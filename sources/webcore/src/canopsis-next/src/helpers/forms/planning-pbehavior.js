@@ -96,6 +96,15 @@ export const pbehaviorToForm = (
 };
 
 /**
+ * @param {Object} pbehavior
+ * @returns {Object}
+ */
+export const pbehaviorToDuplicateForm = pbehavior => ({
+  ...pbehavior,
+  comments: pbehavior.comments.map(({ message, author }) => ({ message, author })),
+});
+
+/**
  * Convert form to pbehavior entity.
  *
  * @param {Object} form

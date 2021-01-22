@@ -27,13 +27,13 @@ L'API météo des services permet de consulter l'état des
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les observateurs :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/weather/watchers/\{\}'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/weather/watchers/\{\}'
 ```
 
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer les observateurs dont l'information `customer` vaut `Capensis`.
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/weather/watchers/\{"infos.customer.value":"Capensis"\}'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/weather/watchers/\{"infos.customer.value":"Capensis"\}'
 ```
 
 ### Réponse en cas de réussite
@@ -95,7 +95,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/weather/watchers/\{"infos
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer l'observateur `watcher_id` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/weather/watchers/watcher_id'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/weather/watchers/watcher_id'
 ```
 
 ### Réponse en cas de réussite

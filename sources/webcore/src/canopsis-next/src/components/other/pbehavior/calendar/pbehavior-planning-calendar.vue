@@ -5,7 +5,8 @@
     :events="events",
     :readOnly="readOnly",
     fluid,
-    fillHeight,
+    fill-height,
+    current-time-for-today,
     @change="changeCalendarHandler",
     @changed="changedEventHandler",
     @added="applyEventChangesHandler",
@@ -154,7 +155,7 @@ export default {
     },
   },
   watch: {
-    pbehaviorsById: {
+    allPbehaviorsById: {
       immediate: true,
       handler() {
         this.setCalendarView();
@@ -174,7 +175,7 @@ export default {
      * Set calendar view to min event date
      */
     setCalendarView() {
-      const startTimestamps = Object.values(this.pbehaviorsById).map(({ tstart }) => tstart);
+      const startTimestamps = Object.values(this.allPbehaviorsById).map(({ tstart }) => tstart);
 
       if (startTimestamps.length) {
         const startTimestamp = Math.min.apply(null, startTimestamps);

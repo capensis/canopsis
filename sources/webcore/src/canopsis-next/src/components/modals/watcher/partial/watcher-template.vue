@@ -10,6 +10,15 @@
         v-icon(small) list
       span {{ $t('modals.watcher.editPbehaviors') }}
     v-runtime-template(v-if="compiledTemplate", :template="compiledTemplate")
+    .float-clear
+    c-table-pagination(
+      v-if="totalItems > pagination.rowsPerPage && hasEntitiesHelper",
+      :total-items="totalItems",
+      :rows-per-page="pagination.rowsPerPage",
+      :page="pagination.page",
+      @update:page="updatePage",
+      @update:rows-per-page="updateRecordsPerPage"
+    )
 </template>
 
 <script>
@@ -53,6 +62,14 @@ export default {
       type: Number,
       default: PAGINATION_LIMIT,
     },
+    pagination: {
+      type: Object,
+      required: true,
+    },
+    totalItems: {
+      type: Number,
+      required: false,
+    },
   },
   asyncComputed: {
     compiledTemplate: {
@@ -68,6 +85,10 @@ export default {
     hasPbehaviorListAccess() {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.pbehaviorList);
     },
+
+    hasEntitiesHelper() {
+      return /{{(\s)?entities(.+)}}/.test(this.modalTemplate);
+    },
   },
   beforeCreate() {
     registerHelper('entities', ({ hash }) => {
@@ -78,10 +99,9 @@ export default {
           :watcher="watcher"
           :watcher-entities="watcherEntities"
           :entity-template="entityTemplate"
-          :items-per-page="itemsPerPage"
           entity-name-field="${entityNameField}"
           @add:event="addEventToQueue"
-        ></watcher-entities-wrapper>
+        />
       `);
     });
   },
@@ -103,6 +123,14 @@ export default {
           availableActions: [CRUD_ACTIONS.create, CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },
       });
+    },
+
+    updatePage(page) {
+      this.$emit('update:pagination', { ...this.pagination, page });
+    },
+
+    updateRecordsPerPage(rowsPerPage) {
+      this.$emit('update:pagination', { ...this.pagination, rowsPerPage, page: 1 });
     },
   },
 };

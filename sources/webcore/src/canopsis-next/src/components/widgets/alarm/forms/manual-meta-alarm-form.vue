@@ -8,7 +8,7 @@
         :label="$t('modals.createManualMetaAlarm.fields.metaAlarm')",
         :error-messages="errors.collect('manualMetaAlarm')",
         :loading="pending",
-        item-value="d",
+        item-value="entity._id",
         item-text="v.display_name",
         name="manualMetaAlarm",
         return-object,

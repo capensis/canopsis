@@ -68,11 +68,17 @@
 <script>
 import { get } from 'lodash';
 
-import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
+import { CalendarEvent, Day, DaySpan, Op, Schedule } from 'dayspan';
 import { DsCalendar } from 'dayspan-vuetify/src/components';
 
 export default {
   extends: DsCalendar,
+  props: {
+    currentTimeForToday: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     canResize() {
       return !this.readOnly && !this.$dayspan.readOnly;
@@ -150,12 +156,22 @@ export default {
         this.endEditing();
         const { day } = mouseEvent;
 
-        this.addStart = day;
-        this.addEnd = day;
         this.placeholderForCreate = false;
-        this.placeholder = this.$dayspan.getPlaceholderEventForAdd(day);
-        this.placeholder.event.schedule = Schedule.forDay(day);
-        this.placeholder.fullDay = true;
+
+        if (this.currentTimeForToday && day.currentDay) {
+          const time = Day.now();
+          this.addStart = time;
+          this.addEnd = Day.today().end();
+          this.placeholder = this.$dayspan.getPlaceholderEventForAdd(time);
+          this.placeholder.event.schedule = Schedule.forTime(time, time.asTime());
+          this.placeholder.fullDay = false;
+        } else {
+          this.addStart = day;
+          this.addEnd = day;
+          this.placeholder = this.$dayspan.getPlaceholderEventForAdd(day);
+          this.placeholder.event.schedule = Schedule.forDay(day);
+          this.placeholder.fullDay = true;
+        }
 
         this.updatePlaceholderRow();
       }

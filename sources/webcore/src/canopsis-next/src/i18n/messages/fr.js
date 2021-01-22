@@ -11,6 +11,7 @@ import {
   REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
   ENGINES_NAMES,
+  WIDGET_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -44,7 +45,7 @@ export default {
     yes: 'Oui',
     no: 'Non',
     default: 'Défaut',
-    confirmation: 'Êtes-vous sûr(e) ?',
+    confirmation: 'Êtes-vous sûr(e) ?',
     parameters: 'Paramètres',
     by: 'Par',
     date: 'Date',
@@ -55,8 +56,8 @@ export default {
     preview: 'Aperçu',
     recursive: 'Récursif',
     select: 'Sélectionner',
-    states: 'Sévérités',
-    state: 'Sévérité',
+    states: 'Criticités',
+    state: 'Criticité',
     sla: 'SLA',
     authors: 'Auteurs',
     stat: 'Statistique',
@@ -404,12 +405,12 @@ export default {
     resolved: 'Résolue',
     filters: 'Filtres',
     filterEditor: 'Éditeur de filtre',
-    isAckNoteRequired: 'Champ \'Note\' requis lors d\'un ack ?',
-    isSnoozeNoteRequired: 'Champ \'Note\' requis lorsque vous répétez ?',
+    isAckNoteRequired: 'Champ \'Note\' requis lors d\'un ack ?',
+    isSnoozeNoteRequired: 'Champ \'Note\' requis lorsque vous répétez ?',
     isMultiAckEnabled: 'Ack multiple',
     fastAckOutput: 'Commentaire d\'Ack rapide',
-    isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
-    isCorrelationEnabled: 'Corrélation activée ?',
+    isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
+    isCorrelationEnabled: 'Corrélation activée ?',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
@@ -534,7 +535,7 @@ export default {
       title: 'Forme des points',
     },
     considerPbehaviors: {
-      title: 'Prendre en compte les comportements périodiques ?',
+      title: 'Prendre en compte les comportements périodiques ?',
     },
     serviceWeatherModalTypes: {
       title: 'Type de modale',
@@ -546,8 +547,8 @@ export default {
     },
     templateEditor: 'Modèle',
     columns: {
-      isHtml: 'Est-ce du HTML?',
-      isState: 'Affiché comme une sévérité ?',
+      isHtml: 'Est-ce du HTML ?',
+      isState: 'Affiché comme une criticité ?',
     },
     liveReporting: {
       title: 'Suivi personnalisé',
@@ -656,7 +657,7 @@ export default {
     createAckEvent: {
       title: 'Acquitter',
       tooltips: {
-        ackResources: 'Voulez-vous acquitter les ressources liées ?',
+        ackResources: 'Voulez-vous acquitter les ressources liées ?',
       },
       fields: {
         ticket: 'Numéro du ticket',
@@ -736,7 +737,7 @@ export default {
             addExdate: 'Ajouter une date d\'exclusion',
           },
           fields: {
-            rRuleQuestion: 'Ajouter une règle de récurrence au comportement périodique ?',
+            rRuleQuestion: 'Ajouter une règle de récurrence au comportement périodique ?',
           },
         },
         comments: {
@@ -755,7 +756,7 @@ export default {
       success: {
         create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60 sec pour apparaître dans l\'interface',
       },
-      cancelConfirmation: 'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
+      cancelConfirmation: 'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
     },
     createPause: {
       title: 'Mettre en pause',
@@ -847,37 +848,37 @@ export default {
     widgetCreation: {
       title: 'Sélectionnez un widget',
       types: {
-        alarmList: {
+        [WIDGET_TYPES.alarmList]: {
           title: 'Bac à alarmes',
         },
-        context: {
+        [WIDGET_TYPES.context]: {
           title: 'Explorateur de contexte',
         },
-        weather: {
+        [WIDGET_TYPES.weather]: {
           title: 'Météo des services',
         },
-        statsHistogram: {
+        [WIDGET_TYPES.statsHistogram]: {
           title: 'Histogramme des statistiques',
         },
-        statsCurves: {
+        [WIDGET_TYPES.statsCurves]: {
           title: 'Courbes de statistiques',
         },
-        statsTable: {
+        [WIDGET_TYPES.statsTable]: {
           title: 'Tableau de statistiques',
         },
-        statsCalendar: {
+        [WIDGET_TYPES.statsCalendar]: {
           title: 'Calendrier',
         },
-        statsNumber: {
+        [WIDGET_TYPES.statsNumber]: {
           title: 'Compteur de statistiques',
         },
-        statsPareto: {
+        [WIDGET_TYPES.statsPareto]: {
           title: 'Diagramme de Pareto',
         },
-        text: {
+        [WIDGET_TYPES.text]: {
           title: 'Texte',
         },
-        counter: {
+        [WIDGET_TYPES.counter]: {
           title: 'Compteur',
         },
       },
@@ -1306,7 +1307,7 @@ export default {
         name: 'Nom',
         description: 'Description',
       },
-      emptyExdates: 'Aucun exdates ajouté pour le moment',
+      emptyExdates: 'Aucun exdate ajouté pour le moment',
     },
     createManualMetaAlarm: {
       title: 'Gestion manuelle des méta-alarmes',
@@ -1377,8 +1378,8 @@ export default {
         '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     },
     clickOutsideConfirmation: {
-      title: 'Êtes-vous sûr(e) ?',
-      text: 'Les modifications ne seront pas enregistrées. Êtes-vous sûr(e) ?',
+      title: 'Êtes-vous sûr(e) ?',
+      text: 'Les modifications ne seront pas enregistrées. Êtes-vous sûr(e) ?',
       buttons: {
         save: 'Sauvegarder',
         dontSave: 'Ne pas sauvegarder',
@@ -1390,7 +1391,7 @@ export default {
     },
     rateInstruction: {
       title: 'Évaluer cette consigne',
-      text: 'Dans quelle mesure cette consigne a-t-elle été utile?',
+      text: 'Dans quelle mesure cette consigne a-t-elle été utile ?',
     },
   },
   tables: {
@@ -1768,7 +1769,7 @@ export default {
         fields: {
           method: 'Méthode',
           url: 'URL',
-          authSwitch: 'Authentification ?',
+          authSwitch: 'Authentification ?',
           auth: 'Auth',
           username: 'Identifiant utilisateur',
           password: 'Mot de passe',
@@ -1996,7 +1997,7 @@ export default {
       lastExecutedOn: 'Dernière exécution le',
     },
     errors: {
-      runningInstruction: 'Les changements ne peuvent pas être enregistrés car la consigne est en cours d\'exécution. Voulez vous stopper l\'exécution de la consigne et ainsi enregistrer les changements ?',
+      runningInstruction: 'Les changements ne peuvent pas être enregistrés car la consigne est en cours d\'exécution. Voulez vous stopper l\'exécution de la consigne et ainsi enregistrer les changements ?',
       operationRequired: 'Veuillez ajouter au moins une opération',
       stepRequired: 'Veuillez ajouter au moins une étape',
     },
@@ -2023,7 +2024,7 @@ export default {
     completedAt: 'Terminé à {time}',
     failedAt: 'Échec à {time}',
     startedAt: 'Commencé à {time}\n(Date de lancement Canopsis)',
-    closeConfirmationText: 'Souhaitez-vous reprendre cette consigne plus tard?',
+    closeConfirmationText: 'Souhaitez-vous reprendre cette consigne plus tard ?',
     popups: {
       success: '{instructionName} a été exécutée avec succès',
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème davantage',

@@ -1,7 +1,7 @@
 # Moteur `kpi` (Python, CAT)
 
 !!! info
-    Disponible à partir de Canopsis 3.46.0, uniquement en édition CAT.
+    Disponible uniquement en édition CAT.
 
 Le moteur `kpi` copie certaines données depuis la base MongoDB de Canopsis vers
 une base de données relationnelle PostgreSQL.

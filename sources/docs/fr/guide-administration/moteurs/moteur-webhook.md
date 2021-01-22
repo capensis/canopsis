@@ -1,19 +1,9 @@
 # Moteur `engine-webhook` (Go, CAT)
 
 !!! info
-    Disponible à partir de Canopsis 3.34.0, uniquement en édition CAT.
+    Disponible uniquement en édition CAT.
 
 Le moteur `engine-webhook` permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
-
-Jusqu'en `3.33.0`, les webhooks étaient une fonctionnalité implémentée sous la forme d'un plugin dans le moteur `engine-axe` (en version CAT).
-
-Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement en version CAT).
-
-Depuis la `3.37.0`, la fonction de répétition est disponible.
-
-Depuis la `3.39.0`, le webhook peut être activé ou désactivé avec l'attribut `enabled`.
-
-Depuis la `3.41.0`, les valeurs des champs `declare_ticket` peuvent être définies sous forme d'expressions régulières.
 
 Les webhooks peuvent être ajoutés et modifiés via l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
 
@@ -152,9 +142,7 @@ Si l'API renvoie une réponse sous forme de JSON imbriqué, il faut prendre en c
 
 Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Data` de telle sorte que la clé dans `Data` corresponde à la valeur dans les données du service. Par exemple avec `"ticket_creation_date" : "timestamp"`, la valeur de `ticket["timestamp"]` sera mise dans `Alarm.Value.Ticket.Data["ticket_creation_date"]`.
 
-A partir de la version 3.41.0 de Canopsis, les valeurs des champs `ticket_id` et autres champs de `declare_ticket` peuvent être définies sous forme d'expressions régulières.
-
-Pour cela, il est nécessaire de positionner l'option `regexp` à `true` comme dans l'exemple suivant :
+Les valeurs des champs `ticket_id` et autres champs de `declare_ticket` peuvent être définies sous forme d'expressions régulières. Pour cela, il est nécessaire de positionner l'option `regexp` à `true` comme dans l'exemple suivant :
 
 ```json
 "declare_ticket": {

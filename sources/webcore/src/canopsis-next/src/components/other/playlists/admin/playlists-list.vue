@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { getApplicationHost } from '@/helpers/router';
+import { APP_HOST } from '@/config';
 
 import rightsTechnicalPlaylistMixin from '@/mixins/rights/technical/playlist';
 
@@ -115,7 +115,7 @@ export default {
     getPlaylistRouteFullUrlById(id) {
       const { href } = this.$router.resolve(this.getPlaylistRouteById(id));
 
-      return `${getApplicationHost()}${href}`;
+      return `${APP_HOST}${href}`;
     },
 
     onSuccessCopied() {

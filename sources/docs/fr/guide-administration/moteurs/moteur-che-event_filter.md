@@ -266,7 +266,7 @@ Les paramètres de l'action sont :
  - `to` : le nom du champ de l'évènement dans lequel la valeur doit être
    copiée.
 
-Par exemple, l'action suivante va vérifier si l'entité à l'origine de l'évènement existe déjà dans le référentiel interne de Canopsis. Si c'est le cas elle sera copiée dans le champ `Entity` de l'évènement (reportez vous à cet [exemple](#ajout-dinformations-a-lentite) pour l'utilisation du champ entity de l'évènement) :
+Par exemple, l'action suivante va vérifier si l'entité à l'origine de l'évènement existe déjà dans le référentiel interne de Canopsis. Si c'est le cas elle sera copiée dans le champ `Entity` de l'évènement (reportez-vous à cet [exemple](#ajout-dinformations-a-lentite) pour l'utilisation du champ entity de l'évènement) :
 
 ```json
 {

@@ -4,13 +4,11 @@ Après une installation de Canopsis, ses différents composants utiliseront les 
 
 ## Accès à l'interface web de Canopsis
 
-Par défaut, l'interface web de Canopsis est disponible depuis votre navigateur à l'adresse suivante : <http://localhost:8082/>.
-
-La nouvelle interface « UIv3 » est accessible depuis l'adresse <http://localhost:8082/en/static/canopsis-next/dist/index.html#>.
+Par défaut, l'interface web de Canopsis est disponible depuis votre navigateur à l'adresse suivante : <http://localhost>.
 
 Les identifiants de connexion par défaut sont `root` / `root`.
 
-Parcourez ensuite [le guide d'utilisation](../../guide-utilisation/index.md) pour en apprendre davantage sur l'interface web de Canopsis.
+Parcourez ensuite [le Guide d'utilisation](../../guide-utilisation/index.md) pour en apprendre davantage sur l'interface web de Canopsis.
 
 ## Accès aux composants internes de Canopsis
 

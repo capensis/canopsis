@@ -11,6 +11,7 @@ import {
   REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
   ENGINES_NAMES,
+  WIDGET_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -755,7 +756,7 @@ export default {
       success: {
         create: 'Pbehavior successfully created! You may need to wait 60 sec to see it in interface',
       },
-      cancelConfirmation: 'Some datas has been modified and will not be saved. Do you really want to close this menu ?',
+      cancelConfirmation: 'Some data has been modified and will not be saved. Do you really want to close this menu?',
     },
     createPause: {
       title: 'Create Pause event',
@@ -847,37 +848,37 @@ export default {
     widgetCreation: {
       title: 'Select a widget',
       types: {
-        alarmList: {
+        [WIDGET_TYPES.alarmList]: {
           title: 'Alarm list',
         },
-        context: {
+        [WIDGET_TYPES.context]: {
           title: 'Context explorer',
         },
-        weather: {
+        [WIDGET_TYPES.weather]: {
           title: 'Service weather',
         },
-        statsHistogram: {
+        [WIDGET_TYPES.statsHistogram]: {
           title: 'Stats histogram',
         },
-        statsCurves: {
+        [WIDGET_TYPES.statsCurves]: {
           title: 'Stats curves',
         },
-        statsTable: {
+        [WIDGET_TYPES.statsTable]: {
           title: 'Stats table',
         },
-        statsCalendar: {
+        [WIDGET_TYPES.statsCalendar]: {
           title: 'Stats calendar',
         },
-        statsNumber: {
+        [WIDGET_TYPES.statsNumber]: {
           title: 'Stats number',
         },
-        statsPareto: {
+        [WIDGET_TYPES.statsPareto]: {
           title: 'Pareto diagram',
         },
-        text: {
+        [WIDGET_TYPES.text]: {
           title: 'Text',
         },
-        counter: {
+        [WIDGET_TYPES.counter]: {
           title: 'Counter',
         },
       },
@@ -1177,7 +1178,7 @@ export default {
         },
         infos: {
           title: 'Informations',
-          validationError: 'Every values must be filled',
+          validationError: 'Every value must be filled',
         },
         patterns: {
           title: 'Patterns',
@@ -1609,7 +1610,7 @@ export default {
     priority: 'Priority',
     enabled: 'Enabled',
     actions: 'Actions',
-    externalDatas: 'External datas',
+    externalDatas: 'External data',
     actionsRequired: 'Please add at least one action',
     id: 'Id',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
@@ -1911,7 +1912,7 @@ export default {
     tabs: {
       type: 'Type',
       reason: 'Reason',
-      exceptions: 'Dates of exceptions',
+      exceptions: 'Exception dates',
     },
   },
 

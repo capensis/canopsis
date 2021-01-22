@@ -237,14 +237,21 @@ export const COUNTER_STATES_ICONS = {
   [ENTITIES_STATES_KEYS.critical]: 'wb_cloudy',
 };
 
+export const PBEHAVIOR_TYPE_TYPES = {
+  active: 'active',
+  inactive: 'inactive',
+  maintenance: 'maintenance',
+  pause: 'pause',
+};
+
 export const WEATHER_ICONS = {
   [WATCHER_STATES.ok]: 'wb_sunny',
   [WATCHER_STATES.minor]: 'person',
   [WATCHER_STATES.major]: 'person',
   [WATCHER_STATES.critical]: 'wb_cloudy',
-  maintenance: 'build',
-  unmonitored: 'brightness_3',
-  [WATCHER_STATES.pause]: 'pause',
+  [PBEHAVIOR_TYPE_TYPES.maintenance]: 'build',
+  [PBEHAVIOR_TYPE_TYPES.inactive]: 'brightness_3',
+  [PBEHAVIOR_TYPE_TYPES.pause]: 'pause',
 };
 
 export const ENTITY_STATUS_STYLES = {
@@ -1127,13 +1134,6 @@ export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {
   pass: 'pass',
   break: 'break',
   drop: 'drop',
-};
-
-export const PBEHAVIOR_TYPE_TYPES = {
-  active: 'active',
-  inactive: 'inactive',
-  maintenance: 'maintenance',
-  pause: 'pause',
 };
 
 export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {

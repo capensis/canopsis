@@ -119,7 +119,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
         "priority" : "priority",
         "regexp" : false
     }
-}' 'http://<Canopsis_URL>/api/v2/webhook'
+}' 'http://localhost:8082/api/v2/webhook'
 ```
 
 #### Réponse en cas de réussite
@@ -293,7 +293,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
         "priority" : "priority",
         "regexp" : false
     }
-}' 'http://<Canopsis_URL>/api/v2/webhook/declare_external_ticket'
+}' 'http://localhost:8082/api/v2/webhook/declare_external_ticket'
 ```
 
 #### Réponse en cas de réussite
@@ -325,7 +325,7 @@ Supprime un Webhook en fonction de son `id`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le webhook avec l'`id` `declare_external_ticket` :
 
 ```sh
-curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/webhook/declare_external_ticket'
+curl -X DELETE -u root:root 'http://localhost:8082/api/v2/webhook/declare_external_ticket'
 ```
 
 #### Réponse en cas de réussite
@@ -375,7 +375,7 @@ Récupère un ou plusieurs Webhooks créés en base.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le webhook avec l'`id` `declare_external_ticket` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/webhook/declare_external_ticket'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/webhook/declare_external_ticket'
 ```
 
 ##### Réponse en cas de réussite
@@ -475,7 +475,7 @@ Récupère tous les Webhooks stockés en base
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les webhooks :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/webhook'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/webhook'
 ```
 
 ##### Réponse en cas de réussite

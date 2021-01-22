@@ -32,7 +32,7 @@ Voyez la [documentation des expressions régulières .NET](https://docs.microsof
 !!! important
     Les expressions régulières de type PCRE / .NET peuvent nécessiter beaucoup plus de ressources que les expressions régulières Golang, à leur exécution, ce qui peut fortement réduire votre taux de traitement d'évènements Canopsis.
 
-    Depuis Canopsis 3.45.0, la [variable d'environnement `REGEXP2_MATCH_TIMEOUT`](../../guide-administration/administration-avancee/variables-environnement.md) permet d'accorder un temps d'exécution maximal à une expression régulière. La durée maximale par défaut est d'une seconde.
+    La [variable d'environnement `REGEXP2_MATCH_TIMEOUT`](../../guide-administration/administration-avancee/variables-environnement.md) permet d'accorder un temps d'exécution maximal à une expression régulière. La durée maximale par défaut est d'une seconde.
 
     Pour cette raison, il est recommandé de n'avoir recours à ces expressions régulières avancées que lorsque votre cas d'utilisation le justifie vraiment.
 

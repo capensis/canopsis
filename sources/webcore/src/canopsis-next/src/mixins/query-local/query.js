@@ -64,8 +64,8 @@ export default {
       };
 
       if (sortKey) {
-        query.sort_key = sortKey;
-        query.sort_dir = sortDir;
+        query.sort_by = sortKey;
+        query.sort = sortDir.toLocaleLowerCase();
       }
 
       if (search) {
