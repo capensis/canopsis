@@ -21,7 +21,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { getRolesSearchByText } from '@/helpers/entities-search';
+import { getRolesSearchByText } from '@/helpers/search/patterns-search';
 
 import entitiesRoleMixins from '@/mixins/entities/role';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';

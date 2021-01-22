@@ -63,7 +63,7 @@ import moment from 'moment-timezone';
 
 import { DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
-import { isStartOfDay, isEndOfDay } from '@/helpers/date';
+import { isStartOfDay, isEndOfDay } from '@/helpers/date/date';
 
 import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';

@@ -1,4 +1,4 @@
-import { toSeconds } from '@/helpers/duration';
+import { toSeconds } from '@/helpers/date/duration';
 
 export default {
   data() {

@@ -9,7 +9,7 @@
 <script>
 import { omit } from 'lodash';
 
-import { replaceTextNotInQuotes } from '@/helpers/searching';
+import { replaceTextNotInQuotes } from '@/helpers/search/quotes';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
 

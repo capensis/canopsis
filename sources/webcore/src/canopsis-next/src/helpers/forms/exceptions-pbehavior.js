@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 
-import { convertTimestampToMomentByTimezone, convertDateToTimestampByTimezone } from '@/helpers/date';
+import { convertTimestampToMomentByTimezone, convertDateToTimestampByTimezone } from '@/helpers/date/date';
 import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/entities';
 
 /**
