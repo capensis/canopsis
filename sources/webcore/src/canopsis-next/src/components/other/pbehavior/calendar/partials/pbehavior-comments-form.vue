@@ -1,35 +1,13 @@
 <template lang="pug">
   div
-    v-layout(
-      :data-test="`pbehaviorComment-${index + 1}`",
+    pbehavior-comment-field(
       v-for="(comment, index) in comments",
+      v-field="comments[index]",
       :key="comment.key",
-      row,
-      wrap,
-      align-center
+      @remove="removeItemFromArray(index)"
     )
-      v-flex(xs11)
-        v-textarea(
-          data-test="pbehaviorCommentField",
-          v-validate="'required'",
-          :disabled="!!comment._id",
-          :label="$t('modals.createPbehavior.steps.comments.fields.message')",
-          :error-messages="errors.collect('message')",
-          :value="comment.message",
-          name="message",
-          @input="updateFieldInArrayItem(index, 'message', $event)"
-        )
-      v-flex(xs1)
-        v-btn(
-          data-test="pbehaviorCommentDeleteButton",
-          color="error",
-          icon,
-          @click="removeItemFromArray(index)"
-        )
-          v-icon delete
     v-layout(row)
       v-btn.ml-0.primary(
-        data-test="pbehaviorAddCommentButton",
         type="button",
         @click="addComment"
       ) {{ $t('modals.createPbehavior.steps.comments.buttons.addComment') }}
@@ -41,7 +19,10 @@ import uid from '@/helpers/uid';
 import authMixin from '@/mixins/auth';
 import formArrayMixin from '@/mixins/form/array';
 
+import PbehaviorCommentField from '../fields/pbehavior-comment-field.vue';
+
 export default {
+  components: { PbehaviorCommentField },
   mixins: [authMixin, formArrayMixin],
   model: {
     prop: 'comments',
