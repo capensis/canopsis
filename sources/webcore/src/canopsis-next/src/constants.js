@@ -1720,3 +1720,15 @@ export const CAT_ENGINES = [
   ENGINES_NAMES.dynamicInfo,
   ENGINES_NAMES.webhook,
 ];
+
+export const REQUEST_METHODS = {
+  post: 'POST',
+  get: 'GET',
+  put: 'PUT',
+  patch: 'PATCH',
+  delete: 'DELETE',
+  head: 'HEAD',
+  connect: 'CONNECT',
+  options: 'OPTIONS',
+  trace: 'TRACE',
+};

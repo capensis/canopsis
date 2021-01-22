@@ -1776,7 +1776,6 @@ export default {
           headers: 'Headers',
           headerKey: 'Header key',
           headerValue: 'Header value',
-          payload: 'Payload',
         },
         emptyHeaders: 'No headers added yet',
       },
