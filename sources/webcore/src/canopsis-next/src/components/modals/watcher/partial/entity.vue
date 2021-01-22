@@ -164,7 +164,7 @@ export default {
       const mainIcons = [];
 
       if (!this.isPaused && !this.hasActivePbehavior) {
-        mainIcons.push(WEATHER_ICONS[this.entity.color]);
+        mainIcons.push(WEATHER_ICONS[this.entity.icon]);
       }
 
       mainIcons.push(...this.entity.pbehaviors.map(({ type }) => type.icon_name));

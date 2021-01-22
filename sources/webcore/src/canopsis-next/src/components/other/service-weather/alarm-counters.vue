@@ -11,7 +11,7 @@
         slot="activator"
       )
       span {{ counter.name }}
-    v-tooltip(top)
+    v-tooltip(top, :disabled="!otherCountersValue")
       alarm-counter(
         :count="otherCountersValue",
         icon="more_horiz",

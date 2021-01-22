@@ -4,7 +4,7 @@
       div(v-html="description")
     div.loginContainer
       base-login
-      cas-login.mt-2(v-show="isCASAuthEnabled")
+      cas-login.mt-2(v-if="isCASAuthEnabled")
     login-footer
 </template>
 

@@ -6,8 +6,10 @@
 
 ## Méthodes d'installation de Canopsis
 
-*  [Installation avec un paquet Debian ou CentOS](installation-paquets.md)
-*  [Installation avec Docker](installation-conteneurs.md)
+Canopsis peut être installé à l'aide de paquets sur CentOS 7, ou bien avec Docker Compose.
+
+*  [Installation de paquets CentOS 7](installation-paquets.md)
+*  [Installation avec Docker Compose](installation-conteneurs.md)
 
 ## Première connexion à Canopsis
 

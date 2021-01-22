@@ -181,7 +181,6 @@ export default {
           entityTemplate: this.widget.parameters.entityTemplate,
           modalTemplate: this.widget.parameters.modalTemplate,
           itemsPerPage: this.widget.parameters.modalItemsPerPage,
-          sort: this.widget.parameters.sort,
         },
       });
     },

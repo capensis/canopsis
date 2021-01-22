@@ -1,45 +1,47 @@
-# Installation de Canopsis avec Docker
+# Installation de Canopsis avec Docker Compose
 
-Cette procédure décrit l'installation de l'édition open-source de Canopsis en mono-instance Docker.
-
-L'ensemble des procédures décrites doivent être réalisées avec l'utilisateur `root`.
+Cette procédure décrit l'installation de Canopsis en mono-instance Docker Compose.
 
 ## Prérequis
 
-### Version minimum du noyau Linux
+### Prérequis de version du noyau Linux
 
-Votre système hôte pour Docker doit disposer d'un noyau Linux suffisamment récent. Canopsis nécessite l'utilisation **d'un noyau Linux 4.4 minimum**. Le noyau installé par défaut sur CentOS 7 n'est donc pas suffisant pour héberger un environnement Docker Canopsis.
+Lors de l'utilisation de Docker, Canopsis nécessite **un noyau Linux 4.4 minimum sur votre système hôte**.
 
-Vérifier votre version du noyau à l'aide de la commande suivante :
+Vérifiez votre version du noyau à l'aide de la commande suivante :
 ```sh
 uname -r
 ```
 
-Si vous obtenez une version inférieure à 4.4, veuillez utiliser un noyau plus récent : soit avec une distribution plus à jour, ou bien à l'aide d'[ELRepo](https://elrepo.org/tiki/kernel-lt) pour CentOS, par exemple.
+Si la version affichée est inférieure à 4.4, vous devez soit utiliser une distribution plus à jour, ou bien mettre à jour votre noyau à l'aide d'[ELRepo](https://elrepo.org/tiki/kernel-lt) pour CentOS, par exemple.
 
-### Installation de Docker CE et Docker Compose
+!!! important
+    Une utilisation de Canopsis avec Docker Compose et un noyau inférieur à 4.4 ne sera ni supportée ni prise en charge.
 
-Canopsis nécessite [l'installation de Docker CE](https://docs.docker.com/install/#supported-platforms), version 19.03.5 minimum. Veuillez utiliser les dépôts officiels de Docker CE, et non pas ceux proposés par votre distribution.
+## Installation de Docker et Docker Compose
 
-Une fois Docker CE installé, vous devez ensuite [installer Docker Compose](https://docs.docker.com/compose/install/#install-compose).
+Vous devez tout d'abord [installer Docker](https://docs.docker.com/get-docker/), version 19.03.5 minimum. Veuillez utiliser les dépôts officiels de Docker, et non pas ceux proposés par votre distribution.
+
+Une fois Docker installé, vous devez ensuite [installer Docker Compose](https://docs.docker.com/compose/install/#install-compose).
 
 ## Lancement de Canopsis avec Docker Compose
 
-Les images Docker officielles de Canopsis sont hébergées sur Docker Hub : <https://hub.docker.com/u/canopsis/>.
+Les images Docker officielles de Canopsis sont hébergées sur Docker Hub : <https://hub.docker.com/u/canopsis/> et seront prochainement migrées vers notre propre registre Docker.
 
 Le [dépôt Git de Canopsis](https://git.canopsis.net/canopsis/canopsis/-/tree/develop) contient des fichiers Docker Compose d'exemple :
 ```sh
 git clone -b develop https://git.canopsis.net/canopsis/canopsis.git && cd canopsis/docker-compose
 ```
 
-La variable `CANOPSIS_IMAGE_TAG` du fichier `.env` a pour valeur par défaut `nightly`, ce qui correspond à la version la plus récente des images disponibles sur Docker Hub. Notez que cela englobe également les versions intermédiaires destinées au développement et aux tests. Aussi, le tag `nigthly` ne doit **pas** être utilisé pour un environnement de production.
+!!! attention
+    La variable `CANOPSIS_IMAGE_TAG` du fichier `.env` a pour valeur par défaut `nightly`, ce qui correspond à la version la plus récente des images disponibles sur Docker Hub. Notez que cela englobe également les versions intermédiaires destinées **au développement et aux tests**. Aussi, le tag `nigthly` ne doit **pas** être utilisé pour un environnement de production.
 
 Récupérez les dernières images disponibles :
 ```sh
 docker-compose pull
 ```
 
-Lancez ensuite la commande suivante, afin de lever un environnement Canopsis open-core complet avec Docker :
+Lancez ensuite la commande suivante, afin de démarrer un environnement Canopsis open-core complet :
 ```sh
 docker-compose up -d
 ```
@@ -62,11 +64,10 @@ docker-compose_influxdb_1        /entrypoint.sh influxd           Up       0.0.0
                                                                            0.0.0.0:8083->8083/tcp,
                                                                            0.0.0.0:8086->8086/tcp
 docker-compose_init_1            /bin/sh -c /${_BINARY_NAME}      Exit 0
-docker-compose_metric_1          /bin/sh -c /entrypoint.sh        Up       8082/tcp
 docker-compose_mongodb_1         docker-entrypoint.sh --wir ...   Up       0.0.0.0:27027->27017/tcp
 docker-compose_nginx_1           /bin/sh -c /entrypoint.sh        Up       0.0.0.0:80->80/tcp
 docker-compose_pbehavior_1       /bin/sh -c /entrypoint.sh        Up       8082/tcp
-docker-compose_provisionning_1   /bin/sh -c /entrypoint-prov.sh   Exit 0
+docker-compose_provisioning_1    /bin/sh -c /entrypoint-prov.sh   Exit 0
 docker-compose_rabbitmq_1        docker-entrypoint.sh rabbi ...   Up       15671/tcp,
                                                                            0.0.0.0:15672->15672/tcp,
                                                                            25672/tcp, 4369/tcp,
@@ -90,7 +91,6 @@ docker-compose down
 
 Stopping docker-compose_nginx_1          ... done
 Stopping docker-compose_webserver_1      ... done
-Stopping docker-compose_metric_1         ... done
 Stopping docker-compose_task_importctx_1 ... done
 Stopping docker-compose_scheduler_1      ... done
 Stopping docker-compose_pbehavior_1      ... done
@@ -106,8 +106,7 @@ Stopping docker-compose_rabbitmq_1       ... done
 Stopping docker-compose_watcher_1        ... done
 Removing docker-compose_nginx_1          ... done
 Removing docker-compose_webserver_1      ... done
-Removing docker-compose_metric_1         ... done
-Removing docker-compose_provisionning_1  ... done
+Removing docker-compose_provisioning_1   ... done
 Removing docker-compose_task_importctx_1 ... done
 Removing docker-compose_scheduler_1      ... done
 Removing docker-compose_pbehavior_1      ... done
