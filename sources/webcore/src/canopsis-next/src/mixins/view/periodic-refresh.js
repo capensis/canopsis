@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import { DATETIME_FORMATS } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { toSeconds } from '@/helpers/duration';
+import { toSeconds } from '@/helpers/date/duration';
 import Observer from '@/services/observer';
 
 import layoutNavigationEditingModeMixin from '../layout/navigation/editing-mode';

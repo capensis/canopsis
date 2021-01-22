@@ -31,7 +31,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { toSeconds } from '@/helpers/duration';
+import { toSeconds } from '@/helpers/date/duration';
 
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsEntitiesPlaylistTabMixin from '@/mixins/rights/entities/playlist-tab';

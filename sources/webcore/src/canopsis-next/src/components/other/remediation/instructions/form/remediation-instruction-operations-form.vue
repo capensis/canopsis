@@ -15,7 +15,7 @@
         v-field="operations[index]",
         :key="operation.key",
         :index="index",
-        :operationNumber="getOperationNumber(index)",
+        :operation-number="getOperationNumber(index)",
         @remove="removeOperation(index)"
       )
     v-layout(row, align-center)
@@ -33,7 +33,7 @@ import Draggable from 'vuedraggable';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
-import { getCharByIndex } from '@/helpers/string';
+import { getLetterByIndex } from '@/helpers/string';
 
 import formArrayMixin from '@/mixins/form/array';
 
@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     getOperationNumber(index) {
-      return `${this.stepNumber}${getCharByIndex(index)}`;
+      return `${this.stepNumber}${getLetterByIndex(index)}`;
     },
 
     addOperation() {

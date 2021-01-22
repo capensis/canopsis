@@ -37,8 +37,8 @@
 </template>
 
 <script>
-import { convertTimestampToMoment } from '@/helpers/date';
-import { updateTime, updateDate } from '@/helpers/date-time-picker';
+import { convertTimestampToMoment } from '@/helpers/date/date';
+import { updateTime, updateDate } from '@/helpers/date/date-time-picker';
 
 import formBaseMixin from '@/mixins/form/base';
 

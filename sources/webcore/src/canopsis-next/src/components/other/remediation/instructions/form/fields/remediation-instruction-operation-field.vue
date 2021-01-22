@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { isOmitEqual } from '@/helpers/is-omit-equal';
+import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
 import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
 
 import formMixin from '@/mixins/form';

@@ -41,7 +41,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { getContextWidgetSearchByText } from '@/helpers/entities-search';
+import { getContextWidgetSearchByText } from '@/helpers/search/patterns-search';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
 

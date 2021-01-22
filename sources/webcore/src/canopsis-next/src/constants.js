@@ -1645,8 +1645,6 @@ export const REMEDIATION_WORKFLOW_TYPES = {
   continue: false,
 };
 
-export const FIRST_LETTER_ALPHABET_CHAR_CODE = 97;
-
 export const MAX_LIMIT = 10000;
 
 export const REMEDIATION_CONFIGURATION_TYPES = {

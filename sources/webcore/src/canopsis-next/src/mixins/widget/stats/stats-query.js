@@ -6,7 +6,7 @@ import {
   dateParse,
   prepareStatsStopForMonthPeriod,
   prepareStatsStartForMonthPeriod,
-} from '@/helpers/date-intervals';
+} from '@/helpers/date/date-intervals';
 
 export default {
   methods: {
