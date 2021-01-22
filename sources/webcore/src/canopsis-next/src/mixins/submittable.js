@@ -23,8 +23,9 @@ export default ({ method = 'submit', property = 'submitting', computedProperty =
           await sourceSubmit.apply(this, args);
         } catch (err) {
           console.warn(err);
+          const message = Object.values(err).join('\n');
 
-          this.$popups.error({ text: err.details || this.$t('errors.default') });
+          this.$popups.error({ text: message || err.details || this.$t('errors.default') });
         } finally {
           this[property] = false;
         }

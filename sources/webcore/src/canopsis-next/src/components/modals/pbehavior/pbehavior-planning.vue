@@ -69,26 +69,20 @@ export default {
   },
   methods: {
     async submit() {
-      try {
-        const createdPbehaviors = Object.values(this.form.addedPbehaviorsById)
-          .map(pbehavior => pbehaviorToRequest(omit(pbehavior, ['_id'])));
-        const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest);
-        const removedPbehaviors = Object.values(this.form.removedPbehaviorsById);
+      const createdPbehaviors = Object.values(this.form.addedPbehaviorsById)
+        .map(pbehavior => pbehaviorToRequest(omit(pbehavior, ['_id'])));
+      const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest);
+      const removedPbehaviors = Object.values(this.form.removedPbehaviorsById);
 
-        await this.createPbehaviors(createdPbehaviors);
-        await this.updatePbehaviors(updatedPbehaviors);
-        await this.removePbehaviors(removedPbehaviors);
+      await this.createPbehaviors(createdPbehaviors);
+      await this.updatePbehaviors(updatedPbehaviors);
+      await this.removePbehaviors(removedPbehaviors);
 
-        if (this.config.afterSubmit) {
-          await this.config.afterSubmit();
-        }
-
-        this.$modals.hide();
-      } catch (err) {
-        const message = Object.values(err).join('\n');
-
-        this.$popups.error({ text: message || this.$t('errors.default') });
+      if (this.config.afterSubmit) {
+        await this.config.afterSubmit();
       }
+
+      this.$modals.hide();
     },
   },
 };
