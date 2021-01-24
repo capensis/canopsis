@@ -237,14 +237,21 @@ export const COUNTER_STATES_ICONS = {
   [ENTITIES_STATES_KEYS.critical]: 'wb_cloudy',
 };
 
+export const PBEHAVIOR_TYPE_TYPES = {
+  active: 'active',
+  inactive: 'inactive',
+  maintenance: 'maintenance',
+  pause: 'pause',
+};
+
 export const WEATHER_ICONS = {
   [WATCHER_STATES.ok]: 'wb_sunny',
   [WATCHER_STATES.minor]: 'person',
   [WATCHER_STATES.major]: 'person',
   [WATCHER_STATES.critical]: 'wb_cloudy',
-  maintenance: 'build',
-  unmonitored: 'brightness_3',
-  [WATCHER_STATES.pause]: 'pause',
+  [PBEHAVIOR_TYPE_TYPES.maintenance]: 'build',
+  [PBEHAVIOR_TYPE_TYPES.inactive]: 'brightness_3',
+  [PBEHAVIOR_TYPE_TYPES.pause]: 'pause',
 };
 
 export const ENTITY_STATUS_STYLES = {
@@ -466,6 +473,7 @@ export const FILTER_OPERATORS = {
   endsWith: 'ends with',
   doesntEndWith: 'doesn\'t end with',
   isEmpty: 'is empty',
+  isEmptyArray: 'is empty array',
   isNotEmpty: 'is not empty',
   isNull: 'is null',
   isNotNull: 'is not null',
@@ -1128,13 +1136,6 @@ export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {
   drop: 'drop',
 };
 
-export const PBEHAVIOR_TYPE_TYPES = {
-  active: 'active',
-  inactive: 'inactive',
-  maintenance: 'maintenance',
-  pause: 'pause',
-};
-
 export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
   setField: {
     value: 'set_field',
@@ -1720,3 +1721,15 @@ export const CAT_ENGINES = [
   ENGINES_NAMES.dynamicInfo,
   ENGINES_NAMES.webhook,
 ];
+
+export const REQUEST_METHODS = {
+  post: 'POST',
+  get: 'GET',
+  put: 'PUT',
+  patch: 'PATCH',
+  delete: 'DELETE',
+  head: 'HEAD',
+  connect: 'CONNECT',
+  options: 'OPTIONS',
+  trace: 'TRACE',
+};

@@ -40,10 +40,10 @@ et son résultat :
 
 Dans un environnement Docker Compose, la procédure est la même, tant que vous ciblez un conteneur disposant d'un environnement Python Canopsis.
 
-On peut, par exemple, exécuter un shell dans le conteneur `webserver` :
+On peut, par exemple, exécuter un shell dans le conteneur `oldapi` :
 
 ```sh
-docker-compose exec webserver /bin/bash
+docker-compose exec oldapi /bin/bash
 ```
 
 Puis, une fois connecté sur celui-ci, `amqp2tty` sera disponible dans le virtualenv Python :

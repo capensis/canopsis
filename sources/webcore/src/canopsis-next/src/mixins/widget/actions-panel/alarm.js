@@ -1,4 +1,4 @@
-import { get, omit, cloneDeep } from 'lodash';
+import { get, cloneDeep } from 'lodash';
 
 import {
   MODALS,
@@ -69,6 +69,16 @@ export default {
       });
     },
 
+    showSnoozeModal() {
+      this.$modals.show({
+        name: MODALS.createSnoozeEvent,
+        config: {
+          ...this.modalConfig,
+          isNoteRequired: this.widget.parameters.isSnoozeNoteRequired,
+        },
+      });
+    },
+
     showAckModal() {
       this.$modals.show({
         name: MODALS.createAckEvent,
@@ -116,15 +126,22 @@ export default {
     },
 
     showVariablesHelperModal() {
+      const {
+        entity,
+        pbehavior,
+        infos,
+        ...alarm
+      } = this.item;
       const variables = [];
 
-      const alarmFields = convertObjectToTreeview(omit(this.item, ['entity', 'infos']), 'alarm');
+      variables.push(convertObjectToTreeview(alarm, 'alarm'));
 
-      variables.push(alarmFields);
+      if (entity) {
+        variables.push(convertObjectToTreeview(entity, 'entity'));
+      }
 
-      if (this.item.entity) {
-        const entityFields = convertObjectToTreeview(this.item.entity, 'entity');
-        variables.push(entityFields);
+      if (pbehavior) {
+        variables.push(convertObjectToTreeview(pbehavior, 'pbehavior'));
       }
 
       this.$modals.show({

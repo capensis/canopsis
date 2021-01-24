@@ -16,7 +16,7 @@
           )
         v-layout(v-if="hasAlarmInstruction", align-center)
           v-tooltip(top)
-            v-icon(slot="activator", size="16", color="black") adjust
+            v-icon(slot="activator", size="16", color="black") assignment
             span {{ $t('alarmList.instructionInfoPopup') }}
         v-layout(v-if="expandable", :class="{ 'ml-3': !hasAlarmInstruction }", align-center)
           expand-button(
@@ -130,8 +130,8 @@ export default {
 
     isNotFiltered() {
       return this.parentAlarm
-        && this.parentAlarm.filtered
-        && !this.parentAlarm.filtered.includes(this.alarm._id);
+        && this.parentAlarm.filtered_children
+        && !this.parentAlarm.filtered_children.includes(this.alarm._id);
     },
   },
   methods: {

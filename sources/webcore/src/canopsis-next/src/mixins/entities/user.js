@@ -27,7 +27,7 @@ export default {
         await this.createUser({ data });
         this.$popups.success({ text: this.$t('success.default') });
       } catch (err) {
-        this.$popups.error({ text: this.$t('error.default') });
+        this.$popups.error({ text: this.$t('errors.default') });
       }
     },
 
@@ -36,7 +36,7 @@ export default {
         await this.removeUser({ id });
         this.$popups.success({ text: this.$t('success.default') });
       } catch (err) {
-        this.$popups.error({ text: this.$t('error.default') });
+        this.$popups.error({ text: this.$t('errors.default') });
       }
     },
   },

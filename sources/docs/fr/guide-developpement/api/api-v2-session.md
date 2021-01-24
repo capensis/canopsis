@@ -8,7 +8,7 @@ Les données disponibles sont :
 - Temps de navigation passé sur chaque page par utilisateur
 - Liste des sessions créées par utilisateur
 
-Pour cela, elle se base notamment sur le signal keepalive envoyé par l'UIv3.
+Pour cela, elle se base notamment sur le signal `keepalive` envoyé par l'interface web de Canopsis.
 
 ### Configuration 
 

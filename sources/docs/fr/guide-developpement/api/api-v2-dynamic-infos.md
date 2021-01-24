@@ -1,8 +1,7 @@
 # Informations dynamiques
 
-!!! info "Disponible uniquement dans Canopsis CAT"
-
-!!! info "Disponible à partir de Canopsis 3.34.0"
+!!! info
+    Disponible uniquement en édition CAT.
 
 L'API dynamic-infos permet de consulter, créer, modifier et supprimer des règles de gestion des informations dynamiques. Ces règles sont utilisées par le moteur Go [`dynamic-infos`](../../guide-administration/moteurs/moteur-dynamic-infos.md) pour ajouter des informations aux alarmes.
 
@@ -62,7 +61,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
         {"name": "type", "value": "url"},
         {"name": "url", "value": "http://help.local/zabbix-critical"}
     ]
-}' 'http://<Canopsis_URL>/api/v2/dynamic-infos'
+}' 'http://localhost:8082/api/v2/dynamic-infos'
 ```
 
 ### Réponse en cas de réussite
@@ -211,7 +210,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
         {"name": "title", "value": "Aide pour les alarmes critiques"},
         {"name": "url", "value": "http://help.local/zabbix-critical"}
     ]
-}' 'http://<Canopsis_URL>/api/v2/dynamic-infos/7b17aae1-8c75-440c-a39c-5b304b850171'
+}' 'http://localhost:8082/api/v2/dynamic-infos/7b17aae1-8c75-440c-a39c-5b304b850171'
 ```
 
 ### Réponse en cas de réussite
@@ -260,7 +259,7 @@ Supprime une règle.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer la règle avec l'id `7b17aae1-8c75-440c-a39c-5b304b850171` :
 
 ```sh
-curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/dynamic-infos/7b17aae1-8c75-440c-a39c-5b304b850171'
+curl -X DELETE -u root:root 'http://localhost:8082/api/v2/dynamic-infos/7b17aae1-8c75-440c-a39c-5b304b850171'
 ```
 
 ### Réponse en cas de réussite
@@ -318,7 +317,7 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/dynamic-infos/7b17aae1
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer la règle avec l'id `7b17aae1-8c75-440c-a39c-5b304b850171` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/dynamic-infos/7b17aae1-8c75-440c-a39c-5b304b850171'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/dynamic-infos/7b17aae1-8c75-440c-a39c-5b304b850171'
 ```
 
 ### Réponse en cas de réussite
@@ -372,13 +371,13 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/dynamic-infos/7b17aae1-8c
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer toutes les règles :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/dynamic-infos'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/dynamic-infos'
 ```
 
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer les règles ajoutant une information avec le nom `url` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/dynamic-infos?search=url&search_fields=infos.name'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/dynamic-infos?search=url&search_fields=infos.name'
 ```
 
 ### Réponse en cas de réussite

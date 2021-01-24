@@ -5,12 +5,10 @@
         v-layout(slot="header", justify-space-between, align-center)
           v-flex.pa-2(v-for="(icon, index) in mainIcons", :key="index")
             v-icon(color="white", small) {{ icon }}
-          v-flex.pl-1.white--text.subheading.entity-title(
-            xs12,
-          )
+          v-flex.pl-1.white--text.subheading.entity-title(xs12)
             v-layout(align-center)
               div.mr-1.entityName(
-                v-resize-text="{maxFontSize: '16px'}",
+                v-resize-text="{ maxFontSize: '16px' }",
               ) {{ { entity } | get(entityNameField, false, entityNameField) }}
               v-btn.mx-1.white(v-for="icon in extraIcons", :key="icon.icon", :color="icon.color", small, dark, icon)
                 v-icon(small) {{ icon.icon }}
@@ -25,16 +23,16 @@
                       v-tooltip(top)
                         v-btn(
                           slot="activator",
-                          @click.stop="action.action",
                           :disabled="!isActionBtnEnable(action.eventType)",
                           depressed,
                           small,
-                          light
+                          light,
+                          @click.stop="action.action"
                         )
                           v-icon {{ action.icon }}
                         span {{ $t(`common.actions.${action.eventType}`) }}
               v-tooltip(v-if="hasActivePbehavior && hasAccessToManagePbehaviors", top)
-                v-btn(small, @click="showPbehaviorsListModal", slot="activator")
+                v-btn(slot="activator", @click="showPbehaviorsListModal", small)
                   v-icon(small) list
                 span {{ $t('modals.watcher.editPbehaviors') }}
             entity-template(:entity="entity", :template="template")
@@ -159,14 +157,14 @@ export default {
         return WATCHER_STATES_COLORS.pause;
       }
 
-      return ENTITIES_STATES_STYLES[this.entity.state].color;
+      return ENTITIES_STATES_STYLES[this.entity.state.val].color;
     },
 
     mainIcons() {
       const mainIcons = [];
 
       if (!this.isPaused && !this.hasActivePbehavior) {
-        mainIcons.push(WEATHER_ICONS[this.entity.color]);
+        mainIcons.push(WEATHER_ICONS[this.entity.icon]);
       }
 
       mainIcons.push(...this.entity.pbehaviors.map(({ type }) => type.icon_name));
@@ -177,21 +175,21 @@ export default {
     extraIcons() {
       const extraIcons = [];
 
-      if (this.entity.acked) {
+      if (this.entity.ack) {
         extraIcons.push({
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
           color: 'purple',
         });
       }
 
-      if (this.entity.has_ticket) {
+      if (this.entity.ticket) {
         extraIcons.push({
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           color: 'blue',
         });
       }
 
-      if (this.entity.status && this.entity.status === ENTITIES_STATUSES.cancelled) {
+      if (this.entity.status && this.entity.status.val === ENTITIES_STATUSES.cancelled) {
         extraIcons.push({
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           color: 'grey darken-1',
@@ -217,13 +215,13 @@ export default {
       const { filteredActionsMap } = this;
       const actions = [filteredActionsMap.comment];
 
-      if (this.entity.state !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
+      if (this.entity.state.val !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
         actions.push(filteredActionsMap.ack);
       }
 
       actions.push(filteredActionsMap.assocTicket);
 
-      if (this.entity.state === ENTITIES_STATES.major) {
+      if (this.entity.state.val === ENTITIES_STATES.major) {
         actions.push(filteredActionsMap.validate, filteredActionsMap.invalidate);
       }
 
@@ -235,7 +233,7 @@ export default {
 
       if (
         this.entity.alarm_display_name &&
-        (!this.entity.status || this.entity.status !== ENTITIES_STATUSES.cancelled)
+        (!this.entity.status || this.entity.status.val !== ENTITIES_STATUSES.cancelled)
       ) {
         actions.push(filteredActionsMap.cancel);
       }

@@ -58,7 +58,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
         "method": "worst"
     },
     "output_template": "Alarmes critiques : {{.State.Critical}}"
-}' 'http://<Canopsis_URL>/api/v2/watcherng'
+}' 'http://localhost:8082/api/v2/watcherng'
 ```
 
 #### Réponse en cas de réussite
@@ -172,7 +172,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
         "method": "worst"
     },
     "output_template": "Alarmes Majeures : {{.State.Major}}"
-}' 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
+}' 'http://localhost:8082/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
 ```
 
 #### Réponse en cas de réussite
@@ -205,7 +205,7 @@ Supprime un observateur en fonction de son `id`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer l'observateur avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
 
 ```sh
-curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
+curl -X DELETE -u root:root 'http://localhost:8082/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
 ```
 
 #### Réponse en cas de réussite
@@ -254,7 +254,7 @@ Récupère un ou plusieurs observateurs présents en base.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer l'observateur avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
 ```
 
 ##### Réponse en cas de réussite
@@ -330,7 +330,7 @@ Récupère tous les observateurs stockés en base
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les webhooks :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcherng'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/watcherng'
 ```
 
 ##### Réponse en cas de réussite
@@ -387,7 +387,7 @@ Force un observateur à recalculer ses `impact/depends`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer l'observateur avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
 
 ```sh
-curl -X PUT -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
+curl -X PUT -u root:root 'http://localhost:8082/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
 ```
 
 #### Réponse en cas de réussite

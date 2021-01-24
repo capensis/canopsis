@@ -1,8 +1,5 @@
 # Compteur
 
-!!! Note
-    Disponible à partir de Canopsis 3.39.0.
-
 ![Compteur](./img/counter.png  "Compteur")
 
 ## Sommaire

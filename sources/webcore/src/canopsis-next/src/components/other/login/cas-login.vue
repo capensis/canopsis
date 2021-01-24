@@ -10,7 +10,9 @@
 import qs from 'qs';
 import { get } from 'lodash';
 
-import { getApplicationHost } from '@/helpers/router';
+import { APP_HOST, API_HOST, API_ROUTES } from '@/config';
+
+import { removeTrailingSlashes } from '@/helpers/url';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -26,15 +28,15 @@ export default {
         return null;
       }
 
-      const { href } = this.$router.resolve({ name: 'home' });
-      const { redirect = href } = this.$route.query;
-      const appUrl = getApplicationHost();
+      const { redirect = '' } = this.$route.query;
+
+      const loginUrl = removeTrailingSlashes(`${API_HOST}${API_ROUTES.cas.login}`);
       const query = qs.stringify({
-        redirect: `${appUrl}${redirect}`,
-        service: `${appUrl}api/cas/loggedin`,
+        redirect: removeTrailingSlashes(`${APP_HOST}${redirect}`),
+        service: removeTrailingSlashes(`${API_HOST}${API_ROUTES.cas.loggedin}`),
       });
 
-      return `${appUrl}api/cas/login?${query}`;
+      return `${loginUrl}?${query}`;
     },
   },
 };

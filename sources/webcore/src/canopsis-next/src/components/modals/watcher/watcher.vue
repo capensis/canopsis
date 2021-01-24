@@ -1,21 +1,18 @@
 <template lang="pug">
-  modal-wrapper(close)
-    template(slot="fullTitle")
-      v-card-title.white--text(:style="{ backgroundColor: color }")
-        v-layout.headline(justify-space-between, align-center)
-          v-flex
-            span {{ watcher.name }}
-          v-flex
-            modal-title-buttons(:modal="modal", close)
+  modal-wrapper(:title-color="color", close)
+    template(slot="title")
+      span {{ watcher.name }}
     template(slot="text")
       v-fade-transition(mode="out-in")
         watcher-template(
-          v-if="!watcherEntitiesPending",
+          v-if="!watcherEntitiesPendingOnMount",
           :watcher="watcher",
-          :watcherEntities="watcherEntitiesWithKey",
-          :modalTemplate="config.modalTemplate",
-          :entityTemplate="config.entityTemplate",
-          :itemsPerPage="config.itemsPerPage",
+          :watcher-entities="watcherEntitiesWithKey",
+          :modal-template="config.modalTemplate",
+          :entity-template="config.entityTemplate",
+          :pagination.sync="pagination",
+          :total-items="watcherEntitiesMeta.total_count",
+          :pending="watcherEntitiesPending",
           @add:event="addEventToQueue"
         )
         v-layout(v-else, column)
@@ -29,7 +26,7 @@
       ) {{ eventsQueue.length }} {{ $t('modals.watcher.actionPending') }}
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-tooltip.mx-2(top)
-        v-btn.secondary(slot="activator", @click="fetchWatchersList")
+        v-btn.secondary(slot="activator", @click="fetchList")
           v-icon refresh
         span {{ $t('modals.watcher.refreshEntities') }}
       v-btn.primary(
@@ -43,7 +40,7 @@
 import moment from 'moment-timezone';
 import { pick, mapValues } from 'lodash';
 
-import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES, SORT_ORDERS } from '@/constants';
 
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { addKeyInEntity } from '@/helpers/entities';
@@ -54,6 +51,7 @@ import confirmableModalMixin from '@/mixins/confirmable-modal';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
+import localQueryMixin from '@/mixins/query-local/query';
 
 import ModalWrapper from '../modal-wrapper.vue';
 import ModalTitleButtons from '../modal-title-buttons.vue';
@@ -71,11 +69,18 @@ export default {
     entitiesWatcherEntityMixin,
     submittableMixin(),
     confirmableModalMixin({ field: 'eventsQueue' }),
+    localQueryMixin,
   ],
   data() {
     return {
       attributes: {},
       eventsQueue: [],
+      watcherEntitiesPendingOnMount: false,
+      query: {
+        rowsPerPage: this.modal.config.itemsPerPage,
+        sortKey: 'state',
+        sortDir: SORT_ORDERS.desc,
+      },
     };
   },
   computed: {
@@ -92,8 +97,13 @@ export default {
     },
   },
   mounted() {
-    this.fetchWatchersList();
+    this.watcherEntitiesPendingOnMount = true;
 
+    this.fetchList();
+
+    this.watcherEntitiesPendingOnMount = false;
+
+    // TODO: Do we need it ?
     const infoAttributes = mapValues(pick(this.watcher.infos, [
       'application_crit_label',
       'product_line',
@@ -109,12 +119,32 @@ export default {
     };
   },
   methods: {
-    fetchWatchersList() {
-      this.fetchWatcherEntitiesList({ watcherId: this.watcher._id });
+    fetchList() {
+      this.fetchWatcherEntitiesList({
+        watcherId: this.watcher._id,
+        params: this.getQuery(),
+      });
     },
 
     addEventToQueue(event) {
       this.eventsQueue.push(event);
+    },
+
+    getPausedPbehaviors(pbehaviors = []) {
+      return pbehaviors.reduce((accSecond, pbehavior) => {
+        if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
+          accSecond.push(this.updatePbehavior({
+            id: pbehavior._id,
+            data: pbehaviorToRequest({
+              ...pbehavior,
+
+              tstop: moment().unix(),
+            }),
+          }));
+        }
+
+        return accSecond;
+      }, []);
     },
 
     async submit() {
@@ -124,22 +154,7 @@ export default {
 
           acc.push(this.createPbehavior({ data: pbehavior }));
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
-          const pausedPbehaviorsRequests = event.data.pbehaviors.reduce((accSecond, pbehavior) => {
-            if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
-              accSecond.push(this.updatePbehavior({
-                id: pbehavior._id,
-                data: pbehaviorToRequest({
-                  ...pbehavior,
-
-                  tstop: moment().unix(),
-                }),
-              }));
-            }
-
-            return accSecond;
-          }, []);
-
-          acc.push(...pausedPbehaviorsRequests);
+          acc.push(...this.getPausedPbehaviors(event.data.pbehaviors));
         } else {
           acc.push(this.createEventAction({ data: event.data }));
         }

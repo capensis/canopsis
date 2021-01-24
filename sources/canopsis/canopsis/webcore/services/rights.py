@@ -219,7 +219,7 @@ def exports(ws):
     def update_user(_id, user):
         return save_user(ws, user)
 
-    @route(ws.application.delete, name='account/delete')
+    @ws.application.delete('/account/delete/<etype>/<_id:path>')
     def delete_entity(etype, _id):
         if not mgr.delete(etype, _id):
             raise ws.Error('Unknown entity type: {0}'.format(etype))

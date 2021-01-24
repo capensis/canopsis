@@ -22,7 +22,9 @@
     mode: "0640"
     owner: redis
     group: root
-  notify: restart redis
 
 - name: Ensure Redis is running and enabled on boot.
   systemd: "name={{ redis_daemon }} state=started enabled=yes"
+
+- name: Restart Redis
+  systemd: "name={{ redis_daemon }} state=restarted"

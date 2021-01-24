@@ -3,7 +3,7 @@
     :class="{ 'fill-min-height': fillHeight }",
     :data-test="$attrs['data-test']"
   )
-    v-card-title.primary.white--text(v-if="$slots.title && !$slots.fullTitle")
+    v-card-title.primary.white--text(v-if="$slots.title", :style="titleStyle")
       div.modal-wrapper__title.headline
         div
           slot(name="title")
@@ -13,7 +13,6 @@
             :minimize="minimize",
             :close="close"
           )
-    slot(name="fullTitle")
     template(v-if="!modal.minimized")
       v-card-text(v-if="$slots.text", key="text")
         slot(name="text")
@@ -42,10 +41,24 @@ export default {
       type: [Boolean, Function],
       default: false,
     },
+    titleColor: {
+      type: String,
+      default: '',
+    },
   },
   computed: {
     modal() {
       return this.$parent.modal || this.$parent.$parent.modal;
+    },
+
+    titleStyle() {
+      const style = {};
+
+      if (this.titleColor) {
+        style.backgroundColor = this.titleColor;
+      }
+
+      return style;
     },
   },
 };
