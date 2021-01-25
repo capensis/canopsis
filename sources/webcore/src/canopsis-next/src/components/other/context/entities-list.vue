@@ -35,7 +35,7 @@
         mass-actions-panel(:itemsIds="selectedIds")
       v-flex
         context-fab(v-if="hasAccessToCreateEntity")
-      v-flex
+      v-flex(v-if="hasAccessToExportAsCsv")
         action-btn(
           :loading="!!contextExportPending",
           :tooltip="$t('settings.exportAsCsv')",
@@ -197,6 +197,10 @@ export default {
 
     hasAccessToUserFilter() {
       return this.checkAccess(USERS_RIGHTS.business.context.actions.userFilter);
+    },
+
+    hasAccessToExportAsCsv() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.exportAsCsv);
     },
   },
   methods: {

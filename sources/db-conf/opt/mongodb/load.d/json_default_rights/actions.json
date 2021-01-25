@@ -701,6 +701,13 @@
         "desc": "Rights on listalarm: Access to 'Remediation instructions filters: user' action"
     },
     {
+        "_id": "listalarm_exportAsCsv",
+        "loader_id": "listalarm_exportAsCsv",
+        "crecord_name": "listalarm_exportAsCsv",
+        "crecord_type": "action",
+        "desc": "Rights on listalarm: Access to 'Export as csv' action"
+    },
+    {
         "_id": "serviceweather_moreInfos",
         "loader_id": "serviceweather_moreInfos",
         "crecord_name": "serviceweather_moreInfos",
@@ -874,6 +881,13 @@
         "crecord_type": "action",
         "crecord_name": "crudcontext_userFilter",
         "desc": "Rights on context: User filter"
+    },
+    {
+        "_id": "crudcontext_exportAsCsv",
+        "loader_id": "crudcontext_exportAsCsv",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_exportAsCsv",
+        "desc": "Rights on context: Export as csv"
     },
     {
         "_id": "view_current_alarms",

@@ -273,6 +273,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_exportAsCsv": {
+            "checksum": 1,
+            "desc": ""
+        },
         "serviceweather_entityComment": {
             "checksum": 1,
             "desc": ""

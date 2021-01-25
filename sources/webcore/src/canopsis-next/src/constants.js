@@ -863,6 +863,8 @@ export const USERS_RIGHTS = {
 
         variablesHelp: `${USER_RIGHTS_PREFIXES.business.common}_variablesHelp`,
 
+        exportAsCsv: `${USER_RIGHTS_PREFIXES.business.alarmsList}_exportAsCsv`,
+
         ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
       },
     },
@@ -880,6 +882,8 @@ export const USERS_RIGHTS = {
         editFilter: `${USER_RIGHTS_PREFIXES.business.context}_editFilter`,
         addFilter: `${USER_RIGHTS_PREFIXES.business.context}_addFilter`,
         userFilter: `${USER_RIGHTS_PREFIXES.business.context}_userFilter`,
+
+        exportAsCsv: `${USER_RIGHTS_PREFIXES.business.context}_exportAsCsv`,
       },
     },
     weather: {
@@ -912,6 +916,8 @@ export const USERS_RIGHTS = {
     },
   },
   api: {
+    files: `${USER_RIGHTS_PREFIXES.api}_file`,
+    alarmRead: `${USER_RIGHTS_PREFIXES.api}_alarm_read`,
     alarmUpdate: `${USER_RIGHTS_PREFIXES.api}_alarm_update`,
     alarmDelete: `${USER_RIGHTS_PREFIXES.api}_alarm_delete`,
     alarmFilter: `${USER_RIGHTS_PREFIXES.api}_alarmfilter`,
@@ -932,6 +938,12 @@ export const USERS_RIGHTS = {
     pbehaviorException: `${USER_RIGHTS_PREFIXES.api}_pbehaviorexception`,
     event: `${USER_RIGHTS_PREFIXES.api}_event`,
     engine: `${USER_RIGHTS_PREFIXES.api}_engine`,
+    remediationInstruction: `${USER_RIGHTS_PREFIXES.api}_instruction`,
+    remediationExecution: `${USER_RIGHTS_PREFIXES.api}_execution`,
+    remediationJob: `${USER_RIGHTS_PREFIXES.api}_job`,
+    remediationJobConfig: `${USER_RIGHTS_PREFIXES.api}_job_config`,
+    entityUpdate: `${USER_RIGHTS_PREFIXES.api}_entity_update`,
+    entityRead: `${USER_RIGHTS_PREFIXES.api}_entity_read`,
   },
 };
 

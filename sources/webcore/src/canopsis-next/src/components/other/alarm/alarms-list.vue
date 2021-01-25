@@ -51,7 +51,7 @@
           icon="schedule",
           @click="showEditLiveReportModal"
         )
-      v-flex
+      v-flex(v-if="hasAccessToExportAsCsv")
         action-btn(
           :loading="!!alarmsExportPending",
           :tooltip="$t('settings.exportAsCsv')",
@@ -101,7 +101,7 @@
 <script>
 import { omit, pick, isEmpty } from 'lodash';
 
-import { MODALS, TOURS } from '@/constants';
+import { MODALS, TOURS, USERS_RIGHTS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
 
@@ -208,6 +208,10 @@ export default {
       const [alarm] = this.alarms;
 
       return alarm && this.$refs.alarmsTable.expanded[alarm._id];
+    },
+
+    hasAccessToExportAsCsv() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.exportAsCsv);
     },
   },
   mounted() {
