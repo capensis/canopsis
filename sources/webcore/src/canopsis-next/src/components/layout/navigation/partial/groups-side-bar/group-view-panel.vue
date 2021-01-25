@@ -4,7 +4,7 @@
       v-layout(align-center, justify-space-between)
         v-flex
           v-layout(align-center)
-            span.pl-2
+            span.ellipsis.pl-2
               slot(name="title") {{ view.title }}
         v-flex
           v-layout(v-if="allowEditing", justify-end)

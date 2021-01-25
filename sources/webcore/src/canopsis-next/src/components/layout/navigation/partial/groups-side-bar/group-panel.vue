@@ -6,7 +6,7 @@
   )
     div.panel-header(slot="header")
       slot(name="title")
-        span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
+        span.ellipsis(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
       v-btn(
         v-show="isEditing",
         :disabled="orderChanged",
