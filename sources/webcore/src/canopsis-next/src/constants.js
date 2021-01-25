@@ -1738,3 +1738,10 @@ export const EXPORT_STATUSES = {
   completed: 1,
   failed: 2,
 };
+
+export const EXPORT_CSV_SEPARATORS = {
+  comma: 'comma',
+  semicolon: 'semicolon',
+  tab: 'tab',
+  space: 'space',
+};

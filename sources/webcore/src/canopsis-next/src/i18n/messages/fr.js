@@ -407,6 +407,7 @@ export default {
     filterEditor: 'Éditeur de filtre',
     isAckNoteRequired: 'Champ \'Note\' requis lors d\'un ack ?',
     isSnoozeNoteRequired: 'Champ \'Note\' requis lorsque vous répétez ?',
+    exportCsvSeparator: 'Exporter le séparateur CSV',
     isMultiAckEnabled: 'Ack multiple',
     fastAckOutput: 'Commentaire d\'Ack rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',

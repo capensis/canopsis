@@ -43,23 +43,21 @@ export default ({ createExport, fetchExport, fetchExportFile }) => ({
 
     waitGeneratingCsvFile({ id, widgetId }) {
       return new Promise((resolve, reject) => {
-        const interval = setInterval(async () => {
+        setTimeout(async () => {
           try {
             const exportData = await this[fetchExport]({ id, widgetId });
 
-            if (exportData.status === EXPORT_STATUSES.completed) {
-              resolve(exportData);
-            }
-
-            if (exportData.status === EXPORT_STATUSES.failed) {
-              reject();
-            }
-
-            if (exportData.status !== EXPORT_STATUSES.running) {
-              clearInterval(interval);
+            switch (exportData.status) {
+              case EXPORT_STATUSES.completed:
+                resolve(exportData);
+                break;
+              case EXPORT_STATUSES.failed:
+                reject();
+                break;
+              case EXPORT_STATUSES.running:
+                resolve(this.waitGeneratingCsvFile({ id, widgetId }));
             }
           } catch (err) {
-            clearInterval(interval);
             reject(err);
           }
         }, EXPORT_FETCHING_INTERVAL);

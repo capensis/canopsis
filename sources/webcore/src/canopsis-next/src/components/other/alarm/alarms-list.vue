@@ -113,7 +113,7 @@ import ActionBtn from '@/components/tables/action-btn.vue';
 import authMixin from '@/mixins/auth';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
-import widgetExportMixin from '@/mixins/widget/export';
+import widgetExportMixinCreator from '@/mixins/widget/export';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
@@ -161,7 +161,7 @@ export default {
     rightsWidgetsAlarmsListCorrelation,
     rightsWidgetsAlarmsListFilters,
     rightsWidgetsAlarmsListRemediationInstructionsFilters,
-    widgetExportMixin({
+    widgetExportMixinCreator({
       createExport: 'createAlarmsListExport',
       fetchExport: 'fetchAlarmsListExport',
       fetchExportFile: 'fetchAlarmsListCsvFile',
@@ -292,12 +292,15 @@ export default {
     },
 
     exportAlarmsList() {
+      const query = this.getQuery();
+
       this.exportWidgetAsCsv({
-        params: pick(this.getQuery(), [
-          'search',
-          'filter',
-          'active_columns',
-        ]),
+        params: {
+          search: query.search,
+          filter: query.filter,
+          active_columns: query.active_columns,
+          separator: this.widget.parameters.exportCsvSeparator,
+        },
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
       });
     },

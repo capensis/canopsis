@@ -17,15 +17,15 @@
           field-columns(
             v-model="settings.widget.parameters.widgetColumns",
             :label="$t('settings.columnNames')",
-            withHtml,
-            withState
+            with-html,
+            with-state
           )
           v-divider
           field-columns(
             v-model="settings.widget.parameters.widgetGroupColumns",
             :label="$t('settings.groupColumnNames')",
-            withHtml,
-            withState
+            with-html,
+            with-state
           )
           v-divider
           field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
@@ -35,19 +35,19 @@
           template(v-if="hasAccessToListFilters")
             field-filters(
               v-model="settings.widget.parameters.mainFilter",
-              :entitiesType="$constants.ENTITIES_TYPES.alarm",
+              :entities-type="$constants.ENTITIES_TYPES.alarm",
               :filters.sync="settings.widget.parameters.viewFilters",
               :condition.sync="settings.widget.parameters.mainFilterCondition",
-              :hasAccessToAddFilter="hasAccessToAddFilter",
-              :hasAccessToEditFilter="hasAccessToEditFilter",
+              :has-access-to-add-filter="hasAccessToAddFilter",
+              :has-access-to-edit-filter="hasAccessToEditFilter",
               @input="updateMainFilterUpdatedAt"
             )
             v-divider
           template(v-if="hasAccessToListRemediationInstructionsFilters")
             field-remediation-instructions-filters(
               v-model="settings.widget.parameters.remediationInstructionsFilters",
-              :hasAccessToAddFilter="hasAccessToAddRemediationInstructionsFilter",
-              :hasAccessToEditFilter="hasAccessToEditRemediationInstructionsFilter"
+              :has-access-to-add-filter="hasAccessToAddRemediationInstructionsFilter",
+              :has-access-to-edit-filter="hasAccessToEditRemediationInstructionsFilter"
             )
             v-divider
           field-live-reporting(v-model="settings.widget.parameters.liveReporting")
@@ -95,6 +95,11 @@
             v-model="settings.widget.parameters.isSnoozeNoteRequired",
             :title="$t('settings.isSnoozeNoteRequired')"
           )
+          v-divider
+          field-export-csv-separator(
+            v-model="settings.widget.parameters.exportCsvSeparator",
+            :title="$t('settings.exportCsvSeparator')"
+          )
       v-divider
     v-btn.primary(data-test="submitAlarms", @click="submit") {{ $t('common.save') }}
 </template>
@@ -116,6 +121,7 @@ import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldColumns from './fields/common/columns.vue';
 import FieldLiveReporting from './fields/common/live-reporting.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
+import FieldExportCsvSeparator from './fields/common/export-separator.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
 import FieldFilters from './fields/common/filters.vue';
@@ -149,6 +155,7 @@ export default {
     FieldFastAckOutput,
     FieldGridRangeSize,
     FieldRemediationInstructionsFilters,
+    FieldExportCsvSeparator,
   },
   mixins: [
     widgetSettingsMixin,

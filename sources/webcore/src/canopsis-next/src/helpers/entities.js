@@ -24,7 +24,7 @@ import {
   TIME_UNITS,
   WIDGET_GRID_SIZES_KEYS,
   WIDGET_GRID_COLUMNS_COUNT,
-  REMEDIATION_WORKFLOW_TYPES,
+  REMEDIATION_WORKFLOW_TYPES, EXPORT_CSV_SEPARATORS,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -108,6 +108,7 @@ export function generateWidgetByType(type) {
           opened: true,
         },
         expandGridRangeSize: [GRID_SIZES.min, GRID_SIZES.max],
+        exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
       };
       break;
 
@@ -131,6 +132,7 @@ export function generateWidgetByType(type) {
         sort: {
           order: SORT_ORDERS.asc,
         },
+        exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
       };
       break;
 

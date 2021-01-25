@@ -407,6 +407,7 @@ export default {
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack?',
     isSnoozeNoteRequired: 'Note field required when snooze?',
+    exportCsvSeparator: 'Export CSV separator',
     isMultiAckEnabled: 'Multiple ack',
     fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
