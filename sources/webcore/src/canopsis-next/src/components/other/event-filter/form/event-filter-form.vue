@@ -3,7 +3,7 @@
     v-layout(align-center)
       v-text-field(
         v-field="form._id",
-        :label="$t('eventFilter.id')",
+        :label="$t('common.id')",
         :disabled="isDisabledIdField",
         :readonly="isDisabledIdField"
       )
@@ -18,7 +18,7 @@
     v-textarea(v-field="form.description", :label="$t('common.description')")
     v-text-field(
       v-field.number="form.priority",
-      :label="$t('modals.eventFilterRule.priority')",
+      :label="$t('common.priority')",
       type="number"
     )
     enabled-field(v-field="form.enabled")

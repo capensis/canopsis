@@ -24,7 +24,7 @@
 <script>
 import { MODALS, EVENT_FILTER_RULE_TYPES } from '@/constants';
 
-import { eventFilterRuleToForm, formEnrichmentOptionsToEventFilterRule } from '@/helpers/forms/event-filter-rule';
+import { eventFilterRuleToForm, formToEventFilterRule } from '@/helpers/forms/event-filter-rule';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -68,19 +68,11 @@ export default {
   },
   methods: {
     async submit() {
-      if (this.isEnrichmentType) {
-        const isFormValid = await this.$validator.validateAll(['actions']);
+      const isFormValid = await this.$validator.validateAll(['actions']);
+      const eventFilter = formToEventFilterRule(this.form);
 
-        if (isFormValid) {
-          await this.config.action({
-            ...this.form.general,
-            ...formEnrichmentOptionsToEventFilterRule(this.form.enrichmentOptions),
-          });
-
-          this.$modals.hide();
-        }
-      } else {
-        await this.config.action({ ...this.form.general });
+      if (isFormValid) {
+        await this.config.action(eventFilter);
 
         this.$modals.hide();
       }

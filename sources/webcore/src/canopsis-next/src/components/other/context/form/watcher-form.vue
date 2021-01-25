@@ -76,7 +76,7 @@ export default {
   },
   computed: {
     tabs() {
-      const patternsTab = { name: this.$t('eventFilter.pattern') };
+      const patternsTab = { name: this.$t('common.pattern') };
       const filterEditorTab = {
         name: this.$t('common.filter'),
         class: { 'error--text': this.hasFilterEditorAnyError },
