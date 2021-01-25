@@ -277,6 +277,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "crudcontext_exportAsCsv": {
+            "checksum": 1,
+            "desc": ""
+        },
         "serviceweather_entityComment": {
             "checksum": 1,
             "desc": ""
