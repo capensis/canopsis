@@ -26,6 +26,7 @@ import { MODALS, EVENT_FILTER_RULE_TYPES } from '@/constants';
 
 import { eventFilterRuleToForm, formToEventFilterRule } from '@/helpers/forms/event-filter-rule';
 
+import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
@@ -42,6 +43,7 @@ export default {
   },
   components: { EventFilterForm, EventFilterEnrichmentForm, ModalWrapper },
   mixins: [
+    authMixin,
     modalInnerMixin,
     submittableMixin(),
     confirmableModalMixin(),
@@ -69,9 +71,11 @@ export default {
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll(['actions']);
-      const eventFilter = formToEventFilterRule(this.form);
 
       if (isFormValid) {
+        const eventFilter = formToEventFilterRule(this.form);
+        eventFilter.author = this.currentUser._id;
+
         await this.config.action(eventFilter);
 
         this.$modals.hide();
