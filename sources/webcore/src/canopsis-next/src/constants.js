@@ -104,6 +104,7 @@ export const MODALS = {
   createRRule: 'create-r-rule',
   selectExceptionsLists: 'select-exceptions-lists',
   pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
+  createPbehavior: 'create-pbehavior',
   createPbehaviorType: 'create-pbehavior-type',
   createPbehaviorReason: 'create-pbehavior-reason',
   createPbehaviorException: 'create-pbehavior-exception',

@@ -128,11 +128,12 @@ export default {
 
     showEditPbehaviorModal(pbehavior) {
       this.$modals.show({
-        name: MODALS.pbehaviorPlanning,
+        name: MODALS.createPbehavior,
         config: {
-          pbehaviors: [pbehavior],
-
-          afterSubmit: () => this.fetchPbehaviorsByEntityId({ id: this.modal.config.entityId }),
+          pbehavior,
+          noFilter: true,
+          timezone: this.$system.timezone,
+          action: data => this.updatePbehavior({ data, id: pbehavior._id }),
         },
       });
     },
