@@ -113,6 +113,7 @@ import ActionBtn from '@/components/tables/action-btn.vue';
 import authMixin from '@/mixins/auth';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
+import widgetExportMixin from '@/mixins/widget/export';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
@@ -160,6 +161,11 @@ export default {
     rightsWidgetsAlarmsListCorrelation,
     rightsWidgetsAlarmsListFilters,
     rightsWidgetsAlarmsListRemediationInstructionsFilters,
+    widgetExportMixin({
+      createExport: 'createAlarmsListExport',
+      fetchExport: 'fetchAlarmsListExport',
+      fetchExportFile: 'fetchAlarmsListCsvFile',
+    }),
   ],
   props: {
     widget: {
@@ -286,7 +292,7 @@ export default {
     },
 
     exportAlarmsList() {
-      this.exportAlarms({
+      this.exportWidgetAsCsv({
         params: pick(this.getQuery(), [
           'search',
           'filter',

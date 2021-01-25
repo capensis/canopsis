@@ -108,6 +108,7 @@ import ActionBtn from '@/components/tables/action-btn.vue';
 import authMixin from '@/mixins/auth';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
+import widgetExportMixin from '@/mixins/widget/export';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
@@ -148,6 +149,11 @@ export default {
     widgetPaginationMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
+    widgetExportMixin({
+      createExport: 'createContextExport',
+      fetchExport: 'fetchContextExport',
+      fetchExportFile: 'fetchContextCsvFile',
+    }),
   ],
   props: {
     widget: {
@@ -251,7 +257,7 @@ export default {
     exportContextList() {
       const query = this.getQuery();
 
-      this.exportContext({
+      this.exportWidgetAsCsv({
         params: {
           filter: query._filter,
           search: query.search,

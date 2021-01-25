@@ -1,10 +1,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import { get } from 'lodash';
 
-import { EXPORT_FETCHING_INTERVAL } from '@/config';
 import { EXPORT_STATUSES } from '@/constants';
-
-import { saveCsvFile } from '@/helpers/files';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
@@ -81,47 +78,6 @@ export default {
       await this.fetchAlarmItem({
         id: alarm._id,
         params,
-      });
-    },
-
-    async exportAlarms({ params, name } = {}) {
-      try {
-        const widgetId = this.widget._id;
-
-        const { _id: id } = await this.createAlarmsListExport({ params, widgetId });
-
-        await this.waitGeneratingAlarmListFile({ id, widgetId });
-
-        const csvFile = await this.fetchAlarmsListCsvFile({ id, widgetId });
-
-        saveCsvFile(csvFile, name);
-      } catch (err) {
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
-      }
-    },
-
-    waitGeneratingAlarmListFile({ id, widgetId }) {
-      return new Promise((resolve, reject) => {
-        const interval = setInterval(async () => {
-          try {
-            const exportAlarmListData = await this.fetchAlarmsListExport({ id, widgetId });
-
-            if (exportAlarmListData.status === EXPORT_STATUSES.completed) {
-              resolve(exportAlarmListData);
-            }
-
-            if (exportAlarmListData.status === EXPORT_STATUSES.failed) {
-              reject();
-            }
-
-            if (exportAlarmListData.status !== EXPORT_STATUSES.running) {
-              clearInterval(interval);
-            }
-          } catch (err) {
-            clearInterval(interval);
-            reject(err);
-          }
-        }, EXPORT_FETCHING_INTERVAL);
       });
     },
   },

@@ -178,7 +178,7 @@ export default {
       return exportData;
     },
 
-    fetchExportContext({ commit }, { params, widgetId, id }) {
+    fetchContextExport({ commit }, { params, widgetId, id }) {
       const exportData = request.get(`${API_ROUTES.contextExport}/${id}`, { params });
 
       commit(types.EXPORT_LIST_COMPLETED, {
