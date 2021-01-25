@@ -2,7 +2,7 @@
   v-card(:color="cardColor")
     v-card-text.panel-item-content
       v-layout(align-center, justify-space-between)
-        v-flex
+        v-flex(:class="{ 'panel-view-title--editing': isEditing }")
           v-layout(align-center)
             span.ellipsis.pl-2
               slot(name="title") {{ view.title }}
@@ -94,6 +94,12 @@ export default {
 
     & /deep/ .v-btn:not(:last-child) {
       margin-right: 0;
+    }
+  }
+
+  .panel-view-title {
+    &--editing {
+      max-width: 73%;
     }
   }
 </style>

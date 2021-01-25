@@ -15,6 +15,7 @@
         v-for="view in group.views",
         :key="view._id",
         :view="view",
+        :is-editing="isEditing",
         :isGroupsOrderChanged="isGroupsOrderChanged"
       )
 </template>
