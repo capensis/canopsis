@@ -9,7 +9,7 @@
           field-default-sort-column(
             v-model="settings.widget.parameters.sort",
             :columns="settings.widget.parameters.widgetColumns",
-            :columnsLabel="$t('settings.columnName')"
+            :columns-label="$t('settings.columnName')"
           )
           v-divider
           field-columns(
@@ -20,11 +20,11 @@
           template(v-if="hasAccessToListFilters")
             field-filters(
               v-model="settings.widget.parameters.mainFilter",
-              :entitiesType="$constants.ENTITIES_TYPES.entity",
+              :entities-type="$constants.ENTITIES_TYPES.entity",
               :filters.sync="settings.widget.parameters.viewFilters",
               :condition.sync="settings.widget.parameters.mainFilterCondition",
-              :hasAccessToAddFilter="hasAccessToAddFilter",
-              :hasAccessToEditFilter="hasAccessToEditFilter",
+              :has-access-to-add-filter="hasAccessToAddFilter",
+              :has-access-to-edit-filter="hasAccessToEditFilter",
               @input="updateMainFilterUpdatedAt"
             )
             v-divider
