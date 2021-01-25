@@ -45,17 +45,17 @@ export default ({ createExport, fetchExport, fetchExportFile }) => ({
       return new Promise((resolve, reject) => {
         const interval = setInterval(async () => {
           try {
-            const exportAlarmListData = await this[fetchExport]({ id, widgetId });
+            const exportData = await this[fetchExport]({ id, widgetId });
 
-            if (exportAlarmListData.status === EXPORT_STATUSES.completed) {
-              resolve(exportAlarmListData);
+            if (exportData.status === EXPORT_STATUSES.completed) {
+              resolve(exportData);
             }
 
-            if (exportAlarmListData.status === EXPORT_STATUSES.failed) {
+            if (exportData.status === EXPORT_STATUSES.failed) {
               reject();
             }
 
-            if (exportAlarmListData.status !== EXPORT_STATUSES.running) {
+            if (exportData.status !== EXPORT_STATUSES.running) {
               clearInterval(interval);
             }
           } catch (err) {
