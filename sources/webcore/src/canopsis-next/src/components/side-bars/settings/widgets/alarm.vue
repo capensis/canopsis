@@ -121,7 +121,7 @@ import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldColumns from './fields/common/columns.vue';
 import FieldLiveReporting from './fields/common/live-reporting.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
-import FieldExportCsvSeparator from './fields/common/export-separator.vue';
+import FieldExportCsvSeparator from './fields/common/export-csv-separator.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
 import FieldFilters from './fields/common/filters.vue';

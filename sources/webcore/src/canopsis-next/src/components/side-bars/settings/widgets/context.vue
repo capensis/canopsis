@@ -48,7 +48,7 @@ import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
-import FieldExportCsvSeparator from './fields/common/export-separator.vue';
+import FieldExportCsvSeparator from './fields/common/export-csv-separator.vue';
 import FieldColumns from './fields/common/columns.vue';
 import FieldFilters from './fields/common/filters.vue';
 import FieldContextEntitiesTypesFilter from './fields/context/context-entities-types-filter.vue';
