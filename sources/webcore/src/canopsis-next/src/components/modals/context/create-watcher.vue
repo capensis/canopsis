@@ -15,11 +15,9 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
+import { MODALS } from '@/constants';
 
-import { MODALS, ENTITIES_TYPES, CANOPSIS_STACK } from '@/constants';
-
-import uuid from '@/helpers/uuid';
+import { watcherToForm, formToWatcherByStack } from '@/helpers/forms/watcher';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -47,22 +45,8 @@ export default {
   data() {
     const { item } = this.modal.config;
 
-    let form = {
-      name: '',
-      mfilter: '{}',
-      infos: {},
-      impact: [],
-      depends: [],
-      entities: [],
-      output_template: '',
-    };
-
-    if (item) {
-      form = { ...item };
-    }
-
     return {
-      form,
+      form: watcherToForm(item),
     };
   },
   methods: {
@@ -70,27 +54,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        let data = {};
-
-        if (this.stack === CANOPSIS_STACK.go) {
-          data = {
-            ...omit(this.form, ['mfilter', 'impact', 'depends']),
-            _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : uuid('watcher'),
-            name: this.form.name,
-            type: ENTITIES_TYPES.watcher,
-            state: {
-              method: 'worst',
-            },
-          };
-        } else {
-          data = {
-            ...omit(this.form, ['entities', 'output_template']),
-            _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : uuid('watcher'),
-            infos: this.form.infos,
-            name: this.form.name,
-            type: ENTITIES_TYPES.watcher,
-          };
-        }
+        const data = formToWatcherByStack(this.form, this.stack);
 
         await this.config.action(data);
         await this.refreshContextEntitiesLists();

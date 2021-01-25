@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { pickBy } from 'lodash';
+import { pickBy, omit } from 'lodash';
 
 import { MODALS, ENTITIES_TYPES, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
@@ -134,8 +134,7 @@ export default {
         this.$modals.show({
           name: MODALS.createWatcher,
           config: {
-            item: this.item,
-            isDuplicating: true,
+            item: omit(this.item, ['_id']),
             title: this.$t('modals.createWatcher.duplicateTitle'),
             action: watcher => this.duplicateWatcherWithPopup(watcher),
           },

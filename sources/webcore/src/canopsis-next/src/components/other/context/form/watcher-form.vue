@@ -26,6 +26,9 @@
                 :error-messages="errors.collect('output_template')",
                 name="output_template"
               )
+        v-layout(wrap, justify-center)
+          v-flex(xs11)
+            enabled-field(v-field="form.enabled")
     v-tab-item
       v-card
         v-card-text
@@ -44,6 +47,7 @@
 <script>
 import { CANOPSIS_STACK } from '@/constants';
 
+import EnabledField from '@/components/forms/fields/enabled-field.vue';
 import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
 import ManageInfos from '@/components/other/context/manage-infos.vue';
@@ -51,6 +55,7 @@ import ManageInfos from '@/components/other/context/manage-infos.vue';
 export default {
   inject: ['$validator'],
   components: {
+    EnabledField,
     FilterEditor,
     PatternsList,
     ManageInfos,
