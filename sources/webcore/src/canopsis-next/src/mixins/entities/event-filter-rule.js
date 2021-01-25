@@ -7,6 +7,7 @@ export default {
     ...mapGetters({
       eventFilterRulesPending: 'pending',
       eventFilterRules: 'items',
+      eventFilterRulesMeta: 'meta',
     }),
   },
   methods: {

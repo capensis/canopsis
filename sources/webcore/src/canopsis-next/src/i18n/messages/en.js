@@ -1605,14 +1605,8 @@ export default {
   },
   eventFilter: {
     title: 'Event filter',
-    type: 'Type',
-    pattern: 'Pattern',
-    priority: 'Priority',
-    enabled: 'Enabled',
-    actions: 'Actions',
     externalDatas: 'External data',
     actionsRequired: 'Please add at least one action',
-    id: 'Id',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
   },
   metaAlarmRule: {
