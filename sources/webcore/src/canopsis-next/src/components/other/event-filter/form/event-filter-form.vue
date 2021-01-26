@@ -31,7 +31,7 @@ import { EVENT_FILTER_RULE_TYPES } from '@/constants';
 import formMixin from '@/mixins/form';
 
 import EnabledField from '@/components/forms/fields/enabled-field.vue';
-import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
+import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 
 export default {
   inject: ['$validator'],

@@ -150,6 +150,7 @@ export default {
     totalEntityPatterns: 'Total entity patterns',
     addFilter: 'Add filter',
     id: 'Id',
+    reset: 'Reset',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

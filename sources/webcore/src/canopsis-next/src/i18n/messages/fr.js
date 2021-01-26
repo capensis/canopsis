@@ -150,6 +150,7 @@ export default {
     totalEntityPatterns: 'Total des modèles d\'entité',
     addFilter: 'Ajouter un filtre',
     id: 'Id',
+    reset: 'Réinitialiser',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',

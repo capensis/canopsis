@@ -1,34 +1,13 @@
 <template lang="pug">
   div
-    the-page-header {{ $t('common.broadcastMessages') }}
-    div.white
-      v-data-table(
-        :headers="headers",
-        :items="preparedBroadcastMessages",
-        :loading="broadcastMessagesPending",
-        :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
-        item-key="_id"
-      )
-        template(slot="items", slot-scope="props")
-          tr(:data-test="`role-${props.item._id}`")
-            td {{ $t(`tables.broadcastMessages.statuses.${props.item.status}`) }}
-            td.broadcast-message-cell
-              broadcast-message(:message="props.item.message", :color="props.item.color")
-            td {{ props.item.start | date('long', true) }}
-            td {{ props.item.end | date('long', true) }}
-            td
-              v-layout(row)
-                action-btn(
-                  v-if="hasUpdateAnyBroadcastMessageAccess",
-                  type="edit",
-                  @click="showEditBroadcastMessageModal(props.item)"
-                )
-                action-btn(
-                  v-if="hasDeleteAnyBroadcastMessageAccess",
-                  type="delete",
-                  @click="showRemoveBroadcastMessageModal(props.item._id)"
-                )
-    fab-buttons(
+    c-the-page-header {{ $t('common.broadcastMessages') }}
+    broadcast-messages-list(
+      :broadcast-messages="broadcastMessages",
+      :pending="broadcastMessagesPending",
+      @edit="showEditBroadcastMessageModal",
+      @remove="showRemoveBroadcastMessageModal"
+    )
+    c-fab-btn(
       v-if="hasCreateAnyBroadcastMessageAccess",
       @refresh="fetchList",
       @create="showCreateBroadcastMessageModal"
@@ -38,25 +17,18 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import moment from 'moment';
 
-import { MODALS, BROADCAST_MESSAGES_STATUSES } from '@/constants';
+import { MODALS } from '@/constants';
 
 import rightsTechnicalBroadcastMessageMixin from '@/mixins/rights/technical/broadcast-message';
 
-import SearchField from '@/components/forms/fields/search-field.vue';
-import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
-import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
-import ActionBtn from '@/components/tables/action-btn.vue';
+import BroadcastMessagesList from '@/components/other/broadcast-message/broadcast-messages-list.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('broadcastMessage');
 
 export default {
   components: {
-    SearchField,
-    BroadcastMessage,
-    FabButtons,
-    ActionBtn,
+    BroadcastMessagesList,
   },
   mixins: [rightsTechnicalBroadcastMessageMixin],
   computed: {
@@ -64,52 +36,6 @@ export default {
       broadcastMessages: 'items',
       broadcastMessagesPending: 'pending',
     }),
-
-    headers() {
-      return [
-        {
-          text: this.$t('common.status'),
-          value: 'status',
-        },
-        {
-          text: this.$t('common.preview'),
-          sortable: false,
-        },
-        {
-          text: this.$t('common.start'),
-          value: 'start',
-        },
-        {
-          text: this.$t('common.end'),
-          value: 'end',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          sortable: false,
-        },
-      ];
-    },
-
-    preparedBroadcastMessages() {
-      return this.broadcastMessages.map((message) => {
-        const now = moment().unix();
-        let status = BROADCAST_MESSAGES_STATUSES.pending;
-
-        if (now >= message.start) {
-          if (now <= message.end) {
-            status = BROADCAST_MESSAGES_STATUSES.active;
-          } else {
-            status = BROADCAST_MESSAGES_STATUSES.expired;
-          }
-        }
-
-        return {
-          ...message,
-
-          status,
-        };
-      });
-    },
   },
   mounted() {
     this.fetchList();
@@ -179,9 +105,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .broadcast-message-cell {
-    max-width: 300px;
-  }
-</style>

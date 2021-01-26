@@ -3,7 +3,7 @@
     v-layout(justify-end)
       v-btn(
         data-test="deleteRule",
-        @click="$emit('deleteRule')",
+        @click="$emit('delete-rule')",
         color="red",
         small,
         flat,
@@ -75,22 +75,13 @@ import MixedField from '@/components/forms/fields/mixed-field.vue';
 
 /**
  * Component representing a rule in MongoDB filter
- *
- * @prop {Object} rule - Object of the rule
- * @prop {Array} possibleFields - List of all possible fields to filter on
- * @prop {Array} [operators=Object.values(FILTER_OPERATORS)] - List of all possible operators. Ex : 'equal', ...
- *
- * @event field#update
- * @event operator#update
- * @event input#update
- * @event deleteRule#click
  */
 export default {
   components: { MixedField },
   mixins: [formMixin, filterHintsMixin],
   model: {
     prop: 'rule',
-    event: 'update:rule',
+    event: 'input',
   },
   props: {
     rule: {

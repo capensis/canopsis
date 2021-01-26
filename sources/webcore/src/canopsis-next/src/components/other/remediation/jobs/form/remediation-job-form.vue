@@ -21,19 +21,24 @@
         name="job_id"
       )
     v-layout(row)
-      payload-field(v-field="form.payload", :help-text="$t('modals.createRemediationJob.payloadHelp')")
+      json-field(
+        v-field="form.payload",
+        :label="$t('common.payload')",
+        :help-text="$t('modals.createRemediationJob.payloadHelp')",
+        name="payload"
+      )
 </template>
 
 <script>
 import EnabledField from '@/components/forms/fields/enabled-field.vue';
-import PayloadField from '@/components/forms/fields/payload-field.vue';
+import JsonField from '@/components/forms/fields/json-field.vue';
 
 import RemediationJobConfigurationField from './fields/remediation-job-configuration-field.vue';
 
 export default {
   components: {
     EnabledField,
-    PayloadField,
+    JsonField,
     RemediationJobConfigurationField,
   },
   inject: ['$validator'],
