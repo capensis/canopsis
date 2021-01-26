@@ -12,7 +12,7 @@
         template(slot="label", slot-scope="props")
           div {{ props.item.name }}
             span.pl-1(v-if="props.leaf") :
-              ellipsis.pl-1.d-inline-block.grey--text.body-1.pre-wrap(:text="String(props.item.value)")
+              c-ellipsis.pl-1.d-inline-block.grey--text.body-1.pre-wrap(:text="String(props.item.value)")
             span.pl-1(v-else-if="!props.leaf && !(props.item.children && props.item.children.length)") :
               .pl-1.d-inline-block.grey--text.text--darken-1.body-1.font-italic {{ $t('common.emptyObject') }}
         template(slot="append", slot-scope="props", v-if="props.leaf")
@@ -32,15 +32,10 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
-
-import Ellipsis from '@/components/tables/ellipsis.vue';
-
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.variablesHelp,
-  components: { Ellipsis, ModalWrapper },
-  mixins: [modalInnerMixin],
+  components: { ModalWrapper },
 };
 </script>

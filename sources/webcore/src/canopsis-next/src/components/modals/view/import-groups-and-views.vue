@@ -40,7 +40,6 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewsGroupsMixin from '@/mixins/entities/view/group';
 import entitiesViewsRightsMixin from '@/mixins/entities/view/rights';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
@@ -61,7 +60,6 @@ export default {
   },
   mixins: [
     submittableMixin(),
-    modalInnerMixin,
     entitiesViewMixin,
     entitiesViewsRightsMixin,
     entitiesViewsGroupsMixin,

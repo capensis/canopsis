@@ -82,7 +82,8 @@ export const MODALS = {
   createBroadcastMessage: 'create-broadcast-message',
   createEventFilterRule: 'create-event-filter-rule',
   createMetaAlarmRule: 'create-meta-alarm-rule',
-  createEventFilterRulePattern: 'create-event-filter-rule-pattern',
+  createPattern: 'create-pattern',
+  createPatternRule: 'create-pattern-rule',
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
@@ -104,6 +105,7 @@ export const MODALS = {
   createRRule: 'create-r-rule',
   selectExceptionsLists: 'select-exceptions-lists',
   pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
+  createPbehavior: 'create-pbehavior',
   createPbehaviorType: 'create-pbehavior-type',
   createPbehaviorReason: 'create-pbehavior-reason',
   createPbehaviorException: 'create-pbehavior-exception',
@@ -1644,8 +1646,6 @@ export const REMEDIATION_WORKFLOW_TYPES = {
   continue: false,
 };
 
-export const FIRST_LETTER_ALPHABET_CHAR_CODE = 97;
-
 export const MAX_LIMIT = 10000;
 
 export const REMEDIATION_CONFIGURATION_TYPES = {
@@ -1720,3 +1720,15 @@ export const CAT_ENGINES = [
   ENGINES_NAMES.dynamicInfo,
   ENGINES_NAMES.webhook,
 ];
+
+export const REQUEST_METHODS = {
+  post: 'POST',
+  get: 'GET',
+  put: 'PUT',
+  patch: 'PATCH',
+  delete: 'DELETE',
+  head: 'HEAD',
+  connect: 'CONNECT',
+  options: 'OPTIONS',
+  trace: 'TRACE',
+};

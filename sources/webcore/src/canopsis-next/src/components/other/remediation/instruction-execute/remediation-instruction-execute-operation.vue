@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import TextEditorBlurred from '@/components/other/text-editor/text-editor-blurred.vue';
+import TextEditorBlurred from '@/components/common/text-editor/text-editor-blurred.vue';
 
 import RemediationInstructionStatus from './partials/remediation-instruction-status.vue';
 import RemediationInstructionExecuteAssignedJobs from './remediation-instruction-assigned-jobs.vue';

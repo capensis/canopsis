@@ -1,15 +1,5 @@
 # Moteur `engine-correlation` (Go, CAT)
 
-!!! note
-    Ce moteur est disponible à partir de Canopsis 3.40.0.
-
-!!! note
-    Le type `valuegroup` est disponible à partir de Canopsis 3.43.0.
-
-!!! note
-    L'attribut `output_template` est disponible à partir de Canopsis 3.47.0.
-
-
 Le moteur `engine-correlation` permet de créer des méta alarmes à partir de `règles de gestion`. Ces règles peuvent être ajoutées via l'[API méta alarmes](../../guide-developpement/api/api-v2-meta-alarm-rule.md).
 
 Des exemples pratiques d'utilisation de la corrélation sont disponibles dans la partie [types de groupements](#types-de-groupements).
@@ -22,10 +12,7 @@ La commande `engine-correlation -help` liste toutes les options acceptées par l
 
 ### Multi-instanciation
 
-!!! note
-    Cette fonctionnalité sera disponible à partir de Canopsis 3.43.0. Elle ne doit pas être utilisée sur les versions antérieures.
-
-Il est possible, à partir de **Canopsis 3.43.0**, de lancer plusieurs instances du moteur `engine-correlation`, afin d'améliorer sa performance de traitement et sa résilience.
+Il est possible, à partir de Canopsis 3.43.0, de lancer plusieurs instances du moteur `engine-correlation`, afin d'améliorer sa performance de traitement et sa résilience.
 
 En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker-compose up -d --scale correlation=2` pour que le moteur `engine-correlation` soit lancé avec 2 instances.
 
@@ -42,8 +29,6 @@ Une méta alarme permet de grouper dynamiquement des alarmes selon des critères
 Ces groupements d'alarmes permettent de visualiser rapidement les corrélations entre les différentes alarmes présentes dans le [bac à alarmes](../../guide-utilisation/interface/widgets/bac-a-alarmes/index.md).
 
 ### Activation de la corrélation
-
-Le moteur est maintenant activé par défaut avec la version **3.45.0**, pour les versions antérieures vous pouvez vous reporter aux [notes de version adéquates](../../notes-de-version/3.41.0.md) pour activer le moteur.
 
 Dans les bacs à alarmes, un interrupteur situé en haut du widget vous permet d'activer la corrélation.
 

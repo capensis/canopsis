@@ -1,4 +1,4 @@
-import { convertTimestampToMomentByTimezone } from '@/helpers/date';
+import { convertTimestampToMomentByTimezone } from '@/helpers/date/date';
 
 import dateFilter from './date';
 

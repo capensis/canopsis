@@ -1,6 +1,6 @@
 import { TIME_UNITS } from '@/constants';
 
-import { toSeconds } from '@/helpers/duration';
+import { toSeconds } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} SnoozeAction

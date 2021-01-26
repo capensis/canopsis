@@ -6,14 +6,14 @@
       template(slot="text")
         event-filter-form(
           v-model="form.general",
-          :isDisabledIdField="isDisabledIdField"
+          :is-disabled-id-field="isDisabledIdField"
         )
         event-filter-enrichment-form(
           v-if="isEnrichmentType",
           v-model="form.enrichmentOptions"
         )
       template(slot="actions")
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
           :loading="submitting",
@@ -22,12 +22,10 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
 import { MODALS, EVENT_FILTER_RULE_TYPES } from '@/constants';
 
 import { eventFilterRuleToForm, formEnrichmentOptionsToEventFilterRule } from '@/helpers/forms/event-filter-rule';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
@@ -43,30 +41,23 @@ export default {
   },
   components: { EventFilterForm, EventFilterEnrichmentForm, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     submittableMixin(),
     confirmableModalMixin(),
   ],
   data() {
-    const { rule, isDuplicating } = this.modal.config;
+    const { rule } = this.modal.config;
 
     return {
-      form: eventFilterRuleToForm(isDuplicating ? omit(rule, ['_id']) : rule),
+      form: eventFilterRuleToForm(rule),
     };
   },
   computed: {
     title() {
-      let type = 'create';
-
-      if (this.config.rule) {
-        type = this.config.isDuplicating ? 'duplicate' : 'edit';
-      }
-
-      return this.$t(`modals.eventFilterRule.${type}.title`);
+      return this.config.title || this.$t('modals.eventFilterRule.create.title');
     },
 
     isDisabledIdField() {
-      return this.config.rule && !this.config.isDuplicating;
+      return this.config.isDisabledIdField;
     },
 
     isEnrichmentType() {

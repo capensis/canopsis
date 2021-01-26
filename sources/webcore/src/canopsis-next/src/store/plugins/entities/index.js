@@ -2,11 +2,13 @@ import Vue from 'vue';
 import { get, pick, uniqWith, mergeWith, isEqual } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
+import { SCHEMA_EMBEDDED_KEY } from '@/config';
+import { REQUEST_METHODS } from '@/constants';
+
 import request from '@/services/request';
 import schemas from '@/store/schemas';
-import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from '@/helpers/store';
-import { SCHEMA_EMBEDDED_KEY } from '@/config';
 
+import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from './helpers';
 import cache from './cache';
 
 const entitiesModuleName = 'entities';
@@ -255,7 +257,7 @@ export const entitiesModule = {
         schema,
         body,
         cancelToken,
-        method = 'GET',
+        method = REQUEST_METHODS.get,
         headers = {},
         params = {},
         dataPreparer = d => d,
@@ -267,16 +269,16 @@ export const entitiesModule = {
       const config = { params, headers, cancelToken };
 
       switch (method.toUpperCase()) {
-        case 'GET':
+        case REQUEST_METHODS.get:
           data = await request.get(route, config);
           break;
-        case 'POST':
+        case REQUEST_METHODS.post:
           data = await request.post(route, body, config);
           break;
-        case 'PUT':
+        case REQUEST_METHODS.put:
           data = await request.put(route, body, config);
           break;
-        case 'DELETE':
+        case REQUEST_METHODS.delete:
           data = await request.delete(route, config);
           break;
         default:
@@ -308,7 +310,7 @@ export const entitiesModule = {
      * @returns {Promise<EntitiesResponseData>}
      */
     async create({ dispatch }, config) {
-      return dispatch('sendRequest', { ...config, method: 'POST' });
+      return dispatch('sendRequest', { ...config, method: REQUEST_METHODS.post });
     },
 
     /**
@@ -319,7 +321,7 @@ export const entitiesModule = {
      * @returns {Promise<EntitiesResponseData>}
      */
     async update({ dispatch }, config) {
-      return dispatch('sendRequest', { ...config, method: 'PUT' });
+      return dispatch('sendRequest', { ...config, method: REQUEST_METHODS.put });
     },
 
     /**
@@ -330,7 +332,7 @@ export const entitiesModule = {
      * @returns {Promise<EntitiesResponseData>}
      */
     async delete({ dispatch }, config) {
-      return dispatch('sendRequest', { ...config, method: 'DELETE' });
+      return dispatch('sendRequest', { ...config, method: REQUEST_METHODS.delete });
     },
 
     /**

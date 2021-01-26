@@ -19,7 +19,6 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS, SNMP_STATE_TYPES } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
@@ -31,7 +30,6 @@ export default {
   name: MODALS.createSnmpRule,
   components: { SnmpRuleForm, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     submittableMixin(),
     confirmableModalMixin(),
   ],

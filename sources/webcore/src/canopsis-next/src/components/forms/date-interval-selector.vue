@@ -40,7 +40,7 @@ import moment from 'moment';
 
 import { STATS_DURATION_UNITS, STATS_QUICK_RANGES, DATETIME_FORMATS } from '@/constants';
 
-import { prepareDateToObject, findRange } from '@/helpers/date-intervals';
+import { prepareDateToObject, findRange } from '@/helpers/date/date-intervals';
 
 import formMixin from '@/mixins/form';
 

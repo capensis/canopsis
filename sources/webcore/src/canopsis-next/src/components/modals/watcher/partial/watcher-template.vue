@@ -11,17 +11,14 @@
       span {{ $t('modals.watcher.editPbehaviors') }}
     v-runtime-template(v-if="compiledTemplate", :template="compiledTemplate")
     .float-clear
-    v-layout.white(v-if="totalItems > pagination.rowsPerPage && hasEntitiesHelper", align-center)
-      v-flex(xs10)
-        pagination(
-          :page="pagination.page",
-          :limit="pagination.rowsPerPage",
-          :total="totalItems",
-          @input="updatePage"
-        )
-      v-spacer
-      v-flex(xs2)
-        records-per-page(:value="pagination.rowsPerPage", @input="updateRecordsPerPage")
+    c-table-pagination(
+      v-if="totalItems > pagination.rowsPerPage && hasEntitiesHelper",
+      :total-items="totalItems",
+      :rows-per-page="pagination.rowsPerPage",
+      :page="pagination.page",
+      @update:page="updatePage",
+      @update:rows-per-page="updateRecordsPerPage"
+    )
 </template>
 
 <script>
@@ -36,15 +33,10 @@ import authMixin from '@/mixins/auth';
 
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
-import Pagination from '@/components/tables/pagination.vue';
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
-
 import WatcherEntitiesWrapper from './entities-wrapper.vue';
 
 export default {
   components: {
-    Pagination,
-    RecordsPerPage,
     VRuntimeTemplate,
     WatcherEntitiesWrapper,
   },
