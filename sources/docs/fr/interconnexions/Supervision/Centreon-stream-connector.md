@@ -90,7 +90,7 @@ Ajout du dépôt Canopsis pour CentOS 7 :
 ```sh
 echo "[canopsis]
 name = canopsis
-baseurl=https://repositories.canopsis.net/pulp/repos/centos7-canopsis/
+baseurl=https://repositories.canopsis.net/pulp/repos/centos7-canopsis-connectors/
 gpgcheck=0
 enabled=1" > /etc/yum.repos.d/canopsis.repo
 ```
