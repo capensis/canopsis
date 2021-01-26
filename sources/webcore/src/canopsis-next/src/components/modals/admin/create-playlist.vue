@@ -26,7 +26,6 @@ import { MODALS } from '@/constants';
 import { getDefaultPlaylist } from '@/helpers/entities';
 import { playlistToForm, formToPlaylist } from '@/helpers/forms/playlist';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 import rightsEntitiesPlaylistTabMixin from '@/mixins/rights/entities/playlist-tab';
@@ -34,7 +33,6 @@ import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import PlaylistForm from '@/components/other/playlists/form/playlist-form.vue';
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -45,9 +43,8 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { PlaylistForm, ProgressOverlay, ModalWrapper },
+  components: { PlaylistForm, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     entitiesViewGroupMixin,
     rightsEntitiesGroupMixin,
     rightsEntitiesPlaylistTabMixin,

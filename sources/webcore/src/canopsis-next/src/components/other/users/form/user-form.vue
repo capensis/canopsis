@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    progress-overlay(:pending="pending")
+    c-progress-overlay(:pending="pending")
     v-layout(row)
       v-text-field(
         v-field="form.crecord_name",
@@ -106,7 +106,6 @@ import { createNamespacedHelpers } from 'vuex';
 import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 import EnabledField from '@/components/forms/fields/enabled-field.vue';
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
 
 const { mapActions } = createNamespacedHelpers('role');
@@ -115,7 +114,6 @@ export default {
   inject: ['$validator'],
   components: {
     EnabledField,
-    ProgressOverlay,
     ViewSelector,
   },
   model: {

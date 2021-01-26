@@ -43,10 +43,22 @@ import GridPlugin from '@/plugins/grid';
 import { isValidUrl } from '@/helpers/validators/is-valid-url';
 import { isValidJson } from '@/helpers/validators/is-valid-json';
 
-import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
-import AdvancedDataTable from '@/components/other/table/advanced-data-table.vue';
-import ThePageHeader from '@/components/layout/the-page-header/the-page-header.vue';
-import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
+import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
+import AlarmChips from '@/components/widgets/alarm/alarm-chips.vue';
+import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
+import CThePageHeader from '@/components/common/page/c-the-page-header.vue';
+import CExpandBtn from '@/components/common/buttons/c-expand-btn.vue';
+import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
+import CFabExpandBtn from '@/components/common/buttons/c-fab-expand-btn.vue';
+import CFabBtn from '@/components/common/buttons/c-fab-btn.vue';
+import CRefreshBtn from '@/components/common/buttons/c-refresh-btn.vue';
+import CEmptyDataTableColumns from '@/components/common/table/c-empty-data-table-columns.vue';
+import CEnabled from '@/components/icons/c-enabled.vue';
+import CEllipsis from '@/components/common/table/c-ellipsis.vue';
+import CPagination from '@/components/common/pagination/c-pagination.vue';
+import CTablePagination from '@/components/common/pagination/c-table-pagination.vue';
+import CAlertOverlay from '@/components/common/overlay/c-alert-overlay.vue';
+import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
 import BullhornIcon from '@/components/icons/bullhorn.vue';
@@ -146,8 +158,22 @@ Vue.use(DaySpanVuetifyPlugin, {
 
 Vue.component('alarm-chips', AlarmChips);
 Vue.component('alarms-list-table', AlarmsListTable);
-Vue.component('advanced-data-table', AdvancedDataTable);
-Vue.component('the-page-header', ThePageHeader);
+
+/* Global custom canopsis components */
+Vue.component('c-the-page-header', CThePageHeader);
+Vue.component('c-advanced-data-table', CAdvancedDataTable);
+Vue.component('c-expand-btn', CExpandBtn);
+Vue.component('c-action-btn', CActionBtn);
+Vue.component('c-fab-expand-btn', CFabExpandBtn);
+Vue.component('c-fab-btn', CFabBtn);
+Vue.component('c-refresh-btn', CRefreshBtn);
+Vue.component('c-empty-data-table-columns', CEmptyDataTableColumns);
+Vue.component('c-enabled', CEnabled);
+Vue.component('c-ellipsis', CEllipsis);
+Vue.component('c-pagination', CPagination);
+Vue.component('c-table-pagination', CTablePagination);
+Vue.component('c-alert-overlay', CAlertOverlay);
+Vue.component('c-progress-overlay', CProgressOverlay);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

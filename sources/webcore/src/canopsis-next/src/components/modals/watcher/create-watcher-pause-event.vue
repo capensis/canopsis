@@ -17,11 +17,10 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import WatcherPauseEventForm from '@/components/other/service-weather/watcher-pause-event-form.vue';
+import WatcherPauseEventForm from '@/components/widgets/service-weather/watcher-pause-event-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -32,7 +31,6 @@ export default {
   },
   components: { WatcherPauseEventForm, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     submittableMixin(),
     confirmableModalMixin(),
   ],

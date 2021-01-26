@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import { DEFAULT_TIME_INTERVAL, META_ALARMS_RULE_TYPES, META_ALARMS_THRESHOLD_TYPES } from '@/constants';
 
-import { convertDurationToIntervalObject } from '@/helpers/date';
+import { convertDurationToIntervalObject } from '@/helpers/date/date';
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 
 import { getConditionsForRemovingEmptyPatterns } from './shared/patterns';

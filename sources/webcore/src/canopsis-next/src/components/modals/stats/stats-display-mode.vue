@@ -25,11 +25,10 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS, STATS_DISPLAY_MODE, STATS_DISPLAY_MODE_PARAMETERS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import StatsDisplayModeForm from '@/components/other/stats/stats-display-mode-form.vue';
+import StatsDisplayModeForm from '@/components/widgets/stats/stats-display-mode-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -37,7 +36,6 @@ export default {
   name: MODALS.statsDisplayMode,
   components: { StatsDisplayModeForm, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     submittableMixin(),
     confirmableModalMixin(),
   ],

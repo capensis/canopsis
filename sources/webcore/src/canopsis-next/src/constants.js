@@ -82,7 +82,8 @@ export const MODALS = {
   createBroadcastMessage: 'create-broadcast-message',
   createEventFilterRule: 'create-event-filter-rule',
   createMetaAlarmRule: 'create-meta-alarm-rule',
-  createEventFilterRulePattern: 'create-event-filter-rule-pattern',
+  createPattern: 'create-pattern',
+  createPatternRule: 'create-pattern-rule',
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
@@ -1644,8 +1645,6 @@ export const REMEDIATION_WORKFLOW_TYPES = {
   stop: true,
   continue: false,
 };
-
-export const FIRST_LETTER_ALPHABET_CHAR_CODE = 97;
 
 export const MAX_LIMIT = 10000;
 

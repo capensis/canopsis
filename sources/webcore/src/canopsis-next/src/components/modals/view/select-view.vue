@@ -22,7 +22,6 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewsGroupsMixin from '@/mixins/entities/view/group';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 
@@ -31,7 +30,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.selectView,
   components: { ModalWrapper },
-  mixins: [modalInnerMixin, entitiesViewsGroupsMixin, rightsEntitiesGroupMixin],
+  mixins: [entitiesViewsGroupsMixin, rightsEntitiesGroupMixin],
   methods: {
     async selectView(viewId) {
       if (this.config.action) {

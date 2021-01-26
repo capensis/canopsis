@@ -20,7 +20,6 @@ import { MODALS } from '@/constants';
 import { heartbeatToForm, formToHeartbeat } from '@/helpers/forms/heartbeat';
 
 import authMixin from '@/mixins/auth';
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
@@ -39,7 +38,6 @@ export default {
   components: { HeartbeatForm, ModalWrapper },
   mixins: [
     authMixin,
-    modalInnerMixin,
     submittableMixin(),
     confirmableModalMixin(),
   ],
