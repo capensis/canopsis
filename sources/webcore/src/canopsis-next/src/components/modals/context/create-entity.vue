@@ -32,13 +32,12 @@ import { MODALS } from '@/constants';
 
 import uuid from '@/helpers/uuid';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
-import EntityForm from '@/components/other/context/form/entity-form.vue';
-import ManageInfos from '@/components/other/context/manage-infos.vue';
+import EntityForm from '@/components/widgets/context/form/entity-form.vue';
+import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -56,7 +55,6 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    modalInnerMixin,
     entitiesContextEntityMixin,
     submittableMixin(),
     confirmableModalMixin(),

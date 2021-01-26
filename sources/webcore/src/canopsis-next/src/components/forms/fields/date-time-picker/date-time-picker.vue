@@ -32,7 +32,7 @@
 <script>
 import { isDate } from 'lodash';
 
-import { updateTime, updateDate } from '@/helpers/date-time-picker';
+import { updateTime, updateDate } from '@/helpers/date/date-time-picker';
 
 import formBaseMixin from '@/mixins/form/base';
 

@@ -40,7 +40,6 @@ import {
 } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -66,7 +65,6 @@ export default {
   components: { ViewForm, ModalWrapper },
   mixins: [
     authMixin,
-    modalInnerMixin,
     submittableMixin(),
     confirmableModalMixin(),
     entitiesViewMixin,

@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
+import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 
 export default {
   inject: ['$validator'],

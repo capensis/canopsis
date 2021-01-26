@@ -15,7 +15,6 @@ import { MODALS } from '@/constants';
 
 import { pbehaviorTypeToForm, formToPbehaviorType } from '@/helpers/forms/type-pbehavior';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import validationErrorsMixin from '@/mixins/form/validation-errors';
 
 import CreateTypeForm from '@/components/other/pbehavior/types/form/create-pbehavior-type-form.vue';
@@ -32,7 +31,6 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    modalInnerMixin,
     validationErrorsMixin(),
   ],
   data() {

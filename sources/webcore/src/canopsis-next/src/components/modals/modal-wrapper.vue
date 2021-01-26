@@ -9,11 +9,10 @@
           slot(name="title")
         div
           modal-title-buttons(
-            :modal="modal",
             :minimize="minimize",
             :close="close"
           )
-    template(v-if="!modal.minimized")
+    template(v-if="!$modal.minimized")
       v-card-text(v-if="$slots.text", key="text")
         slot(name="text")
       template(v-if="$slots.actions")
@@ -27,6 +26,7 @@
 import ModalTitleButtons from './modal-title-buttons.vue';
 
 export default {
+  inject: ['$modal'],
   components: { ModalTitleButtons },
   props: {
     fillHeight: {
@@ -47,10 +47,6 @@ export default {
     },
   },
   computed: {
-    modal() {
-      return this.$parent.modal || this.$parent.$parent.modal;
-    },
-
     titleStyle() {
       const style = {};
 

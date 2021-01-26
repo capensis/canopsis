@@ -16,8 +16,8 @@
           td {{ item.value }}
           td
             v-layout(row)
-              action-btn(type="edit", @click="showEditInfoModal(item)")
-              action-btn(type="delete", @click="removeInfo(item)")
+              c-action-btn(type="edit", @click="showEditInfoModal(item)")
+              c-action-btn(type="delete", @click="removeInfo(item)")
 </template>
 
 <script>
@@ -26,11 +26,8 @@ import { MODALS } from '@/constants';
 import formArrayMixin from '@/mixins/form/array';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
-
 export default {
   inject: ['$validator'],
-  components: { ActionBtn },
   mixins: [formArrayMixin, formValidationHeaderMixin],
   model: {
     prop: 'form',

@@ -1,7 +1,7 @@
 import { isUndefined, omit } from 'lodash';
 
 import uuid from '@/helpers/uuid';
-import { durationToForm, formToDuration } from '@/helpers/duration';
+import { durationToForm, formToDuration } from '@/helpers/date/duration';
 import { generateRemediationInstructionStep } from '@/helpers/entities';
 
 /**

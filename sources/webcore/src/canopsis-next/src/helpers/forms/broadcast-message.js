@@ -2,7 +2,7 @@ import moment from 'moment';
 
 import { DEFAULT_BROADCAST_MESSAGE_COLOR } from '@/constants';
 
-import { convertTimestampToMoment } from '@/helpers/date';
+import { convertTimestampToMoment } from '@/helpers/date/date';
 
 export function messageToForm({
   message = '',

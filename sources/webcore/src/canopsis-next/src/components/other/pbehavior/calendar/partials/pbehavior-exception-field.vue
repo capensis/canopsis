@@ -39,7 +39,7 @@
 import moment from 'moment';
 
 import { DATETIME_FORMATS } from '@/constants';
-import { isEndOfDay, isStartOfDay } from '@/helpers/date';
+import { isEndOfDay, isStartOfDay } from '@/helpers/date/date';
 
 import formMixin from '@/mixins/form';
 
