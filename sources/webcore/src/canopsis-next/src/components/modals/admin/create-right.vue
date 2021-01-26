@@ -15,7 +15,6 @@ import { MODALS } from '@/constants';
 
 import { generateRight } from '@/helpers/entities';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRightMixin from '@/mixins/entities/right';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
@@ -31,7 +30,6 @@ export default {
   },
   components: { RightForm, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     entitiesRightMixin,
     submittableMixin(),
     confirmableModalMixin(),

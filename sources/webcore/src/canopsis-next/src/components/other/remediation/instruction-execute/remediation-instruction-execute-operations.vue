@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { getCharByIndex } from '@/helpers/string';
+import { getLetterByIndex } from '@/helpers/string';
 
 import RemediationInstructionExecuteOperation from './remediation-instruction-execute-operation.vue';
 
@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     getOperationNumber(index) {
-      return `${this.stepNumber}${getCharByIndex(index)}`;
+      return `${this.stepNumber}${getLetterByIndex(index)}`;
     },
 
     nextOperation(index) {

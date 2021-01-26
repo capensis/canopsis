@@ -150,6 +150,7 @@ export default {
     totalEntityPatterns: 'Total des modèles d\'entité',
     addFilter: 'Ajouter un filtre',
     id: 'Id',
+    reset: 'Réinitialiser',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1776,7 +1777,6 @@ export default {
           headers: 'Headers',
           headerKey: 'Clé',
           headerValue: 'Valeur',
-          payload: 'Payload',
         },
         emptyHeaders: 'Aucun en-tête ajouté pour le moment',
       },

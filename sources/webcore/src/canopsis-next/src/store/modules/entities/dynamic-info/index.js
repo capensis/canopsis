@@ -45,7 +45,7 @@ export default createEntityModule({
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
           meta: {
-            total: data.count,
+            total_count: data.count,
           },
         });
       } catch (err) {

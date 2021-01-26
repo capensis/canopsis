@@ -49,9 +49,9 @@ import FileSelector from '@/components/forms/fields/file-selector.vue';
 import GroupPanel from '@/components/layout/navigation/partial/groups-side-bar/group-panel.vue';
 import GroupViewPanel from '@/components/layout/navigation/partial/groups-side-bar/group-view-panel.vue';
 
-import { saveJsonFile } from '@/helpers/files';
-import { getFileTextContent } from '@/helpers/file-select';
-import { prepareGroupsAndViewsToExport } from '@/helpers/groups';
+import { saveJsonFile } from '@/helpers/file/files';
+import { getFileTextContent } from '@/helpers/file/file-select';
+import { prepareGroupsAndViewsToExport } from '@/helpers/forms/groups';
 import { EXPORT_VIEWS_AND_GROUPS_SUFFIX } from '@/config';
 import { MODALS } from '@/constants';
 

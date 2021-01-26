@@ -45,7 +45,7 @@ import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 
-import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

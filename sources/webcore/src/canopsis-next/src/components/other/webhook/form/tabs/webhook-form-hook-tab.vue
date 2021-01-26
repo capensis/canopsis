@@ -43,7 +43,7 @@ import { WEBHOOK_TRIGGERS } from '@/constants';
 
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
-import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
+import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 
 export default {
   inject: ['$validator'],

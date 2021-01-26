@@ -1,5 +1,5 @@
 <template lang="pug">
-  advanced-data-table.white(
+  c-advanced-data-table.white(
     :headers="headers",
     :items="pbehaviorExceptions",
     :loading="pending",
@@ -17,12 +17,12 @@
         v-btn(@click="$emit('remove-selected', props.selected)", icon)
           v-icon delete
     template(slot="actions", slot-scope="props")
-      action-btn(
+      c-action-btn(
         v-if="hasUpdateAnyPbehaviorExceptionAccess",
         type="edit",
         @click="$emit('edit', props.item)"
       )
-      action-btn(
+      c-action-btn(
         v-if="hasDeleteAnyPbehaviorExceptionAccess",
         :tooltip="props.item.deletable ? $t('common.delete') : $t('pbehaviorExceptions.usingException')",
         :disabled="!props.item.deletable",
@@ -36,13 +36,10 @@
 <script>
 import rightsTechnicalPbehaviorExceptionsMixin from '@/mixins/rights/technical/pbehavior-exceptions';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
-
 import PbehaviorExceptionsListExpandPanel from './partials/pbehavior-exceptions-list-expand-panel.vue';
 
 export default {
   components: {
-    ActionBtn,
     PbehaviorExceptionsListExpandPanel,
   },
   mixins: [rightsTechnicalPbehaviorExceptionsMixin],

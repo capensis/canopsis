@@ -40,8 +40,8 @@ import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
-import AckEventForm from '@/components/other/alarm/forms/ack-event-form.vue';
+import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
+import AckEventForm from '@/components/widgets/alarm/forms/ack-event-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

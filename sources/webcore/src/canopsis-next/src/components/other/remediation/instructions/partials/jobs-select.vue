@@ -13,7 +13,7 @@
 <script>
 import formBaseMixin from '@/mixins/form/base';
 
-import ChooseExpansionPanel from '@/components/other/choose-expansion-panel/choose-expansion-panel.vue';
+import ChooseExpansionPanel from '@/components/common/choose-expansion-panel/choose-expansion-panel.vue';
 import ChooseJobsLists from '@/components/other/remediation/jobs/partials/choose-jobs-lists.vue';
 
 export default {

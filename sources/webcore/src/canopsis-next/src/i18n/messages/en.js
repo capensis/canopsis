@@ -150,6 +150,7 @@ export default {
     totalEntityPatterns: 'Total entity patterns',
     addFilter: 'Add filter',
     id: 'Id',
+    reset: 'Reset',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1776,7 +1777,6 @@ export default {
           headers: 'Headers',
           headerKey: 'Header key',
           headerValue: 'Header value',
-          payload: 'Payload',
         },
         emptyHeaders: 'No headers added yet',
       },

@@ -85,9 +85,9 @@ export default {
   methods: {
     showEditPatternModal() {
       this.$modals.show({
-        name: MODALS.createEventFilterRulePattern,
+        name: MODALS.createPattern,
         config: {
-          isSimplePattern: true,
+          onlySimpleRule: true,
           pattern: this.form.pattern,
           action: (pattern) => {
             this.updateField('pattern', pattern);

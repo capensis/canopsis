@@ -21,6 +21,7 @@ import formMixin from '@/mixins/form';
 import RetryField from '@/components/forms/fields/retry.vue';
 import EnabledField from '@/components/forms/fields/enabled-field.vue';
 import DisableDuringPeriodsField from '@/components/forms/fields/disable-during-periods.vue';
+
 import WebhookTabsForm from './tabs/webhook-tabs-form.vue';
 
 export default {

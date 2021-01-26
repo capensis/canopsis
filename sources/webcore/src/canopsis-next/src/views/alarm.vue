@@ -17,7 +17,7 @@ import authMixin from '@/mixins/auth';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
-import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
+import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
 import { generateWidgetByType } from '@/helpers/entities';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');

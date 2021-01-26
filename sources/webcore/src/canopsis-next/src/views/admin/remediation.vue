@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    the-page-header {{ $t('common.instructions') }}
+    c-the-page-header {{ $t('common.instructions') }}
     v-layout(row, wrap)
       v-flex(xs12)
         v-card.ma-2
@@ -22,14 +22,13 @@
               v-tab-item(:value="$constants.REMEDIATION_TABS.jobs", lazy)
                 v-card-text
                   remediation-jobs
-    fab-buttons(@create="create", @refresh="refresh", :has-access="hasCreateAccess")
+    c-fab-btn(@create="create", @refresh="refresh", :has-access="hasCreateAccess")
       span {{ tooltipText }}
 </template>
 
 <script>
 import { MODALS, REMEDIATION_TABS } from '@/constants';
 
-import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 import RemediationInstructions from '@/components/other/remediation/instructions/remediation-instructions.vue';
 import RemediationJobs from '@/components/other/remediation/jobs/remediation-jobs.vue';
 import RemediationConfigurations from '@/components/other/remediation/configurations/remediation-configurations.vue';
@@ -46,7 +45,6 @@ export default {
     RemediationInstructions,
     RemediationConfigurations,
     RemediationJobs,
-    FabButtons,
   },
   mixins: [
     entitiesRemediationInstructionsMixin,

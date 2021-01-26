@@ -31,7 +31,7 @@ import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import { formToSnooze, snoozeToForm } from '@/helpers/forms/snooze-event';
 
-import SnoozeEventForm from '@/components/other/alarm/forms/snooze-event-form.vue';
+import SnoozeEventForm from '@/components/widgets/alarm/forms/snooze-event-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

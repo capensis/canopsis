@@ -9,7 +9,7 @@
       v-flex(xs11)
         v-layout(row)
           v-layout
-            expand-button.step-expand(
+            c-expand-btn.step-expand(
               v-model="expanded",
               :color="!expanded && hasChildrenError ? 'error' : 'grey darken-3'"
             )
@@ -49,13 +49,11 @@
 import formMixin from '@/mixins/form';
 import validationChildrenMixin from '@/mixins/form/validation-children';
 
-import { isOmitEqual } from '@/helpers/is-omit-equal';
-import { toSeconds } from '@/helpers/duration';
+import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
+import { toSeconds } from '@/helpers/date/duration';
 import { generateRemediationInstructionStep } from '@/helpers/entities';
 
 import confirmableFormMixin from '@/mixins/confirmable-form';
-
-import ExpandButton from '@/components/other/buttons/expand-button.vue';
 
 import DraggableStepNumber from '../../partials/draggable-step-number.vue';
 
@@ -68,7 +66,6 @@ export default {
   inject: ['$validator'],
   components: {
     DraggableStepNumber,
-    ExpandButton,
     RemediationInstructionOperationsForm,
     RemediationInstructionStepWorkflowField,
     RemediationInstructionStepEndpointField,

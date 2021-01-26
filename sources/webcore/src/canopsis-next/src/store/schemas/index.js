@@ -7,7 +7,7 @@ import {
   childMergeStrategy,
   parentProcessStrategy,
   viewTabProcessStrategy,
-} from '@/helpers/schema';
+} from './helpers';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',

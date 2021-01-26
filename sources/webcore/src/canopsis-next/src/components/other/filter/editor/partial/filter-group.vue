@@ -29,7 +29,7 @@
           block,
           small,
           flat,
-          @click="$emit('deleteGroup')"
+          @click="$emit('delete-group')"
         ) {{ $t("filterEditor.buttons.deleteGroup") }}
 
     v-layout
@@ -40,9 +40,9 @@
             v-for="(rule, ruleKey) in group.rules",
             :key="ruleKey",
             :rule="rule",
-            :possibleFields="possibleFields",
-            @deleteRule="deleteRule(ruleKey)",
-            @update:rule="updateRule(ruleKey, $event)"
+            :possible-fields="possibleFields",
+            @delete-rule="deleteRule(ruleKey)",
+            @input="updateRule(ruleKey, $event)"
           )
 
         div(data-test="filterGroupLayout")
@@ -51,8 +51,8 @@
             :key="groupKey",
             :group="group",
             :possibleFields="possibleFields",
-            @deleteGroup="deleteGroup(groupKey)",
-            @update:group="updateGroup(groupKey, $event)"
+            @input="updateGroup(groupKey, $event)",
+            @delete-group="deleteGroup(groupKey)"
           )
 </template>
 
@@ -72,13 +72,6 @@ import FilterRule from './filter-rule.vue';
 
 /**
  * Component representing a group in MongoDB filter
- *
- * @prop {Array} possibleFields - Boolean to determine if it's the root filter's group
- * @prop {Object} group - Group object
- * @prop {boolean} [isInitial=false] - Boolean to determine if it's the root filter's group
- *
- * @event group#update
- * @event deleteGroup#click
  */
 export default {
   name: 'filter-group', // We need it for recursive
@@ -90,7 +83,7 @@ export default {
   mixins: [formMixin],
   model: {
     prop: 'group',
-    event: 'update:group',
+    event: 'input',
   },
   props: {
     possibleFields: {

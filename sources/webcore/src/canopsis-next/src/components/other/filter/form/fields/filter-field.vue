@@ -5,15 +5,12 @@
         v-list-tile-content {{ filter.title }}
       v-list-tile-action(v-if="hasAccessToEdit")
         v-layout
-          action-btn(type="edit", @click="$emit('edit')")
-          action-btn(type="delete", @click="$emit('delete')")
+          c-action-btn(type="edit", @click="$emit('edit')")
+          c-action-btn(type="delete", @click="$emit('delete')")
 </template>
 
 <script>
-import ActionBtn from '@/components/tables/action-btn.vue';
-
 export default {
-  components: { ActionBtn },
   model: {
     prop: 'filter',
     event: 'input',

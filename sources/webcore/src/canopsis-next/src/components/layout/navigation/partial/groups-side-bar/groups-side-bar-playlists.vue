@@ -14,7 +14,7 @@
             v-layout(align-center, justify-space-between)
               v-flex
                 v-layout(align-center)
-                  span.pl-3 {{ playlist.name }}
+                  span.ellipsis.pl-3 {{ playlist.name }}
 </template>
 
 <script>

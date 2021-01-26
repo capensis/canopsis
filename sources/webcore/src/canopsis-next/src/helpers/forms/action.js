@@ -5,8 +5,8 @@ import { ACTION_TYPES, ACTION_AUTHOR, ACTION_FORM_FIELDS_MAP_BY_TYPE } from '@/c
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { generateAction, generateActionId } from '@/helpers/entities';
 import { pbehaviorToForm, formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
-import { convertDurationToIntervalObject } from '@/helpers/date';
-import { durationToForm, formToDuration } from '@/helpers/duration';
+import { convertDurationToIntervalObject } from '@/helpers/date/date';
+import { durationToForm, formToDuration } from '@/helpers/date/duration';
 import { getConditionsForRemovingEmptyPatterns } from '@/helpers/forms/shared/patterns';
 
 /**
