@@ -944,8 +944,8 @@ export const USERS_RIGHTS = {
     remediationExecution: `${USER_RIGHTS_PREFIXES.api}_execution`,
     remediationJob: `${USER_RIGHTS_PREFIXES.api}_job`,
     remediationJobConfig: `${USER_RIGHTS_PREFIXES.api}_job_config`,
-    entityUpdate: `${USER_RIGHTS_PREFIXES.api}_entity_update`,
     entityRead: `${USER_RIGHTS_PREFIXES.api}_entity_read`,
+    entityUpdate: `${USER_RIGHTS_PREFIXES.api}_entity_update`,
     entityDelete: `${USER_RIGHTS_PREFIXES.api}_entity_delete`,
   },
 };
