@@ -3,9 +3,9 @@
     template(slot="title")
       span {{ $t('alarmList.actions.titles.pbehaviorList') }}
     template(slot="text")
-      advanced-data-table(:headers="headers", :items="filteredPbehaviors", expand)
+      c-advanced-data-table(:headers="headers", :items="filteredPbehaviors", expand)
         template(slot="enabled", slot-scope="props")
-          enabled-column(:value="props.item.enabled")
+          c-enabled(:value="props.item.enabled")
         template(slot="tstart", slot-scope="props") {{ props.item.tstart | timezone($system.timezone, 'long', true) }}
         template(slot="tstop", slot-scope="props") {{ props.item.tstop | timezone($system.timezone, 'long', true) }}
         template(slot="rrule", slot-scope="props")
@@ -14,12 +14,12 @@
           pbehaviors-list-expand-item(:pbehavior="props.item")
         template(slot="actions", slot-scope="props")
           v-layout(row)
-            action-btn(
+            c-action-btn(
               v-if="hasAccessToEditPbehavior",
               type="edit",
               @click="showEditPbehaviorModal(props.item)"
             )
-            action-btn(
+            c-action-btn(
               v-if="hasAccessToDeletePbehavior",
               type="delete",
               @click="showRemovePbehaviorModal(props.item._id)"
@@ -43,11 +43,8 @@
 
 import { MODALS, CRUD_ACTIONS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
-import EnabledColumn from '@/components/tables/enabled-column.vue';
 import PbehaviorsListExpandItem from '@/components/other/pbehavior/exploitation/pbehaviors-list-expand-item.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -58,11 +55,9 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   components: {
     PbehaviorsListExpandItem,
-    ActionBtn,
-    EnabledColumn,
     ModalWrapper,
   },
-  mixins: [modalInnerMixin, entitiesPbehaviorMixin],
+  mixins: [entitiesPbehaviorMixin],
   inject: ['$system'],
   computed: {
     headers() {
@@ -128,11 +123,12 @@ export default {
 
     showEditPbehaviorModal(pbehavior) {
       this.$modals.show({
-        name: MODALS.pbehaviorPlanning,
+        name: MODALS.createPbehavior,
         config: {
-          pbehaviors: [pbehavior],
-
-          afterSubmit: () => this.fetchPbehaviorsByEntityId({ id: this.modal.config.entityId }),
+          pbehavior,
+          noFilter: true,
+          timezone: this.$system.timezone,
+          action: data => this.updatePbehavior({ data, id: pbehavior._id }),
         },
       });
     },

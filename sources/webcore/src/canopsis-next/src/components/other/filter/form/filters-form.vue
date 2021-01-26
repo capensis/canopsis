@@ -96,8 +96,9 @@ export default {
       this.$modals.show({
         name: MODALS.createFilter,
         config: {
-          title: this.$t('modals.filter.edit.title'),
           filter,
+
+          title: this.$t('modals.filter.edit.title'),
           entitiesType: this.entitiesType,
           existingTitles: this.existingTitles,
           action: newFilter => this.updateItemInArray(index, newFilter),

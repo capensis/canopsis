@@ -5,7 +5,7 @@ import { get, isUndefined } from 'lodash';
  * @param {Object} object - Object to search the property on
  * @param {string} property - Property name
  * @param {Function} [filter] - Filter to apply on the property
- * @param {string} [defaultValue] - Default value for the property
+ * @param {any} [defaultValue] - Default value for the property
  *
  * @returns {String}
  */

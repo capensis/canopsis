@@ -16,7 +16,6 @@
 import { INSTRUCTION_EXECUTE_FETCHING_INTERVAL } from '@/config';
 import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import authMixin from '@/mixins/auth';
 import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 import pollingMixin from '@/mixins/polling';
@@ -33,7 +32,6 @@ export default {
   },
   mixins: [
     authMixin,
-    modalInnerMixin,
     entitiesRemediationInstructionExecutionMixin,
     pollingMixin({
       method: 'pingInstructionExecution',

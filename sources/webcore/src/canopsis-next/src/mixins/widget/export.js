@@ -1,7 +1,7 @@
 import { EXPORT_FETCHING_INTERVAL } from '@/config';
 import { EXPORT_STATUSES } from '@/constants';
 
-import { saveCsvFile } from '@/helpers/files';
+import { saveCsvFile } from '@/helpers/file/files';
 
 /**
  * @typedef {Object} ExportMixin

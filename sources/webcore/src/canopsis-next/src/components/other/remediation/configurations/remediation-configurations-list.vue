@@ -1,5 +1,5 @@
 <template lang="pug">
-  advanced-data-table.white(
+  c-advanced-data-table.white(
     :headers="headers",
     :items="remediationConfigurations",
     :loading="pending",
@@ -16,12 +16,12 @@
         v-btn(@click="$emit('remove-selected', props.selected)", icon)
           v-icon delete
     template(slot="actions", slot-scope="props")
-      action-btn(
+      c-action-btn(
         v-if="hasUpdateAnyRemediationConfigurationAccess",
         type="edit",
         @click="$emit('edit', props.item)"
       )
-      action-btn(
+      c-action-btn(
         v-if="hasDeleteAnyRemediationConfigurationAccess",
         :tooltip="props.disabled ? $t('remediationConfigurations.usingConfiguration') : $t('common.delete')",
         :disabled="props.disabled",
@@ -33,10 +33,7 @@
 <script>
 import rightsTechnicalRemediationConfigurationMixin from '@/mixins/rights/technical/remediation-configuration';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
-
 export default {
-  components: { ActionBtn },
   mixins: [rightsTechnicalRemediationConfigurationMixin],
   props: {
     remediationConfigurations: {

@@ -36,8 +36,8 @@ export { default as CreateRole } from './admin/create-role.vue';
 export { default as CreateRight } from './admin/create-right.vue';
 export { default as CreateBroadcastMessage } from './admin/create-broadcast-message.vue';
 export { default as CreateEventFilterRule } from './event-filter/create-event-filter-rule.vue';
-export { default as CreateEventFilterRulePattern } from './event-filter/pattern/create-event-filter-rule-pattern.vue';
-export { default as AddEventFilterRuleToPattern } from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';
+export { default as CreatePattern } from './pattern/create-pattern.vue';
+export { default as CreatePatternRule } from './pattern/create-pattern-rule.vue';
 export { default as EventFilterRuleActions } from './event-filter/event-filter-rule-actions.vue';
 export { default as EventFilterRuleExternalData } from './event-filter/event-filter-rule-external-data.vue';
 export { default as EventFilterRuleCreateAction } from './event-filter/event-filter-rule-create-action.vue';
@@ -59,6 +59,7 @@ export { default as PbehaviorPlanning } from './pbehavior/pbehavior-planning.vue
 export { default as SelectExceptionsLists } from './pbehavior/select-exceptions-lists.vue';
 export { default as CreateRRule } from './pbehavior/create-r-rule.vue';
 export { default as PbehaviorRecurrentChangesConfirmation } from './pbehavior/pbehavior-recurrent-changes-confirmation.vue';
+export { default as CreatePbehavior } from './pbehavior/create-pbehavior.vue';
 export { default as CreatePbehaviorType } from './pbehavior/create-pbehavior-type.vue';
 export { default as CreatePbehaviorReason } from './pbehavior/create-pbehavior-reason.vue';
 export { default as CreatePbehaviorException } from './pbehavior/create-pbehavior-exception.vue';
@@ -67,6 +68,6 @@ export { default as CreateRemediationConfiguration } from './remediation/create-
 export { default as CreateRemediationJob } from './remediation/create-remediation-job.vue';
 export { default as ExecuteRemediationInstruction } from './remediation/execute-remediation-instruction.vue';
 export { default as ImageViewer } from './common/image-viewer.vue';
-export { default as Patterns } from './common/patterns.vue';
+export { default as Patterns } from './pattern/patterns.vue';
 export { default as Rate } from './common/rate.vue';
 export { default as CreateRemediationInstructionsFilter } from './remediation/create-remediation-instructions-filter.vue';

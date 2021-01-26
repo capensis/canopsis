@@ -26,11 +26,10 @@ import { MODALS, STATS_TYPES } from '@/constants';
 
 import { setField } from '@/helpers/immutable';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import AddStatForm from '@/components/other/stats/add-stat-form.vue';
+import AddStatForm from '@/components/widgets/stats/add-stat-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -41,7 +40,6 @@ export default {
   },
   components: { AddStatForm, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     submittableMixin(),
     confirmableModalMixin(),
   ],

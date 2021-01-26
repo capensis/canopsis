@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container.admin-rights
-    the-page-header {{ $t('common.rights') }}
+    c-the-page-header {{ $t('common.rights') }}
     div.position-relative
       v-fade-transition
         v-layout.white.progress(v-show="pending", column)

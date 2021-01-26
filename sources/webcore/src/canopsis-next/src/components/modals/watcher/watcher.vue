@@ -45,7 +45,6 @@ import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES, SORT_ORDERS } from '@
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { addKeyInEntity } from '@/helpers/entities';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
@@ -63,7 +62,6 @@ export default {
   components: { ModalTitleButtons, WatcherTemplate, ModalWrapper },
   inject: ['$system'],
   mixins: [
-    modalInnerMixin,
     eventActionsMixin,
     entitiesPbehaviorMixin,
     entitiesWatcherEntityMixin,
