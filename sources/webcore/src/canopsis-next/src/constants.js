@@ -934,6 +934,9 @@ export const USERS_RIGHTS = {
     pbehaviorException: `${USER_RIGHTS_PREFIXES.api}_pbehaviorexception`,
     event: `${USER_RIGHTS_PREFIXES.api}_event`,
     engine: `${USER_RIGHTS_PREFIXES.api}_engine`,
+    entityRead: `${USER_RIGHTS_PREFIXES.api}_entity_read`,
+    entityUpdate: `${USER_RIGHTS_PREFIXES.api}_entity_update`,
+    entityDelete: `${USER_RIGHTS_PREFIXES.api}_entity_delete`,
   },
 };
 
