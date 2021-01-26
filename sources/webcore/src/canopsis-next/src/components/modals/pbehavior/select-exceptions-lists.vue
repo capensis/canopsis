@@ -15,8 +15,6 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
-
 import ChooseExceptionsLists from '@/components/other/pbehavior/exceptions/partials/choose-exceptions-lists.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -27,7 +25,6 @@ export default {
     ChooseExceptionsLists,
     ModalWrapper,
   },
-  mixins: [modalInnerMixin],
   data() {
     return {
       exceptions: this.modal.config.exceptions ? cloneDeep(this.modal.config.exceptions) : [],

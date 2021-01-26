@@ -58,7 +58,7 @@ export function getMainFilter(widget, userPreference) {
     mainFilter = widgetMainFilter;
   }
 
-  return mainFilter || null;
+  return mainFilter || undefined;
 }
 
 /**

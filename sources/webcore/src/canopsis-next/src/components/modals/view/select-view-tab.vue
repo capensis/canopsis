@@ -24,7 +24,6 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewsGroupsMixin from '@/mixins/entities/view/group';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 
@@ -34,7 +33,6 @@ export default {
   name: MODALS.selectViewTab,
   components: { ModalWrapper },
   mixins: [
-    modalInnerMixin,
     entitiesViewsGroupsMixin,
     rightsEntitiesGroupMixin,
   ],

@@ -1,75 +1,72 @@
 <template lang="pug">
   div(data-test="filterEditor")
     v-tabs.filter-editor(v-model="activeTab", slider-color="primary", centered)
-      v-tab(:disabled="isRequestStringChanged") {{ $t('filterEditor.tabs.visualEditor') }}
+      v-tab(:disabled="advancedJsonWasChanged || errors.has('advancedJson')") {{ $t('filterEditor.tabs.visualEditor') }}
       v-tab-item
         v-container.pa-1
           filter-group(
-            :group="filter",
-            :possibleFields="possibleFields",
-            isInitial,
-            @update:group="updateFilter"
+            v-field="form",
+            :possible-fields="possibleFields",
+            is-initial,
+            @input="resetFilterValidator"
           )
       v-tab(@click="openAdvancedTab") {{ $t('filterEditor.tabs.advancedEditor') }}
       v-tab-item
-        v-textarea(
-          v-model="requestString",
-          v-validate="'json'",
+        json-field(
+          :value="advancedJson",
           :label="$t('filterEditor.tabs.advancedEditor')",
-          :error-messages="errors.collect('requestString')",
-          data-vv-validate-on="none",
-          name="requestString",
+          name="advancedJson",
           rows="10",
-          @input="updateRequestString"
+          validate-on="button",
+          @input="updateJson"
         )
-        v-layout(justify-center)
-          v-flex(xs10, md-6)
-            v-alert(:value="parseError", type="error") {{ parseError }}
-        v-btn(
-          :disabled="!isRequestStringChanged || errors.has('requestString')",
-          @click="parseRequestStringToFilter"
-        ) {{ $t('common.parse') }}
     v-alert(:value="errors.has('filter')", type="error") {{ $t('filterEditor.errors.required') }}
 </template>
 
 
 <script>
-import { cloneDeep, isEmpty, isString } from 'lodash';
+import { get } from 'lodash';
 
-import { ENTITIES_TYPES, FILTER_DEFAULT_VALUES } from '@/constants';
+import { ENTITIES_TYPES } from '@/constants';
 
-import { removeSpacesFromStringFilter } from '@/helpers/filter';
-import parseGroupToFilter from '@/helpers/filter/editor/parse-group-to-filter';
-import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-request';
+import { filterToForm, formToFilter } from '@/helpers/forms/filter';
 import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
+
 
 import filterHintsMixin from '@/mixins/entities/filter-hint';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
+
+import JsonField from '@/components/forms/fields/json-field.vue';
 
 import FilterGroup from './partial/filter-group.vue';
 
 /**
  * Component to create new MongoDB filter
- *
- * @prop {string} value - Initial value for filter
- *
- * @event input
  */
 export default {
   inject: ['$validator'],
   components: {
+    JsonField,
     FilterGroup,
   },
   mixins: [filterHintsMixin, formValidationHeaderMixin],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
-    value: {
-      type: [String, Object],
-      default: '',
+    form: {
+      type: Object,
+      required: true,
     },
     entitiesType: {
       type: String,
       default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
+      validator: value => [
+        ENTITIES_TYPES.alarm,
+        ENTITIES_TYPES.entity,
+        ENTITIES_TYPES.pbehavior,
+      ].includes(value),
     },
     required: {
       type: Boolean,
@@ -77,40 +74,14 @@ export default {
     },
   },
   data() {
-    const data = {
-      filter: cloneDeep(FILTER_DEFAULT_VALUES.group),
+    return {
       activeTab: 0,
-      parseError: '',
-      requestString: '',
-      isRequestStringChanged: false,
+      advancedJson: '{}',
     };
-
-    try {
-      if (this.value !== '') {
-        const parsedFilter = isString(this.value) ? JSON.parse(this.value) : this.value;
-
-        if (!isEmpty(parsedFilter)) {
-          data.filter = parseGroupToFilter(parsedFilter);
-        }
-      }
-    } catch (err) {
-      data.activeTab = 1;
-      data.requestString = isString(this.value) ? this.value : JSON.stringify(this.value);
-      data.isRequestStringChanged = true;
-      data.parseError = this.$t('filterEditor.errors.cantParseToVisualEditor');
-    }
-
-    return data;
   },
   computed: {
-    request() {
-      try {
-        return parseFilterToRequest(this.filter);
-      } catch (err) {
-        console.error(err);
-
-        return {};
-      }
+    advancedJsonWasChanged() {
+      return get(this.fields, ['advancedJson', 'changed']);
     },
 
     defaultAlarmHints() {
@@ -171,17 +142,20 @@ export default {
       return this.alarmFilterHintsOrDefault;
     },
   },
+
+  watch: {
+    advancedJsonWasChanged(value) {
+      if (value) {
+        this.resetFilterValidator();
+      }
+    },
+  },
   async created() {
     if (this.required && this.$validator) {
       this.$validator.attach({
         name: 'filter',
         rules: 'required:true',
-        getter: () => {
-          const isFilterNotEmpty = !checkIfGroupIsEmpty(this.filter);
-          const isRequestStringNotEmpty = this.isRequestStringChanged && this.requestString !== '';
-
-          return isFilterNotEmpty || isRequestStringNotEmpty;
-        },
+        getter: () => !checkIfGroupIsEmpty(this.form),
         context: () => this,
         vm: this,
       });
@@ -190,65 +164,48 @@ export default {
     await this.fetchFilterHints();
   },
   methods: {
-    updateFilter(value) {
-      const preparedFilter = parseFilterToRequest(value);
-
-      this.filter = value;
-      this.requestString = this.$options.filters.json(preparedFilter);
-
-      const newValue = isString(this.value) ? removeSpacesFromStringFilter(this.requestString) : preparedFilter;
-
-      this.$emit('input', newValue);
-
-      if (this.required && this.errors.has('filter')) {
-        this.$validator.validate('filter');
-      }
-    },
-
-    updateRequestString() {
-      this.errors.remove('requestString');
-
-      if (!this.isRequestStringChanged) {
-        this.isRequestStringChanged = true;
+    resetFilterValidator() {
+      if (this.errors.has('filter')) {
+        this.errors.remove('filter');
       }
     },
 
     openAdvancedTab() {
-      if (!this.isRequestStringChanged) {
-        this.requestString = this.$options.filters.json(this.request);
+      if (this.activeTab === 1) {
+        return;
+      }
+
+      try {
+        this.advancedJson = formToFilter(this.form);
+      } catch (err) {
+        console.warn(err);
+
+        this.$popups.error({ text: this.$t('errors.default') });
       }
     },
 
-    parseRequestStringToFilter() {
+    updateJson(advancedJson) {
       try {
-        this.parseError = '';
-        this.errors.remove('requestString');
+        this.$emit('input', filterToForm(advancedJson));
 
-        if (this.requestString !== '') {
-          this.updateFilter(parseGroupToFilter(this.parseRequestStringToObject()));
-        } else {
-          this.requestString = this.$options.filters.json(this.request);
-        }
-
-        this.isRequestStringChanged = false;
+        this.advancedJson = advancedJson;
       } catch (err) {
-        if (!this.errors.has('requestString')) {
-          this.parseError = this.$t('filterEditor.errors.cantParseToVisualEditor');
-        }
-      }
-    },
+        console.warn(err);
 
-    parseRequestStringToObject() {
-      try {
-        return JSON.parse(this.requestString);
-      } catch (err) {
-        this.errors.add({
-          field: 'requestString',
-          msg: this.$t('filterEditor.errors.invalidJSON'),
-          rule: 'json',
-        });
+        /**
+         * We need to use setTimeout instead of $nextTick here because we already used reset inside json-field
+         * and $nextTick will not work
+         */
+        setTimeout(() => {
+          this.$validator.flag('advancedJson', {
+            touched: true,
+          });
 
-        throw err;
+          this.errors.add({
+            field: 'advancedJson',
+            msg: this.$t('filterEditor.errors.cantParseToVisualEditor'),
+          });
+        }, 0);
       }
     },
   },
