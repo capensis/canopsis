@@ -6,7 +6,7 @@
         v-field="form.crecord_name",
         v-validate="'required'",
         :label="$t('modals.createUser.fields.username')",
-        :disabled="onlyUserPrefs",
+        :disabled="onlyUserPrefs || !isNew",
         :error-messages="errors.collect('username')",
         name="username",
         browser-autocomplete="new-password",
@@ -92,12 +92,9 @@
           v-icon content_copy
         span {{ $t('modals.variablesHelp.copyToClipboard') }}
     v-layout(row)
-      v-switch(
+      enabled-field(
         v-field="form.enable",
-        :label="$t('modals.createUser.fields.enabled')",
-        :disabled="onlyUserPrefs",
-        color="primary",
-        data-test="enabled"
+        :disabled="onlyUserPrefs"
       )
     v-layout
       view-selector(v-field="form.defaultview")
@@ -108,6 +105,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
+import EnabledField from '@/components/forms/fields/enabled-field.vue';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
 
@@ -116,6 +114,7 @@ const { mapActions } = createNamespacedHelpers('role');
 export default {
   inject: ['$validator'],
   components: {
+    EnabledField,
     ProgressOverlay,
     ViewSelector,
   },

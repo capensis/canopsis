@@ -923,7 +923,6 @@ export default {
         password: 'Mot de passe',
         role: 'Rôle',
         language: 'Langue de l\'interface par défaut',
-        enabled: 'Actif',
       },
     },
     editUser: {

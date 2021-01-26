@@ -65,7 +65,7 @@ export default {
       return [
         {
           text: this.$t('tables.admin.users.columns.username'),
-          value: 'id',
+          value: 'crecord_name',
         },
         {
           text: this.$t('tables.admin.users.columns.firstName'),

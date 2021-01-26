@@ -3,6 +3,7 @@
     v-field="value",
     :label="label || $t('common.enabled')",
     :color="color",
+    :disabled="disabled",
     :hide-details="hideDetails"
   )
 </template>
@@ -25,6 +26,10 @@ export default {
     color: {
       type: String,
       default: 'primary',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     hideDetails: {
       type: Boolean,
