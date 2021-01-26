@@ -4,13 +4,15 @@ import { CANOPSIS_STACK, ENTITIES_TYPES } from '@/constants';
 
 import uuid from '@/helpers/uuid';
 
+import { filterToForm, formToFilter } from './filter';
+
 /**
  * @typedef {Object} WatcherForm
  * @property {string} _id
  * @property {string} type
  * @property {string} name
  * @property {boolean} enabled
- * @property {string} mfilter
+ * @property {FilterForm} mfilter
  * @property {Object} infos
  * @property {Array} impact
  * @property {Array} depends
@@ -58,7 +60,7 @@ export function watcherToForm(watcher = {}) {
     /**
      * PYTHON stack fields
      */
-    mfilter: watcher.mfilter || '{}',
+    mfilter: filterToForm(JSON.parse(watcher.mfilter || '{}')),
     impact: watcher.impact ? [...watcher.impact] : [],
     depends: watcher.depends ? [...watcher.depends] : [],
 
@@ -88,5 +90,10 @@ export function formToWatcherByStack(form = {}, stack = CANOPSIS_STACK.go) {
     };
   }
 
-  return omit(form, ['entities', 'output_template']);
+
+  return {
+    ...omit(form, ['entities', 'output_template', 'mfilter']),
+
+    mfilter: JSON.stringify(formToFilter(form.mfilter)),
+  };
 }

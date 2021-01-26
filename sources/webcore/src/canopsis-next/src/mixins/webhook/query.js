@@ -1,16 +1,14 @@
-export default {
-  data() {
-    return {
-      query: {
-        search: '',
-      },
-    };
-  },
-  methods: {
-    getQuery() {
-      const query = {};
+import localQueryMixin from '@/mixins/query-local/query';
 
-      const { search } = this.query;
+export default {
+  mixins: [localQueryMixin],
+  methods: {
+    customQueryCondition(query, oldQuery) {
+      return query.search !== oldQuery.search;
+    },
+
+    getQuery({ search } = this.query) {
+      const query = {};
 
       if (search) {
         query.search = search;

@@ -1,6 +1,6 @@
 import { TIME_UNITS, AVAILABLE_SORTED_TIME_UNITS } from '@/constants';
 
-import { formToMaxByAvailableUnitsForm } from '@/helpers/duration';
+import { formToMaxByAvailableUnitsForm } from '@/helpers/date/duration';
 
 /**
  * Filter for getting max available interval value from unit

@@ -20,7 +20,6 @@ import { MODALS } from '@/constants';
 import { pbehaviorToForm, formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 
 import authMixin from '@/mixins/auth';
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
@@ -36,7 +35,6 @@ export default {
   components: { PbehaviorForm, ModalWrapper },
   mixins: [
     authMixin,
-    modalInnerMixin,
     submittableMixin(),
     confirmableModalMixin(),
   ],

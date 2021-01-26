@@ -8,24 +8,25 @@
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="isDisabled",
+          :disabled="isDisabled || advancedJsonWasChanged",
           :loading="submitting",
           type="submit"
         ) {{ $t('common.submit') }}
 </template>
 
 <script>
+import { get } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import { watcherToForm, formToWatcherByStack } from '@/helpers/forms/watcher';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import WatcherForm from '@/components/other/context/form/watcher-form.vue';
+import WatcherForm from '@/components/widgets/context/form/watcher-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -36,18 +37,22 @@ export default {
   },
   components: { WatcherForm, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     entitiesContextEntityMixin,
     entitiesInfoMixin,
     submittableMixin(),
     confirmableModalMixin(),
   ],
   data() {
-    const { item } = this.modal.config;
+    const { item = {} } = this.modal.config;
 
     return {
       form: watcherToForm(item),
     };
+  },
+  computed: {
+    advancedJsonWasChanged() {
+      return get(this.fields, ['advancedJson', 'changed']);
+    },
   },
   methods: {
     async submit() {
