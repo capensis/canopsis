@@ -17,6 +17,14 @@ Vous devez [réaliser une sauvegarde](../../guide-administration/administration-
 
 Fonctionnellement, vous ne devez plus dépendre d'un [ancien moteur Canopsis](../../guide-administration/moteurs/index.md#liste-des-anciens-moteurs-non-supportes) : la procédure qui suit les désactive obligatoirement, et plus aucun support n'est assuré pour les environnements v4 où ces moteurs seraient encore activés.
 
+!!! note
+    Ainsi, si vous utilisiez encore des règles d'event-filter Python, ces règles doivent au préalable avoir déjà toutes été migrées au format des event-filters Go, avant de migrer vers Canopsis v4.
+
+D'autres prérequis ont aussi été mis à jour. Vérifiez que vous respectez toujours :
+
+* les [prérequis d'utilisation de Docker Compose](../../guide-administration/installation/installation-conteneurs.md#prerequis)
+* les [prérequis de version de navigateur pris en charge](../../guide-utilisation/limitations/index.md#compatibilite-des-anciens-navigateurs)
+
 ### Note importante pour les utilisateurs de paquets Debian 9
 
 Concernant les formats d'installation, les prochaines versions de Canopsis se recentreront sur CentOS 7 et Docker Compose : les paquets Debian 9 ne seront donc bientôt plus fournis ou pris en charge.
@@ -95,7 +103,7 @@ Choisissez un onglet ci-dessous, en fonction de votre environnement (paquets Cen
     echo "deb [trusted=yes] https://repositories.canopsis.net/pulp/deb/debian9-canopsis4-cat/ stable main" > /etc/apt/sources.list.d/canopsis-cat.list
     ```
 
-## Coupure du service
+## Étape 3 : coupure du service
 
 Les changements architecturaux étant nombreux, une **coupure du service** doit être effectuée.
 
@@ -115,7 +123,7 @@ Les changements architecturaux étant nombreux, une **coupure du service** doit 
     docker-compose down
     ```
 
-## Mise à jour de la liste des moteurs
+## Étape 4 : mise à jour de la liste des moteurs
 
 === "Paquets"
 
@@ -162,4 +170,37 @@ Les changements architecturaux étant nombreux, une **coupure du service** doit 
     
     Si vous bénéficiez d'une souscription Canopsis CAT, rapprochez-vous de votre contact habituel pour obtenir plus d'information sur la mise à jour de ces fichiers.
     
-    Dans le fichier `.env`, assurez-vous de bien avoir `CANOPSIS_IMAGE_TAG=4.0.0`.
+    Dans le fichier `.env`, assurez-vous de bien avoir `CANOPSIS_IMAGE_TAG=4.0.0`, ainsi que les nouvelles variables `CPS_API_URL` et `CPS_OLD_API_URL`.
+
+## Étape 5 : mise à jour des fichiers de configuration principaux
+
+### `webserver.conf` vers `oldapi.conf`
+
+Dans Canopsis v3, la gestion des API historiques se faisait dans le fichier `webserver.conf`. En v4, ce fichier a été renommé en `oldapi.conf`.
+
+Si vous aviez apporté des modifications locales à ce fichier, vous devez le renommer en `oldapi.conf`, après l'avoir resynchronisé avec le fichier de référence suivant : <https://git.canopsis.net/canopsis/canopsis/-/blob/4.0.0/sources/canopsis/etc/oldapi.conf>.
+
+De la même façon, les fichiers de logs `webserver*.log` ont été renommés en `oldapi*.log`. Adaptez vos éventuels logrotates à cet effet.
+
+### `default_configuration.toml` vers `canopsis.toml`
+
+L'ancien fichier de configuration des moteurs de Canopsis, `default_configuration.toml` a été profondément revu et a été renommé en `canopsis.toml`. Ce nouveau fichier remplace aussi l'ancien fichier de configuration `initialisation.toml`, devenu obsolète.
+
+Vous devez, ici aussi, vous baser sur le nouveau fichier `canopsis.toml` installé par défaut, si vous modifiez certains de ces réglages par défaut.
+
+Les fichiers de référence (pour Core et CAT) sont aussi disponibles à cette adresse : <https://git.canopsis.net/canopsis/go-engines/-/tree/develop/cmd/canopsis-reconfigure>.
+
+Après toute modification du fichier `canopsis.toml`, vous devez relancer l'outil `canopsis-reconfigure` afin que ces changements soient pris en compte.
+
+=== "Paquets"
+
+    ```sh
+    set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
+    /opt/canopsis/bin/canopsis-reconfigure
+    ```
+
+=== "Docker Compose"
+
+    ```sh
+    docker-compose restart reconfigure
+    ```
