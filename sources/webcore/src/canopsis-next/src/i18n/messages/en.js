@@ -124,6 +124,7 @@ export default {
     interval: 'Interval',
     status: 'Status',
     unit: 'Unit',
+    delay: 'Delay',
     begin: 'Begin',
     timezone: 'Timezone',
     reason: 'Reason',
@@ -1394,6 +1395,17 @@ export default {
       title: 'Rate this instruction',
       text: 'How useful was this instruction?',
     },
+    createScenario: {
+      create: {
+        title: 'Create scenario',
+      },
+      edit: {
+        title: 'Modify scenario',
+      },
+      duplicate: {
+        title: 'Duplicate scenario',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -2054,6 +2066,12 @@ export default {
       with: 'WITH',
       without: 'WITHOUT',
       all: 'ALL',
+    },
+  },
+
+  scenarios: {
+    fields: {
+      triggers: 'Triggers',
     },
   },
 

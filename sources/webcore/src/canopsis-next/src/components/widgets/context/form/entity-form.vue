@@ -17,7 +17,7 @@
           name="description"
         )
       v-layout(row)
-        enabled-field(v-field="form.enabled")
+        c-enabled-field(v-field="form.enabled")
         v-select(
           v-field="form.type",
           v-validate="'required'",
@@ -44,7 +44,6 @@
 import formMixin from '@/mixins/form';
 
 import EntitiesSelect from '@/components/widgets/context/entities-select.vue';
-import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 /**
  * Form to create a new entity
@@ -66,7 +65,6 @@ import EnabledField from '@/components/forms/fields/enabled-field.vue';
 export default {
   inject: ['$validator'],
   components: {
-    EnabledField,
     EntitiesSelect,
   },
   mixins: [formMixin],

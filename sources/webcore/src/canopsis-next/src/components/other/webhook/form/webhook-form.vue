@@ -10,8 +10,8 @@
         v-icon(slot="activator") help_outline
         span {{ $t('modals.createWebhook.tooltips.id') }}
     retry-field(v-field="form.retry")
-    enabled-field(v-field="form.enabled")
-    disable-during-periods-field(v-field="form.disable_during_periods")
+    c-enabled-field(v-field="form.enabled")
+    c-disable-during-periods-field(v-field="form.disable_during_periods")
     webhook-tabs-form(v-field="form")
 </template>
 
@@ -19,16 +19,12 @@
 import formMixin from '@/mixins/form';
 
 import RetryField from '@/components/forms/fields/retry.vue';
-import EnabledField from '@/components/forms/fields/enabled-field.vue';
-import DisableDuringPeriodsField from '@/components/forms/fields/disable-during-periods.vue';
 
 import WebhookTabsForm from './tabs/webhook-tabs-form.vue';
 
 export default {
   components: {
     RetryField,
-    EnabledField,
-    DisableDuringPeriodsField,
     WebhookTabsForm,
   },
   mixins: [formMixin],

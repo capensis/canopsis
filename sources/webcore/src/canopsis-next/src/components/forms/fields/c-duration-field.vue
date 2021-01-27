@@ -3,23 +3,30 @@
     v-flex(xs8)
       v-text-field(
         v-field.number="duration.value",
-        v-validate="'required|numeric|min_value:1'",
+        v-validate="durationValidateRules",
         :label="label || $t('common.duration')",
         :error-messages="errors.collect(name)",
+        :disabled="disabled",
         :name="name",
+        :min="min",
         type="number"
       )
     v-flex(xs4)
       v-select(
         v-field="duration.unit",
-        v-validate="'required'",
+        v-validate="unitValidateRules",
         :items="availableUnits",
+        :disabled="disabled",
+        :label="unitsLabel",
         :error-messages="errors.collect(unitFieldName)",
-        :name="unitFieldName"
+        :name="unitFieldName",
+        :clearable="!required"
       )
 </template>
 
 <script>
+import { isNumber } from 'lodash';
+
 import { AVAILABLE_TIME_UNITS } from '@/constants';
 
 export default {
@@ -32,11 +39,15 @@ export default {
     duration: {
       type: Object,
       default: () => ({
-        value: 0,
+        value: 1,
         unit: AVAILABLE_TIME_UNITS.minute.value,
       }),
     },
     label: {
+      type: String,
+      default: null,
+    },
+    unitsLabel: {
       type: String,
       default: null,
     },
@@ -48,11 +59,24 @@ export default {
       type: String,
       default: 'duration',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    min: {
+      type: Number,
+      default: 1,
+    },
   },
   computed: {
     unitFieldName() {
       return `${this.name}Unit`;
     },
+
     availableUnits() {
       if (this.units) {
         return this.units;
@@ -62,6 +86,22 @@ export default {
         value,
         text: this.$tc(text, this.duration.value || 0),
       }));
+    },
+
+    isRequired() {
+      return this.required || isNumber(this.duration.value) || Boolean(this.duration.unit);
+    },
+
+    durationValidateRules() {
+      return {
+        required: this.isRequired,
+        numeric: true,
+        min_value: this.min,
+      };
+    },
+
+    unitValidateRules() {
+      return { required: this.isRequired };
     },
   },
 };

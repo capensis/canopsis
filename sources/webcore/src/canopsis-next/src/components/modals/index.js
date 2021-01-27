@@ -71,3 +71,4 @@ export { default as ImageViewer } from './common/image-viewer.vue';
 export { default as Patterns } from './pattern/patterns.vue';
 export { default as Rate } from './common/rate.vue';
 export { default as CreateRemediationInstructionsFilter } from './remediation/create-remediation-instructions-filter.vue';
+export { default as CreateScenario } from './scenarios/create-scenario.vue';

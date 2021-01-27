@@ -124,6 +124,7 @@ export default {
     interval: 'Période',
     status: 'Statut',
     unit: 'Unité',
+    delay: 'Intervalle',
     begin: 'Commencer',
     timezone: 'Fuseau horaire',
     reason: 'Raison',
@@ -1394,6 +1395,17 @@ export default {
       title: 'Évaluer cette consigne',
       text: 'Dans quelle mesure cette consigne a-t-elle été utile ?',
     },
+    createScenario: {
+      create: {
+        title: 'Créer un scénario',
+      },
+      edit: {
+        title: 'Modifier le scénario',
+      },
+      duplicate: {
+        title: 'Dupliquer scénario',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -2054,6 +2066,12 @@ export default {
       with: 'AVEC',
       without: 'SANS',
       all: 'TOUT',
+    },
+  },
+
+  scenarious: {
+    fields: {
+      triggers: 'Triggers',
     },
   },
 

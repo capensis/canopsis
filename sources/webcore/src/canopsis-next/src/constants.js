@@ -118,6 +118,7 @@ export const MODALS = {
   imageViewer: 'image-viewer',
   patterns: 'patterns',
   rate: 'rate',
+  createScenario: 'create-scenario',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -1734,4 +1735,26 @@ export const REQUEST_METHODS = {
   connect: 'CONNECT',
   options: 'OPTIONS',
   trace: 'TRACE',
+};
+
+export const SCENARIO_TRIGGERS = {
+  create: 'create',
+  stateinc: 'stateinc',
+  statedec: 'statedec',
+  statusinc: 'statusinc',
+  statusdec: 'statusdec',
+  changestate: 'changestate',
+  ack: 'ack',
+  ackremove: 'ackremove',
+  cancel: 'cancel',
+  uncancel: 'uncancel',
+  comment: 'comment',
+  done: 'done',
+  declareticket: 'declareticket',
+  declareticketwebhook: 'declareticketwebhook',
+  assocticket: 'assocticket',
+  snooze: 'snooze',
+  unsnooze: 'unsnooze',
+  resolve: 'resolve',
+  activate: 'activate',
 };

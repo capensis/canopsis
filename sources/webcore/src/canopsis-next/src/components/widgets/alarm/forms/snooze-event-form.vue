@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    duration-field(v-field="form.duration")
+    c-duration-field(v-field="form.duration", required)
     v-layout(row)
       v-textarea(
         v-field="form.output",
@@ -12,11 +12,8 @@
 </template>
 
 <script>
-import DurationField from '@/components/forms/fields/duration.vue';
-
 export default {
   inject: ['$validator'],
-  components: { DurationField },
   model: {
     prop: 'form',
     event: 'input',
