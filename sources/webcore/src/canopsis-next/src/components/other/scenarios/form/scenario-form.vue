@@ -18,17 +18,9 @@
     v-layout(row)
       c-enabled-field(v-field="form.enabled")
     v-layout(row)
-      v-select(
-        v-validate="'required'",
+      c-triggers-field(
         :value="form.triggers",
-        :items="availableTriggers",
-        :disabled="disabled",
-        :label="$t('scenarios.fields.triggers')",
-        :error-messages="errors.collect('triggers')",
-        name="triggers",
-        multiple,
-        chips,
-        @change="updateField('triggers', $event)"
+        @input="updateField('triggers', $event)"
       )
     v-layout(row)
       c-disable-during-periods-field(v-field="form.disable_during_periods")
@@ -42,8 +34,6 @@
 </template>
 
 <script>
-import { SCENARIO_TRIGGERS } from '@/constants';
-
 import formMixin from '@/mixins/form/object';
 
 export default {
@@ -61,11 +51,6 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
-    },
-  },
-  computed: {
-    availableTriggers() {
-      return Object.values(SCENARIO_TRIGGERS);
     },
   },
 };

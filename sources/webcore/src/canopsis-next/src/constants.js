@@ -1243,6 +1243,7 @@ export const SORT_ORDERS = {
   desc: 'DESC',
 };
 
+/** TODO: Should be removed */
 export const WEBHOOK_TRIGGERS = {
   create: 'create',
   stateinc: 'stateinc',
