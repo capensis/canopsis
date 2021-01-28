@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list.pa-0(:class="{ 'category-links-list': limit }", :dark="!limit", dense)
+  v-list.pa-0(:class="{ 'transparent': limit }", :dark="!limit", dense)
     category-links(
       v-for="category in categoriesLinks",
       :links="category.links",

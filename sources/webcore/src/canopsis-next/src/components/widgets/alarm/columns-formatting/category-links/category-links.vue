@@ -31,10 +31,6 @@ export default {
 .category {
   display: inline-block;
 
-  &-links-list {
-    background: transparent !important;
-  }
-
   &-list-tile /deep/ .v-list__tile {
     height: unset !important;
   }
