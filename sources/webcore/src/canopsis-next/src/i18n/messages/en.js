@@ -2070,5 +2070,9 @@ export default {
     },
   },
 
+  scenario: {
+    title: 'Scenarios',
+  },
+
   ...featureService.get('i18n.en'),
 };

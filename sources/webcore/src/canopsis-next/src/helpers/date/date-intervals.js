@@ -5,8 +5,8 @@ import { STATS_DURATION_UNITS, DATETIME_FORMATS, STATS_QUICK_RANGES } from '@/co
 /**
  * Convert a date interval string to moment date object
  *
- * @param {String} dateString
- * @param {String} type
+ * @param {string} dateString
+ * @param {string} type
  * @returns {Moment}
  */
 export function parseStringToDateInterval(dateString, type) {

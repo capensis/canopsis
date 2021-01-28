@@ -35,6 +35,7 @@ import counterModule from './counter';
 import playlistModule from './playlist';
 import metaAlarmRuleModule from './meta-alarm-rule';
 import engineRunInfoModule from './engine-run-info';
+import scenarioModule from './scenario';
 
 export default {
   alarm: alarmModule,
@@ -74,4 +75,5 @@ export default {
   remediationConfiguration: remediationConfigurationModule,
   remediationInstructionExecution: remediationInstructionExecutionModule,
   remediationJobExecution: remediationJobExecutionModule,
+  scenario: scenarioModule,
 };

@@ -11,10 +11,105 @@ import {
 import { addKeyInEntity, getIdFromEntity, removeKeyFromEntity } from '@/helpers/entities';
 
 /**
+ * @typedef {Object} PbehaviorType
+ * @property {string} _id
+ * @property {string} description
+ * @property {string} icon_name
+ * @property {string} name
+ * @property {number} priority
+ * @property {string} type
+ */
+
+/**
+ * @typedef {Object} PbehaviorReason
+ * @property {string} _id
+ * @property {boolean} deletable
+ * @property {string} description
+ * @property {string} name
+ */
+
+/**
+ * @typedef {Object} PbehaviorComment
+ * @property {string} _id
+ * @property {string} author
+ * @property {string} message
+ * @property {number} ts
+ */
+
+/**
+ * @typedef {PbehaviorComment} PbehaviorCommentForm
+ * @property {string} key
+ */
+
+/**
+ * @typedef {Object} PbehaviorCommentDuplicate
+ * @property {string} author
+ * @property {string} message
+ */
+
+/**
+ * @typedef {Object} PbehaviorExdate
+ * @property {number} begin
+ * @property {number} end
+ * @property {PbehaviorType} type
+ */
+
+
+/**
+ * @typedef {PbehaviorExdate} PbehaviorExdateForm
+ * @property {string} key
+ * @property {Date} begin
+ * @property {Date} end
+ */
+
+/**
+ * @typedef {Object} PbehaviorExdateRequest
+ * @property {string} type
+ */
+
+/**
+ * @typedef {Object} Pbehavior
+ * @property {string} _id
+ * @property {string} author
+ * @property {boolean} enabled
+ * @property {Object | string} filter
+ * @property {string} name
+ * @property {string} rrule
+ * @property {boolean} start_on_trigger
+ * @property {number} tstart
+ * @property {number} tstop
+ * @property {PbehaviorType} type
+ * @property {PbehaviorReason} reason
+ * @property {PbehaviorComment[]} comments
+ * @property {PbehaviorException[]} exceptions
+ * @property {PbehaviorExdate[]} exdates
+ */
+
+/**
+ * @typedef {Pbehavior} PbehaviorForm
+ * @property {PbehaviorCommentForm[]} comments
+ * @property {PbehaviorExceptionForm[]} exceptions
+ * @property {PbehaviorExdateForm[]} exdates
+ */
+
+/**
+ * @typedef {Pbehavior} PbehaviorDuplicate
+ * @property {PbehaviorCommentDuplicate[]} comments
+ */
+
+/**
+ * @typedef {Pbehavior} PbehaviorRequest
+ * @property {string} type
+ * @property {string} reason
+ * @property {string[]} exceptions
+ * @property {PbehaviorExdateRequest[]} exdates
+ */
+
+/**
  * Clear exdate entity and convert to request.
  *
- * @param {Array} exdates
- * @return {{end: number, type: string, begin: number }[]}
+ * @param {PbehaviorExdate[]} [exdates = []]
+ * @return {PbehaviorExdateRequest[]}
  */
 export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, end }) => ({
   type: getIdFromEntity(type),
@@ -25,9 +120,9 @@ export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, en
 /**
  * Convert exdate to form
  *
- * @param {Object} exdate
+ * @param {PbehaviorExdate} exdate
  * @param {string} [timezone = moment.tz.guess()]
- * @return {{end: Date, type: Object, begin: Date }[]}
+ * @return {PbehaviorExdateForm}
  */
 export const exdateToForm = (exdate, timezone = moment.tz.guess()) => ({
   ...exdate,
@@ -39,9 +134,9 @@ export const exdateToForm = (exdate, timezone = moment.tz.guess()) => ({
 /**
  * Convert exdate form to exdate
  *
- * @param {Object} formExdate
+ * @param {PbehaviorExdateForm} formExdate
  * @param {string} [timezone = moment.tz.guess()]
- * @return {{type: string, begin: number, end: number}}
+ * @return {PbehaviorExdate}
  */
 export const formToExdate = (formExdate, timezone = moment.tz.guess()) => ({
   type: formExdate.type,
@@ -52,7 +147,7 @@ export const formToExdate = (formExdate, timezone = moment.tz.guess()) => ({
 /**
  * Convert exceptions to exceptions id array.
  *
- * @param {Array} exceptions
+ * @param {PbehaviorException[]} exceptions
  * @return {string[]}
  */
 export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception => getIdFromEntity(exception));
@@ -60,10 +155,10 @@ export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception
 /**
  * Convert pbehavior entity to form data.
  *
- * @param {Object} [pbehavior = {}]
+ * @param {Pbehavior} [pbehavior = {}]
  * @param {string|Object} [filter = null]
  * @param {string} [timezone = moment.tz.guess()]
- * @return {Object}
+ * @return {PbehaviorForm}
  */
 export const pbehaviorToForm = (
   pbehavior = {},
@@ -96,8 +191,8 @@ export const pbehaviorToForm = (
 };
 
 /**
- * @param {Object} pbehavior
- * @returns {Object}
+ * @param {Pbehavior} pbehavior
+ * @returns {PbehaviorDuplicate}
  */
 export const pbehaviorToDuplicateForm = pbehavior => ({
   ...pbehavior,
@@ -107,9 +202,9 @@ export const pbehaviorToDuplicateForm = pbehavior => ({
 /**
  * Convert form to pbehavior entity.
  *
- * @param {Object} form
+ * @param {PbehaviorForm} form
  * @param {string} timezone
- * @return {Object}
+ * @return {Pbehavior}
  */
 export const formToPbehavior = (form, timezone = moment.tz.guess()) => ({
   ...form,
@@ -130,7 +225,7 @@ export const formToPbehavior = (form, timezone = moment.tz.guess()) => ({
  * @param {CalendarEvent} calendarEvent
  * @param {string|Object} filter
  * @param {string} [timezone = moment.tz.guess()]
- * @return {Object}
+ * @return {PbehaviorForm}
  */
 export const calendarEventToPbehaviorForm = (
   calendarEvent,
@@ -169,7 +264,7 @@ export const calendarEventToPbehaviorForm = (
 /**
  * Convert form to calendar event.
  *
- * @param {Object} form
+ * @param {PbehaviorForm} form
  * @param {CalendarEvent} calendarEvent
  * @param {string} timezone
  * @return {CalendarEvent}
@@ -197,8 +292,8 @@ export const formToCalendarEvent = (form, calendarEvent, timezone) => {
 /**
  * Convert pbehavior to request data.
  *
- * @param {Object} pbehavior
- * @return {Object}
+ * @param {Pbehavior} pbehavior
+ * @return {PbehaviorRequest}
  */
 export const pbehaviorToRequest = (pbehavior) => {
   const result = omit(pbehavior, ['type', 'reason', 'exdates']);

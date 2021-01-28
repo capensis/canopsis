@@ -41,6 +41,7 @@ export const ENTITIES_TYPES = {
   remediationJob: 'remediationJob',
   remediationConfiguration: 'remediationConfiguration',
   remediationInstructionExecution: 'remediationInstructionExecution',
+  scenario: 'scenario',
 };
 
 export const MODALS = {
@@ -824,6 +825,7 @@ export const USERS_RIGHTS = {
       heartbeat: `${USER_RIGHTS_PREFIXES.technical.exploitation}_heartbeat`,
       dynamicInfo: `${USER_RIGHTS_PREFIXES.technical.exploitation}_dynamicInfo`,
       metaAlarmRule: `${USER_RIGHTS_PREFIXES.technical.exploitation}_metaAlarmRule`,
+      scenario: `${USER_RIGHTS_PREFIXES.technical.exploitation}_scenario`,
     },
   },
   business: {
@@ -1738,24 +1740,14 @@ export const REQUEST_METHODS = {
   trace: 'TRACE',
 };
 
-export const SCENARIO_TRIGGERS = {
-  create: 'create',
-  stateinc: 'stateinc',
-  statedec: 'statedec',
-  statusinc: 'statusinc',
-  statusdec: 'statusdec',
-  changestate: 'changestate',
+export const SCENARIO_ACTION_TYPES = {
+  snooze: 'snooze',
+  pbehavior: 'pbehavior',
+  changeState: 'changestate',
   ack: 'ack',
   ackremove: 'ackremove',
-  cancel: 'cancel',
-  uncancel: 'uncancel',
-  comment: 'comment',
-  done: 'done',
-  declareticket: 'declareticket',
-  declareticketwebhook: 'declareticketwebhook',
   assocticket: 'assocticket',
-  snooze: 'snooze',
-  unsnooze: 'unsnooze',
-  resolve: 'resolve',
-  activate: 'activate',
+  declareticket: 'declareticket',
+  cancel: 'cancel',
+  webhook: 'webhook',
 };

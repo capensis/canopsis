@@ -14,7 +14,7 @@ export const prepareViewToExport = view => ({
 /**
  * Convert Group to export group entity.
  * @param {Array} views
- * @param {String} name
+ * @param {string} name
  * @param {Array} exportedViewIds
  * @return {Object}
  */

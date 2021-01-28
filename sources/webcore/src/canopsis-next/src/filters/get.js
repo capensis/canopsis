@@ -7,7 +7,7 @@ import { get, isUndefined } from 'lodash';
  * @param {Function} [filter] - Filter to apply on the property
  * @param {any} [defaultValue] - Default value for the property
  *
- * @returns {String}
+ * @returns {string}
  */
 export default function (object, property, filter, defaultValue) {
   let value = get(object, property);

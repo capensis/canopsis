@@ -33,8 +33,8 @@ import { pbehaviorToForm } from './forms/planning-pbehavior';
 
 /**
  * @typedef {Object} Interval
- * @property {Number} interval
- * @property {String} unit
+ * @property {number} interval
+ * @property {string} unit
  */
 
 /**
@@ -692,9 +692,8 @@ export const removeKeyFromEntity = (entities = []) => entities.map(entity => omi
  * Get id from entity
  *
  * @param {Object} entity
- * @param {String} entity._id
- * @param {String} idField
- * @return {String}
+ * @param {string} idField
+ * @return {string}
  */
 export const getIdFromEntity = (entity, idField = '_id') =>
   (isObject(entity) ? entity[idField] : entity);
