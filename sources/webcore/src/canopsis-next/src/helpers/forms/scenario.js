@@ -1,7 +1,7 @@
 import moment from 'moment-timezone';
 import { isUndefined, cloneDeep, omit, isNumber } from 'lodash';
 
-import { SCENARIO_ACTION_TYPES } from '@/constants';
+import { ENTITIES_STATES, SCENARIO_ACTION_TYPES } from '@/constants';
 
 import uid from '../uid';
 import { durationToForm, formToDuration } from '../date/duration';
@@ -102,15 +102,19 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 
 /**
- * @typedef {ScenarioAction} ScenarioActionForm
- * @property {
+ * @typedef {
  *   PbehaviorForm |
  *   ScenarioActionDefaultParameters |
  *   ScenarioActionSnoozeFormParameters |
  *   ScenarioActionChangeStateParameters |
  *   ScenarioActionWebhookFormParameters |
  *   ScenarioActionAssocTicketParameters
- * } parameters
+ * } ScenarioActionParameters
+ */
+
+/**
+ * @typedef {ScenarioAction} ScenarioActionForm
+ * @property {Object.<ScenarioActionType, ScenarioActionParameters>} parameters
  */
 
 /**
@@ -120,42 +124,134 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 
 /**
+ * Convert scenario action parameters to form
+ *
+ * @param {ScenarioActionDefaultParameters} [parameters]
+ * @returns {ScenarioActionDefaultParameters}
+ */
+const scenarioDefaultActionParametersToForm = (parameters = {}) => ({
+  output: parameters.output || '',
+  author: parameters.author || '',
+});
+
+/**
+ * Convert scenario action webhook parameters to form
+ *
+ * @param {ScenarioActionWebhookParameters} [parameters]
+ * @returns {ScenarioActionWebhookFormParameters}
+ */
+const scenarioWebhookActionParametersToForm = (parameters = {}) => ({
+  declare_ticket: cloneDeep(parameters.declare_ticket || {}),
+  retry_count: parameters.retry_count || '',
+  retry_delay: durationToForm(parameters.retry_delay),
+  request: parameters.request || {
+    method: '',
+    url: '',
+    auth: {
+      username: '',
+      password: '',
+    },
+    headers: {},
+    payload: '',
+  },
+});
+
+/**
+ * Convert scenario action snooze parameters to form
+ *
+ * @param {ScenarioActionSnoozeParameters} [parameters]
+ * @returns {ScenarioActionSnoozeFormParameters}
+ */
+const scenarioSnoozeActionParametersToForm = (parameters = {}) => ({
+  ...scenarioDefaultActionParametersToForm(parameters),
+  duration: durationToForm(parameters.duration),
+});
+
+/**
+ * Convert scenario action snooze parameters to form
+ *
+ * @param {ScenarioActionChangeStateParameters} [parameters={}]
+ * @returns {ScenarioActionChangeStateParameters}
+ */
+const scenarioChangeStateActionParametersToForm = (parameters = {}) => ({
+  ...scenarioDefaultActionParametersToForm(parameters),
+  state: parameters.state || ENTITIES_STATES.minor,
+});
+
+/**
+ * Convert scenario action assoc ticket parameters to form
+ *
+ * @param {ScenarioActionAssocTicketParameters} [parameters={}]
+ * @returns {ScenarioActionAssocTicketParameters}
+ */
+const scenarioAssocTicketActionParametersToForm = (parameters = {}) => ({
+  ...scenarioDefaultActionParametersToForm(parameters),
+  ticket: parameters.ticket || '',
+});
+
+/**
+ * Convert scenario action pbehavior parameters to form
+ *
+ * @param {Pbehavior} [parameters={}]
+ * @param {string} [timezone=moment.tz.guess()]
+ * @returns {PbehaviorForm}
+ */
+const scenarioPbehaviorActionParametersToForm = (parameters = {}, timezone = moment.tz.guess()) =>
+  pbehaviorToForm(parameters, null, timezone);
+
+/**
+ *
+ * @returns {Object.<ScenarioActionType, ScenarioActionParameters>}
+ */
+const prepareDefaultScenarioActionParameters = () => ({
+  [SCENARIO_ACTION_TYPES.snooze]: scenarioSnoozeActionParametersToForm(),
+  [SCENARIO_ACTION_TYPES.pbehavior]: scenarioPbehaviorActionParametersToForm(),
+  [SCENARIO_ACTION_TYPES.changeState]: scenarioChangeStateActionParametersToForm(),
+  [SCENARIO_ACTION_TYPES.ack]: scenarioDefaultActionParametersToForm(),
+  [SCENARIO_ACTION_TYPES.ackremove]: scenarioDefaultActionParametersToForm(),
+  [SCENARIO_ACTION_TYPES.assocticket]: scenarioAssocTicketActionParametersToForm(),
+  [SCENARIO_ACTION_TYPES.declareticket]: scenarioDefaultActionParametersToForm(),
+  [SCENARIO_ACTION_TYPES.cancel]: scenarioDefaultActionParametersToForm(),
+  [SCENARIO_ACTION_TYPES.webhook]: scenarioWebhookActionParametersToForm(),
+});
+
+/**
  * Convert scenario action to form
  *
  * @param {ScenarioAction} [scenarioAction = {}]
  * @param {string} [timezone = moment.tz.guess()]
  * @returns {ScenarioActionForm}
  */
-export function scenarioActionToForm(scenarioAction = {}, timezone = moment.tz.guess()) {
+export const scenarioActionToForm = (scenarioAction = {}, timezone = moment.tz.guess()) => {
+  const type = scenarioAction.type || SCENARIO_ACTION_TYPES.snooze;
+  const parameters = prepareDefaultScenarioActionParameters();
+
   const parametersPreparers = {
-    [SCENARIO_ACTION_TYPES.snooze]: (parameters = {}) =>
-      ({ ...parameters, duration: durationToForm(parameters.duration) }),
-
-    [SCENARIO_ACTION_TYPES.webhook]: (parameters = {}) =>
-      ({
-        request: cloneDeep(parameters.request || {}),
-        declare_ticket: cloneDeep(parameters.declare_ticket || {}),
-        retry_count: parameters.retry_count || '',
-        retry_delay: durationToForm(parameters.retry_delay),
-      }),
-
-    [SCENARIO_ACTION_TYPES.pbehavior]: (parameters = {}) =>
-      pbehaviorToForm(parameters, null, timezone),
+    [SCENARIO_ACTION_TYPES.snooze]: scenarioSnoozeActionParametersToForm,
+    [SCENARIO_ACTION_TYPES.webhook]: scenarioWebhookActionParametersToForm,
+    [SCENARIO_ACTION_TYPES.pbehavior]: scenarioPbehaviorActionParametersToForm,
   };
+
+  const prepareParametersToFormFunction = parametersPreparers[type];
+
+  if (scenarioAction.parameters) {
+    parameters[type] = prepareParametersToFormFunction
+      ? prepareParametersToFormFunction(scenarioAction.parameters, timezone)
+      : { ...scenarioAction.parameters };
+  }
 
   return {
+    type,
+    parameters,
     key: uid(),
-    type: scenarioAction.type,
-    drop_scenario_if_not_matched: scenarioAction.drop_scenario_if_not_matched,
-    emit_trigger: scenarioAction.emit_trigger,
+    drop_scenario_if_not_matched: !isUndefined(scenarioAction.drop_scenario_if_not_matched)
+      ? scenarioAction.drop_scenario_if_not_matched
+      : true,
+    emit_trigger: !isUndefined(scenarioAction.emit_trigger) ? scenarioAction.emit_trigger : true,
     alarm_patterns: scenarioAction.alarm_patterns ? cloneDeep(scenarioAction.alarm_patterns) : [],
     entity_patterns: scenarioAction.entity_patterns ? cloneDeep(scenarioAction.entity_patterns) : [],
-
-    parameters: parametersPreparers[scenarioAction.type]
-      ? parametersPreparers[scenarioAction.type](scenarioAction.parameters)
-      : { ...scenarioAction.parameters },
   };
-}
+};
 
 /**
  * Convert scenario to form
@@ -164,20 +260,20 @@ export function scenarioActionToForm(scenarioAction = {}, timezone = moment.tz.g
  * @param {string} [timezone = moment.tz.guess()]
  * @returns {ScenarioForm}
  */
-export function scenarioToForm(scenario = {}, timezone = moment.tz.guess()) {
-  return {
-    name: scenario.name || '',
-    author: scenario.author || '',
-    priority: scenario.priority || 1,
-    enabled: isUndefined(scenario.enabled) ? true : scenario.enabled,
-    delay: scenario.delay
-      ? durationToForm(scenario.delay)
-      : { value: undefined, unit: undefined },
-    triggers: scenario.triggers ? [...scenario.triggers] : [],
-    disable_during_periods: scenario.disable_during_periods ? [...scenario.disable_during_periods] : [],
-    actions: scenario.actions ? scenario.actions.map(action => scenarioActionToForm(action, timezone)) : [],
-  };
-}
+export const scenarioToForm = (scenario = {}, timezone = moment.tz.guess()) => ({
+  name: scenario.name || '',
+  author: scenario.author || '',
+  priority: scenario.priority || 1,
+  enabled: !isUndefined(scenario.enabled) ? scenario.enabled : true,
+  delay: scenario.delay
+    ? durationToForm(scenario.delay)
+    : { value: undefined, unit: undefined },
+  triggers: scenario.triggers ? [...scenario.triggers] : [],
+  disable_during_periods: scenario.disable_during_periods ? [...scenario.disable_during_periods] : [],
+  actions: scenario.actions
+    ? scenario.actions.map(action => scenarioActionToForm(action, timezone))
+    : [scenarioActionToForm(undefined, timezone)],
+});
 
 /**
  * Convert form to scenario action
@@ -186,7 +282,9 @@ export function scenarioToForm(scenario = {}, timezone = moment.tz.guess()) {
  * @param {string} [timezone = moment.tz.guess()]
  * @returns {ScenarioAction}
  */
-export function formToScenarioAction(form, timezone = moment.tz.guess()) {
+export const formToScenarioAction = (form, timezone = moment.tz.guess()) => {
+  const parametersByCurrentType = form.parameters[form.type];
+
   const parametersPreparers = {
     [SCENARIO_ACTION_TYPES.snooze]: (parameters = {}) =>
       ({ ...parameters, duration: formToDuration(parameters.duration) }),
@@ -206,14 +304,16 @@ export function formToScenarioAction(form, timezone = moment.tz.guess()) {
     },
   };
 
+  const prepareParametersToAction = parametersPreparers[form.type];
+
   return {
     ...omit(form, ['key']),
 
-    parameters: parametersPreparers[form.type]
-      ? parametersPreparers[form.type](form.parameters)
-      : { ...form.parameters },
+    parameters: prepareParametersToAction
+      ? prepareParametersToAction(parametersByCurrentType)
+      : { ...parametersByCurrentType },
   };
-}
+};
 
 /**
  * Convert form to scenario
@@ -222,13 +322,11 @@ export function formToScenarioAction(form, timezone = moment.tz.guess()) {
  * @param {string} [timezone = moment.tz.guess()]
  * @returns {Scenario}
  */
-export function formToScenario(form, timezone = moment.tz.guess()) {
-  return {
-    ...omit(form, ['delay', 'actions']),
+export const formToScenario = (form, timezone = moment.tz.guess()) => ({
+  ...omit(form, ['delay', 'actions']),
 
-    delay: form.delay && isNumber(form.delay.value)
-      ? formToDuration(form.delay)
-      : undefined,
-    actions: form.actions.map(action => formToScenarioAction(action, timezone)),
-  };
-}
+  delay: form.delay && isNumber(form.delay.value)
+    ? formToDuration(form.delay)
+    : undefined,
+  actions: form.actions.map(action => formToScenarioAction(action, timezone)),
+});

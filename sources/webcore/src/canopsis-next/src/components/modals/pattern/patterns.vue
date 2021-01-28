@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        patterns-form(
+        c-patterns-field(
           v-model="form",
           :alarm="config.alarm",
           :entity="config.entity",
@@ -33,8 +33,6 @@ import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 import validationErrorsMixin from '@/mixins/form/validation-errors';
 
-import PatternsForm from '@/components/forms/patterns.vue';
-
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
@@ -42,7 +40,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { ModalWrapper, PatternsForm },
+  components: { ModalWrapper },
   mixins: [
     submittableMixin(),
     validationErrorsMixin(),

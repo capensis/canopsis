@@ -12,6 +12,7 @@ import {
   PBEHAVIOR_RRULE_PERIODS_RANGES,
   ENGINES_NAMES,
   WIDGET_TYPES,
+  SCENARIO_ACTION_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2078,6 +2079,25 @@ export default {
 
   scenario: {
     title: 'Scenarios',
+    actions: {
+      [SCENARIO_ACTION_TYPES.snooze]: 'Snooze',
+      [SCENARIO_ACTION_TYPES.pbehavior]: 'Pbehavior',
+      [SCENARIO_ACTION_TYPES.changeState]: 'Change state (Change and lock severity)',
+      [SCENARIO_ACTION_TYPES.ack]: 'Acknowledge',
+      [SCENARIO_ACTION_TYPES.ackremove]: 'Acknowledge remove',
+      [SCENARIO_ACTION_TYPES.assocticket]: 'Associate ticket',
+      [SCENARIO_ACTION_TYPES.declareticket]: 'Declare ticket',
+      [SCENARIO_ACTION_TYPES.cancel]: 'Cancel',
+      [SCENARIO_ACTION_TYPES.webhook]: 'Webhook',
+    },
+    fields: {
+      triggers: 'Triggers',
+      emitTrigger: 'Emit trigger',
+    },
+    tabs: {
+      general: 'General',
+      pattern: 'Pattern',
+    },
   },
 
   ...featureService.get('i18n.en'),

@@ -3,6 +3,7 @@
     v-field="value",
     :label="$t('webhook.disableDuringPeriods')",
     :items="duringItems",
+    :disabled="disabled",
     multiple
   )
 </template>
@@ -19,6 +20,10 @@ export default {
     value: {
       type: Array,
       required: false,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

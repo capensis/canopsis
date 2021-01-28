@@ -63,6 +63,8 @@ import CEnabledField from '@/components/forms/fields/c-enabled-field.vue';
 import CDurationField from '@/components/forms/fields/c-duration-field.vue';
 import CDisableDuringPeriodsField from '@/components/forms/fields/c-disable-during-periods-field.vue';
 import CTriggersField from '@/components/forms/fields/c-triggers-field.vue';
+import CActionTypeField from '@/components/forms/fields/c-action-type-field.vue';
+import CPatternsField from '@/components/forms/fields/c-patterns-field.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
 import BullhornIcon from '@/components/icons/bullhorn.vue';
@@ -182,6 +184,8 @@ Vue.component('c-enabled-field', CEnabledField);
 Vue.component('c-duration-field', CDurationField);
 Vue.component('c-disable-during-periods-field', CDisableDuringPeriodsField);
 Vue.component('c-triggers-field', CTriggersField);
+Vue.component('c-action-type-field', CActionTypeField);
+Vue.component('c-patterns-field', CPatternsField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
