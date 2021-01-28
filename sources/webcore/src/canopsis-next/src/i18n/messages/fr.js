@@ -2069,7 +2069,7 @@ export default {
     },
   },
 
-  scenarious: {
+  scenarios: {
     fields: {
       triggers: 'Triggers',
     },
