@@ -1,16 +1,17 @@
 <template lang="pug">
   tr
     td.pa-0
-      v-tooltip(:disabled="!isFailedJob", right)
+      v-layout(row, align-center)
+        v-tooltip(v-if="isFailedJob || isCompletedJob", :disabled="!isFailedJob", right)
+          v-icon.mr-1(slot="activator", :color="isFailedJob ? 'error' : 'success'") {{ statusIcon }}
+          span {{ job.fail_reason }}
         v-btn.primary(
           :disabled="isRunningJob || isFailedJob",
-          slot="activator",
           round,
           small,
           block,
           @click="$emit('execute-job', job)"
         ) {{ job.name }}
-        span {{ job.fail_reason }}
     td.text-xs-center
       span(v-if="!isCancelledJob") {{ job.started_at | date('long', true, '-') }}
       span(v-else) -
@@ -71,6 +72,10 @@ export default {
         && !this.isCompletedJob
         && this.isStartedJob
         && this.isLaunchedJob;
+    },
+
+    statusIcon() {
+      return this.isFailedJob ? 'cancel' : 'check';
     },
   },
 };
