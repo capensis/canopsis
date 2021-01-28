@@ -232,7 +232,7 @@ Vous devez utiliser cette nouvelle configuration, et n'y apporter des changement
     mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.oldv3
     cp /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/cors.j2 /etc/nginx/cors.inc
     cp /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/resolvers.j2 /etc/nginx/resolvers.inc
-    sed -e 's,{{ CPS_API_URL }},http://127.0.0.1:8082,g' /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/ > /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+    sed -e 's,{{ CPS_API_URL }},http://127.0.0.1:8082,g' /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/default.j2 > /etc/nginx/conf.d/default.conf
     ```
 
     Puis, vérifiez si certaines de vos modifications locales de `/etc/nginx/conf.d/default.conf.oldv3` doivent être reprises dans le nouveau fichier `/etc/nginx/conf.d/default.conf`.
