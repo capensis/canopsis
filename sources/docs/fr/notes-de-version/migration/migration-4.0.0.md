@@ -29,7 +29,7 @@ D'autres prérequis ont aussi été mis à jour. Vérifiez que vous respectez to
 
 Concernant les formats d'installation, les prochaines versions de Canopsis se recentreront sur CentOS 7 et Docker Compose : les paquets Debian 9 ne seront donc bientôt plus fournis ou pris en charge.
 
-Des paquets Debian 9 sont encore disponibles pour Canopsis 4.0.0, mais ceux-ci sont **dépréciés** et seront totalement supprimés dans une future mise à jour de Canopsis 4.1 ou 4.2. Si vous utilisez les paquets Debian 9, vous devez préparer une migration vers une des [méthodes d'installation prises en charge](../../guide-administration/installation/index.md#methodes-dinstallation-de-canopsis), à savoir CentOS 7 ou Docker Compose.
+Des paquets Debian 9 sont encore disponibles pour Canopsis 4.0.0, mais ceux-ci sont **dépréciés** et seront totalement supprimés dans une future mise à jour de Canopsis 4.1 ou 4.2. Si vous utilisez les paquets Debian 9, vous devez préparer une migration vers une des [méthodes d'installation prise en charge](../../guide-administration/installation/index.md#methodes-dinstallation-de-canopsis), à savoir CentOS 7 ou Docker Compose.
 
 Ce Guide de migration ne prend pas en charge la migration d'un environnement Debian 9 vers une autre méthode d'installation.
 
