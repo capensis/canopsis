@@ -152,6 +152,7 @@ export default {
     addFilter: 'Ajouter un filtre',
     id: 'Id',
     reset: 'Réinitialiser',
+    triggers: 'Triggers',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -2066,12 +2067,6 @@ export default {
       with: 'AVEC',
       without: 'SANS',
       all: 'TOUT',
-    },
-  },
-
-  scenarios: {
-    fields: {
-      triggers: 'Triggers',
     },
   },
 

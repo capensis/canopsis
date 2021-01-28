@@ -4,7 +4,7 @@
     v-field="value",
     :items="availableTriggers",
     :disabled="disabled",
-    :label="label || $t('scenarios.fields.triggers')",
+    :label="label || $t('common.triggers')",
     :error-messages="errors.collect('triggers')",
     name="triggers",
     multiple,

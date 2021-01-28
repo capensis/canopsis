@@ -152,6 +152,7 @@ export default {
     addFilter: 'Add filter',
     id: 'Id',
     reset: 'Reset',
+    triggers: 'Triggers',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -2066,12 +2067,6 @@ export default {
       with: 'WITH',
       without: 'WITHOUT',
       all: 'ALL',
-    },
-  },
-
-  scenarios: {
-    fields: {
-      triggers: 'Triggers',
     },
   },
 
