@@ -28,7 +28,7 @@
       v-text-field(
         v-field.number="form.priority",
         :label="$t('common.priority')",
-        :min="0",
+        :min="1",
         type="number"
       )
 </template>

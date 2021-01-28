@@ -5,15 +5,15 @@
     :items="availableTriggers",
     :disabled="disabled",
     :label="label || $t('common.triggers')",
-    :error-messages="errors.collect('triggers')",
-    name="triggers",
+    :error-messages="errors.collect(name)",
+    :name="name",
     multiple,
     chips
   )
 </template>
 
 <script>
-import { SCENARIO_TRIGGERS } from '@/constants';
+import { SCENARIO_ACTION_TYPES } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -30,6 +30,10 @@ export default {
       type: String,
       default: '',
     },
+    name: {
+      type: String,
+      default: 'triggers',
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -37,7 +41,7 @@ export default {
   },
   computed: {
     availableTriggers() {
-      return Object.values(SCENARIO_TRIGGERS);
+      return Object.values(SCENARIO_ACTION_TYPES);
     },
   },
 };

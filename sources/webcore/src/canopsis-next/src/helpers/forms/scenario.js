@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { isUndefined, cloneDeep, omit, isNumber } from 'lodash';
 
 import { SCENARIO_ACTION_TYPES } from '@/constants';
@@ -168,7 +168,7 @@ export function scenarioToForm(scenario = {}, timezone = moment.tz.guess()) {
   return {
     name: scenario.name || '',
     author: scenario.author || '',
-    priority: scenario.priority || 0,
+    priority: scenario.priority || 1,
     enabled: isUndefined(scenario.enabled) ? true : scenario.enabled,
     delay: scenario.delay
       ? durationToForm(scenario.delay)
