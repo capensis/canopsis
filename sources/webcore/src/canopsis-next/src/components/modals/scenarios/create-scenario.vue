@@ -30,6 +30,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createScenario,
+  inject: ['$system'],
   $_veeValidate: {
     validator: 'new',
   },
@@ -45,7 +46,7 @@ export default {
   ],
   data() {
     return {
-      form: scenarioToForm(this.modal.config.scenario),
+      form: scenarioToForm(this.modal.config.scenario, this.$system.timezone),
     };
   },
   computed: {
@@ -60,7 +61,7 @@ export default {
       if (isFormValid) {
         try {
           if (this.config.action) {
-            const scenario = formToScenario(this.form);
+            const scenario = formToScenario(this.form, this.$system.timezone);
             scenario.author = this.currentUser._id;
 
             await this.config.action(scenario);
