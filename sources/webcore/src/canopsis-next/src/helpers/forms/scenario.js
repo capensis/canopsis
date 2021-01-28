@@ -3,7 +3,7 @@ import { isUndefined, cloneDeep, omit } from 'lodash';
 
 import { SCENARIO_ACTION_TYPES } from '@/constants';
 
-import uid from '../uuid';
+import uid from '../uid';
 import { durationToForm, formToDuration } from '../date/duration';
 import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning-pbehavior';
 
