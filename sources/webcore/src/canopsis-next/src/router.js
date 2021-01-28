@@ -28,7 +28,8 @@ import ExploitationActions from '@/views/exploitation/actions.vue';
 import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
 import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
 import Playlist from '@/views/playlist.vue';
-import ExploitationMetaAlarmRule from '@/views/exploitation/meta-alarm-rule.vue';
+import ExploitationMetaAlarmRules from '@/views/exploitation/meta-alarm-rules.vue';
+import ExploitationScenarios from '@/views/exploitation/scenarios.vue';
 
 Vue.use(Router);
 
@@ -268,11 +269,22 @@ const routes = [
   {
     path: '/exploitation/meta-alarm-rule',
     name: 'exploitation-meta-alarm-rules',
-    component: ExploitationMetaAlarmRule,
+    component: ExploitationMetaAlarmRules,
     meta: {
       requiresLogin: true,
       requiresRight: {
         id: USERS_RIGHTS.technical.exploitation.metaAlarmRule,
+      },
+    },
+  },
+  {
+    path: '/exploitation/scenarios',
+    name: 'exploitation-scenarios',
+    component: ExploitationScenarios,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.scenario,
       },
     },
   },

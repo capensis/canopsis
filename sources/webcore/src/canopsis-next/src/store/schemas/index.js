@@ -113,6 +113,8 @@ export const remediationJobSchema = new schema.Entity(ENTITIES_TYPES.remediation
 
 export const remediationConfigurationSchema = new schema.Entity(ENTITIES_TYPES.remediationConfiguration, {}, { idAttribute: '_id' });
 
+export const scenarioSchema = new schema.Entity(ENTITIES_TYPES.scenario, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -141,4 +143,5 @@ export default {
   [ENTITIES_TYPES.remediationInstruction]: remediationInstructionSchema,
   [ENTITIES_TYPES.remediationJob]: remediationJobSchema,
   [ENTITIES_TYPES.remediationConfiguration]: remediationConfigurationSchema,
+  [ENTITIES_TYPES.scenario]: scenarioSchema,
 };

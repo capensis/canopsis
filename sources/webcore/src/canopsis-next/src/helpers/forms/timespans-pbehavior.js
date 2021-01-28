@@ -4,9 +4,9 @@ import { exceptionsToRequest, exdatesToRequest } from '@/helpers/forms/planning-
  * Convert pbehavior to timespan
  *
  * @param {Object} pbehavior
- * @param {Number} from
- * @param {Number} to
- * @param {Boolean} byDate
+ * @param {number} from
+ * @param {number} to
+ * @param {boolean} byDate
  * @return {Object}}
  */
 export const pbehaviorToTimespanRequest = ({

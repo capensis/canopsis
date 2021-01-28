@@ -41,6 +41,7 @@ export const ENTITIES_TYPES = {
   remediationJob: 'remediationJob',
   remediationConfiguration: 'remediationConfiguration',
   remediationInstructionExecution: 'remediationInstructionExecution',
+  scenario: 'scenario',
 };
 
 export const MODALS = {
@@ -823,6 +824,7 @@ export const USERS_RIGHTS = {
       heartbeat: `${USER_RIGHTS_PREFIXES.technical.exploitation}_heartbeat`,
       dynamicInfo: `${USER_RIGHTS_PREFIXES.technical.exploitation}_dynamicInfo`,
       metaAlarmRule: `${USER_RIGHTS_PREFIXES.technical.exploitation}_metaAlarmRule`,
+      scenario: `${USER_RIGHTS_PREFIXES.technical.exploitation}_scenario`,
     },
   },
   business: {
@@ -1282,6 +1284,7 @@ export const ACTION_TYPES = {
   assocticket: 'assocticket',
   declareticket: 'declareticket',
   cancel: 'cancel',
+  webhook: 'webhook',
 };
 
 export const ACTION_AUTHOR = 'engine-action';
@@ -1734,4 +1737,16 @@ export const REQUEST_METHODS = {
   connect: 'CONNECT',
   options: 'OPTIONS',
   trace: 'TRACE',
+};
+
+export const SCENARIO_ACTION_TYPES = {
+  snooze: 'snooze',
+  pbehavior: 'pbehavior',
+  changeState: 'changestate',
+  ack: 'ack',
+  ackremove: 'ackremove',
+  assocticket: 'assocticket',
+  declareticket: 'declareticket',
+  cancel: 'cancel',
+  webhook: 'webhook',
 };
