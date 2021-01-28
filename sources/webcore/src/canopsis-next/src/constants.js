@@ -1284,7 +1284,6 @@ export const ACTION_TYPES = {
   assocticket: 'assocticket',
   declareticket: 'declareticket',
   cancel: 'cancel',
-  webhook: 'webhook',
 };
 
 export const ACTION_AUTHOR = 'engine-action';

@@ -143,7 +143,7 @@ export default {
         },
         {
           route: { name: 'exploitation-scenarios' },
-          text: this.$t('scenarios.title'),
+          text: this.$t('scenario.title'),
           icon: 'linear_scale',
           right: USERS_RIGHTS.technical.exploitation.scenario,
         },

@@ -12,7 +12,6 @@ export default {
   methods: {
     ...mapActions({
       fetchScenariosList: 'fetchList',
-      refreshScenariosList: 'fetchListWithPreviousParams',
       createScenario: 'create',
       updateScenario: 'update',
       removeScenario: 'remove',
