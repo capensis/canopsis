@@ -1,7 +1,7 @@
 <template lang="pug">
   v-select(
     v-field="value",
-    :label="$t('webhook.disableDuringPeriods')",
+    :label="$t('common.disableDuringPeriods')",
     :items="duringItems",
     multiple
   )

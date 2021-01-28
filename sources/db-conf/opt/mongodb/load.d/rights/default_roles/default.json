@@ -28,9 +28,6 @@
         "models_exploitation_pbehavior": {
             "checksum": 15
         },
-        "models_exploitation_webhook": {
-            "checksum": 15
-        },
         "models_exploitation_snmpRule": {
             "checksum": 15
         },
@@ -44,6 +41,9 @@
             "checksum": 15
         },
         "models_exploitation_metaAlarmRule": {
+          "checksum": 15
+        },
+        "models_exploitation_scenario": {
           "checksum": 15
         },
         "tabs_showeditionmenu" : {

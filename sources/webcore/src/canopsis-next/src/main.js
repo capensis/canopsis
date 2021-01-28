@@ -64,7 +64,6 @@ import CDurationField from '@/components/forms/fields/c-duration-field.vue';
 import CDisableDuringPeriodsField from '@/components/forms/fields/c-disable-during-periods-field.vue';
 import CTriggersField from '@/components/forms/fields/c-triggers-field.vue';
 
-import WebhookIcon from '@/components/icons/webhook.vue';
 import BullhornIcon from '@/components/icons/bullhorn.vue';
 import AltRouteIcon from '@/components/icons/alt_route.vue';
 import SettingsSyncIcon from '@/components/icons/settings_sync.vue';
@@ -84,9 +83,6 @@ Vue.use(Vuetify, {
     secondary: config.COLORS.secondary,
   },
   icons: {
-    webhook: {
-      component: WebhookIcon,
-    },
     bullhorn: {
       component: BullhornIcon,
     },

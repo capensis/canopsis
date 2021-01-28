@@ -107,7 +107,6 @@ export default {
     search: 'Recherche',
     filters: 'Filtres',
     filter: 'Filtre',
-    webhooks: 'Webhooks',
     emptyObject: 'Objet vide',
     startDate: 'Date de début',
     endDate: 'Date de fin',
@@ -153,6 +152,10 @@ export default {
     id: 'Id',
     reset: 'Réinitialiser',
     triggers: 'Triggers',
+    disableDuringPeriods: 'Désactiver pendant les règles',
+    retryDelay: 'Intervalle',
+    retryUnit: 'Unit',
+    retryCount: 'Nombre d\'essais après échec',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1021,31 +1024,6 @@ export default {
         title: 'Titre',
       },
     },
-    createWebhook: {
-      create: {
-        title: 'Créer un webhook',
-        success: 'Webhook créé avec succès !',
-      },
-      edit: {
-        title: 'Éditer un webhook',
-        success: 'Webhook édité avec succès !',
-      },
-      duplicate: {
-        title: 'Dupliquer un webhook',
-      },
-      remove: {
-        success: 'Webhook supprimé avec succès !',
-      },
-      fields: {
-        id: 'ID',
-        retryDelay: 'Intervalle',
-        retryUnit: 'Unit',
-        retryCount: 'Nombre d\'essais après échec',
-      },
-      tooltips: {
-        id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
-      },
-    },
     statsDateInterval: {
       title: 'Stats - Intervalle de dates',
       fields: {
@@ -1760,55 +1738,6 @@ export default {
   patternsList: {
     noData: 'Aucun pattern. Cliquez sur \'Ajouter\' pour ajouter des champs au pattern',
     noDataDisabled: 'Aucun pattern.',
-  },
-  webhook: {
-    title: 'Webhooks',
-    disableDuringPeriods: 'Désactiver pendant les règles',
-    table: {
-      headers: {
-        id: 'ID',
-        requestMethod: 'Requête: Méthode',
-        requestUrl: 'Requête: URL',
-        retryDelay: 'Intervalle',
-        retryCount: 'Nombre d\'essais',
-        enabled: 'Activé',
-      },
-    },
-    tabs: {
-      hook: {
-        title: 'Hook',
-        fields: {
-          triggers: 'Triggers',
-          eventPatterns: 'Patterns des événements',
-          alarmPatterns: 'Patterns des alarmes',
-          entityPatterns: 'Pattern des entités',
-        },
-      },
-      request: {
-        title: 'Requête',
-        fields: {
-          method: 'Méthode',
-          url: 'URL',
-          authSwitch: 'Authentification ?',
-          auth: 'Auth',
-          username: 'Identifiant utilisateur',
-          password: 'Mot de passe',
-          headers: 'Headers',
-          headerKey: 'Clé',
-          headerValue: 'Valeur',
-        },
-        emptyHeaders: 'Aucun en-tête ajouté pour le moment',
-      },
-      declareTicket: {
-        emptyResponse: 'Réponse vide',
-        title: 'Déclarer un ticket',
-        fields: {
-          text: 'Clé',
-          value: 'Valeur',
-        },
-        emptyDeclareTicket: 'Billet de déclaration vide',
-      },
-    },
   },
   validation: {
     custom: {

@@ -4,7 +4,7 @@
       v-text-field(
         v-field.number="value.count",
         v-validate="fieldValidateRules",
-        :label="$t('modals.createWebhook.fields.retryCount')",
+        :label="$t('common.retryCount')",
         :error-messages="errors.collect('retryCount')",
         :min="0",
         name="retryCount",
@@ -14,7 +14,7 @@
       v-text-field(
         v-field.number="value.delay",
         v-validate="fieldValidateRules",
-        :label="$t('modals.createWebhook.fields.retryDelay')",
+        :label="$t('common.retryDelay')",
         :error-messages="errors.collect('retryDelay')",
         :min="0",
         name="retryDelay",
@@ -25,7 +25,7 @@
         v-field="value.unit",
         v-validate="unitValidateRules",
         :items="availableUnits",
-        :label="$t('modals.createWebhook.fields.retryUnit')",
+        :label="$t('common.retryUnit')",
         :error-messages="errors.collect('retryUnit')",
         name="retryUnit",
         clearable
