@@ -21,7 +21,7 @@
       :label="$t('modals.eventFilterRule.priority')",
       type="number"
     )
-    enabled-field(v-field="form.enabled")
+    c-enabled-field(v-field="form.enabled")
     patterns-list(v-field="form.patterns")
 </template>
 
@@ -30,12 +30,11 @@ import { EVENT_FILTER_RULE_TYPES } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
-import EnabledField from '@/components/forms/fields/enabled-field.vue';
 import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 
 export default {
   inject: ['$validator'],
-  components: { EnabledField, PatternsList },
+  components: { PatternsList },
   mixins: [formMixin],
   model: {
     prop: 'form',

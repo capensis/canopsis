@@ -1,5 +1,5 @@
-import moment from 'moment';
-import { isUndefined, cloneDeep, omit } from 'lodash';
+import moment from 'moment-timezone';
+import { isUndefined, cloneDeep, omit, isNumber } from 'lodash';
 
 import { SCENARIO_ACTION_TYPES } from '@/constants';
 
@@ -168,9 +168,11 @@ export function scenarioToForm(scenario = {}, timezone = moment.tz.guess()) {
   return {
     name: scenario.name || '',
     author: scenario.author || '',
-    priority: scenario.priority || 0,
+    priority: scenario.priority || 1,
     enabled: isUndefined(scenario.enabled) ? true : scenario.enabled,
-    delay: durationToForm(scenario.delay),
+    delay: scenario.delay
+      ? durationToForm(scenario.delay)
+      : { value: undefined, unit: undefined },
     triggers: scenario.triggers ? [...scenario.triggers] : [],
     disable_during_periods: scenario.disable_during_periods ? [...scenario.disable_during_periods] : [],
     actions: scenario.actions ? scenario.actions.map(action => scenarioActionToForm(action, timezone)) : [],
@@ -224,7 +226,9 @@ export function formToScenario(form, timezone = moment.tz.guess()) {
   return {
     ...omit(form, ['delay', 'actions']),
 
-    delay: formToDuration(form.delay),
+    delay: form.delay && isNumber(form.delay.value)
+      ? formToDuration(form.delay)
+      : undefined,
     actions: form.actions.map(action => formToScenarioAction(action, timezone)),
   };
 }

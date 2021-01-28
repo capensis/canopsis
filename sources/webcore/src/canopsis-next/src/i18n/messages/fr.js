@@ -124,6 +124,7 @@ export default {
     interval: 'Période',
     status: 'Statut',
     unit: 'Unité',
+    delay: 'Intervalle',
     begin: 'Commencer',
     timezone: 'Fuseau horaire',
     reason: 'Raison',
@@ -151,6 +152,7 @@ export default {
     addFilter: 'Ajouter un filtre',
     id: 'Id',
     reset: 'Réinitialiser',
+    triggers: 'Triggers',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1393,6 +1395,23 @@ export default {
     rateInstruction: {
       title: 'Évaluer cette consigne',
       text: 'Dans quelle mesure cette consigne a-t-elle été utile ?',
+    },
+    createScenario: {
+      create: {
+        title: 'Créer un scénario',
+        success: 'Scénario créé!',
+      },
+      edit: {
+        title: 'Modifier le scénario',
+        success: 'Scénario modifié!',
+      },
+      duplicate: {
+        title: 'Dupliquer scénario',
+        success: 'Scénario dupliqué!',
+      },
+      remove: {
+        success: 'Scénario supprimé!',
+      },
     },
   },
   tables: {

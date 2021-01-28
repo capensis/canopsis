@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout(row)
-      enabled-field(v-field="form.enabled")
+      c-enabled-field(v-field="form.enabled")
     v-layout(row)
       v-text-field(
         v-field="form.name",
@@ -23,11 +23,10 @@
 </template>
 
 <script>
-import EnabledField from '@/components/forms/fields/enabled-field.vue';
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
 
 export default {
-  components: { RemediationInstructionStepsForm, EnabledField },
+  components: { RemediationInstructionStepsForm },
   inject: ['$validator'],
   model: {
     prop: 'form',

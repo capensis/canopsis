@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     v-layout(row)
-      enabled-field(v-field="form.enabled")
+      c-enabled-field(v-field="form.enabled")
     v-layout(row)
       v-text-field(
         v-field="form.name",
@@ -30,14 +30,12 @@
 </template>
 
 <script>
-import EnabledField from '@/components/forms/fields/enabled-field.vue';
 import JsonField from '@/components/forms/fields/json-field.vue';
 
 import RemediationJobConfigurationField from './fields/remediation-job-configuration-field.vue';
 
 export default {
   components: {
-    EnabledField,
     JsonField,
     RemediationJobConfigurationField,
   },

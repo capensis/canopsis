@@ -119,6 +119,7 @@ export const MODALS = {
   imageViewer: 'image-viewer',
   patterns: 'patterns',
   rate: 'rate',
+  createScenario: 'create-scenario',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -1244,6 +1245,7 @@ export const SORT_ORDERS = {
   desc: 'DESC',
 };
 
+/** TODO: Should be removed */
 export const WEBHOOK_TRIGGERS = {
   create: 'create',
   stateinc: 'stateinc',

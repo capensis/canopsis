@@ -10,7 +10,7 @@
           name="name"
         )
       v-flex(v-if="!noEnabled", xs12)
-        enabled-field(v-field="form.enabled", hide-details)
+        c-enabled-field(v-field="form.enabled", hide-details)
       v-flex.mt-3(xs12)
         v-layout(v-if="withStartOnTrigger", wrap)
           v-switch.mt-0.mb-1(
@@ -21,7 +21,7 @@
             @change="changeStartOnTrigger"
           )
         v-layout(v-if="form.start_on_trigger", row)
-          duration-field(v-field="form.duration")
+          c-duration-field(v-field="form.duration", required)
         template(v-else)
           v-layout(row)
             date-time-splitted-range-picker-field(
@@ -69,16 +69,12 @@ import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 
-import EnabledField from '@/components/forms/fields/enabled-field.vue';
-import DurationField from '@/components/forms/fields/duration.vue';
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
 import PbehaviorReasonsField from '@/components/other/pbehavior/reasons/partials/pbehavior-reasons-field.vue';
 
 export default {
   components: {
-    EnabledField,
-    DurationField,
     DateTimeSplittedRangePickerField,
     PbehaviorReasonsField,
     PbehaviorTypeField,

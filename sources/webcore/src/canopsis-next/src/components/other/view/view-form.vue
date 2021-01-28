@@ -24,7 +24,7 @@
           name="description",
           data-test="viewFieldDescription"
         )
-        enabled-field(v-field="form.enabled", data-test="viewFieldEnabled")
+        c-enabled-field(v-field="form.enabled", data-test="viewFieldEnabled")
         periodic-refresh-field(v-model="form.periodicRefresh", :label="$t('modals.view.fields.periodicRefresh')")
     v-layout(wrap, justify-center)
       v-flex(xs11)
@@ -58,10 +58,9 @@
 
 <script>
 import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
-import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 export default {
-  components: { EnabledField, PeriodicRefreshField },
+  components: { PeriodicRefreshField },
   inject: ['$validator'],
   model: {
     prop: 'form',

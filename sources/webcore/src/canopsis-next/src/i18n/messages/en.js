@@ -124,6 +124,7 @@ export default {
     interval: 'Interval',
     status: 'Status',
     unit: 'Unit',
+    delay: 'Delay',
     begin: 'Begin',
     timezone: 'Timezone',
     reason: 'Reason',
@@ -151,6 +152,7 @@ export default {
     addFilter: 'Add filter',
     id: 'Id',
     reset: 'Reset',
+    triggers: 'Triggers',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1393,6 +1395,23 @@ export default {
     rateInstruction: {
       title: 'Rate this instruction',
       text: 'How useful was this instruction?',
+    },
+    createScenario: {
+      create: {
+        title: 'Create scenario',
+        success: 'Scenario created!',
+      },
+      edit: {
+        title: 'Modify scenario',
+        success: 'Scenario modified!',
+      },
+      duplicate: {
+        title: 'Duplicate scenario',
+        success: 'Scenario duplicated!',
+      },
+      remove: {
+        success: 'Scenario deleted!',
+      },
     },
   },
   tables: {
