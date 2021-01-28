@@ -24,6 +24,6 @@ Elle nécessite de suivre la [procédure standard de mise à jour](index.md) et 
 
 La mise à jour d'un Canopsis 3.26.0 vers 3.26.1 constitue une mise à jour *mineure*.
 
-Ces mises à jour comportent uniquement des correctifs. Il n'y a aucun ajout de fonctionnalités ou de changement fonctionnel.
+Ces mises à jour comportent uniquement des correctifs. Il n'y a aucun ajout de fonctionnalités ou changement fonctionnel.
 
 Elle nécessite de suivre la [procédure standard de mise à jour](index.md) et de réaliser toute manipulation supplémentaire décrite dans les [notes de version](../../index.md#notes-de-version) correspondantes.
