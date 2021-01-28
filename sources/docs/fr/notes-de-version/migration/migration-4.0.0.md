@@ -18,12 +18,12 @@ Vous devez [réaliser une sauvegarde](../../guide-administration/administration-
 Fonctionnellement, vous ne devez plus dépendre d'un [ancien moteur Canopsis](../../guide-administration/moteurs/index.md#liste-des-anciens-moteurs-non-supportes) : la procédure qui suit les désactive obligatoirement, et plus aucun support n'est assuré pour les environnements v4 où ces moteurs seraient encore activés.
 
 !!! note
-    Ainsi, si vous utilisiez encore des règles d'event-filter Python, ces règles doivent au préalable avoir déjà toutes été migrées au format des event-filters Go, avant de migrer vers Canopsis v4.
+    Ainsi, à titre d'exemple, si vous utilisiez encore des règles d'event-filter Python, ces règles doivent au préalable avoir déjà toutes été migrées au format des event-filters Go, avant de migrer vers Canopsis v4.
 
 D'autres prérequis ont aussi été mis à jour. Vérifiez que vous respectez toujours :
 
-* les [prérequis d'utilisation de Docker Compose](../../guide-administration/installation/installation-conteneurs.md#prerequis)
-* les [prérequis de version de navigateur pris en charge](../../guide-utilisation/limitations/index.md#compatibilite-des-anciens-navigateurs)
+* les [prérequis d'utilisation de Docker Compose](../../guide-administration/installation/installation-conteneurs.md#prerequis) ;
+* les [prérequis de version de navigateur pris en charge](../../guide-utilisation/limitations/index.md#compatibilite-des-anciens-navigateurs).
 
 ### Note importante pour les utilisateurs de paquets Debian 9
 
@@ -123,7 +123,27 @@ Les changements architecturaux étant nombreux, une **coupure du service** doit 
     docker-compose down
     ```
 
-## Étape 4 : mise à jour de la liste des moteurs
+### Étape 4 : application de la procédure de mise à jour
+
+=== "CentOS 7"
+    Appliquez la mise à jour des paquets Canopsis :
+
+    ```sh
+    yum --disablerepo="*" --enablerepo="canopsis*" update
+    ```
+
+=== "Docker Compose"
+    Passer directement à l'étape suivante.
+
+=== "Debian 9 (déprécié)"
+    Appliquez l'ensemble de vos mises à jour (ciblez uniquement les paquets `canopsis*` si nécessaire) :
+
+    ```sh
+    apt update
+    apt upgrade
+    ```
+
+## Étape 5 : mise à jour de la liste des moteurs
 
 === "Paquets"
 
@@ -141,11 +161,15 @@ Les changements architecturaux étant nombreux, une **coupure du service** doit 
     
     grep -q ^CPS_API_URL= /opt/canopsis/etc/go-engines-vars.conf || echo "CPS_API_URL=http://localhost:8082" >> /opt/canopsis/etc/go-engines-vars.conf
     grep -q ^CPS_OLD_API_URL= /opt/canopsis/etc/go-engines-vars.conf || echo "CPS_OLD_API_URL=http://localhost:8081" >> /opt/canopsis/etc/go-engines-vars.conf
+    
+    cp /opt/canopsis/etc/amqp2engines-core.conf.example /opt/canopsis/etc/amqp2engines.conf
     ```
 
-    Et, si et seulement si vous utilisez CAT :
+    Puis, si et seulement si vous utilisez CAT :
 
     ```sh
+    cp /opt/canopsis/etc/amqp2engines-cat.conf.example /opt/canopsis/etc/amqp2engines.conf
+    
     systemctl enable canopsis-engine-go@engine-correlation
     systemctl enable canopsis-service@external-job-executor
     
@@ -170,9 +194,11 @@ Les changements architecturaux étant nombreux, une **coupure du service** doit 
     
     Si vous bénéficiez d'une souscription Canopsis CAT, rapprochez-vous de votre contact habituel pour obtenir plus d'information sur la mise à jour de ces fichiers.
     
-    Dans le fichier `.env`, assurez-vous de bien avoir `CANOPSIS_IMAGE_TAG=4.0.0`, ainsi que les nouvelles variables `CPS_API_URL` et `CPS_OLD_API_URL`.
+    Dans le fichier `.env`, assurez-vous de bien avoir `CANOPSIS_IMAGE_TAG=4.0.0`, ainsi que les nouvelles variables `CPS_API_URL` et `CPS_OLD_API_URL`. La variable `CPS_WEBSERVER=1` doit aussi être renommée en `CPS_OLD_API=1` là où elle était déjà utilisée.
 
-## Étape 5 : mise à jour des fichiers de configuration principaux
+    **Note :** si vous utilisiez le conteneur `canopsis/uiv3`, celui-ci n'est plus disponible et doit être remplacé par l'image `canopsis/nginx`. Faites aussi attention à la chaîne `provisionning` (deux *n*) qui a été corrigée en `provisioning` (un seul *n*) dans ce fichier.
+
+## Étape 6 : mise à jour des fichiers de configuration principaux
 
 ### `webserver.conf` vers `oldapi.conf`
 
@@ -192,15 +218,88 @@ Les fichiers de référence (pour Core et CAT) sont aussi disponibles à cette a
 
 Après toute modification du fichier `canopsis.toml`, vous devez relancer l'outil `canopsis-reconfigure` afin que ces changements soient pris en compte.
 
+### Configuration de Nginx
+
+La configuration de Nginx a été revue en v4. La refonte qui a été opérée est indispensable au bon fonctionnement de Canopsis.
+
+Vous devez utiliser cette nouvelle configuration, et n'y apporter des changements que s'ils sont strictement nécessaires.
+
 === "Paquets"
+
+    Exécutez les commandes suivantes pour installer les nouveaux fichiers de référence :
+
+    ```sh
+    mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.oldv3
+    cp /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/cors.j2 /etc/nginx/cors.inc
+    cp /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/resolvers.j2 /etc/nginx/resolvers.inc
+    sed -e 's,{{ CPS_API_URL }},http://127.0.0.1:8082,g' /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/ > /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+    ```
+
+    Puis, vérifiez si certaines de vos modifications locales de `/etc/nginx/conf.d/default.conf.oldv3` doivent être reprises dans le nouveau fichier `/etc/nginx/conf.d/default.conf`.
+
+=== "Docker Compose"
+
+    Si vous surchargiez la configuration de Nginx, veuillez repartir des fichiers de configuration par défaut de la v4, et appliquer toute modification qui serait encore nécessaire.
+
+## Étape 7 : vérification de l'URL d'appel aux API Canopsis
+
+Cette étape n'est à suivre que si vous utilisez des scripts tiers appelant les API Canopsis.
+
+Si c'est le cas, vérifiez que ces scripts interrogent bien les API Canopsis au travers d'une URL de ce type :
+
+```
+http://localhost:8082/api/...
+```
+
+et non pas une URL de ce type :
+
+```
+http://localhost/api/
+```
+
+En effet, l'API Canopsis doit toujours être interrogée sur son port `8082`. Canopsis v3 tolérait les appels à l'API au travers de Nginx (port `80` par défaut), mais **cette utilisation n'est plus prise en charge avec Canopsis v4**. Vous pouvez aussi avoir besoin d'ajuster vos flux réseau en conséquence.
+
+## Étape 8 : Fin de la mise à jour
+
+=== "Paquets"
+
+    Si vous utilisez Canopsis Core, exécutez la commande suivante :
+
+     ```sh
+    su - canopsis -c "canopsinit --canopsis-edition core"
+    ```
+
+    Si vous utilisez Canopsis CAT, exécutez :
+
+    ```sh
+    su - canopsis -c "canopsinit --canopsis-edition cat"
+    ```
+
+    Puis, dans tous les cas, exécutez :
 
     ```sh
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
     /opt/canopsis/bin/canopsis-reconfigure
+    
+    systemctl daemon-reload
+    canoctl restart
+    systemctl restart nginx
     ```
 
 === "Docker Compose"
 
+    Relancez l'ensemble de l'environnement Docker Compose :
+
     ```sh
-    docker-compose restart reconfigure
+    docker-compose up -d
     ```
+
+## Connexion à l'interface web de Canopsis
+
+Une fois votre environnement à jour, vous pouvez à nouveau vous connecter à l'interface web de Canopsis en vous rendant sur <http://localhost> (par défaut) avec l'utilisateur `root` de Canopsis. Ce nouvel accès simplifié remplace les anciennes adresses de type `http://localhost/en/static/canopsis-next/dist/index.html#`.
+
+Il est aussi recommandé, en parallèle, de [vous rendre sur l'interface web RabbitMQ](../../guide-de-depannage/rabbitmq-webui.md) afin de vérifier que l'ensemble des moteurs dépilent bien l'ensemble de leurs évènements en attente.
+
+## Mise à jour des configurations de type CAS, LDAP ou SAML2
+
+Si votre installation utilise une connexion de type CAS, LDAP ou SAML2, vous devez consulter la [documentation des méthodes d'authentification avancées](../../guide-administration/administration-avancee/methodes-authentification-avancees.md) afin de vous assurer que cette configuration est bien à jour pour une utilisation avec Canopsis v4.
