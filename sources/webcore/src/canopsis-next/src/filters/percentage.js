@@ -1,9 +1,9 @@
 /**
  *
- * @param {Number} value - Numeric value to format
- * @param {Number} precision - Number of floating digit to keep
+ * @param {number} value - Numeric value to format
+ * @param {number} precision - Number of floating digit to keep
  *
- * @returns {String}
+ * @returns {string}
  */
 export default function (value, precision = 3) {
   const tmp = 10 ** precision;

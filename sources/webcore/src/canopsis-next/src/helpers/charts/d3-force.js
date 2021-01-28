@@ -10,7 +10,7 @@ const DEFAULT_FORCE_Y_STRENGTH = 3;
  *
  * @param {Object} nodeByName
  * @param {Object} node
- * @param {Number} length
+ * @param {number} length
  * @returns {number}
  */
 const calculateNodeDepth = (node, nodeByName, length = 1) => {

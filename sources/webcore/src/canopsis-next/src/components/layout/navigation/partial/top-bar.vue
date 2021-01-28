@@ -141,6 +141,12 @@ export default {
           icon: 'list',
           right: USERS_RIGHTS.technical.exploitation.metaAlarmRule,
         },
+        {
+          route: { name: 'exploitation-scenarios' },
+          text: this.$t('scenario.title'),
+          icon: 'linear_scale',
+          right: USERS_RIGHTS.technical.exploitation.scenario,
+        },
       ];
 
       return links.filter(({ right }) =>

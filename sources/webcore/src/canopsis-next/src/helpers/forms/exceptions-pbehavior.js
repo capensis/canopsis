@@ -4,6 +4,21 @@ import { convertTimestampToMomentByTimezone, convertDateToTimestampByTimezone } 
 import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/entities';
 
 /**
+ * @typedef {Object} PbehaviorException
+ * @property {string} _id
+ * @property {number} created
+ * @property {boolean} deletable
+ * @property {string} description
+ * @property {string} name
+ * @property {PbehaviorExdate[]} exdates
+ */
+
+/**
+ * @typedef {PbehaviorException} PbehaviorExceptionForm
+ * @property {string} key
+ */
+
+/**
  * Convert pbehavior exception data to date exception form
  *
  * @param {Object} [exception = {}]

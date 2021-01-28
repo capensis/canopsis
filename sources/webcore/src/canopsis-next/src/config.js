@@ -143,6 +143,7 @@ export const API_ROUTES = {
     login: '/cas/login',
     loggedin: '/cas/loggedin',
   },
+  scenarios: '/api/v4/scenarios',
 };
 
 export const COLORS = {

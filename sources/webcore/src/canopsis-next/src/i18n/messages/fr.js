@@ -2057,5 +2057,9 @@ export default {
     },
   },
 
+  scenario: {
+    title: 'Scénarios',
+  },
+
   ...featureService.get('i18n.fr'),
 };
