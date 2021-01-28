@@ -1399,12 +1399,18 @@ export default {
     createScenario: {
       create: {
         title: 'Créer un scénario',
+        success: 'Scénario créé!',
       },
       edit: {
         title: 'Modifier le scénario',
+        success: 'Scénario modifié!',
       },
       duplicate: {
         title: 'Dupliquer scénario',
+        success: 'Scénario dupliqué!',
+      },
+      remove: {
+        success: 'Scénario supprimé!',
       },
     },
   },
