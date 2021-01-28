@@ -1,63 +1,21 @@
 <template lang="pug">
-  div
-    category-links-list(v-if="asList", :categories="filteredCategories", :limit="limit")
-    v-menu(v-else, :disabled="isDisabled", @click.native.stop)
-      v-btn(slot="activator", :disabled="isDisabled", depressed, small) {{ $t('common.links') }}
-      v-list(dark, dense)
-        category-links-list(:categories="filteredCategories")
+  v-list.links-list.transparent.pa-0(dense)
+    category-links(:links="links", :label="label")
 </template>
 
 <script>
-import { BUSINESS_USER_RIGHTS_ACTIONS_MAP, WIDGETS_ACTIONS_TYPES } from '@/constants';
-
-import { harmonizeCategories } from '@/helpers/links';
-
-import authMixin from '@/mixins/auth';
-
-import CategoryLinksList from './category-links/category-links-list.vue';
+import CategoryLinks from './category-links/category-links.vue';
 
 export default {
-  components: { CategoryLinksList },
-  mixins: [authMixin],
+  components: { CategoryLinks },
   props: {
     links: {
-      type: Object,
-      default: () => ({}),
-    },
-    asList: {
-      type: Boolean,
-      default: false,
-    },
-    limit: {
-      type: Number,
+      type: Array,
       required: false,
     },
-  },
-  computed: {
-    filteredCategories() {
-      return harmonizeCategories(this.links, this.checkAccessForSpecialCategory);
-    },
-
-    /**
-     * If there are no links, in every category
-     */
-    isDisabled() {
-      return Object.values(this.links).every(element => !element.length);
-    },
-
-    /**
-     * Check if user has access to all links/categories
-     */
-    hasAccessToLinks() {
-      return this.checkAccess(BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList[WIDGETS_ACTIONS_TYPES.alarmsList.links]);
-    },
-  },
-  methods: {
-    checkAccessForSpecialCategory(category) {
-      const rightPrefix = BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList[WIDGETS_ACTIONS_TYPES.alarmsList.links];
-      const right = `${rightPrefix}_${category}`;
-
-      return this.hasAccessToLinks || this.checkAccess(right);
+    label: {
+      type: String,
+      required: false,
     },
   },
 };

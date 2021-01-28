@@ -30,8 +30,9 @@ import { ALARM_ENTITY_FIELDS } from '@/constants';
 
 import AlarmColumnCellPopupBody from './alarm-column-cell-popup-body.vue';
 import AlarmColumnValueState from './alarm-column-value-state.vue';
-import AlarmColumnValueLinks from './alarm-column-value-links.vue';
+import AlarmColumnValueCategories from './alarm-column-value-categories.vue';
 import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue';
+import AlarmColumnValueLinks from './alarm-column-value-links.vue';
 
 /**
  * Component to format alarms list columns
@@ -46,8 +47,9 @@ export default {
   components: {
     AlarmColumnCellPopupBody,
     AlarmColumnValueState,
-    AlarmColumnValueLinks,
+    AlarmColumnValueCategories,
     AlarmColumnValueExtraDetails,
+    AlarmColumnValueLinks,
   },
   props: {
     alarm: {
@@ -132,7 +134,7 @@ export default {
         },
         links: {
           bind: {
-            is: 'alarm-column-value-links',
+            is: 'alarm-column-value-categories',
             asList: get(this.widget.parameters, 'linksCategoriesAsList.enabled', false),
             limit: get(this.widget.parameters, 'linksCategoriesAsList.limit'),
             links: this.alarm.links,
@@ -151,10 +153,7 @@ export default {
       }
 
       if (this.column.value.startsWith('links.')) {
-        const category = this.column.value.slice(6);
-        const links = {
-          [category]: this.$options.filters.get(this.alarm, this.column.value, null, []),
-        };
+        const links = get(this.alarm, this.column.value, []);
 
         return {
           bind: {

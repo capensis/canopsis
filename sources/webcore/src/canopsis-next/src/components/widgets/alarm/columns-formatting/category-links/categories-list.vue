@@ -1,26 +1,22 @@
 <template lang="pug">
   v-list.pa-0(:class="{ 'category-links-list': limit }", :dark="!limit", dense)
-    v-list-tile-content(
+    category-links(
       v-for="category in categoriesLinks",
+      :links="category.links",
+      :label="category.label",
       :key="category.label"
     )
-      v-list-tile-title.px-2.font-weight-bold.category {{ category.label }}
-      v-list-tile.category-list-tile.py-1(
-        v-for="(link, index) in category.links",
-        :key="index"
-      )
-        category-link(:link="link")
     v-menu(v-if="dropDownShown", full-width)
       v-btn.ma-0(slot="activator", small, block, flat) ...
-      category-links-list(:categories="dropDownCategories")
+      categories-list(:categories="dropDownCategories")
 </template>
 
 <script>
-import CategoryLink from './category-link.vue';
+import CategoryLinks from './category-links.vue';
 
 export default {
-  name: 'category-links-list',
-  components: { CategoryLink },
+  name: 'categories-list',
+  components: { CategoryLinks },
   props: {
     categories: {
       type: Array,
@@ -48,21 +44,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .category {
-    display: inline-block;
-
-    &-links-list {
-      background: transparent !important;
-    }
-
-    &-list-tile /deep/ .v-list__tile {
-      height: unset !important;
-    }
-
-    &:first-letter {
-      text-transform: uppercase;
-    }
-  }
-</style>
