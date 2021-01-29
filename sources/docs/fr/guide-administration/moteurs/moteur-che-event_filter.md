@@ -79,9 +79,9 @@ Les patterns d'une règle permettent de sélectionner les évènements auxquels 
 
 !!! note
     Afin de connaître l'intitulé exact des patterns que vous souhaitez utiliser, vous pouvez, en tant qu'administrateur, prendre une alarme représentative dans votre Bac à alarmes, et vous aider du bouton d'action « Liste des variables disponibles ».
-    
+
     Cette vue vous présente le contenu de vos alarmes et de vos entités, sous la forme d'un arbre.
-    
+
     Elle vous permet par exemple de savoir que le composant est directement accessible depuis le champ `component`, tandis que les hostgroups se situent dans `infos.hostgroups.value`.
 
 #### Patterns simples
@@ -118,6 +118,53 @@ Par exemple, le pattern suivant sélectionne les évènements dont la criticité
         }
     }
 ]
+```
+
+!!! note
+    A partir de Canopsis v3.46.0, de nouveaux opérateurs avancés ont été ajoutés pour tester les éléments d'un tableau.
+
+ - `has_every` : le tableau doit contenir **tous** les éléments listés dans l'opérateur.
+ - `has_one_of` : le tableau doit contenir **au moins un** des éléments listés dans l'opérateur.
+ - `has_not` : le tableau ne doit contenir **aucun** des éléments listés dans l'opérateur.
+
+Par exemple, avec le pattern `has_every` suivant :
+
+```json
+"patterns": [
+    {
+        "hostgroups": {
+            "has_every": [
+                "windows",
+                "windows-2012r2"
+            ]
+        }
+    }
+]
+```
+
+Un événement contenant le tableau suivant sera sélectionné car il contient à la fois `windows` et `windows-2012r2` :
+
+```json
+{
+    "hostgroups": [
+        "windows-2012r2",
+        "windows",
+        "vmware-windows-guests",
+        "vmware-guests",
+    ]
+}
+```
+
+Tandis qu'un événement contenant le tableau suivant ne sera pas sélectionné car il ne contient qu'un des 2 éléments de `has_every` :
+```json
+{
+    "hostgroups": [
+        "windows-2012r2",
+        "debian",
+        "vmware-windows-guests",
+        "vmware-guests",
+    ]
+}
 ```
 
 ### Types de règles
