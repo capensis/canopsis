@@ -42,10 +42,6 @@
           :class="{ 'error--text': hasHookFormAnyError }"
         ) {{ $t('modals.createAction.tabs.hook') }}
       v-tab-item
-        webhook-form-hook-tab(
-          ref="hookForm",
-          v-field="form.generalParameters.hook"
-        )
 </template>
 
 <script>
@@ -53,7 +49,6 @@ import { ACTION_TYPES } from '@/constants';
 
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
-import WebhookFormHookTab from '@/components/other/webhook/form/tabs/webhook-form-hook-tab.vue';
 import DelayField from '@/components/other/action/form/fields/delay.vue';
 
 import ActionGeneralTab from './tabs/action-general-tab.vue';
@@ -63,7 +58,6 @@ export default {
   components: {
     DelayField,
     ActionGeneralTab,
-    WebhookFormHookTab,
   },
   mixins: [formValidationHeaderMixin],
   model: {

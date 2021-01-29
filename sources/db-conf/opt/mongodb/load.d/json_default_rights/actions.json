@@ -457,14 +457,6 @@
         "type": "CRUD"
     },
     {
-        "_id": "models_exploitation_webhook",
-        "loader_id": "models_exploitation_webhook",
-        "crecord_name": "models_exploitation_webhook",
-        "crecord_type": "action",
-        "desc": "Exploitation: Webhooks",
-        "type": "CRUD"
-    },
-    {
         "_id": "models_exploitation_snmpRule",
         "loader_id": "models_exploitation_snmpRule",
         "crecord_name": "models_exploitation_snmpRule",
@@ -503,6 +495,14 @@
       "crecord_type": "action",
       "desc": "Exploitation: Meta alarm rule",
       "type": "CRUD"
+    },
+    {
+        "_id": "models_exploitation_scenario",
+        "loader_id": "models_exploitation_scenario",
+        "crecord_name": "models_exploitation_scenario",
+        "crecord_type": "action",
+        "desc": "Exploitation: Scenarios",
+        "type": "CRUD"
     },
     {
         "_id": "listalarm_ack",

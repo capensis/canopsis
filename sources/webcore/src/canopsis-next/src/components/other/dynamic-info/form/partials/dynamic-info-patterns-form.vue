@@ -7,13 +7,13 @@
       v-tab-item
         patterns-list(
           v-field="form.alarm_patterns",
-          :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
+          :operators="$constants.DYNAMIC_INFO_PATTERNS_OPERATORS",
           @input="validatePatterns"
         )
       v-tab-item
         patterns-list(
           v-field="form.entity_patterns",
-          :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
+          :operators="$constants.DYNAMIC_INFO_PATTERNS_OPERATORS",
           @input="validatePatterns"
         )
 </template>

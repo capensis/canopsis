@@ -106,12 +106,6 @@ export default {
           right: USERS_RIGHTS.technical.exploitation.pbehavior,
         },
         {
-          route: { name: 'exploitation-webhooks' },
-          text: this.$t('common.webhooks'),
-          icon: '$vuetify.icons.webhook',
-          right: USERS_RIGHTS.technical.exploitation.webhook,
-        },
-        {
           route: { name: 'exploitation-snmp-rules' },
           text: this.$t('snmpRules.title'),
           icon: 'assignment',

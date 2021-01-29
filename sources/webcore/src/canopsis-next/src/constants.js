@@ -27,7 +27,6 @@ export const ENTITIES_TYPES = {
   role: 'role',
   eventFilterRule: 'eventFilterRule',
   metaAlarmRule: 'metaAlarmRule',
-  webhook: 'webhook',
   snmpRule: 'snmpRule',
   action: 'action',
   heartbeat: 'heartbeat',
@@ -90,7 +89,6 @@ export const MODALS = {
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
   eventFilterRuleCreateAction: 'event-filter-rule-create-action',
   filtersList: 'filters-list',
-  createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
   selectViewTab: 'select-view-tab',
   createAction: 'create-action',
@@ -819,7 +817,6 @@ export const USERS_RIGHTS = {
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,
-      webhook: `${USER_RIGHTS_PREFIXES.technical.exploitation}_webhook`,
       snmpRule: `${USER_RIGHTS_PREFIXES.technical.exploitation}_snmpRule`,
       action: `${USER_RIGHTS_PREFIXES.technical.exploitation}_action`,
       heartbeat: `${USER_RIGHTS_PREFIXES.technical.exploitation}_heartbeat`,
@@ -923,7 +920,6 @@ export const USERS_RIGHTS = {
     idleRule: `${USER_RIGHTS_PREFIXES.api}_idlerule`,
     eventFilter: `${USER_RIGHTS_PREFIXES.api}_eventfilter`,
     action: `${USER_RIGHTS_PREFIXES.api}_action`,
-    webhook: `${USER_RIGHTS_PREFIXES.api}_webhook`,
     metaalarmrule: `${USER_RIGHTS_PREFIXES.api}_metaalarmrule`,
     playlist: `${USER_RIGHTS_PREFIXES.api}_playlist`,
     dynamicinfos: `${USER_RIGHTS_PREFIXES.api}_dynamicinfos`,
@@ -1245,32 +1241,9 @@ export const SORT_ORDERS = {
   desc: 'DESC',
 };
 
-/** TODO: Should be removed */
-export const WEBHOOK_TRIGGERS = {
-  create: 'create',
-  stateinc: 'stateinc',
-  statedec: 'statedec',
-  statusinc: 'statusinc',
-  statusdec: 'statusdec',
-  changestate: 'changestate',
-  ack: 'ack',
-  ackremove: 'ackremove',
-  cancel: 'cancel',
-  uncancel: 'uncancel',
-  comment: 'comment',
-  done: 'done',
-  declareticket: 'declareticket',
-  declareticketwebhook: 'declareticketwebhook',
-  assocticket: 'assocticket',
-  snooze: 'snooze',
-  unsnooze: 'unsnooze',
-  resolve: 'resolve',
-  activate: 'activate',
-};
-
 export const EVENT_FILTER_RULE_OPERATORS = ['>=', '>', '<', '<=', 'regex_match'];
 
-export const WEBHOOK_EVENT_FILTER_RULE_OPERATORS = ['>=', '>', '<', '<=', 'regex_match'];
+export const DYNAMIC_INFO_PATTERNS_OPERATORS = ['>=', '>', '<', '<=', 'regex_match'];
 
 export const SNMP_STATE_TYPES = {
   simple: 'simple',
@@ -1490,12 +1463,12 @@ export const ADMIN_PAGES_RULES = {
 
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
-  webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
   snmpRule: { edition: CANOPSIS_EDITION.cat },
   heartbeat: { stack: CANOPSIS_STACK.go },
   action: { stack: CANOPSIS_STACK.go },
   dynamicInfo: { edition: CANOPSIS_EDITION.cat },
   metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  scenario: { stack: CANOPSIS_STACK.go },
 };
 
 export const USER_RIGHTS_TO_PAGES_RULES = {
@@ -1508,12 +1481,12 @@ export const USER_RIGHTS_TO_PAGES_RULES = {
    * Exploitation pages
    */
   [USERS_RIGHTS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
-  [USERS_RIGHTS.technical.exploitation.webhook]: EXPLOITATION_PAGES_RULES.webhooks,
   [USERS_RIGHTS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
   [USERS_RIGHTS.technical.exploitation.heartbeat]: EXPLOITATION_PAGES_RULES.heartbeat,
   [USERS_RIGHTS.technical.exploitation.action]: EXPLOITATION_PAGES_RULES.action,
   [USERS_RIGHTS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USERS_RIGHTS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
+  [USERS_RIGHTS.technical.exploitation.scenario]: EXPLOITATION_PAGES_RULES.scenario,
 };
 
 export const WIDGET_TYPES_RULES = {
