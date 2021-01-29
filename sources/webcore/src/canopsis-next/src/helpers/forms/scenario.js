@@ -77,8 +77,9 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  * @property {ScenarioActionType} type
  * @property {boolean} drop_scenario_if_not_matched
  * @property {boolean} emit_trigger
- * @property {Object[]} alarm_patterns
- * @property {Object[]} entity_patterns
+ * @property {Object} patterns
+ * @property {Object[]} patterns.alarm_patterns
+ * @property {Object[]} patterns.entity_patterns
  * @property {
  *   Pbehavior |
  *   ScenarioActionDefaultParameters |
@@ -200,6 +201,7 @@ const scenarioPbehaviorActionParametersToForm = (parameters = {}, timezone = mom
   pbehaviorToForm(parameters, null, timezone);
 
 /**
+ * Prepare parameters for all scenario action types
  *
  * @returns {Object.<ScenarioActionType, ScenarioActionParameters>}
  */
@@ -216,6 +218,35 @@ const prepareDefaultScenarioActionParameters = () => ({
 });
 
 /**
+ * Convert scenario action parameters to form
+ *
+ * @param {ScenarioAction} action
+ * @param {string} timezone
+ * @returns {Object.<ScenarioActionType, ScenarioActionParameters>}
+ */
+export const scenarioActionParametersToForm = (action, timezone) => {
+  const parameters = prepareDefaultScenarioActionParameters();
+
+  if (!action.type || !action.parameters) {
+    return parameters;
+  }
+
+  const parametersPreparers = {
+    [SCENARIO_ACTION_TYPES.snooze]: scenarioSnoozeActionParametersToForm,
+    [SCENARIO_ACTION_TYPES.webhook]: scenarioWebhookActionParametersToForm,
+    [SCENARIO_ACTION_TYPES.pbehavior]: scenarioPbehaviorActionParametersToForm,
+  };
+
+  const prepareParametersToFormFunction = parametersPreparers[action.type];
+
+  parameters[action.type] = prepareParametersToFormFunction
+    ? prepareParametersToFormFunction(action.parameters, timezone)
+    : { ...action.parameters };
+
+  return parameters;
+};
+
+/**
  * Convert scenario action to form
  *
  * @param {ScenarioAction} [scenarioAction = {}]
@@ -224,32 +255,19 @@ const prepareDefaultScenarioActionParameters = () => ({
  */
 export const scenarioActionToForm = (scenarioAction = {}, timezone = moment.tz.guess()) => {
   const type = scenarioAction.type || SCENARIO_ACTION_TYPES.snooze;
-  const parameters = prepareDefaultScenarioActionParameters();
-
-  const parametersPreparers = {
-    [SCENARIO_ACTION_TYPES.snooze]: scenarioSnoozeActionParametersToForm,
-    [SCENARIO_ACTION_TYPES.webhook]: scenarioWebhookActionParametersToForm,
-    [SCENARIO_ACTION_TYPES.pbehavior]: scenarioPbehaviorActionParametersToForm,
-  };
-
-  const prepareParametersToFormFunction = parametersPreparers[type];
-
-  if (scenarioAction.parameters) {
-    parameters[type] = prepareParametersToFormFunction
-      ? prepareParametersToFormFunction(scenarioAction.parameters, timezone)
-      : { ...scenarioAction.parameters };
-  }
 
   return {
     type,
-    parameters,
     key: uid(),
+    parameters: scenarioActionParametersToForm(scenarioAction, timezone),
     drop_scenario_if_not_matched: !isUndefined(scenarioAction.drop_scenario_if_not_matched)
       ? scenarioAction.drop_scenario_if_not_matched
       : true,
     emit_trigger: !isUndefined(scenarioAction.emit_trigger) ? scenarioAction.emit_trigger : true,
-    alarm_patterns: scenarioAction.alarm_patterns ? cloneDeep(scenarioAction.alarm_patterns) : [],
-    entity_patterns: scenarioAction.entity_patterns ? cloneDeep(scenarioAction.entity_patterns) : [],
+    patterns: {
+      alarm_patterns: scenarioAction.alarm_patterns ? cloneDeep(scenarioAction.alarm_patterns) : [],
+      entity_patterns: scenarioAction.entity_patterns ? cloneDeep(scenarioAction.entity_patterns) : [],
+    },
   };
 };
 
@@ -307,7 +325,8 @@ export const formToScenarioAction = (form, timezone = moment.tz.guess()) => {
   const prepareParametersToAction = parametersPreparers[form.type];
 
   return {
-    ...omit(form, ['key']),
+    ...omit(form, ['key', 'patterns']),
+    ...form.patterns,
 
     parameters: prepareParametersToAction
       ? prepareParametersToAction(parametersByCurrentType)

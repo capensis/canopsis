@@ -2,19 +2,15 @@
   div
     v-textarea(
       v-field="value.message",
-      :label="$t('modals.createAction.fields.message')"
+      :label="$t('modals.createAction.fields.message')",
+      :name="`${name}.message`"
     )
-    old-duration-field(v-field="value.duration")
+    c-duration-field(v-field="value.duration", :name="`${name}.duration`", required)
 </template>
 
 <script>
-import OldDurationField from '@/components/forms/fields/old-duration.vue';
-
 export default {
   inject: ['$validator'],
-  components: {
-    OldDurationField,
-  },
   model: {
     prop: 'value',
     event: 'input',
@@ -23,6 +19,10 @@ export default {
     value: {
       type: Object,
       required: true,
+    },
+    name: {
+      type: String,
+      required: 'parameters',
     },
   },
 };

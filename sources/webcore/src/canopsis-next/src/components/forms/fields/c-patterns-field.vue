@@ -3,40 +3,46 @@
     v-flex(xs12)
       v-tabs(v-model="activePatternTab", slider-color="primary", fixed-tabs)
         template(v-if="alarm")
-          v-tab(:class="{ 'error--text': errors.has('alarm_patterns') }") {{ $t('common.alarmPatterns') }}
+          v-tab(:class="{ 'error--text': errors.has(alarmPatternsFieldName) }") {{ $t('common.alarmPatterns') }}
           v-tab-item
             patterns-list(
               v-field="value.alarm_patterns",
+              v-validate="rules",
               :disabled="disabled",
-              name="alarm_patterns",
-              @input="errors.remove('alarm_patterns')"
+              :name="alarmPatternsFieldName",
+              @input="errors.remove(alarmPatternsFieldName)"
             )
         template(v-if="event")
-          v-tab(:class="{ 'error--text': errors.has('event_patterns') }") {{ $t('common.eventPatterns') }}
+          v-tab(:class="{ 'error--text': errors.has(eventPatternsFieldName) }") {{ $t('common.eventPatterns') }}
           v-tab-item
             patterns-list(
               v-field="value.event_patterns",
+              v-validate="rules",
               :disabled="disabled",
-              name="event_patterns",
-              @input="errors.remove('event_patterns')"
+              :name="eventPatternsFieldName",
+              @input="errors.remove(eventPatternsFieldName)"
             )
         template(v-if="entity")
-          v-tab(:class="{ 'error--text': errors.has('entity_patterns') }") {{ $t('common.entityPatterns') }}
+          v-tab(:class="{ 'error--text': errors.has(entityPatternsFieldName) }") {{ $t('common.entityPatterns') }}
           v-tab-item
             patterns-list(
               v-field="value.entity_patterns",
+              v-validate="rules",
               :disabled="disabled",
-              name="entity_patterns",
-              @input="errors.remove('entity_patterns')"
+              :name="entityPatternsFieldName",
+              @input="errors.remove(entityPatternsFieldName)"
             )
         template(v-if="totalEntity")
-          v-tab(:class="{ 'error--text': errors.has('total_entity_patterns') }") {{ $t('common.totalEntityPatterns') }}
+          v-tab(
+            :class="{ 'error--text': errors.has(totalEntityPatternsFieldName) }"
+          ) {{ $t('common.totalEntityPatterns') }}
           v-tab-item
             patterns-list(
               v-field="value.total_entity_patterns",
+              v-validate="rules",
               :disabled="disabled",
-              name="total_entity_patterns",
-              @input="errors.remove('total_entity_patterns')"
+              :name="totalEntityPatternsFieldName",
+              @input="errors.remove(totalEntityPatternsFieldName)"
             )
 </template>
 
@@ -75,11 +81,47 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    name: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
       activePatternTab: 0,
     };
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+
+    alarmPatternsFieldName() {
+      return this.preparePatternsFieldName('alarm_patterns');
+    },
+
+    eventPatternsFieldName() {
+      return this.preparePatternsFieldName('event_patterns');
+    },
+
+    entityPatternsFieldName() {
+      return this.preparePatternsFieldName('entity_patterns');
+    },
+
+    totalEntityPatternsFieldName() {
+      return this.preparePatternsFieldName('total_entity_patterns');
+    },
+  },
+  methods: {
+    preparePatternsFieldName(name) {
+      return [this.name, name].filter(Boolean).join('.');
+    },
   },
 };
 </script>

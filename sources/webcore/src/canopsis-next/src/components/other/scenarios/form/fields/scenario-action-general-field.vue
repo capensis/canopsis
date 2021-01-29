@@ -1,11 +1,13 @@
 <template lang="pug">
-  component(v-model="value", :is="component")
+  div
+    component(v-model="value", :is="component", :name="name")
 </template>
 
 <script>
 import { SCENARIO_ACTION_TYPES } from '@/constants';
 
 import formMixin from '@/mixins/form/object';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import ScenarioActionAssocticketField from './scenario-action-assocticket-field.vue';
 import ScenarioActionNoteField from './scenario-action-note-field.vue';
@@ -22,7 +24,7 @@ export default {
     ScenarioActionPbehaviorField,
     ScenarioActionSnoozeField,
   },
-  mixins: [formMixin],
+  mixins: [formMixin, formValidationHeaderMixin],
   model: {
     prop: 'action',
     event: 'input',
@@ -35,6 +37,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    name: {
+      type: String,
+      default: 'parameters',
     },
   },
   computed: {

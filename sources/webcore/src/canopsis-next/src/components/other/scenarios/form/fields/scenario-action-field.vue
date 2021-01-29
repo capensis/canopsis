@@ -2,27 +2,37 @@
   v-card
     v-card-text
       v-layout(row)
-        c-action-type-field(v-field="action.type", :disabled="disabled")
+        c-action-type-field(
+          v-field="action.type",
+          :disabled="disabled",
+          :name="`${name}.type`",
+          @input="errors.clear()"
+        )
       v-layout(row)
         c-enabled-field(v-field="action.emit_trigger", :label="$t('scenario.fields.emitTrigger')")
-      v-tabs(centered, slider-color="primary")
-        v-tab {{ $t('scenario.tabs.general') }}
+      v-tabs(v-model="activeTab", centered, slider-color="primary")
+        v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('scenario.tabs.general') }}
+        v-tab(:class="{ 'error--text': hasPatternsError }") {{ $t('scenario.tabs.pattern') }}
+      v-divider
+      v-tabs-items.pt-2(v-model="activeTab")
         v-tab-item
-          v-divider
-          scenario-action-general-field(v-field="action")
-        v-tab {{ $t('scenario.tabs.pattern') }}
+          scenario-action-general-field(
+            ref="general",
+            v-field="action",
+            :name="`${name}.parameters`"
+          )
         v-tab-item
-          v-divider
-          c-patterns-field(v-model="patterns", alarm, entity)
+          scenario-action-pattern-field(ref="patterns", v-model="action.patterns", :name="name")
 </template>
 
 <script>
 import formMixin from '@/mixins/form/object';
 
 import ScenarioActionGeneralField from './scenario-action-general-field.vue';
+import ScenarioActionPatternField from './scenario-action-pattern-field.vue';
 
 export default {
-  components: { ScenarioActionGeneralField },
+  components: { ScenarioActionPatternField, ScenarioActionGeneralField },
   inject: ['$validator'],
   mixins: [formMixin],
   model: {
@@ -38,22 +48,26 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  computed: {
-    patterns: {
-      get() {
-        return {
-          alarm_patterns: this.action.alarm_patterns,
-          entity_patterns: this.action.entity_patterns,
-        };
-      },
-      set(patterns) {
-        this.updateModel({
-          ...this.action,
-          ...patterns,
-        });
-      },
+    name: {
+      type: String,
+      default: 'action',
     },
+  },
+  data() {
+    return {
+      activeTab: 0,
+      hasGeneralError: false,
+      hasPatternsError: false,
+    };
+  },
+  mounted() {
+    this.$watch(() => this.$refs.general.hasAnyError, (value) => {
+      this.hasGeneralError = value;
+    });
+
+    this.$watch(() => this.$refs.patterns.hasAnyError, (value) => {
+      this.hasPatternsError = value;
+    });
   },
 };
 </script>

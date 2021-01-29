@@ -25,6 +25,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      default: 'disable_during_periods',
+    },
   },
   computed: {
     duringItems() {

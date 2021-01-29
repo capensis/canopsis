@@ -3,9 +3,9 @@
     v-field="value",
     v-validate="'required'",
     :items="actionTypes",
-    :error-messages="errors.collect('actionType')",
+    :error-messages="errors.collect(name)",
     :label="label || $t('common.type')",
-    name="actionType"
+    :name="name"
   )
 </template>
 
@@ -26,6 +26,10 @@ export default {
     label: {
       type: String,
       default: '',
+    },
+    name: {
+      type: String,
+      default: 'actionType',
     },
     disabled: {
       type: Boolean,

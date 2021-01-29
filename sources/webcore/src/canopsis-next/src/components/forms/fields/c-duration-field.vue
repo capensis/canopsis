@@ -5,9 +5,9 @@
         v-field.number="duration.value",
         v-validate="durationValidateRules",
         :label="label || $t('common.duration')",
-        :error-messages="errors.collect(name)",
+        :error-messages="errors.collect(intervalName)",
         :disabled="disabled",
-        :name="name",
+        :name="intervalName",
         :min="min",
         type="number"
       )
@@ -73,8 +73,12 @@ export default {
     },
   },
   computed: {
+    intervalName() {
+      return `${this.name}.seconds`;
+    },
+
     unitFieldName() {
-      return `${this.name}Unit`;
+      return `${this.name}.unit`;
     },
 
     availableUnits() {
