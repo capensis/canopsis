@@ -77,7 +77,6 @@ export default {
           });
 
           this.setTitle();
-          this.setPopupTimeout();
 
           this.startKeepalive();
           this.showPausedExecutionsPopup();

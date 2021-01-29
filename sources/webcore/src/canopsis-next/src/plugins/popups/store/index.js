@@ -59,12 +59,15 @@ export default {
     success({ dispatch }, popup) {
       return dispatch('add', { ...popup, type: POPUP_TYPES.success });
     },
+
     info({ dispatch }, popup) {
       return dispatch('add', { ...popup, type: POPUP_TYPES.info });
     },
+
     warning({ dispatch }, popup) {
       return dispatch('add', { ...popup, type: POPUP_TYPES.warning });
     },
+
     error({ dispatch }, popup) {
       return dispatch('add', { ...popup, type: POPUP_TYPES.error });
     },

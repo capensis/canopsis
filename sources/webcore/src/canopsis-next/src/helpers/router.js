@@ -82,19 +82,24 @@ export async function checkUserAccessForRoute(to = {}) {
   const rightId = isFunction(requiresRight.id) ? requiresRight.id(to) : requiresRight.id;
   const rightMask = requiresRight.mask ? requiresRight.mask : USERS_RIGHTS_MASKS.read;
 
-  let currentUser;
+  let currentUser = store.getters['auth/currentUser'];
 
-  if (!isEmpty(store.getters['auth/currentUser'])) {
-    currentUser = store.getters['auth/currentUser'];
-  } else {
+  if (isEmpty(currentUser)) {
     currentUser = await store.watchOnce(state => state.auth.currentUser, v => !isEmpty(v));
+  }
+
+  if (!store.getters['info/popupTimeout']) {
+    await store.watchOnce(state => state.info.popupTimeout, v => v);
   }
 
   if (checkUserAccess(currentUser, rightId, rightMask)) {
     return true;
   }
 
-  store.dispatch('popups/add', { text: i18n.t('common.forbidden'), type: POPUP_TYPES.error });
+  store.dispatch('popups/add', {
+    text: i18n.t('common.forbidden'),
+    type: POPUP_TYPES.error,
+  });
 
   throw new Error('User don\'t have access to page');
 }
