@@ -1,5 +1,7 @@
 import { API_ROUTES } from '@/config';
 import request from '@/services/request';
+import { toSeconds } from '@/helpers/date/duration';
+import { POPUP_TYPES } from '@/constants';
 
 const types = {
   FETCH_LOGIN_INFOS: 'FETCH_LOGIN_INFOS',
@@ -54,7 +56,7 @@ export default {
       state.footer = userInterface.footer;
       state.description = userInterface.login_page_description;
       state.language = userInterface.language;
-      state.popupTimeout = userInterface.popup_timeout;
+      state.popupTimeout = userInterface.popup_timeout || {};
 
       state.isLDAPAuthEnabled = loginConfig.ldapconfig ? loginConfig.ldapconfig.enable : false;
       state.isCASAuthEnabled = loginConfig.casconfig ? loginConfig.casconfig.enable : false;
@@ -76,7 +78,7 @@ export default {
       state.version = version;
       state.logo = logo;
       state.appTitle = appTitle;
-      state.popupTimeout = popupTimeout;
+      state.popupTimeout = popupTimeout || {};
       state.allowChangeSeverityToInfo = allowChangeSeverityToInfo;
       state.edition = edition;
       state.stack = stack;
@@ -86,7 +88,7 @@ export default {
     },
   },
   actions: {
-    async fetchLoginInfos({ commit }) {
+    async fetchLoginInfos({ commit, dispatch }) {
       try {
         const {
           version,
@@ -94,11 +96,21 @@ export default {
           login_config: loginConfig,
         } = await request.get(API_ROUTES.infos.login);
 
+        const { language, popup_timeout: popupTimeout } = userInterface;
+
         commit(types.FETCH_LOGIN_INFOS, {
           version,
           userInterface: userInterface || {},
           loginConfig: loginConfig || {},
         });
+
+        if (language) {
+          dispatch('i18n/setGlobalLocale', language, { root: true });
+        }
+
+        if (popupTimeout) {
+          dispatch('setPopupTimeouts', { popupTimeout });
+        }
       } catch (err) {
         console.error(err);
       }
@@ -138,6 +150,10 @@ export default {
         if (language) {
           dispatch('i18n/setGlobalLocale', language, { root: true });
         }
+
+        if (popupTimeout) {
+          dispatch('setPopupTimeouts', { popupTimeout });
+        }
       } catch (err) {
         console.error(err);
       }
@@ -145,6 +161,19 @@ export default {
 
     updateUserInterface(context, { data } = {}) {
       return request.post(API_ROUTES.infos.userInterface, data);
+    },
+
+    setPopupTimeouts({ dispatch }, { popupTimeout = {} }) {
+      const { interval: intervalInfo, unit: unitInfo } = popupTimeout.info;
+      const { interval: intervalError, unit: unitError } = popupTimeout.error;
+
+      const timeInfo = toSeconds(intervalInfo, unitInfo) * 1000;
+      const timeError = toSeconds(intervalError, unitError) * 1000;
+
+      dispatch('popups/setDefaultCloseTime', { type: POPUP_TYPES.success, time: timeInfo }, { root: true });
+      dispatch('popups/setDefaultCloseTime', { type: POPUP_TYPES.info, time: timeInfo }, { root: true });
+      dispatch('popups/setDefaultCloseTime', { type: POPUP_TYPES.warning, time: timeError }, { root: true });
+      dispatch('popups/setDefaultCloseTime', { type: POPUP_TYPES.error, time: timeError }, { root: true });
     },
   },
 };

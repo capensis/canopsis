@@ -1,8 +1,7 @@
-import { POPUP_TYPES, USER_RIGHTS_TO_PAGES_RULES } from '@/constants';
+import { USER_RIGHTS_TO_PAGES_RULES } from '@/constants';
 
 import { createNamespacedHelpers } from 'vuex';
 import { isMatch } from 'lodash';
-import { toSeconds } from '@/helpers/date/duration';
 import { DEFAULT_APP_TITLE } from '@/config';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
@@ -50,36 +49,6 @@ export default {
       };
 
       return isMatch(appInfo, USER_RIGHTS_TO_PAGES_RULES[right]);
-    },
-
-    setErrorPopupTime() {
-      const { interval, unit } = this.popupTimeout.error;
-      const delay = toSeconds(interval, unit) * 1000;
-
-      this.$popups.setDefaultCloseTime(POPUP_TYPES.error, delay);
-      this.$popups.setDefaultCloseTime(POPUP_TYPES.warning, delay);
-    },
-
-    setInfoPopupTime() {
-      const { interval, unit } = this.popupTimeout.info;
-      const delay = toSeconds(interval, unit) * 1000;
-
-      this.$popups.setDefaultCloseTime(POPUP_TYPES.info, delay);
-      this.$popups.setDefaultCloseTime(POPUP_TYPES.success, delay);
-    },
-
-    setPopupTimeout() {
-      if (!this.popupTimeout) {
-        return;
-      }
-
-      if (this.popupTimeout.error) {
-        this.setErrorPopupTime();
-      }
-
-      if (this.popupTimeout.info) {
-        this.setInfoPopupTime();
-      }
     },
 
     setTitle() {

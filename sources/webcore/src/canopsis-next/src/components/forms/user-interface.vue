@@ -192,7 +192,6 @@ export default {
           await this.fetchAllInfos();
 
           this.setTitle();
-          this.setPopupTimeout();
 
           this.$popups.success({ text: this.$t('success.default') });
           this.reset();
