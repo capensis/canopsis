@@ -1633,7 +1633,7 @@ export const ENGINES_NAMES = {
   axe: 'engine-axe',
   che: 'engine-che',
   pbehavior: 'engine-pbehavior',
-  action: 'engine-action', // TODO: ask about it
+  action: 'engine-action',
   watcher: 'engine-watcher',
   dynamicInfo: 'engine-dynamic-info',
   correlation: 'engine-correlation',
@@ -1646,7 +1646,7 @@ export const ENGINES_QUEUE_NAMES = {
   axe: 'Engine_axe',
   che: 'Engine_che',
   pbehavior: 'Engine_pbehavior',
-  action: 'Engine_action', // TODO: ask about it
+  action: 'Engine_action',
   watcher: 'Engine_watcher',
   dynamicInfo: 'Engine_dynamic_infos',
   correlation: 'Engine_correlation',
@@ -1659,7 +1659,7 @@ export const ENGINES_NAMES_TO_QUEUE_NAMES = {
   [ENGINES_QUEUE_NAMES.axe]: ENGINES_NAMES.axe,
   [ENGINES_QUEUE_NAMES.che]: ENGINES_NAMES.che,
   [ENGINES_QUEUE_NAMES.pbehavior]: ENGINES_NAMES.pbehavior,
-  [ENGINES_QUEUE_NAMES.action]: ENGINES_NAMES.action, // TODO: ask about it
+  [ENGINES_QUEUE_NAMES.action]: ENGINES_NAMES.action,
   [ENGINES_QUEUE_NAMES.watcher]: ENGINES_NAMES.watcher,
   [ENGINES_QUEUE_NAMES.dynamicInfo]: ENGINES_NAMES.dynamicInfo,
   [ENGINES_QUEUE_NAMES.correlation]: ENGINES_NAMES.correlation,
