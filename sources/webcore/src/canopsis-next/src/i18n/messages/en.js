@@ -1829,7 +1829,7 @@ export default {
       title: 'Pbehavior',
       description: 'Checks if the alarm is under PBehvaior',
     },
-    [ENGINES_NAMES.action]: { // TODO: ask about it
+    [ENGINES_NAMES.action]: {
       title: 'Action',
       description: 'Triggers the actions launch',
     },

@@ -1829,7 +1829,7 @@ export default {
       title: 'Pbehavior',
       description: 'Vérifie si l\'alarme est sous PBehvaior',
     },
-    [ENGINES_NAMES.action]: { // TODO: ask about it
+    [ENGINES_NAMES.action]: {
       title: 'Action',
       description: 'Déclenche le lancement des actions',
     },
