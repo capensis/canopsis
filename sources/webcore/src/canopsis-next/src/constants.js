@@ -28,7 +28,6 @@ export const ENTITIES_TYPES = {
   eventFilterRule: 'eventFilterRule',
   metaAlarmRule: 'metaAlarmRule',
   snmpRule: 'snmpRule',
-  action: 'action',
   heartbeat: 'heartbeat',
   dynamicInfo: 'dynamicInfo',
   broadcastMessage: 'broadcastMessage',
@@ -91,7 +90,6 @@ export const MODALS = {
   filtersList: 'filters-list',
   createSnmpRule: 'create-snmp-rule',
   selectViewTab: 'select-view-tab',
-  createAction: 'create-action',
   createHeartbeat: 'create-heartbeat',
   createDynamicInfo: 'create-dynamic-info',
   createDynamicInfoInformation: 'create-dynamic-info-information',
@@ -818,7 +816,6 @@ export const USERS_RIGHTS = {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,
       snmpRule: `${USER_RIGHTS_PREFIXES.technical.exploitation}_snmpRule`,
-      action: `${USER_RIGHTS_PREFIXES.technical.exploitation}_action`,
       heartbeat: `${USER_RIGHTS_PREFIXES.technical.exploitation}_heartbeat`,
       dynamicInfo: `${USER_RIGHTS_PREFIXES.technical.exploitation}_dynamicInfo`,
       metaAlarmRule: `${USER_RIGHTS_PREFIXES.technical.exploitation}_metaAlarmRule`,
@@ -1250,30 +1247,6 @@ export const SNMP_STATE_TYPES = {
   template: 'template',
 };
 
-export const ACTION_TYPES = {
-  snooze: 'snooze',
-  pbehavior: 'pbehavior',
-  changeState: 'changestate',
-  ack: 'ack',
-  ackremove: 'ackremove',
-  assocticket: 'assocticket',
-  declareticket: 'declareticket',
-  cancel: 'cancel',
-};
-
-export const ACTION_AUTHOR = 'engine-action';
-
-export const ACTION_FORM_FIELDS_MAP_BY_TYPE = {
-  [ACTION_TYPES.snooze]: 'snoozeParameters',
-  [ACTION_TYPES.pbehavior]: 'pbehaviorParameters',
-  [ACTION_TYPES.changeState]: 'changeStateParameters',
-  [ACTION_TYPES.ack]: 'ackParameters',
-  [ACTION_TYPES.ackremove]: 'ackremoveParameters',
-  [ACTION_TYPES.assocticket]: 'assocticketParameters',
-  [ACTION_TYPES.declareticket]: 'declareticketParameters',
-  [ACTION_TYPES.cancel]: 'cancelParameters',
-};
-
 export const CANOPSIS_STACK = {
   go: 'go',
   python: 'python',
@@ -1465,7 +1438,6 @@ export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
   snmpRule: { edition: CANOPSIS_EDITION.cat },
   heartbeat: { stack: CANOPSIS_STACK.go },
-  action: { stack: CANOPSIS_STACK.go },
   dynamicInfo: { edition: CANOPSIS_EDITION.cat },
   metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
   scenario: { stack: CANOPSIS_STACK.go },
@@ -1483,7 +1455,6 @@ export const USER_RIGHTS_TO_PAGES_RULES = {
   [USERS_RIGHTS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
   [USERS_RIGHTS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
   [USERS_RIGHTS.technical.exploitation.heartbeat]: EXPLOITATION_PAGES_RULES.heartbeat,
-  [USERS_RIGHTS.technical.exploitation.action]: EXPLOITATION_PAGES_RULES.action,
   [USERS_RIGHTS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USERS_RIGHTS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USERS_RIGHTS.technical.exploitation.scenario]: EXPLOITATION_PAGES_RULES.scenario,
@@ -1662,7 +1633,7 @@ export const ENGINES_NAMES = {
   axe: 'engine-axe',
   che: 'engine-che',
   pbehavior: 'engine-pbehavior',
-  action: 'engine-action',
+  action: 'engine-action', // TODO: ask about it
   watcher: 'engine-watcher',
   dynamicInfo: 'engine-dynamic-info',
   correlation: 'engine-correlation',
@@ -1675,7 +1646,7 @@ export const ENGINES_QUEUE_NAMES = {
   axe: 'Engine_axe',
   che: 'Engine_che',
   pbehavior: 'Engine_pbehavior',
-  action: 'Engine_action',
+  action: 'Engine_action', // TODO: ask about it
   watcher: 'Engine_watcher',
   dynamicInfo: 'Engine_dynamic_infos',
   correlation: 'Engine_correlation',
@@ -1688,7 +1659,7 @@ export const ENGINES_NAMES_TO_QUEUE_NAMES = {
   [ENGINES_QUEUE_NAMES.axe]: ENGINES_NAMES.axe,
   [ENGINES_QUEUE_NAMES.che]: ENGINES_NAMES.che,
   [ENGINES_QUEUE_NAMES.pbehavior]: ENGINES_NAMES.pbehavior,
-  [ENGINES_QUEUE_NAMES.action]: ENGINES_NAMES.action,
+  [ENGINES_QUEUE_NAMES.action]: ENGINES_NAMES.action, // TODO: ask about it
   [ENGINES_QUEUE_NAMES.watcher]: ENGINES_NAMES.watcher,
   [ENGINES_QUEUE_NAMES.dynamicInfo]: ENGINES_NAMES.dynamicInfo,
   [ENGINES_QUEUE_NAMES.correlation]: ENGINES_NAMES.correlation,

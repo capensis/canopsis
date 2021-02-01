@@ -1081,35 +1081,6 @@ export default {
     selectViewTab: {
       title: 'Select tab',
     },
-    createAction: {
-      create: {
-        title: 'Create action',
-        success: 'Action successfully created!',
-      },
-      edit: {
-        title: 'Edit action',
-        success: 'Action successfully edited!',
-      },
-      duplicate: {
-        title: 'Duplicate action',
-        success: 'Action successfully duplicated!',
-      },
-      remove: {
-        success: 'Action successfully removed!',
-      },
-      tabs: {
-        general: 'General',
-        hook: 'Hook',
-      },
-      fields: {
-        message: 'Message',
-        duration: 'Duration',
-        output: 'Note',
-        ticket: 'Associate ticket',
-        delay: 'Delay',
-        delayUnit: 'Unit',
-      },
-    },
     createHeartbeat: {
       create: {
         title: 'Create heartbeat',
@@ -1646,38 +1617,6 @@ export default {
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
   },
-  actions: {
-    title: 'Actions',
-    addAction: 'Add Action',
-    table: {
-      id: 'Id',
-      type: 'Type',
-      delay: 'Delay',
-      expand: {
-        tabs: {
-          general: 'General',
-          hook: 'Hook',
-          author: 'Author',
-          pbehavior: {
-            name: 'Name',
-            type: 'Type',
-            reason: 'Reason',
-            start: 'Start',
-            end: 'End',
-          },
-          snooze: {
-            message: 'Message',
-            duration: 'Duration',
-            noMessage: 'No message is set',
-          },
-          changeState: {
-            output: 'Output',
-            noOutput: 'No output is set',
-          },
-        },
-      },
-    },
-  },
   layout: {
     sideBar: {
       buttons: {
@@ -1890,7 +1829,7 @@ export default {
       title: 'Pbehavior',
       description: 'Checks if the alarm is under PBehvaior',
     },
-    [ENGINES_NAMES.action]: {
+    [ENGINES_NAMES.action]: { // TODO: ask about it
       title: 'Action',
       description: 'Triggers the actions launch',
     },

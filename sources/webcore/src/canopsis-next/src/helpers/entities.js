@@ -15,8 +15,6 @@ import {
   STATS_DISPLAY_MODE_PARAMETERS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   SORT_ORDERS,
-  ACTION_TYPES,
-  DURATION_UNITS,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   GRID_SIZES, AVAILABLE_COUNTERS,
@@ -29,7 +27,6 @@ import {
 
 import uuid from './uuid';
 import uid from './uid';
-import { pbehaviorToForm } from './forms/planning-pbehavior';
 
 /**
  * @typedef {Object} Interval
@@ -486,85 +483,6 @@ export function generateCopyOfView(view) {
     ...omit(view, ['_id', 'tabs']),
 
     tabs: view.tabs.map(tab => generateCopyOfViewTab(tab)),
-  };
-}
-
-/**
- * Generate an 'action' entity
- * @returns {Object}
- */
-export function generateAction() {
-  const defaultHook = {
-    event_patterns: [],
-    alarm_patterns: [],
-    entity_patterns: [],
-    triggers: [],
-  };
-
-  // Get basic action parameters
-  const generalParameters = {
-    _id: uuid('action'),
-    type: ACTION_TYPES.snooze,
-    enabled: true,
-    delay: {},
-    hook: defaultHook,
-    priority: 0,
-  };
-
-  // Default 'snooze' action parameters
-  const snoozeParameters = {
-    message: '',
-    duration: {
-      duration: 1,
-      durationType: DURATION_UNITS.minute.value,
-    },
-  };
-
-  // Default 'pbehavior' action parameters
-  const pbehaviorParameters = pbehaviorToForm();
-
-  // Default 'changestate' action parameters
-  const changeStateParameters = {
-    state: ENTITIES_STATES.minor,
-    output: '',
-  };
-
-  // Default 'ack' action parameters
-  const ackParameters = {
-    output: '',
-  };
-
-  // Default 'ackremove' action parameters
-  const ackremoveParameters = {
-    output: '',
-  };
-
-  // Default 'assocticket' action parameters
-  const assocticketParameters = {
-    ticket: '',
-    output: '',
-  };
-
-  // Default 'assocticket' action parameters
-  const declareticketParameters = {
-    output: '',
-  };
-
-  // Default 'cancel' action parameters
-  const cancelParameters = {
-    output: '',
-  };
-
-  return {
-    generalParameters,
-    snoozeParameters,
-    pbehaviorParameters,
-    changeStateParameters,
-    ackParameters,
-    ackremoveParameters,
-    assocticketParameters,
-    declareticketParameters,
-    cancelParameters,
   };
 }
 

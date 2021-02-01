@@ -1081,35 +1081,6 @@ export default {
     selectViewTab: {
       title: 'Sélectionnez l\'onglet',
     },
-    createAction: {
-      create: {
-        title: 'Créer une action',
-        success: 'Action créée avec succès !',
-      },
-      edit: {
-        title: 'Modifier le action',
-        success: 'Action éditée avec succès !',
-      },
-      duplicate: {
-        title: 'Dupliquer un action',
-        success: 'Action dupliquée avec succès !',
-      },
-      remove: {
-        success: 'Action supprimée avec succès !',
-      },
-      tabs: {
-        general: 'Général',
-        hook: 'Hook',
-      },
-      fields: {
-        message: 'Message',
-        duration: 'Durée',
-        output: 'Note',
-        ticket: 'Numéro du ticket',
-        delay: 'Intervalle',
-        delayUnit: 'Unité',
-      },
-    },
     createHeartbeat: {
       create: {
         title: 'Créer un heartbeat',
@@ -1646,38 +1617,6 @@ export default {
     uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
   },
-  actions: {
-    title: 'Actions',
-    addAction: 'Ajouter une action',
-    table: {
-      id: 'Id',
-      type: 'Type',
-      delay: 'Délai',
-      expand: {
-        tabs: {
-          general: 'Général',
-          hook: 'Hook',
-          author: 'Auteur',
-          pbehavior: {
-            name: 'Nom',
-            type: 'Type',
-            reason: 'Raison',
-            start: 'Début',
-            end: 'Fin',
-          },
-          snooze: {
-            message: 'Message',
-            duration: 'Durée',
-            noMessage: 'Aucun message n\'est défini',
-          },
-          changeState: {
-            output: 'Output',
-            noOutput: 'Aucun output n\'est défini',
-          },
-        },
-      },
-    },
-  },
   layout: {
     sideBar: {
       buttons: {
@@ -1890,7 +1829,7 @@ export default {
       title: 'Pbehavior',
       description: 'Vérifie si l\'alarme est sous PBehvaior',
     },
-    [ENGINES_NAMES.action]: {
+    [ENGINES_NAMES.action]: { // TODO: ask about it
       title: 'Action',
       description: 'Déclenche le lancement des actions',
     },

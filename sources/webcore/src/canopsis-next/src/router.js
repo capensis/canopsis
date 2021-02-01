@@ -23,7 +23,6 @@ import AdminRemediation from '@/views/admin/remediation.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
-import ExploitationActions from '@/views/exploitation/actions.vue';
 import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
 import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
 import Playlist from '@/views/playlist.vue';
@@ -205,17 +204,6 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: USERS_RIGHTS.technical.exploitation.snmpRule,
-      },
-    },
-  },
-  {
-    path: '/exploitation/actions',
-    name: 'exploitation-actions',
-    component: ExploitationActions,
-    meta: {
-      requiresLogin: true,
-      requiresRight: {
-        id: USERS_RIGHTS.technical.exploitation.action,
       },
     },
   },

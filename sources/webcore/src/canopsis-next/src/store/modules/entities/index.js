@@ -22,7 +22,6 @@ import infoModule from './info';
 import filterHintModule from './filter-hint';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
-import actionModule from './action';
 import heartbeatModule from './heartbeat';
 import keepaliveModule from './keepalive';
 import dynamicInfoModule from './dynamic-info';
@@ -55,7 +54,6 @@ export default {
   info: infoModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
-  action: actionModule,
   heartbeat: heartbeatModule,
   keepalive: keepaliveModule,
   dynamicInfo: dynamicInfoModule,

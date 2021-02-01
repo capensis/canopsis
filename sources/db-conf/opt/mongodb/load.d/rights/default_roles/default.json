@@ -31,9 +31,6 @@
         "models_exploitation_snmpRule": {
             "checksum": 15
         },
-        "models_exploitation_action": {
-            "checksum": 15
-        },
         "models_exploitation_heartbeat": {
             "checksum": 15
         },

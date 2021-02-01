@@ -8,8 +8,8 @@
     v-layout.mt-4(row)
       v-textarea(
         v-field="value.output",
-        :label="label || $t('modals.createAction.fields.output')",
         v-validate="'required'",
+        :label="label || $t('common.output')",
         :error-messages="errors.collect('output')",
         name="output"
       )

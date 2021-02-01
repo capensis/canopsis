@@ -33,7 +33,7 @@ import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import ChangeStateField from '@/components/other/action/form/fields/change-state.vue';
+import ChangeStateField from '@/components/forms/fields/change-state.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
