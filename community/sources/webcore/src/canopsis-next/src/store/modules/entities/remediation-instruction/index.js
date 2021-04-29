@@ -13,7 +13,7 @@ export default createEntityModule({
   withMeta: true,
 }, {
   actions: {
-    fetchItemCommentsWithoutStore({ id, params }) {
+    fetchItemCommentsWithoutStore(context, { id, params }) {
       return request.get(`${API_ROUTES.remediation.instructionComments}/${id}`, { params });
     },
   },
