@@ -8,6 +8,7 @@
       @remove-selected="showRemoveSelectedRemediationInstructionModal",
       @assign-patterns="showAssignPatternsModal",
       @remove="showRemoveRemediationInstructionModal",
+      @approve="showApproveRemediationInstructionModal",
       @edit="showEditRemediationInstructionModal"
     )
 </template>
@@ -61,6 +62,10 @@ export default {
           },
         },
       });
+    },
+
+    showApproveRemediationInstructionModal() {
+      // Awesome code
     },
 
     showConfirmModalOnRunningRemediationInstruction(action) {
