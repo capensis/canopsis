@@ -14,14 +14,38 @@
 </template>
 
 <script>
+import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
+
 import RatingField from '@/components/forms/fields/rating-field.vue';
 
 export default {
   components: { RatingField },
+  mixins: [entitiesRemediationInstructionsMixin],
   props: {
-    comments: {
-      type: Array,
-      default: () => [],
+    remediationInstruction: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      pending: false,
+      comments: [],
+    };
+  },
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    async fetchList() {
+      this.pending = true;
+
+      const { data: comments } = await this.fetchRemediationInstructionCommentsListWithoutStore({
+        id: this.remediationInstruction._id,
+      });
+      this.comments = comments;
+
+      this.pending = false;
     },
   },
 };

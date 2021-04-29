@@ -21,16 +21,23 @@
         span.pre-line.header-text {{ props.header.text }}
       template(slot="enabled", slot-scope="props")
         c-enabled(:value="props.item.enabled")
-      template(slot="rating", slot-scope="props")
-        rating-field(:value="props.item.rating", readonly)
-      template(slot="last_modified", slot-scope="props")
-        | {{ props.item.last_modified | date('long', true, null) }}
-      template(slot="avg_complete_time", slot-scope="props")
-        span(v-if="props.item.avg_complete_time") {{ props.item.avg_complete_time | duration }}
-      template(slot="last_executed_on", slot-scope="props")
-        | {{ props.item.last_executed_on | date('long', true, null) }}
+      template(slot="status", slot-scope="props")
+        v-tooltip(v-if="props.item.approval", bottom)
+          slot(slot="activator")
+            v-icon(color="black") query_builder
+          span {{ $t('remediationInstructions.approvalPending') }}
+        v-icon(v-else, color="primary") check_circle
+      template(slot="type", slot-scope="props") {{ $t(`remediationInstructions.types.${props.item.type}`) }}
+      template(slot="last_modified", slot-scope="props") {{ props.item.last_modified | date('long', true, null) }}
+      template(slot="last_executed_on", slot-scope="props") {{ props.item.last_executed_on | date('long', true, null) }}
       template(slot="actions", slot-scope="props")
-        v-layout(row)
+        v-layout(row, justify-end)
+          c-action-btn(
+            v-if="props.item.approval",
+            icon="notification_important",
+            :tooltip="$t('remediationInstructions.needApprove')",
+            @click="$emit('approve', props.item)"
+          )
           c-action-btn(
             v-if="hasUpdateAnyRemediationInstructionAccess",
             type="edit",
@@ -56,13 +63,10 @@
 <script>
 import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
 
-import RatingField from '@/components/forms/fields/rating-field.vue';
-
 import RemediationInstructionsListExpandPanel from './partials/remediation-instructions-list-expand-panel.vue';
 
 export default {
   components: {
-    RatingField,
     RemediationInstructionsListExpandPanel,
   },
   mixins: [permissionsTechnicalRemediationInstructionMixin],
@@ -100,24 +104,20 @@ export default {
           value: 'enabled',
         },
         {
-          text: this.$t('remediationInstructions.table.rating'),
-          value: 'rating',
+          text: this.$t('common.type'),
+          value: 'type',
         },
         {
           text: this.$t('remediationInstructions.table.lastModifiedOn'),
           value: 'last_modified',
         },
         {
-          text: this.$t('remediationInstructions.table.averageTimeCompletion'),
-          value: 'avg_complete_time',
+          text: this.$t('common.status'),
+          value: 'status',
         },
         {
           text: this.$t('remediationInstructions.table.monthExecutions'),
           value: 'month_executions',
-        },
-        {
-          text: this.$t('remediationInstructions.table.lastExecutedBy'),
-          value: 'last_executed_by.username',
         },
         {
           text: this.$t('remediationInstructions.table.lastExecutedOn'),

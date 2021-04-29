@@ -5,7 +5,7 @@ const { mapActions, mapGetters } = createNamespacedHelpers('remediationInstructi
 /**
  * @mixin
  */
-export default {
+export const entitiesRemediationInstructionsMixin = {
   computed: {
     ...mapGetters({
       remediationInstructions: 'items',
@@ -18,6 +18,7 @@ export default {
       fetchRemediationInstructionsList: 'fetchList',
       fetchRemediationInstructionsListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchRemediationInstructionsListWithoutStore: 'fetchListWithoutStore',
+      fetchRemediationInstructionCommentsListWithoutStore: 'fetchItemCommentsWithoutStore',
       createRemediationInstruction: 'create',
       updateRemediationInstruction: 'update',
       removeRemediationInstruction: 'remove',

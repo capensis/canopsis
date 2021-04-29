@@ -1,10 +1,10 @@
 <template lang="pug">
   v-tabs(color="secondary lighten-1", dark, centered, slider-color="primary")
-    v-tab {{ $tc('common.comment', remediationInstruction.comments.length) }}
-    v-tab-item
+    v-tab {{ $tc('common.comment', 2) }}
+    v-tab-item(lazy)
       v-layout.pa-3.secondary.lighten-2
         v-flex(offset-xs2, xs8)
-          remediation-instructions-comments(:comments="remediationInstruction.comments")
+          remediation-instructions-comments(:remediation-instruction="remediationInstruction")
 </template>
 
 <script>

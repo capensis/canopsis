@@ -33,7 +33,7 @@ import RemediationInstructions from '@/components/other/remediation/instructions
 import RemediationJobs from '@/components/other/remediation/jobs/remediation-jobs.vue';
 import RemediationConfigurations from '@/components/other/remediation/configurations/remediation-configurations.vue';
 
-import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
+import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
 import entitiesRemediationConfigurationsMixin from '@/mixins/entities/remediation/configurations';
 import entitiesRemediationJobsMixin from '@/mixins/entities/remediation/jobs';
 import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';

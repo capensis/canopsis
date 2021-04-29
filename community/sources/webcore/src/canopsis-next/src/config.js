@@ -156,6 +156,7 @@ export const API_ROUTES = {
     executions: '/api/v4/cat/executions',
     jobExecutions: '/api/v4/cat/job-executions',
     pausedExecutions: '/api/v4/cat/account/paused-executions',
+    instructionComments: '/api/v4/cat/instruction-comments',
   },
 };
 

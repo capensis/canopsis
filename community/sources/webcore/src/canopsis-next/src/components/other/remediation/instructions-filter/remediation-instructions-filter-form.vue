@@ -45,7 +45,7 @@
 import { MAX_LIMIT } from '@/constants';
 
 import formMixin from '@/mixins/form';
-import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
+import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
 
 export default {
   inject: ['$validator'],

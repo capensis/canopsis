@@ -18,6 +18,7 @@ import {
   SIDE_BARS,
   STATE_SETTING_METHODS,
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  REMEDIATION_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2007,9 +2008,11 @@ export default {
     emptyOperations: 'Aucune opération ajoutée pour le moment',
     requestApproval: 'Demande d\'approbation',
     type: 'Type d\'instruction',
+    approvalPending: 'En attente d\'approbation',
+    needApprove: 'Une approbation est nécessaire',
     types: {
-      manual: 'Manuel',
-      automatic: 'Automatique',
+      [REMEDIATION_TYPES.manual]: 'Manuel',
+      [REMEDIATION_TYPES.auto]: 'Automatique',
     },
     tooltips: {
       endpoint: 'Le point de terminaison doit être une question qui appelle une réponse Oui / Non',

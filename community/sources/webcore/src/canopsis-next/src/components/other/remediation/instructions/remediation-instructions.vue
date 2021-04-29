@@ -19,7 +19,7 @@ import { MODALS } from '@/constants';
 
 import { remediationInstructionToForm, formToRemediationInstruction } from '@/helpers/forms/remediation-instruction';
 
-import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
+import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
 import RemediationInstructionsList from './remediation-instructions-list.vue';
@@ -37,6 +37,7 @@ export default {
     fetchList() {
       const params = this.getQuery();
       params.with_flags = true;
+      params.with_month_executions = true;
 
       this.fetchRemediationInstructionsList({ params });
     },

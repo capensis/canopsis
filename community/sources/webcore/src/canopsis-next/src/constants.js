@@ -1592,6 +1592,11 @@ export const REMEDIATION_TABS = {
   jobs: 'jobs',
 };
 
+export const REMEDIATION_TYPES = {
+  manual: 0,
+  auto: 1,
+};
+
 export const WORKFLOW_TYPES = {
   stop: true,
   continue: false,
