@@ -91,6 +91,7 @@ import CPercentsField from '@/components/forms/fields/c-percents-field.vue';
 import CMiniBarChart from '@/components/common/chart/c-mini-bar-chart.vue';
 import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
+import CRolePickerField from '@/components/forms/fields/c-role-picker-field.vue';
 
 import BullhornIcon from '@/components/icons/bullhorn.vue';
 import AltRouteIcon from '@/components/icons/alt_route.vue';
@@ -248,6 +249,7 @@ Vue.component('c-mini-bar-chart', CMiniBarChart);
 Vue.component('c-images-viewer', CImagesViewer);
 Vue.component('c-clickable-tooltip', CClickableTooltip);
 Vue.component('c-help-icon', CHelpIcon);
+Vue.component('c-role-picker-field', CRolePickerField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
