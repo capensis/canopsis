@@ -44,7 +44,7 @@ export default createEntityModule({
     },
 
     /**
-     * Fetch users list with previous params
+     * Fetch users list without store
      *
      * @param {VuexActionContext} context
      * @param {Object} [params]
