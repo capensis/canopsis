@@ -1738,6 +1738,7 @@ export default {
       importExportViews: 'Import/Export',
       stateSettings: 'State settings',
       storageSettings: 'Storage settings',
+      notificationsSettings: 'Notifications settings',
     },
     interfaceLanguage: 'Interface language',
     groupsNavigationType: {
@@ -2263,6 +2264,15 @@ export default {
     },
     history: {
       junit: 'Script launched at {launchedAt}',
+    },
+  },
+
+  notificationSettings: {
+    instruction: {
+      header: 'Instructions',
+      rate: '”Rate the instruction” notifications',
+      rateFrequency: 'Frequency',
+      duration: 'Time range',
     },
   },
 

@@ -1738,6 +1738,7 @@ export default {
       importExportViews: 'Importation/Exportation',
       stateSettings: 'Paramètres d\'état',
       storageSettings: 'Paramètres de stockage',
+      notificationsSettings: 'Paramètres des notifications',
     },
     interfaceLanguage: 'Langue de l\'interface',
     groupsNavigationType: {
@@ -2263,6 +2264,15 @@ export default {
     },
     history: {
       junit: 'Script lancé à {launchedAt}',
+    },
+  },
+
+  notificationSettings: {
+    instruction: {
+      header: 'Instructions',
+      rate: 'Notifications "Évaluer l\'instruction"',
+      rateFrequency: 'La fréquence',
+      duration: 'Intervalle de temps',
     },
   },
 
