@@ -117,6 +117,7 @@ export const MODALS = {
   createRemediationInstructionsFilter: 'create-remediation-instructions-filter',
   executeRemediationInstruction: 'execute-remediation-instruction',
   remediationPatterns: 'remediation-patterns',
+  remediationInstructionApproval: 'remediation-instruction-approval',
   imageViewer: 'image-viewer',
   imagesViewer: 'images-viewer',
   patterns: 'patterns',

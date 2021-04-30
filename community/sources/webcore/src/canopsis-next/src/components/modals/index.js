@@ -66,6 +66,7 @@ export { default as CreateRemediationConfiguration } from './remediation/create-
 export { default as CreateRemediationJob } from './remediation/create-remediation-job.vue';
 export { default as ExecuteRemediationInstruction } from './remediation/execute-remediation-instruction.vue';
 export { default as RemediationPatterns } from './remediation/remediation-patterns.vue';
+export { default as RemediationInstructionApproval } from './remediation/remediation-instruction-approval.vue';
 export { default as ImageViewer } from './common/image-viewer.vue';
 export { default as ImagesViewer } from './common/images-viewer.vue';
 export { default as Patterns } from './pattern/patterns.vue';
