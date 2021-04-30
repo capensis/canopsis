@@ -190,6 +190,7 @@ export default {
     access: 'Access',
     communication: 'Communication | Communications',
     general: 'General',
+    notification: 'Notification | Notifications',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

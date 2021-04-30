@@ -18,6 +18,7 @@
     v-spacer
     portal-target(:name="$constants.PORTALS_NAMES.additionalTopBarItems")
     v-toolbar-items
+      top-bar-menu(:title="$tc('common.notification', 2)", :links="notificationLinks")
       top-bar-exploitation-menu
       top-bar-administration-menu
       top-bar-user-menu
@@ -35,6 +36,7 @@ import GroupsTopBar from './groups-top-bar/groups-top-bar.vue';
 import TopBarExploitationMenu from './top-bar-exploitation-menu.vue';
 import TopBarAdministrationMenu from './top-bar-administration-menu.vue';
 import TopBarUserMenu from './top-bar-user-menu.vue';
+import TopBarMenu from './top-bar-menu.vue';
 
 /**
  * Component for the top bar of the application
@@ -50,11 +52,23 @@ export default {
     TopBarExploitationMenu,
     TopBarAdministrationMenu,
     TopBarUserMenu,
+    TopBarMenu,
   },
   mixins: [
     authMixin,
     entitiesInfoMixin,
   ],
+  computed: {
+    notificationLinks() {
+      return [
+        {
+          route: { name: 'notification-instruction-rating' },
+          title: this.$t('instructionRating.title'),
+          icon: 'star_rate',
+        },
+      ];
+    },
+  },
 };
 </script>
 
