@@ -100,6 +100,7 @@ import SettingsSyncIcon from '@/components/icons/settings_sync.vue';
 import EngineeringIcon from '@/components/icons/engineering.vue';
 import InsightsIcon from '@/components/icons/insights.vue';
 import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services.vue';
+import StarHalfIcon from '@/components/icons/star_half.vue';
 
 import * as modalsComponents from '@/components/modals';
 
@@ -133,6 +134,9 @@ Vue.use(Vuetify, {
     },
     miscellaneous_services: {
       component: MiscellaneousServicesIcon,
+    },
+    star_half: {
+      component: StarHalfIcon,
     },
   },
 });
