@@ -2006,6 +2006,11 @@ export default {
     emptySteps: 'Aucune étape ajoutée pour le moment',
     emptyOperations: 'Aucune opération ajoutée pour le moment',
     requestApproval: 'Demande d\'approbation',
+    type: 'Type d\'instruction',
+    types: {
+      manual: 'Manuel',
+      automatic: 'Automatique',
+    },
     tooltips: {
       endpoint: 'Le point de terminaison doit être une question qui appelle une réponse Oui / Non',
     },

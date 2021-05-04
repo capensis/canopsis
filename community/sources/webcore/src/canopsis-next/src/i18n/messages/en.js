@@ -2007,6 +2007,11 @@ export default {
     emptySteps: 'No steps added yet',
     emptyOperations: 'No operations added yet',
     requestApproval: 'Request for approval',
+    type: 'Instruction type',
+    types: {
+      manual: 'Manual',
+      automatic: 'Automatic',
+    },
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',
     },

@@ -93,6 +93,7 @@ import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
 import CRolePickerField from '@/components/forms/fields/c-role-picker-field.vue';
 import CUserPickerField from '@/components/forms/fields/c-user-picker-field.vue';
+import CInstructionTypeField from '@/components/forms/fields/c-instruction-type-field.vue';
 
 import BullhornIcon from '@/components/icons/bullhorn.vue';
 import AltRouteIcon from '@/components/icons/alt_route.vue';
@@ -252,6 +253,7 @@ Vue.component('c-clickable-tooltip', CClickableTooltip);
 Vue.component('c-help-icon', CHelpIcon);
 Vue.component('c-role-picker-field', CRolePickerField);
 Vue.component('c-user-picker-field', CUserPickerField);
+Vue.component('c-instruction-type-field', CInstructionTypeField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

@@ -1599,6 +1599,11 @@ export const WORKFLOW_TYPES = {
 
 export const MAX_LIMIT = 10000;
 
+export const REMEDIATION_INSTRUCTION_TYPES = {
+  manual: 0,
+  automatic: 1,
+};
+
 export const REMEDIATION_CONFIGURATION_TYPES = {
   rundeck: 'rundeck',
   awx: 'awx',
