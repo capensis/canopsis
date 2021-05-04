@@ -36,7 +36,7 @@ export default {
     },
     name: {
       type: String,
-      default: 'user',
+      default: 'role',
     },
   },
   data() {
