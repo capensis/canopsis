@@ -1604,6 +1604,11 @@ export const REMEDIATION_CONFIGURATION_TYPES = {
   awx: 'awx',
 };
 
+export const REMEDIATION_INSTRUCTION_APPROVAL_TYPES = {
+  role: 0,
+  user: 1,
+};
+
 export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
   running: 0,
   paused: 1,

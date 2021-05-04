@@ -28,7 +28,7 @@ export default {
   props: {
     value: {
       type: Object,
-      default: () => ({}),
+      required: false,
     },
     label: {
       type: String,
@@ -36,7 +36,7 @@ export default {
     },
     name: {
       type: String,
-      default: '',
+      default: 'role',
     },
   },
   data() {

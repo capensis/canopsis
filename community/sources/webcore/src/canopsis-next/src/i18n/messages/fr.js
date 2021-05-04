@@ -2005,6 +2005,7 @@ export default {
     timeToComplete: 'Temps d\'exécution (estimation)',
     emptySteps: 'Aucune étape ajoutée pour le moment',
     emptyOperations: 'Aucune opération ajoutée pour le moment',
+    requestApproval: 'Demande d\'approbation',
     tooltips: {
       endpoint: 'Le point de terminaison doit être une question qui appelle une réponse Oui / Non',
     },

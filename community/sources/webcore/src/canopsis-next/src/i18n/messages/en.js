@@ -69,8 +69,8 @@ export default {
     authors: 'Authors',
     stat: 'Stat',
     trend: 'Trend',
-    users: 'Users',
-    roles: 'Roles',
+    user: 'User | Users',
+    role: 'Role | Roles',
     import: 'Import',
     export: 'Export',
     rights: 'Rights',
@@ -2005,6 +2005,7 @@ export default {
     timeToComplete: 'Time to complete',
     emptySteps: 'No steps added yet',
     emptyOperations: 'No operations added yet',
+    requestApproval: 'Request for approval',
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',
     },

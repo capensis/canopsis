@@ -3,7 +3,7 @@
     remediation-instructions-list(
       :remediation-instructions="remediationInstructions",
       :pending="remediationInstructionsPending",
-      :totalItems="remediationInstructionsMeta.total_count",
+      :total-items="remediationInstructionsMeta.total_count",
       :pagination.sync="pagination",
       @remove-selected="showRemoveSelectedRemediationInstructionModal",
       @assign-patterns="showAssignPatternsModal",
