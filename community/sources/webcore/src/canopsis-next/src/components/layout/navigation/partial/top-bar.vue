@@ -64,7 +64,7 @@ export default {
         {
           route: { name: 'notification-instruction-rating' },
           title: this.$t('instructionRating.title'),
-          icon: '$vuetify.icons.star_half',
+          icon: 'star_half',
         },
       ];
     },
