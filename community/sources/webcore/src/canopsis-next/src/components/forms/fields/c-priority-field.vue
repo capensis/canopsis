@@ -34,6 +34,10 @@ export default {
       type: Number,
       default: 0,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     rules() {
