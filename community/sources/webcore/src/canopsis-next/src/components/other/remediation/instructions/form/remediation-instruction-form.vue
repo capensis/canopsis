@@ -2,7 +2,7 @@
   div
     v-layout(row)
       v-flex(xs3)
-        c-instruction-type-field(v-field="form.type")
+        c-instruction-type-field(v-field="form.type", @input="errors.clear()")
       v-flex
         c-enabled-field.mt-0(v-field="form.enabled", hide-details)
     v-layout(row)
@@ -25,8 +25,13 @@
       remediation-instruction-steps-form(v-field="form.steps")
     template(v-else)
       v-layout(row, justify-space-between, align-center)
-        v-flex(xs8)
-          | Timeout
+        v-flex(xs7)
+          c-duration-field(
+            v-field="form.timeout_after_execution",
+            :label="$t('remediationInstructions.timeoutAfterExecution')",
+            name="timeout_after_execution",
+            required
+          )
         v-flex.ml-2(xs3)
           c-priority-field(v-model="form.priority", required)
       v-layout(row)

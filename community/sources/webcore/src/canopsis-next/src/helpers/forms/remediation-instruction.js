@@ -57,6 +57,7 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  * @property {string} name
  * @property {boolean} enabled
  * @property {string} description
+ * @property {Duration} timeout_after_execution
  * @property {Array} alarm_patterns
  * @property {Array} entity_patterns
  * @property {RemediationInstructionStep[]} steps
@@ -68,6 +69,7 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
 
 /**
  * @typedef {RemediationInstruction} RemediationInstructionForm
+ * @property {DurationForm} timeout_after_execution
  * @property {RemediationInstructionStepForm[]} steps
  * @property {RemediationInstructionApprovalForm} approval
  */
@@ -140,6 +142,7 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   name: remediationInstruction.name || '',
   type: !isUndefined(remediationInstruction.type) ? remediationInstruction.type : REMEDIATION_INSTRUCTION_TYPES.manual,
   enabled: !isUndefined(remediationInstruction.enabled) ? remediationInstruction.enabled : true,
+  timeout_after_execution: durationToForm(remediationInstruction.timeout_after_execution),
   active_on_pbh: remediationInstruction.active_on_pbh
     ? cloneDeep(remediationInstruction.active_on_pbh)
     : [],
@@ -225,12 +228,13 @@ const formApprovalToRemediationInstructionApproval = (approval) => {
  */
 export const formToRemediationInstruction = (form) => {
   const {
-    steps, jobs, priority, ...instruction
+    steps, jobs, priority, timeout_after_execution: timeoutAfterExecution, ...instruction
   } = form;
 
   if (form.type === REMEDIATION_INSTRUCTION_TYPES.manual) {
     instruction.steps = formStepsToRemediationInstructionSteps(steps);
   } else {
+    instruction.timeout_after_execution = formToDuration(timeoutAfterExecution);
     instruction.priority = priority;
     instruction.jobs = formJobsToRemediationInstructionJobs(jobs);
   }

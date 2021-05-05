@@ -2006,6 +2006,7 @@ export default {
     timeToComplete: 'Temps d\'exécution (estimation)',
     emptySteps: 'Aucune étape ajoutée pour le moment',
     emptyOperations: 'Aucune opération ajoutée pour le moment',
+    timeoutAfterExecution: 'Timeout après l\'exécution de l\'instruction',
     requestApproval: 'Demande d\'approbation',
     type: 'Type d\'instruction',
     approvalPending: 'En attente d\'approbation',

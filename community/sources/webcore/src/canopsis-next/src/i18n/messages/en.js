@@ -2007,6 +2007,7 @@ export default {
     timeToComplete: 'Time to complete',
     emptySteps: 'No steps added yet',
     emptyOperations: 'No operations added yet',
+    timeoutAfterExecution: 'Timeout after instruction execution',
     requestApproval: 'Request for approval',
     type: 'Instruction type',
     approvalPending: 'Approval pending',
