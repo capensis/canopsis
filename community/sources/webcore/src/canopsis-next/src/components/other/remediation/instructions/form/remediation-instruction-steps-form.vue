@@ -24,7 +24,7 @@ import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import { generateRemediationInstructionStep } from '@/helpers/entities';
+import { remediationInstructionStepToForm } from '@/helpers/forms/remediation-instruction';
 
 import formArrayMixin from '@/mixins/form/array';
 
@@ -91,7 +91,7 @@ export default {
   },
   methods: {
     addStep() {
-      this.addItemIntoArray(generateRemediationInstructionStep());
+      this.addItemIntoArray(remediationInstructionStepToForm());
     },
 
     removeStep(index) {

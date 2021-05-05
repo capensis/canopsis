@@ -19,8 +19,6 @@ import {
   ENTITIES_STATUSES,
   GRID_SIZES, AVAILABLE_COUNTERS,
   DEFAULT_COUNTER_BLOCK_TEMPLATE,
-  TIME_UNITS,
-  WORKFLOW_TYPES,
   COLOR_INDICATOR_TYPES,
   EXPORT_CSV_SEPARATORS,
   EXPORT_CSV_DATETIME_FORMATS,
@@ -494,46 +492,3 @@ export const removeKeyFromEntities = (entities = []) => entities.map(entity => o
  */
 export const getIdFromEntity = (entity, idField = '_id') =>
   (isObject(entity) ? entity[idField] : entity);
-
-/**
- * Generate an remediation instruction step operation entity
- *
- * @typedef {Object} RemediationInstructionStepOperation
- * @property {string} name
- * @property {string} description
- * @property {Array} jobs
- * @property {DurationForm} time_to_complete
- * @property {string} [key]
- * @return {RemediationInstructionStepOperation}
- */
-export const generateRemediationInstructionStepOperation = () => ({
-  name: '',
-  description: '',
-  jobs: [],
-  time_to_complete: {
-    value: 0,
-    unit: TIME_UNITS.minute,
-  },
-  key: uid(),
-});
-
-/**
- * Generate an remediation instruction step entity
- *
- * @typedef {Object} RemediationInstructionStep
- * @property {string} endpoint
- * @property {string} name
- * @property {boolean} stop_on_fail
- * @property {RemediationInstructionStepOperation[]} operations
- * @property {boolean} [saved]
- * @property {string} [key]
- * @return {RemediationInstructionStep}
- */
-export const generateRemediationInstructionStep = () => ({
-  endpoint: '',
-  name: '',
-  operations: [generateRemediationInstructionStepOperation()],
-  stop_on_fail: WORKFLOW_TYPES.stop,
-  saved: false,
-  key: uid(),
-});

@@ -1,7 +1,7 @@
 <template lang="pug">
   v-combobox(
     v-field="value",
-    v-validate="'required'",
+    v-validate="rules",
     :items="items",
     :label="label",
     :loading="pending",
@@ -27,7 +27,7 @@ export default {
   mixins: [formBaseMixin],
   props: {
     value: {
-      type: Object,
+      type: [Object, String],
       required: false,
     },
     label: {
@@ -38,12 +38,23 @@ export default {
       type: String,
       default: 'role',
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       pending: false,
       items: [],
     };
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
   },
   mounted() {
     this.fetchList();

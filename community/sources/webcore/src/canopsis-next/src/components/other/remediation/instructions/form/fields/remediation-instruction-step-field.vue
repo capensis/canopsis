@@ -53,9 +53,9 @@
 import formMixin from '@/mixins/form';
 import validationChildrenMixin from '@/mixins/form/validation-children';
 
+import { remediationInstructionStepToForm } from '@/helpers/forms/remediation-instruction';
 import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
 import { toSeconds } from '@/helpers/date/duration';
-import { generateRemediationInstructionStep } from '@/helpers/entities';
 
 import confirmableFormMixin from '@/mixins/confirmable-form';
 
@@ -76,7 +76,7 @@ export default {
       field: 'step',
       method: 'remove',
       comparator(step) {
-        const emptyStep = generateRemediationInstructionStep();
+        const emptyStep = remediationInstructionStepToForm();
         const paths = [
           'key',
           step.operations.length ? ['operations', 0, 'key'] : 'operations',

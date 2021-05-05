@@ -20,14 +20,17 @@
       )
     v-layout(row)
       remediation-instruction-steps-form(v-field="form.steps")
+    v-layout(row)
+      remediation-instruction-approval-form(v-field="form.approval")
 </template>
 
 <script>
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
+import RemediationInstructionApprovalForm from './remediation-instruction-approval-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: { RemediationInstructionStepsForm },
+  components: { RemediationInstructionApprovalForm, RemediationInstructionStepsForm },
   model: {
     prop: 'form',
     event: 'input',

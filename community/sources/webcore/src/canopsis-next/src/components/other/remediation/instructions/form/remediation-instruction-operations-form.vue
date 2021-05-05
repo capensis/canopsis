@@ -32,7 +32,7 @@ import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
+import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
 import { getLetterByIndex } from '@/helpers/string';
 
 import formArrayMixin from '@/mixins/form/array';
@@ -110,7 +110,7 @@ export default {
     },
 
     addOperation() {
-      this.addItemIntoArray(generateRemediationInstructionStepOperation());
+      this.addItemIntoArray(remediationInstructionStepOperationToForm());
     },
 
     removeOperation(index) {

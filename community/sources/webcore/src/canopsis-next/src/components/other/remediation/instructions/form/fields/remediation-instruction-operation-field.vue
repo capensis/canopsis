@@ -44,7 +44,8 @@
 
 <script>
 import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
-import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
+
+import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
 
 import formMixin from '@/mixins/form';
 import validationChildrenMixin from '@/mixins/form/validation-children';
@@ -69,7 +70,7 @@ export default {
       field: 'operation',
       method: 'remove',
       comparator(operation) {
-        const emptyOperation = generateRemediationInstructionStepOperation();
+        const emptyOperation = remediationInstructionStepOperationToForm();
         const paths = ['key'];
 
         return isOmitEqual(operation, emptyOperation, paths);

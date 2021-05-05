@@ -1,7 +1,7 @@
 <template lang="pug">
   v-combobox(
     v-field="value",
-    v-validate="'required'",
+    v-validate="rules",
     :items="items",
     :label="label",
     :loading="pending",
@@ -23,11 +23,20 @@ import formBaseMixin from '@/mixins/form/base';
 const { mapActions } = createNamespacedHelpers('user');
 
 export default {
+  $_veeValidate: {
+    value() {
+      return this.value;
+    },
+
+    name() {
+      return this.name;
+    },
+  },
   inject: ['$validator'],
   mixins: [formBaseMixin],
   props: {
     value: {
-      type: Object,
+      type: [Object, String],
       required: false,
     },
     label: {
@@ -38,12 +47,23 @@ export default {
       type: String,
       default: 'user',
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       pending: false,
       items: [],
     };
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
   },
   mounted() {
     this.fetchList();
