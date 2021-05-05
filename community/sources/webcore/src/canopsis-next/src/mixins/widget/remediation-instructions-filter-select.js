@@ -57,8 +57,16 @@ export default {
   },
   methods: {
     updateRemediationInstructionsFiltersInQuery(filters) {
+      const queryWithoutRemediationInstructionsFields = omit(this.query, [
+        'with_instructions',
+        'include_instructions',
+        'exclude_instructions',
+        'include_types',
+        'exclude_types',
+      ]);
+
       this.query = {
-        ...omit(this.query, ['with_instructions', 'without_instructions']),
+        ...queryWithoutRemediationInstructionsFields,
         ...prepareRemediationInstructionsFiltersToQuery(filters),
 
         page: 1,

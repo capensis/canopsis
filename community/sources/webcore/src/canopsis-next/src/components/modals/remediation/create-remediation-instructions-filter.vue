@@ -49,6 +49,8 @@ export default {
     const defaultForm = {
       with: true,
       all: false,
+      auto: false,
+      manual: false,
       instructions: [],
     };
 

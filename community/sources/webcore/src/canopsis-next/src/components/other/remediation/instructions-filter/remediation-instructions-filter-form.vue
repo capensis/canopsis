@@ -24,6 +24,17 @@
         @change="changeSelectedAll"
       )
     v-layout(row)
+      v-checkbox(
+        v-field="form.automatic",
+        :label="$t('remediationInstructions.types.automatic')",
+        color="primary"
+      )
+      v-checkbox(
+        v-field="form.manual",
+        :label="$t('remediationInstructions.types.manual')",
+        color="primary"
+      )
+    v-layout(row)
       v-select(
         v-validate="selectValidationRules",
         :value="form.instructions",
