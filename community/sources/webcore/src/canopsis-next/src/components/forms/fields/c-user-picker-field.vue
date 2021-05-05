@@ -23,15 +23,6 @@ import formBaseMixin from '@/mixins/form/base';
 const { mapActions } = createNamespacedHelpers('user');
 
 export default {
-  $_veeValidate: {
-    value() {
-      return this.value;
-    },
-
-    name() {
-      return this.name;
-    },
-  },
   inject: ['$validator'],
   mixins: [formBaseMixin],
   props: {
