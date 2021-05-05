@@ -35,7 +35,7 @@
 <script>
 import { REMEDIATION_INSTRUCTION_APPROVAL_TYPES } from '@/constants';
 
-import RemediationInstructionApprovalTypeField from './remediation-instruction-approval-type-field.vue';
+import RemediationInstructionApprovalTypeField from './fields/remediation-instruction-approval-type-field.vue';
 
 export default {
   inject: ['$validator'],
