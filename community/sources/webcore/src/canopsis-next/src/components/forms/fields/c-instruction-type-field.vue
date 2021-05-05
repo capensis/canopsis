@@ -7,13 +7,10 @@
     color="primary"
   )
     v-radio(
-      :label="$t('remediationInstructions.types.manual')",
-      :value="$constants.REMEDIATION_INSTRUCTION_TYPES.manual",
-      color="primary"
-    )
-    v-radio(
-      :label="$t('remediationInstructions.types.automatic')",
-      :value="$constants.REMEDIATION_INSTRUCTION_TYPES.automatic",
+      v-for="type in types",
+      :key="type.value",
+      :label="type.label",
+      :value="type.value",
       color="primary"
     )
 </template>
@@ -30,6 +27,14 @@ export default {
     value: {
       type: Number,
       default: REMEDIATION_INSTRUCTION_TYPES.manual,
+    },
+  },
+  computed: {
+    types() {
+      return Object.values(REMEDIATION_INSTRUCTION_TYPES).map(value => ({
+        value,
+        label: this.$t(`remediationInstructions.types.${value}`),
+      }));
     },
   },
 };
