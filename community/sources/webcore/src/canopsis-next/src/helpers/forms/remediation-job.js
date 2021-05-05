@@ -1,13 +1,20 @@
 /**
- * Convert remediation job entity to form object
- *
  * @typedef {Object} RemediationJob
  * @property {Object|string} config
+ * @property {string} _id
  * @property {string} job_id
  * @property {string} name
  * @property {string} payload
+ */
+/**
+ * @typedef {RemediationJob} RemediationJobForm
+ */
+
+/**
+ * Convert remediation job entity to form object
+ *
  * @param {RemediationJob} remediationJob
- * @return {RemediationJob}
+ * @return {RemediationJobForm}
  */
 export const remediationJobToForm = (remediationJob = {}) => ({
   config: remediationJob.config || '',
@@ -19,7 +26,7 @@ export const remediationJobToForm = (remediationJob = {}) => ({
 /**
  * Convert remediation job form object to API compatible object
  *
- * @param {RemediationJob} form
+ * @param {RemediationJobForm} form
  * @return {RemediationJob}
  */
 export const formToRemediationJob = form => ({

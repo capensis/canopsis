@@ -24,14 +24,7 @@
           :items="types"
         )
       v-flex.ml-2(xs6)
-        v-text-field(
-          v-field.number="form.priority",
-          v-validate="'required|numeric|min_value:0'",
-          :label="$t('modals.createPbehaviorType.fields.priority')",
-          :error-messages="errors.collect('priority')",
-          type="number",
-          name="priority"
-        )
+        c-priority-field(v-model="form.priority", required)
     v-layout(row)
       icon-field(
         v-field="form.iconName",

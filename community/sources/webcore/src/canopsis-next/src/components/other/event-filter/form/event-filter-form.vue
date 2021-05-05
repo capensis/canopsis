@@ -21,14 +21,8 @@
       :error-messages="errors.collect('description')",
       name="description"
     )
-    v-text-field(
-      v-field.number="form.priority",
-      v-validate="'required'",
-      :error-messages="errors.collect('priority')",
-      :label="$t('common.priority')",
-      name="priority",
-      type="number"
-    )
+    v-textarea(v-field="form.description", :label="$t('common.description')")
+    c-priority-field(v-model="form.priority")
     c-enabled-field(v-field="form.enabled")
     patterns-list(v-field="form.patterns")
 </template>

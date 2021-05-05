@@ -63,6 +63,7 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  * @property {RemediationInstructionStep[]} steps
  * @property {string[]} active_on_pbh
  * @property {string[]} disabled_on_pbh
+ * @property {string[]} jobs
  * @property {RemediationInstructionApproval} approval
  */
 
@@ -147,7 +148,17 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   description: remediationInstruction.description || '',
   steps: remediationInstructionStepsToForm(remediationInstruction.steps),
   approval: remediationInstructionApprovalToForm(remediationInstruction.approval),
+  jobs: remediationInstruction.jobs || [],
 });
+
+
+/**
+ * Convert a remediation instruction step operations form array to a API compatible operation array
+ *
+ * @param {RemediationJob[]} jobs
+ * @returns {string[]}
+ */
+const formJobsToRemediationInstructionJobs = (jobs = []) => jobs.map(({ _id }) => _id);
 
 
 /**
@@ -160,7 +171,7 @@ const formOperationsToRemediationInstructionOperation = operations => operations
   ...omit(operation, ['key']),
 
   time_to_complete: formToDuration(operation.time_to_complete),
-  jobs: operation.jobs.map(({ _id }) => _id),
+  jobs: formJobsToRemediationInstructionJobs(operation.jobs),
 }));
 
 /**
@@ -203,11 +214,22 @@ const formApprovalToRemediationInstructionApproval = (approval) => {
  * @param {Object} form
  * @returns {Object}
  */
-export const formToRemediationInstruction = form => ({
-  ...form,
+export const formToRemediationInstruction = (form) => {
+  const {
+    steps, jobs, priority, ...instruction
+  } = form;
 
-  alarm_patterns: form.alarm_patterns && form.alarm_patterns.length ? form.alarm_patterns : undefined,
-  entity_patterns: form.entity_patterns && form.entity_patterns.length ? form.entity_patterns : undefined,
-  steps: formStepsToRemediationInstructionSteps(form.steps),
-  approval: formApprovalToRemediationInstructionApproval(form.approval),
-});
+  if (form.type === REMEDIATION_INSTRUCTION_TYPES.manual) {
+    instruction.steps = formStepsToRemediationInstructionSteps(steps);
+  } else {
+    instruction.priority = priority;
+    instruction.jobs = formJobsToRemediationInstructionJobs(jobs);
+  }
+
+  return {
+    ...instruction,
+    alarm_patterns: form.alarm_patterns.length ? form.alarm_patterns : undefined,
+    entity_patterns: form.entity_patterns.length ? form.entity_patterns : undefined,
+    approval: formApprovalToRemediationInstructionApproval(form.approval),
+  };
+};
