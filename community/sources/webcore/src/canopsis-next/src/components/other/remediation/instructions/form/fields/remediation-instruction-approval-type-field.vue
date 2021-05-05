@@ -3,8 +3,7 @@
     v-field="type",
     hide-details,
     mandatory,
-    row,
-    color="primary"
+    row
   )
     v-radio(
       :label="$tc('common.role')",
