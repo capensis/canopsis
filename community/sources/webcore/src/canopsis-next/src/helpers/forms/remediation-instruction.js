@@ -101,7 +101,7 @@ const remediationInstructionStepOperationsToForm = (operations = [undefined]) =>
  * Convert a remediation instruction step to form
  *
  * @param {RemediationInstructionStep} [step]
- * @returns {Array}
+ * @returns {RemediationInstructionStepForm}
  */
 export const remediationInstructionStepToForm = (step = {}) => ({
   endpoint: step.endpoint || '',
