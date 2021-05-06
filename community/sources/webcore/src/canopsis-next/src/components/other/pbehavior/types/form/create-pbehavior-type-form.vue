@@ -24,7 +24,7 @@
           :items="types"
         )
       v-flex.ml-2(xs6)
-        c-priority-field(v-model="form.priority", required)
+        c-priority-field(v-field="form.priority", required)
     v-layout(row)
       icon-field(
         v-field="form.iconName",

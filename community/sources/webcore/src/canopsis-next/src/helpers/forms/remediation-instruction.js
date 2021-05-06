@@ -1,4 +1,4 @@
-import { isUndefined, omit, pick } from 'lodash';
+import { isUndefined, omit, pick, cloneDeep } from 'lodash';
 
 import {
   REMEDIATION_INSTRUCTION_APPROVAL_TYPES,
@@ -76,7 +76,7 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  * Convert a remediation instruction step operation to form
  *
  * @param {RemediationInstructionStepOperation} [operation]
- * @returns {Array}
+ * @returns {RemediationInstructionStepOperationForm}
  */
 export const remediationInstructionStepOperationToForm = (operation = {}) => ({
   name: operation.name || '',
@@ -84,7 +84,7 @@ export const remediationInstructionStepOperationToForm = (operation = {}) => ({
   time_to_complete: operation.time_to_complete
     ? durationToForm(operation.time_to_complete)
     : { value: 0, unit: TIME_UNITS.minute },
-  jobs: operation.jobs || [],
+  jobs: operation.jobs ? cloneDeep(operation.jobs) : [],
   key: uuid(),
 });
 
@@ -140,14 +140,24 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   name: remediationInstruction.name || '',
   type: !isUndefined(remediationInstruction.type) ? remediationInstruction.type : REMEDIATION_INSTRUCTION_TYPES.manual,
   enabled: !isUndefined(remediationInstruction.enabled) ? remediationInstruction.enabled : true,
-  active_on_pbh: remediationInstruction.active_on_pbh || [],
-  disabled_on_pbh: remediationInstruction.disabled_on_pbh || [],
-  alarm_patterns: remediationInstruction.alarm_patterns || [],
-  entity_patterns: remediationInstruction.entity_patterns || [],
+  active_on_pbh: remediationInstruction.active_on_pbh
+    ? cloneDeep(remediationInstruction.active_on_pbh)
+    : [],
+  disabled_on_pbh: remediationInstruction.disabled_on_pbh
+    ? cloneDeep(remediationInstruction.disabled_on_pbh)
+    : [],
+  alarm_patterns: remediationInstruction.alarm_patterns
+    ? cloneDeep(remediationInstruction.alarm_patterns)
+    : [],
+  entity_patterns: remediationInstruction.entity_patterns
+    ? cloneDeep(remediationInstruction.entity_patterns)
+    : [],
   description: remediationInstruction.description || '',
   steps: remediationInstructionStepsToForm(remediationInstruction.steps),
   approval: remediationInstructionApprovalToForm(remediationInstruction.approval),
-  jobs: remediationInstruction.jobs || [],
+  jobs: remediationInstruction.jobs
+    ? cloneDeep(remediationInstruction.jobs)
+    : [],
 });
 
 
@@ -210,8 +220,8 @@ const formApprovalToRemediationInstructionApproval = (approval) => {
 /**
  * Convert a remediation instruction form object to a API compatible object
  *
- * @param {Object} form
- * @returns {Object}
+ * @param {RemediationInstructionForm} form
+ * @returns {RemediationInstruction}
  */
 export const formToRemediationInstruction = (form) => {
   const {
