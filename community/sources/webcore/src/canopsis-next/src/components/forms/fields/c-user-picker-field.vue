@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-combobox(
+  v-autocomplete(
     v-field="value",
     v-validate="rules",
     :items="items",

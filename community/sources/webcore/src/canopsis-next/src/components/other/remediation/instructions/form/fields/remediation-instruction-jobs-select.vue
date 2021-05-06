@@ -2,8 +2,8 @@
   v-autocomplete(
     v-field="value",
     v-validate="rules",
-    :items="items",
-    :label="label",
+    :items="jobs",
+    :label="label || $t('remediationInstructions.job')",
     :loading="pending",
     :name="name",
     :error-messages="errors.collect(name)",
@@ -14,29 +14,29 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import { MAX_LIMIT } from '@/constants';
 
-import formBaseMixin from '@/mixins/form/base';
-
-const { mapActions } = createNamespacedHelpers('role');
+import entitiesRemediationJobsMixin from '@/mixins/entities/remediation/jobs';
 
 export default {
   inject: ['$validator'],
-  mixins: [formBaseMixin],
+  mixins: [entitiesRemediationJobsMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: [Object, String],
-      required: false,
-    },
-    label: {
-      type: String,
       default: '',
     },
     name: {
       type: String,
-      default: 'role',
+      default: 'job',
+    },
+    label: {
+      type: String,
+      default: '',
     },
     required: {
       type: Boolean,
@@ -46,7 +46,7 @@ export default {
   data() {
     return {
       pending: false,
-      items: [],
+      jobs: [],
     };
   },
   computed: {
@@ -60,16 +60,16 @@ export default {
     this.fetchList();
   },
   methods: {
-    ...mapActions({
-      fetchRolesListWithoutStore: 'fetchListWithoutStore',
-    }),
-
     async fetchList() {
       this.pending = true;
 
-      const { data: items } = await this.fetchRolesListWithoutStore({ params: { limit: MAX_LIMIT } });
+      const { data: jobs } = await this.fetchRemediationJobsListWithoutStore({
+        params: {
+          limit: MAX_LIMIT,
+        },
+      });
 
-      this.items = items;
+      this.jobs = jobs;
       this.pending = false;
     },
   },
