@@ -79,7 +79,7 @@ export default {
     },
 
     instructionsMessage() {
-      return this.filter.instructions.join(', ');
+      return this.filter.instructions.map(({ name }) => name).join(', ');
     },
   },
   methods: {

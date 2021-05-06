@@ -1630,8 +1630,6 @@ export const REMEDIATION_JOB_EXECUTION_STATUSES = {
   canceled: 3,
 };
 
-export const REMEDIATION_INSTRUCTION_FILTER_ALL = 'all';
-
 /**
  * 19/01/2038 @ 3:14am (UTC) in unix timestamp
  *

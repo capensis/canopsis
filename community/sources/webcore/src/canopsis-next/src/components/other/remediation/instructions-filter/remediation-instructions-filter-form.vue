@@ -25,13 +25,15 @@
       )
     v-layout(row)
       v-checkbox(
-        v-field="form.automatic",
-        :label="$t('remediationInstructions.types.automatic')",
+        v-field="form.auto",
+        :label="$t(`remediationInstructions.types.automatic`)",
+        :disabled="form.all",
         color="primary"
       )
       v-checkbox(
         v-field="form.manual",
         :label="$t('remediationInstructions.types.manual')",
+        :disabled="form.all",
         color="primary"
       )
     v-layout(row)
@@ -44,11 +46,12 @@
         :label="$t('remediationInstructionsFilters.fields.selectedInstructions')",
         :error-messages="errors.collect('instructions')",
         item-text="name",
-        item-value="name",
+        item-value="_id",
         name="instructions",
         multiple,
         clearable,
-        @change="updateField('instructions', $event)"
+        return-object,
+        @change="changeInstructions"
       )
 </template>
 
@@ -109,9 +112,15 @@ export default {
 
       if (all) {
         newForm.instructions = [];
+        newForm.manual = true;
+        newForm.auto = true;
       }
 
       this.updateModel(newForm);
+    },
+
+    changeInstructions(instructions) {
+      this.updateField('instructions', instructions.map(({ _id, name }) => ({ _id, name })));
     },
   },
 };
