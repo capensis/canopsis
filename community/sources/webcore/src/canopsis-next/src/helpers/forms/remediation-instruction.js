@@ -15,12 +15,12 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  * @property {string} name
  * @property {string} description
  * @property {Array} jobs
- * @property {DurationForm} time_to_complete
- * @property {string} [key]
+ * @property {Duration} time_to_complete
  */
 
 /**
  * @typedef {RemediationInstructionStepOperation} RemediationInstructionStepOperationForm
+ * @property {DurationForm} time_to_complete
  * @property {string} [key]
  */
 
@@ -30,7 +30,6 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  * @property {string} name
  * @property {boolean} stop_on_fail
  * @property {RemediationInstructionStepOperation[]} operations
- * @property {string} [key]
  */
 
 /**
@@ -92,7 +91,7 @@ export const remediationInstructionStepOperationToForm = (operation = {}) => ({
 /**
  * Convert a remediation instruction step operation array to form array
  *
- * @param {RemediationInstructionStepOperation[]} operations
+ * @param {RemediationInstructionStepOperation[]} [operations = [undefined]]
  * @returns {Array}
  */
 const remediationInstructionStepOperationsToForm = (operations = [undefined]) =>
@@ -115,7 +114,7 @@ export const remediationInstructionStepToForm = (step = {}) => ({
 /**
  * Convert a remediation instruction steps array to form array
  *
- * @param {RemediationInstructionStep[]} steps
+ * @param {RemediationInstructionStep[]} [steps = [undefined]]
  * @returns {RemediationInstructionStepForm[]}
  */
 const remediationInstructionStepsToForm = (steps = [undefined]) => steps.map(remediationInstructionStepToForm);
@@ -165,9 +164,9 @@ const formJobsToRemediationInstructionJobs = (jobs = []) => jobs.map(({ _id }) =
  * Convert a remediation instruction step operations form array to a API compatible operation array
  *
  * @param {RemediationInstructionStepOperationForm[]} operations
- * @returns {RemediationInstructionStepOperation}
+ * @returns {RemediationInstructionStepOperation[]}
  */
-const formOperationsToRemediationInstructionOperation = operations => operations.map(operation => ({
+const formOperationsToRemediationInstructionOperations = operations => operations.map(operation => ({
   ...omit(operation, ['key']),
 
   time_to_complete: formToDuration(operation.time_to_complete),
@@ -183,7 +182,7 @@ const formOperationsToRemediationInstructionOperation = operations => operations
 const formStepsToRemediationInstructionSteps = steps => steps.map(step => ({
   ...omit(step, ['key']),
 
-  operations: formOperationsToRemediationInstructionOperation(step.operations),
+  operations: formOperationsToRemediationInstructionOperations(step.operations),
 }));
 
 /**
