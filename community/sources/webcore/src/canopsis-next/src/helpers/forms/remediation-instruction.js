@@ -209,7 +209,8 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
  * @returns {RemediationInstructionJob[]}
  */
 const formJobsToRemediationInstructionJobs = (jobs = []) => jobs.map(job => ({
-  ...job,
+  ...omit(job, ['key']),
+
   job: job.job._id,
 }));
 

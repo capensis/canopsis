@@ -60,11 +60,6 @@ export default {
       default: 'job',
     },
   },
-  data() {
-    return {
-      expanded: true,
-    };
-  },
   computed: {
     jobFieldName() {
       return `${this.name}.job`;
