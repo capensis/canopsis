@@ -13,7 +13,9 @@
       remediation-instruction-job-field.py-1(
         v-for="(job, index) in jobs",
         v-field="jobs[index]",
+        :jobs="jobsItems",
         :key="job.key",
+        :name="job.key",
         :index="index",
         :job-number="index + 1",
         @remove="removeItemFromArray(index)"
@@ -30,9 +32,11 @@
 <script>
 import Draggable from 'vuedraggable';
 
+import { MAX_LIMIT } from '@/constants';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
+import { entitiesRemediationJobsMixin } from '@/mixins/entities/remediation/jobs';
 
 import RemediationInstructionJobField from './fields/remediation-instruction-job-field.vue';
 
@@ -42,7 +46,7 @@ export default {
     Draggable,
     RemediationInstructionJobField,
   },
-  mixins: [formArrayMixin],
+  mixins: [formArrayMixin, entitiesRemediationJobsMixin],
   model: {
     prop: 'jobs',
     event: 'input',
@@ -60,6 +64,7 @@ export default {
   data() {
     return {
       isDragging: false,
+      jobsItems: [],
     };
   },
   computed: {
@@ -85,6 +90,9 @@ export default {
       this.$validator.validate(this.name);
     },
   },
+  mounted() {
+    this.fetchList();
+  },
   created() {
     this.$validator.attach({
       name: this.name,
@@ -108,6 +116,16 @@ export default {
 
     endDragging() {
       this.isDragging = false;
+    },
+
+    async fetchList() {
+      const { data: jobs } = await this.fetchRemediationJobsListWithoutStore({
+        params: {
+          limit: MAX_LIMIT,
+        },
+      });
+
+      this.jobsItems = jobs;
     },
   },
 };

@@ -30,8 +30,7 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 import FieldOpenedResolvedFilter from '../fields/alarm/opened-resolved-filter.vue';
 import FieldFilters from '../fields/common/filters.vue';

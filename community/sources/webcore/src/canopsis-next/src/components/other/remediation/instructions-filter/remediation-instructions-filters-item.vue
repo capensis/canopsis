@@ -17,7 +17,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 export default {
   mixins: [formMixin],

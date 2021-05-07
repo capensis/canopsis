@@ -42,7 +42,7 @@ import { STATS_DURATION_UNITS, STATS_QUICK_RANGES, DATETIME_FORMATS } from '@/co
 
 import { prepareDateToObject, findRange } from '@/helpers/date/date-intervals';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 

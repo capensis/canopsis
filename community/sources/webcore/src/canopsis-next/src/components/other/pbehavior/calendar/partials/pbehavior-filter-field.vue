@@ -28,7 +28,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
-import formMixin from '@/mixins/form/object';
+import { formMixin } from '@/mixins/form';
 
 const { mapActions } = createNamespacedHelpers('pbehavior');
 

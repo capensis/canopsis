@@ -30,7 +30,7 @@
 <script>
 import { EVENT_FILTER_RULE_TYPES } from '@/constants';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 

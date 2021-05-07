@@ -47,8 +47,7 @@ import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
 
 import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
 
-import formMixin from '@/mixins/form';
-import validationChildrenMixin from '@/mixins/form/validation-children';
+import { formMixin, validationChildrenMixin } from '@/mixins/form';
 import confirmableFormMixin from '@/mixins/confirmable-form';
 
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';

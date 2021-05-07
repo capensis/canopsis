@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form/object';
+import { formMixin } from '@/mixins/form';
 
 import ScenarioActionsForm from './scenario-actions-form.vue';
 

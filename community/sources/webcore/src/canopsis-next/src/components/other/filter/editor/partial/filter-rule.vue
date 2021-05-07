@@ -50,7 +50,7 @@ import { FILTER_OPERATORS, FILTER_OPERATORS_FOR_ARRAY } from '@/constants';
 
 import uid from '@/helpers/uid';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import FilterRuleField from './filter-rule-field.vue';
 

@@ -7,10 +7,19 @@
           :color="hasChildrenError ? 'error' : 'primary'"
         ) {{ jobNumber }}
       v-flex(xs10)
-        remediation-instruction-jobs-select(v-field="job.job")
+        v-autocomplete(
+          v-field="job.job",
+          v-validate="'required'",
+          :items="jobs",
+          :label="$t('remediationInstructions.job')",
+          :error-messages="errors.collect('job')",
+          :name="jobFieldName",
+          item-text="name",
+          item-value="_id"
+        )
       v-flex(xs1)
         v-layout(justify-center)
-          c-action-btn(type="delete", @click="remove")
+          c-action-btn(type="delete", @click="$emit('remove')")
     v-flex(offset-xs1, xs11)
       c-workflow-field(
         v-field="job.stop_on_fail",
@@ -20,14 +29,10 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-import validationChildrenMixin from '@/mixins/form/validation-children';
-
-import RemediationInstructionJobsSelect from './remediation-instruction-jobs-select.vue';
+import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],
-  components: { RemediationInstructionJobsSelect },
   mixins: [
     formMixin,
     validationChildrenMixin,
@@ -41,9 +46,17 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    jobs: {
+      type: Array,
+      default: () => [],
+    },
     jobNumber: {
       type: [Number, String],
       default: 0,
+    },
+    name: {
+      type: String,
+      default: 'job',
     },
   },
   data() {
@@ -52,26 +65,9 @@ export default {
     };
   },
   computed: {
-    fieldName() {
-      return this.job.key ? this.job.key : '';
-    },
-
-    nameFieldName() {
-      return `${this.fieldName}.name`;
-    },
-  },
-  methods: {
-    remove() {
-      this.$emit('remove');
+    jobFieldName() {
+      return `${this.name}.job`;
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .job-expand {
-    margin: 24px 2px 0 2px !important;
-    width: 20px;
-    height: 20px;
-  }
-</style>

@@ -41,7 +41,7 @@
 <script>
 import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 import PatternInformation from '@/components/other/pattern/pattern-information.vue';
 

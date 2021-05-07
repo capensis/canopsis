@@ -26,7 +26,7 @@ import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import { remediationInstructionStepToForm } from '@/helpers/forms/remediation-instruction';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 import RemediationInstructionStepField from './fields/remediation-instruction-step-field.vue';
 

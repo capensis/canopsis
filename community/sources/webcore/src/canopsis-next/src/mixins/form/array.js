@@ -5,7 +5,7 @@ import baseFormMixin, { modelPropKeyComputed } from './base';
 /**
  * @mixin Form mixin
  */
-export default {
+export const formArrayMixin = {
   mixins: [baseFormMixin],
   methods: {
     /**
@@ -52,3 +52,5 @@ export default {
     },
   },
 };
+
+export default formArrayMixin;

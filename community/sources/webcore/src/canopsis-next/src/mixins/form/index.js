@@ -1,4 +1,4 @@
-export { default as array } from './array';
-export { default as object } from './object';
-
-export { default } from './object';
+export { formArrayMixin } from './array';
+export { formMixin } from './object';
+export { validationChildrenMixin } from './validation-children';
+export { formValidationHeaderMixin } from './validation-header';

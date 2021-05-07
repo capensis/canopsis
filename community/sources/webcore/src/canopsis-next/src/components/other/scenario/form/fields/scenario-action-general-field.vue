@@ -6,8 +6,7 @@
 <script>
 import { SCENARIO_ACTION_TYPES } from '@/constants';
 
-import formMixin from '@/mixins/form/object';
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 import ScenarioActionAssocticketField from './scenario-action-assocticket-field.vue';
 import ScenarioActionNoteField from './scenario-action-note-field.vue';

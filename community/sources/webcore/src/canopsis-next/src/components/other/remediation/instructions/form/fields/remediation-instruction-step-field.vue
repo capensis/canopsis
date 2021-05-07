@@ -50,8 +50,7 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-import validationChildrenMixin from '@/mixins/form/validation-children';
+import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 import { remediationInstructionStepToForm } from '@/helpers/forms/remediation-instruction';
 import { isOmitEqual } from '@/helpers/validators/is-omit-equal';

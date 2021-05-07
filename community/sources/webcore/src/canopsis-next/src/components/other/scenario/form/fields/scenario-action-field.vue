@@ -43,9 +43,8 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form/object';
+import { formMixin, validationChildrenMixin } from '@/mixins/form';
 import confirmableFormMixin from '@/mixins/confirmable-form';
-import validationChildrenMixin from '@/mixins/form/validation-children';
 
 import ScenarioActionGeneralField from './scenario-action-general-field.vue';
 import ScenarioActionPatternsField from './scenario-action-patterns-field.vue';

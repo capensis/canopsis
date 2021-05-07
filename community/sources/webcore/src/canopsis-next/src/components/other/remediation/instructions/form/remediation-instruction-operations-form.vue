@@ -35,7 +35,7 @@ import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
 import { getLetterByIndex } from '@/helpers/string';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 import RemediationInstructionOperationField from './fields/remediation-instruction-operation-field.vue';
 

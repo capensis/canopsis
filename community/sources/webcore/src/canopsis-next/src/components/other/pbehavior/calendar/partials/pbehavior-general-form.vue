@@ -72,8 +72,7 @@ import { DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import { isStartOfDay, isEndOfDay } from '@/helpers/date/date';
 
-import formMixin from '@/mixins/form';
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
