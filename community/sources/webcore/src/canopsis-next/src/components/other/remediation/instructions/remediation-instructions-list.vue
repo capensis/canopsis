@@ -34,9 +34,9 @@
         v-layout(row, justify-end)
           c-action-btn(
             v-if="props.item.approval",
+            :tooltip="$t('remediationInstructions.needApprove')",
             icon="notification_important",
             color="error",
-            :tooltip="$t('remediationInstructions.needApprove')",
             @click="$emit('approve', props.item)"
           )
           c-action-btn(
