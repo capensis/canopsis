@@ -17,7 +17,11 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formToRemediationInstruction, remediationInstructionToForm } from '@/helpers/forms/remediation-instruction';
+import {
+  formToRemediationInstruction,
+  remediationInstructionErrorsToForm,
+  remediationInstructionToForm,
+} from '@/helpers/forms/remediation-instruction';
 
 import { validationErrorsMixin } from '@/mixins/form/validation-errors';
 import { submittableMixin } from '@/mixins/submittable';
@@ -63,7 +67,7 @@ export default {
 
           this.$modals.hide();
         } catch (err) {
-          this.setFormErrors(err);
+          this.setFormErrors(remediationInstructionErrorsToForm(err));
         }
       }
     },

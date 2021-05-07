@@ -9,6 +9,7 @@ import {
 
 import uuid from '@/helpers/uuid';
 import { durationToForm, formToDuration } from '@/helpers/date/duration';
+import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
 
 /**
  * @typedef {Object} RemediationInstructionStepOperation
@@ -286,3 +287,25 @@ export const formToRemediationInstruction = (form) => {
     approval: formApprovalToRemediationInstructionApproval(form.approval),
   };
 };
+
+/**
+ * Convert error structure to form structure
+ *
+ * @param {Object} errors
+ * @param {RemediationInstructionForm} form
+ * @return {FlattenErrors}
+ */
+export const remediationInstructionErrorsToForm = (errors, form) => flattenErrorMap(errors, (errorsObject) => {
+  const { jobs, ...errorMessages } = errorsObject;
+
+  if (jobs) {
+    errorMessages.jobs = jobs.reduce((acc, messages, index) => {
+      const job = form.jobs[index];
+      acc[job.key] = messages;
+
+      return acc;
+    }, {});
+  }
+
+  return errorMessages;
+});
