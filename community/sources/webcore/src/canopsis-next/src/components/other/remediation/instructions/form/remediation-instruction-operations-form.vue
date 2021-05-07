@@ -20,8 +20,8 @@
       )
     v-layout(row, align-center)
       v-btn.ml-0(
-        outline,
         :color="hasOperationsErrors ? 'error' : 'primary'",
+        outline,
         @click="addOperation"
       ) {{ $t('remediationInstructions.addOperation') }}
       span.error--text(v-show="hasOperationsErrors") {{ $t('remediationInstructions.errors.operationRequired') }}

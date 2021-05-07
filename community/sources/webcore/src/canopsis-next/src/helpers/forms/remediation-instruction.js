@@ -52,18 +52,30 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {RemediationInstructionApproval} RemediationInstructionJob
+ * @property {RemediationJob} job
+ * @property {boolean} stop_on_fail
+ */
+
+/**
+ * @typedef {RemediationInstructionJob} RemediationInstructionJobForm
+ * @property {string} [key]
+ */
+
+/**
  * @typedef {Object} RemediationInstruction
  * @property {number} type
  * @property {string} name
+ * @property {number} priority
  * @property {boolean} enabled
  * @property {string} description
  * @property {Duration} timeout_after_execution
  * @property {Array} alarm_patterns
  * @property {Array} entity_patterns
- * @property {RemediationInstructionStep[]} steps
  * @property {string[]} active_on_pbh
  * @property {string[]} disabled_on_pbh
- * @property {string[]} jobs
+ * @property {RemediationInstructionStep[]} steps
+ * @property {RemediationInstructionJob[]} jobs
  * @property {RemediationInstructionApproval} approval
  */
 
@@ -71,6 +83,7 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  * @typedef {RemediationInstruction} RemediationInstructionForm
  * @property {DurationForm} timeout_after_execution
  * @property {RemediationInstructionStepForm[]} steps
+ * @property {RemediationInstructionJobForm[]} jobs
  * @property {RemediationInstructionApprovalForm} approval
  */
 
@@ -121,7 +134,12 @@ export const remediationInstructionStepToForm = (step = {}) => ({
  */
 const remediationInstructionStepsToForm = (steps = [undefined]) => steps.map(remediationInstructionStepToForm);
 
-
+/**
+ * Convert a remediation instruction approval to form
+ *
+ * @param {RemediationInstructionApproval} approval
+ * @return {RemediationInstructionApprovalForm}
+ */
 const remediationInstructionApprovalToForm = (approval = {}) => ({
   need_approve: !!approval.comment,
   type: approval.user
@@ -133,6 +151,26 @@ const remediationInstructionApprovalToForm = (approval = {}) => ({
 });
 
 /**
+ * Convert a remediation instruction job to form
+ *
+ * @param {RemediationInstructionJob} [job = {}]
+ * @returns {RemediationInstructionJobForm}
+ */
+export const remediationInstructionJobToForm = (job = {}) => ({
+  job: job.job,
+  stop_on_fail: !isUndefined(job.stop_on_fail) ? job.stop_on_fail : WORKFLOW_TYPES.stop,
+  key: uuid(),
+});
+
+/**
+ * Convert a remediation instruction jobs array to form array
+ *
+ * @param {RemediationInstructionJob[]} [jobs = [undefined]]
+ * @returns {RemediationInstructionJobForm[]}
+ */
+const remediationInstructionJobsToForm = (jobs = [undefined]) => jobs.map(remediationInstructionJobToForm);
+
+/**
  * Convert a remediation instruction object to form object
  *
  * @param {RemediationInstruction} remediationInstruction
@@ -140,6 +178,7 @@ const remediationInstructionApprovalToForm = (approval = {}) => ({
  */
 export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   name: remediationInstruction.name || '',
+  priority: remediationInstruction.priority || 0,
   type: !isUndefined(remediationInstruction.type) ? remediationInstruction.type : REMEDIATION_INSTRUCTION_TYPES.manual,
   enabled: !isUndefined(remediationInstruction.enabled) ? remediationInstruction.enabled : true,
   timeout_after_execution: durationToForm(remediationInstruction.timeout_after_execution),
@@ -158,19 +197,20 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   description: remediationInstruction.description || '',
   steps: remediationInstructionStepsToForm(remediationInstruction.steps),
   approval: remediationInstructionApprovalToForm(remediationInstruction.approval),
-  jobs: remediationInstruction.jobs
-    ? cloneDeep(remediationInstruction.jobs)
-    : [],
+  jobs: remediationInstructionJobsToForm(remediationInstruction.jobs),
 });
 
 
 /**
  * Convert a remediation instruction step operations form array to a API compatible operation array
  *
- * @param {RemediationJob[]} jobs
- * @returns {string[]}
+ * @param {RemediationInstructionJobForm[]} jobs
+ * @returns {RemediationInstructionJob[]}
  */
-const formJobsToRemediationInstructionJobs = (jobs = []) => jobs.map(({ _id }) => _id);
+const formJobsToRemediationInstructionJobs = (jobs = []) => jobs.map(job => ({
+  ...job,
+  job: job.job._id,
+}));
 
 
 /**
@@ -183,7 +223,7 @@ const formOperationsToRemediationInstructionOperations = operations => operation
   ...omit(operation, ['key']),
 
   time_to_complete: formToDuration(operation.time_to_complete),
-  jobs: formJobsToRemediationInstructionJobs(operation.jobs),
+  jobs: operation.jobs.map(({ _id }) => _id),
 }));
 
 /**
@@ -235,8 +275,8 @@ export const formToRemediationInstruction = (form) => {
     instruction.steps = formStepsToRemediationInstructionSteps(steps);
   } else {
     instruction.timeout_after_execution = formToDuration(timeoutAfterExecution);
-    instruction.priority = priority;
     instruction.jobs = formJobsToRemediationInstructionJobs(jobs);
+    instruction.priority = priority;
   }
 
   return {

@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     v-layout(row, align-center)
-      v-flex(xs1)
+      v-flex.pr-2(xs1)
         c-draggable-step-number(
           drag-class="job-drag-handler",
           :color="hasChildrenError ? 'error' : 'primary'"
@@ -12,10 +12,11 @@
           v-validate="'required'",
           :items="jobs",
           :label="$t('remediationInstructions.job')",
-          :error-messages="errors.collect('job')",
+          :error-messages="errors.collect(jobFieldName)",
           :name="jobFieldName",
           item-text="name",
-          item-value="_id"
+          item-value="_id",
+          return-object
         )
       v-flex(xs1)
         v-layout(justify-center)

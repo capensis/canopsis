@@ -22,8 +22,8 @@
       )
     v-layout(row, align-center)
       v-btn.ml-0(
-        outline,
         :color="hasJobsErrors ? 'error' : 'primary'",
+        outline,
         @click="addJob"
       ) {{ $t('remediationInstructions.addJob') }}
       span.error--text(v-show="hasJobsErrors") {{ $t('remediationInstructions.errors.jobRequired') }}
@@ -34,6 +34,8 @@ import Draggable from 'vuedraggable';
 
 import { MAX_LIMIT } from '@/constants';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+
+import { remediationInstructionJobToForm } from '@/helpers/forms/remediation-instruction';
 
 import { formArrayMixin } from '@/mixins/form';
 import { entitiesRemediationJobsMixin } from '@/mixins/entities/remediation/jobs';
@@ -107,7 +109,7 @@ export default {
   },
   methods: {
     addJob() {
-      this.addItemIntoArray({});
+      this.addItemIntoArray(remediationInstructionJobToForm());
     },
 
     startDragging() {
