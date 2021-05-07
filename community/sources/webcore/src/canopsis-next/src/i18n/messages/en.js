@@ -18,7 +18,7 @@ import {
   SIDE_BARS,
   STATE_SETTING_METHODS,
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
-  REMEDIATION_TYPES,
+  REMEDIATION_INSTRUCTION_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2012,8 +2012,8 @@ export default {
     approvalPending: 'Approval pending',
     needApprove: 'Approval is needed',
     types: {
-      [REMEDIATION_TYPES.manual]: 'Manual',
-      [REMEDIATION_TYPES.auto]: 'Automatic',
+      [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manual',
+      [REMEDIATION_INSTRUCTION_TYPES.auto]: 'Automatic',
     },
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',

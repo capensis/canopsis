@@ -1592,11 +1592,6 @@ export const REMEDIATION_TABS = {
   jobs: 'jobs',
 };
 
-export const REMEDIATION_TYPES = {
-  manual: 0,
-  auto: 1,
-};
-
 export const WORKFLOW_TYPES = {
   stop: true,
   continue: false,
@@ -1606,7 +1601,7 @@ export const MAX_LIMIT = 10000;
 
 export const REMEDIATION_INSTRUCTION_TYPES = {
   manual: 0,
-  automatic: 1,
+  auto: 1,
 };
 
 export const REMEDIATION_CONFIGURATION_TYPES = {
