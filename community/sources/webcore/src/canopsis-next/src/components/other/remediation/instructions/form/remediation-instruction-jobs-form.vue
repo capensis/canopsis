@@ -3,26 +3,22 @@
     v-layout(row)
       v-flex(v-if="!jobs.length", xs12)
         v-alert(:value="true", type="info") {{ $t('remediationInstructions.emptyJobs') }}
-    draggable(
-      v-field="jobs",
-      :options="draggableOptions",
-      :class="{ 'grey lighten-2': isDragging }",
-      @start="startDragging",
-      @end="endDragging"
-    )
-      remediation-instruction-job-field.py-1(
-        v-for="(job, index) in jobs",
-        v-field="jobs[index]",
-        :jobs="jobsItems",
-        :key="job.key",
-        :name="job.key",
-        :index="index",
-        :job-number="index + 1",
-        @remove="removeItemFromArray(index)"
-      )
+    h3.subheading.font-weight-bold {{ $t('remediationInstructions.listJobs') }}
+    draggable(v-field="jobs", :options="draggableOptions")
+      v-card.my-2(v-for="(job, index) in jobs", :key="job.key")
+        v-card-text
+          remediation-instruction-job-field.py-1(
+            v-field="jobs[index]",
+            :jobs="jobsItems",
+            :name="job.key",
+            :job-number="index + 1",
+            :disabled="disabled",
+            @remove="removeItemFromArray(index)"
+          )
     v-layout(row, align-center)
       v-btn.ml-0(
         :color="hasJobsErrors ? 'error' : 'primary'",
+        :disabled="disabled",
         outline,
         @click="addJob"
       ) {{ $t('remediationInstructions.addJob') }}
@@ -62,6 +58,10 @@ export default {
       type: String,
       default: 'jobs',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -76,6 +76,7 @@ export default {
 
     draggableOptions() {
       return {
+        disabled: this.disabled,
         animation: VUETIFY_ANIMATION_DELAY,
         handle: '.job-drag-handler',
         ghostClass: 'white',
@@ -110,14 +111,6 @@ export default {
   methods: {
     addJob() {
       this.addItemIntoArray(remediationInstructionJobToForm());
-    },
-
-    startDragging() {
-      this.isDragging = true;
-    },
-
-    endDragging() {
-      this.isDragging = false;
     },
 
     async fetchList() {

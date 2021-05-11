@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        remediation-instruction-form(v-model="form")
+        remediation-instruction-form(v-model="form", :disabled="disabled")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -53,6 +53,10 @@ export default {
   computed: {
     title() {
       return this.config.title || this.$t('modals.createRemediationInstruction.create.title');
+    },
+
+    disabled() {
+      return this.config.disabled;
     },
   },
   methods: {

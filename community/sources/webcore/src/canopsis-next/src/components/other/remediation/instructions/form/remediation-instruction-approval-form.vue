@@ -3,11 +3,14 @@
     v-checkbox(
       v-field="approval.need_approve",
       :label="$t('remediationInstructions.requestApproval')",
+      :disabled="disabled",
       color="primary",
       hide-details
     )
     template(v-if="approval.need_approve")
-      v-layout(row, align-center)
+      v-layout(v-if="disabled", row)
+        span.subheading.grey--text.my-4 {{ assignLabel }}: {{ assignValue }}
+      v-layout(v-else, row, align-center)
         v-flex(xs6)
           remediation-instruction-approval-type-field(v-field="approval.type", @input="resetErrors")
         v-flex(xs5)
@@ -30,6 +33,7 @@
         v-validate="'required'",
         :label="$tc('common.comment')",
         :error-messages="errors.collect('comment')",
+        :disabled="disabled",
         name="comment"
       )
 </template>
@@ -55,6 +59,10 @@ export default {
       type: String,
       default: 'approval',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     isRoleType() {
@@ -67,6 +75,14 @@ export default {
 
     userFieldName() {
       return `${this.name}.user`;
+    },
+
+    assignLabel() {
+      return this.isRoleType ? this.$tc('common.role') : this.$tc('common.user');
+    },
+
+    assignValue() {
+      return this.isRoleType ? this.approval.role.name : this.approval.user.name;
     },
   },
   methods: {

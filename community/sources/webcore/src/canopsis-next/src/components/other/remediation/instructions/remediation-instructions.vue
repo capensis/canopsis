@@ -22,6 +22,7 @@ import { remediationInstructionToForm, formToRemediationInstruction } from '@/he
 
 import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { authMixin } from '@/mixins/auth';
 
 import RemediationInstructionsList from './remediation-instructions-list.vue';
 
@@ -30,6 +31,7 @@ export default {
   mixins: [
     entitiesRemediationInstructionsMixin,
     localQueryMixin,
+    authMixin,
   ],
   mounted() {
     this.fetchList();
@@ -44,10 +46,14 @@ export default {
     },
 
     showEditRemediationInstructionModal(remediationInstruction) {
+      const waitingApproveByCurrentUser = !!remediationInstruction.approval
+        && remediationInstruction.approval.requested_by !== this.currentUser._id;
+
       this.$modals.show({
         name: MODALS.createRemediationInstruction,
         config: {
           remediationInstruction,
+          disabled: waitingApproveByCurrentUser,
           title: this.$t('modals.createRemediationInstruction.edit.title'),
           action: async (instruction) => {
             await this.updateRemediationInstructionWithConfirm(remediationInstruction, instruction);

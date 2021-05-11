@@ -2,17 +2,18 @@
   v-radio-group.mt-0(
     v-field="value",
     :label="label",
+    :disabled="disabled",
     hide-details,
     mandatory,
     color="primary"
   )
     v-radio(
-      :label="stopLabel || $t('common.stop')",
+      :label="stopLabel",
       :value="stopValue",
       color="primary"
     )
     v-radio(
-      :label="continueLabel || $t('common.continue')",
+      :label="continueLabel",
       :value="continueValue",
       color="primary"
     )
@@ -37,11 +38,15 @@ export default {
     },
     stopLabel: {
       type: String,
-      required: false,
+      default() {
+        return this.$t('common.stop');
+      },
     },
     continueLabel: {
       type: String,
-      required: false,
+      default() {
+        return this.$t('common.continue');
+      },
     },
     stopValue: {
       type: Boolean,
@@ -50,6 +55,19 @@ export default {
     continueValue: {
       type: Boolean,
       default: WORKFLOW_TYPES.continue,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    textValue() {
+      if (this.value === this.stopValue) {
+        return this.stopLabel;
+      }
+
+      return this.continueLabel;
     },
   },
 };

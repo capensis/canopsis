@@ -4,6 +4,7 @@
     v-validate="rules",
     :label="label || $t('common.priority')",
     :error-messages="errors.collect(name)",
+    :disabled="disabled",
     :name="name",
     :min="min",
     type="number"
@@ -35,6 +36,10 @@ export default {
       default: 0,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

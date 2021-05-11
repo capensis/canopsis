@@ -8,11 +8,13 @@
           remediation-instruction-step-field(
             v-field="steps[index]",
             :step-number="index + 1",
+            :disabled="disabled",
             @remove="removeStep(index)"
           )
     v-layout(row, align-center)
       v-btn.ml-0(
         :color="hasStepsErrors ? 'error' : 'primary'",
+        :disabled="disabled",
         outline,
         @click="addStep"
       ) {{ $t('remediationInstructions.addStep') }}
@@ -49,6 +51,10 @@ export default {
     name: {
       type: String,
       default: 'steps',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

@@ -3,8 +3,9 @@
     v-layout
       v-flex.mt-3(xs1)
         c-draggable-step-number(
-          drag-class="step-drag-handler",
-          :color="hasChildrenError ? 'error' : 'primary'"
+          :disabled="disabled",
+          :color="hasChildrenError ? 'error' : 'primary'",
+          drag-class="step-drag-handler"
         ) {{ stepNumber }}
       v-flex(xs11)
         v-layout(row)
@@ -22,6 +23,7 @@
                     :label="$t('common.name')",
                     :error-messages="errors.collect(nameFieldName)",
                     :name="nameFieldName",
+                    :disabled="disabled",
                     box
                   )
                 v-flex.pl-2(xs3)
@@ -30,22 +32,23 @@
                     :label="$t('remediationInstructions.timeToComplete')",
                     readonly
                   )
-                v-flex.mt-3(xs1)
+                v-flex.mt-1(xs1)
                   v-layout(justify-center)
-                    v-btn.ma-0(icon, small, @click.prevent="remove")
-                      v-icon(color="error") delete
+                    c-action-btn(v-if="!disabled", type="delete", @click="$emit('remove')")
               v-expand-transition(mode="out-in")
                 v-layout(v-if="expanded", column)
                   c-workflow-field(
                     v-field="step.stop_on_fail",
                     :label="$t('remediationInstructions.workflow')",
-                    :continue-label="$t('remediationInstructions.remainingStep')"
+                    :continue-label="$t('remediationInstructions.remainingStep')",
+                    :disabled="disabled"
                   )
-                  remediation-instruction-step-endpoint-field(v-field="step.endpoint")
+                  remediation-instruction-step-endpoint-field(v-field="step.endpoint", :disabled="disabled")
                   remediation-instruction-operations-form(
                     v-field="step.operations",
                     :name="operationFieldName",
-                    :step-number="stepNumber"
+                    :step-number="stepNumber",
+                    :disabled="disabled"
                   )
 </template>
 
@@ -97,6 +100,10 @@ export default {
     stepNumber: {
       type: [Number, String],
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

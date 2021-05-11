@@ -42,6 +42,7 @@ import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-tab
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
 import CStateCountChangesChips from '@/components/common/chips/c-state-count-changes-chips.vue';
 import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
+import CInstructionJobChip from '@/components/common/chips/c-instruction-job-chip.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
 import CThePageHeader from '@/components/common/page/c-the-page-header.vue';
@@ -205,6 +206,7 @@ Vue.component('alarms-list-table', AlarmsListTable);
 
 /* Global custom canopsis components */
 Vue.component('c-alarm-chip', CAlarmChip);
+Vue.component('c-instruction-job-chip', CInstructionJobChip);
 Vue.component('c-test-suite-chip', CTestSuiteChip);
 Vue.component('c-the-page-header', CThePageHeader);
 Vue.component('c-advanced-data-table', CAdvancedDataTable);

@@ -2,7 +2,7 @@
   div
     v-layout(row)
       v-flex(xs3)
-        c-instruction-type-field(v-field="form.type", @input="errors.clear()")
+        c-instruction-type-field.mb-2(v-field="form.type", :disabled="disabled")
       v-flex
         c-enabled-field.mt-0(v-field="form.enabled", hide-details)
     v-layout(row)
@@ -26,17 +26,18 @@
         c-duration-field(
           v-field="form.timeout_after_execution",
           :label="$t('remediationInstructions.timeoutAfterExecution')",
+          :disabled="disabled",
           name="timeout_after_execution",
           required
         )
       v-flex.ml-2(v-if="!isManualType", xs3)
-        c-priority-field(v-model="form.priority", required)
+        c-priority-field(v-model="form.priority", :disabled="disabled", required)
     v-layout(v-if="isManualType", row)
-      remediation-instruction-steps-form(v-field="form.steps")
+      remediation-instruction-steps-form(v-field="form.steps", :disabled="disabled")
     v-layout(v-else, row)
-      remediation-instruction-jobs-form(v-model="form.jobs")
+      remediation-instruction-jobs-form(v-model="form.jobs", :disabled="disabled")
     v-layout(row)
-      remediation-instruction-approval-form(v-field="form.approval")
+      remediation-instruction-approval-form(v-field="form.approval", :disabled="disabled")
 </template>
 
 <script>
@@ -61,6 +62,10 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

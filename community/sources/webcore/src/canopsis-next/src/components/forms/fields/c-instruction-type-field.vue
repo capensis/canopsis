@@ -2,9 +2,9 @@
   v-radio-group.mt-0(
     v-field="value",
     :label="$t('remediationInstructions.type')",
+    :disabled="disabled",
     hide-details,
-    mandatory,
-    color="primary"
+    mandatory
   )
     v-radio(
       v-for="type in types",
@@ -27,6 +27,10 @@ export default {
     value: {
       type: Number,
       default: REMEDIATION_INSTRUCTION_TYPES.manual,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

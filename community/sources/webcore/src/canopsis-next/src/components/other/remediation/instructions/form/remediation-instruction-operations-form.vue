@@ -16,11 +16,13 @@
         :key="operation.key",
         :index="index",
         :operation-number="getOperationNumber(index)",
+        :disabled="disabled",
         @remove="removeOperation(index)"
       )
     v-layout(row, align-center)
       v-btn.ml-0(
         :color="hasOperationsErrors ? 'error' : 'primary'",
+        :disabled="disabled",
         outline,
         @click="addOperation"
       ) {{ $t('remediationInstructions.addOperation') }}
@@ -63,6 +65,10 @@ export default {
       type: [String, Number],
       default: '',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -76,6 +82,7 @@ export default {
 
     draggableOptions() {
       return {
+        disabled: this.disabled,
         animation: VUETIFY_ANIMATION_DELAY,
         handle: '.operation-drag-handler',
         ghostClass: 'white',
