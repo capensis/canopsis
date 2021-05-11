@@ -21,21 +21,20 @@
         :error-messages="errors.collect('description')",
         name="description"
       )
+    v-layout(row, justify-space-between, align-center)
+      v-flex(xs7)
+        c-duration-field(
+          v-field="form.timeout_after_execution",
+          :label="$t('remediationInstructions.timeoutAfterExecution')",
+          name="timeout_after_execution",
+          required
+        )
+      v-flex.ml-2(v-if="!isManualType", xs3)
+        c-priority-field(v-model="form.priority", required)
     v-layout(v-if="isManualType", row)
       remediation-instruction-steps-form(v-field="form.steps")
-    template(v-else)
-      v-layout(row, justify-space-between, align-center)
-        v-flex(xs7)
-          c-duration-field(
-            v-field="form.timeout_after_execution",
-            :label="$t('remediationInstructions.timeoutAfterExecution')",
-            name="timeout_after_execution",
-            required
-          )
-        v-flex.ml-2(xs3)
-          c-priority-field(v-model="form.priority", required)
-      v-layout(row)
-        remediation-instruction-jobs-form(v-model="form.jobs")
+    v-layout(v-else, row)
+      remediation-instruction-jobs-form(v-model="form.jobs")
     v-layout(row)
       remediation-instruction-approval-form(v-field="form.approval")
 </template>

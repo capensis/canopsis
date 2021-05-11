@@ -271,19 +271,19 @@ const formApprovalToRemediationInstructionApproval = (approval) => {
  */
 export const formToRemediationInstruction = (form) => {
   const {
-    steps, jobs, priority, timeout_after_execution: timeoutAfterExecution, ...instruction
+    steps, jobs, priority, ...instruction
   } = form;
 
   if (form.type === REMEDIATION_INSTRUCTION_TYPES.manual) {
     instruction.steps = formStepsToRemediationInstructionSteps(steps);
   } else {
-    instruction.timeout_after_execution = formToDuration(timeoutAfterExecution);
     instruction.jobs = formJobsToRemediationInstructionJobs(jobs);
     instruction.priority = priority;
   }
 
   return {
     ...instruction,
+    timeout_after_execution: formToDuration(form.timeout_after_execution),
     alarm_patterns: form.alarm_patterns.length ? form.alarm_patterns : undefined,
     entity_patterns: form.entity_patterns.length ? form.entity_patterns : undefined,
     approval: formApprovalToRemediationInstructionApproval(form.approval),
