@@ -41,9 +41,10 @@ import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
 
 /**
  * @typedef {Object} RemediationInstructionApproval
- * @property {string} [user]
- * @property {string} [role]
+ * @property {User} [user]
+ * @property {Role} [role]
  * @property {string} comment
+ * @property {string} requested_by
  */
 
 /**
@@ -143,7 +144,7 @@ const remediationInstructionStepsToForm = (steps = [undefined]) => steps.map(rem
  */
 const remediationInstructionApprovalToForm = (approval = {}) => ({
   need_approve: !!approval.comment,
-  type: approval.user
+  type: approval.user && approval.user._id
     ? REMEDIATION_INSTRUCTION_APPROVAL_TYPES.user
     : REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role,
   user: approval.user,

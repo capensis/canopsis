@@ -40,7 +40,7 @@ export default {
       params.with_flags = true;
       params.with_month_executions = true;
 
-      this.fetchRemediationInstructionsList({ params });
+      return this.fetchRemediationInstructionsList({ params });
     },
 
     showEditRemediationInstructionModal(remediationInstruction) {
@@ -69,15 +69,20 @@ export default {
     },
 
     showConfirmModalOnRunningRemediationInstruction(action) {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         this.$modals.show({
           name: MODALS.confirmation,
           dialogProps: { persistent: true },
           config: {
             text: this.$t('remediationInstructions.errors.runningInstruction'),
             action: async () => {
-              await action();
-              resolve();
+              try {
+                await action();
+
+                resolve();
+              } catch (err) {
+                reject(err);
+              }
             },
             cancel: resolve,
           },
@@ -87,9 +92,8 @@ export default {
 
     async updateRemediationInstructionWithConfirm(remediationInstruction, data) {
       if (remediationInstruction.running) {
-        await this.showConfirmModalOnRunningRemediationInstruction(() => {
-          this.updateRemediationInstruction({ id: remediationInstruction._id, data });
-        });
+        await this.showConfirmModalOnRunningRemediationInstruction(() =>
+          this.updateRemediationInstruction({ id: remediationInstruction._id, data }));
       } else {
         await this.updateRemediationInstruction({ id: remediationInstruction._id, data });
       }

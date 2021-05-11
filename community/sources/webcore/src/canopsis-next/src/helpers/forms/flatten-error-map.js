@@ -13,7 +13,8 @@ import flatten from 'flat';
  * @return {FlattenErrors}
  */
 export const flattenErrorMap = (errors = {}, map) => {
-  const [errorsKeys, errorsValues] = Object.entries(errors);
+  const errorsKeys = Object.keys(errors);
+  const errorsValues = Object.values(errors);
 
   const errorsObject = zipObjectDeep(errorsKeys, errorsValues);
 

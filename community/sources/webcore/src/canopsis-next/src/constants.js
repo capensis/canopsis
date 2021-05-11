@@ -982,6 +982,7 @@ export const USERS_PERMISSIONS = {
     junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
     datastorageRead: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_read`,
     datastorageUpdate: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_update`,
+    instructionApprove: `${USER_PERMISSIONS_PREFIXES.api}_instruction_approve`,
   },
 };
 
