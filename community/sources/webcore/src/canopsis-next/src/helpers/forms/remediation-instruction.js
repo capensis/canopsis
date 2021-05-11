@@ -292,7 +292,7 @@ export const formToRemediationInstruction = (form) => {
 /**
  * Convert error structure to form structure
  *
- * @param {Object} errors
+ * @param {FlattenErrors} errors
  * @param {RemediationInstructionForm} form
  * @return {FlattenErrors}
  */

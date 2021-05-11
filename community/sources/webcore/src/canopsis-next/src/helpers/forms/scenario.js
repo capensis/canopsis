@@ -436,11 +436,11 @@ export const formToScenario = (form, timezone = moment.tz.guess()) => ({
 /**
  * Convert error structure to form structure
  *
- * @param {Object} errors
+ * @param {FlattenErrors} errors
  * @param {ScenarioForm} form
- * @return {Object}
+ * @return {FlattenErrors}
  */
-export const scenarioErrorToForm = (errors, form = {}) => {
+export const scenarioErrorToForm = (errors, form) => {
   const prepareScenarioActionsErrors = (errorsObject) => {
     const { actions, ...errorMessages } = errorsObject;
 

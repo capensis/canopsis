@@ -2,14 +2,13 @@ import { zipObjectDeep } from 'lodash';
 import flatten from 'flat';
 
 /**
- * @typedef FlattenErrors
- * @type {Object.<string, string | string[]>}
+ * @typedef {Object.<string, string | string[]>} FlattenErrors
  */
 
 /**
  * Map flatten errors object.
  *
- * @param {Object} errors
+ * @param {FlattenErrors} errors
  * @param {function} map
  * @return {FlattenErrors}
  */

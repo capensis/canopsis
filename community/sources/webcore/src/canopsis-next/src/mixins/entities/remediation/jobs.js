@@ -24,5 +24,3 @@ export const entitiesRemediationJobsMixin = {
     }),
   },
 };
-
-export default entitiesRemediationJobsMixin;
