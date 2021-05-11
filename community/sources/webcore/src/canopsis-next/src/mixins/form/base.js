@@ -3,7 +3,7 @@ import formComputedPropertiesMixin, { modelPropKeyComputed, modelEventKeyCompute
 /**
  * @mixin Form mixin
  */
-export default {
+export const formBaseMixin = {
   mixins: [formComputedPropertiesMixin],
   methods: {
     /**
@@ -21,3 +21,5 @@ export {
   modelPropKeyComputed,
   modelEventKeyComputed,
 };
+
+export default formBaseMixin;

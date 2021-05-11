@@ -32,8 +32,7 @@
 </template>
 
 <script>
-
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 /**
  * Date picker field component

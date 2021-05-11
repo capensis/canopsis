@@ -1,12 +1,12 @@
 import { setField } from '@/helpers/immutable';
 
-import baseFormMixin, { modelPropKeyComputed } from './base';
+import { formBaseMixin, modelPropKeyComputed } from './base';
 
 /**
  * @mixin Form mixin
  */
 export const formArrayMixin = {
-  mixins: [baseFormMixin],
+  mixins: [formBaseMixin],
   methods: {
     /**
      * Emit event to parent with new array with new item

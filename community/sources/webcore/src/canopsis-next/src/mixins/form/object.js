@@ -2,13 +2,13 @@ import { isEqual } from 'lodash';
 
 import { setField, unsetField } from '@/helpers/immutable';
 
-import baseFormMixin, { modelPropKeyComputed } from './base';
+import { formBaseMixin, modelPropKeyComputed } from './base';
 
 /**
  * @mixin Form mixin
  */
 export const formMixin = {
-  mixins: [baseFormMixin],
+  mixins: [formBaseMixin],
   methods: {
     /**
      * Emit event to parent with new object and with updated field

@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 import ChooseExpansionPanel from '@/components/common/choose-expansion-panel/choose-expansion-panel.vue';
 import ChooseJobsLists from '@/components/other/remediation/jobs/partials/choose-jobs-lists.vue';

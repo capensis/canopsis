@@ -34,7 +34,7 @@
 <script>
 import { MAX_LIMIT } from '@/constants';
 
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 import entitiesEntityCategoryMixin from '@/mixins/entities/entity-category';
 
 export default {

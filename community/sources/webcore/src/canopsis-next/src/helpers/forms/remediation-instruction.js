@@ -90,6 +90,13 @@ import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
  */
 
 /**
+ * @typedef {Object | undefined} RemediationInstructionApprovalRequest
+ * @property {string} [user]
+ * @property {string} [role]
+ * @property {string} comment
+ */
+
+/**
  * Convert a remediation instruction step operation to form
  *
  * @param {RemediationInstructionStepOperation} [operation]
@@ -245,7 +252,7 @@ const formStepsToRemediationInstructionSteps = steps => steps.map(step => ({
  * Convert a remediation instruction approval form
  *
  * @param {RemediationInstructionApprovalForm} approval
- * @returns {RemediationInstructionApproval | undefined}
+ * @returns {RemediationInstructionApprovalRequest}
  */
 const formApprovalToRemediationInstructionApproval = (approval) => {
   if (!approval.need_approve) {
