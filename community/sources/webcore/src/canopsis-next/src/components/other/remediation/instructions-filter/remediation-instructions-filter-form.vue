@@ -24,17 +24,20 @@
         @change="changeSelectedAll"
       )
     v-layout(row)
+      v-flex(md3, xs6)
+        v-checkbox(
+          :input-value="form.auto",
+          :label="$t(`remediationInstructions.types.automatic`)",
+          :disabled="form.all || hasAnyAnotherOppositeFilterWithAuto",
+          color="primary",
+          @change="changeType('auto', $event)"
+        )
       v-checkbox(
-        v-field="form.auto",
-        :label="$t(`remediationInstructions.types.automatic`)",
-        :disabled="form.all",
-        color="primary"
-      )
-      v-checkbox(
-        v-field="form.manual",
+        :input-value="form.manual",
         :label="$t('remediationInstructions.types.manual')",
-        :disabled="form.all",
-        color="primary"
+        :disabled="form.all || hasAnyAnotherOppositeFilterWithManual",
+        color="primary",
+        @change="changeType('manual', $event)"
       )
     v-layout(row)
       v-select(
@@ -42,7 +45,7 @@
         :value="form.instructions",
         :items="preparedRemediationInstructions",
         :loading="remediationInstructionsPending",
-        :disabled="form.all",
+        :disabled="form.all || (form.auto && form.manual)",
         :label="$t('remediationInstructionsFilters.fields.selectedInstructions')",
         :error-messages="errors.collect('instructions')",
         item-text="name",
@@ -56,7 +59,11 @@
 </template>
 
 <script>
+import { find, pick } from 'lodash';
+
 import { MAX_LIMIT } from '@/constants';
+
+import { isRemediationInstructionIntersectsWithFilterByType } from '@/helpers/forms/remediation-instruction-filter';
 
 import { formMixin } from '@/mixins/form';
 import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
@@ -80,27 +87,43 @@ export default {
   },
   computed: {
     selectValidationRules() {
-      return this.form.all ? {} : { required: true };
+      return (this.form.all || this.form.manual || this.form.auto) ? {} : { required: true };
     },
 
     hasAnyAnotherOppositeFilter() {
       return this.filters.some(filter => this.form.with !== filter.with);
     },
 
+    hasAnyAnotherOppositeFilterWithAuto() {
+      return this.filters.some(filter =>
+        this.form.with !== filter.with && (filter.auto || filter.all));
+    },
+
+    hasAnyAnotherOppositeFilterWithManual() {
+      return this.filters.some(filter =>
+        this.form.with !== filter.with && (filter.manual || filter.all));
+    },
+
     preparedRemediationInstructions() {
-      return this.remediationInstructions.map((instruction) => {
-        const filtersSomeComparator = filter => this.form.with !== filter.with
-          && (filter.all || filter.instructions.includes(instruction.name));
-
-        const instructionAlreadyInForm = this.form.instructions.includes(instruction.name);
-        const disabled = !instructionAlreadyInForm && this.filters.some(filtersSomeComparator);
-
-        if (disabled) {
-          return { ...instruction, disabled };
+      return this.remediationInstructions.reduce((acc, instruction) => {
+        if (isRemediationInstructionIntersectsWithFilterByType(this.form, instruction)) {
+          return acc;
         }
 
-        return instruction;
-      });
+        const filtersSomeComparator = filter =>
+          this.form.with !== filter.with
+          && (
+            (filter.all || find(filter.instructions, { _id: instruction._id }))
+            || (isRemediationInstructionIntersectsWithFilterByType(filter, instruction))
+          );
+
+        const instructionAlreadyInForm = find(this.form.instructions, { _id: instruction._id });
+        const disabled = !instructionAlreadyInForm && this.filters.some(filtersSomeComparator);
+
+        acc.push(disabled ? { ...instruction, disabled } : instruction);
+
+        return acc;
+      }, []);
     },
   },
   mounted() {
@@ -119,8 +142,22 @@ export default {
       this.updateModel(newForm);
     },
 
+    changeType(key, value) {
+      const newForm = {
+        ...this.form,
+
+        [key]: value,
+      };
+
+      newForm.instructions =
+        newForm.instructions
+          .filter(instruction => !isRemediationInstructionIntersectsWithFilterByType(newForm, instruction));
+
+      this.updateModel(newForm);
+    },
+
     changeInstructions(instructions) {
-      this.updateField('instructions', instructions.map(({ _id, name }) => ({ _id, name })));
+      this.updateField('instructions', instructions.map(instruction => pick(instruction, ['_id', 'name', 'type'])));
     },
   },
 };

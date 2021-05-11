@@ -74,8 +74,9 @@ export default {
       const getMessage = key => this.$t(`remediationInstructionsFilters.chip.${key}`);
 
       const { filter } = this;
+      const all = filter.all || (filter.manual && filter.auto);
 
-      return `${getMessage(filter.with ? 'with' : 'without')}${filter.all ? ` ${getMessage('all')}` : ':'}`;
+      return `${getMessage(filter.with ? 'with' : 'without')}${all ? ` ${getMessage('all')}` : ':'}`;
     },
 
     instructionsMessage() {

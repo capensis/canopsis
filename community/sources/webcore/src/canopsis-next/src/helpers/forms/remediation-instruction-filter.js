@@ -2,6 +2,7 @@
  * @typedef {Object} RemediationInstructionFilterInstruction
  * @property {string} _id
  * @property {string} name
+ * @property {number} type
  */
 
 /**
@@ -21,6 +22,7 @@
  */
 
 import { isUndefined } from 'lodash';
+import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
 /**
  * Convert remediation instruction filter to form
@@ -35,3 +37,16 @@ export const remediationInstructionFilterToForm = (filter = {}) => ({
   manual: !!filter.manual,
   instructions: filter.instructions ? [...filter.instructions] : [],
 });
+
+/**
+ * Is remediation instruction intersects with remediation instruction filter by type
+ *
+ * @param {RemediationInstructionFilterForm | {}} [filter = {}]
+ * @param {RemediationInstruction | {}} [instruction = {}]
+ * @returns {boolean}
+ */
+export const isRemediationInstructionIntersectsWithFilterByType = (filter = {}, instruction = {}) => {
+  const isAuto = instruction.type === REMEDIATION_INSTRUCTION_TYPES.automatic;
+
+  return (filter.auto && isAuto) || (filter.manual && !isAuto);
+};
