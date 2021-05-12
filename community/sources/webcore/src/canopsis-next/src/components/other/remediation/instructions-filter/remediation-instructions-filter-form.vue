@@ -27,7 +27,7 @@
       v-flex(md3, xs6)
         v-checkbox(
           :input-value="form.auto",
-          :label="$t(`remediationInstructions.types.automatic`)",
+          :label="$t('remediationInstructions.types.automatic')",
           :disabled="form.all || hasAnyAnotherOppositeFilterWithAuto",
           color="primary",
           @change="changeType('auto', $event)"

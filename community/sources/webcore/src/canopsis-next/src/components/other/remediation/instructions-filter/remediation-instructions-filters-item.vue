@@ -10,8 +10,8 @@
       span.instruction-filter__text
         v-icon(color="white", small) assignment
         v-icon.pl-1(v-if="filter.locked", color="white", small) lock
-        strong.pl-2 {{ typeMessage }}
-        span.pl-1(v-if="!filter.all") {{ instructionsMessage }}
+        strong.pl-2 {{ conditionTypeMessage }}
+        span.pl-1(v-if="!isAll") {{ typesAndInstructionsMessage }}
 </template>
 
 <script>
@@ -44,6 +44,10 @@ export default {
     },
   },
   computed: {
+    isAll() {
+      return this.filter.all || (this.filter.manual && this.filter.auto);
+    },
+
     chipListeners() {
       const listeners = { input: this.close };
 
@@ -70,17 +74,25 @@ export default {
       return this.filters.filter(item => item._id !== this.filter._id);
     },
 
-    typeMessage() {
-      const getMessage = key => this.$t(`remediationInstructionsFilters.chip.${key}`);
+    conditionTypeMessage() {
+      const allMessage = this.isAll ? ` ${this.$t('remediationInstructionsFilters.chip.all')}` : ':';
+      const conditionMessage = this.$t(`remediationInstructionsFilters.chip.${this.filter.with ? 'with' : 'without'}`);
 
-      const { filter } = this;
-      const all = filter.all || (filter.manual && filter.auto);
-
-      return `${getMessage(filter.with ? 'with' : 'without')}${all ? ` ${getMessage('all')}` : ':'}`;
+      return `${conditionMessage}${allMessage}`;
     },
 
-    instructionsMessage() {
-      return this.filter.instructions.map(({ name }) => name).join(', ');
+    typesAndInstructionsMessage() {
+      const types = [];
+
+      if (this.filter.manual) {
+        types.push(this.$t('remediationInstructions.types.manual'));
+      }
+
+      if (this.filter.auto) {
+        types.push(this.$t('remediationInstructions.types.automatic'));
+      }
+
+      return [...types, ...this.filter.instructions.map(({ name }) => name)].join(', ');
     },
   },
   methods: {
