@@ -61,14 +61,5 @@ export default {
       default: false,
     },
   },
-  computed: {
-    textValue() {
-      if (this.value === this.stopValue) {
-        return this.stopLabel;
-      }
-
-      return this.continueLabel;
-    },
-  },
 };
 </script>

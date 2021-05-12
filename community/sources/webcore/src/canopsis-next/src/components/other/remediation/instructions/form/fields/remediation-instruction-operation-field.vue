@@ -47,10 +47,7 @@
                     :error-messages="errors.collect(descriptionFieldName)",
                     :name="descriptionFieldName"
                   )
-                  v-layout.my-2(v-if="disabled && operation.jobs.length", wrap)
-                    v-flex.mb-2(xs12)
-                      span.subheading.font-weight-bold {{ $tc('remediationInstructions.job', 2) }}:
-                    c-instruction-job-chip.mr-2(v-for="job in operation.jobs", :key="job._id") {{ job.name }}
+                  jobs-chips(v-if="disabled && operation.jobs.length", :jobs="operation.jobs")
                   jobs-select(v-if="!disabled", v-field="operation.jobs")
         v-flex.mt-1(xs1)
           v-layout(justify-center)
@@ -66,6 +63,7 @@ import { formMixin, validationChildrenMixin } from '@/mixins/form';
 import confirmableFormMixin from '@/mixins/confirmable-form';
 
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
+import JobsChips from '@/components/other/remediation/instructions/partials/jobs-chips.vue';
 import JobsSelect from '@/components/other/remediation/instructions/partials/jobs-select.vue';
 import TextEditorBlurred from '@/components/common/text-editor/text-editor-blurred.vue';
 
@@ -77,6 +75,7 @@ export default {
     TextEditorBlurred,
     RemediationInstructionTimeToCompleteField,
     TextEditorField,
+    JobsChips,
     JobsSelect,
   },
   mixins: [

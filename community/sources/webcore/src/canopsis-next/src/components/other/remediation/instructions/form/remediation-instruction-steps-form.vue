@@ -69,6 +69,7 @@ export default {
 
     draggableOptions() {
       return {
+        disabled: this.disabled,
         animation: VUETIFY_ANIMATION_DELAY,
         handle: '.step-drag-handler',
         ghostClass: 'white',
