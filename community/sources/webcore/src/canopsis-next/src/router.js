@@ -28,6 +28,7 @@ import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
 import Playlist from '@/views/playlist.vue';
 import ExploitationMetaAlarmRules from '@/views/exploitation/meta-alarm-rules.vue';
 import ExploitationScenarios from '@/views/exploitation/scenarios.vue';
+import NotificationInstructionStats from '@/views/notification/instruction-stats.vue';
 
 Vue.use(Router);
 
@@ -261,6 +262,17 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: USERS_PERMISSIONS.technical.exploitation.scenario,
+      },
+    },
+  },
+  {
+    path: '/notification/instruction-stats',
+    name: 'notification-instruction-stats',
+    component: NotificationInstructionStats,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_PERMISSIONS.technical.notification.instructionStats,
       },
     },
   },

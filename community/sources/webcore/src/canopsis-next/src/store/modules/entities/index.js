@@ -11,6 +11,7 @@ import remediationInstructionExecutionModule from './remediation-instruction-exe
 import remediationConfigurationModule from './remediation-configuration';
 import remediationJobModule from './remediation-job';
 import remediationJobExecutionModule from './remediation-job-execution';
+import remediationInstructionStatsModule from './remediation-instruction-stats';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
 import statsModule from './stats';
@@ -71,6 +72,7 @@ export default {
   remediationConfiguration: remediationConfigurationModule,
   remediationInstructionExecution: remediationInstructionExecutionModule,
   remediationJobExecution: remediationJobExecutionModule,
+  remediationInstructionStats: remediationInstructionStatsModule,
   scenario: scenarioModule,
   entityCategory: entityCategoryModule,
   testSuite: testSuiteModule,

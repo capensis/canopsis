@@ -151,6 +151,7 @@ export const API_ROUTES = {
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
   remediation: {
     instructions: '/api/v4/cat/instructions',
+    instructionStats: '/api/v4/cat/instruction-stats',
     jobs: '/api/v4/cat/jobs',
     configurations: '/api/v4/cat/job-configs',
     executions: '/api/v4/cat/executions',

@@ -106,6 +106,8 @@ export const remediationJobSchema = new schema.Entity(ENTITIES_TYPES.remediation
 
 export const remediationConfigurationSchema = new schema.Entity(ENTITIES_TYPES.remediationConfiguration, {}, { idAttribute: '_id' });
 
+export const remediationInstructionStatsSchema = new schema.Entity(ENTITIES_TYPES.remediationInstructionStats, {}, { idAttribute: '_id' });
+
 export const scenarioSchema = new schema.Entity(ENTITIES_TYPES.scenario, {}, { idAttribute: '_id' });
 
 export const entityCategorySchema = new schema.Entity(ENTITIES_TYPES.entityCategory, {}, { idAttribute: '_id' });
@@ -147,4 +149,5 @@ export default {
   [ENTITIES_TYPES.testSuite]: testSuiteSchema,
   [ENTITIES_TYPES.testSuiteHistory]: testSuiteHistorySchema,
   [ENTITIES_TYPES.stateSetting]: stateSettingSchema,
+  [ENTITIES_TYPES.remediationInstructionStats]: remediationInstructionStatsSchema,
 };

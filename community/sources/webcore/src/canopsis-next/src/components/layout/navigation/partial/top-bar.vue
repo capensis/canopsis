@@ -62,8 +62,8 @@ export default {
     notificationLinks() {
       return [
         {
-          route: { name: 'notification-instruction-rating' },
-          title: this.$t('instructionRating.title'),
+          route: { name: 'notification-instruction-stats' },
+          title: this.$t('common.instructionRating'),
           icon: 'star_half',
         },
       ];

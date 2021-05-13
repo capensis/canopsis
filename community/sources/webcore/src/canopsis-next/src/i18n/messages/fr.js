@@ -127,6 +127,7 @@ export default {
     instructions: 'Consignes',
     metaAlarmRule: 'Meta alarm rule',
     dynamicInfo: 'Informations dynamiques',
+    instructionRating: 'Évaluation de l\'instruction',
     icon: 'Icône',
     fullscreen: 'Plein écran',
     interval: 'Période',

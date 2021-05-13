@@ -127,6 +127,7 @@ export default {
     instructions: 'Instructions',
     metaAlarmRule: 'Meta alarm rule',
     dynamicInfo: 'Dynamic informations',
+    instructionRating: 'Instruction rating',
     icon: 'Icon',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
@@ -2033,9 +2034,7 @@ export default {
     table: {
       rating: 'Rating',
       lastModifiedOn: 'Last modified on',
-      averageTimeCompletion: 'Average time\nof completion',
       monthExecutions: '№ of executions\nthis month',
-      lastExecutedBy: 'Last executed by',
       lastExecutedOn: 'Last executed on',
     },
     errors: {
@@ -2100,6 +2099,22 @@ export default {
       with: 'WITH',
       without: 'WITHOUT',
       all: 'ALL',
+    },
+  },
+
+  remediationInstructionStats: {
+    table: {
+      lastExecutedOn: 'Last executed on',
+      lastModifiedOn: 'Last modified on',
+      averageCompletionTime: 'Average time\nof completion',
+      executionCount: 'Number of\nexecutions',
+      alarmStates: 'Alarms affected by state',
+      okAlarmStates: 'Number of resulting\nOK states',
+      rating: 'Rating',
+    },
+    actions: {
+      needRate: 'Rate it!',
+      rate: 'Rate',
     },
   },
 

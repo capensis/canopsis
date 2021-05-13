@@ -26,15 +26,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.c-state-count-changes-chip {
-  font-size: 12px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 30px;
-  height: 20px;
-  border-radius: 10px;
-}
-</style>
