@@ -74,6 +74,10 @@ export default {
       return this.filters.filter(item => item._id !== this.filter._id);
     },
 
+    instructionsNames() {
+      return this.filter.instructions.map(({ name }) => name);
+    },
+
     conditionTypeMessage() {
       const allMessage = this.isAll ? ` ${this.$t('remediationInstructionsFilters.chip.all')}` : ':';
       const conditionMessage = this.$t(`remediationInstructionsFilters.chip.${this.filter.with ? 'with' : 'without'}`);
@@ -92,7 +96,7 @@ export default {
         types.push(this.$t(`remediationInstructions.types.${REMEDIATION_INSTRUCTION_TYPES.auto}`));
       }
 
-      return [...types, ...this.filter.instructions.map(({ name }) => name)].join(', ');
+      return [...types, ...this.instructionsNames].join(', ');
     },
   },
   methods: {

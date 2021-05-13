@@ -45,7 +45,7 @@
         :value="form.instructions",
         :items="preparedRemediationInstructions",
         :loading="remediationInstructionsPending",
-        :disabled="form.all || (form.auto && form.manual)",
+        :disabled="isAll",
         :label="$t('remediationInstructionsFilters.fields.selectedInstructions')",
         :error-messages="errors.collect('instructions')",
         item-text="name",
@@ -89,6 +89,10 @@ export default {
     },
   },
   computed: {
+    isAll() {
+      return this.form.all || (this.form.auto && this.form.manual);
+    },
+
     selectValidationRules() {
       return (this.form.all || this.form.manual || this.form.auto) ? {} : { required: true };
     },

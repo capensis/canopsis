@@ -1,3 +1,7 @@
+import { isUndefined } from 'lodash';
+
+import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
+
 /**
  * @typedef {Object} RemediationInstructionFilterInstruction
  * @property {string} _id
@@ -20,9 +24,6 @@
  * @property {string} _id
  * @property {boolean} locked
  */
-
-import { isUndefined } from 'lodash';
-import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
 /**
  * Convert remediation instruction filter to form
