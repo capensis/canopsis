@@ -40,6 +40,7 @@ import { setSeveralFields } from '@/helpers/immutable';
 
 import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
+import CStateCountChangesChips from '@/components/common/chips/c-state-count-changes-chips.vue';
 import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
@@ -256,6 +257,7 @@ Vue.component('c-role-picker-field', CRolePickerField);
 Vue.component('c-user-picker-field', CUserPickerField);
 Vue.component('c-instruction-type-field', CInstructionTypeField);
 Vue.component('c-priority-field', CPriorityField);
+Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

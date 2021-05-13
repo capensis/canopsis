@@ -1,0 +1,40 @@
+<template lang="pug">
+  span.d-inline-flex.align-center
+    span.c-state-count-changes-chip(:style="style") {{ affect.from }}
+    v-icon(color="black", size="16") arrow_forward
+    span.c-state-count-changes-chip(:style="style") {{ affect.to }}
+</template>
+
+<script>
+import { COLORS } from '@/config';
+
+export default {
+  props: {
+    affect: {
+      type: Object,
+      default: () => ({ from: 0, to: 0 }),
+    },
+    color: {
+      type: String,
+      default: COLORS.primary,
+    },
+  },
+  computed: {
+    style() {
+      return { backgroundColor: this.color };
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.c-state-count-changes-chip {
+  font-size: 12px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 20px;
+  border-radius: 10px;
+}
+</style>
