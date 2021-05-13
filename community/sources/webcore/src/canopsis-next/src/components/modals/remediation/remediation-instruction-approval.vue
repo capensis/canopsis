@@ -44,6 +44,8 @@ export default {
 
       this.pending = false;
     },
+
+    submit() {},
   },
 };
 </script>
