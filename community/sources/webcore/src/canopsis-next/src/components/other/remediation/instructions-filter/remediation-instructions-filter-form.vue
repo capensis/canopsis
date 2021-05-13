@@ -27,14 +27,14 @@
       v-flex(md3, xs6)
         v-checkbox(
           :input-value="form.auto",
-          :label="$t('remediationInstructions.types.automatic')",
+          :label="$t(`remediationInstructions.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.auto}`)",
           :disabled="form.all || hasAnyAnotherOppositeFilterWithAuto",
           color="primary",
           @change="changeType('auto', $event)"
         )
       v-checkbox(
         :input-value="form.manual",
-        :label="$t('remediationInstructions.types.manual')",
+        :label="$t(`remediationInstructions.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.manual}`)",
         :disabled="form.all || hasAnyAnotherOppositeFilterWithManual",
         color="primary",
         @change="changeType('manual', $event)"
@@ -56,6 +56,9 @@
         return-object,
         @change="changeInstructions"
       )
+        v-tooltip(slot="append-outer", left)
+          v-icon(slot="activator") help
+          div {{ $t('remediationInstructionsFilters.fields.selectedInstructionsHelp') }}
 </template>
 
 <script>
@@ -114,7 +117,7 @@ export default {
           this.form.with !== filter.with
           && (
             (filter.all || find(filter.instructions, { _id: instruction._id }))
-            || (isRemediationInstructionIntersectsWithFilterByType(filter, instruction))
+            || isRemediationInstructionIntersectsWithFilterByType(filter, instruction)
           );
 
         const instructionAlreadyInForm = find(this.form.instructions, { _id: instruction._id });
@@ -127,7 +130,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchRemediationInstructionsList({ limit: MAX_LIMIT });
+    this.fetchRemediationInstructionsList({ params: { limit: MAX_LIMIT } });
   },
   methods: {
     changeSelectedAll(all) {

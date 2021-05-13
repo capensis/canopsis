@@ -46,7 +46,7 @@ export const remediationInstructionFilterToForm = (filter = {}) => ({
  * @returns {boolean}
  */
 export const isRemediationInstructionIntersectsWithFilterByType = (filter = {}, instruction = {}) => {
-  const isAuto = instruction.type === REMEDIATION_INSTRUCTION_TYPES.automatic;
+  const isAuto = instruction.type === REMEDIATION_INSTRUCTION_TYPES.auto;
 
   return (filter.auto && isAuto) || (filter.manual && !isAuto);
 };

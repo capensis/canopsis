@@ -2087,6 +2087,7 @@ export default {
       without: 'Without selected instructions',
       selectAll: 'Select all',
       selectedInstructions: 'Selected instructions',
+      selectedInstructionsHelp: 'Instructions of selected type are excluded from the list',
     },
     chip: {
       with: 'WITH',

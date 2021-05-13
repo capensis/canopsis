@@ -191,6 +191,7 @@ export default {
     access: 'Accès',
     communication: 'Communication | Communication',
     general: 'Général',
+    notification: 'Notification | Notifications',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -2086,6 +2087,7 @@ export default {
       without: 'Sans les consignes sélectionnées',
       selectAll: 'Tout sélectionner',
       selectedInstructions: 'Consignes sélectionnées',
+      selectedInstructionsHelp: 'Les instructions du type sélectionné sont exclues de la liste',
     },
     chip: {
       with: 'AVEC',

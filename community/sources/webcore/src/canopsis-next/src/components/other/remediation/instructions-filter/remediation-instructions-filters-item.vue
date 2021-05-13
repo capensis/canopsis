@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -85,11 +85,11 @@ export default {
       const types = [];
 
       if (this.filter.manual) {
-        types.push(this.$t('remediationInstructions.types.manual'));
+        types.push(this.$t(`remediationInstructions.types.${REMEDIATION_INSTRUCTION_TYPES.manual}`));
       }
 
       if (this.filter.auto) {
-        types.push(this.$t('remediationInstructions.types.automatic'));
+        types.push(this.$t(`remediationInstructions.types.${REMEDIATION_INSTRUCTION_TYPES.auto}`));
       }
 
       return [...types, ...this.filter.instructions.map(({ name }) => name)].join(', ');

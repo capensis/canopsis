@@ -35,18 +35,18 @@ export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
     const key = filter.with ? PARAMETERS_FILTERS_TYPES.include : PARAMETERS_FILTERS_TYPES.exclude;
 
     if (
-      acc[key].types.includes(REMEDIATION_INSTRUCTION_TYPES.automatic)
+      acc[key].types.includes(REMEDIATION_INSTRUCTION_TYPES.autom)
       && acc[key].types.includes(REMEDIATION_INSTRUCTION_TYPES.manual)
     ) {
       return acc;
     }
 
     if (filter.all) {
-      acc[key].types = [REMEDIATION_INSTRUCTION_TYPES.automatic, REMEDIATION_INSTRUCTION_TYPES.manual];
+      acc[key].types = [REMEDIATION_INSTRUCTION_TYPES.autom, REMEDIATION_INSTRUCTION_TYPES.manual];
     }
 
     if (filter.auto) {
-      acc[key].types.push(REMEDIATION_INSTRUCTION_TYPES.automatic);
+      acc[key].types.push(REMEDIATION_INSTRUCTION_TYPES.autom);
     }
 
     if (filter.manual) {
