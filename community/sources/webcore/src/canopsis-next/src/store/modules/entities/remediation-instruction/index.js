@@ -16,5 +16,9 @@ export default createEntityModule({
     fetchItemCommentsWithoutStore(context, { id, params }) {
       return request.get(`${API_ROUTES.remediation.instructionComments}/${id}`, { params });
     },
+
+    fetchItemApprovalWithoutStore(context, { id, params }) {
+      return request.get(`${API_ROUTES.remediation.instructions}/${id}/approval`, { params });
+    },
   },
 });

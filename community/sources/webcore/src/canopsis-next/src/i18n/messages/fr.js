@@ -1496,6 +1496,9 @@ export default {
         placeholder: 'Saisissez le chemin d\'accès au dossier vidéo',
       },
     },
+    remediationInstructionApproval: {
+      title: 'Approbation des instructions',
+    },
   },
   tables: {
     noData: 'Aucune donnée',

@@ -70,8 +70,13 @@ export default {
       });
     },
 
-    showApproveRemediationInstructionModal() {
-      // Awesome code
+    showApproveRemediationInstructionModal(remediationInstruction) {
+      this.$modals.show({
+        name: MODALS.remediationInstructionApproval,
+        config: {
+          remediationInstructionId: remediationInstruction._id,
+        },
+      });
     },
 
     showConfirmModalOnRunningRemediationInstruction(action) {

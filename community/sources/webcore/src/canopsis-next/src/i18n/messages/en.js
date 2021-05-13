@@ -1496,6 +1496,9 @@ export default {
         placeholder: 'Input the path to the video folder',
       },
     },
+    remediationInstructionApproval: {
+      title: 'Instruction approval',
+    },
   },
   tables: {
     noData: 'No data',
