@@ -4,9 +4,7 @@
       template(slot="title")
         span {{ $t('modals.remediationInstructionApproval.title') }}
       template(slot="text")
-        v-fade-transition
-          c-progress-overlay(v-if="pending", pending)
-          span(v-else-if="remediationInstructionApproval") something
+        remediation-instruction-approval-alert(v-if="approval", :approval="approval")
 </template>
 
 <script>
@@ -14,17 +12,26 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
+import modalInnerMixin from '@/plugins/modals/mixins/inner';
+
+import RemediationInstructionApprovalAlert from
+  '@/components/other/remediation/instructions/partials/approval-alert.vue';
+
 import ModalWrapper from '../modal-wrapper.vue';
 
 const { mapActions } = createNamespacedHelpers('remediationInstruction');
 
 export default {
   name: MODALS.remediationInstructionApproval,
-  components: { ModalWrapper },
+  components: {
+    RemediationInstructionApprovalAlert,
+    ModalWrapper,
+  },
+  mixins: [modalInnerMixin],
   data() {
     return {
       pending: false,
-      remediationInstructionApproval: null,
+      approval: null,
     };
   },
   mounted() {
@@ -38,7 +45,7 @@ export default {
     async fetchItem() {
       this.pending = true;
 
-      this.remediationInstructionApproval = await this.fetchRemediationInstructionApprovalWithoutStore({
+      this.approval = await this.fetchRemediationInstructionApprovalWithoutStore({
         id: this.config.remediationInstructionId,
       });
 
