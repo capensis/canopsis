@@ -216,3 +216,14 @@ $mobileBreakpoint: 450px;
   height: 20px;
   border-radius: 10px;
 }
+
+.c-table-header {
+  &__text {
+    &--multiline {
+      white-space: pre-line !important;
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;
+    }
+  }
+}

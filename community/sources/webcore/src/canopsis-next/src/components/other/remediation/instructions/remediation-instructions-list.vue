@@ -18,7 +18,7 @@
           v-btn(@click="$emit('remove-selected', props.selected)", icon)
             v-icon delete
       template(slot="headerCell", slot-scope="props")
-        span.pre-line.header-text {{ props.header.text }}
+        span.c-table-header__text--multiline {{ props.header.text }}
       template(slot="enabled", slot-scope="props")
         c-enabled(:value="props.item.enabled")
       template(slot="status", slot-scope="props")
@@ -141,14 +141,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.header-text {
-  display: inline-block;
-  height: 100%;
-  vertical-align: middle;
-}
-
 .instruction-list {
   /deep/ thead th {
+    // NOTE: Needed to vertically center the sort icon
     vertical-align: middle;
   }
 }
