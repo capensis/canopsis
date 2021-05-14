@@ -1897,6 +1897,7 @@ export default {
     technical: {
       admin: 'Admin rights',
       exploitation: 'Exploitation rights',
+      notification: 'Notification rights',
     },
     business: {
       [USER_PERMISSIONS_PREFIXES.business.common]: 'Rights for common',

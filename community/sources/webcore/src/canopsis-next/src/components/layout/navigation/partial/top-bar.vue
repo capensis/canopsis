@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { USERS_PERMISSIONS } from '@/constants';
+
 import { authMixin } from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -65,8 +67,9 @@ export default {
           route: { name: 'notification-instruction-stats' },
           title: this.$t('common.instructionRating'),
           icon: 'star_half',
+          permission: USERS_PERMISSIONS.technical.notification.instructionStats,
         },
-      ];
+      ].filter(({ permission }) => this.checkAppInfoAccessByRight(permission) && this.checkReadAccess(permission));
     },
   },
 };

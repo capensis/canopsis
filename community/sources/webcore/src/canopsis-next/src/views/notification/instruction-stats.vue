@@ -5,7 +5,8 @@
       :remediation-instruction-stats="remediationInstructionStats",
       :pending="remediationInstructionStatsPending",
       :pagination.sync="pagination",
-      :total-items="remediationInstructionStatsMeta.total_count"
+      :total-items="remediationInstructionStatsMeta.total_count",
+      @rate="showInstructionRateModal"
     )
     c-fab-btn(@refresh="fetchList")
 </template>
@@ -30,6 +31,8 @@ export default {
     this.fetchList();
   },
   methods: {
+    showInstructionRateModal() {},
+
     fetchList() {
       const params = this.getQuery();
       params.with_flags = true;

@@ -39,8 +39,8 @@ export default {
   methods: {
     ...mapActions(['fetchLoginInfos', 'fetchAppInfos', 'updateUserInterface']),
 
-    checkAppInfoAccessByRight(right) {
-      const rightAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[right];
+    checkAppInfoAccessByRight(permission) {
+      const rightAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[permission];
 
       if (!rightAppInfoRules) {
         return true;
@@ -51,7 +51,7 @@ export default {
         stack: this.stack,
       };
 
-      return isMatch(appInfo, USER_PERMISSIONS_TO_PAGES_RULES[right]);
+      return isMatch(appInfo, USER_PERMISSIONS_TO_PAGES_RULES[permission]);
     },
 
     setTitle() {

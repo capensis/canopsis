@@ -38,7 +38,7 @@
           )
           c-action-btn(
             :tooltip="$t('remediationInstructionStats.actions.rate')",
-            :disabled="!props.item.rateble",
+            :disabled="!props.item.ratable",
             icon="thumbs_up_down",
             @click="$emit('rate', props.item)"
           )
@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
+
 import RatingField from '@/components/forms/fields/rating-field.vue';
 
 import AffectAlarmStates from './partials/affect-alarm-states.vue';
@@ -54,6 +56,7 @@ import RemediationInstructionStatsListExpandPanel from './partials/remediation-i
 
 export default {
   components: { RemediationInstructionStatsListExpandPanel, RatingField, AffectAlarmStates },
+  mixins: [permissionsTechnicalRemediationInstructionMixin],
   props: {
     remediationInstructionStats: {
       type: Array,
@@ -79,7 +82,7 @@ export default {
           text: this.$t('common.name'),
           value: 'name',
         },
-        {
+        this.hasCreateAnyRemediationInstructionAccess && {
           text: this.$t('common.type'),
           value: 'type',
         },
@@ -121,7 +124,7 @@ export default {
           value: 'actions',
           sortable: false,
         },
-      ];
+      ].filter(Boolean);
     },
   },
 };
