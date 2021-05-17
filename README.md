@@ -14,7 +14,7 @@ A demo is available at: [demo.canopsis.net](https://demo.canopsis.net).
 
 ## Installation
 
-Canopsis can be installed through [Debian or CentOS packages](https://doc.canopsis.net/guide-administration/installation/installation-paquets/), or with [Docker images](https://doc.canopsis.net/guide-administration/installation/installation-conteneurs/).
+Canopsis can be installed through [CentOS packages](https://doc.canopsis.net/guide-administration/installation/installation-paquets/), or with [Docker images](https://doc.canopsis.net/guide-administration/installation/installation-conteneurs/).
 
 ## Documentation
 
