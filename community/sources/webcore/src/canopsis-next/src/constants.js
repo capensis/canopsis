@@ -1448,10 +1448,6 @@ export const EXPLOITATION_PAGES_RULES = {
   scenario: { stack: CANOPSIS_STACK.go },
 };
 
-export const NOTIFICATION_PAGES_RULES = {
-  instructionStats: { stack: CANOPSIS_STACK.go },
-};
-
 export const USER_PERMISSIONS_TO_PAGES_RULES = {
   /**
    * Admin pages
@@ -1467,11 +1463,6 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USERS_PERMISSIONS.technical.exploitation.scenario]: EXPLOITATION_PAGES_RULES.scenario,
-
-  /**
-   * Notification pages
-   */
-  [USERS_PERMISSIONS.technical.notification.instructionStats]: NOTIFICATION_PAGES_RULES.instructionStats,
 };
 
 export const WIDGET_TYPES_RULES = {

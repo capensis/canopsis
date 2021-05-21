@@ -39,10 +39,10 @@ export default {
   methods: {
     ...mapActions(['fetchLoginInfos', 'fetchAppInfos', 'updateUserInterface']),
 
-    checkAppInfoAccessByRight(permission) {
-      const rightAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[permission];
+    checkAppInfoAccessByPermission(permission) {
+      const permissionAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[permission];
 
-      if (!rightAppInfoRules) {
+      if (!permissionAppInfoRules) {
         return true;
       }
 

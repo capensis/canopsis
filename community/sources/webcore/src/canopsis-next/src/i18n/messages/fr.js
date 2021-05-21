@@ -2105,6 +2105,22 @@ export default {
     },
   },
 
+  remediationInstructionStats: {
+    table: {
+      lastExecutedOn: 'Dernière exécution le',
+      lastModifiedOn: 'Dernière modification le',
+      averageCompletionTime: 'Temps moyen\n\'achèvement',
+      executionCount: 'Nombre de\nexécutions',
+      alarmStates: 'Alarmes affectées par l\'état',
+      okAlarmStates: 'Nombre de résultats\nÉtats OK',
+      rating: 'Notation',
+    },
+    actions: {
+      needRate: 'Notez-le!',
+      rate: 'Taux',
+    },
+  },
+
   remediationPatterns: {
     tabs: {
       pbehaviorTypes: {
