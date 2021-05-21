@@ -57,7 +57,7 @@ const routes = [
     component: View,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: route => route.params.id,
       },
     },
@@ -69,7 +69,7 @@ const routes = [
     component: Alarm,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.view,
       },
     },
@@ -81,7 +81,7 @@ const routes = [
     component: AdminPermissions,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.action,
       },
     },
@@ -92,7 +92,7 @@ const routes = [
     component: AdminUsers,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.user,
       },
     },
@@ -103,7 +103,7 @@ const routes = [
     component: AdminRoles,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.role,
       },
     },
@@ -114,7 +114,7 @@ const routes = [
     component: AdminParameters,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.parameters,
       },
     },
@@ -125,7 +125,7 @@ const routes = [
     component: AdminBroadcastMessages,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.broadcastMessage,
       },
     },
@@ -136,7 +136,7 @@ const routes = [
     component: AdminPlaylists,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.playlist,
       },
     },
@@ -147,7 +147,7 @@ const routes = [
     component: AdminPlanning,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.planning,
       },
     },
@@ -158,7 +158,7 @@ const routes = [
     component: AdminEngines,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         action: CRUD_ACTIONS.can,
         id: USERS_PERMISSIONS.technical.engine,
       },
@@ -170,7 +170,7 @@ const routes = [
     component: AdminRemediation,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.remediation,
       },
     },
@@ -181,7 +181,7 @@ const routes = [
     component: ExploitationPbehaviors,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.pbehavior,
       },
     },
@@ -192,7 +192,7 @@ const routes = [
     component: ExploitationEventFilter,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.eventFilter,
       },
     },
@@ -203,7 +203,7 @@ const routes = [
     component: ExploitationSnmpRules,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.snmpRule,
       },
     },
@@ -214,7 +214,7 @@ const routes = [
     component: ExploitationHeartbeats,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.heartbeat,
       },
     },
@@ -225,7 +225,7 @@ const routes = [
     component: ExploitationDynamicInfos,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.dynamicInfo,
       },
     },
@@ -236,7 +236,7 @@ const routes = [
     component: Playlist,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: route => route.params.id,
         action: CRUD_ACTIONS.read,
       },
@@ -249,7 +249,7 @@ const routes = [
     component: ExploitationMetaAlarmRules,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.metaAlarmRule,
       },
     },
@@ -260,7 +260,7 @@ const routes = [
     component: ExploitationScenarios,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.scenario,
       },
     },
@@ -271,7 +271,7 @@ const routes = [
     component: NotificationInstructionStats,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.notification.instructionStats,
       },
     },
