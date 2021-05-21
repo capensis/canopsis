@@ -39,10 +39,10 @@ export async function checkAppInfoAccessForRoute(to = {}) {
     return true;
   }
 
-  const rightId = isFunction(requiresPermission.id) ? requiresPermission.id(to) : requiresPermission.id;
-  const rightAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[rightId];
+  const permissionId = isFunction(requiresPermission.id) ? requiresPermission.id(to) : requiresPermission.id;
+  const permissionAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[permissionId];
 
-  if (!rightAppInfoRules) {
+  if (!permissionAppInfoRules) {
     return true;
   }
 
@@ -56,7 +56,7 @@ export async function checkAppInfoAccessForRoute(to = {}) {
     stack,
   };
 
-  if (isMatch(appInfo, rightAppInfoRules)) {
+  if (isMatch(appInfo, permissionAppInfoRules)) {
     return true;
   }
 
