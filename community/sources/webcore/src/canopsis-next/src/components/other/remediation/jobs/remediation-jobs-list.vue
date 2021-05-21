@@ -62,7 +62,7 @@ export default {
         },
         {
           text: this.$t('common.author'),
-          value: 'author',
+          value: 'author.username',
         },
         {
           text: this.$t('remediationJobs.table.configuration'),
