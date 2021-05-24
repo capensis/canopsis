@@ -192,6 +192,8 @@ export default {
     communication: 'Communication | Communication',
     general: 'Général',
     notification: 'Notification | Notifications',
+    dismiss: 'Rejeter',
+    approve: 'Approuver',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1498,6 +1500,7 @@ export default {
     },
     remediationInstructionApproval: {
       title: 'Approbation des instructions',
+      requested: 'demandé pour approbation',
     },
   },
   tables: {

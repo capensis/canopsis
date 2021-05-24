@@ -4,7 +4,10 @@
       template(slot="title")
         span {{ $t('modals.remediationInstructionApproval.title') }}
       template(slot="text")
-        remediation-instruction-approval-alert(v-if="approval", :approval="approval")
+        remediation-instruction-approval-alert(v-if="approval", :approval="approval.approval")
+      template(slot="actions")
+        v-btn(depressed, flat, @click="dismiss") {{ $t('common.dismiss') }}
+        v-btn.primary(@click="approve") {{ $t('common.approve') }}
 </template>
 
 <script>
@@ -52,7 +55,9 @@ export default {
       this.pending = false;
     },
 
-    submit() {},
+    dismiss() {},
+
+    approve() {},
   },
 };
 </script>
