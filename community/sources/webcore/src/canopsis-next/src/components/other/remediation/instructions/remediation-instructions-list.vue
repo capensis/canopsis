@@ -139,12 +139,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.instruction-list {
-  /deep/ thead th {
-    // NOTE: Needed to vertically center the sort icon
-    vertical-align: middle;
-  }
-}
-</style>

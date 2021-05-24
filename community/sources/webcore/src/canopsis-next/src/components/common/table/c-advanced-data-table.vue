@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.white
+  div.c-advanced-data-table.white
     v-layout(row, wrap, v-bind="toolbarProps")
       v-flex(v-if="shownSearch", xs4)
         c-search-field(
@@ -46,7 +46,7 @@
         slot(v-bind="getItemsProps(props)", name="items")
           tr(:key="props.item[itemKey] || props.index")
             td(v-if="selectAll || expand", @click.stop)
-              v-layout.checkbox-wrapper(row, justify-start)
+              v-layout.c-checkbox-wrapper(row, justify-start)
                 slot(v-if="selectAll", v-bind="getItemsProps(props)", name="item-select")
                   v-checkbox-functional(
                     v-if="!isDisabledItem(props.item)",
@@ -253,7 +253,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .checkbox-wrapper {
+.c-advanced-data-table {
+  /deep/ thead th {
+    vertical-align: middle;
+  }
+
+  & .c-checkbox-wrapper {
     display: inline-flex;
   }
+}
 </style>
