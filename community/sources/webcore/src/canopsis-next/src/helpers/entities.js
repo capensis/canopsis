@@ -10,7 +10,7 @@ import {
   STATS_CALENDAR_COLORS,
   STATS_TYPES,
   STATS_DURATION_UNITS,
-  STATS_QUICK_RANGES,
+  QUICK_RANGES,
   STATS_DISPLAY_MODE,
   STATS_DISPLAY_MODE_PARAMETERS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
@@ -193,8 +193,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         stats: {},
         statsColors: {},
@@ -207,8 +207,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         stats: {},
         statsColors: {},
@@ -221,8 +221,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stats: {},
@@ -249,8 +249,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stat: {
@@ -296,8 +296,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stats: {},

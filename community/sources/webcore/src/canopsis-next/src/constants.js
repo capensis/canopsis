@@ -544,12 +544,17 @@ export const DATETIME_FORMATS = {
   time: 'H:mm:ss',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
   dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
-  datePicker: 'DD/MM/YYYY',
+  datePicker: 'YYYY-MM-DD',
   timePicker: 'HH:mm',
   timePickerWithSeconds: 'HH:mm:ss',
   veeValidateDateTimeFormat: 'dd/MM/yyyy HH:mm',
   refreshFieldFormat: 'Y __ D __ H _ m _ s _',
   testSuiteFormat: 'DD MMM YYYY [\n]H:mm:ss [GMT]',
+};
+
+export const DATETIME_INTERVAL_TYPES = {
+  start: 'start',
+  stop: 'stop',
 };
 
 export const STATS_OPTIONS = {
@@ -632,7 +637,7 @@ export const STATS_CRITICITY = {
   critical: 'critical',
 };
 
-export const STATS_QUICK_RANGES = {
+export const QUICK_RANGES = {
   custom: {
     value: 'custom',
   },

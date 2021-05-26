@@ -1,7 +1,7 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
-import { WIDGET_TYPES, STATS_QUICK_RANGES, ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP } from '@/constants';
+import { WIDGET_TYPES, QUICK_RANGES, ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP } from '@/constants';
 
 import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from './filter';
 import {
@@ -77,8 +77,8 @@ export function convertAlarmWidgetToQuery(widget) {
     query.tstart = liveReporting.tstart;
     query.tstop = liveReporting.tstop;
   } else if (query.resolved) {
-    query.tstart = STATS_QUICK_RANGES.last30Days.start;
-    query.tstop = STATS_QUICK_RANGES.last30Days.stop;
+    query.tstart = QUICK_RANGES.last30Days.start;
+    query.tstop = QUICK_RANGES.last30Days.stop;
   }
 
   if (widgetColumns) {

@@ -22,10 +22,13 @@
         :readonly="!disabled",
         @click:append="clear"
       )
+        template(slot="append")
+          slot(name="append")
     v-date-picker.date-picker(
       :value="value",
       :opened="opened",
       :color="color",
+      :allowed-dates="allowedDates",
       @input="input",
       @change="change"
     )
@@ -55,7 +58,7 @@ export default {
       default: false,
     },
     value: {
-      type: String,
+      type: [String, Number],
       default: null,
     },
     label: {
@@ -72,7 +75,7 @@ export default {
     },
     format: {
       type: String,
-      default: 'datePicker',
+      default: 'short',
     },
     error: {
       type: Boolean,
@@ -85,6 +88,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    allowedDates: {
+      type: Function,
+      required: false,
     },
   },
   data() {

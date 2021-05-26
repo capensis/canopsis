@@ -6,7 +6,7 @@ import {
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   CRUD_ACTIONS,
   WIDGET_TYPES,
-  STATS_QUICK_RANGES,
+  QUICK_RANGES,
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
@@ -184,8 +184,8 @@ export default {
        * Default value for liveReporting is last 30 days
        */
       widget.parameters.liveReporting = {
-        tstart: STATS_QUICK_RANGES.last30Days.start,
-        tstop: STATS_QUICK_RANGES.last30Days.stop,
+        tstart: QUICK_RANGES.last30Days.start,
+        tstop: QUICK_RANGES.last30Days.stop,
       };
 
       /**

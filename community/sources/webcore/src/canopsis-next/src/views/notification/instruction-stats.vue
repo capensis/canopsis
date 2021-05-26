@@ -12,6 +12,12 @@
 </template>
 
 <script>
+import moment from 'moment';
+
+import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES } from '@/constants';
+
+import { dateParse } from '@/helpers/date/date-intervals';
+
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
@@ -27,6 +33,16 @@ export default {
     localQueryMixin,
     entitiesRemediationInstructionStatsMixin,
   ],
+  data() {
+    return {
+      query: {
+        interval: {
+          from: moment().subtract(1, 'week').format(DATETIME_FORMATS.datePicker),
+          to: moment().format(DATETIME_FORMATS.datePicker),
+        },
+      },
+    };
+  },
   mounted() {
     this.fetchList();
   },
@@ -36,9 +52,17 @@ export default {
     fetchList() {
       const params = this.getQuery();
       params.with_flags = true;
-      // TODO: Should be removed
-      params.from = 1;
-      params.to = Date.now();
+
+      params.from = dateParse(
+        this.pagination.interval.from,
+        DATETIME_INTERVAL_TYPES.start,
+        DATETIME_FORMATS.datePicker,
+      ).unix();
+      params.to = dateParse(
+        this.pagination.interval.to,
+        DATETIME_INTERVAL_TYPES.stop,
+        DATETIME_FORMATS.datePicker,
+      ).unix();
 
       this.fetchRemediationInstructionStatsList({ params });
     },

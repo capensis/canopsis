@@ -11,6 +11,9 @@
       advanced-pagination,
       @update:pagination="$emit('update:pagination', $event)"
     )
+      template(slot="toolbar", slot-scope="props")
+        v-layout(align-center)
+          remediation-instruction-stats-date-interval(:interval="pagination.interval", @input="updateInterval")
       template(slot="headerCell", slot-scope="props")
         span.c-table-header__text--multiline {{ props.header.text }}
       template(slot="type", slot-scope="props")
@@ -53,9 +56,15 @@ import RatingField from '@/components/forms/fields/rating-field.vue';
 
 import AffectAlarmStates from './partials/affect-alarm-states.vue';
 import RemediationInstructionStatsListExpandPanel from './partials/remediation-instruction-stats-list-expand-panel.vue';
+import RemediationInstructionStatsDateInterval from './partials/remediation-instruction-stats-date-interval.vue';
 
 export default {
-  components: { RemediationInstructionStatsListExpandPanel, RatingField, AffectAlarmStates },
+  components: {
+    RemediationInstructionStatsDateInterval,
+    RemediationInstructionStatsListExpandPanel,
+    RatingField,
+    AffectAlarmStates,
+  },
   mixins: [permissionsTechnicalRemediationInstructionMixin],
   props: {
     remediationInstructionStats: {
@@ -125,6 +134,14 @@ export default {
           sortable: false,
         },
       ].filter(Boolean);
+    },
+  },
+  methods: {
+    updateInterval(interval) {
+      this.$emit('update:pagination', {
+        ...this.pagination,
+        interval,
+      });
     },
   },
 };

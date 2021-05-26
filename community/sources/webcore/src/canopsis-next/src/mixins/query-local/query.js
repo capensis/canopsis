@@ -1,4 +1,4 @@
-import { isEqual, pick } from 'lodash';
+import { isEqual, omit } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS } from '@/constants';
@@ -34,11 +34,12 @@ export const localQueryMixin = {
           rowsPerPage: value.rowsPerPage || PAGINATION_LIMIT,
           sortKey: value.sortBy,
           sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
+          ...omit(value, ['search', 'page', 'rowsPerPage', 'sortBy', 'descending']),
         };
       },
       get() {
         return {
-          ...pick(this.query, ['page', 'rowsPerPage', 'search']),
+          ...omit(this.query, ['sortKey', 'sortDir']),
           sortBy: this.query.sortKey,
           descending: this.query.sortDir === SORT_ORDERS.desc,
         };
