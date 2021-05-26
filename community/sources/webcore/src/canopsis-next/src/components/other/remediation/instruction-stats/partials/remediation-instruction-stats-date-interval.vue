@@ -66,11 +66,11 @@ export default {
     },
 
     intervalFromString() {
-      return this.intervalFromAsMoment.format('YYYY-MM-DD');
+      return this.intervalFromAsMoment.format(DATETIME_FORMATS.datePicker);
     },
 
     intervalToString() {
-      return this.intervalToAsMoment.format('YYYY-MM-DD');
+      return this.intervalToAsMoment.format(DATETIME_FORMATS.datePicker);
     },
 
     range: {

@@ -12,9 +12,7 @@
 </template>
 
 <script>
-import moment from 'moment';
-
-import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES } from '@/constants';
+import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
 
 import { dateParse } from '@/helpers/date/date-intervals';
 
@@ -37,8 +35,8 @@ export default {
     return {
       query: {
         interval: {
-          from: moment().subtract(1, 'week').format(DATETIME_FORMATS.datePicker),
-          to: moment().format(DATETIME_FORMATS.datePicker),
+          from: QUICK_RANGES.last7Days.start,
+          to: QUICK_RANGES.last7Days.stop,
         },
       },
     };
