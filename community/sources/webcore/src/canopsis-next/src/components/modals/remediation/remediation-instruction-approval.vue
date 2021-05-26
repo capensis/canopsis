@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ $t('modals.remediationInstructionApproval.title') }}
       template(slot="text")
-        v-layout(column, v-if="remediationInstructionApproval")
+        v-layout(v-if="remediationInstructionApproval", column)
           remediation-instruction-approval-alert(
             v-if="remediationInstructionApproval",
             :approval="remediationInstructionApproval.approval"
@@ -15,7 +15,11 @@
               span Updated
             v-tab {{ $t('modals.remediationInstructionApproval.tabs.original') }}
             v-tab-item
-              remediation-instruction-execute(:execution-instruction="remediationInstructionApproval.original")
+              remediation-instruction-form(
+                :form="remediationInstructionApproval.original",
+                disabled-common,
+                disabled
+              )
         v-layout(v-else, justify-center)
           v-progress-circular(indeterminate, color="primary")
       template(slot="actions")
@@ -32,8 +36,8 @@ import modalInnerMixin from '@/plugins/modals/mixins/inner';
 
 import RemediationInstructionApprovalAlert from
   '@/components/other/remediation/instructions/partials/approval-alert.vue';
-import RemediationInstructionExecute from
-  '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
+import RemediationInstructionForm from
+  '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -44,7 +48,7 @@ export default {
   name: MODALS.remediationInstructionApproval,
   components: {
     RemediationInstructionApprovalAlert,
-    RemediationInstructionExecute,
+    RemediationInstructionForm,
     ModalWrapper,
   },
   mixins: [modalInnerMixin],

@@ -2,15 +2,23 @@
   div
     v-layout(row)
       v-flex(xs3)
-        c-instruction-type-field.mb-2(v-field="form.type", :disabled="disabled")
+        c-instruction-type-field.mb-2(
+          v-field="form.type",
+          :disabled="disabled"
+        )
       v-flex
-        c-enabled-field.mt-0(v-field="form.enabled", hide-details)
+        c-enabled-field.mt-0(
+          v-field="form.enabled",
+          :disabled="disabledCommon",
+          hide-details
+        )
     v-layout(row)
       v-text-field(
         v-field="form.name",
         v-validate="'required'",
         :label="$t('common.name')",
         :error-messages="errors.collect('name')",
+        :disabled="disabledCommon",
         name="name"
       )
     v-layout(row)
@@ -19,6 +27,7 @@
         v-validate="'required'",
         :label="$t('common.description')",
         :error-messages="errors.collect('description')",
+        :disabled="disabledCommon",
         name="description"
       )
     v-layout(row, justify-space-between, align-center)
@@ -64,6 +73,10 @@ export default {
       default: () => ({}),
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    disabledCommon: {
       type: Boolean,
       default: false,
     },
