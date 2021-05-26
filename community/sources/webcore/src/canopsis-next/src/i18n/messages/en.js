@@ -1478,6 +1478,10 @@ export default {
     remediationInstructionApproval: {
       title: 'Instruction approval',
       requested: 'requested for approval',
+      tabs: {
+        updated: 'Updated',
+        original: 'Original',
+      },
     },
   },
   tables: {
