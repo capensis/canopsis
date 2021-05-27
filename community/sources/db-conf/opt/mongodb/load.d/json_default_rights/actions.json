@@ -1394,5 +1394,19 @@
         "crecord_name": "api_datastorage_update",
         "crecord_type": "action",
         "desc": "Data storage settings update"
+    },
+    {
+        "_id": "api_notification",
+        "loader_id": "api_notification",
+        "crecord_name": "api_notification",
+        "crecord_type": "action",
+        "desc": "Notification settings"
+    },
+    {
+        "_id": "api_instruction_approve",
+        "loader_id": "api_instruction_approve",
+        "crecord_name": "api_instruction_approve",
+        "crecord_type": "action",
+        "desc": "Instruction approve"
     }
 ]
