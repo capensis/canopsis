@@ -4,26 +4,31 @@
       template(slot="title")
         span {{ $t('modals.remediationInstructionApproval.title') }}
       template(slot="text")
-        v-layout(v-if="remediationInstructionApproval", column)
-          remediation-instruction-approval-alert(
-            v-if="remediationInstructionApproval",
-            :approval="remediationInstructionApproval.approval"
-          )
-          v-tabs.mt-3(slider-color="primary", fixed-tabs)
-            v-tab {{ $t('modals.remediationInstructionApproval.tabs.updated') }}
-            v-tab-item
-              span Updated
-            v-tab {{ $t('modals.remediationInstructionApproval.tabs.original') }}
-            v-tab-item
-              remediation-instruction-form(
-                :form="remediationInstructionApproval.original",
-                disabled-common,
-                disabled
-              )
-        v-layout(v-else, justify-center)
-          v-progress-circular(indeterminate, color="primary")
+        v-fade-transition
+          v-layout(v-if="!remediationInstructionApproval", justify-center)
+            v-progress-circular(indeterminate, color="primary")
+          v-layout(v-else, column)
+            remediation-instruction-approval-alert(
+              :approval="remediationInstructionApproval.approval"
+            )
+            v-tabs.mt-3(slider-color="primary", fixed-tabs)
+              v-tab {{ $t('modals.remediationInstructionApproval.tabs.updated') }}
+              v-tab-item.pt-3
+                remediation-instruction-form(
+                  :form="remediationInstructionApproval.updated",
+                  disabled-common,
+                  disabled
+                )
+              v-tab {{ $t('modals.remediationInstructionApproval.tabs.original') }}
+              v-tab-item.pt-3
+                remediation-instruction-form(
+                  :form="remediationInstructionApproval.original",
+                  disabled-common,
+                  disabled
+                )
       template(slot="actions")
-        v-btn(depressed, flat, @click="dismiss") {{ $t('common.dismiss') }}
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.warning(depressed, flat, @click="dismiss") {{ $t('common.dismiss') }}
         v-btn.primary(@click="approve") {{ $t('common.approve') }}
 </template>
 
@@ -54,7 +59,6 @@ export default {
   mixins: [modalInnerMixin],
   data() {
     return {
-      pending: false,
       remediationInstructionApproval: null,
     };
   },
@@ -67,13 +71,9 @@ export default {
     }),
 
     async fetchItem() {
-      this.pending = true;
-
       this.remediationInstructionApproval = await this.fetchRemediationInstructionApprovalWithoutStore({
         id: this.config.remediationInstructionId,
       });
-
-      this.pending = false;
     },
 
     dismiss() {},

@@ -45,7 +45,7 @@
       remediation-instruction-steps-form(v-field="form.steps", :disabled="disabled")
     v-layout(v-else, row)
       remediation-instruction-jobs-form(v-model="form.jobs", :disabled="disabled")
-    v-layout(row)
+    v-layout(v-if="!disabledCommon", row)
       remediation-instruction-approval-form(v-field="form.approval", :disabled="disabled")
 </template>
 

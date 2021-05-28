@@ -47,7 +47,10 @@
                     :error-messages="errors.collect(descriptionFieldName)",
                     :name="descriptionFieldName"
                   )
-                  jobs-chips(v-if="disabled && operation.jobs.length", :jobs="operation.jobs")
+                  jobs-chips(
+                    v-if="disabled &&  operation.jobs && operation.jobs.length",
+                    :jobs="operation.jobs"
+                  )
                   jobs-select(v-if="!disabled", v-field="operation.jobs")
         v-flex.mt-1(xs1)
           v-layout(justify-center)
