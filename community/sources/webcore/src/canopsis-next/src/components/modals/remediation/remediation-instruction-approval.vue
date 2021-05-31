@@ -27,9 +27,23 @@
                   disabled
                 )
       template(slot="actions")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.warning(depressed, flat, @click="dismiss") {{ $t('common.dismiss') }}
-        v-btn.primary(@click="approve") {{ $t('common.approve') }}
+        v-btn(
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
+        v-btn.warning(
+          :disabled="isDisabled || !remediationInstructionApproval",
+          :loading="submitting",
+          depressed,
+          flat,
+          @click="dismiss"
+        ) {{ $t('common.dismiss') }}
+        v-btn.primary(
+          :disabled="isDisabled || !remediationInstructionApproval",
+          :loading="submitting",
+          @click="approve"
+        ) {{ $t('common.approve') }}
 </template>
 
 <script>
@@ -38,6 +52,8 @@ import { createNamespacedHelpers } from 'vuex';
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/plugins/modals/mixins/inner';
+
+import { submittableMixin } from '@/mixins/submittable';
 
 import RemediationInstructionApprovalAlert from
   '@/components/other/remediation/instructions/partials/approval-alert.vue';
@@ -56,7 +72,10 @@ export default {
     RemediationInstructionForm,
     ModalWrapper,
   },
-  mixins: [modalInnerMixin],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+  ],
   data() {
     return {
       remediationInstructionApproval: null,
@@ -68,6 +87,7 @@ export default {
   methods: {
     ...mapActions({
       fetchRemediationInstructionApprovalWithoutStore: 'fetchItemApprovalWithoutStore',
+      updateRemediationInstructionApproval: 'updateApproval',
     }),
 
     async fetchItem() {
@@ -76,9 +96,22 @@ export default {
       });
     },
 
-    dismiss() {},
+    approve() {
+      return this.submit(true);
+    },
 
-    approve() {},
+    dismiss() {
+      return this.submit();
+    },
+
+    async submit(approve = false) {
+      await this.updateRemediationInstructionApproval({
+        id: this.config.remediationInstructionId,
+        data: { approve },
+      });
+
+      this.$modals.hide();
+    },
   },
 };
 </script>

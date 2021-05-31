@@ -46,14 +46,14 @@ export default {
     },
 
     showEditRemediationInstructionModal(remediationInstruction) {
-      const wasRequestedByCurrentUser = !!remediationInstruction.approval
-        && remediationInstruction.approval.requested_by === this.currentUser._id;
+      const wasRequestedByAnotherUser = !!remediationInstruction.approval
+        && !(remediationInstruction.approval.requested_by === this.currentUser._id);
 
       this.$modals.show({
         name: MODALS.createRemediationInstruction,
         config: {
           remediationInstruction,
-          disabled: !wasRequestedByCurrentUser,
+          disabled: wasRequestedByAnotherUser,
           title: this.$t('modals.createRemediationInstruction.edit.title'),
           action: async (instruction) => {
             await this.updateRemediationInstructionWithConfirm(remediationInstruction, instruction);

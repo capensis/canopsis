@@ -33,7 +33,7 @@
       template(slot="actions", slot-scope="props")
         v-layout(row, justify-end)
           c-action-btn(
-            v-if="props.item.approval",
+            v-if="props.item.approval && isApprovalForCurrentUser(props.item.approval)",
             :tooltip="$t('remediationInstructions.needApprove')",
             icon="notification_important",
             color="error",
@@ -62,6 +62,8 @@
 </template>
 
 <script>
+import { get } from 'lodash';
+
 import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
 
 import RemediationInstructionsListExpandPanel from './partials/remediation-instructions-list-expand-panel.vue';
@@ -133,6 +135,11 @@ export default {
     },
   },
   methods: {
+    isApprovalForCurrentUser(remediationInstruction) {
+      return get(remediationInstruction, 'user._id') === this.currentUser._id
+        || get(remediationInstruction, 'role._id') === this.currentUser.role._id;
+    },
+
     isDisabledInstruction({ deletable }) {
       return !deletable;
     },

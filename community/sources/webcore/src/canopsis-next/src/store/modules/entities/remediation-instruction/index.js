@@ -17,8 +17,12 @@ export default createEntityModule({
       return request.get(`${API_ROUTES.remediation.instructionComments}/${id}`, { params });
     },
 
-    fetchItemApprovalWithoutStore(context, { id, params }) {
-      return request.get(`${API_ROUTES.remediation.instructions}/${id}/approval`, { params });
+    fetchItemApprovalWithoutStore(context, { id }) {
+      return request.get(`${API_ROUTES.remediation.instructions}/${id}/approval`);
+    },
+
+    updateApproval(context, { id, data }) {
+      return request.put(`${API_ROUTES.remediation.instructions}/${id}/approval`, data);
     },
   },
 });
