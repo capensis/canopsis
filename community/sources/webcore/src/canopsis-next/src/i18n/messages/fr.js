@@ -410,8 +410,12 @@ export default {
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
     },
     infoPopup: 'Info popup',
-    instructionInfoPopup: 'Au moins une consigne est attachée à cette alarme',
-    priorityPopup: 'Le paramètre de priorité est dérivé de la gravité de l\'alarme multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
+    tooltips: {
+      priority: 'Le paramètre de priorité est dérivé de la gravité de l\'alarme multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
+      hasInstruction: 'Au moins une consigne est attachée à cette alarme',
+      hasAutoInstructionInRunning: 'Instruction automatique en cours',
+      allAutoInstructionExecuted: 'Toutes les instructions automatiques ont été exécutées',
+    },
   },
   weather: {
     moreInfos: 'Plus d\'infos',

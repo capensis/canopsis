@@ -23,9 +23,7 @@ const PARAMETERS_FILTERS_TYPES = {
  * @returns {RemediationInstructionFilterQueryParameters}
  */
 export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
-  const query = {
-    with_instructions: true,
-  };
+  const query = {};
 
   if (!filters.length) {
     return query;

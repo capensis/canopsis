@@ -53,7 +53,15 @@ export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
   widgets: [widgetSchema],
 }, {
   idAttribute: '_id',
-  processStrategy: childProcessStrategy,
+  processStrategy(entity, parent, key) {
+    const result = childProcessStrategy.call(this, entity, parent, key);
+
+    if (!result.widgets) {
+      result.widgets = [];
+    }
+
+    return result;
+  },
   mergeStrategy: childMergeStrategy,
 });
 

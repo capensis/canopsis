@@ -410,8 +410,12 @@ export default {
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
     infoPopup: 'Info popup',
-    instructionInfoPopup: 'There is an instruction for this type of incidents',
-    priorityPopup: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
+    tooltips: {
+      priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
+      hasInstruction: 'There is an instruction for this type of incidents',
+      hasAutoInstructionInRunning: 'Automatic instruction in progress',
+      allAutoInstructionExecuted: 'All automatic instructions has been executed',
+    },
   },
   weather: {
     moreInfos: 'More info',

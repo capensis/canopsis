@@ -71,6 +71,7 @@ export function convertAlarmWidgetToQuery(widget) {
     opened: alarmsStateFilter.opened || false,
     resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,
+    with_instructions: true,
   };
 
   if (!isEmpty(liveReporting)) {
