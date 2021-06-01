@@ -39,6 +39,7 @@ func main() {
 
 	depMaker := DependencyMaker{}
 	references := depMaker.GetDefaultReferences(ctx, opts, logger)
+	defer close(references.StatsCh)
 	engine := NewEngineFIFO(opts, references)
 
 	wg := sync.WaitGroup{}
