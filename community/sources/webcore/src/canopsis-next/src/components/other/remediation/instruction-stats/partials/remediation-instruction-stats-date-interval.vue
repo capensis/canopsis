@@ -3,7 +3,7 @@
     date-picker-field(
       :value="intervalFromString",
       :label="$t('common.from')",
-      :allowed-dates="allowedFromDates",
+      :allowed-dates="isAllowedFromDate",
       hide-details,
       @input="updateFromDate"
     )
@@ -11,7 +11,7 @@
     date-picker-field.ml-4(
       :value="intervalToString",
       :label="$t('common.to')",
-      :allowed-dates="allowedToDates",
+      :allowed-dates="isAllowedToDate",
       hide-details,
       @input="updateToDate"
     )
@@ -48,21 +48,27 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    accumulatedBefore: {
+      type: Number,
+      required: false,
+    },
   },
   computed: {
     quickRanges() {
-      return Object.values(QUICK_RANGES).map(range => ({
-        ...range,
-        text: this.$t(`quickRanges.types.${range.value}`),
-      }));
+      return Object.values(QUICK_RANGES)
+        .filter(this.isAllowedQuickRange)
+        .map(range => ({
+          ...range,
+          text: this.$t(`quickRanges.types.${range.value}`),
+        }));
     },
 
     intervalFromAsMoment() {
-      return dateParse(this.interval.from, DATETIME_INTERVAL_TYPES.start, DATETIME_FORMATS.datePicker);
+      return this.convertIntervalFromFieldToMoment(this.interval.from);
     },
 
     intervalToAsMoment() {
-      return dateParse(this.interval.to, DATETIME_INTERVAL_TYPES.stop, DATETIME_FORMATS.datePicker);
+      return this.convertIntervalToFieldToMoment(this.interval.to);
     },
 
     intervalFromString() {
@@ -91,12 +97,63 @@ export default {
     },
   },
   methods: {
-    allowedFromDates(date) {
-      return moment(date).unix() < this.intervalToAsMoment.unix();
+    convertIntervalFieldToMoment(date, type = DATETIME_INTERVAL_TYPES.start) {
+      return dateParse(date, type, DATETIME_FORMATS.datePicker);
     },
 
-    allowedToDates(date) {
-      return moment(date).unix() > this.intervalFromAsMoment.unix();
+    convertIntervalFromFieldToMoment(date) {
+      return this.convertIntervalFieldToMoment(date, DATETIME_INTERVAL_TYPES.start);
+    },
+
+    convertIntervalToFieldToMoment(date) {
+      return this.convertIntervalFieldToMoment(date, DATETIME_INTERVAL_TYPES.stop);
+    },
+
+    isAllowedQuickRange({ start, stop }) {
+      if (!start || !stop) {
+        return true;
+      }
+
+      const startMoment = this.convertIntervalFromFieldToMoment(start);
+      const stopMoment = this.convertIntervalToFieldToMoment(stop);
+
+      return this.isAllowedAccumulatedFromDate(startMoment) && this.isAllowedAccumulatedToDate(stopMoment);
+    },
+
+    isAllowedAccumulatedFromDate(dateMoment) {
+      return this.accumulatedBefore > dateMoment.unix()
+        ? dateMoment.isoWeekday() === 1
+        : true;
+    },
+
+    isAllowedFromDate(date) {
+      const dateMoment = moment(date);
+      const dateTimestamp = dateMoment.unix();
+      const toTimestamp = this.intervalToAsMoment.unix();
+
+      if (dateTimestamp > toTimestamp) {
+        return false;
+      }
+
+      return this.isAllowedAccumulatedFromDate(dateMoment);
+    },
+
+    isAllowedAccumulatedToDate(dateMoment) {
+      return this.accumulatedBefore > dateMoment.unix()
+        ? dateMoment.isoWeekday() === 7
+        : true;
+    },
+
+    isAllowedToDate(date) {
+      const dateMoment = moment(date);
+      const dateTimestamp = dateMoment.unix();
+      const fromTimestamp = this.intervalFromAsMoment.unix();
+
+      if (dateTimestamp < fromTimestamp) {
+        return false;
+      }
+
+      return this.isAllowedAccumulatedToDate(dateMoment);
     },
 
     updateFromDate(from) {

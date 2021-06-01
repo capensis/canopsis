@@ -6,6 +6,7 @@
       :pending="remediationInstructionStatsPending",
       :pagination.sync="pagination",
       :total-items="remediationInstructionStatsMeta.total_count",
+      :accumulated-before="remediationInstructionStatsMeta.accumulated_before",
       @rate="showInstructionRateModal"
     )
     c-fab-btn(@refresh="fetchList")

@@ -34,7 +34,7 @@ export const localQueryMixin = {
           rowsPerPage: value.rowsPerPage || PAGINATION_LIMIT,
           sortKey: value.sortBy,
           sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
-          ...omit(value, ['search', 'page', 'rowsPerPage', 'sortBy', 'descending']),
+          ...omit(value, ['search', 'page', 'rowsPerPage', 'totalItems', 'sortBy', 'descending']),
         };
       },
       get() {

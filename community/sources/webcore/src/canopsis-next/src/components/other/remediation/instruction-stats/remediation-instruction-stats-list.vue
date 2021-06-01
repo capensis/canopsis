@@ -13,7 +13,11 @@
     )
       template(slot="toolbar", slot-scope="props")
         v-layout(align-center)
-          remediation-instruction-stats-date-interval(:interval="pagination.interval", @input="updateInterval")
+          remediation-instruction-stats-date-interval(
+            :interval="pagination.interval",
+            :accumulated-before="accumulatedBefore",
+            @input="updateInterval"
+          )
       template(slot="headerCell", slot-scope="props")
         span.c-table-header__text--multiline {{ props.header.text }}
       template(slot="type", slot-scope="props")
@@ -76,6 +80,10 @@ export default {
       default: false,
     },
     totalItems: {
+      type: Number,
+      required: false,
+    },
+    accumulatedBefore: {
       type: Number,
       required: false,
     },
