@@ -22,7 +22,7 @@ export default {
       if (this.alarm.is_auto_instruction_running) {
         return {
           icon: 'assignment',
-          class: 'auto-running',
+          class: 'instruction-icon--auto-running',
           tooltip: this.$t('alarmList.tooltips.hasAutoInstructionInRunning'),
         };
       } else if (this.alarm.is_all_auto_instructions_completed) {
@@ -43,7 +43,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.instruction-icon.auto-running {
+.instruction-icon--auto-running {
   border: 2px dashed black;
 }
 </style>
