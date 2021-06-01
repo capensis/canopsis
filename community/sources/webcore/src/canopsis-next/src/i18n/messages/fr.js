@@ -1424,7 +1424,7 @@ export default {
       title: 'Attribuer des modèles',
     },
     rateInstruction: {
-      title: 'Évaluer cette consigne',
+      title: 'Évaluer cette consigne "{name}"',
       text: 'Dans quelle mesure cette consigne a-t-elle été utile ?',
     },
     createScenario: {

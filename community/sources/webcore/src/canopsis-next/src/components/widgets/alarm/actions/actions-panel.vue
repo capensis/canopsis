@@ -275,9 +275,9 @@ export default {
           alarm: this.item,
           onOpen: refreshAlarm,
           onClose: refreshAlarm,
-          onComplete: async (instructionExecute) => {
+          onComplete: async () => {
             await refreshAlarm();
-            this.showRateInstructionModal(instructionExecute._id);
+            this.showRateInstructionModal(assignedInstruction);
           },
         },
       });

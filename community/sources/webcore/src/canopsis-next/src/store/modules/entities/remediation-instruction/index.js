@@ -24,5 +24,9 @@ export default createEntityModule({
     updateApproval(context, { id, data }) {
       return request.put(`${API_ROUTES.remediation.instructions}/${id}/approval`, data);
     },
+
+    rateInstruction(context, { id, data }) {
+      return request.put(`${API_ROUTES.remediation.instructions}/${id}/rate`, data);
+    },
   },
 });

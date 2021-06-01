@@ -1424,7 +1424,7 @@ export default {
       title: 'Assign patterns',
     },
     rateInstruction: {
-      title: 'Rate this instruction',
+      title: 'Rate this instruction "{name}"',
       text: 'How useful was this instruction?',
     },
     createScenario: {

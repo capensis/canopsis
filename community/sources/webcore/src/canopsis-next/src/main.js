@@ -298,7 +298,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.executeRemediationInstruction]: { maxWidth: 960, persistent: true },
     [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
     [MODALS.imagesViewer]: { maxWidth: '100%', contentClass: 'v-dialog__images-viewer' },
-    [MODALS.rate]: { maxWidth: 400 },
+    [MODALS.rate]: { maxWidth: 500 },
     [MODALS.createMetaAlarmRule]: { maxWidth: 920, lazy: true },
     [MODALS.createEventFilterRuleAction]: { maxWidth: 920 },
     [MODALS.testSuite]: { maxWidth: 920 },

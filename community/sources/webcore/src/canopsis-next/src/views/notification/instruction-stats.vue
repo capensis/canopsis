@@ -7,19 +7,20 @@
       :pagination.sync="pagination",
       :total-items="remediationInstructionStatsMeta.total_count",
       :accumulated-before="remediationInstructionStatsMeta.accumulated_before",
-      @rate="showInstructionRateModal"
+      @rate="showRateInstructionModal"
     )
     c-fab-btn(@refresh="fetchList")
 </template>
 
 <script>
-import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
+import { MODALS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
 
 import { dateParse } from '@/helpers/date/date-intervals';
 
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
+import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
 
 import RemediationInstructionStatsList from '@/components/other/remediation/instruction-stats/remediation-instruction-stats-list.vue';
 
@@ -31,6 +32,7 @@ export default {
     authMixin,
     localQueryMixin,
     entitiesRemediationInstructionStatsMixin,
+    entitiesRemediationInstructionsMixin,
   ],
   data() {
     return {
@@ -46,7 +48,16 @@ export default {
     this.fetchList();
   },
   methods: {
-    showInstructionRateModal() {},
+    showRateInstructionModal(instruction) {
+      this.$modals.show({
+        name: MODALS.rate,
+        config: {
+          title: this.$t('modals.rateInstruction.title', { name: instruction.name }),
+          text: this.$t('modals.rateInstruction.text'),
+          action: data => this.rateRemediationInstruction({ id: instruction._id, data }),
+        },
+      });
+    },
 
     fetchList() {
       const params = this.getQuery();
