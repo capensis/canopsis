@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"runtime/trace"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/streadway/amqp"
+	"runtime/trace"
+	"time"
 )
 
 type EngineFIFO struct {
@@ -100,6 +100,13 @@ func (e *EngineFIFO) WorkerProcess(parentCtx context.Context, msg amqp.Delivery)
 		e.processWorkerError(err, msg)
 		return
 	}
+
+	ts := event.Timestamp.Time
+	if ts.IsZero() {
+		ts = time.Now()
+	}
+
+	e.References.StatsSender.Add(ts.Unix(), true)
 
 	e.Logger().Debug().Str("event", fmt.Sprintf("%+v", event)).Msg("sent to scheduler")
 	err = e.References.Scheduler.ProcessEvent(ctx, e.References.ChannelPub, event.GetLockID(), msg.Body)
