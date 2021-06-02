@@ -122,6 +122,10 @@ export default {
 
     isAllowedAccumulatedFromDate(dateMoment) {
       return this.accumulatedBefore > dateMoment.unix()
+        /**
+         * NOTE: If the date is before the accumulation date, the data is grouped by week.
+         * In this case, we can only select Monday.
+         */
         ? dateMoment.isoWeekday() === 1
         : true;
     },
@@ -140,6 +144,10 @@ export default {
 
     isAllowedAccumulatedToDate(dateMoment) {
       return this.accumulatedBefore > dateMoment.unix()
+        /**
+         * NOTE: If the date is before the accumulation date, the data is grouped by week.
+         * In this case, we can only select Sunday.
+         */
         ? dateMoment.isoWeekday() === 7
         : true;
     },

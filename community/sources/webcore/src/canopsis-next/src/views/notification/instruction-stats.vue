@@ -54,7 +54,10 @@ export default {
         config: {
           title: this.$t('modals.rateInstruction.title', { name: instruction.name }),
           text: this.$t('modals.rateInstruction.text'),
-          action: data => this.rateRemediationInstruction({ id: instruction._id, data }),
+          action: async (data) => {
+            await this.rateRemediationInstruction({ id: instruction._id, data });
+            this.fetchList();
+          },
         },
       });
     },
