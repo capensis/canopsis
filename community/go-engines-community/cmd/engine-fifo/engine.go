@@ -8,7 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/streadway/amqp"
 	"runtime/trace"
-	"time"
 )
 
 type EngineFIFO struct {
@@ -101,12 +100,8 @@ func (e *EngineFIFO) WorkerProcess(parentCtx context.Context, msg amqp.Delivery)
 		return
 	}
 
-	ts := event.Timestamp.Time
-	if ts.IsZero() {
-		ts = time.Now()
-	}
-
-	e.References.StatsSender.Add(ts.Unix(), true)
+	event.Format()
+	e.References.StatsSender.Add(event.Timestamp.Unix(), true)
 
 	e.Logger().Debug().Str("event", fmt.Sprintf("%+v", event)).Msg("sent to scheduler")
 	err = e.References.Scheduler.ProcessEvent(ctx, e.References.ChannelPub, event.GetLockID(), msg.Body)

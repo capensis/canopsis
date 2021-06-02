@@ -45,6 +45,8 @@ const (
 	WebhookMongoCollection               = "webhooks"
 	EntityCategoryMongoCollection        = "entity_category"
 	ImportJobMongoCollection             = "default_importgraph"
+
+	// Following collections are used for event statistics.
 	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
 	MessageRateStatsHourCollectionName   = "message_rate_statistic_hour"
 	JunitTestSuiteMongoCollection       = "junit_test_suite"
