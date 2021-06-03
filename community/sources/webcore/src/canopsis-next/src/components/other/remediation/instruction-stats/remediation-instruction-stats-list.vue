@@ -104,35 +104,35 @@ export default {
           value: 'type',
         },
         {
-          text: this.$t('remediationInstructionStats.table.lastExecutedOn'),
+          text: this.$t('remediationInstructionStats.lastExecutedOn'),
           value: 'last_executed_on',
         },
         {
-          text: this.$t('remediationInstructionStats.table.lastModifiedOn'),
+          text: this.$t('remediationInstructionStats.lastModifiedOn'),
           value: 'last_modified',
         },
         {
-          text: this.$t('remediationInstructionStats.table.averageCompletionTime'),
+          text: this.$t('remediationInstructionStats.averageCompletionTime'),
           value: 'avg_complete_time',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.table.executionCount'),
+          text: this.$t('remediationInstructionStats.executionCount'),
           value: 'execution_count',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.table.alarmStates'),
+          text: this.$t('remediationInstructionStats.alarmStates'),
           value: 'alarm_states',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.table.okAlarmStates'),
+          text: this.$t('remediationInstructionStats.okAlarmStates'),
           value: 'ok_alarm_states',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.table.rating'),
+          text: this.$t('remediationInstructionStats.rating'),
           value: 'rating',
           sortable: false,
         },

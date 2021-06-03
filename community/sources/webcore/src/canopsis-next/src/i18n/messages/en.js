@@ -195,6 +195,8 @@ export default {
     notification: 'Notification | Notifications',
     dismiss: 'Dismiss',
     approve: 'Approve',
+    summary: 'Summary',
+    statistics: 'Statistics',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -2088,15 +2090,14 @@ export default {
   },
 
   remediationInstructionStats: {
-    table: {
-      lastExecutedOn: 'Last executed on',
-      lastModifiedOn: 'Last modified on',
-      averageCompletionTime: 'Average time\nof completion',
-      executionCount: 'Number of\nexecutions',
-      alarmStates: 'Alarms affected by state',
-      okAlarmStates: 'Number of resulting\nOK states',
-      rating: 'Rating',
-    },
+    alarmsTimeline: 'Alarms timeline',
+    lastExecutedOn: 'Last executed on',
+    lastModifiedOn: 'Last modified on',
+    averageCompletionTime: 'Average time\nof completion',
+    executionCount: 'Number of\nexecutions',
+    alarmStates: 'Alarms affected by state',
+    okAlarmStates: 'Number of resulting\nOK states',
+    rating: 'Rating',
     actions: {
       needRate: 'Rate it!',
       rate: 'Rate',
@@ -2246,7 +2247,6 @@ export default {
     failureMessage: 'Failure message',
     noData: 'No system messages found in XML',
     tabs: {
-      summary: 'Summary',
       globalMessages: 'Global messages',
       gantt: 'Gantt',
       details: 'Details',

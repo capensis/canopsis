@@ -2,7 +2,7 @@
   v-card(color="white black--text")
     v-card-text.pa-0
       v-tabs(centered, slider-color="primary")
-        v-tab {{ $t('testSuite.tabs.summary') }}
+        v-tab {{ $t('common.summary') }}
         v-tab-item
           test-suite-summary-tab(:test-suite="testSuite")
         v-tab {{ $t('testSuite.tabs.globalMessages') }}

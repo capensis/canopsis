@@ -8,7 +8,6 @@
       :pagination="pagination",
       :is-disabled-item="isDisabledInstruction",
       select-all,
-      expand,
       search,
       advanced-pagination,
       @update:pagination="$emit('update:pagination', $event)"
@@ -57,8 +56,6 @@
             type="delete",
             @click="$emit('remove', props.item)"
           )
-      template(slot="expand", slot-scope="props")
-        remediation-instructions-list-expand-panel(:remediationInstruction="props.item")
 </template>
 
 <script>
@@ -66,12 +63,7 @@ import { get } from 'lodash';
 
 import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
 
-import RemediationInstructionsListExpandPanel from './partials/remediation-instructions-list-expand-panel.vue';
-
 export default {
-  components: {
-    RemediationInstructionsListExpandPanel,
-  },
   mixins: [permissionsTechnicalRemediationInstructionMixin],
   props: {
     remediationInstructions: {

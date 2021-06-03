@@ -195,6 +195,7 @@ export default {
     notification: 'Notification | Notifications',
     dismiss: 'Rejeter',
     approve: 'Approuver',
+    summary: 'Résumé',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -2090,15 +2091,14 @@ export default {
   },
 
   remediationInstructionStats: {
-    table: {
-      lastExecutedOn: 'Dernière exécution le',
-      lastModifiedOn: 'Dernière modification le',
-      averageCompletionTime: 'Temps moyen\n\'achèvement',
-      executionCount: 'Nombre de\nexécutions',
-      alarmStates: 'Alarmes affectées par l\'état',
-      okAlarmStates: 'Nombre de résultats\nÉtats OK',
-      rating: 'Notation',
-    },
+    alarmsTimeline: 'Chronologie des alarmes',
+    lastExecutedOn: 'Dernière exécution le',
+    lastModifiedOn: 'Dernière modification le',
+    averageCompletionTime: 'Temps moyen\n\'achèvement',
+    executionCount: 'Nombre de\nexécutions',
+    alarmStates: 'Alarmes affectées par l\'état',
+    okAlarmStates: 'Nombre de résultats\nÉtats OK',
+    rating: 'Notation',
     actions: {
       needRate: 'Notez-le!',
       rate: 'Taux',
@@ -2248,7 +2248,6 @@ export default {
     failureMessage: 'Message d\'échec',
     noData: 'Aucun message système trouvé dans XML',
     tabs: {
-      summary: 'Résumé',
       globalMessages: 'Messages globaux',
       gantt: 'Gantt',
       details: 'Des détails',
