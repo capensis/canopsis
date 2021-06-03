@@ -196,6 +196,7 @@ export default {
     dismiss: 'Rejeter',
     approve: 'Approuver',
     summary: 'Résumé',
+    statistics: 'Statistiques',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
