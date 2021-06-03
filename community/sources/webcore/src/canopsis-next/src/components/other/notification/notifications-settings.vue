@@ -48,6 +48,8 @@ export default {
       if (isFormValid) {
         try {
           await this.updateNotificationSettings({ data: formToNotificationsSettings(this.form) });
+
+          this.$popups.success({ text: this.$t('success.default') });
         } catch (err) {
           this.setFormErrors(err);
         }
