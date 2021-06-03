@@ -140,6 +140,7 @@ export const API_ROUTES = {
   },
   stateSetting: '/api/v4/state-settings/',
   dataStorage: '/api/v4/data-storage',
+  notification: '/api/v4/notification/',
   logout: '/logout',
 
   /**

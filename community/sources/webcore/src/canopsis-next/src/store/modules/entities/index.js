@@ -36,6 +36,7 @@ import testSuiteModule from './test-suite';
 import stateSettingModule from './state-setting';
 import associativeTableModule from './associative-table';
 import dataStorageModule from './data-storage';
+import notificationSettingsModule from './notification-settings';
 
 export default {
   alarm: alarmModule,
@@ -76,4 +77,5 @@ export default {
   stateSetting: stateSettingModule,
   associativeTable: associativeTableModule,
   dataStorage: dataStorageModule,
+  notificationSettings: notificationSettingsModule,
 };
