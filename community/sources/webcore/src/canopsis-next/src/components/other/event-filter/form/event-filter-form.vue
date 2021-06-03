@@ -21,7 +21,6 @@
       :error-messages="errors.collect('description')",
       name="description"
     )
-    v-textarea(v-field="form.description", :label="$t('common.description')")
     c-priority-field(v-model="form.priority")
     c-enabled-field(v-field="form.enabled")
     patterns-list(v-field="form.patterns")

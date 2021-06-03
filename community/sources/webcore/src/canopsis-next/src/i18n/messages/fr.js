@@ -1996,7 +1996,7 @@ export default {
     job: 'Emploi | Emplois',
     listJobs: 'Liste des emplois',
     endpointAvatar: 'EP',
-    workflow: 'Si cette étape échoue:',
+    workflow: 'Si cette étape échoue :',
     jobWorkflow: 'Workflow si ce travail échoue:',
     remainingStep: 'Continuer avec les étapes restantes',
     remainingJob: 'Continuer avec le travail restant',

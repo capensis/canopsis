@@ -645,6 +645,14 @@
         "api_instruction_approve": {
           "checksum": 1,
           "crecord_type": "right"
+        },
+        "api_datastorage_read": {
+          "checksum": 1,
+          "crecord_type": "right"
+        },
+        "api_datastorage_update": {
+          "checksum": 1,
+          "crecord_type": "right"
         }
       },
     "defaultview": "875df4c2-027b-4549-8add-e20ed7ff7d4f"

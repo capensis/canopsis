@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 

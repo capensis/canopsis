@@ -162,6 +162,62 @@ import {
  */
 
 /**
+ * @typedef { 'enrichment' | 'drop' | 'break' } EventFilterRuleType
+ */
+
+/**
+ * @typedef {
+ *    'set_field' |
+ *    'set_field_from_template' |
+ *    'set_entity_info_from_template' |
+ *    'copy'
+ * } EventFilterRuleActionType
+ */
+
+/**
+ * @typedef {Object} EventFilterRuleAction
+ * @property {string} name
+ * @property {EventFilterRuleActionType} type
+ * @property {string} value
+ */
+
+/**
+ * @typedef {Object} EventFilterRuleEnrichment
+ * @property {EventFilterRuleAction[]} actions
+ * @property {Object} external_data
+ * @property {string} on_success
+ * @property {string} on_failure
+ */
+
+/**
+ * @typedef {Object} EventFilterRuleGeneral
+ * @property {string} _id
+ * @property {EventFilterRuleType} type
+ * @property {string} description
+ * @property {Array} patterns
+ * @property {number} priority
+ * @property {boolean} enabled
+ */
+
+/**
+ * @typedef {EventFilterRuleEnrichment & EventFilterRuleGeneral} EventFilterRule
+ */
+
+/**
+ * @typedef {EventFilterRuleGeneral} EventFilterRuleGeneralForm
+ */
+
+/**
+ * @typedef {EventFilterRuleEnrichment} EventFilterRuleEnrichmentForm
+ */
+
+/**
+ * @typedef {Object} EventFilterRuleForm
+ * @property {EventFilterRuleGeneralForm} general
+ * @property {EventFilterRuleEnrichmentForm} enrichmentOptions
+ */
+
+/**
  * Convert event filter rule to form
  *
  * @param {EventFilterRule} [rule={}]
