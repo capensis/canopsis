@@ -3,6 +3,7 @@
     h4.subheading {{ $t('notificationSettings.instruction.header') }}
     v-checkbox.my-2(
       v-field="form.instruction.rate",
+      :disabled="!form.instruction.rate_frequency.value",
       :label="$t('notificationSettings.instruction.rate')",
       color="primary",
       hide-details
@@ -12,6 +13,8 @@
       v-flex(xs3)
         c-duration-field(
           v-field="form.instruction.rate_frequency",
+          :disabled="!form.instruction.rate",
+          :required="form.instruction.rate",
           :label="$t('notificationSettings.instruction.duration')"
         )
 </template>
