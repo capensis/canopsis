@@ -11,7 +11,7 @@
           v-tabs-items.pt-2(v-model="activeTab")
             v-tab-item(lazy)
               v-flex(offset-xs2, xs8)
-                remediation-instruction-stats-information-tab(:remediation-instruction="remediationInstruction")
+                remediation-instruction-stats-summary-tab(:remediation-instruction="remediationInstruction")
             v-tab-item(lazy)
               remediation-instruction-stats-statistics-tab(:remediation-instruction="remediationInstruction")
             v-tab-item(lazy)
@@ -23,14 +23,14 @@
 <script>
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 
-import RemediationInstructionStatsInformationTab from './remediation-instruction-stats-information-tab.vue';
+import RemediationInstructionStatsSummaryTab from './remediation-instruction-stats-summary-tab.vue';
 import RemediationInstructionStatsStatisticsTab from './remediation-instruction-stats-statistics-tab.vue';
 import RemediationInstructionStatsAlarmsTimelineTab from './remediation-instruction-stats-alarms-timeline-tab.vue';
 import RemediationInstructionStatsRatingTab from './remediation-instruction-stats-rating-tab.vue';
 
 export default {
   components: {
-    RemediationInstructionStatsInformationTab,
+    RemediationInstructionStatsSummaryTab,
     RemediationInstructionStatsStatisticsTab,
     RemediationInstructionStatsAlarmsTimelineTab,
     RemediationInstructionStatsRatingTab,
