@@ -21,7 +21,7 @@
       affect-alarm-states(v-if="props.item.execution_count", :alarm-states="props.item.alarm_states")
       template(v-else) -
     template(slot="ok_alarm_states", slot-scope="props")
-      span.c-state-count-changes-chip.primary(v-if="props.item.ok_alarm_states") {{ props.item.ok_alarm_states }}
+      span.c-state-count-changes-chip.primary(v-if="props.item.execution_count") {{ props.item.ok_alarm_states }}
       template(v-else) -
 </template>
 
