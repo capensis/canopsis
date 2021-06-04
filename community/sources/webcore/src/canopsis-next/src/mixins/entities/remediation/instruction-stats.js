@@ -15,6 +15,7 @@ export const entitiesRemediationInstructionStatsMixin = {
       fetchRemediationInstructionStatsList: 'fetchList',
       fetchRemediationInstructionStatsSummaryWithoutStore: 'fetchSummaryWithoutStore',
       fetchRemediationInstructionStatsCommentsListWithoutStore: 'fetchCommentsWithoutStore',
+      fetchRemediationInstructionStatsChangesListWithoutStore: 'fetchChangesWithoutStore',
     }),
   },
 };

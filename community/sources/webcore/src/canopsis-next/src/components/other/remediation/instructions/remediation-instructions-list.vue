@@ -92,7 +92,7 @@ export default {
         },
         {
           text: this.$t('common.author'),
-          value: 'author.username',
+          value: 'author.name',
         },
         {
           text: this.$t('common.enabled'),

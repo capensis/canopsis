@@ -13,9 +13,11 @@
               v-flex(offset-xs2, xs8)
                 remediation-instruction-stats-summary-tab(:remediation-instruction="remediationInstruction")
             v-tab-item(lazy)
-              remediation-instruction-stats-statistics-tab(:remediation-instruction="remediationInstruction")
+              v-flex(offset-xs2, xs8)
+                remediation-instruction-stats-statistics-tab(:remediation-instruction="remediationInstruction")
             v-tab-item(lazy)
-              remediation-instruction-stats-alarms-timeline-tab(:remediation-instruction="remediationInstruction")
+              v-flex(offset-xs2, xs8)
+                remediation-instruction-stats-alarms-timeline-tab(:remediation-instruction="remediationInstruction")
             v-tab-item(lazy)
               remediation-instruction-stats-rating-tab(:remediation-instruction="remediationInstruction")
 </template>

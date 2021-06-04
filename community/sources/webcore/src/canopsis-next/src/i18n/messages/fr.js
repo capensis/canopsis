@@ -2094,12 +2094,14 @@ export default {
   remediationInstructionStats: {
     alarmsTimeline: 'Chronologie des alarmes',
     lastExecutedOn: 'Dernière exécution le',
+    modifiedOn: 'Dernière modification le',
     lastModifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\n\'achèvement',
     executionCount: 'Nombre de\nexécutions',
     alarmStates: 'Alarmes affectées par l\'état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
     rating: 'Notation',
+    notAvailable: 'N/a',
     actions: {
       needRate: 'Notez-le!',
       rate: 'Taux',

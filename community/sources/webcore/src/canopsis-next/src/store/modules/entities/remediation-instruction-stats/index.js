@@ -16,6 +16,10 @@ export default createEntityModule({
       return request.get(`${API_ROUTES.remediation.instructionStats}/${id}/summary`);
     },
 
+    fetchChangesWithoutStore(context, { id, params }) {
+      return request.get(`${API_ROUTES.remediation.instructionStats}/${id}/changes`, { params });
+    },
+
     fetchCommentsWithoutStore(context, { id, params }) {
       return request.get(`${API_ROUTES.remediation.instructionComments}/${id}`, { params });
     },

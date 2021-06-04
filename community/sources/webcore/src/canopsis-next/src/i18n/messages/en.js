@@ -2092,12 +2092,14 @@ export default {
   remediationInstructionStats: {
     alarmsTimeline: 'Alarms timeline',
     lastExecutedOn: 'Last executed on',
+    modifiedOn: 'Modified on',
     lastModifiedOn: 'Last modified on',
     averageCompletionTime: 'Average time\nof completion',
     executionCount: 'Number of\nexecutions',
     alarmStates: 'Alarms affected by state',
     okAlarmStates: 'Number of resulting\nOK states',
     rating: 'Rating',
+    notAvailable: 'N/a',
     actions: {
       needRate: 'Rate it!',
       rate: 'Rate',
