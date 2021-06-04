@@ -18,7 +18,6 @@ export const entitiesRemediationInstructionsMixin = {
       fetchRemediationInstructionsList: 'fetchList',
       fetchRemediationInstructionsListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchRemediationInstructionsListWithoutStore: 'fetchListWithoutStore',
-      fetchRemediationInstructionCommentsListWithoutStore: 'fetchItemCommentsWithoutStore',
       createRemediationInstruction: 'create',
       updateRemediationInstruction: 'update',
       removeRemediationInstruction: 'remove',

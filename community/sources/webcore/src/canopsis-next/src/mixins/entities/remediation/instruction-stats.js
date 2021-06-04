@@ -13,6 +13,8 @@ export const entitiesRemediationInstructionStatsMixin = {
   methods: {
     ...mapActions({
       fetchRemediationInstructionStatsList: 'fetchList',
+      fetchRemediationInstructionStatsSummaryWithoutStore: 'fetchSummaryWithoutStore',
+      fetchRemediationInstructionStatsCommentsListWithoutStore: 'fetchCommentsWithoutStore',
     }),
   },
 };

@@ -18,6 +18,7 @@
     )
     remediation-instruction-stats-information-row(:label="$t('remediationInstructionStats.alarmStates')")
       affect-alarm-states.remediation-instruction-stats-information--alarm-states(
+        v-if="remediationInstruction.alarm_states",
         :alarm-states="remediationInstruction.alarm_states"
       )
     remediation-instruction-stats-information-row(:label="$t('remediationInstructionStats.okAlarmStates')")

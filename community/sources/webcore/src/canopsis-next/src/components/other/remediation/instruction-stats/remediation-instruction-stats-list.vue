@@ -50,7 +50,7 @@
             @click="$emit('rate', props.item)"
           )
       template(slot="expand", slot-scope="props")
-        remediation-instruction-stats-list-expand-panel(:remediation-instruction="props.item")
+        remediation-instruction-stats-list-expand-panel(:remediation-instruction-stats-id="props.item._id")
 </template>
 
 <script>

@@ -13,13 +13,13 @@
 </template>
 
 <script>
-import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
+import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 
 import RatingField from '@/components/forms/fields/rating-field.vue';
 
 export default {
   components: { RatingField },
-  mixins: [entitiesRemediationInstructionsMixin],
+  mixins: [entitiesRemediationInstructionStatsMixin],
   props: {
     remediationInstruction: {
       type: Object,
@@ -39,7 +39,7 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      const { data: comments } = await this.fetchRemediationInstructionCommentsListWithoutStore({
+      const { data: comments } = await this.fetchRemediationInstructionStatsCommentsListWithoutStore({
         id: this.remediationInstruction._id,
       });
       this.comments = comments;

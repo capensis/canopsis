@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
+
 import RemediationInstructionStatsInformationTab from './remediation-instruction-stats-information-tab.vue';
 import RemediationInstructionStatsStatisticsTab from './remediation-instruction-stats-statistics-tab.vue';
 import RemediationInstructionStatsAlarmsTimelineTab from './remediation-instruction-stats-alarms-timeline-tab.vue';
@@ -33,16 +35,31 @@ export default {
     RemediationInstructionStatsAlarmsTimelineTab,
     RemediationInstructionStatsRatingTab,
   },
+  mixins: [entitiesRemediationInstructionStatsMixin],
   props: {
-    remediationInstruction: {
-      type: Object,
-      default: () => ({}),
+    remediationInstructionStatsId: {
+      type: String,
+      required: true,
     },
   },
   data() {
     return {
       activeTab: 0,
+      remediationInstruction: {},
     };
+  },
+  watch: {
+    remediationInstructionStatsId: 'fetchRemediationInstructionStatsSummary',
+  },
+  mounted() {
+    this.fetchRemediationInstructionStatsSummary();
+  },
+  methods: {
+    async fetchRemediationInstructionStatsSummary() {
+      this.remediationInstruction = await this.fetchRemediationInstructionStatsSummaryWithoutStore({
+        id: this.remediationInstructionStatsId,
+      });
+    },
   },
 };
 </script>
