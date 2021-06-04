@@ -95,7 +95,7 @@ export const API_ROUTES = {
   },
   infos: {
     login: '/api/v4/internal/login_info',
-    app: '/api/internal/app_info',
+    app: '/api/v4/internal/app_info',
     userInterface: '/api/v4/internal/user_interface',
   },
   heartbeat: '/api/v4/heartbeats',
