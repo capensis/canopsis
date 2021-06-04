@@ -12,8 +12,7 @@
     template(slot="modified_on", slot-scope="props")
       span {{ props.item.modified_on | date('long', true) }}
     template(slot="execution_count", slot-scope="props")
-      span(v-if="props.item.execution_count") {{ props.item.execution_count }}
-      template(v-else) -
+      span {{ props.item.execution_count }}
     template(slot="avg_complete_time", slot-scope="props")
       span(v-if="props.item.execution_count") {{ props.item.avg_complete_time | duration }}
       span(v-else) {{ $t('remediationInstructionStats.notAvailable') }}
