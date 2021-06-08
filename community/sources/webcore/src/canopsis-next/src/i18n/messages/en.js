@@ -2295,6 +2295,7 @@ export default {
       title: 'Instructions data storage',
       accumulateAfter: 'Accumulate instructions statistics after',
       deleteAfter: 'Delete instructions data after',
+      deleteAfterHelpText: 'When switched on, the instructions statistical data will be deleted after the defined time period.',
     },
     history: {
       junit: 'Script launched at {launchedAt}',
