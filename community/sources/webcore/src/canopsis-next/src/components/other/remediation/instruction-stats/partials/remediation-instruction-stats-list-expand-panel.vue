@@ -3,7 +3,7 @@
     v-tabs(v-model="activeTab", color="secondary lighten-1", dark, centered, slider-color="primary")
       v-tab {{ $t('common.summary') }}
       v-tab {{ $t('common.statistics') }}
-      v-tab {{ $t('remediationInstructionStats.alarmsTimeline') }}
+      v-tab(v-if="remediationInstruction.execution_count") {{ $t('remediationInstructionStats.alarmsTimeline') }}
       v-tab {{ $t('remediationInstructionStats.rating') }}
     v-layout.pa-3.secondary.lighten-2
       v-flex(xs12)
@@ -15,7 +15,7 @@
             v-tab-item(lazy)
               v-flex(offset-xs2, xs8)
                 remediation-instruction-stats-statistics-tab(:remediation-instruction="remediationInstruction")
-            v-tab-item(lazy)
+            v-tab-item(v-if="remediationInstruction.execution_count", lazy)
               remediation-instruction-stats-alarms-timeline-tab(:remediation-instruction="remediationInstruction")
             v-tab-item(lazy)
               v-flex(offset-xs2, xs8)

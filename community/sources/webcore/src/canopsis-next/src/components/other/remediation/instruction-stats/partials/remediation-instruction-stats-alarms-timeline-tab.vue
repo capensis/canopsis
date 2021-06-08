@@ -8,20 +8,23 @@
     advanced-pagination
   )
     template(slot="executed_on", slot-scope="props")
-      span {{ props.item.executed_on | date('long', true) }}
+      span.c-nowrap {{ props.item.executed_on | date('long', true) }}
     template(slot="alarm._id", slot-scope="props")
       span {{ props.item.alarm | get('v.display_name') }}
     template(slot="timeline", slot-scope="props")
       span.grey--text.text--darken-2(v-if="!props.item.alarm")
         | {{ $t('remediationInstructionStats.instructionChanged') }}
-      span Timeline
+      alarm-horizontal-time-line.my-2(v-else, :alarm="props.item.alarm")
 </template>
 
 <script>
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
+import AlarmHorizontalTimeLine from '@/components/widgets/alarm/time-line/horizontal-time-line.vue';
+
 export default {
+  components: { AlarmHorizontalTimeLine },
   mixins: [localQueryMixin, entitiesRemediationInstructionStatsMixin],
   props: {
     remediationInstruction: {
@@ -43,13 +46,11 @@ export default {
           text: this.$t('remediationInstructionStats.executedOn'),
           value: 'executed_on',
           sortable: false,
-          width: 180,
         },
         {
           text: this.$t('remediationInstructionStats.alarmId'),
           value: 'alarm.v.display_name',
           sortable: false,
-          width: 150,
         },
         {
           value: 'timeline',

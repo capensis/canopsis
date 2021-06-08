@@ -178,6 +178,10 @@ $mobileBreakpoint: 450px;
   white-space: pre-line !important;
 }
 
+.c-nowrap {
+  white-space: nowrap;
+}
+
 .progress-linear-absolute--top {
   position: absolute !important;
   width: 100% !important;
