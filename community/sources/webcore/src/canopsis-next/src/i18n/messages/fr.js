@@ -2293,8 +2293,14 @@ export default {
       deleteAfter: 'Supprimer les données des suites de tests après',
       deleteAfterHelpText: 'Lorsqu\'elles sont activées, les données des suites de tests JUnit (XML, captures d\'écran et vidéos) seront supprimées après la période définie.',
     },
+    remediation: {
+      title: 'Instructions de stockage des données',
+      accumulateAfter: 'Accumuler les statistiques des instructions après',
+      deleteAfter: 'Supprimer les données des instructions après',
+    },
     history: {
       junit: 'Script lancé à {launchedAt}',
+      remediation: 'Script lancé à {launchedAt}',
     },
   },
 

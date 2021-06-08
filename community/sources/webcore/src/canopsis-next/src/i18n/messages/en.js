@@ -2291,8 +2291,14 @@ export default {
       deleteAfter: 'Delete test suites data after',
       deleteAfterHelpText: 'When switched on, the JUnit test suites data (XMLs, screenshots and videos) will be deleted after the defined time period.',
     },
+    remediation: {
+      title: 'Instructions data storage',
+      accumulateAfter: 'Accumulate instructions statistics after',
+      deleteAfter: 'Delete instructions data after',
+    },
     history: {
       junit: 'Script launched at {launchedAt}',
+      remediation: 'Script launched at {launchedAt}',
     },
   },
 

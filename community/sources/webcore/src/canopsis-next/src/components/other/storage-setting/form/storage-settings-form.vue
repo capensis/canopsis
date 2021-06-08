@@ -6,7 +6,19 @@
         v-field="form.junit.delete_after",
         :label="$t('storageSetting.junit.deleteAfter')",
         :help-text="$t('storageSetting.junit.deleteAfterHelpText')",
-        name="delete_after"
+        name="junit.delete_after"
+      )
+    storage-setting-block(:title="$t('storageSetting.remediation.title')")
+      template(v-if="history.remediation", slot="subtitle") {{ remediationSubTitle }}
+      storage-setting-duration-field(
+        v-field="form.remediation.accumulate_after",
+        :label="$t('storageSetting.remediation.accumulateAfter')",
+        name="remediation.accumulate_after"
+      )
+      storage-setting-duration-field(
+        v-field="form.remediation.delete_after",
+        :label="$t('storageSetting.remediation.deleteAfter')",
+        name="remediation.delete_after"
       )
 </template>
 
@@ -36,6 +48,11 @@ export default {
     junitSubTitle() {
       return this.$t('storageSetting.history.junit', {
         launchedAt: this.$options.filters.date(this.history.junit, DATETIME_FORMATS.long, true),
+      });
+    },
+    remediationSubTitle() {
+      return this.$t('storageSetting.history.remediation', {
+        launchedAt: this.$options.filters.date(this.history.remediation, DATETIME_FORMATS.long, true),
       });
     },
   },
