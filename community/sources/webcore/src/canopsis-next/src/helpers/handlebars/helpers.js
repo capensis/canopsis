@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import dateFilter from '@/filters/date';
 import durationFilter from '@/filters/duration';
-import { DATETIME_FORMATS, ENTITY_INFOS_TYPE } from '@/constants';
+import { DATETIME_FORMATS } from '@/constants';
 
 import i18n from '@/i18n';
 
@@ -77,7 +77,7 @@ export function durationHelper(second) {
  * @returns {Handlebars.SafeString}
  */
 export function alarmStateHelper(state) {
-  return new Handlebars.SafeString(`<c-alarm-chip type="${ENTITY_INFOS_TYPE.state}" value="${state}"></c-alarm-chip>`);
+  return new Handlebars.SafeString(`<c-alarm-chip value="${state}"></c-alarm-chip>`);
 }
 
 /**

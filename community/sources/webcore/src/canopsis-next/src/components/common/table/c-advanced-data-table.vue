@@ -40,6 +40,7 @@
       :expand="expand",
       :is-disabled-item="isDisabledItem",
       :hide-actions="hideActions || advancedPagination || noPagination",
+      :table-class="tableClass",
       @update:pagination="updatePagination"
     )
       template(slot="items", slot-scope="props")
@@ -170,6 +171,10 @@ export default {
       type: Object,
       required: false,
     },
+    tableClass: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
@@ -188,7 +193,7 @@ export default {
 
     headersWithExpand() {
       if (this.expand && !this.selectAll) {
-        return [{ sortable: false }, ...this.headers];
+        return [{ sortable: false, width: 20 }, ...this.headers];
       }
 
       return this.headers;

@@ -1,25 +1,26 @@
 <template lang="pug">
-  v-list
-    v-list-tile(v-if="!comments.length")
-      v-list-tile-content
-        v-list-tile-title {{ $t('tables.noData') }}
-    template(v-for="(comment, index) in comments")
-      v-list-tile(:key="index")
-        v-list-tile-content
-          v-list-tile-title {{ comment.comment }}
-        v-list-tile-action
-          rating-field(:value="comment.rating", readonly)
-      v-divider(v-if="index < comments.length - 1", :key="`divider_${index}`")
+  c-advanced-data-table(
+    :items="remediationInstructionStatsComments",
+    :headers="headers",
+    :loading="pending",
+    :pagination.sync="pagination",
+    :total-items="totalItems",
+    advanced-pagination
+  )
+    template(slot="created", slot-scope="props") {{ props.item.created | date('long', true) }}
+    template(slot="rating", slot-scope="props")
+      rating-field(:value="props.item.rating", readonly)
 </template>
 
 <script>
+import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 
 import RatingField from '@/components/forms/fields/rating-field.vue';
 
 export default {
   components: { RatingField },
-  mixins: [entitiesRemediationInstructionStatsMixin],
+  mixins: [localQueryMixin, entitiesRemediationInstructionStatsMixin],
   props: {
     remediationInstruction: {
       type: Object,
@@ -28,9 +29,36 @@ export default {
   },
   data() {
     return {
+      remediationInstructionStatsComments: [],
+      totalItems: 0,
       pending: false,
-      comments: [],
     };
+  },
+  computed: {
+    headers() {
+      return [
+        {
+          text: this.$t('common.date'),
+          value: 'created',
+          sortable: false,
+        },
+        {
+          text: this.$t('common.username'),
+          value: 'user.name',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediationInstructionStats.rating'),
+          value: 'rating',
+          sortable: false,
+        },
+        {
+          text: this.$tc('common.comment', 2),
+          value: 'comment',
+          sortable: false,
+        },
+      ];
+    },
   },
   mounted() {
     this.fetchList();
@@ -39,10 +67,15 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      const { data: comments } = await this.fetchRemediationInstructionStatsCommentsListWithoutStore({
+      const {
+        data: remediationInstructionStatsComments,
+        meta,
+      } = await this.fetchRemediationInstructionStatsCommentsListWithoutStore({
         id: this.remediationInstruction._id,
+        params: this.getQuery(),
       });
-      this.comments = comments;
+      this.remediationInstructionStatsComments = remediationInstructionStatsComments;
+      this.totalItems = meta.total_count;
 
       this.pending = false;
     },

@@ -1,6 +1,6 @@
 <template lang="pug">
-  div.instruction-stats-list
-    c-advanced-data-table.white(
+  div.c-remediation-instruction-stats
+    c-advanced-data-table(
       :headers="headers",
       :items="remediationInstructionStats",
       :loading="pending",
@@ -9,6 +9,7 @@
       expand,
       search,
       advanced-pagination,
+      table-class="c-remediation-instruction-stats__table",
       @update:pagination="$emit('update:pagination', $event)"
     )
       template(slot="toolbar", slot-scope="props")
@@ -98,48 +99,58 @@ export default {
         {
           text: this.$t('common.name'),
           value: 'name',
+          width: 150,
         },
         this.hasCreateAnyRemediationInstructionAccess && {
           text: this.$t('common.type'),
           value: 'type',
+          width: 100,
         },
         {
           text: this.$t('remediationInstructionStats.lastExecutedOn'),
           value: 'last_executed_on',
+          width: 180,
         },
         {
           text: this.$t('remediationInstructionStats.lastModifiedOn'),
           value: 'last_modified',
+          width: 180,
         },
         {
           text: this.$t('remediationInstructionStats.averageCompletionTime'),
           value: 'avg_complete_time',
           sortable: false,
+          width: 150,
         },
         {
           text: this.$t('remediationInstructionStats.executionCount'),
           value: 'execution_count',
           sortable: false,
+          width: 150,
         },
         {
           text: this.$t('remediationInstructionStats.alarmStates'),
           value: 'alarm_states',
           sortable: false,
+          width: 300,
         },
         {
           text: this.$t('remediationInstructionStats.okAlarmStates'),
           value: 'ok_alarm_states',
           sortable: false,
+          width: 150,
         },
         {
           text: this.$t('remediationInstructionStats.rating'),
           value: 'rating',
           sortable: false,
+          width: 250,
         },
         {
           text: this.$t('common.actionsLabel'),
           value: 'actions',
           sortable: false,
+          width: 100,
         },
       ].filter(Boolean);
     },
@@ -154,3 +165,12 @@ export default {
   },
 };
 </script>
+
+
+<style lang="scss">
+.c-remediation-instruction-stats {
+  &__table {
+    table-layout: fixed !important;
+  }
+}
+</style>

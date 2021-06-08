@@ -24,7 +24,7 @@ export default {
     },
     type: {
       type: String,
-      default: null,
+      default: ENTITY_INFOS_TYPE.state,
     },
   },
   computed: {

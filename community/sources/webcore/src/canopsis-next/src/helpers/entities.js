@@ -1,4 +1,5 @@
-import { get, omit, cloneDeep, isObject } from 'lodash';
+import { get, omit, cloneDeep, isObject, groupBy } from 'lodash';
+import moment from 'moment';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS, DEFAULT_CATEGORIES_LIMIT } from '@/config';
@@ -20,6 +21,7 @@ import {
   GRID_SIZES, AVAILABLE_COUNTERS,
   DEFAULT_COUNTER_BLOCK_TEMPLATE,
   COLOR_INDICATOR_TYPES,
+  DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
   EXPORT_CSV_DATETIME_FORMATS,
 } from '@/constants';
@@ -492,3 +494,15 @@ export const removeKeyFromEntities = (entities = []) => entities.map(entity => o
  */
 export const getIdFromEntity = (entity, idField = '_id') =>
   (isObject(entity) ? entity[idField] : entity);
+
+/**
+ * Get grouped steps by date
+ *
+ * @param {AlarmEvent[]} steps
+ * @return {Object.<string, AlarmEvent[]>}
+ */
+export const groupAlarmSteps = (steps) => {
+  const orderedSteps = [...steps].reverse();
+
+  return groupBy(orderedSteps, step => moment.unix(step.t).format(DATETIME_FORMATS.short));
+};

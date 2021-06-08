@@ -1,10 +1,10 @@
 <template lang="pug">
   div
-    i.material-icons(:style="{color: style.color}") {{ style.icon }}
+    i.material-icons(:style="{ color: style.color }") {{ style.icon }}
 </template>
 
 <script>
-import { formatState, formatStatus, formatEvent } from '@/helpers/formatting';
+import { formatStep } from '@/helpers/formatting';
 
 /**
  * Component for the flag on the alarms list's timeline
@@ -22,15 +22,7 @@ export default {
   },
   computed: {
     style() {
-      if (this.step._t.startsWith('status')) {
-        return formatStatus(this.step.val);
-      }
-
-      if (this.step._t.startsWith('state')) {
-        return formatState(this.step.val);
-      }
-
-      return formatEvent(this.step._t);
+      return formatStep(this.step);
     },
   },
 };

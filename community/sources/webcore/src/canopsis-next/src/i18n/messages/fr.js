@@ -2093,6 +2093,8 @@ export default {
 
   remediationInstructionStats: {
     alarmsTimeline: 'Chronologie des alarmes',
+    alarmId: 'ID d\'alarme',
+    executedOn: 'Exécuté sur',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
     lastModifiedOn: 'Dernière modification le',
@@ -2102,6 +2104,7 @@ export default {
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
     rating: 'Notation',
     notAvailable: 'N/a',
+    instructionChanged: 'L\'instruction a été modifiée',
     actions: {
       needRate: 'Notez-le!',
       rate: 'Taux',

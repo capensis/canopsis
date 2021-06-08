@@ -2091,6 +2091,8 @@ export default {
 
   remediationInstructionStats: {
     alarmsTimeline: 'Alarms timeline',
+    alarmId: 'Alarm ID',
+    executedOn: 'Executed on',
     lastExecutedOn: 'Last executed on',
     modifiedOn: 'Modified on',
     lastModifiedOn: 'Last modified on',
@@ -2100,6 +2102,7 @@ export default {
     okAlarmStates: 'Number of resulting\nOK states',
     rating: 'Rating',
     notAvailable: 'N/a',
+    instructionChanged: 'The instruction has been changed',
     actions: {
       needRate: 'Rate it!',
       rate: 'Rate',

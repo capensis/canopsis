@@ -30,7 +30,7 @@ export const localQueryMixin = {
         this.query = {
           ...this.query,
           search: value.search || '',
-          page: value.page,
+          page: value.rowsPerPage <= this.query.rowsPerPage ? value.page : 1,
           rowsPerPage: value.rowsPerPage || PAGINATION_LIMIT,
           sortKey: value.sortBy,
           sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(align-center)
-    c-alarm-chip(:type="$constants.ENTITY_INFOS_TYPE.state", :value="stateId")
+    c-alarm-chip(:value="stateId")
     v-icon(v-if="showIcon", color="purple") account_circle
 </template>
 
