@@ -64,6 +64,7 @@ export default {
         launchedAt: this.$options.filters.date(this.history.junit, DATETIME_FORMATS.long, true),
       });
     },
+
     remediationSubTitle() {
       return this.$t('storageSetting.history.remediation', {
         launchedAt: this.$options.filters.date(this.history.remediation, DATETIME_FORMATS.long, true),
