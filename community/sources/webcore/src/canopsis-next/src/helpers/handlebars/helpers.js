@@ -2,9 +2,10 @@ import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash'
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
+import { DATETIME_FORMATS } from '@/constants';
+
 import dateFilter from '@/filters/date';
 import durationFilter from '@/filters/duration';
-import { DATETIME_FORMATS } from '@/constants';
 
 import i18n from '@/i18n';
 

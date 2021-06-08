@@ -6,10 +6,10 @@
       :loading="pending",
       :total-items="totalItems",
       :pagination="pagination",
+      table-class="c-remediation-instruction-stats__table",
       expand,
       search,
       advanced-pagination,
-      table-class="c-remediation-instruction-stats__table",
       @update:pagination="$emit('update:pagination', $event)"
     )
       template(slot="toolbar", slot-scope="props")
