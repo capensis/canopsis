@@ -3,6 +3,7 @@
         "_id": "api_message_rate_stats_read",
         "crecord_type": "action",
         "crecord_name": "api_message_rate_stats_read",
+        "loader_id": "api_message_rate_stats_read",
         "desc": "Message rate statistics"
     });
     db.default_rights.updateOne(
