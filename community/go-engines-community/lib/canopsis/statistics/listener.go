@@ -164,7 +164,7 @@ func (l *statsListener) saveToDB(ctx context.Context) {
 
 			received, err = strconv.Atoi(result.Val())
 			if err != nil {
-				l.logger.Error().Err(err).Str("redis_key", key).Msg("Failed to flush statistics: failed to convert redis value to int")
+				l.logger.Error().Err(err).Str("redis_key", key).Str("val", result.Val()).Msg("Flush statistics: failed to convert received value to int")
 				break
 			}
 
@@ -176,13 +176,13 @@ func (l *statsListener) saveToDB(ctx context.Context) {
 
 			dropped, err = strconv.Atoi(result.Val())
 			if err != nil {
-				l.logger.Error().Err(err).Str("redis_key", key).Msg("Failed to flush statistics: failed to convert redis value to int")
+				l.logger.Error().Err(err).Str("redis_key", key).Str("val", result.Val()).Msg("Flush statistics: failed to convert dropped value to int")
 				break
 			}
 
 			minute, err = strconv.Atoi(key)
 			if err != nil {
-				l.logger.Error().Err(err).Str("redis_key", key).Msg("Failed to flush statistics: failed to convert redis value to int")
+				l.logger.Error().Err(err).Str("redis_key", key).Msg("Flush statistics: failed to convert minute value to int")
 				break
 			}
 
