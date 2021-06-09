@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/go-redis/redis/v7"
+	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -67,7 +67,7 @@ func (l *statsListener) Listen(ctx context.Context, channel <-chan Message) {
 			}
 			l.save(m)
 		case <-tickerRedis.C:
-			l.saveToRedis()
+			l.saveToRedis(ctx)
 		case <-tickerMongo.C:
 			l.saveToDB(ctx)
 		}
@@ -95,20 +95,20 @@ func (l *statsListener) save(m Message) {
 	}
 }
 
-func (l *statsListener) saveToRedis() {
+func (l *statsListener) saveToRedis(ctx context.Context) {
 	l.statsMx.Lock()
 	l.redisMx.Lock()
 	defer l.statsMx.Unlock()
 	defer l.redisMx.Unlock()
 	for minute, counts := range l.stats {
 		key := strconv.Itoa(minute)
-		result := l.redisClient.HIncrBy(key, "received", counts.Received)
+		result := l.redisClient.HIncrBy(ctx, key, "received", counts.Received)
 		if result.Err() != nil {
 			l.logger.Error().Err(result.Err()).Str("redis_key", key).Int64("value", counts.Received).Msg("Failed to save statistics in redis")
 			return
 		}
 
-		result = l.redisClient.HIncrBy(key, "dropped", counts.Dropped)
+		result = l.redisClient.HIncrBy(ctx, key, "dropped", counts.Dropped)
 		if result.Err() != nil {
 			l.logger.Error().Err(result.Err()).Str("redis_key", key).Int64("value", counts.Dropped).Msg("Failed to save statistics in redis")
 			return
@@ -124,7 +124,7 @@ func (l *statsListener) saveToDB(ctx context.Context) {
 
 	var err error
 	l.logger.Debug().Msg("flush")
-	keysResult := l.redisClient.Keys("*")
+	keysResult := l.redisClient.Keys(ctx, "*")
 	if keysResult.Err() != nil {
 		l.logger.Error().Err(keysResult.Err()).Msg("Failed to flush statistics: failed to get data from redis")
 		return
@@ -138,7 +138,7 @@ func (l *statsListener) saveToDB(ctx context.Context) {
 			minute, received, dropped int
 		)
 
-		result = l.redisClient.HGet(key, "received")
+		result = l.redisClient.HGet(ctx, key, "received")
 		if err = result.Err(); err != nil {
 			l.logger.Error().Err(result.Err()).Str("redis_key", key).Msg("Failed to flush statistics: failed to get received value from redis")
 			break
@@ -150,7 +150,7 @@ func (l *statsListener) saveToDB(ctx context.Context) {
 			break
 		}
 
-		result = l.redisClient.HGet(key, "dropped")
+		result = l.redisClient.HGet(ctx, key, "dropped")
 		if err = result.Err(); err != nil {
 			l.logger.Error().Err(result.Err()).Str("redis_key", key).Msg("Failed to flush statistics: failed to get dropped value from redis")
 			break
@@ -197,7 +197,7 @@ func (l *statsListener) saveToDB(ctx context.Context) {
 		}
 	}
 
-	flushAllResult := l.redisClient.FlushDB()
+	flushAllResult := l.redisClient.FlushDB(ctx)
 	if flushAllResult.Err() != nil {
 		l.logger.Error().Err(flushAllResult.Err()).Msg("Failed to flush statistics: failed to remove old data from redis")
 		return
