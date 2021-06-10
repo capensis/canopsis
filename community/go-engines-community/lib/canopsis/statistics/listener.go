@@ -269,7 +269,6 @@ func getLastID(ctx context.Context, collection mongo.DbCollection) (int64, error
 	cursor, err := collection.Aggregate(ctx, []bson.M{{"$group": bson.M{
 		"_id": nil,
 		"max": bson.M{"$max": "$_id"},
-		"min": bson.M{"$min": "$_id"},
 	}}})
 	if err != nil {
 		return 0, err
