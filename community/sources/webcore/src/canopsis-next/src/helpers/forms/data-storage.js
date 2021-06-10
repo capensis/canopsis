@@ -106,7 +106,7 @@ export const formJunitToDataStorageSettings = (form = {}) => ({
  * @param {DataStorageRemediationConfigForm} form
  * @return {DataStorageRemediationConfig}
  */
-export const formRemediationToDataStorageSettings = (form = {}) => ({
+export const formToRemediationDataStorageSettings = (form = {}) => ({
   delete_after: formToDurationWithEnabled(form.delete_after),
   accumulate_after: formToDurationWithEnabled(form.accumulate_after),
 });
@@ -119,5 +119,5 @@ export const formRemediationToDataStorageSettings = (form = {}) => ({
  */
 export const formToDataStorageSettings = (form = {}) => ({
   junit: formJunitToDataStorageSettings(form.junit),
-  remediation: formRemediationToDataStorageSettings(form.remediation),
+  remediation: formToRemediationDataStorageSettings(form.remediation),
 });
