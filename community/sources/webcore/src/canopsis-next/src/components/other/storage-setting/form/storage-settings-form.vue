@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    storage-setting-block(v-if="!isCatVersion", :title="$t('storageSetting.junit.title')")
+    storage-setting-block(:title="$t('storageSetting.junit.title')")
       template(v-if="history.junit", slot="subtitle") {{ junitSubTitle }}
       storage-setting-duration-field(
         v-field="form.junit.delete_after",
@@ -26,15 +26,12 @@
 <script>
 import { DATETIME_FORMATS } from '@/constants';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
-
 import StorageSettingBlock from './partials/storage-setting-block.vue';
 import StorageSettingDurationField from './partials/storage-setting-duration-field.vue';
 
 export default {
   inject: ['$validator'],
   components: { StorageSettingDurationField, StorageSettingBlock },
-  mixins: [entitiesInfoMixin],
   model: {
     prop: 'form',
     event: 'input',

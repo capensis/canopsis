@@ -1444,6 +1444,10 @@ export const ADMIN_PAGES_RULES = {
   remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
 };
 
+export const NOTIFICATIONS_PAGES_RULES = {
+  instructionStats: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+};
+
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
   snmpRule: { edition: CANOPSIS_EDITION.cat },
@@ -1468,6 +1472,11 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USERS_PERMISSIONS.technical.exploitation.scenario]: EXPLOITATION_PAGES_RULES.scenario,
+
+  /**
+   * Notifications pages
+   */
+  [USERS_PERMISSIONS.technical.notification.instructionStats]: NOTIFICATIONS_PAGES_RULES.instructionStats,
 };
 
 export const WIDGET_TYPES_RULES = {

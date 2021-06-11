@@ -11,21 +11,10 @@
             remediation-instruction-approval-alert(
               :approval="remediationInstructionApproval.approval"
             )
-            v-tabs.mt-3(slider-color="primary", fixed-tabs)
-              v-tab {{ $t('modals.remediationInstructionApproval.tabs.updated') }}
-              v-tab-item.pt-3
-                remediation-instruction-form(
-                  :form="remediationInstructionApproval.updated",
-                  disabled-common,
-                  disabled
-                )
-              v-tab {{ $t('modals.remediationInstructionApproval.tabs.original') }}
-              v-tab-item.pt-3
-                remediation-instruction-form(
-                  :form="remediationInstructionApproval.original",
-                  disabled-common,
-                  disabled
-                )
+            remediation-instruction-approval-tabs(
+              :original="remediationInstructionApproval.original",
+              :updated="remediationInstructionApproval.updated"
+            )
       template(slot="actions")
         v-btn(
           depressed,
@@ -57,8 +46,8 @@ import { submittableMixin } from '@/mixins/submittable';
 
 import RemediationInstructionApprovalAlert from
   '@/components/other/remediation/instructions/partials/approval-alert.vue';
-import RemediationInstructionForm from
-  '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
+import RemediationInstructionApprovalTabs from
+  '@/components/other/remediation/instructions/partials/approval-tabs.vue';
 
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -69,7 +58,7 @@ export default {
   name: MODALS.remediationInstructionApproval,
   components: {
     RemediationInstructionApprovalAlert,
-    RemediationInstructionForm,
+    RemediationInstructionApprovalTabs,
     ModalWrapper,
   },
   mixins: [

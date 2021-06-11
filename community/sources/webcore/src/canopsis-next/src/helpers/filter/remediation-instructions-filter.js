@@ -7,8 +7,8 @@ import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
  * @property {boolean} [with_instructions]
  * @property {string[]} [include_instructions]
  * @property {string[]} [exclude_instructions]
- * @property {string[]} [include_types]
- * @property {string[]} [exclude_types]
+ * @property {string[]} [include_instructions_types]
+ * @property {string[]} [exclude_instructions_types]
  */
 
 const PARAMETERS_FILTERS_TYPES = {

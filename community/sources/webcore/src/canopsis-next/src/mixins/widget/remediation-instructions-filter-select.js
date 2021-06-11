@@ -61,8 +61,8 @@ export default {
         'with_instructions',
         'include_instructions',
         'exclude_instructions',
-        'include_types',
-        'exclude_types',
+        'include_instructions_types',
+        'exclude_instructions_types',
       ]);
 
       this.query = {

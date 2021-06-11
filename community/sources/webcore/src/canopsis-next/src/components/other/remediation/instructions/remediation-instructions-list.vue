@@ -18,6 +18,8 @@
             v-icon delete
       template(slot="headerCell", slot-scope="props")
         span.c-table-header__text--multiline {{ props.header.text }}
+      template(slot="author", slot-scope="props")
+        span {{ props.item.author.name }}
       template(slot="enabled", slot-scope="props")
         c-enabled(:value="props.item.enabled")
       template(slot="status", slot-scope="props")
@@ -92,7 +94,7 @@ export default {
         },
         {
           text: this.$t('common.author'),
-          value: 'author.name',
+          value: 'author',
         },
         {
           text: this.$t('common.enabled'),
@@ -113,6 +115,7 @@ export default {
         {
           text: this.$t('remediationInstructions.table.monthExecutions'),
           value: 'month_executions',
+          sortable: false,
         },
         {
           text: this.$t('remediationInstructions.table.lastExecutedOn'),

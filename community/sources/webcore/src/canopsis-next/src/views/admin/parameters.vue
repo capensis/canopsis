@@ -15,17 +15,19 @@
             v-tab-item(lazy)
               v-card-text
                 state-settings
-            v-tab {{ $t('parameters.tabs.notificationsSettings') }}
-            v-tab-item(lazy)
-              v-card-text
-                notifications-settings
-            v-tab {{ $t('parameters.tabs.storageSettings') }}
-            v-tab-item(lazy)
-              v-card-text
-                storage-settings
+            template(v-if="isCatVersion")
+              v-tab {{ $t('parameters.tabs.notificationsSettings') }}
+              v-tab-item(lazy)
+                v-card-text
+                  notifications-settings
+              v-tab {{ $t('parameters.tabs.storageSettings') }}
+              v-tab-item(lazy)
+                v-card-text
+                  storage-settings
 </template>
 
 <script>
+import entitiesInfoMixin from '@/mixins/entities/info';
 import { permissionsTechnicalParametersMixin } from '@/mixins/permissions/technical/parameters';
 
 import UserInterface from '@/components/other/user-interface/user-interface.vue';
@@ -42,6 +44,6 @@ export default {
     NotificationsSettings,
     StorageSettings,
   },
-  mixins: [permissionsTechnicalParametersMixin],
+  mixins: [entitiesInfoMixin, permissionsTechnicalParametersMixin],
 };
 </script>
