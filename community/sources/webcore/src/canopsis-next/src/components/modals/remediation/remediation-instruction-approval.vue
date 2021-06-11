@@ -99,6 +99,10 @@ export default {
         data: { approve },
       });
 
+      if (this.config.afterSubmit) {
+        await this.config.afterSubmit();
+      }
+
       this.$modals.hide();
     },
   },

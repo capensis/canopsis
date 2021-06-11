@@ -75,6 +75,7 @@ export default {
         name: MODALS.remediationInstructionApproval,
         config: {
           remediationInstructionId: remediationInstruction._id,
+          afterSubmit: this.fetchList,
         },
       });
     },
