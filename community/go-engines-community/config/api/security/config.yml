@@ -1,0 +1,38 @@
+security:
+  # auth_providers defines enabled authentication methods.
+  # Possible values:
+  # - basic Auth by username-password.
+  # - apikey Auth by token.
+  # - ldap Auth using LDAP service. Define LDAP config in object collection by cservice.ldapconfig id.
+  # - cas Auth using CAS service. Define CAS config in object collection by cservice.casconfig id.
+  # - saml Auth using SAML service. Define SAML config below(commented saml section)
+  auth_providers:
+    - basic
+    - apikey
+#    - saml
+
+#  saml:
+#    x509_cert: D:\saml\myservice.cert
+#    x509_key:  D:\saml\myservice.key
+#    idp_metadata_url: http://localhost:8080/simplesaml/saml2/idp/metadata.php
+#    idp_metadata_xml: D:\\saml\\IDPORANGE_URIMetadata.xml
+#    idp_attributes_map:
+#      email: email
+#      name: uid
+#      firstname: uid
+#      lastname: uid
+#    canopsis_saml_url: http://localhost:8084/saml
+#    canopsis_sso_binding: redirect
+#    canopsis_acs_binding: redirect
+#    sign_auth_request: false
+#    name_id_format: urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
+#    default_role: "admin"
+#    skip_verify: true
+#    skip_signature_validation: true
+#    acs_index: 1
+#    auto_user_registration: false
+
+session:
+  # stats_frame uses for session stats. Session stats are accumulated during frame period.
+  # New stats row will be created if duration between stats requests are more then frame.
+  stats_frame: 5m

@@ -1,0 +1,19 @@
+[Unit]
+Description=Canopsis Go Engine %i
+After=network.target
+Documentation=https://doc.canopsis.net
+
+[Service]
+User=canopsis
+Group=canopsis
+WorkingDirectory=/opt/canopsis
+Environment=HOME=/opt/canopsis
+EnvironmentFile=/opt/canopsis/etc/go-engines-vars.conf
+ExecStart=/usr/bin/env /opt/canopsis/bin/%i
+PIDFile=/run/canopsis-engine-go-%i.pid
+Restart=always
+RestartSec=1
+StartLimitBurst=300
+
+[Install]
+WantedBy=multi-user.target

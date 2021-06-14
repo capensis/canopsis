@@ -1,0 +1,21 @@
+ARG GOLANG_IMAGE_TAG
+
+FROM golang:${GOLANG_IMAGE_TAG}
+
+ENV GOPATH /sources/go
+ENV PROJECT_PATH ${GOPATH}/src/git.canopsis.net/canopsis/go-engines
+ENV PATH ${PATH}:${GOPATH}/bin
+ENV GO111MODULE on
+
+RUN mkdir -p ${PROJECT_PATH} ${GOPATH}/bin
+RUN apk update && apk add make git curl gcc build-base g++
+
+COPY go.mod ${PROJECT_PATH}/go.mod
+
+RUN cd ${PROJECT_PATH} && go mod download
+
+COPY docker/go-test.sh /go-test.sh
+
+COPY . ${PROJECT_PATH}/
+
+# do not set entrypoint as this container will be run via docker-compose exec

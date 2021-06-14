@@ -1,0 +1,30 @@
+stages:
+  - test
+
+variables:
+  COMPOSE_HTTP_TIMEOUT: "180"
+  CI_COMPOSE_PROJECT: "gorev-ci-${CI_JOB_ID}"
+  CI_COMPOSE_FILE: "CI/docker-compose.ci.yml"
+  CI_PROJECT_DIR: "CI/"
+
+before_script:
+  - uname -a
+  - docker -v
+  - echo "Go version $(awk -F'\"' '/^GOLANG_IMAGE_TAG:/ { print $2 }' Makefile.var)"
+  - git --no-pager show
+
+stage_test:
+  stage: test
+  tags: ["gorev"]
+  script:
+    - echo "Begin script"
+    - make docker_test_image
+    - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} up -d
+    - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} exec -T webserver ./bin/canopsinit && sleep 2
+    - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} exec -T testing /bin/sh /go-test.sh
+
+after_script:
+    - echo "After script"
+    - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} kill
+    - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} rm -sf
+    - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} down -v

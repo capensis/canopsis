@@ -1,0 +1,26 @@
+[
+  {
+    "_id": "rating-1-for-test-instruction-to-rate-2",
+    "execution": "execution-for-test-instruction-to-rate-2",
+    "instruction": "test-instruction-to-rate-2",
+    "user": "root",
+    "rating": 4.5,
+    "comment": "test"
+  },
+  {
+    "_id": "rating-1-for-test-instruction-to-rate-4",
+    "execution": "execution-for-test-instruction-to-rate-4",
+    "instruction": "test-instruction-to-rate-4",
+    "user": "test_user_1",
+    "rating": 5,
+    "comment": "test_user_1_comment"
+  },
+  {
+    "_id": "rating-2-for-test-instruction-to-rate-4",
+    "execution": "execution-for-test-instruction-to-rate-4",
+    "instruction": "test-instruction-to-rate-4",
+    "user": "test_user_2",
+    "rating": 1,
+    "comment": "test_user_2_comment"
+  }
+]

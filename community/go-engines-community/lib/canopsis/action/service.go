@@ -1,0 +1,223 @@
+package action
+
+import (
+	"context"
+	libamqp "git.canopsis.net/canopsis/go-engines/lib/amqp"
+	libalarm "git.canopsis.net/canopsis/go-engines/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/go-engines/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"github.com/rs/zerolog"
+	"github.com/streadway/amqp"
+	"go.mongodb.org/mongo-driver/mongo"
+)
+
+const AbandonedDuration = 60
+const MaxRetries = 5
+
+type service struct {
+	alarmAdapter            libalarm.Adapter
+	scenarioInputChannel    chan<- ExecuteScenariosTask
+	delayedScenarioManager  DelayedScenarioManager
+	executionStorage        ScenarioExecutionStorage
+	encoder                 encoding.Encoder
+	fifoChan                libamqp.Channel
+	fifoExchange, fifoQueue string
+	activationService       libalarm.ActivationService
+	logger                  zerolog.Logger
+}
+
+// NewService gives the correct action adapter.
+func NewService(
+	alarmAdapter libalarm.Adapter,
+	scenarioInputChan chan<- ExecuteScenariosTask,
+	delayedScenarioManager DelayedScenarioManager,
+	storage ScenarioExecutionStorage,
+	encoder encoding.Encoder,
+	fifoChan libamqp.Channel,
+	fifoExchange string,
+	fifoQueue string,
+	activationService libalarm.ActivationService,
+	logger zerolog.Logger,
+) Service {
+	service := service{
+		alarmAdapter:           alarmAdapter,
+		scenarioInputChannel:   scenarioInputChan,
+		delayedScenarioManager: delayedScenarioManager,
+		executionStorage:       storage,
+		fifoChan:               fifoChan,
+		encoder:                encoder,
+		fifoExchange:           fifoExchange,
+		fifoQueue:              fifoQueue,
+		activationService:      activationService,
+		logger:                 logger,
+	}
+
+	return &service
+}
+
+func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan ScenarioResult) {
+	ctx, cancel := context.WithCancel(parentCtx)
+	s.logger.Debug().Msg("start listen scenario results")
+
+	go func() {
+		defer cancel()
+
+		for {
+			select {
+			case <-ctx.Done():
+				s.logger.Debug().Msg("scenario results listener is cancelled")
+				return
+			case result, ok := <-channel:
+				if !ok {
+					s.logger.Debug().Msg("scenario results channel closed")
+					return
+				}
+
+				s.logger.Debug().Msgf("scenario for alarm_id = %s finished", result.Alarm.ID)
+				// Fetch updated alarm from storage since task manager returns
+				// updated alarm after one scenario and not after all scenarios.
+				alarm, err := s.alarmAdapter.GetOpenedAlarmByAlarmId(result.Alarm.ID)
+				if err != nil {
+					s.logger.Error().Err(err).Msg("failed to fetch alarm")
+					break
+				}
+
+				if result.Err != nil {
+					s.sendEventToFifoAck(&types.Event{
+						Connector:     alarm.Value.Connector,
+						ConnectorName: alarm.Value.ConnectorName,
+						Component:     alarm.Value.Component,
+						Resource:      alarm.Value.Resource,
+						Alarm:         &alarm,
+					})
+					break
+				}
+
+				ok, err = s.activationService.Process(&alarm)
+				if err != nil {
+					s.logger.Error().Err(err).Msg("failed to send activation")
+					break
+				}
+
+				if !ok {
+					s.sendEventToFifoAck(&types.Event{
+						Connector:     alarm.Value.Connector,
+						ConnectorName: alarm.Value.ConnectorName,
+						Component:     alarm.Value.Component,
+						Resource:      alarm.Value.Resource,
+						Alarm:         &alarm,
+					})
+				}
+			}
+		}
+	}()
+}
+
+func (s *service) Process(ctx context.Context, event *types.Event) error {
+	if event.Alarm == nil || event.Entity == nil || event.Alarm.IsResolved() {
+		s.sendEventToFifoAck(event)
+
+		return nil
+	}
+
+	alarm := *event.Alarm
+	entity := *event.Entity
+
+	switch event.AlarmChange.Type {
+	case types.AlarmChangeTypePbhEnter, types.AlarmChangeTypePbhLeave,
+		types.AlarmChangeTypePbhLeaveAndEnter:
+		var err error
+		if event.PbehaviorInfo.IsActive() {
+			err = s.delayedScenarioManager.ResumeDelayedScenarios(ctx, alarm)
+		} else {
+			err = s.delayedScenarioManager.PauseDelayedScenarios(ctx, alarm)
+		}
+		if err != nil {
+			return err
+		}
+	}
+
+	if event.EventType == types.EventTypeRunDelayedScenario {
+		s.scenarioInputChannel <- ExecuteScenariosTask{
+			Alarm:             alarm,
+			Entity:            entity,
+			DelayedScenarioID: event.DelayedScenarioID,
+		}
+
+		return nil
+	}
+
+	s.scenarioInputChannel <- ExecuteScenariosTask{
+		Triggers:     event.AlarmChange.GetTriggers(),
+		Alarm:        alarm,
+		Entity:       entity,
+		AckResources: event.AckResources,
+	}
+
+	return nil
+}
+
+func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
+	abandonedExecutions, err := s.executionStorage.GetAbandoned(ctx)
+	if err != nil {
+		return err
+	}
+
+	for _, execution := range abandonedExecutions {
+		alarm, err := s.alarmAdapter.GetOpenedAlarmByAlarmId(execution.AlarmID)
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				s.logger.Warn().Str("execution_id", execution.ID).Msg("Alarm for scenario execution doesn't exist or resolved. Execution will be removed")
+				err = s.executionStorage.Del(ctx, execution.ID)
+				if err != nil {
+					return err
+				}
+			}
+
+			continue
+		}
+
+		completed := execution.ActionExecutions[len(execution.ActionExecutions)-1].Executed
+
+		if completed {
+			s.logger.Debug().Str("execution_id", execution.ID).Msg("Execution was completed. Execution will be removed")
+			err = s.executionStorage.Del(ctx, execution.ID)
+			if err != nil {
+				return err
+			}
+
+			continue
+		}
+
+		s.scenarioInputChannel <- ExecuteScenariosTask{
+			Alarm:                alarm,
+			Entity:               execution.Entity,
+			AbandonedExecutionID: execution.ID,
+		}
+	}
+
+	return nil
+}
+
+func (s *service) sendEventToFifoAck(event *types.Event) {
+	body, err := s.encoder.Encode(event)
+	if err != nil {
+		s.logger.Error().Err(err).Msg("failed to send fifo ack event: failed to encode fifo ack event")
+		return
+	}
+
+	err = s.fifoChan.Publish(
+		s.fifoExchange,
+		s.fifoQueue,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType:  "application/json",
+			Body:         body,
+			DeliveryMode: amqp.Persistent,
+		},
+	)
+	if err != nil {
+		s.logger.Error().Err(err).Msg("failed to send fifo ack event: failed to publish message")
+	}
+}

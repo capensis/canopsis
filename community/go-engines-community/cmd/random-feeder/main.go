@@ -1,0 +1,240 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"math"
+	"math/rand"
+	"strconv"
+	"sync"
+	"time"
+
+	"git.canopsis.net/canopsis/go-engines/lib/amqp"
+	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/go-engines/lib/log"
+	"github.com/rs/zerolog"
+	amqpmod "github.com/streadway/amqp"
+)
+
+const (
+	numberOfConnectors = 10
+	numberOfComponents = 1000
+)
+
+type resourceData func() (int64, int64, int64)
+
+type References struct {
+	channelPub *amqpmod.Channel
+}
+
+type Feeder struct {
+	flags      Flags
+	references References
+	logger     zerolog.Logger
+
+	oldResourcesMap   map[int]int
+	newResourcesMap   map[int]int
+
+	resourcesMapMutex sync.Mutex
+}
+
+func (f *Feeder) getEvent(state, Ci, ci, ri int64) types.Event {
+	return types.Event{
+		Connector:     "feeder" + strconv.Itoa(int(Ci)),
+		ConnectorName: "feeder" + strconv.Itoa(int(Ci)) + "_inst0",
+		Component:     "feeder" + strconv.Itoa(int(Ci)) + "_" + strconv.Itoa(int(ci)),
+		Resource:      "feeder" + strconv.Itoa(int(Ci)) + "_" + strconv.Itoa(int(ri)),
+		State:         types.CpsNumber(state),
+		SourceType:    types.SourceTypeResource,
+		EventType:     types.EventTypeCheck,
+	}
+}
+
+func (f *Feeder) sendBytes(content []byte, rk string) error {
+	return f.references.channelPub.Publish(
+		f.flags.ExchangeName,
+		"Engine_che",
+		false,
+		false,
+		amqpmod.Publishing{
+			Body:        content,
+			ContentType: "application/json",
+		},
+	)
+}
+
+func (f *Feeder) send(state, Ci, ci, ri int64) error {
+	evt := f.getEvent(state, Ci, ci, ri)
+
+	bevt, _ := json.Marshal(evt)
+
+	return f.sendBytes(bevt, evt.GetCompatRK())
+}
+
+func (f *Feeder) adjust(target float64, sent, tsent int64) int64 {
+	eps := float64(sent * time.Second.Nanoseconds() / tsent)
+	variance := math.Abs(target-eps) * 100.0 / float64(target)
+	adj := int64(0)
+
+	if variance > 1 {
+		if eps < target {
+			adj = -tsent / 100
+		} else {
+			adj = tsent / 100
+		}
+	}
+
+	return adj
+}
+
+func (f *Feeder) setupAmqp() error {
+	amqpSession, err := amqp.NewSession()
+	if err != nil {
+		return fmt.Errorf("amqp session: %v", err)
+	}
+
+	channelPub, err := amqpSession.Channel()
+	if err != nil {
+		return fmt.Errorf("amqp pub channel: %v", err)
+	}
+
+	if err := channelPub.Confirm(false); err != nil {
+		return fmt.Errorf("confirm: %v", err)
+	}
+
+	f.references = References{
+		channelPub: channelPub,
+	}
+
+	return nil
+}
+
+func (f *Feeder) sendMessages(eventsPerSecond float64, callback resourceData) error {
+	if err := f.setupAmqp(); err != nil {
+		return err
+	}
+
+	sleepEvery := int64(25)
+	pubcount := int64(0)
+
+	nanosecSleep := time.Duration(float64(time.Second.Nanoseconds()) / eventsPerSecond * float64(sleepEvery))
+
+	tstart := time.Now().UnixNano()
+
+	checkEvery := int64(100)
+	changeStateEvery := int64(100 / f.flags.Alarms)
+
+	rand.Seed(time.Now().UnixNano())
+
+	stateMap := make(map[string]int)
+
+	for {
+		connectorId, componentId, resourceId := callback()
+
+		eid := fmt.Sprintf("%d%d", componentId, resourceId)
+		state := stateMap[eid]
+
+		if (componentId * connectorId * resourceId) % changeStateEvery == 0 {
+			if state == types.AlarmStateOK {
+				state = types.AlarmStateCritical
+			} else {
+				state = types.AlarmStateOK
+			}
+		}
+
+		stateMap[eid] = state
+
+		err := f.send(int64(state), connectorId, componentId, resourceId)
+		if err != nil {
+			return err
+		}
+
+		pubcount++
+
+		if pubcount % checkEvery == 0 {
+			tsent := time.Now().UnixNano() - tstart
+			adj := f.adjust(eventsPerSecond, checkEvery, tsent)
+			nanosecSleep = time.Duration(nanosecSleep.Nanoseconds() + adj)
+			tstart = time.Now().UnixNano()
+		}
+
+		if pubcount % sleepEvery == 0 {
+			if nanosecSleep.Nanoseconds() > 0 {
+				time.Sleep(nanosecSleep)
+			}
+		}
+	}
+}
+
+func (f *Feeder) feed(eventsPerSecond float64, newResourcesPerSec float64) {
+	go f.sendMessages(eventsPerSecond - newResourcesPerSec, func() (int64, int64, int64) {
+		connectorId := 1 + rand.Intn(numberOfConnectors)
+		componentId := rand.Intn(numberOfComponents)
+
+		resourceId := rand.Intn(f.oldResourcesMap[connectorId])
+
+		return int64(connectorId), int64(componentId), int64(resourceId)
+	})
+
+	ticker := time.NewTicker(time.Millisecond * time.Duration(1000 / newResourcesPerSec))
+	go func() {
+		for {
+			<-ticker.C
+
+			rand.Seed(time.Now().UnixNano())
+
+			connectorId := 1 + rand.Intn(numberOfConnectors)
+			componentId := rand.Intn(numberOfComponents)
+
+			f.newResourcesMap[connectorId]++
+			resourceId := f.newResourcesMap[connectorId]
+
+			f.send(1, int64(connectorId), int64(componentId), int64(resourceId))
+		}
+	}()
+}
+
+func (f *Feeder) Run() error {
+	if err := f.setupAmqp(); err != nil {
+		return err
+	}
+
+	f.feed(float64(f.flags.EventsPerSec), float64(f.flags.NewResourcesPerSec))
+
+	time.Sleep(time.Second * time.Duration(f.flags.FeederTime))
+
+	return nil
+}
+
+func NewFeeder(logger zerolog.Logger) (*Feeder, error) {
+	oldResourcesMap := make(map[int]int)
+	newResourcesMap := make(map[int]int)
+
+	for i := 1; i < 11; i++ {
+		oldResourcesMap[i] = i * 10
+		newResourcesMap[i] = i * 10
+	}
+
+	f := Feeder{
+		logger:          logger,
+		oldResourcesMap: oldResourcesMap,
+		newResourcesMap: newResourcesMap,
+	}
+
+	if err := f.flags.ParseArgs(); err != nil {
+		return nil, err
+	}
+
+	return &f, nil
+}
+
+func main() {
+	logger := log.NewLogger(false)
+
+	feeder, err := NewFeeder(logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("feeder init error")
+	}
+
+	feeder.Run()
+}

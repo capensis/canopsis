@@ -1,0 +1,122 @@
+[
+  {
+    "_id": "dynamic_info_1",
+    "entity_patterns": [
+      {
+        "infos": {
+          "alert_name": {
+            "value": {
+              "regex_match": "(AWS|GCP|HPE)_MAILS_TICKET.*"
+            }
+          }
+        }
+      }
+    ],
+    "last_modified_date": 1593679995,
+    "name": "dynamic_info_1",
+    "author": "root",
+    "alarm_patterns": null,
+    "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+    "infos": [
+      {
+        "name": "type",
+        "value": "consigne"
+      },
+      {
+        "name": "label",
+        "value": "Consigne sur réception mail Mainteneurs"
+      },
+      {
+        "name": "colibri",
+        "value": "268997"
+      }
+    ],
+    "creation_date": 1581423405,
+    "pattern": [
+      "(AWS|GCP|HPE)_MAILS_TICKET.*"
+    ]
+  },
+  {
+    "_id": "dynamic_info_2",
+    "entity_patterns": [
+      {
+        "infos": {
+          "alert_name": {
+            "value": {
+              "regex_match": "CENTREONIET_.*IMPORT_POSTES-IET.*"
+            }
+          }
+        }
+      }
+    ],
+    "last_modified_date": 1593677536,
+    "name": "dynamic_info_2",
+    "author": "root",
+    "alarm_patterns": null,
+    "description": "le service d’import des postes dans l’annuaire ne fonctionne pas",
+    "infos": [
+      {
+        "name": "type",
+        "value": "consigne"
+      },
+      {
+        "name": "label",
+        "value": "Consigne Suivi et Administration de l'Infra Neptune"
+      },
+      {
+        "name": "colibri",
+        "value": "148768"
+      }
+    ],
+    "creation_date": 1581504657,
+    "pattern": [
+      "CENTREONIET_.*IMPORT_POSTES-IET.*"
+    ]
+  },
+  {
+    "_id": "test-dynamic-infos-to-delete",
+    "last_modified_date": 1593679995,
+    "name": "test-dynamic-infos-to-delete",
+    "author": "root",
+    "alarm_patterns": null,
+    "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+    "infos": [
+      {
+        "name": "type",
+        "value": "consigne"
+      },
+      {
+        "name": "label",
+        "value": "Consigne sur réception mail Mainteneurs"
+      },
+      {
+        "name": "colibri",
+        "value": "268997"
+      }
+    ],
+    "creation_date": 1581423405
+  },
+  {
+    "_id": "test-dynamic-infos-to-update",
+    "last_modified_date": 1593679995,
+    "name": "test-dynamic-infos-to-update",
+    "author": "root",
+    "alarm_patterns": null,
+    "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+    "infos": [
+      {
+        "name": "type",
+        "value": "consigne"
+      },
+      {
+        "name": "label",
+        "value": "Consigne sur réception mail Mainteneurs"
+      },
+      {
+        "name": "colibri",
+        "value": "268997"
+      }
+    ],
+    "creation_date": 1581423405
+  }
+]
