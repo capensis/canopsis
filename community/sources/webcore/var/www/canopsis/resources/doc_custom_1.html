@@ -1,0 +1,219 @@
+<div class="doc_custom">
+<h1 id="documentation-dexploitation-decathlon">Documentation d'exploitation</h1>
+<h2 id="vue-alerte">Vue alerte:</h2>
+<ol>
+<li>
+<p>les vues</p>
+<ul>
+<li>
+<p>status view</p>
+<p>Affiche le nombre d'alertes sur la période réparties par status (toutes alertes confondues soft/hard)</p>
+</li>
+<li>
+<p>type view</p>
+<p>Affiche le nombre d'alertes sur la période réparties par types (tous états, tous status)</p>
+</li>
+<li>
+<p>state view</p>
+<p>Affiche le nombre d'alertes répartiespar états (hard /soft)</p>
+</li>
+<li>
+<p>acknowlegment view</p>
+<p>Affiche le nombre d'alertes sur la période réparties par acknowlegment (ack,not ack, ack by host)</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Autres règles de calcul:</p>
+<ul>
+<li>les alertes qui disparaissent seules comptées comme des alertes non acknowlegées.</li>
+<li>les alertes survenues pendant un downtime ne sont pas prises en comptes.</li>
+</ul>
+</li>
+</ol>
+<h2 id="vue-sla">Vue SLA:</h2>
+<ol>
+<li>
+<p>La vue SLA à pour but d'afficher le nombre d'alertes traitées sur la période avec pour chaque criticité:</p>
+<ul>
+<li>un graphique en barre pour les status warning et critical</li>
+<li>le nombre d'alertes en SLA OK / hors SLA OK (NOK) / non traitées (résolution spontanée non accqitées)</li>
+<li>un diagrame circulaire détaillant les ratios des elements ci dessus</li>
+<li>un tableau des elements ci dessus</li>
+<li>un tableau recapitulatif qui détaille les SLA par jour et par période</li>
+<li>un tableau récapitulatif qui détaille les SLA par hostgroup et par période</li>
+</ul>
+</li>
+<li>
+<p>Calculs spécifiques à ne pas prendre en compte dans les calculs</p>
+<ul>
+<li>une alerte repassant en état OK avant sa limite de temps et acknowlegée dans ou après SLA ou résolue spontanément apres les SLA</li>
+<li>les alertes en timeout</li>
+<li>les ack de service dus à un ack de l'hote</li>
+</ul>
+</li>
+</ol>
+<h2 id="unsolved-alerts">Unsolved alerts:</h2>
+<p>Le tableau de bord par défaut de canopsis affiche la liste des alertes non résolues en cours.</p>
+<h2 id="vue-top-10">Vue top 10:</h2>
+<ul>
+<li>fournit la liste des 10 services ayant générés le plus d'alerte sur une période donnée répartis par status</li>
+<li>la liste fournit les informations suivantes: host parent, service concerné, nombre d'alertes, output le plus récurrent</li>
+<li>cette liste est exportable au format CSV à l'aide du bouton export</li>
+</ul>
+<h2 id="affichage-dynamique-des-informations">Affichage dynamique des informations:</h2>
+<p>Canopsis permet d'afficher toutes les vues proposées en fonction du temps et d'hostgroups spécifiques. Pour cela, il faut passer en mode live reporting.</p>
+<p>Ce mode spécifique permet de spécifier une date de début et une date de fin de prise en compte des données à afficher sur les différentes vues de canopsis. Il est possible à l'aide de cet outil de définir des hostgroups à exclure pour l'affichage en cours au travers des fonctionnalitées avancées du live reporting.</p>
+<p>Ces fonctionnalitées avancées sont accessibles à l'aide du bouton <em>fonctions avancées</em> dans le panneau du live reporting dans lequel il est possible de définir des <em>hostgroups composant/resources, downtimes et périodes d'exclusion</em> à prendre en compte lors de du rafraichissement des données.</p>
+</div>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+<h1 id="metriques-generees-par-canopsis">Métriques générées par Canopsis</h1>
+<p>L'objet de cet article est de détailler les métriques générées par les moteurs de calcul du logiciel Canopsis pendant leur fonctionnement. Ces métriques seront regroupées par moteur de calcul.</p>
+<h2 id="1-acknowledgement">1. Acknowledgement</h2>
+<ul>
+<li>
+<h3 id="cps_alerts_ack">cps_alerts_ack :</h3>
+<p>Cette métrique indique si l'événement a été acquitté par un autre opérateur que l'host; elle vaut
+<strong>0</strong> si l'événement a été acquitté par l'<strong>host</strong>,
+<strong>1</strong> sinon.</p>
+</li>
+<li>
+<h3 id="cps_alerts_ack_by_host">cps_alerts_ack_by_host :</h3>
+<p>Cette métrique indique si l'événement a été acquitté par l'<strong>host</strong>; elle vaut <strong>1</strong> si l'événement a été acquitté par l'<strong>host</strong>, <strong>0</strong> sinon</p>
+</li>
+<li>
+<h3 id="cps_alerts_not_ack">cps_alerts_not_ack</h3>
+<p>Cette métrique indique si l'événement n'a pas été acquitté; elle vaut <strong>1</strong> si l'événement n'a pas encore été acquitté, <strong>0</strong> sinon.</p>
+</li>
+<li>
+<h3 id="ack_delay">ack_delay</h3>
+<p>Cette métrique contient le temps passé ( en secondes ) depuis l'arrivée de l'événement dans le cas où celui-ci n'a pas encore été acquitté</p>
+</li>
+<li>
+<h3 id="ack_solved_delay">ack_solved_delay</h3>
+<p>Cette métrique contient le temps écoulé entre l'arrivée de l'événement et son acquittement, c'est à dire le temps nécessaire à l'acquittement de l'événement. </p>
+</li>
+<li>
+<h3 id="cps_alerts_mass_ack">cps_alerts_mass_ack</h3>
+<p>Cette métrique tient à jour le compteur des alertes qui ne sont pas comptabilisées dûs à des précédents acquittements contenant un commentaire spécifique dont un des commentaires définis par l'utilisateur à déclenché leur exclusion.</p>
+</li>
+</ul>
+<h2 id="2-sla">2. Sla</h2>
+<ul>
+<li>
+<h3 id="cps_pct_by_state_state">cps_pct_by_state_[state] :</h3>
+<p>Cette métrique définit le niveau de criticité de l'événement en fonction de la valeur du statut. Elle se décline de la manière suivante :<br />
+cps_pct_by_state_0 : Ok<br />
+cps_pct_by_state_1 : Warning<br />
+cps_pct_by_state_2 : Critical<br />
+cps_pct_by_state_3 : Unknown </p>
+</li>
+</ul>
+<h2 id="3-alertcounter">3. AlertCounter</h2>
+<p>Les métriques générées par ce moteur sont destinées à incrémenter plusieurs compteurs. Les mots entre crochets indiquent les parties variables du nom de la métrique en fonction des éléments qu'elle comptabilise.<br />
+</p>
+<ul>
+<li>
+<h3 id="cps_sla_slatype-_-slaname-_-last_sla_state">cps_sla_[slatype] _ [slaname] _ [last_sla_state]</h3>
+<p>Cette métrique est incrémentée dans le cas ou le délai d'acquittement du " <strong>S</strong>ervice <strong>L</strong>evel <strong>A</strong>grement " ( ou sla ) est dépassé. Elle comptabilise les sla en fonction de leur type <em>slatype</em> (<strong>ok</strong>,<strong>nok</strong> ou <strong>out</strong> ), du niveau de criticité de l'événement lié <em>slaname</em> ainsi que l'état actuel du sla considéré. Les compteurs considérés sont: <strong>ok</strong> pour les alertes acquitées dans les temps,  <strong>nok</strong> pour les alertes acquitées avec du retard ou <strong>out</strong>, c'est à dire, non acquittées après dépassement du délai de sla.</p>
+</li>
+<li>
+<h3 id="cps_sla_warn_-_crit-_-slatype">cps_sla_warn_ [_crit] _ [slatype]</h3>
+<p>Cette métrique comptabilise les sla en fonction de leur niveau de criticité <em>_crit</em> ( <strong>warn</strong> ou <strong>crit</strong> ) et de leur type <em>slatype</em> ( <strong>ok</strong>,<strong>nok</strong> ou <strong>out</strong> )  et se décline de la manière suivante :<br />
+cps_sla_warn_ok<br />
+cps_sla_warn_nok<br />
+cps_sla_warn_out<br />
+cps_sla_crit_ok<br />
+cps_sla_crit_nok<br />
+cps_sla_crit_out <br />
+</p>
+</li>
+<li>
+<h3 id="cps_statechange">cps_statechange :</h3>
+<p>Ce compteur comptabilise tous les changements d'état. </p>
+</li>
+<li>
+<h3 id="cps_statechange_nok">cps_statechange_nok</h3>
+<p>Ce compteur est incrémenté lorsque le statut ( <em>state</em> ) de l'événement n'est pas ok ( niveau d'alerte <em>warning</em>, <em>critical</em> ou <em>unknown</em> )</p>
+</li>
+<li>
+<h3 id="cps_statechange_cstate">cps_statechange_[cstate]</h3>
+<p>Ce compteur comptabilise les changement d'état en fonction de la valeur du nouveau statut ( <em>state</em> ) de l'événement correspondant ( 0,1,2 ou 3 correspondant aux niveaux d'alerte ok, warning, critical ou unknown ). Il se décline de la manière suivante :<br />
+cps_statechange_0<br />
+cps_statechange_1<br />
+cps_statechange_2<br />
+cps_statechange_3<br />
+</p>
+</li>
+<li>
+<h3 id="cps_statechange_cstate_type">cps_statechange_[cstate_type]</h3>
+<p>Cette métrique comptabilise les événements en fonction du niveau d'urgence de la prise en charge :<br />
+cps_statechange_soft : on l'incrémente si le niveau d'urgence est bas.<br />
+cps_statechange_hard : on l'incrémente si le niveau d'urgence de prise en charge de l'événement est fort</p>
+</li>
+<li>
+<h3 id="cps_statechange_cevtype">cps_statechange_[cevtype]</h3>
+<p>Cette métrique prend en compte le type de la source ayant émis l'événement considéré ( paramètre <em>source_type</em> ). Il se décline de la manière suivante :<br />
+</p>
+<ul>
+<li>
+<p>cps_statechange_component : incrémenté si l'événement est émis par un composant, </p>
+</li>
+<li>
+<p>cps_statechange_resource : incrémenté si l'émetteur de l'événement est une ressource, </p>
+</li>
+<li>
+<p>cps_statechange_resource_by_component : incrémenté si l'événement signale un problème au niveau du composant et que l'émetteur est une ressource</p>
+</li>
+</ul>
+</li>
+<li>
+<h3 id="cps_alerts_not_ack_1">cps_alerts_not_ack :</h3>
+<p>Ce compteur comptabilise les événements non acquittés.</p>
+</li>
+<li>
+<h3 id="cps_alerts_ack_1">cps_alerts_ack</h3>
+<p>Cette métrique comptabilise les événements acquittés.</p>
+</li>
+<li>
+<h3 id="cps_alerts_ack_by_host_1">cps_alerts_ack_by_host</h3>
+<p>Ce compteur comptabilise les événements acquittés par l'<strong>host</strong>.</p>
+</li>
+</ul>
+<h2 id="4-consolidation">4. Consolidation :</h2>
+<p>Le moteur de calcul Consolidation renvoie un événement ayant comme métrique la méthode mathématique utilisée pour effectuer la consolidation. Cette métrique peut prendre les valeurs suivantes : <strong>mean</strong> ou <strong>average</strong>, <strong>min</strong>, <strong>max</strong>, <strong>sum</strong>, <strong>delta</strong>, <strong>last</strong> .</p>
+<h2 id="5-event_filter">5. Event_filter :</h2>
+<p>Les métriques générées dans ce moteur sont des compteurs.</p>
+<ul>
+<li>
+<h3 id="pass_event">pass_event :</h3>
+<p>Ce compteur comptabilise le nombre d'événements qui passent dans les filtres d'inclusion . </p>
+</li>
+<li>
+<h3 id="drop_event">drop_event :</h3>
+<p>Ce compteur comptabilise le nombre d'événements non compris dans les filtres d'exclusion.</p>
+</li>
+</ul>
+<h2 id="6-perfstore2">6. Perfstore2</h2>
+<ul>
+<li>
+<h3 id="cps_state">cps_state :</h3>
+<p>Coefficient combinant 3 informations sur le statut de l'événement :<br />
+<em>state</em>, <em>state_type</em> et <em>state_extra</em></p>
+</li>
+</ul>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>

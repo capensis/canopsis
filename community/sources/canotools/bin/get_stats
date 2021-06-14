@@ -1,0 +1,271 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# --------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+import sys
+import os
+import getopt
+import traceback
+import time
+import requests
+
+try:
+    import json
+except:
+    import simplejson as json
+
+
+def usage():
+    print(" Usage: get_stats")
+    print
+    print(" Get statistics from an event.")
+    print
+    print(" Options:")
+    print("  -s, --server=SERVER_ADDR")
+    print("     webserver address (default : localhost:8082)")
+    print("  -a, --authkey=AUTHKEY")
+    print("  -f, --file=FILE_PATH")
+    print("     file contraining an event mongo filter")
+    print("  -j, --json=JSON")
+    print("     a json string containing a correct event mongo filter")
+    print("  -c, --component=COMPONENT_NAME")
+    print("     component name")
+    print("  -r, --resource=RESOURCE_NAME")
+    print("     resource name")
+    print("  -m, --metrics=METRIC_NAME")
+    print("     metric names")
+    print("  -b, --from=FROM")
+    print("     beginning of measures in seconds from now")
+    print("  -e, --to=TO")
+    print("     end of measures in seconds from now")
+    print("  -t, --timezone=TIMEZONE")
+    print("     timezone")
+    print("  -o, --format")
+    print("     output format. Values are json (default) or csv with ',' \
+separation characters")
+    print("  -h, --help")
+    print("     show help")
+    print
+    print(" Example of mongo filters:")
+    print(" {\"co\": \"component_name\", \"re\": \"resource_name\"}")
+
+
+def main(argv):
+    try:
+        opts, args = getopt.getopt(
+            sys.argv[1:],
+            "s:a:f:j:c:r:m:b:e:t:o:h",
+            ["server=", "authkey=", "file=", "json=", "component=",
+                "resource=", "metrics=", "from=", "to=", "timezone=",
+                "format=", "help"])
+
+    except getopt.GetoptError as err:
+        print(err)
+        usage()
+        sys.exit(2)
+
+    if len(opts) < 1:
+        usage()
+        sys.exit()
+
+    #---------------------------option processing----------------------
+    authkey = None
+    server = 'localhost:8082'
+    file_path = None
+    json_string = None
+    component = None
+    resource = None
+    metrics = None
+    _from = 0
+    to = 0
+    timezone = time.timezone
+    now = int(time.time())
+    format = "json"
+
+    for opt, arg in opts:
+        if opt in ('-h', '--help'):
+            usage()
+            sys.exit()
+        elif opt in ('--server', '-s'):
+            server = arg
+        elif opt in ('--authkey', '-a'):
+            authkey = arg
+        elif opt in ('--file', '-f'):
+            _, file_extension = os.path.splitext(arg)
+            file_path = arg
+        elif opt in ('--json', '-j'):
+            try:
+                json_string = json.loads(arg)
+            except Exception as e:
+                print('Bad json string', e)
+                sys.exit()
+        elif opt in ('--component', '-c'):
+            component = arg
+        elif opt in ('--resource', '-r'):
+            resource = arg
+        elif opt in ('--metric', '-m'):
+            metrics = arg
+        elif opt in ('--from', '-b'):
+            _from = int(arg)
+        elif opt in ('--to', '-e'):
+            to = int(arg)
+        elif opt in ('--timezone', '-t'):
+            timezone = int(arg)
+        elif opt in ('--format', '-o'):
+            format = arg
+
+    #--------------------------- authenticate ---------------------------
+    if not authkey:
+        print('You must provide an authkey to access the webserver.\n \
+            You can generate it from the Canopsis Web UI.')
+        usage()
+        sys.exit()
+
+    server_url = 'http://%s' % server
+
+    s = requests.Session()
+
+    s.get('%s/autoLogin/%s' % (server_url, authkey))
+    r = s.get('%s/account/me' % server_url)
+
+    try:
+        response = r.json()
+        #response = json.loads(r.read())
+    except Exception as err:
+        print('Error: Bad response from server %s' % err)
+        sys.exit()
+
+    if not response['success']:
+        print('Error: The provided authkey does not match any existing user')
+        sys.exit()
+
+    #-------------------------- find event source -----------------------
+    event_filter = {}
+
+    if json_string:
+        event_filter = json_string
+
+    elif file_path:
+        if file_extension != '.json':
+            print('Error: Invalid file format (Must be .json)')
+            sys.exit()
+
+        if not os.path.exists(file_path):
+            print('Error: File not found (%s)' % file_path)
+            sys.exit()
+
+        #------------------ read file -------------------
+        try:
+            event_filter = \
+                json.loads(open(file_path, "r").read().decode('utf-8-sig'))
+        except Exception as err:
+            print('Invalid json file: %s' % err)
+            sys.exit()
+
+    #check if input stream
+    elif not sys.stdin.isatty():
+        try:
+            event_filter = json.loads(sys.stdin.read())
+        except:
+            print('Error: Invalid json stream')
+            sys.exit()
+
+    if component:
+        event_filter['co'] = component
+
+    if resource:
+        event_filter['re'] = resource
+
+    if metrics:
+        event_filter = {'$and': [event_filter, {'me': {'$in': metrics}}]}
+
+    #---------------------------- prepare filter --------------------------
+    if not event_filter:
+        print('Error: No json media found, you must provide \
+            file/stream/command')
+        sys.exit()
+
+    #---------------------------- get events ------------------------------
+
+    event_filter = {'filter': json.dumps(event_filter)}
+
+    server_url = 'http://%s' % server
+
+    full_url = '%s/perfstore' % (server_url)
+
+    response = s.get(url=full_url, params=event_filter)
+
+    events = response.json()['data']
+
+    params = {'timezone': timezone}
+
+    perfstore_url = '%s/perfstore/values' % server_url
+    if _from != 0:
+        _from = now - _from
+        to = now - to
+        perfstore_url += '/%s/%s' % (_from, to)
+
+    event_ids = [{'id': event['_id']} for event in events]
+
+    params['nodes'] = json.dumps(event_ids)
+
+    response = s.post(url=perfstore_url, data=params)
+
+    result = response.json()['data']
+
+    if format == 'json':
+        display_json(result)
+    elif format == 'csv':
+        display_csv(result)
+    else:
+        raise Exception("undefined format %s" % format)
+
+def display_json(data):
+    print(data)
+
+
+def display_csv(data):
+    for d in data:
+        print('properties:' + reduce(
+            lambda x, y: x + y,
+            [',%s' % key for key in d.keys() if key != 'values']))
+        print('values:' + reduce(
+            lambda x, y: x + y,
+            [',%s' % value for value in d.values()
+                if not isinstance(value, list)]))
+        values = d['values']
+        print('timestamps', reduce(
+            lambda x, y: x + y,
+            [',%s' % point[0] for point in values]))
+        print('date', reduce(
+            lambda x, y: x + y,
+            [',%s' % time.ctime(point[0]) for point in values]))
+        print('value:', reduce(
+            lambda x, y: x + y,
+            [',%s' % point[1] for point in values]))
+        print
+
+if __name__ == "__main__":
+    try:
+        main(sys.argv[1:])
+    except Exception as err:
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(1)

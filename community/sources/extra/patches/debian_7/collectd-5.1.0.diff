@@ -1,0 +1,55 @@
+--- externals/collectd-5.1.0/src/netlink.c	2012-04-02 10:04:58.000000000 +0200
++++ externals/collectd-5.1.0/src/netlink.c.new	2014-07-07 15:21:59.180985921 +0200
+@@ -570,8 +570,7 @@
+     return (-1);
+   }
+ 
+-  if (rtnl_dump_filter (&rth, link_filter, /* arg1 = */ NULL,
+-	NULL, NULL) != 0)
++  if (rtnl_dump_filter (&rth, link_filter, /* arg1 = */ NULL) != 0)
+   {
+     ERROR ("netlink plugin: ir_read: rtnl_dump_filter failed.");
+     return (-1);
+@@ -608,8 +607,7 @@
+ 	continue;
+       }
+ 
+-      if (rtnl_dump_filter (&rth, qos_filter, (void *) &ifindex,
+-	    NULL, NULL) != 0)
++      if (rtnl_dump_filter (&rth, qos_filter, (void *) &ifindex) != 0)
+       {
+ 	ERROR ("netlink plugin: ir_read: rtnl_dump_filter failed.");
+ 	continue;
+--- externals/collectd-5.1.0/src/Makefile.am	2012-04-02 10:04:58.000000000 +0200
++++ externals/collectd-5.1.0/src/Makefile.am.new	2014-07-07 15:21:30.700985159 +0200
+@@ -4,7 +4,7 @@
+ endif
+ 
+ if COMPILER_IS_GCC
+-AM_CFLAGS = -Wall -Werror
++AM_CFLAGS = -Wall
+ endif
+ 
+ AM_CPPFLAGS = -DPREFIX='"${prefix}"'
+--- externals/collectd-5.1.0/src/Makefile.in	2012-04-02 10:05:30.000000000 +0200
++++ externals/collectd-5.1.0/src/Makefile.in.new	2014-07-07 15:21:20.196984877 +0200
+@@ -2007,7 +2007,7 @@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ SUBDIRS = libcollectdclient $(am__append_1)
+-@COMPILER_IS_GCC_TRUE@AM_CFLAGS = -Wall -Werror
++@COMPILER_IS_GCC_TRUE@AM_CFLAGS = -Wall
+ AM_CPPFLAGS = -DPREFIX='"${prefix}"' \
+ 	-DCONFIGFILE='"${sysconfdir}/${PACKAGE_NAME}.conf"' \
+ 	-DLOCALSTATEDIR='"${localstatedir}"' \
+--- externals/collectd-5.1.0/src/collectd.c	2012-04-02 10:04:58.000000000 +0200
++++ externals/collectd-5.1.0/src/collectd.c.new	2014-07-07 15:21:00.908984361 +0200
+@@ -302,7 +302,7 @@
+ #endif
+ 
+ #if HAVE_LIBSTATGRAB
+-	if (sg_init ())
++	if (sg_init (1))
+ 	{
+ 		ERROR ("sg_init: %s", sg_str_error (sg_get_error ()));
+ 		return (-1);

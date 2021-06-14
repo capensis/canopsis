@@ -1,0 +1,11 @@
+{
+	"id": "resources",
+	"name": "Resources",
+	"items": {
+		"xtype": "list",
+		"show_tags": true,
+		"fitler_buttons": true,
+		"filter": "{\"$and\": [{\"source_type\":\"resource\"}, {\"event_type\": {\"$ne\": \"comment\"}}, {\"event_type\": {\"$ne\": \"user\"}}]}"
+	},
+	"internal": true
+}

@@ -1,0 +1,8 @@
+{
+     "id": "comments",
+     "name": "Comments",
+     "items": {
+          "xtype": "CommentsGrid"
+     },
+     "internal": true
+}

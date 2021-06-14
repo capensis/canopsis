@@ -1,0 +1,34 @@
+NAME="redis"
+
+FCHECK=$PREFIX/bin/redis-server
+
+BASE="redis-$VERSION"
+LOG="$LOG_PATH/$NAME.log"
+rm -f $LOG &> /dev/null
+
+function build(){
+	cd $SRC_PATH/externals
+	
+	if [ ! -e $BASE ]; then
+		extract_archive "$BASE.tar.gz"
+	fi
+	cd $BASE
+
+	echo " + Clean ..."
+	make clean 1>> $LOG 2>> $LOG
+
+	echo " + Build ..."
+	make 1>> $LOG 2>> $LOG
+	check_code $?
+}
+
+function install(){
+	cd $SRC_PATH/externals/$BASE
+	
+	cp src/redis-benchmark $PREFIX/bin/	
+	cp src/redis-cli $PREFIX/bin/	
+	cp src/redis-sentinel $PREFIX/bin/	
+	cp src/redis-server $PREFIX/bin/	
+	cp src/redis-check-aof $PREFIX/bin/	
+	cp src/redis-check-dump $PREFIX/bin/	
+}

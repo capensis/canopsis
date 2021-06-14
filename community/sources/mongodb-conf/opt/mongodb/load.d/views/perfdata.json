@@ -1,0 +1,8 @@
+{
+     "id": "perfdata",
+     "name": "Perfdata",
+     "items": {
+          "xtype": "PerfdataGrid"
+     },
+     "internal": true
+}

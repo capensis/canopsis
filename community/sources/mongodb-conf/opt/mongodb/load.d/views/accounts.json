@@ -1,0 +1,8 @@
+{
+	"id": "account_manager",
+	"name": "Accounts",
+	"items": {
+		"xtype": "AccountGrid"
+	},
+	"internal": true
+}

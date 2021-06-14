@@ -1,0 +1,10 @@
+i686
+x86_64
+noarch
+canopsis_installer*
+build.info
+common.sh
+.repo_root
+Packages.json
+Packages.list
+stable

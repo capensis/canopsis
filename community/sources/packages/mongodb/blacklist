@@ -1,0 +1,3 @@
+/var/lib/mongodb/*
+/var/log/mongodb/*
+/.python-eggs

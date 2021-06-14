@@ -1,0 +1,25 @@
+Tango Materia Icon Theme (0.0.6)
+-----------------------------------------------------------
+
+A. Introduction
+----------------
+This is an unofficial tarball of the Tango Icon Theme.
+
+B. FAQ
+----------------
+1. What is the Tango Desktop Project?
+The Tango Desktop Project exists to create a consistent user experience 
+for free and Open Source software with graphical user interfaces. 
+
+While the look and feel of an application is determined by many components 
+the initial work has been done on unifying the look of the individual icon sets.
+
+Tango defines a standard icon style guidelines document that applications and 
+desktop enviroments can adhere to. Work has started on creating a new base icon
+theme based on a standard icon naming specification. In addition, we provide 
+transition utilities to create icon themes for existing GNOME and KDE desktops. 
+ 
+To more information, please go to http://tango-project.org/
+
+2. For more information about Tango Materia Icon Theme, 
+please visit http://materia.infinitiv.it/

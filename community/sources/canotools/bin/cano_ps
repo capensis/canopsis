@@ -1,0 +1,13 @@
+#!/usr/bin/env python2.7
+
+import psutil
+
+processes = [proc for proc in psutil.process_iter() if proc.username == "canopsis"]
+
+for proc in processes:
+	print "[%s] CPU: %.2f%%, MEM: %.2f%%, Command: %s" % (
+		proc.name,
+		proc.get_cpu_percent(),
+		proc.get_memory_percent(),
+		' '.join(proc.cmdline)
+	)

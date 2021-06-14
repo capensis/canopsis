@@ -1,0 +1,8 @@
+{
+     "id": "consolidation_manager",
+     "name": "Consolidation",
+     "items": {
+          "xtype": "ConsolidationGrid"
+     },
+     "internal": true
+}

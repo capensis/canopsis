@@ -1,0 +1,8 @@
+{
+     "id": "sla",
+     "name": "sla",
+     "items": {
+          "xtype": "SLACritGrid"
+     },
+     "internal": true
+}

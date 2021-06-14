@@ -1,0 +1,8 @@
+{
+     "id": "briefcase",
+     "name": "Briefcase",
+     "items": {
+          "xtype": "BriefcaseGrid"
+     },
+     "internal": true
+}

@@ -1,0 +1,9 @@
+NAME="canolibs"
+
+function build(){
+	true
+}
+
+function install(){
+	install_basic_source $NAME
+}

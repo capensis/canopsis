@@ -1,0 +1,24 @@
+[{
+	"name": "Scheduler",
+	"version": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype": "scheduler",
+	"description": "Monitor scheduled tasks.",
+	"description-fr": "Surveillance de tâches ordonnancées",
+	"refreshInterval": 300,
+	"border": false,
+	"locales": ["fr"],
+	"options": [{
+		"title": "Inventory",
+		"advanced": false,
+		"items": [{
+			"xtype": "cinventory",
+			"name": "inventory",
+			"multiSelect": false,
+			"base_filter": {
+				"event_type": "scheduledcheck"
+			}
+		}]
+	}]
+}]

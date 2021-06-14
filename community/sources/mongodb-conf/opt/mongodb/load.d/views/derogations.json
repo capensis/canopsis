@@ -1,0 +1,8 @@
+{
+     "id": "derogation_manager",
+     "name": "Derogations",
+     "items": {
+          "xtype": "DerogationGrid"
+     },
+     "internal": true
+}

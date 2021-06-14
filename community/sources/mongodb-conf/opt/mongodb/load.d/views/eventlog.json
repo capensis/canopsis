@@ -1,0 +1,8 @@
+{
+     "id": "eventLog_navigation",
+     "name": "Events log navigation",
+     "items": {
+          "xtype": "EventLog"
+     },
+     "internal": true
+}

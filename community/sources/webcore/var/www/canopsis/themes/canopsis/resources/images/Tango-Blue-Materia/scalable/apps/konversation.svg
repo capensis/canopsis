@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="48px"
+   height="48px"
+   id="svg1306"
+   sodipodi:version="0.32"
+   inkscape:version="0.43"
+   sodipodi:docbase="/home/andreas/projekt/tango"
+   sodipodi:docname="konversation.svg">
+  <defs
+     id="defs1308">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient2189">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop2191" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop2193" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient2097">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1.0000000"
+         offset="0"
+         id="stop2099" />
+      <stop
+         style="stop-color:#e7e7e3;stop-opacity:1.0000000"
+         offset="1"
+         id="stop2101" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2097"
+       id="radialGradient2103"
+       cx="16.981855"
+       cy="15.445013"
+       fx="16.981855"
+       fy="15.445013"
+       r="20.978409"
+       gradientTransform="matrix(1.506310,4.232823e-3,-3.006144e-3,1.069777,-7.834295,-0.459221)"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2189"
+       id="radialGradient2195"
+       cx="25.304846"
+       cy="44.051216"
+       fx="25.304846"
+       fy="44.051216"
+       r="21.535715"
+       gradientTransform="matrix(0.928681,-4.115381e-13,1.51762e-17,0.102029,1.804722,37.76401)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="9.8994949"
+     inkscape:cx="36.049754"
+     inkscape:cy="27.417916"
+     inkscape:current-layer="g3466"
+     showgrid="false"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     fill="#3465a4"
+     stroke="#888a85"
+     inkscape:window-width="1270"
+     inkscape:window-height="945"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     showguides="true"
+     inkscape:guide-bbox="true" />
+  <metadata
+     id="metadata1311">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Konversation application icon</dc:title>
+        <dc:date>March 2006</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Andreas Nilsson</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:source>http://tango-project.org</dc:source>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>konversation</rdf:li>
+            <rdf:li>chat</rdf:li>
+            <rdf:li>irc</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/GPL/2.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/GPL/2.0/">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Notice" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/ShareAlike" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/SourceCode" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <path
+       style="opacity:1.0000000;fill:url(#radialGradient2103);fill-opacity:1.0;stroke:#888a85;stroke-width:0.95604855;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000"
+       d="M 24.000000,4.5000000 C 12.682540,4.5000000 3.4019565,12.122561 3.5000000,21.500000 C 3.6428571,35.306522 21.074237,40.272257 28.750000,37.968750 C 33.500000,39.526786 34.672008,41.494575 41.636294,41.481182 C 37.600580,38.824932 37.681725,37.204832 37.648985,34.334296 C 41.775215,31.225857 44.499999,26.481404 44.500000,21.500000 C 44.500000,12.122049 35.317461,4.5000002 24.000000,4.5000000 z "
+       id="path2079"
+       sodipodi:nodetypes="cscccsc" />
+    <path
+       style="opacity:1.0000000;fill:none;fill-opacity:1.0000000;stroke:#ffffff;stroke-width:0.95625000;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000"
+       d="M 23.994662,5.4547703 C 13.207968,5.4547703 4.3626237,12.706539 4.4560691,21.627822 C 4.5922266,34.762740 21.509158,39.183875 28.824944,36.992420 C 32.981790,38.554252 33.336205,39.167206 38.463463,40.162686 C 36.706160,38.110310 36.608173,36.326316 36.594741,33.953563 C 40.527459,30.996331 43.533255,26.366911 43.533256,21.627822 C 43.533256,12.706052 34.781359,5.4547703 23.994662,5.4547703 z "
+       id="path2095"
+       sodipodi:nodetypes="cscccsc" />
+    <g
+       id="g3466"
+       transform="translate(-1.000000,-6.739988e-2)">
+      <path
+         sodipodi:nodetypes="cczzzc"
+         id="path2735"
+         d="M 27.27517,25.629204 C 27.850464,26.475726 29.082357,27.728887 29.556636,28.378536 C 30.732273,27.811001 34.171957,25.149035 34.29573,20.658402 C 34.419503,16.167769 29.984477,10.857755 24.203082,10.857755 C 18.493113,10.857755 14.68934,16.214955 14.68934,21.637822 C 14.68934,27.062039 18.938,31.961711 24.669907,32.289174"
+         style="fill:none;fill-opacity:0.75000000;fill-rule:evenodd;stroke:#3465a4;stroke-width:1.5000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000" />
+      <path
+         style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#3465a4;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 23.642857,14.531686 L 21.071429,26.3174"
+         id="path1322"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#3465a4;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+         d="M 26.357143,19.071429 L 22,20.714286 L 28.75,28.035714"
+         id="path2197"
+         transform="translate(1,6.739988e-2)"
+         sodipodi:nodetypes="ccc" />
+    </g>
+    <path
+       sodipodi:type="arc"
+       style="opacity:0.2;fill:url(#radialGradient2195);fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path1314"
+       sodipodi:cx="24.535715"
+       sodipodi:cy="42"
+       sodipodi:rx="21.535715"
+       sodipodi:ry="2.7142856"
+       d="M 46.07143 42 A 21.535715 2.7142856 0 1 1  3,42 A 21.535715 2.7142856 0 1 1  46.07143 42 z"
+       transform="matrix(0.92869,0,0,1.289475,-0.786071,-10.65794)" />
+  </g>
+</svg>

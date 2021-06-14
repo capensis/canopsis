@@ -1,0 +1,81 @@
+#!/bin/bash
+
+NAME="canolibs"
+VERSION=0.7
+RELEASE=0
+DESCRIPTION=""
+REQUIRES="canohome python python-libs"
+
+NO_ARCH=true
+NO_DIST=true
+NO_DISTVERS=true
+
+function pre_install(){
+	echo "Pre-install $NAME $VERSION-$RELEASE ..."
+	check_code $?
+
+	if [ -e $VARLIB_PATH/rabbitmq-server-conf ]
+	then
+		cp $PREFIX/etc/amqp.conf{,.bak}
+	fi
+
+	if [ -e $VARLIB_PATH/mongodb-conf ]
+	then
+		cp $PREFIX/etc/cstorage.conf{,.bak}
+	fi
+}
+
+function post_install(){
+	echo "Post-install $NAME $VERSION-$RELEASE ..."
+	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
+	chown -R $HUSER:$HGROUP $PREFIX/etc
+	check_code $?
+
+	if [ -e $VARLIB_PATH/rabbitmq-server-conf ]
+	then
+		rabbit_user=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/amqp.conf.bak master userid"`
+		rabbit_pass=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/amqp.conf.bak master password"`
+
+		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/amqp.conf master userid $rabbit_user"
+		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/amqp.conf master password $rabbit_pass"
+
+		rm $PREFIX/etc/amqp.conf.bak
+	fi
+
+	if [ -e $VARLIB_PATH/mongodb-conf ]
+	then
+		mongo_user=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/cstorage.conf.bak master userid"`
+		mongo_pass=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/cstorage.conf.bak master password"`
+
+		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master userid $mongo_user"
+		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master password $mongo_pass"
+
+		rm $PREFIX/etc/cstorage.conf.bak
+	fi
+}
+
+function pre_remove(){
+	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function post_remove(){
+	echo "Post-remove $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function pre_update(){
+	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+	echo " + Clean old unittests"
+	rm -Rf $PREFIX/lib/canolibs/unittest/*
+}
+
+function post_update(){
+	echo "Post-update $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function purge(){
+	echo "Purge $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}

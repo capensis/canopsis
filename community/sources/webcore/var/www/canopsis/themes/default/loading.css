@@ -1,0 +1,38 @@
+/* From Sencha (http://www.sencha.com/products/extjs/examples/) examples */
+
+#loading-mask{
+	background-color:white;
+	height:100%;
+	position:absolute;
+	left:0;
+	top:0;
+	width:100%;
+	z-index:20000;
+}
+
+#loading{
+	height:auto;
+	position:absolute;
+	left:45%;
+	top:40%;
+	padding:2px;
+	z-index:20001;
+}
+
+#loading a {
+	color:#225588;
+}
+
+#loading .loading-indicator{
+	background:white;
+	color:#444;
+	font:bold 13px Helvetica, Arial, sans-serif;
+	height:auto;
+	margin:0;
+	padding:10px;
+}
+
+#loading-msg {
+	font-size: 10px;
+	font-weight: normal;
+}

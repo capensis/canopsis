@@ -1,0 +1,8 @@
+{
+	"id": "selector_manager",
+	"name": "Selectors",
+	"items": {
+		"xtype": "SelectorGrid"
+	},
+	"internal": true
+}

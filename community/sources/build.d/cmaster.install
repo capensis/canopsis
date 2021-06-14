@@ -1,0 +1,9 @@
+NAME="cmaster"
+
+function build(){
+	true
+}
+
+function install(){
+	true
+}

@@ -1,0 +1,10 @@
+NAME="snmp2amqp"
+
+function build(){
+	true
+}
+
+function install(){
+	install_basic_source $NAME
+	install_python_daemon "$PREFIX/opt/$NAME/$NAME.py"
+}

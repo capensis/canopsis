@@ -1,0 +1,12 @@
+{
+	"id": "components",
+	"name": "Components",
+	"items": {
+		"xtype": "list",
+		"show_tags": true,
+		"fitler_buttons": true,
+		"filter": "{\"$and\": [{\"source_type\":\"component\"}, {\"event_type\": {\"$ne\": \"comment\"}}, {\"event_type\": {\"$ne\": \"user\"}}]}",
+		"show_resource": false
+	},
+	"internal": true
+}

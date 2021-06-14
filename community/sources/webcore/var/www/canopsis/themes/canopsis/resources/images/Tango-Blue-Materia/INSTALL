@@ -1,0 +1,14 @@
+Tango Materia Icon Theme
+---------------------------
+
+Just unpack the iconset to ~/.icons or /usr/share/icons
+
+note: "~" means is your home directory, i.e.: /home/<YOU>/.icons
+
+OR
+Easier way is to use GNOME Theme Preferences:
+
+Go to Main Menu > System > Preferences > Theme 
+
+Choose 'Install Theme', locate the tarball and let GNOME do the
+installation process. 

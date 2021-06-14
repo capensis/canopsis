@@ -1,0 +1,83 @@
+#!/bin/bash
+
+NAME="webcore"
+VERSION=0.7
+RELEASE=1
+DESCRIPTION=""
+REQUIRES="canohome python canolibs supervisord-conf wkhtmltopdf-libs nodejs-libs"
+
+NO_ARCH=true
+NO_DIST=true
+NO_DISTVERS=true
+
+function pre_install(){
+	echo "Pre-install $NAME $VERSION-$RELEASE ..."
+	rm -Rf $PREFIX/var/www/canopsis/* &> /dev/null || true
+	check_code $? 
+}
+
+function post_install(){
+	echo "Post-install $NAME $VERSION-$RELEASE ..."
+
+	if [ ! -e $PREFIX/var/www/global_options.js ]; then
+		cp $PREFIX/var/www/canopsis/app/lib/global_options.js $PREFIX/var/www/global_options.js
+		check_code $?
+	fi
+	
+	mkdir -p $PREFIX/var/www/widgets
+
+	echo " + Fix permissions"
+	chown -R $HUSER:$HGROUP $PREFIX/var/www
+	check_code $?
+
+	su - $HUSER -c $PREFIX/bin/webcore_minimizer
+	check_code $? 
+}
+
+function pre_remove(){
+	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
+	service webserver stop || true
+	check_code $?
+}
+
+function post_remove(){
+	echo "Post-remove $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function pre_update(){
+	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+	rm -Rf $PREFIX/var/www/canopsis/* &> /dev/null || true
+
+	# Delete old init script
+	rm $PREFIX/etc/init.d/webserver &> /dev/null || true
+	rm $PREFIX/etc/daemon.d/webserver.conf &> /dev/null || true
+
+	rm $PREFIX/etc/init.d/webserver &> /dev/null || true
+	rm $PREFIX/etc/init.d/websocket &> /dev/null || true
+	
+	check_code $?
+}
+
+function post_update(){
+	echo "Post-update $NAME $VERSION-$RELEASE ..."
+
+	if [ ! -e $PREFIX/var/www/global_options.js ]; then
+		cp $PREFIX/var/www/canopsis/app/lib/global_options.js $PREFIX/var/www/global_options.js
+		check_code $?
+	fi
+
+        if [ ! -e $PREFIX/bin/uglifyjs ]; then
+                ln -s $PREFIX/lib/node_modules/uglify-js/bin/uglifyjs $PREFIX/bin/uglifyjs
+        fi
+	
+	mkdir -p $PREFIX/var/www/widgets
+	
+	$PREFIX/bin/webcore_minimizer
+	check_code $?
+}
+
+function purge(){
+	echo "Purge $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
