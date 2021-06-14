@@ -1,0 +1,51 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": [
+            "id",
+            "type",
+            "info"
+        ]
+    }],
+    "properties": {
+        "crecord_type": {
+            "type": "string",
+            "default": "graphelement",
+            "required": false
+        },
+        "crecord_name": {
+            "type": "string",
+            "default": "",
+            "required": true
+        },
+        "_id": {
+            "type": "string",
+            "required": true
+        },
+        "_cls": {
+            "type": "string",
+            "required": true,
+            "default": "canopsis.graph.elements.GraphElement"
+        },
+        "info": {
+            "type": "object",
+            "role": "json",
+            "default": {},
+            "required": false
+        },
+        "type": {
+            "type": "string",
+            "required": false
+        },
+        "_type": {
+            "type": "string",
+            "required": true
+        },
+        "label": {
+            "type": "string",
+            "required": false,
+            "description": "Short description"
+        }
+    }
+}

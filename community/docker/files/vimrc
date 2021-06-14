@@ -1,0 +1,27 @@
+set number
+set background=dark
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set nobackup
+set smarttab
+set softtabstop=4
+set wildmenu
+set wildmode=longest:list
+set modeline
+set laststatus=2
+set cc=79
+set nolist
+set linebreak
+set formatoptions+=1
+set hlsearch
+set ruler
+set showcmd
+set incsearch
+set nocompatible
+set backspace=indent,eol,start
+filetype plugin indent on
+syntax on
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif

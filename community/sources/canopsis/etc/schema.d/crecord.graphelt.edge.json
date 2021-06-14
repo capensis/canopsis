@@ -1,0 +1,53 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": [
+            "weight",
+            "directed",
+            "type",
+            "info"
+        ]
+    }],
+    "properties": {
+        "crecord_type": {
+            "type": "string",
+            "required": true,
+            "default": "edge"
+        },
+        "_cls": {
+            "default": "canopsis.graph.elements.Edge"
+        },
+        "sources": {
+            "type": "array",
+            "default": [],
+            "items": {
+                "type": "string"
+            },
+            "required": true
+        },
+        "targets": {
+            "type": "array",
+            "default": [],
+            "items": {
+                "type": "string"
+            },
+            "required": true
+        },
+        "_type": {
+            "type": "string",
+            "default": "edge",
+            "required": true
+        },
+        "weight": {
+            "type": "number",
+            "default": 1,
+            "required": true
+        },
+        "directed": {
+            "type": "boolean",
+            "default": true,
+            "required": true
+        }
+    }
+}

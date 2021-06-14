@@ -1,0 +1,19 @@
+[Unit]
+Description=Canopsis APIv2 (Gunicorn)
+After=network.target
+Documentation=https://doc.canopsis.net
+
+[Service]
+User=canopsis
+Group=canopsis
+WorkingDirectory=/opt/canopsis
+Environment=HOME=/opt/canopsis
+Environment=VIRTUAL_ENV=/opt/canopsis
+Environment=PATH=$VIRTUAL_ENV/bin:/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+Environment="LD_LIBRARY_PATH=/opt/rh/python27/root/usr/lib64"
+Restart=on-failure
+Type=simple
+ExecStart=/opt/canopsis/bin/canopsis-oldapi -k gevent -w 1 --limit-request-line 6800 -b 0.0.0.0:8081
+
+[Install]
+WantedBy=multi-user.target

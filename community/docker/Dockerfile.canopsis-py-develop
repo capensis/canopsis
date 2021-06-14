@@ -1,0 +1,77 @@
+FROM debian:9-slim as build
+
+ARG PROXY
+
+ENV CPS_HOME /opt/canopsis
+ENV CPS_USER canopsis
+ENV CPS_GROUP canopsis
+ENV http_proxy ${PROXY}
+ENV https_proxy ${PROXY}
+
+COPY docker/build/build-debian-9.sh /build.sh
+RUN /bin/bash /build.sh
+
+WORKDIR ${CPS_HOME}
+
+### Canopsis Core
+
+#### Venv setup
+COPY docker/build/pip-setup.sh /
+RUN /bin/bash /pip-setup.sh
+
+#### Dependencies
+COPY sources/canopsis/requirements.txt /sources/canopsis/requirements.txt
+COPY docker/build/pip-deps.sh /
+RUN /bin/bash /pip-deps.sh
+
+#### Ansible
+COPY docker/build/pip-ansible.sh /
+RUN /bin/bash /pip-ansible.sh
+
+#### Canopsis only
+COPY sources/canopsis /sources/canopsis
+COPY docker/build/pip-canopsis.sh /
+RUN /bin/bash /pip-canopsis.sh
+RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
+
+### Webcore
+COPY sources/webcore ${CPS_HOME}/var/www/
+
+COPY VERSION.txt /${CPS_HOME}/
+
+WORKDIR ${CPS_HOME}
+
+COPY sources/canopsis/etc ./etc
+COPY sources/canopsis/etc/amqp2engines-python-core.conf.example ./etc/amqp2engines.conf
+COPY sources/db-conf/opt ./opt
+COPY docker/files/sudoers /etc/sudoers.d/canopsis
+COPY docker/files/bashrc .bashrc
+COPY docker/files/bash_profile .bash_profile
+COPY docker/files/etc/ ./etc/
+
+RUN chmod +x /opt/canopsis/.bash_profile
+
+ADD docker/files/entrypoint.sh /
+
+# Do NOT chown the entire CPS_HOME directory:
+#  * Security: the user must not be able to change runtime files.
+#  * Image size: docker is dumb, until --squash is stable.
+RUN \
+    mkdir -p ./etc/init.d var/log/engines var/cache/canopsis tmp && \
+    sed -i -E -e "s@~@${CPS_HOME}@g" ./etc/oldapi.conf && \
+    groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash ${CPS_USER} && \
+    chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
+
+RUN apt-get update && apt-get install sudo -y && \
+    apt-get clean
+
+# Ansible
+COPY deploy-ansible/ ${CPS_HOME}/deploy-ansible
+
+ADD sources/canopsis/canopsis ./lib/python2.7/site-packages/canopsis
+ADD sources/canopsis/test ./lib/python2.7/site-packages/canopsis_test
+
+USER ${CPS_USER}:${CPS_GROUP}
+
+EXPOSE 8081
+ENTRYPOINT /entrypoint.sh

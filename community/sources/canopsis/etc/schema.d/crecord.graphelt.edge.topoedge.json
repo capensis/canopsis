@@ -1,0 +1,22 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": [
+            "weight"
+        ]
+    }],
+    "properties": {
+        "_cls": {
+            "default": "canopsis.topology.elements.TopoEdge"
+        },
+        "type": {
+            "default": "topoedge"
+        },
+        "info": {
+            "default": {
+                "state": 0
+            }
+        }
+    }
+}

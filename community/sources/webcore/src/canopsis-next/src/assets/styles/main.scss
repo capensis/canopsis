@@ -1,0 +1,208 @@
+$seeAlarmBtnHeight: 18px;
+$mobileBreakpoint: 450px;
+
+.v-toolbar--fixed {
+  z-index: 3;
+}
+
+.v-overlay {
+  z-index: 8;
+}
+
+.v-navigation-drawer--is-mobile, .v-navigation-drawer--temporary {
+  z-index: 9;
+}
+
+.v-list {
+  .v-input {
+    &, &__slot {
+      margin-top: 4px;
+    }
+
+    &__slot {
+      margin-bottom: 8px;
+    }
+
+    .v-messages {
+      display: block;
+    }
+  }
+}
+
+.v-tabs__div {
+  max-width: none;
+}
+
+.fab {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 5;
+}
+
+.wf-loading, .wf-inactive {
+  .v-icon {
+    max-width: 24px !important;
+    max-height: 24px !important;
+    overflow: hidden !important;
+  }
+}
+
+.v-window__container--is-active {
+  height: 100% !important;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.validation-header.error--text {
+  animation: shake .6s cubic-bezier(.25,.8,.5,1);
+  transition: .3s cubic-bezier(.25,.8,.5,1);
+}
+
+.draggable {
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.weather__item {
+  min-height: unset !important;
+
+  &.v-card__with-see-alarms-btn {
+    padding-bottom: $seeAlarmBtnHeight;
+
+    .see-alarms-btn {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      font-size: .6em;
+      height: $seeAlarmBtnHeight;
+      color: white;
+      margin: 0;
+      background-color: rgba(0, 0, 0, .2);
+
+      &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
+        background-color: rgba(0, 0, 0, .5);
+      }
+    }
+  }
+
+  .pauseIcon {
+    position: absolute;
+    right: 0;
+    bottom: 1em;
+    cursor: inherit;
+
+    &:hover, &:focus {
+      position: absolute;
+    }
+  }
+
+  .service-name {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2em;
+
+    &, & a {
+      color: white;
+    }
+  }
+
+  .helpBtn {
+    position: absolute;
+    right: 0.2em;
+    top: 0;
+    z-index: 1;
+
+    &:hover, &:focus {
+      position: absolute;
+    }
+  }
+
+  &--background {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 10px;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+}
+
+.pre {
+  white-space: pre;
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
+}
+
+.v-tooltip__content {
+  max-width: 60%;
+
+  @media screen and (max-width: $mobileBreakpoint) {
+    max-width: 80%;
+  }
+}
+
+.operator-chip {
+  background: #a6a6a6;
+  padding: 3px 8px;
+  color: white;
+  border-radius: 5px;
+}
+
+.fill-min-height {
+  min-height: 100vh;
+}
+
+.v-menu__activator {
+  &--disabled {
+    cursor: default !important;
+
+    & * {
+      cursor: default !important;
+    }
+  }
+}
+
+.pre-line {
+  white-space: pre-line !important;
+}
+
+.progress-linear-absolute--top {
+  position: absolute !important;
+  width: 100% !important;
+  margin: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+.group-checkbox {
+  height: 24px;
+  margin: 0;
+  padding: 0;
+}
+
+.c-extra-details {
+  &__badge {
+    padding: 3px 7px;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 10px;
+  }
+
+  &__message {
+    max-width: 600px;
+    white-space: pre-line;
+  }
+}

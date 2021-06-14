@@ -1,0 +1,125 @@
+<template lang="pug">
+  v-select(
+    v-validate="rules",
+    v-field="category",
+    :label="$t('service.fields.category')",
+    :loading="entityCategoriesPending || creating",
+    :readonly="creating",
+    :items="entityCategories",
+    :error-messages="errors.collect(name)",
+    :name="name",
+    :clearable="!required",
+    item-text="name",
+    item-value="_id",
+    return-object,
+    @keydown.enter.prevent="createCategory"
+  )
+    template(v-if="addable", slot="append-item")
+      v-text-field.pb-3.pt-1.px-3(
+        ref="createField",
+        v-model.trim="newCategory",
+        v-validate="'unique-name'",
+        :label="$t('service.fields.createCategory')",
+        :error-messages="errors.collect(newCategoryFieldName)",
+        :name="newCategoryFieldName",
+        hide-details,
+        @keyup.enter="createCategory",
+        @blur="clearCategory"
+      )
+        v-tooltip(slot="append", left)
+          v-icon(slot="activator") help
+          div(v-html="$t('service.fields.createCategoryHelp')")
+</template>
+
+<script>
+import { MAX_LIMIT } from '@/constants';
+
+import formBaseMixin from '@/mixins/form/base';
+import entitiesEntityCategoryMixin from '@/mixins/entities/entity-category';
+
+export default {
+  inject: ['$validator'],
+  mixins: [formBaseMixin, entitiesEntityCategoryMixin],
+  model: {
+    prop: 'category',
+    event: 'input',
+  },
+  props: {
+    category: {
+      type: [Object, String],
+      default: '',
+    },
+    name: {
+      type: String,
+      default: 'category',
+    },
+    addable: {
+      type: Boolean,
+      default: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      newCategory: '',
+      creating: false,
+    };
+  },
+  computed: {
+    newCategoryFieldName() {
+      return `${this.name}.create`;
+    },
+
+    categoriesNames() {
+      return this.entityCategories.map(({ name }) => name.toLowerCase());
+    },
+
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+  },
+  created() {
+    this.$validator.extend('unique-name', {
+      getMessage: () => this.$t('validator.unique'),
+      validate: () => this.newCategory && !this.categoriesNames.includes(this.newCategory.toLowerCase()),
+    });
+  },
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    async createCategory() {
+      this.creating = true;
+
+      const category = await this.createEntityCategory({
+        data: {
+          name: this.newCategory,
+        },
+      });
+
+      await this.fetchList();
+
+      this.creating = false;
+      this.clearCategory();
+
+      return this.updateModel(category);
+    },
+
+    clearCategory() {
+      this.$refs.createField.blur();
+      this.newCategory = '';
+    },
+
+    fetchList() {
+      this.fetchEntityCategoriesList({
+        params: { limit: MAX_LIMIT },
+      });
+    },
+  },
+};
+</script>

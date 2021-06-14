@@ -1,0 +1,156 @@
+{
+  "crecord_name" : "selectors.json",
+  "loader_id": "view.selectors",
+  "loader_no_update": true,
+  "id": "view.selectors",
+  "_id": "view.selectors",
+  "crecord_write_time": 1408625322,
+  "crecord_type": "view",
+  "enable": true,
+  "containerwidget": {
+    "items": [
+      {
+        "widget": {
+          "item_actions": [
+            "actionbutton-edit",
+            "actionbutton-show",
+            "actionbutton-removeselection"
+          ],
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb61",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb61",
+          "title": "Selectors",
+          "itemsPerPage": 5,
+          "filters": [],
+          "mixins": [],
+          "default_filter": null,
+          "cloaking": false,
+          "listed_crecord_type": "selector",
+          "selection_toolbar": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
+          ],
+          "mixins": [
+            { "name" : "sortablearray" },
+            { "name" : "arraysearch" },
+            { "name" : "pagination" },
+            { "name" : "crud" }
+          ],
+          "displayed_columns": [
+            "display_name",
+            "description",
+            "dostate",
+            "exclude_ids",
+            "include_ids",
+            "mfilter",
+            "downtimes_as_ok"
+          ],
+          "actions_toolbar": [
+            "actionbutton-removeselection"
+          ],
+          "xtype": "list"
+        },
+        "xtype": "widgetwrapper",
+        "title": "wrapper"
+      },
+      {
+        "widget" : {
+          "tagName" : null,
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb50",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb50",
+          "refreshableWidget" : true,
+          "item_actions" : [ ],
+          "title" : "Computed selectors",
+          "maximized_column_index" : null,
+          "itemsPerPage" : 10,
+          "mixins" : [ ],
+          "cssClass" : null,
+          "cloaking" : false,
+          "filters" : [ ],
+          "selection_toolbar" : [ ],
+          "displayed_columns" : [
+            "component",
+            "resource",
+            "ack",
+            "output",
+            "state",
+            "status",
+            "timestamp"
+          ],
+          "mixins": [
+            { "name": "sortablearray" },
+            { "name": "arraysearch" },
+            { "name": "pagination" },
+            {
+              "name": "customfilterlist",
+              "filters" : [],
+              "default_filter" : "{\"$or\":[{\"event_type\":{\"$eq\":\"selector\"}}]}"
+            },
+            { "name": "history" },
+            { "name": "infobutton" },
+            { "name": "responsivelist" }
+          ],
+          "listed_crecord_type" : "event",
+          "actions_toolbar" : [ ],
+          "refreshInterval" : 30,
+          "contentTruncatedLength" : null,
+          "xtype" : "list"
+        },
+        "xtype" : "widgetwrapper",
+        "title" : "wrapper"
+      },
+      {
+        "widget" : {
+          "tagName" : null,
+          "id" : "item_13019673-ebdf-6271-e595-6be7338cbc50",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338cbc50",
+          "refreshableWidget" : true,
+          "item_actions" : [ ],
+          "title" : "Computed sla",
+          "maximized_column_index" : null,
+          "itemsPerPage" : 10,
+          "mixins" : [ ],
+          "cssClass" : null,
+          "cloaking" : false,
+          "filters" : [ ],
+          "selection_toolbar" : [ ],
+          "displayed_columns" : [
+            "component",
+            "resource",
+            "output",
+            "state",
+            "status",
+            "timestamp"
+          ],
+          "mixins": [
+            { "name": "sortablearray" },
+            { "name": "arraysearch" },
+            { "name": "pagination" },
+            {
+              "name": "customfilterlist",
+              "filters" : [],
+              "default_filter" : "{\"$or\":[{\"resource\":{\"$eq\":\"sla\"}}]}"
+            },
+            { "name": "history" },
+            { "name": "infobutton" },
+            { "name": "responsivelist" }
+          ],
+          "listed_crecord_type" : "event",
+          "actions_toolbar" : [ ],
+          "refreshInterval" : 30,
+          "contentTruncatedLength" : null,
+          "xtype" : "list"
+        },
+        "xtype" : "widgetwrapper",
+        "title" : "wrapper"
+      }
+    ],
+    "widgetslotTemplate": null,
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
+    ],
+    "title": "container title vbox"
+  }
+}

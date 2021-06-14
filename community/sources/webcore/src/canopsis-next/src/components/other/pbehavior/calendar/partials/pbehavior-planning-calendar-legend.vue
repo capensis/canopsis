@@ -1,0 +1,54 @@
+<template lang="pug">
+  v-menu(
+    :max-width="500",
+    :nudge-width="500",
+    :close-on-content-click="false",
+    origin="left",
+    left,
+    offset-x,
+    offset-overflow
+  )
+    v-tooltip(slot="activator", top)
+      v-btn(slot="activator", icon)
+        v-icon info
+      div {{ $t('calendar.pbehaviorPlanningLegend.title') }}
+    v-card
+      v-card-text
+        template(v-if="exceptionTypes.length")
+          div.my-1(v-for="type in exceptionTypes", :key="type._id")
+            div.body-1(:style="getStyleForType(type)")
+              v-icon.px-1(color="white", small) {{ type.icon_name }}
+              strong.ds-ev-title {{ type.name }}
+        span.subheading(v-else) {{ $t('calendar.pbehaviorPlanningLegend.noData') }}
+</template>
+
+<script>
+import tinycolor from 'tinycolor2';
+
+import { getMostReadableTextColor } from '@/helpers/color';
+
+export default {
+  props: {
+    exceptionTypes: {
+      type: Array,
+      default: () => [],
+    },
+    colorsToTypes: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  methods: {
+    getStyleForType(type = {}) {
+      const backgroundColor = type.color
+        || this.colorsToTypes[type._id]
+        || tinycolor.random().toHexString();
+
+      return {
+        backgroundColor,
+        color: getMostReadableTextColor(backgroundColor, { level: 'AA', size: 'large' }),
+      };
+    },
+  },
+};
+</script>

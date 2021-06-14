@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "properties": {
+        "type": {"enum": ["resource"], "required": true},
+        "servicegroups": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "component": {"type": "string", "required": true}
+    }
+}

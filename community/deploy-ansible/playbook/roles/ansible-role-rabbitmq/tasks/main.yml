@@ -1,0 +1,15 @@
+---
+- name: Ensure erlang is installed.
+  package:
+    name: erlang
+    state: present
+
+# Setup/install tasks.
+- include_tasks: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- name: Ensure rabbitmq is started and enabled (if configured).
+  systemd:
+    name: "{{ rabbitmq_daemon }}"
+    state: "{{ rabbitmq_state }}"
+    enabled: "{{ rabbitmq_enabled }}"

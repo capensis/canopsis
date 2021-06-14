@@ -1,0 +1,24 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys":["eventcategories","output","dtstart","dtend"]
+    }],
+    "properties": {
+        "crecord_type": {
+            "enum": ["calendardata"],
+            "required": true
+        },
+        "eventcategories": {
+            "type": "string",
+            "required": true,
+            "role": "eventcategories",
+            "description": "Event category"
+        },
+        "output": {
+            "type": "string",
+            "required": true,
+            "description": "Event description"
+        }
+    }
+}

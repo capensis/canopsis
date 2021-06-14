@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  remote_user: root
+  vars:
+    influxdb_database_name: test
+    influxdb_username: test
+    influxdb_password: test
+    influxdb_ip_address: 127.0.0.1
+  roles:
+    - ansible-influxdb

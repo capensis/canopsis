@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<p:profile xmlns:p="profile:1.0">
+ <p:name>jbb</p:name>
+ <p:age>20</p:age>
+</p:profile>

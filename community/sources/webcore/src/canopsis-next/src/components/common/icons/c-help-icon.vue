@@ -1,0 +1,48 @@
+<template lang="pug">
+  v-tooltip(:max-width="maxWidth", :top="top", :right="right", :bottom="bottom", :left="left")
+    v-icon(slot="activator", :color="color", :size="size") {{ icon }}
+    div(v-html="text")
+</template>
+
+<script>
+export default {
+  props: {
+    icon: {
+      type: String,
+      default: 'help_outline',
+    },
+    color: {
+      type: String,
+      default: 'info',
+    },
+    text: {
+      type: String,
+      required: true,
+    },
+    maxWidth: {
+      type: [String, Number],
+      required: false,
+    },
+    top: {
+      type: Boolean,
+      required: false,
+    },
+    right: {
+      type: Boolean,
+      required: false,
+    },
+    bottom: {
+      type: Boolean,
+      required: false,
+    },
+    left: {
+      type: Boolean,
+      required: false,
+    },
+    size: {
+      type: String,
+      required: false,
+    },
+  },
+};
+</script>

@@ -1,0 +1,42 @@
+{
+  "_id": "cservice.frontend",
+  "list_info_button_pattern": "http://localhost:8082/#/userview/view.current_alarms",
+  "loader_id": "cservice.frontend",
+  "enable": false,
+  "login_footer": "Canopsis by Capensis",
+  "crecord_write_time": 1521019551,
+  "cfilter_allow_only_optimized_filters": true,
+  "debug_mode": true,
+  "safe_mode": true,
+  "id": "cservice.frontend",
+  "crecord_name": "frontend",
+  "loader_no_update": true,
+  "title": "Canopsis",
+  "editors": {
+    "behaviors": "string",
+    "filter": "querybuilder",
+    "mfilter": "querybuilder",
+    "cfilter": "querybuilder"
+  },
+  "crecord_type": "",
+  "keybindings": [
+    {
+      "value": "toggleEditMode",
+      "label": "ctrl+e"
+    },
+    {
+      "value": "toggleFullscreen",
+      "label": "ctrl+y"
+    },
+    {
+      "value": "refresh",
+      "label": "ctrl+r"
+    },
+    {
+      "value": "toggleDevTools",
+      "label": "²"
+    }
+  ],
+  "defaultview": "view.current_alarms",
+  "crecord_creation_time": 0
+}

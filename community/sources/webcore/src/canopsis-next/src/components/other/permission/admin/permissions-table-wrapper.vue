@@ -1,0 +1,90 @@
+<template lang="pug">
+  div.pa-3.permissions-table-wrapper
+    permissions-groups-table(
+      v-if="isGroup",
+      :groups="permissions",
+      :roles="roles",
+      :changed-roles="changedRoles",
+      :disabled="disabled",
+      @change="$listeners.change"
+    )
+    permissions-table(
+      v-else,
+      :permissions="permissions",
+      :roles="roles",
+      :changedRoles="changedRoles",
+      :disabled="disabled",
+      @change="$listeners.change"
+    )
+</template>
+
+<script>
+import PermissionsTable from './permissions-table.vue';
+import PermissionsGroupsTable from './permissions-groups-table.vue';
+
+export default {
+  components: {
+    PermissionsTable,
+    PermissionsGroupsTable,
+  },
+  props: {
+    permissions: {
+      type: Array,
+      required: true,
+    },
+    roles: {
+      type: Array,
+      required: true,
+    },
+    changedRoles: {
+      type: Object,
+      required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    isGroup() {
+      return this.permissions.length && this.permissions[0].permissions;
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+  $checkboxCellWidth: 112px;
+  $cellPadding: 8px 8px;
+
+  .permissions-table-wrapper /deep/ {
+    .v-table__overflow {
+      background: black;
+      overflow: visible;
+
+      td, th {
+        padding: $cellPadding;
+
+        &:not(:first-child) {
+          width: $checkboxCellWidth;
+        }
+      }
+
+      th {
+        transition: none;
+        position: sticky;
+        top: 48px;
+        background: white;
+        z-index: 1;
+      }
+
+      .v-datatable__expand-content .v-table {
+        background: #f3f3f3;
+      }
+    }
+
+    .v-expansion-panel__body {
+      overflow: auto;
+    }
+  }
+</style>

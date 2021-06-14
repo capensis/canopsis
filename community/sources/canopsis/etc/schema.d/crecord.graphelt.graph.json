@@ -1,0 +1,40 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": [
+            "id",
+            "type",
+            "info"
+        ]
+    }],
+    "properties": {
+        "crecord_type": {
+            "type": "string",
+            "default": "graph",
+            "required": false
+        },
+        "_cls": {
+            "default": "canopsis.graph.elements.Graph"
+        },
+        "type": {
+            "default": "graph",
+            "type": "string",
+            "required": false
+        },
+        "_type": {
+            "default": "graph"
+        },
+        "elts": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "required": true
+        },
+        "_delts": {
+            "type": "object",
+            "required": false
+        }
+    }
+}

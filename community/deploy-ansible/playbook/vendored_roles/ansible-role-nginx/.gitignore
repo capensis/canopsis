@@ -1,0 +1,7 @@
+# Any private crt and keys #
+############################
+*.crt
+*.key
+__pycache__
+*~
+\#*

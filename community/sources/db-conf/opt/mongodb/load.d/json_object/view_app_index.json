@@ -1,0 +1,32 @@
+{
+  "crecord_name" : "app_index.json",
+  "loader_id": "view.app_index",
+  "loader_no_update": true,
+  "id": "view.app_index",
+  "_id": "view.app_index",
+  "crecord_type": "view",
+  "crecord_write_time": 1400853201,
+  "enable": true,
+  "containerwidget": {
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
+    ],
+    "title": "container title vbox",
+    "items": [
+      {
+        "title": "wrapper",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0028",
+          "xtype": "text",
+          "html" : "<center><img src=\"http://www.canopsis.org/wp-content/uploads/2014/02/opensourcehypervision.jpg\" alt=\"\" /></center>"
+        }
+      }
+    ]
+  }
+}
+
+

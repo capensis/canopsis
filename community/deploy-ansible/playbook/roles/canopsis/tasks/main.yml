@@ -1,0 +1,35 @@
+---
+- import_tasks: config-mongodb.yml
+  tags:
+    - cps_mongodb
+
+- import_tasks: config-rabbitmq.yml
+  tags:
+    - cps_rabbitmq
+
+- import_tasks: config-engines.yml
+  tags:
+    - cps_config
+
+- import_tasks: config-additional-cat-engines.yml
+  tags:
+    - cps_config
+  when: canopsis_edition == "cat"
+
+- import_tasks: init-db.yml
+  become: true
+  become_user: "{{ canopsis_user }}"
+  tags:
+    - cps_initdb
+
+- import_tasks: init-engines.yml
+  tags:
+    - cps_go_engines
+
+- import_tasks: config-nginx.yml
+  tags:
+    - cps_nginx
+
+- import_tasks: init-nginx.yml
+  tags:
+    - cps_nginx

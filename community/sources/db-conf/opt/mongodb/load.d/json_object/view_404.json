@@ -1,0 +1,35 @@
+{
+  "loader_id": "view.404",
+  "loader_no_update": true,
+  "id": "view.404",
+  "_id": "view.404",
+  "crecord_type": "view",
+  "crecord_name": "404 error view",
+  "crecord_write_time": 1400853201,
+  "enable": true,
+  "containerwidget": {
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
+    ],
+    "title": "container title vbox",
+    "_id": "test_view_vertical_container",
+    "items": [
+      {
+        "title": "404",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "xtype": "text",
+          "title": "404 page not found",
+          "html": "The page or view you tried to show does not seems to exist.",
+          "filters": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
+          ]
+        }
+      }
+    ]
+  }
+}

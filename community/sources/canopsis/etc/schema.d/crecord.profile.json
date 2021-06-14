@@ -1,0 +1,37 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["_id", "description"]
+	},{
+		"title": "Groups",
+		"keys": ["groups"]
+	},{
+		"title": "Rights",
+		"keys": ["rights"]
+	}],
+	"properties": {
+		"crecord_type": {
+			"enum": ["profile"],
+			"required": true
+		},
+		"_id": {
+			"type": "string"
+		},
+		"rights": {
+			"type": "object",
+			"role": "rights",
+			"required": false
+		},
+		"groups": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"required": false
+		},
+		"description": {
+			"type": "string"
+		}
+	}
+}

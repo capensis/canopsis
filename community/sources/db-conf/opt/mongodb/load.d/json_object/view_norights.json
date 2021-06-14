@@ -1,0 +1,35 @@
+{
+  "loader_id": "view.norights",
+  "loader_no_update": true,
+  "id": "view.norights",
+  "_id": "view.norights",
+  "crecord_type": "view",
+  "crecord_name": "no rights error view",
+  "crecord_write_time": 1400853201,
+  "enable": true,
+  "containerwidget": {
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
+    ],
+    "title": "container title vbox",
+    "_id": "test_view_vertical_container",
+    "items": [
+      {
+        "title": "No rights",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "xtype": "text",
+          "title": "Please contact your administrator.",
+          "html": "You do not have any rights on Canopsis. Please conctact your administrator.",
+          "filters": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
+          ]
+        }
+      }
+    ]
+  }
+}

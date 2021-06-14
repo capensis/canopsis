@@ -1,0 +1,4 @@
+# amqp2engines.conf for an open-core Go stack
+
+[engine:scheduler]
+[engine:task_importctx]

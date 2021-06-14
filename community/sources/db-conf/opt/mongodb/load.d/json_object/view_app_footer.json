@@ -1,0 +1,35 @@
+{
+        "crecord_name" : "app_footer.json",
+        "loader_id": "view.app_footer",
+        "crecord_type": "view",
+        "loader_no_update": true,
+        "id" : "view.app_footer",
+        "_id" : "view.app_footer",
+        "crecord_write_time" : 1406205401,
+        "enable" : true,
+        "containerwidget" : {
+                "items" : [
+                        {
+                                "widget" : {
+                                        "widgetId" : "item_54ebc8fc-5ba4-6fc3-7100-ccbf93285ab6",
+                                        "preference_id" : null,
+                                        "xtype" : "text",
+                                        "title" : "Footer",
+                                        "series" : [],
+                                        "mixins" : [],
+                                        "html": "",
+                                        "tagName" : null,
+                                        "events" : []
+                                },
+                                "xtype" : "widgetwrapper",
+                                "title" : "wrapper"
+                        }
+                ],
+                "widgetslotTemplate" : null,
+                "xtype": "widgetcontainer",
+                "mixins": [
+                { "name": "lightlayout" }
+                ],
+                "title" : "container title vbox"
+        }
+}

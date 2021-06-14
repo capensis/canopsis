@@ -1,0 +1,85 @@
+<template lang="pug">
+  v-card-text
+    remediation-jobs-list(
+      :remediation-jobs="remediationJobs",
+      :pending="remediationJobsPending",
+      :total-items="remediationJobsMeta.total_count",
+      :pagination.sync="pagination",
+      @remove-selected="showRemoveSelectedRemediationJobsModal",
+      @remove="showRemoveRemediationJobModal",
+      @edit="showEditRemediationJobModal"
+    )
+</template>
+
+<script>
+import { MODALS } from '@/constants';
+
+import entitiesRemediationJobsMixin from '@/mixins/entities/remediation/jobs';
+import { localQueryMixin } from '@/mixins/query-local/query';
+
+import RemediationJobsList from './remediation-jobs-list.vue';
+
+export default {
+  components: { RemediationJobsList },
+  mixins: [
+    entitiesRemediationJobsMixin,
+    localQueryMixin,
+  ],
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    fetchList() {
+      const params = this.getQuery();
+      params.with_flags = true;
+
+      this.fetchRemediationJobsList({ params });
+    },
+
+    showEditRemediationJobModal(remediationJob) {
+      this.$modals.show({
+        name: MODALS.createRemediationJob,
+        config: {
+          remediationJob,
+          title: this.$t('modals.createRemediationJob.edit.title'),
+          action: async (job) => {
+            await this.updateRemediationJob({ id: remediationJob._id, data: job });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationJob.edit.popups.success', {
+                jobName: job.name,
+              }),
+            });
+
+            await this.fetchList();
+          },
+        },
+      });
+    },
+
+    showRemoveRemediationJobModal(remediationJob) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.removeRemediationJob({ id: remediationJob._id });
+            await this.fetchList();
+          },
+        },
+      });
+    },
+
+    showRemoveSelectedRemediationJobsModal(selected) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await Promise.all(selected.map(({ _id: id }) => this.removeRemediationJob({ id })));
+            await this.fetchList();
+          },
+        },
+      });
+    },
+  },
+};
+</script>

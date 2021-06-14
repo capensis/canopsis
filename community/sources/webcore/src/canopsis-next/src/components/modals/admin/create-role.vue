@@ -1,0 +1,68 @@
+<template lang="pug">
+  v-form(data-test="createRoleModal", @submit.prevent="submit")
+    modal-wrapper(close)
+      template(slot="title")
+        span {{ title }}
+      template(slot="text")
+        role-form(v-model="form")
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary.white--text(
+          :disabled="isDisabled",
+          type="submit",
+          data-test="submitButton"
+        ) {{ $t('common.submit') }}
+</template>
+
+<script>
+import { MODALS } from '@/constants';
+
+import { roleToForm, formToRole } from '@/helpers/forms/role';
+
+import { submittableMixin } from '@/mixins/submittable';
+import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+
+import RoleForm from '@/components/other/role/role-form.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
+
+export default {
+  name: MODALS.createRole,
+  $_veeValidate: {
+    validator: 'new',
+  },
+  components: { RoleForm, ModalWrapper },
+  mixins: [
+    submittableMixin(),
+    confirmableModalMixin(),
+    validationErrorsMixin(),
+  ],
+  data() {
+    return {
+      form: roleToForm(this.modal.config.role),
+    };
+  },
+  computed: {
+    title() {
+      return this.config.title || this.$t('modals.createRole.create.title');
+    },
+  },
+  methods: {
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        try {
+          await this.config.action(formToRole(this.form));
+
+          this.$modals.hide();
+        } catch (err) {
+          this.setFormErrors(err);
+        }
+      }
+    },
+  },
+};
+</script>
+

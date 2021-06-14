@@ -1,0 +1,67 @@
+#!/bin/sh
+set -e
+
+help_usage()
+{
+	echo "$0 [deploy|start|status|stop|restart|reconfigure]"
+	echo
+	echo "  deploy:      deploy a full Canopsis stack with Go engines"
+	echo "  start:       start Canopsis engines and services"
+	echo "  status:      get the status of Canopsis engines and services"
+	echo "  stop:        stop Canopsis engines and services"
+	echo "  restart:     restart Canopsis engines and services"
+	echo "  reconfigure: reload canopsis.toml changes into Canopsis"
+	echo
+	echo "NOTE: \"deploy\" can only be called once, after a fresh install"
+	echo
+	exit 1
+}
+
+# Here, we're checking for a specific Go file instead of looking for
+# a package, because it's simpler and because this required file used
+# to be missing in some installations.
+check_go_prerequisites_or_die()
+{
+	if ! [ -f /opt/canopsis/etc/canopsis-core.toml.example ]; then
+		echo "A Go component is required, but could not be found." >&2
+		echo "Is the canopsis-engines-go package installed?" >&2
+		exit 1
+	fi
+}
+
+if [ "$(id -u)" -ne 0 ]; then
+	echo "$0: must be run as root" >&2
+	exit 1
+fi
+
+if command -v sestatus >/dev/null 2>&1 && sestatus | grep -q enforcing ; then
+	echo "ERROR: Running Canopsis with SELinux is unsupported." >&2
+	echo "Please set it in permissive mode or disable it, if you may." >&2
+
+	exit 1
+fi
+
+while true ; do
+	case $1 in
+	start|status|stop|restart)
+		/opt/canopsis/bin/canopsis-systemd "$1"
+		exit $?
+		;;
+	deploy|deploy-go)
+		check_go_prerequisites_or_die
+		/opt/canopsis/bin/canopsis-systemd stop
+		/opt/canopsis/deploy-ansible/install-self.sh
+		exit $?
+		;;
+	reconfigure)
+		check_go_prerequisites_or_die
+		/opt/canopsis/bin/canopsis-reconfigure
+		exit $?
+		;;
+	*)
+		help_usage
+		;;
+	esac
+
+	shift
+done

@@ -1,0 +1,155 @@
+import Vue from 'vue';
+import { get } from 'lodash';
+
+import { API_ROUTES } from '@/config';
+import { ENTITIES_TYPES } from '@/constants';
+
+import i18n from '@/i18n';
+import request from '@/services/request';
+
+import { entitySchema } from '@/store/schemas';
+import { createEntityModule } from '@/store/plugins/entities';
+
+export const types = {
+  FETCH_LIST: 'FETCH_LIST',
+  FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
+  FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
+
+  EXPORT_LIST: 'EXPORT_LIST',
+  EXPORT_LIST_COMPLETED: 'EXPORT_LIST_COMPLETED',
+
+  DOWNLOAD_LIST_COMPLETED: 'DOWNLOAD_LIST_COMPLETED',
+};
+
+export default createEntityModule({
+  route: API_ROUTES.entity,
+  entityType: ENTITIES_TYPES.entity,
+  dataPreparer: d => d.data,
+  withFetchingParams: true,
+  withMeta: true,
+  types,
+}, {
+  state: {
+    widgets: {},
+  },
+  getters: {
+    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
+      rootGetters['entities/getList'](ENTITIES_TYPES.entity, get(state.widgets[widgetId], 'allIds', [])),
+
+    getMetaByWidgetId: state => widgetId => get(state.widgets[widgetId], 'meta', {}),
+    getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
+    getExportByWidgetId: state => widgetId => get(state.widgets[widgetId], 'exportData'),
+
+    getFetchingParamsByWidgetId: state => widgetId => get(state.widgets[widgetId], 'fetchingParams'),
+  },
+  mutations: {
+    [types.FETCH_LIST](state, { widgetId, params }) {
+      Vue.setSeveral(state.widgets, widgetId, { pending: true, fetchingParams: params });
+    },
+    [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
+      Vue.setSeveral(state.widgets, widgetId, { allIds, meta, pending: false });
+    },
+    [types.FETCH_LIST_FAILED](state, { widgetId }) {
+      Vue.setSeveral(state.widgets, widgetId, { pending: false });
+    },
+    [types.EXPORT_LIST_COMPLETED](state, { widgetId, exportData }) {
+      Vue.setSeveral(state.widgets, widgetId, { exportData });
+    },
+    [types.DOWNLOAD_LIST_COMPLETED](state, { widgetId }) {
+      Vue.delete(state.widgets[widgetId], 'exportData');
+    },
+  },
+  actions: {
+    async fetchList({ commit, dispatch }, { widgetId, params } = {}) {
+      try {
+        commit(types.FETCH_LIST, { widgetId, params });
+
+        const { normalizedData, data } = await dispatch('entities/fetch', {
+          route: API_ROUTES.entity,
+          params,
+          dataPreparer: d => d.data,
+          schema: [entitySchema],
+        }, { root: true });
+
+        commit(types.FETCH_LIST_COMPLETED, {
+          widgetId,
+          allIds: normalizedData.result,
+          ...data,
+        });
+      } catch (err) {
+        console.error(err);
+
+        commit(types.FETCH_LIST_FAILED, { widgetId });
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
+      }
+    },
+
+    fetchListWithPreviousParams({ dispatch, getters, state }) {
+      const widgetsIds = Object.keys(state.widgets);
+      const fetchRequests = widgetsIds.map(widgetId => dispatch('fetchList', {
+        widgetId,
+        params: getters.getFetchingParamsByWidgetId(widgetId),
+      }));
+
+      return Promise.all(fetchRequests);
+    },
+
+    update(context, { data, id }) {
+      return request.put(API_ROUTES.entityBasics, data, {
+        params: { _id: id },
+      });
+    },
+
+    create(context, { data, id }) {
+      return request.post(API_ROUTES.entityBasics, data, {
+        params: { _id: id },
+      });
+    },
+
+    remove(context, { id }) {
+      return request.delete(API_ROUTES.entityBasics, {
+        params: { _id: id },
+      });
+    },
+
+    fetchBasicEntityWithoutStore(context, { id } = {}) {
+      return request.get(API_ROUTES.entityBasics, {
+        params: { _id: id },
+      });
+    },
+
+    fetchListWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.entity, { params });
+    },
+
+    async createContextExport({ commit }, { widgetId, params }) {
+      const exportData = await request.post(API_ROUTES.contextExport, {}, { params });
+
+      commit(types.EXPORT_LIST_COMPLETED, {
+        widgetId,
+        exportData,
+      });
+
+      return exportData;
+    },
+
+    fetchContextExport({ commit }, { params, widgetId, id }) {
+      const exportData = request.get(`${API_ROUTES.contextExport}/${id}`, { params });
+
+      commit(types.EXPORT_LIST_COMPLETED, {
+        widgetId,
+        exportData,
+      });
+
+      return exportData;
+    },
+
+    async fetchContextCsvFile({ commit }, { params, id, widgetId }) {
+      const csvData = await request.get(`${API_ROUTES.contextExport}/${id}/download`, { params });
+
+      commit(types.DOWNLOAD_LIST_COMPLETED, { widgetId });
+
+      return csvData;
+    },
+  },
+});

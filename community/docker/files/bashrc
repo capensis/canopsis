@@ -1,0 +1,20 @@
+#!/bin/bash
+
+export PATH="$PATH:/usr/sbin:$HOME/bin"
+export PS1='[\u@\h \W]\$ '
+
+if [ -e $HOME/bin/activate ]; then
+    . $HOME/bin/activate
+fi
+
+if [ -f ~/.bash_completion ]; then
+     . ~/.bash_completion
+fi
+
+alias ls="ls --color=auto -F"
+alias ll="ls -l"
+
+if [ -f "$HOME/VERSION.txt" ]; then
+     CANOPSIS_VERSION=$(cat "$HOME/VERSION.txt")
+     export PS1="($CANOPSIS_VERSION)[\\u@\\h \\W]\\$ "
+fi

@@ -1,0 +1,20 @@
+{
+    "title": "logauthor",
+    "type": "object",
+    "description": "authors",
+    "categories": [{
+            "title": "General",
+            "keys": [
+                "author"
+            ]
+        }
+    ],
+    "properties": {
+        "_id":{"type":"string"},
+        "author" : {"type":"string"},
+        "action" : {"type":"string"},
+        "cible" : {"type":"string"},
+        "date" :{"type":"number","role":"timestamp"},
+        "crecord_name":{"type":"string"}
+}
+}

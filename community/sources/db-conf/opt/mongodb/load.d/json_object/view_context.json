@@ -1,0 +1,91 @@
+{  
+  "_id": "view.context",
+  "id": "view.context",
+  "crecord_write_time": 1506610791,
+  "loader_id" : "view.context",
+  "loader_no_update": false,
+  "title":"Context",
+  "enable": true,
+  "description": null,
+  "author": "root",
+  "containerwidget": {
+    "widgetId": null,
+    "preference_id": null,
+    "xtype": "widgetcontainer",
+    "title": null,
+    "widgetslotTemplate": null,
+    "mixins": [
+      {
+        "name": "verticallayout"
+      }
+    ],
+    "tagName": null,
+    "items": [
+      {
+        "xtype": "widgetwrapper",
+        "widget": {
+          "widgetId": null,
+          "preference_id": "2a8f5dfb-1920-9e92-995c-d842fa112c1d",
+          "xtype": "crudcontext",
+          "title": null,
+          "default_sort_column": {
+            "direction": "ASC"
+          },
+          "mixins": [
+            {
+              "name": "arraysearch",
+              "EmberClass": {
+                "mixins": [
+                  {
+                    "properties": {
+                      "partials": {
+                        "header": [
+                          "search"
+                        ]
+                      },
+                      "_actions": {}
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "sortablearray"
+            },
+            {
+              "name": "customfilterlist"
+            },
+            {
+              "name": "crud",
+              "hideDuplicate": true
+            },
+            {
+              "name": "pagination"
+            },
+            {
+              "name": "listlinedetail",
+              "template": "{{component-crudentitydetails this=this._data}}"
+            }
+          ],
+          "popup": [],
+          "tagName": null,
+          "id": "widget_crudcontext_80baf579-d429-cd55-b340-8f24b4f3b82a",
+          "columns": [
+            "name",
+            "type"
+          ],
+          "name": "context"
+        },
+        "mixins": [],
+        "id": "widgetwrapper_07a7020a-1ce4-dd19-744a-c63244508748",
+        "title": "wrapper"
+      }
+    ],
+    "id": "container_37af5f37-40f7-a56f-37bb-5ad6ae30aff8"
+  },
+  "tags": [],
+  "crecord_creation_time": 0,
+  "crecord_type": "view",
+  "internal": true,
+  "crecord_name": "view.context"
+}

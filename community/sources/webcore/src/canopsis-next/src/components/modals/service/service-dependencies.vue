@@ -1,0 +1,36 @@
+<template lang="pug">
+  modal-wrapper(close)
+    template(slot="title")
+      span {{ title }}
+    template(slot="text")
+      service-dependencies-table(
+        :root="config.root",
+        :columns="config.columns",
+        :impact="config.impact",
+        include-root
+      )
+</template>
+
+<script>
+import { get } from 'lodash';
+
+import { MODALS } from '@/constants';
+
+import ServiceDependenciesTable from '@/components/other/service/table/service-dependencies.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
+
+export default {
+  name: MODALS.serviceDependencies,
+  components: { ServiceDependenciesTable, ModalWrapper },
+  computed: {
+    title() {
+      const type = this.config.impact
+        ? 'impacts'
+        : 'dependencies';
+
+      return this.$t(`modals.serviceDependencies.${type}.title`, { name: get(this.config.root, 'entity.name') });
+    },
+  },
+};
+</script>

@@ -1,0 +1,32 @@
+{
+    "type": "object",
+    "metadata": {
+        "icon": "fa fa-database"
+    },
+    "categories": [{
+        "title": "General",
+        "keys":["retention_duration", "use_secure_delay", "storages"]
+    }],
+    "properties": {
+        "retention_duration": {
+            "type": "number",
+            "default" : 31536000,
+            "description" : "Delay until when keep information into database. Data cleaning is applied once a day.",
+            "role": "duration"
+        },
+        "use_secure_delay": {
+            "type": "boolean",
+            "default": true,
+            "required": true,
+            "description": "One year delay security to avoid too short delay data deletion. When false, security is disabled"
+        },
+        "storages": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "required": true,
+            "description": "Storages to clean"
+        }
+    }
+}

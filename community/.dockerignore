@@ -1,0 +1,8 @@
+.git
+**/.git
+sources/webcore
+!sources/webcore/src
+sources/canopsis/build
+sources/canopsis/dist
+sources/canopsis/*.egg-info
+sources/canopsis/pyinstaller

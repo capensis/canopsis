@@ -1,0 +1,279 @@
+{
+	"type": "object",
+	"categories": [
+		{
+			"title": "Source",
+			"keys":["connector", "connector_name"]
+		},
+		{
+			"title": "Entities",
+			"keys":["component", "resource", "domain", "perimeter"]
+		},
+		{
+			"title": "Event",
+			"keys":["event_type", "status.val", "state.val", "ack.isAck"]
+		},
+		{
+			"title": "Event filter",
+			"keys":["state", "state_type", "status"]
+		},
+		{
+			"title": "Alarms",
+			"keys": [
+				"v.connector",
+				"v.connector_name",
+				"v.component",
+				"v.resource",
+				"v.done.t",
+				"v.ack.t",
+				"v.snooze.t",
+				"v.ticket.t",
+				"v.canceled.t",
+				"v.state.val",
+				"v.status.val"
+			]
+		}
+	],
+	"showEditButton": true,
+	"properties": {
+		"v": {
+			"type": "object",
+			"role": "alarm",
+			"properties": {
+				"connector": {
+					"type": "string",
+					"role": "Connector"
+				},
+				"connector_name": {
+					"type": "string",
+					"title": "Connector name"
+				},
+				"component": {
+					"type":"string",
+					"title": "Component"
+				},
+				"resource": {
+					"type": "string",
+					"title": "Resource"
+				},
+				"ack": {
+					"type": "object",
+					"title": "Alarm ack",
+					"properties": {
+						"t": {
+							"type": "integer",
+							"role": "eventtimestamp",
+							"canDisplayAgo" : true,
+							"title": "Date ACK"
+						}
+					}
+				},
+				"snooze": {
+					"type": "object",
+					"properties": {
+						"t": {
+							"type": "integer",
+							"role": "eventtimestamp",
+							"canDisplayAgo" : true,
+							"title": "Date Snooze"
+						}
+					}
+				},
+				"ticket": {
+					"type": "object",
+					"properties": {
+						"t": {
+							"type": "integer",
+							"role": "eventtimestamp",
+							"canDisplayAgo" : true,
+							"title": "Date Ticket"
+						}
+					}
+				},
+				"done": {
+					"type": "object",
+					"properties": {
+						"t": {
+							"type": "integer",
+							"role": "eventtimestamp",
+							"canDisplayAgo" : true,
+							"title": "Date Done"
+						}
+					}
+				},
+				"canceled": {
+					"type": "object"
+				},
+				"resolved": {
+					"type": "integer",
+					"role": "eventtimestamp",
+					"canDisplayAgo" : true
+				},
+				"state": {
+					"type": "object",
+					"required": false,
+					"role": "criticity",
+					"properties": {
+						"val": {
+							"type" : "number"
+						}
+					}
+				},
+				"status": {
+					"type": "number",
+					"required": false,
+					"role": "criticity",
+					"properties": {
+						"v": {
+							"type" : "number"
+						}
+					}
+				}
+
+			}
+		},
+		"hostgroups": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role" : "tags"
+		},
+		"change_state_output": {
+			"type": "string"
+		},
+		"event_type": {
+			"type": "string",
+			"required": true,
+			"role": "eventtype"
+		},
+		"source_type": {
+			"type": "string",
+			"required": true
+		},
+		"crecord_type": {
+			"enum": ["event"],
+			"required": false,
+			"default": "event",
+			"icon": "flag"
+		},
+		"ack": {
+			"type": "object",
+			"role": "ack",
+			"properties": {
+				"isAck": {
+					"type" : "boolean"
+				}
+			}
+		},
+		"ack_remove": {
+			"type": "object"
+		},
+		"ticket_declared_author": {
+			"type": "string"
+		},
+		"ticket_declared_date": {
+			"type": "number"
+		},
+		"ticket": {
+			"type": "string",
+			"title":"ticket"
+		},
+		"last_state_change": {
+			"type": "integer",
+			"role": "eventtimestamp",
+			"canDisplayAgo" : true,
+			"title": "last state change"
+
+		},
+		"tags": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role" : "tags"
+		},
+		"ticket_date": {
+			"type": "number"
+		},
+		"keep_state": {
+			"type": "boolean"
+		},
+		"timestamp": {
+			"type": "number",
+			"role": "timestamp",
+			"canDisplayAgo" : true
+		},
+		"component": {
+			"type": "string",
+			"required": true
+		},
+		"component_alias": {
+			"type": "string",
+			"required": false
+		},
+		"resource": {
+			"type": "string",
+			"required": false,
+			"readOnly": true
+		},
+		"connector": {
+			"type": "string",
+			"required": true,
+			"role": "source"
+		},
+		"connector_name": {
+			"type": "string",
+			"required": true
+		},
+		"output": {
+			"role": "richtext",
+			"type": "string",
+			"required": true,
+			"description": "output of the event",
+			"title": "Output"
+		},
+		"state": {
+			"type": "number",
+			"required": false,
+			"role": "criticity",
+			"properties": {
+				"val": {
+					"type" : "number"
+				}
+			}
+		},
+		"state_type": {
+			"type": "number"
+		},
+		"perimeter": {
+			"type": "string"
+		},
+		"domain": {
+			"type": "string"
+		},
+		"status": {
+			"type": "number",
+			"role": "status",
+			"properties": {
+				"val": {
+					"type" : "number"
+				}
+			}
+		},
+		"cancel": {
+			"type": "object",
+			"role": "object"
+		},
+		"done": {
+			"type": "object",
+			"role": "object"
+		},
+		"author": {
+			"type": "string"
+		},
+		"entity_id": {
+			"type": "string"
+		}
+	}
+}

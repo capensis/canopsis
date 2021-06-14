@@ -1,0 +1,15 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": ["title", "job"]
+    }],
+    "properties": {
+        "title": {"type": "string"},
+        "job": {
+            "model": "crecord.job",
+            "relationship": "belongsTo",
+            "required": true
+        }
+    }
+}

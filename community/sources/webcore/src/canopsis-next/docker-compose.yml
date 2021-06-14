@@ -1,0 +1,12 @@
+---
+version: '2'
+
+services:
+  uiv3:
+    image: canopsis/uiv3:develop
+    ports:
+      - 9090:8080
+    restart: unless-stopped
+    environment:
+      - VUE_APP_API_HOST=http://localhost:8082
+

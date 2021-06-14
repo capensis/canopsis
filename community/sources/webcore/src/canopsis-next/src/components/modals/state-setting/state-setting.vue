@@ -1,0 +1,74 @@
+<template lang="pug">
+  v-form(@submit.prevent="submit")
+    modal-wrapper(close)
+      template(slot="title")
+        span {{ title }}
+      template(slot="text")
+        state-setting-form(v-model="form")
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.submit') }}
+</template>
+
+<script>
+import { MODALS } from '@/constants';
+
+import { stateSettingToForm, formToStateSetting } from '@/helpers/forms/state-setting';
+
+import { authMixin } from '@/mixins/auth';
+import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { submittableMixin } from '@/mixins/submittable';
+import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+
+import StateSettingForm from '@/components/other/state-setting/form/state-setting-form.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
+
+export default {
+  name: MODALS.stateSetting,
+  $_veeValidate: {
+    validator: 'new',
+  },
+  components: {
+    StateSettingForm,
+    ModalWrapper,
+  },
+  mixins: [
+    authMixin,
+    validationErrorsMixin(),
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
+  data() {
+    return {
+      form: stateSettingToForm(this.modal.config.stateSetting),
+    };
+  },
+  computed: {
+    title() {
+      return this.config.title || this.$t('modals.stateSetting.title');
+    },
+  },
+  methods: {
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        try {
+          if (this.config.action) {
+            await this.config.action(formToStateSetting(this.form));
+          }
+
+          this.$modals.hide();
+        } catch (err) {
+          this.setFormErrors(err);
+        }
+      }
+    },
+  },
+};
+</script>

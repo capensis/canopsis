@@ -1,0 +1,22 @@
+[master]
+host = {{ canopsis_mongo_host }}
+port = {{ canopsis_mongo_port }}
+userid = {{ canopsis_mongo_user }}
+password = {{ canopsis_mongo_password }}
+db = {{ canopsis_mongo_db }}
+gridfs_namespace = binaries
+read_preference = PRIMARY_PREFERRED
+
+#Defines how many result can be fetched as default limit when on api limit is set to 0
+fetch_limit = 10000
+
+#Defines the data count limit on a given collection where beyond count operation is not performed for any query (pagination limitation)
+no_count_limit = 200000
+
+
+[events]
+
+types=calendar,check,comment,consolidation,eue,log,perf,selector,sla,toponode,trap,user,ack,cancel,uncancel,ackremove,assocticket,declareticket,todo,watcher,statcounterinc,statduration,snooze,changestate,done,statstateinterval
+checks=check,selector,sla,eue,toponode,consolidation
+logs=trap,log,calendar,ack,downtime,cancel,uncancel,ackremove,assocticket,todo
+comments=user,comment

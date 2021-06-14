@@ -1,0 +1,22 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["_id"]
+	},{
+		"title": "Permissions",
+		"keys": ["rights"]
+	}],
+	"properties": {
+		"_id": {
+			"type": "string"
+		},
+		"rights": {
+			"type": "object",
+			"role": "rights"
+		},
+		"description": {
+			"type": "string"
+		}
+	}
+}

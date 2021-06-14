@@ -1,0 +1,26 @@
+{
+    "crecord_name" : "app_header.json",
+    "loader_id": "view.app_header",
+    "loader_no_update": true,
+    "crecord_type": "view",
+    "id" : "view.app_header",
+    "_id" : "view.app_header",
+    "crecord_write_time" : 1406205401,
+    "enable" : true,
+   "containerwidget" : {
+    "items" : [{
+                "widget" : {
+                        "xtype" : "uimaintabcollection",
+                        "title" : "",
+                        "tabs" : [{"label": "Evenements", "value": "view.event"}]
+                },
+                "xtype" : "widgetwrapper",
+                "title" : "wrapper"
+            }],
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "lightlayout" }
+    ],
+    "title" : "container title vbox"
+    }
+}

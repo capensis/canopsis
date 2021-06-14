@@ -1,0 +1,69 @@
+<template lang="pug">
+  v-layout(row)
+    v-flex(xs5)
+      v-checkbox(
+        v-validate,
+        v-field="duration.enabled",
+        :label="label",
+        color="primary",
+        :disabled="hasDuration",
+        :name="`${name}.enabled`"
+      )
+        c-help-icon(v-if="helpText", slot="append", :text="helpText", max-width="300", top)
+    v-flex(xs4)
+      c-duration-field(
+        v-field="duration",
+        :units-label="$t('common.unit')",
+        :disabled="!duration.enabled",
+        :required="duration.enabled",
+        :units="timeUnits",
+        :name="name"
+      )
+</template>
+
+<script>
+import { AVAILABLE_TIME_UNITS } from '@/constants';
+
+export default {
+  inject: ['$validator'],
+  model: {
+    prop: 'duration',
+    event: 'input',
+  },
+  props: {
+    duration: {
+      type: Object,
+      required: true,
+    },
+    label: {
+      type: String,
+      required: true,
+    },
+    helpText: {
+      type: String,
+      required: false,
+    },
+    name: {
+      type: String,
+      required: false,
+    },
+  },
+  computed: {
+    timeUnits() {
+      return [
+        AVAILABLE_TIME_UNITS.day,
+        AVAILABLE_TIME_UNITS.week,
+        AVAILABLE_TIME_UNITS.month,
+        AVAILABLE_TIME_UNITS.year,
+      ].map(({ value, text }) => ({
+        value,
+        text: this.$tc(text, this.duration.value),
+      }));
+    },
+
+    hasDuration() {
+      return !this.duration.value;
+    },
+  },
+};
+</script>

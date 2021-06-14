@@ -1,0 +1,66 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "Bagot settings",
+		"keys":["bagot_freq", "bagot_time"]
+	},{
+		"title": "Stealthy settings",
+		"keys":["stealthy_time"]
+	},{
+		"title": "Misc statuses",
+		"keys":["restore_event", "cancel_autosolve_delay", "done_autosolve_delay"]
+    }],
+	"properties": {
+		"stealthy_time": {
+			"type": "number",
+			"required": true,
+			"default": 60,
+			"role": "duration",
+			"description": "How long elapsed between two event state change to consider a stealthy status."
+		},
+		"bagot_freq": {
+			"type": "number",
+			"required": true,
+			"default": 5,
+			"description": "How many oscillation to be counted before event is put un bagot statement."
+		},
+		"bagot_time": {
+			"type": "number",
+			"required": true,
+			"default": 60,
+			"role": "duration",
+			"description": "Duration to consider when computing bagot oscillation."
+		},
+        "flapping_persistant_steps": {
+			"type": "number",
+			"required": true,
+			"default": 10,
+			"description": "Number of state changes step to keep in case of long term flapping. If some steps have to be cropped, most recent ones are kept."
+        },
+        "hard_limit": {
+			"type": "number",
+			"required": true,
+			"default": 100,
+			"description": "Maximum number of steps an alarm can have. Only alarm cancelation or hard limit extension are possible ways to interact with an alarm that has reached this point."
+        },
+		"restore_event": {
+			"type": "boolean",
+			"required": true,
+			"description": "When true, consdider state change with different state level, otherwise consider a change at alert level."
+		},
+		"cancel_autosolve_delay": {
+			"type": "number",
+			"required": true,
+			"default": 3600,
+			"role": "duration",
+			"description": "Once a canceled alarm is resolved, it can not be uncanceled. This delay allows users to uncancel an alarm if they made a mistake."
+		},
+		"done_autosolve_delay": {
+			"type": "number",
+			"required": true,
+			"default": 900,
+			"role": "duration",
+			"description": "Automatically close done alarms after a delay."
+		}
+	}
+}

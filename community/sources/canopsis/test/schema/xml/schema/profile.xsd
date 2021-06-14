@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           xmlns="profile:1.0"
+           targetNamespace="profile:1.0"
+           elementFormDefault="qualified">
+
+<xs:complexType name="profiletype">
+  <xs:sequence>
+    <xs:element name="name" type="xs:string"/>
+    <xs:element name="age" type="xs:integer"/>
+  </xs:sequence>
+</xs:complexType>
+
+<xs:element name="profile" type="profiletype"/>
+
+</xs:schema>

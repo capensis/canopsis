@@ -1,0 +1,82 @@
+<template lang="pug">
+  v-layout(row, wrap, align-center)
+    v-flex(xs11)
+      v-chip(
+        v-for="entity in entities",
+        :key="getEntityKey(entity)",
+        :close="!isDisabledEntity(entity)",
+        :class="{ 'error white--text': isEntityExists(entity) }",
+        @input="$emit('remove', entity)"
+      ) {{ contentKey ? entity[contentKey] : entity }}
+    v-flex(v-if="clearable && removableEntities.length", xs1)
+      v-tooltip(right)
+        v-btn(
+          slot="activator",
+          small,
+          icon,
+          @click="clear"
+        )
+          v-icon(color="error") delete
+        span {{ $t('common.deleteAll') }}
+</template>
+
+<script>
+export default {
+  props: {
+    entities: {
+      type: Array,
+      required: true,
+    },
+    disabledEntities: {
+      type: Array,
+      default: () => [],
+    },
+    existingEntities: {
+      type: Array,
+      default: () => [],
+    },
+    itemKey: {
+      type: String,
+      default: '_id',
+    },
+    contentKey: {
+      type: String,
+      required: false,
+    },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    removableEntities() {
+      return this.entities.filter(entity => this.isDisabledEntity(entity));
+    },
+  },
+  methods: {
+    isDisabledEntity(entity) {
+      const key = this.getEntityKey(entity);
+
+      return key
+        ? this.disabledEntities.some(disabledEntity => this.getEntityKey(disabledEntity) === key)
+        : this.disabledEntities.includes(entity);
+    },
+
+    isEntityExists(entity) {
+      const key = this.getEntityKey(entity);
+
+      return key
+        ? this.existingEntities.some(existEntity => this.getEntityKey(existEntity) === key)
+        : this.existingEntities.includes(entity);
+    },
+
+    clear() {
+      this.$emit('clear', this.removableEntities);
+    },
+
+    getEntityKey(entity) {
+      return entity[this.itemKey] || entity;
+    },
+  },
+};
+</script>

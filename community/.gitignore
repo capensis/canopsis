@@ -1,0 +1,27 @@
+_build/
+doc/logs
+log
+doc/locale
+.idea
+.cache
+.coverage
+*~
+.\#*
+\#*\#
+*.*.swp
+Vagrantfile
+*.vagrant
+requirements_control
+.DS_Store
+.Spotlight-V100
+.Trashes
+.vscode
+# python wheels
+*.whl
+# python bytecode
+*.pyc
+.mypy_cache
+
+packages
+
+env-release.sh

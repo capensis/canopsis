@@ -1,0 +1,55 @@
+---
+- name: Make sure that engine-service systemd directory exists (CAT)
+  file:
+    path: "/etc/systemd/system/canopsis-engine-go@engine-service.service.d"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+    recurse: yes
+
+- name: Override default engine-service -publishQueue, for go-engines-cat additional engines (CAT)
+  template:
+    src: systemd/service.j2
+    dest: "/etc/systemd/system/canopsis-engine-go@engine-service.service.d/service.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Make sure that engine-axe systemd directory exists (CAT)
+  file:
+    path: "/etc/systemd/system/canopsis-engine-go@engine-axe.service.d"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+    recurse: yes
+
+- name: Override default engine-axe -publishQueue, for go-engines-cat additional engines (CAT)
+  template:
+    src: systemd/axe.j2
+    dest: "/etc/systemd/system/canopsis-engine-go@engine-axe.service.d/axe.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Make sure that engine-action systemd directory exists (CAT)
+  file:
+    path: "/etc/systemd/system/canopsis-engine-go@engine-action.service.d"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+    recurse: yes
+
+- name: Enable webhook feature in engine-action (CAT)
+  template:
+    src: systemd/action.j2
+    dest: "/etc/systemd/system/canopsis-engine-go@engine-action.service.d/action.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Reload systemd
+  systemd:
+    daemon-reload: yes

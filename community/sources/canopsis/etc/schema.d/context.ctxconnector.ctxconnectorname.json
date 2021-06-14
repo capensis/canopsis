@@ -1,0 +1,7 @@
+{
+    "type": "object",
+    "properties": {
+        "type": {"enum": ["connector_name"], "required": true},
+        "connector": {"type": "string", "required": true}
+    }
+}
