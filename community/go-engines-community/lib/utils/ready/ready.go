@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/lib/amqp"
-	"git.canopsis.net/canopsis/go-engines/lib/influx"
-	"git.canopsis.net/canopsis/go-engines/lib/log"
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
-	"git.canopsis.net/canopsis/go-engines/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/influx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 )
 
 var logger = log.NewLogger(false)

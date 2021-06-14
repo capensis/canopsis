@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/config"
-	mock_alarm "git.canopsis.net/canopsis/go-engines/mocks/lib/canopsis/alarm"
-	mock_config "git.canopsis.net/canopsis/go-engines/mocks/lib/canopsis/config"
-	mock_idlealarm "git.canopsis.net/canopsis/go-engines/mocks/lib/canopsis/idlealarm"
-	mock_redis "git.canopsis.net/canopsis/go-engines/mocks/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
+	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
+	mock_idlealarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/idlealarm"
+	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/golang/mock/gomock"
 	"testing"

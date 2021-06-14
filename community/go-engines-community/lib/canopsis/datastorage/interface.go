@@ -1,10 +1,10 @@
 package datastorage
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/datastorage/adapter.go git.canopsis.net/canopsis/go-engines/lib/canopsis/datastorage Adapter
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/datastorage/adapter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage Adapter
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 const ID = "data_storage"

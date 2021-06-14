@@ -26,7 +26,7 @@ RUN apk update && apk add tzdata
 
 USER canopsis:canopsis
 
-ENV CPS_BASE_DIR=/go/src/git.canopsis.net/canopsis/go-engines/
+ENV CPS_BASE_DIR=/go/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/
 ENV PROJECT_DIR=${CPS_BASE_DIR}/cmd/${PROJECT_NAME}
 ENV _BINARY_NAME=${BINARY_NAME}
 

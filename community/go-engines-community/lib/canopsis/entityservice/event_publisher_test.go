@@ -2,12 +2,12 @@ package entityservice_test
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/entityservice"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	mock_amqp "git.canopsis.net/canopsis/go-engines/mocks/lib/amqp"
-	mock_alarm "git.canopsis.net/canopsis/go-engines/mocks/lib/canopsis/alarm"
-	mock_encoding "git.canopsis.net/canopsis/go-engines/mocks/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
+	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
+	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"

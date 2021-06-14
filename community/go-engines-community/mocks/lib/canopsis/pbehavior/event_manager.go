@@ -5,8 +5,8 @@
 package mock_pbehavior
 
 import (
-	pbehavior "git.canopsis.net/canopsis/go-engines/lib/canopsis/pbehavior"
-	types "git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	pbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 	time "time"

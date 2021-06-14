@@ -3,7 +3,7 @@ package pbehavior
 import (
 	"context"
 	"encoding/json"
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"math"
 	"sort"

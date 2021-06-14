@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/lib/api/common"
-	"git.canopsis.net/canopsis/go-engines/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"git.canopsis.net/canopsis/go-engines/lib/utils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 )
 
 type Store interface {

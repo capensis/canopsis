@@ -1,6 +1,6 @@
 package proxy
 
-//go:generate mockgen -destination=../../../mocks/lib/security/proxy/proxy.go git.canopsis.net/canopsis/go-engines/lib/security/proxy AccessConfig
+//go:generate mockgen -destination=../../../mocks/lib/security/proxy/proxy.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy AccessConfig
 
 import (
 	"io/ioutil"

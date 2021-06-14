@@ -5,7 +5,7 @@
 package mock_alarm
 
 import (
-	types "git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )

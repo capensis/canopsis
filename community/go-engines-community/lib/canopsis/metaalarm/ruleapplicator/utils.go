@@ -1,8 +1,8 @@
 package ruleapplicator
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/go-engines/lib/errt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 )
 
 /**

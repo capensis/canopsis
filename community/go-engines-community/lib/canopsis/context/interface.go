@@ -1,10 +1,10 @@
 package context
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/context/context.go git.canopsis.net/canopsis/go-engines/lib/canopsis/context EnrichmentCenter
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/context/context.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context EnrichmentCenter
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 // EnrichmentCenter is the high level API for context management.

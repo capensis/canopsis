@@ -2,10 +2,10 @@ package executor
 
 import (
 	"fmt"
-	libentity "git.canopsis.net/canopsis/go-engines/lib/canopsis/entity"
-	operationlib "git.canopsis.net/canopsis/go-engines/lib/canopsis/operation"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/statsng"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statsng"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 func NewResolveStatExecutor(

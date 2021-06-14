@@ -5,11 +5,11 @@ import (
 	"errors"
 	"runtime/trace"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis"
-	cps "git.canopsis.net/canopsis/go-engines/lib/canopsis"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/heartbeat"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/heartbeat"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/streadway/amqp"
 )
 

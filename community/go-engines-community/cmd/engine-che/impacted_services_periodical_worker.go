@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	libcontext "git.canopsis.net/canopsis/go-engines/lib/canopsis/context"
-	"git.canopsis.net/canopsis/go-engines/lib/redis"
+	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 	"time"

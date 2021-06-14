@@ -15,12 +15,12 @@ import (
 	"testing"
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/fixtures"
-	"git.canopsis.net/canopsis/go-engines/lib/bdd"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis"
-	libjson "git.canopsis.net/canopsis/go-engines/lib/canopsis/encoding/json"
-	liblog "git.canopsis.net/canopsis/go-engines/lib/log"
-	"git.canopsis.net/canopsis/go-engines/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/fixtures"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/bdd"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	libjson "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/cucumber/godog"
 	"github.com/rs/zerolog"
 )

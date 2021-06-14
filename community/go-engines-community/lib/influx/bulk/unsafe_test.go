@@ -4,10 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/lib/influx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/influx"
 	influxmod "github.com/influxdata/influxdb/client/v2"
 
-	"git.canopsis.net/canopsis/go-engines/lib/influx/bulk"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/influx/bulk"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

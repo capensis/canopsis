@@ -3,10 +3,10 @@ Package operation implements alarm modification operations.
 */
 package operation
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/operation/executor.go git.canopsis.net/canopsis/go-engines/lib/canopsis/operation Executor
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/operation/executor.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation Executor
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 // Executor interface is used to implement an alarm modification operation.

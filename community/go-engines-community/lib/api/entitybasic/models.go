@@ -3,7 +3,7 @@ package entitybasic
 import (
 	"encoding/json"
 	"fmt"
-	"git.canopsis.net/canopsis/go-engines/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 )
 
 type Entity struct {

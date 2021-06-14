@@ -1,14 +1,14 @@
 package eventfilter
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"net/http"
 
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 
-	"git.canopsis.net/canopsis/go-engines/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 
-	"git.canopsis.net/canopsis/go-engines/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
 )
 

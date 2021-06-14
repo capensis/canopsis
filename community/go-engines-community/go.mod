@@ -1,14 +1,19 @@
-module git.canopsis.net/canopsis/go-engines
+module git.canopsis.net/canopsis/canopsis-community/community/go-engines-community
 
-// If there's a hard requirement, always sync this and Makefile.var:GOLANG_IMAGE_TAG
+// Needs to be synced with Makefile.var:GOLANG_IMAGE_TAG and go.mod from Pro
 // Only two integers are allowed here (https://golang.org/ref/mod#go-mod-file-go)
 go 1.16
 
-// Note: GPL, AGPL (and other viral) libs are not allowed here, because of CAT.
+// Note: External libs under GPL, AGPL or other viral licenses are not allowed here.
+// Canopsis Pro contains Canopsis Community, and Canopsis Pro can't contain viral
+// licenses, since it's a proprietary product.
+//
 // Please always maintain this file with the rules described here:
-// https://git.canopsis.net/canopsis/canopsis/-/issues/2697
+// https://git.canopsis.net/canopsis/canopsis-pro/-/issues/590
 
 require (
+	// No GPL or AGPL libs allowed below!
+
 	github.com/ajg/form v1.5.1
 	github.com/alecthomas/participle v0.7.1
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
@@ -53,3 +58,6 @@ require (
 	golang.org/x/text v0.3.6
 	gopkg.in/yaml.v2 v2.4.0
 )
+
+// No effect on the real canopsis-community repo, but necessary when it's part of the canopsis-pro monorepo
+replace git.canopsis.net/canopsis/canopsis-community/community/go-engines-community => ./

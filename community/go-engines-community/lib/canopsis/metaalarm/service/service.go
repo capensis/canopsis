@@ -1,6 +1,6 @@
 package service
 
-//go:generate mockgen -destination=../../../../mocks/lib/canopsis/metaalarm/service/service.go git.canopsis.net/canopsis/go-engines/lib/canopsis/metaalarm/service MetaAlarmService
+//go:generate mockgen -destination=../../../../mocks/lib/canopsis/metaalarm/service/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service MetaAlarmService
 
 import (
 	"fmt"
@@ -8,11 +8,11 @@ import (
 	"strings"
 	"text/template"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/config"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"git.canopsis.net/canopsis/go-engines/lib/utils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 )
 

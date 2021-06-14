@@ -3,8 +3,8 @@ package pbehavior
 import (
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/teambition/rrule-go"
 )
 

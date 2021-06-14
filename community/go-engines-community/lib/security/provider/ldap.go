@@ -1,12 +1,12 @@
 package provider
 
-//go:generate mockgen -destination=../../../mocks/lib/security/provider/provider.go git.canopsis.net/canopsis/go-engines/lib/security/provider LdapDialer
+//go:generate mockgen -destination=../../../mocks/lib/security/provider/provider.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/provider LdapDialer
 
 import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/go-engines/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/go-ldap/ldap/v3"
 )
 

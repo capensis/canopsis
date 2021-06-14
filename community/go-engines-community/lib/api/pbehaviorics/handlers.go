@@ -2,7 +2,7 @@ package pbehaviorics
 
 import (
 	"fmt"
-	"git.canopsis.net/canopsis/go-engines/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"

@@ -3,7 +3,7 @@ Package file contains operations with files.
 */
 package file
 
-//go:generate mockgen -destination=../../mocks/lib/file/file.go git.canopsis.net/canopsis/go-engines/lib/file Storage
+//go:generate mockgen -destination=../../mocks/lib/file/file.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file Storage
 
 // Storage is used to implement file modification operations.
 type Storage interface {

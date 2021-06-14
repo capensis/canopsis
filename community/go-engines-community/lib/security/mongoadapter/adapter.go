@@ -6,8 +6,8 @@ package mongoadapter
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
-	libmodel "git.canopsis.net/canopsis/go-engines/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	libmodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
 	"go.mongodb.org/mongo-driver/bson"

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/lib/api/middleware"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )

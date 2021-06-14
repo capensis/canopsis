@@ -3,18 +3,18 @@ Package idlealarm implements alarm modification on idle alarm.
 */
 package idlealarm
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/idlealarm/service.go git.canopsis.net/canopsis/go-engines/lib/canopsis/idlealarm Service
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/idlealarm/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm Service
 
 import (
 	"context"
 	"fmt"
-	libalarm "git.canopsis.net/canopsis/go-engines/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/encoding"
-	libentity "git.canopsis.net/canopsis/go-engines/lib/canopsis/entity"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/idlerule"
-	libpbehavior "git.canopsis.net/canopsis/go-engines/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"git.canopsis.net/canopsis/go-engines/lib/redis"
+	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
+	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
 	"strings"
 	"time"

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/action"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/encoding"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
 

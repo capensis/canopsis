@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	mock_security "git.canopsis.net/canopsis/go-engines/mocks/lib/security"
+	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"net/http"

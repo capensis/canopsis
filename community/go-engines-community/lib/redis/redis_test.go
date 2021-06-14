@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/lib/log"
-	"git.canopsis.net/canopsis/go-engines/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

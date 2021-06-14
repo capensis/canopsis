@@ -4,8 +4,8 @@ import (
 	"regexp"
 	"testing"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/testlib"
-	"git.canopsis.net/canopsis/go-engines/lib/utils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/testlib"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

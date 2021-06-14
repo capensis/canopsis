@@ -1,8 +1,8 @@
 package mongostore
 
 import (
-	libmongo "git.canopsis.net/canopsis/go-engines/lib/mongo"
-	mock_mongo "git.canopsis.net/canopsis/go-engines/mocks/lib/mongo"
+	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"

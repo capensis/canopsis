@@ -1,10 +1,10 @@
 package userprovider
 
 import (
-	libmongo "git.canopsis.net/canopsis/go-engines/lib/mongo"
-	"git.canopsis.net/canopsis/go-engines/lib/security"
-	"git.canopsis.net/canopsis/go-engines/lib/security/model"
-	mock_mongo "git.canopsis.net/canopsis/go-engines/mocks/lib/mongo"
+	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"

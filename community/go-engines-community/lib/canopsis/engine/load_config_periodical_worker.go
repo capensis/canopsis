@@ -2,7 +2,7 @@ package engine
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/rs/zerolog"
 	"time"
 )

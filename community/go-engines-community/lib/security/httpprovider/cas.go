@@ -3,8 +3,8 @@ package httpprovider
 import (
 	"encoding/xml"
 	"fmt"
-	libhttp "git.canopsis.net/canopsis/go-engines/lib/http"
-	"git.canopsis.net/canopsis/go-engines/lib/security"
+	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"io/ioutil"
 	"net/http"
 	"net/url"

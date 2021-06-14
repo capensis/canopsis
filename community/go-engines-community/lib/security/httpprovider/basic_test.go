@@ -3,8 +3,8 @@ package httpprovider
 import (
 	"encoding/base64"
 	"fmt"
-	"git.canopsis.net/canopsis/go-engines/lib/security"
-	mock_security "git.canopsis.net/canopsis/go-engines/mocks/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	"github.com/golang/mock/gomock"
 	"testing"
 )

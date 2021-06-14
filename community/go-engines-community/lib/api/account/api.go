@@ -3,8 +3,8 @@ package account
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/go-engines/lib/api/auth"
-	"git.canopsis.net/canopsis/go-engines/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
 )
 

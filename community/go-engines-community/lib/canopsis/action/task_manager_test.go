@@ -3,9 +3,9 @@ package action_test
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/action"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	mock_action "git.canopsis.net/canopsis/go-engines/mocks/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 	"testing"

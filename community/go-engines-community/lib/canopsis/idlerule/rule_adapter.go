@@ -1,10 +1,10 @@
 package idlerule
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/idlerule/adapter.go git.canopsis.net/canopsis/go-engines/lib/canopsis/idlerule RuleAdapter
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/idlerule/adapter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule RuleAdapter
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

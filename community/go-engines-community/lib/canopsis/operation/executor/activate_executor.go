@@ -1,8 +1,8 @@
 package executor
 
 import (
-	operationlib "git.canopsis.net/canopsis/go-engines/lib/canopsis/operation"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 func NewActivateExecutor() operationlib.Executor {

@@ -1,12 +1,12 @@
 package config_test
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/config"
-	"git.canopsis.net/canopsis/go-engines/lib/testutils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/testutils"
 	"os"
 	"testing"
 
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

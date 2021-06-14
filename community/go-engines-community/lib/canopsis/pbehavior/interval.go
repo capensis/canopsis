@@ -3,7 +3,7 @@ package pbehavior
 import (
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/lib/timespan"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/teambition/rrule-go"
 )
 

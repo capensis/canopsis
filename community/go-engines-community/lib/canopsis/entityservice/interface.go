@@ -1,11 +1,11 @@
 package entityservice
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/entityservice/entityservice.go git.canopsis.net/canopsis/go-engines/lib/canopsis/entityservice Adapter,CountersCache,Storage
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/entityservice/entityservice.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice Adapter,CountersCache,Storage
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 

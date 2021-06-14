@@ -1,6 +1,6 @@
 package metaalarm
 
-import "git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter/pattern"
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 
 type RuleConfig struct {
 	TimeInterval int `bson:"time_interval,omitempty" json:"time_interval,omitempty"`

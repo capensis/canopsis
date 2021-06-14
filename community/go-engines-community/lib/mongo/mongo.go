@@ -1,6 +1,6 @@
 package mongo
 
-//go:generate mockgen -destination=../../mocks/lib/mongo/mongo.go git.canopsis.net/canopsis/go-engines/lib/mongo DbCollection,DbClient,SingleResultHelper,Cursor
+//go:generate mockgen -destination=../../mocks/lib/mongo/mongo.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo DbCollection,DbClient,SingleResultHelper,Cursor
 
 import (
 	"context"

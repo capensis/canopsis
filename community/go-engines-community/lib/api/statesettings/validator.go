@@ -1,7 +1,7 @@
 package statesettings
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/statesetting"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"github.com/go-playground/validator/v10"
 	"strconv"
 	"strings"

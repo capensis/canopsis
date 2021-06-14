@@ -5,11 +5,11 @@ import (
 	"testing"
 	"time"
 
-	amqpLib "git.canopsis.net/canopsis/go-engines/lib/amqp"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/encoding/json"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"git.canopsis.net/canopsis/go-engines/lib/log"
-	"git.canopsis.net/canopsis/go-engines/lib/redis"
+	amqpLib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

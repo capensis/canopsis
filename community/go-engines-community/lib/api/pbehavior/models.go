@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 
-	"git.canopsis.net/canopsis/go-engines/lib/api/pagination"
-	"git.canopsis.net/canopsis/go-engines/lib/api/pbehaviorexception"
-	"git.canopsis.net/canopsis/go-engines/lib/api/pbehaviorreason"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorreason"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 )

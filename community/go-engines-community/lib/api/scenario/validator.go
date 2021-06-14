@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/go-playground/validator/v10"
 	"github.com/teambition/rrule-go"
 	"go.mongodb.org/mongo-driver/bson"

@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	cps "git.canopsis.net/canopsis/go-engines/lib/canopsis"
-	"git.canopsis.net/canopsis/go-engines/lib/log"
-	"git.canopsis.net/canopsis/go-engines/lib/testutils"
+	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/testutils"
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/streadway/amqp"
 )

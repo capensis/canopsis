@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/lib/utils/ready"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils/ready"
 )
 
 func main() {

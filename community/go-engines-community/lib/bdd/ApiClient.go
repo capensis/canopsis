@@ -19,8 +19,8 @@ import (
 
 	"github.com/gin-gonic/gin/binding"
 
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
-	"git.canopsis.net/canopsis/go-engines/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/cucumber/messages-go/v10"
 	"go.mongodb.org/mongo-driver/bson"
 )

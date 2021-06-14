@@ -3,12 +3,12 @@ package user
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/go-engines/lib/api/common"
-	"git.canopsis.net/canopsis/go-engines/lib/api/pagination"
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
-	securitymodel "git.canopsis.net/canopsis/go-engines/lib/security/model"
-	"git.canopsis.net/canopsis/go-engines/lib/security/password"
-	"git.canopsis.net/canopsis/go-engines/lib/utils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

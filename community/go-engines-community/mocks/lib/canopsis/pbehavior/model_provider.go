@@ -6,7 +6,7 @@ package mock_pbehavior
 
 import (
 	context "context"
-	pbehavior "git.canopsis.net/canopsis/go-engines/lib/canopsis/pbehavior"
+	pbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )

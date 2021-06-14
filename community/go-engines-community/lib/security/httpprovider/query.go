@@ -1,7 +1,7 @@
 package httpprovider
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"net/http"
 )
 

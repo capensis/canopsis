@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	cps "git.canopsis.net/canopsis/go-engines/lib/canopsis"
+	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 )
 
 func (f *Flags) ParseArgs() error {

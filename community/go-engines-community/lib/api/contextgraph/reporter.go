@@ -2,8 +2,8 @@ package contextgraph
 
 import (
 	"context"
-	libmongo "git.canopsis.net/canopsis/go-engines/lib/mongo"
-	"git.canopsis.net/canopsis/go-engines/lib/utils"
+	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"time"

@@ -1,8 +1,8 @@
 package account
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/api/role"
-	"git.canopsis.net/canopsis/go-engines/lib/api/user"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 )
 
 type User struct {

@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 )
 
 // LinksFetcher interface to fetch external API

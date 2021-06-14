@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"git.canopsis.net/canopsis/go-engines/lib/log"
-	"git.canopsis.net/canopsis/go-engines/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	redisV8 "github.com/go-redis/redis/v8"
 	. "github.com/smartystreets/goconvey/convey"
 )

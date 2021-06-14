@@ -7,9 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/debug"
-	"git.canopsis.net/canopsis/go-engines/lib/log"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/debug"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 )
 
 func main() {

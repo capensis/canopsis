@@ -8,11 +8,11 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"git.canopsis.net/canopsis/go-engines/lib/amqp"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/config"
-	"git.canopsis.net/canopsis/go-engines/lib/log"
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
-	"git.canopsis.net/canopsis/go-engines/lib/utils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/pelletier/go-toml"
 	"github.com/rs/zerolog"
 )

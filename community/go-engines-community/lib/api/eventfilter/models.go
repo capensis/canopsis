@@ -1,10 +1,10 @@
 package eventfilter
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/api/pagination"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter/pattern"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type EventFilterPayload struct {

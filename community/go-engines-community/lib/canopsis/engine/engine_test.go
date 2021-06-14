@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	libengine "git.canopsis.net/canopsis/go-engines/lib/canopsis/engine"
-	mock_engine "git.canopsis.net/canopsis/go-engines/mocks/lib/canopsis/engine"
+	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 )

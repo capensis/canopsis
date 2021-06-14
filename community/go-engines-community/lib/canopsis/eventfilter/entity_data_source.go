@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	libcontext "git.canopsis.net/canopsis/go-engines/lib/canopsis/context"
+	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
 )
 
 // EntityDataSourceFactory is a factory for EntityDataSourceGetter. It

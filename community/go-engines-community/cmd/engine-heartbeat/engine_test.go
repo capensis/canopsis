@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	hb "git.canopsis.net/canopsis/go-engines/cmd/engine-heartbeat"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/heartbeat"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"git.canopsis.net/canopsis/go-engines/lib/log"
+	hb "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/cmd/engine-heartbeat"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/heartbeat"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/streadway/amqp"
 )

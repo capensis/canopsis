@@ -1,6 +1,6 @@
 package redis
 
-//go:generate mockgen -destination=../../mocks/lib/redis/store.go git.canopsis.net/canopsis/go-engines/lib/redis Store
+//go:generate mockgen -destination=../../mocks/lib/redis/store.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis Store
 
 import (
 	"context"

@@ -1,10 +1,10 @@
 package provider
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/security"
-	mock_ldap "git.canopsis.net/canopsis/go-engines/mocks/github.com/go-ldap/ldap"
-	mock_security "git.canopsis.net/canopsis/go-engines/mocks/lib/security"
-	mock_provider "git.canopsis.net/canopsis/go-engines/mocks/lib/security/provider"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	mock_ldap "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-ldap/ldap"
+	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
+	mock_provider "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security/provider"
 	"github.com/go-ldap/ldap/v3"
 	"github.com/golang/mock/gomock"
 	"testing"

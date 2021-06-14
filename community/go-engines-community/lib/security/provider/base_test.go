@@ -1,9 +1,9 @@
 package provider
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/security"
-	mock_security "git.canopsis.net/canopsis/go-engines/mocks/lib/security"
-	mock_password "git.canopsis.net/canopsis/go-engines/mocks/lib/security/password"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
+	mock_password "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security/password"
 	"github.com/golang/mock/gomock"
 	"testing"
 )

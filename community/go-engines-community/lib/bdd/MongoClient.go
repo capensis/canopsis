@@ -3,9 +3,9 @@ package bdd
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	libmongo "git.canopsis.net/canopsis/go-engines/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

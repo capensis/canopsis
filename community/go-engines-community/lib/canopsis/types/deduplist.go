@@ -3,7 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/encoding/gob"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/gob"
 )
 
 // DedupList is not to be used directly, use NewDedupList instead.

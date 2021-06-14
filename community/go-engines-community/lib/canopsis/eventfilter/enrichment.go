@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter/pattern"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
 

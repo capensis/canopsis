@@ -9,9 +9,9 @@ import (
 	"strings"
 	"sync"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis"
-	libcontext "git.canopsis.net/canopsis/go-engines/lib/canopsis/context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
 

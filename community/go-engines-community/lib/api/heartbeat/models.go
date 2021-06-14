@@ -3,8 +3,8 @@ package heartbeat
 import (
 	"encoding/json"
 
-	"git.canopsis.net/canopsis/go-engines/lib/api/pagination"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type FilteredQuery struct {

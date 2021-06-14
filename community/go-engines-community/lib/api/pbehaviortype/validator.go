@@ -1,7 +1,7 @@
 package pbehaviortype
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"github.com/go-playground/validator/v10"
 	"strings"
 )

@@ -1,12 +1,12 @@
 package pbehavior
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/pbehavior/service.go git.canopsis.net/canopsis/go-engines/lib/canopsis/pbehavior Service
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/pbehavior/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior Service
 
 import (
 	"context"
 	"encoding/json"
-	libtypes "git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"git.canopsis.net/canopsis/go-engines/lib/timespan"
+	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/rs/zerolog"
 	"time"
 )

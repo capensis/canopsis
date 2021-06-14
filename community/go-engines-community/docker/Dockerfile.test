@@ -3,7 +3,7 @@ ARG GOLANG_IMAGE_TAG
 FROM golang:${GOLANG_IMAGE_TAG}
 
 ENV GOPATH /sources/go
-ENV PROJECT_PATH ${GOPATH}/src/git.canopsis.net/canopsis/go-engines
+ENV PROJECT_PATH ${GOPATH}/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community
 ENV PATH ${PATH}:${GOPATH}/bin
 ENV GO111MODULE on
 

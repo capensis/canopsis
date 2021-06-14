@@ -1,15 +1,15 @@
 // security contains implementation of authentication and authorization methods.
 package security
 
-//go:generate mockgen -destination=../../mocks/lib/security/security.go git.canopsis.net/canopsis/go-engines/lib/security Enforcer,Provider,HttpProvider,UserProvider,ConfigProvider
+//go:generate mockgen -destination=../../mocks/lib/security/security.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security Enforcer,Provider,HttpProvider,UserProvider,ConfigProvider
 
 import (
 	"context"
 	"path/filepath"
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
-	"git.canopsis.net/canopsis/go-engines/lib/security/mongoadapter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/mongoadapter"
 	"github.com/casbin/casbin/v2"
 )
 

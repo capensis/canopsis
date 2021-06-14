@@ -2,10 +2,10 @@ package action_test
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/action"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/encoding/json"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"git.canopsis.net/canopsis/go-engines/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
 	"reflect"
 	"testing"

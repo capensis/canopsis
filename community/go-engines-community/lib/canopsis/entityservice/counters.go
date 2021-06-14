@@ -1,8 +1,8 @@
 package entityservice
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 // GetAlarmCountersFromEvent returns counters for old alarm state and

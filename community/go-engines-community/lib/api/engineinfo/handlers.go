@@ -2,7 +2,7 @@ package engineinfo
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

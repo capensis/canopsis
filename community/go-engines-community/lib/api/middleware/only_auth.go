@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"github.com/gin-gonic/gin"
 )
 

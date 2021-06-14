@@ -2,8 +2,8 @@ package pbehavior
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
-	mock_mongo "git.canopsis.net/canopsis/go-engines/mocks/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
 	"github.com/influxdata/influxdb/pkg/deep"
 	"go.mongodb.org/mongo-driver/bson"

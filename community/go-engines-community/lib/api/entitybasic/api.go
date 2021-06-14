@@ -2,9 +2,9 @@ package entitybasic
 
 import (
 	"errors"
-	"git.canopsis.net/canopsis/go-engines/lib/api/common"
-	"git.canopsis.net/canopsis/go-engines/lib/api/logger"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"net/http"

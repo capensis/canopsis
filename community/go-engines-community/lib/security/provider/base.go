@@ -3,8 +3,8 @@ package provider
 
 import (
 	"fmt"
-	"git.canopsis.net/canopsis/go-engines/lib/security"
-	"git.canopsis.net/canopsis/go-engines/lib/security/password"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"strings"
 )
 

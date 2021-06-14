@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	fifo "git.canopsis.net/canopsis/go-engines/cmd/engine-fifo"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis"
-	"git.canopsis.net/canopsis/go-engines/lib/log"
+	fifo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/cmd/engine-fifo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"github.com/streadway/amqp"
 
 	. "github.com/smartystreets/goconvey/convey"

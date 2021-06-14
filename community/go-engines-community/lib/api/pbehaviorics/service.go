@@ -2,11 +2,11 @@ package pbehaviorics
 
 import (
 	"fmt"
-	pbehaviorapi "git.canopsis.net/canopsis/go-engines/lib/api/pbehavior"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/config"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/go-engines/lib/ics"
-	"git.canopsis.net/canopsis/go-engines/lib/timespan"
+	pbehaviorapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/ics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/teambition/rrule-go"
 	"math"
 	"time"

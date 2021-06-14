@@ -1,12 +1,12 @@
 package serviceweather
 
 import (
-	alarmapi "git.canopsis.net/canopsis/go-engines/lib/api/alarm"
-	"git.canopsis.net/canopsis/go-engines/lib/api/entitycategory"
-	"git.canopsis.net/canopsis/go-engines/lib/api/pagination"
-	"git.canopsis.net/canopsis/go-engines/lib/api/pbehavior"
-	"git.canopsis.net/canopsis/go-engines/lib/api/pbehaviortype"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type ListRequest struct {

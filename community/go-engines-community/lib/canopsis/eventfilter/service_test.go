@@ -2,15 +2,15 @@ package eventfilter_test
 
 import (
 	"context"
-	mock_eventfilter "git.canopsis.net/canopsis/go-engines/mocks/lib/canopsis/eventfilter"
+	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	"sort"
 	"testing"
 
-	libcontext "git.canopsis.net/canopsis/go-engines/lib/canopsis/context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"git.canopsis.net/canopsis/go-engines/lib/log"
-	mock_context "git.canopsis.net/canopsis/go-engines/mocks/lib/canopsis/context"
+	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	mock_context "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/context"
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"

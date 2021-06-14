@@ -2,12 +2,12 @@ package action_test
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/action"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter/pattern"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"git.canopsis.net/canopsis/go-engines/lib/utils"
-	mock_action "git.canopsis.net/canopsis/go-engines/mocks/lib/canopsis/action"
-	mock_alarm "git.canopsis.net/canopsis/go-engines/mocks/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
+	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	"github.com/golang/mock/gomock"
 	"github.com/influxdata/influxdb/pkg/deep"
 	"github.com/rs/zerolog"

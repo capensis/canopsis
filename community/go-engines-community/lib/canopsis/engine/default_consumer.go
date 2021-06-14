@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	libamqp "git.canopsis.net/canopsis/go-engines/lib/amqp"
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 )

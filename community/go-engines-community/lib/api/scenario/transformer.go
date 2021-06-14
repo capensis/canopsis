@@ -2,7 +2,7 @@ package scenario
 
 import (
 	"encoding/json"
-	libaction "git.canopsis.net/canopsis/go-engines/lib/canopsis/action"
+	libaction "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 )
 
 type ModelTransformer interface {

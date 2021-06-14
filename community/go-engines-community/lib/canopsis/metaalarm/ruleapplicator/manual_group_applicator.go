@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/metaalarm/service"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

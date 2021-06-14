@@ -1,7 +1,7 @@
 package pattern
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 // TimePattern is a type representing a pattern that can be applied to the value

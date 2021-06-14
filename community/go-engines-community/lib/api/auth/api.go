@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/api/common"
-	"git.canopsis.net/canopsis/go-engines/lib/security"
-	libsession "git.canopsis.net/canopsis/go-engines/lib/security/session"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"net/http"

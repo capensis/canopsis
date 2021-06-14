@@ -1,9 +1,9 @@
 package httpprovider
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/security"
-	mock_http "git.canopsis.net/canopsis/go-engines/mocks/lib/http"
-	mock_security "git.canopsis.net/canopsis/go-engines/mocks/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	mock_http "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/http"
+	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	"github.com/golang/mock/gomock"
 	"io/ioutil"
 	"net/http"

@@ -1,7 +1,7 @@
 package serviceweather
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/go-playground/validator/v10"
 	"strings"
 )

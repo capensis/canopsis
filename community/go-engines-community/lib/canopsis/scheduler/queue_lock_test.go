@@ -3,7 +3,7 @@ package scheduler
 import (
 	"bytes"
 	"context"
-	mock_v8 "git.canopsis.net/canopsis/go-engines/mocks/github.com/go-redis/redis/v8"
+	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
 	"github.com/go-redis/redis/v8"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"

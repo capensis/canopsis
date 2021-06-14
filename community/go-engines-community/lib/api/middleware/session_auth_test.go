@@ -2,12 +2,12 @@ package middleware
 
 import (
 	"fmt"
-	"git.canopsis.net/canopsis/go-engines/lib/api/auth"
-	libmongo "git.canopsis.net/canopsis/go-engines/lib/mongo"
-	"git.canopsis.net/canopsis/go-engines/lib/security"
-	"git.canopsis.net/canopsis/go-engines/lib/security/model"
-	mock_sessions "git.canopsis.net/canopsis/go-engines/mocks/github.com/gorilla/sessions"
-	mock_mongo "git.canopsis.net/canopsis/go-engines/mocks/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	mock_sessions "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/gorilla/sessions"
+	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/gorilla/sessions"

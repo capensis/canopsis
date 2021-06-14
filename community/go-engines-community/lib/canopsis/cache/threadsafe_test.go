@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/cache"
-	"git.canopsis.net/canopsis/go-engines/lib/testutils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/cache"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/testutils"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

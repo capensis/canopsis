@@ -1,7 +1,7 @@
 // engine contain implementation of canopsis engine.
 package engine
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/engine/engine.go git.canopsis.net/canopsis/go-engines/lib/canopsis/engine Engine,Consumer,MessageProcessor,PeriodicalWorker,RPCClient,RPCMessageProcessor
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/engine/engine.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine Engine,Consumer,MessageProcessor,PeriodicalWorker,RPCClient,RPCMessageProcessor
 
 import (
 	"context"

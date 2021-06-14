@@ -1,9 +1,9 @@
 package stats
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	libmongo "git.canopsis.net/canopsis/go-engines/lib/mongo"
-	mock_mongo "git.canopsis.net/canopsis/go-engines/mocks/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
 	"go.mongodb.org/mongo-driver/mongo"
 	"math"

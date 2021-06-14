@@ -10,10 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	libamqp "git.canopsis.net/canopsis/go-engines/lib/amqp"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
-	"git.canopsis.net/canopsis/go-engines/lib/redis"
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 )

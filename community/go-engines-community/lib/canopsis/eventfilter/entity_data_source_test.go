@@ -2,13 +2,13 @@ package eventfilter_test
 
 import (
 	"context"
-	mock_context "git.canopsis.net/canopsis/go-engines/mocks/lib/canopsis/context"
+	mock_context "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/context"
 	"github.com/golang/mock/gomock"
 	"testing"
 
-	libcontext "git.canopsis.net/canopsis/go-engines/lib/canopsis/context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

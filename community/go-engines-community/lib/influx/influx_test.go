@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"git.canopsis.net/canopsis/go-engines/lib/influx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/influx"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

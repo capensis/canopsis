@@ -2,17 +2,17 @@ package main
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"github.com/bsm/redislock"
 	"runtime/trace"
 	"time"
 
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/encoding/json"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/go-engines/lib/canopsis/entityservice"
-	"git.canopsis.net/canopsis/go-engines/lib/depmake"
-	"git.canopsis.net/canopsis/go-engines/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
 )
 

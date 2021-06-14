@@ -2,9 +2,9 @@ package mongoadapter
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/go-engines/lib/mongo"
-	libmodel "git.canopsis.net/canopsis/go-engines/lib/security/model"
-	mock_mongo "git.canopsis.net/canopsis/go-engines/mocks/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	libmodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	casbinmodel "github.com/casbin/casbin/v2/model"
 	"github.com/golang/mock/gomock"
 	"go.mongodb.org/mongo-driver/bson"
