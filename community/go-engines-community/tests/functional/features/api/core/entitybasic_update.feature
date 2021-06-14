@@ -1,0 +1,335 @@
+Feature: Update entity basic
+  I need to be able to update a entity basic
+
+  Scenario: given update request should update entity
+    When I am admin
+    When I do PUT /api/v4/entitybasics?_id=test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name:
+    """
+    {
+      "description": "test-entitybasic-to-update-connector-description-updated",
+      "enabled": true,
+      "category": "test-category-to-entitybasic-edit",
+      "impact_level": 3,
+      "infos": [
+        {
+          "description": "test-entitybasic-to-update-info-1-description",
+          "name": "test-entitybasic-to-update-info-1-name",
+          "value": "test-entitybasic-to-update-info-1-value"
+        },
+        {
+          "description": "test-entitybasic-to-update-info-2-description",
+          "name": "test-entitybasic-to-update-info-2-name",
+          "value": false
+        },
+        {
+          "description": "test-entitybasic-to-update-info-3-description",
+          "name": "test-entitybasic-to-update-info-3-name",
+          "value": 1022
+        },
+        {
+          "description": "test-entitybasic-to-update-info-4-description",
+          "name": "test-entitybasic-to-update-info-4-name",
+          "value": 10.45
+        },
+        {
+          "description": "test-entitybasic-to-update-info-5-description",
+          "name": "test-entitybasic-to-update-info-5-name",
+          "value": null
+        },
+        {
+          "description": "test-entitybasic-to-update-info-6-description",
+          "name": "test-entitybasic-to-update-info-6-name",
+          "value": ["test-entitybasic-to-update-info-6-value", false, 1022, 10.45, null]
+        }
+      ],
+      "impact": [
+        "test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1",
+        "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
+      ],
+      "depends": [
+        "test-entitybasic-to-update-component-1",
+        "test-entitybasic-to-update-component-3"
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """
+    {
+      "_id": "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name",
+      "category": {
+        "_id": "test-category-to-entitybasic-edit",
+        "author": "test-category-to-entitybasic-edit-author",
+        "created": 1592215337,
+        "name": "test-category-to-entitybasic-edit-name",
+        "updated": 1592215337
+      },
+      "changeable_depends": [
+        "test-entitybasic-to-update-component-1",
+        "test-entitybasic-to-update-component-3"
+      ],
+      "changeable_impact": [
+        "test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1",
+        "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
+      ],
+      "depends": [
+        "test-entitybasic-to-update-component-1",
+        "test-entitybasic-to-update-component-3"
+      ],
+      "description": "test-entitybasic-to-update-connector-description-updated",
+      "enable_history": [],
+      "enabled": true,
+      "impact": [
+        "test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1",
+        "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
+      ],
+      "impact_level": 3,
+      "infos": {
+        "test-entitybasic-to-update-info-1-name": {
+          "description": "test-entitybasic-to-update-info-1-description",
+          "name": "test-entitybasic-to-update-info-1-name",
+          "value": "test-entitybasic-to-update-info-1-value"
+        },
+        "test-entitybasic-to-update-info-2-name": {
+          "description": "test-entitybasic-to-update-info-2-description",
+          "name": "test-entitybasic-to-update-info-2-name",
+          "value": false
+        },
+        "test-entitybasic-to-update-info-3-name": {
+          "description": "test-entitybasic-to-update-info-3-description",
+          "name": "test-entitybasic-to-update-info-3-name",
+          "value": 1022
+        },
+        "test-entitybasic-to-update-info-4-name": {
+          "description": "test-entitybasic-to-update-info-4-description",
+          "name": "test-entitybasic-to-update-info-4-name",
+          "value": 10.45
+        },
+        "test-entitybasic-to-update-info-5-name": {
+          "description": "test-entitybasic-to-update-info-5-description",
+          "name": "test-entitybasic-to-update-info-5-name",
+          "value": null
+        },
+        "test-entitybasic-to-update-info-6-name": {
+          "description": "test-entitybasic-to-update-info-6-description",
+          "name": "test-entitybasic-to-update-info-6-name",
+          "value": ["test-entitybasic-to-update-info-6-value", false, 1022, 10.45, null]
+        }
+      },
+      "measurements": null,
+      "name": "test-entitybasic-to-update-connector-name",
+      "type": "connector"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-component-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "_id": "test-entitybasic-to-update-component-2",
+      "changeable_depends": [
+        "test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2"
+      ],
+      "changeable_impact": [],
+      "depends": [
+        "test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2"
+      ],
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-component-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "_id": "test-entitybasic-to-update-component-3",
+      "changeable_depends": [
+        "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
+      ],
+      "changeable_impact": [
+        "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name"
+      ],
+      "depends": [
+        "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
+      ],
+      "impact": [
+        "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name"
+      ]
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "_id": "test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2",
+      "changeable_depends": [],
+      "changeable_impact": [
+        "test-entitybasic-to-update-component-2"
+      ],
+      "depends": [],
+      "impact": [
+        "test-entitybasic-to-update-component-2"
+      ]
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "_id": "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3",
+      "changeable_depends": [
+        "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name"
+      ],
+      "changeable_impact": [
+        "test-entitybasic-to-update-component-3"
+      ],
+      "depends": [
+        "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name"
+      ],
+      "impact": [
+        "test-entitybasic-to-update-component-3"
+      ]
+    }
+    """
+
+  Scenario: given invalid update request should return errors
+    When I am admin
+    When I do PUT /api/v4/entitybasics?_id=test-entitybasic-not-found:
+    """
+    {}
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """
+    {
+      "errors": {
+        "enabled": "Enabled is missing.",
+        "impact_level": "ImpactLevel is missing."
+      }
+    }
+    """
+
+  Scenario: given invalid update request should return errors
+    When I am admin
+    When I do PUT /api/v4/entitybasics?_id=test-entitybasic-to-update:
+    """
+    {
+      "description": "test-entitybasic-to-update-description",
+      "enabled": true,
+      "category": "test-category-not-exist",
+      "impact_level": 1,
+      "infos": [
+        {}
+      ],
+      "impact": [
+        "test-entity-not-exist"
+      ],
+      "depends": [
+        "test-entity-not-exist"
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """
+    {
+      "errors": {
+        "category": "Category doesn't exist.",
+        "impact": "Impacts doesn't exist.",
+        "depends": "Depends doesn't exist.",
+        "infos.0.name": "Name is missing."
+      }
+    }
+    """
+
+  Scenario: given invalid update request should return errors
+    When I am admin
+    When I do PUT /api/v4/entitybasics?_id=test-entitybasic-to-update:
+    """
+    {
+      "description": "test-entitybasic-to-update-description",
+      "enabled": true,
+      "category": "test-category-to-entitybasic-edit",
+      "impact_level": 1,
+      "infos": [],
+      "impact": [
+        "test-entitybasic-to-edit-impact-1",
+        "test-entitybasic-to-edit-impact-1"
+      ],
+      "depends": [
+        "test-entitybasic-to-edit-impact-2",
+        "test-entitybasic-to-edit-impact-2"
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """
+    {
+      "errors": {
+        "depends": "Depends contains duplicate values.",
+        "impact": "Impacts contains duplicate values."
+      }
+    }
+    """
+
+  Scenario: given invalid update request should return errors
+    When I am admin
+    When I do PUT /api/v4/entitybasics?_id=test-entitybasic-to-update:
+    """
+    {
+      "description": "test-entitybasic-to-update-description",
+      "enabled": true,
+      "category": "test-category-to-entitybasic-edit",
+      "impact_level": 1,
+      "infos": [],
+      "impact": [
+        "test-entitybasic-to-edit-impact-1"
+      ],
+      "depends": [
+        "test-entitybasic-to-edit-impact-1"
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """
+    {
+      "errors": {
+        "depends": "Depends contains duplicate values with Impacts."
+      }
+    }
+    """
+
+  Scenario: given update request and no auth user should not allow access
+    When I do PUT /api/v4/entitybasics?_id=test-entitybasic-not-found
+    Then the response code should be 401
+
+  Scenario: given update request and auth user by api key without permissions should not allow access
+    When I am noperms
+    When I do PUT /api/v4/entitybasics?_id=test-entitybasic-not-found
+    Then the response code should be 403
+
+  Scenario: given update request with not exist id should return not found error
+    When I am admin
+    When I do PUT /api/v4/entitybasics?_id=test-entitybasic-not-found:
+    """
+    {
+      "description": "test-entitybasic-not-found-description",
+      "enabled": true,
+      "category": "test-category-to-entitybasic-edit",
+      "impact_level": 1,
+      "infos": [],
+      "impact": [],
+      "depends": []
+    }
+    """
+    Then the response code should be 404
+    Then the response body should be:
+    """
+    {
+      "error": "Not found"
+    }
+    """

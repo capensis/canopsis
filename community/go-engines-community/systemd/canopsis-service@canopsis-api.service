@@ -1,0 +1,19 @@
+[Unit]
+Description=Canopsis API daemon
+After=network.target
+Documentation=https://doc.canopsis.net
+
+[Service]
+User=canopsis
+Group=canopsis
+WorkingDirectory=/opt/canopsis
+Environment=HOME=/opt/canopsis
+EnvironmentFile=/opt/canopsis/etc/go-engines-vars.conf
+Restart=always
+Type=simple
+RestartSec=1
+StartLimitBurst=300
+ExecStart=/opt/canopsis/bin/canopsis-api -port 8082
+
+[Install]
+WantedBy=multi-user.target

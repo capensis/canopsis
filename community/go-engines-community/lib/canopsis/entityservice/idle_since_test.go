@@ -1,0 +1,22 @@
+package entityservice_test
+
+import (
+	"git.canopsis.net/canopsis/go-engines/lib/canopsis/entityservice"
+	"testing"
+)
+
+func TestMark(t *testing.T) {
+	m := entityservice.NewServicesIdleSinceMap()
+
+	if !m.Mark("1", 2) {
+		t.Fatalf("Should be able to mark")
+	}
+
+	if m.Mark("1", 3) {
+		t.Fatalf("Shouldn't be able to mark")
+	}
+
+	if !m.Mark("1", 1) {
+		t.Fatalf("Should be able to mark")
+	}
+}

@@ -1,0 +1,105 @@
+package provider
+
+import (
+	"git.canopsis.net/canopsis/go-engines/lib/security"
+	mock_security "git.canopsis.net/canopsis/go-engines/mocks/lib/security"
+	mock_password "git.canopsis.net/canopsis/go-engines/mocks/lib/security/password"
+	"github.com/golang/mock/gomock"
+	"testing"
+)
+
+func TestBaseProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	username := "testname"
+	password := "testpass"
+	expectedUser := &security.User{
+		ID:             "testid",
+		AuthApiKey:     "testkey",
+		HashedPassword: "testhash",
+		IsEnabled:      true,
+	}
+	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
+	mockUserProvider.
+		EXPECT().
+		FindByUsername(gomock.Eq(username)).
+		Return(expectedUser, nil)
+	mockEncoder := mock_password.NewMockEncoder(ctrl)
+	mockEncoder.
+		EXPECT().
+		IsValidPassword(gomock.Eq([]byte(expectedUser.HashedPassword)), gomock.Eq([]byte(password))).
+		Return(true)
+
+	p := NewBaseProvider(mockUserProvider, mockEncoder)
+	user, err := p.Auth(username, password)
+
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+
+	if user != expectedUser {
+		t.Errorf("expected user: %v but got %v", expectedUser, user)
+	}
+}
+
+func TestBaseProvider_Auth_GivenInvalidUsername_ShouldReturnNil(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	username := "testname"
+	password := "testpass"
+	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
+	mockUserProvider.
+		EXPECT().
+		FindByUsername(gomock.Eq(username)).
+		Return(nil, nil)
+	mockEncoder := mock_password.NewMockEncoder(ctrl)
+	mockEncoder.
+		EXPECT().
+		IsValidPassword(gomock.Any(), gomock.Any()).
+		Times(0)
+
+	p := NewBaseProvider(mockUserProvider, mockEncoder)
+	user, err := p.Auth(username, password)
+
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+
+	if user != nil {
+		t.Errorf("expected no user but got %v", user)
+	}
+}
+
+func TestBaseProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	username := "testname"
+	password := "testpass"
+	expectedUser := &security.User{
+		ID:             "testid",
+		AuthApiKey:     "testkey",
+		HashedPassword: "testhash",
+		IsEnabled:      true,
+	}
+	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
+	mockUserProvider.
+		EXPECT().
+		FindByUsername(gomock.Eq(username)).
+		Return(expectedUser, nil)
+	mockEncoder := mock_password.NewMockEncoder(ctrl)
+	mockEncoder.
+		EXPECT().
+		IsValidPassword(gomock.Eq([]byte(expectedUser.HashedPassword)), gomock.Eq([]byte(password))).
+		Return(false)
+
+	p := NewBaseProvider(mockUserProvider, mockEncoder)
+	user, err := p.Auth(username, password)
+
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+
+	if user != nil {
+		t.Errorf("expected no user but got %v", user)
+	}
+}

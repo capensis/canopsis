@@ -1,0 +1,561 @@
+package amqp
+
+import (
+	"fmt"
+	"sync"
+	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/streadway/amqp"
+)
+
+const (
+	maxReconnectTimeout             = time.Minute
+	waitReconnectionTimeoutOverhead = 500 * time.Millisecond
+)
+
+// Dial accepts a string in the AMQP URI format and returns a new amqp connection.
+// If connection is closed it tries to reconnect.
+func Dial(url string, logger zerolog.Logger,
+	reconnectCount int, minReconnectTimeout time.Duration) (Connection, error) {
+	amqpConn, err := amqp.Dial(url)
+	if err != nil {
+		logger.Err(err).Msg("Dial: connect failed")
+		return nil, err
+	}
+
+	if reconnectCount < -1 {
+		return nil, fmt.Errorf("invalid reconnectCount %v, can be -1 or possitive int", reconnectCount)
+	}
+
+	isReconnectable := reconnectCount != 0 && minReconnectTimeout > 0
+
+	var waitReconnectionTimeout time.Duration
+	if isReconnectable && reconnectCount > 0 {
+		waitReconnectionTimeout += waitReconnectionTimeoutOverhead
+		for i := 0; i < reconnectCount; i++ {
+			waitReconnectionTimeout += minTimeDuration(minReconnectTimeout<<i, maxReconnectTimeout)
+		}
+	}
+
+	logger.Debug().Msg("Dial: connected")
+	conn := &baseConnection{
+		amqpConn:                amqpConn,
+		logger:                  logger,
+		isReconnectable:         isReconnectable,
+		reconnectCount:          reconnectCount,
+		minReconnectTimeout:     minTimeDuration(minReconnectTimeout, maxReconnectTimeout),
+		waitReconnectionTimeout: waitReconnectionTimeout,
+	}
+
+	if conn.isReconnectable {
+		go reconnect(url, conn)
+	}
+
+	return conn, nil
+}
+
+// baseConnection is used to wrap amqp connection to reconnect it each time
+// when connection is closed.
+type baseConnection struct {
+	// amqpConn contains real connection.
+	amqpConn *amqp.Connection
+	// listeners is used to notify opened channels that connection is reconnected.
+	listenersM sync.Mutex
+	listeners  []chan<- bool
+	// closed is true if connection is closed normally or if reconnection failed after max retries.
+	closedM                 sync.Mutex
+	closed                  bool
+	logger                  zerolog.Logger
+	isReconnectable         bool
+	reconnectCount          int
+	minReconnectTimeout     time.Duration
+	waitReconnectionTimeout time.Duration
+}
+
+// Channel opens new amqp channel.
+// If connection or channel is closed it tries to reopen channel.
+func (c *baseConnection) Channel() (res Channel, resErr error) {
+	logPrefix := "Channel:"
+	// Add listeners before check on isClosed to prevent race condition.
+	listener := make(chan bool, 1)
+	c.addListener(listener)
+
+	defer func() {
+		if resErr != nil {
+			c.removeListener(listener)
+			close(listener)
+		}
+	}()
+
+	if c.IsClosed() {
+		return nil, amqp.ErrClosed
+	}
+
+	amqpCh, err := c.amqpConn.Channel()
+	if err != nil {
+		if c.isReconnectable && err == amqp.ErrClosed {
+			c.logger.Debug().Msgf("%s wait reconnection", logPrefix)
+			if c.waitReconnectionTimeout == 0 {
+				reconnected := <-listener
+				if reconnected {
+					amqpCh, err = c.amqpConn.Channel()
+				}
+			} else {
+				select {
+				case reconnected := <-listener:
+					if reconnected {
+						amqpCh, err = c.amqpConn.Channel()
+					}
+				case <-time.After(c.waitReconnectionTimeout):
+					/* add timeout to prevent infinity waiting on bug */
+				}
+			}
+		}
+
+		if err != nil {
+			c.logger.Err(err).Msgf("%s channel creation failed", logPrefix)
+			return nil, err
+		}
+	}
+
+	c.logger.Debug().Msgf("%s channel created", logPrefix)
+	ch := &baseChannel{
+		amqpCh:                  amqpCh,
+		logger:                  c.logger,
+		waitReconnectionTimeout: c.waitReconnectionTimeout,
+		isReconnectable:         c.isReconnectable,
+	}
+
+	if ch.isReconnectable {
+		go reconnectChannel(c, ch, listener)
+	}
+
+	return ch, nil
+}
+
+// IsClosed returns true if the connection is marked as closed.
+func (c *baseConnection) IsClosed() bool {
+	c.closedM.Lock()
+	defer c.closedM.Unlock()
+
+	return c.closed
+}
+
+// Close closes connection.
+func (c *baseConnection) Close() error {
+	c.closedM.Lock()
+	defer c.closedM.Unlock()
+
+	if c.closed {
+		return amqp.ErrClosed
+	}
+
+	c.closed = true
+
+	return c.amqpConn.Close()
+}
+
+// addListener adds listener.
+func (c *baseConnection) addListener(listener chan<- bool) {
+	c.listenersM.Lock()
+	defer c.listenersM.Unlock()
+	c.listeners = append(c.listeners, listener)
+}
+
+// removeListener removes listener.
+func (c *baseConnection) removeListener(listener chan<- bool) {
+	c.listenersM.Lock()
+	defer c.listenersM.Unlock()
+	removeIndex := -1
+	for i := range c.listeners {
+		if c.listeners[i] == listener {
+			removeIndex = i
+		}
+	}
+
+	if removeIndex >= 0 {
+		c.listeners = append(c.listeners[:removeIndex], c.listeners[removeIndex+1:]...)
+	}
+}
+
+// notifyListeners sends reconnection result to opened channels.
+func (c *baseConnection) notifyListeners(reconnected bool) {
+	c.listenersM.Lock()
+	defer c.listenersM.Unlock()
+
+	for _, listener := range c.listeners {
+		listener <- reconnected
+	}
+}
+
+// baseChannel is used to wrap amqp channel to reconnect it each time
+// when connection or channel is closed.
+type baseChannel struct {
+	// amqpCh contains real channel.
+	amqpCh *amqp.Channel
+	// listeners is used to notify consumers and publishers that channel is reconnected.
+	listenersM sync.Mutex
+	listeners  []chan<- bool
+	// closed is true if channel is closed normally or if reconnection failed.
+	closedM                 sync.Mutex
+	closed                  bool
+	logger                  zerolog.Logger
+	isReconnectable         bool
+	waitReconnectionTimeout time.Duration
+}
+
+// Consume starts delivering queued messages.
+// If connection or channel is closed it waits reconnection.
+func (ch *baseChannel) Consume(
+	queue, consumer string,
+	autoAck, exclusive, noLocal, noWait bool,
+	args amqp.Table,
+) (resCh <-chan amqp.Delivery, resErr error) {
+	logPrefix := "Consume:"
+	// Add listeners before check on isClosed to prevent race condition.
+	listener := make(chan bool, 1)
+	ch.addListener(listener)
+
+	defer func() {
+		if resErr != nil {
+			ch.removeListener(listener)
+			close(listener)
+		}
+	}()
+
+	if ch.IsClosed() {
+		return nil, amqp.ErrClosed
+	}
+
+	// Create custom delivery channel to manage its closing.
+	res := make(chan amqp.Delivery)
+
+	go func() {
+		ch.logger.Debug().Msgf("%s goroutine started", logPrefix)
+		defer ch.logger.Debug().Msgf("%s goroutine stopped", logPrefix)
+		defer close(res)
+		defer func() {
+			ch.removeListener(listener)
+			close(listener)
+		}()
+
+		for {
+			msgs, err := ch.amqpCh.Consume(queue, consumer, autoAck, exclusive, noLocal, noWait, args)
+			if err != nil {
+				if err == amqp.ErrClosed {
+					if !ch.isReconnectable {
+						return
+					}
+
+					ch.logger.Debug().Msgf("%s wait reconnect channel", logPrefix)
+
+					if ch.waitReconnectionTimeout == 0 {
+						reconnected := <-listener
+						if !reconnected {
+							return
+						}
+						msgs, err = ch.amqpCh.Consume(queue, consumer, autoAck, exclusive, noLocal, noWait, args)
+					} else {
+						select {
+						case reconnected := <-listener:
+							if !reconnected {
+								return
+							}
+							msgs, err = ch.amqpCh.Consume(queue, consumer, autoAck, exclusive, noLocal, noWait, args)
+						case <-time.After(ch.waitReconnectionTimeout):
+							/* add timeout to prevent infinity waiting on bug */
+						}
+					}
+				}
+
+				if err != nil {
+					ch.logger.Err(err).Msgf("%s consume failed", logPrefix)
+					break
+				}
+			}
+
+			ch.logger.Debug().Msgf("%s consume started", logPrefix)
+			// Sends messages to custom channel.
+			for msg := range msgs {
+				res <- msg
+			}
+
+			ch.logger.Debug().Msgf("%s consume ended", logPrefix)
+		}
+	}()
+
+	return res, nil
+}
+
+// Publish sends a message.
+// If connection or channel is closed it waits reconnection.
+func (ch *baseChannel) Publish(
+	exchange, key string,
+	mandatory, immediate bool,
+	msg amqp.Publishing,
+) error {
+	return ch.retry(func() error {
+		return ch.amqpCh.Publish(exchange, key, mandatory, immediate, msg)
+	})
+}
+
+// Ack acknowledges a delivery
+func (ch *baseChannel) Ack(tag uint64, multiple bool) error {
+	return ch.retry(func() error {
+		return ch.amqpCh.Ack(tag, multiple)
+	})
+}
+
+func (ch *baseChannel) Nack(tag uint64, multiple bool, requeue bool) error {
+	return ch.retry(func() error {
+		return ch.amqpCh.Nack(tag, multiple, requeue)
+	})
+}
+
+func (ch *baseChannel) Qos(prefetchCount, prefetchSize int, global bool) error {
+	return ch.retry(func() error {
+		return ch.amqpCh.Qos(prefetchCount, prefetchSize, global)
+	})
+}
+
+func (ch *baseChannel) ExchangeDeclare(name, kind string, durable, autoDelete, internal, noWait bool, args amqp.Table) error {
+	return ch.retry(func() error {
+		return ch.amqpCh.ExchangeDeclare(name, kind, durable, autoDelete, internal, noWait, args)
+	})
+}
+
+func (ch *baseChannel) QueueDeclare(name string, durable, autoDelete, exclusive, noWait bool, args amqp.Table) (amqp.Queue, error) {
+	var queue amqp.Queue
+	err := ch.retry(func() error {
+		var err error
+		queue, err = ch.amqpCh.QueueDeclare(name, durable, autoDelete, exclusive, noWait, args)
+		return err
+	})
+
+	return queue, err
+}
+
+func (ch *baseChannel) QueueBind(name, key, exchange string, noWait bool, args amqp.Table) error {
+	return ch.retry(func() error {
+		return ch.amqpCh.QueueBind(name, key, exchange, noWait, args)
+	})
+}
+
+func (ch *baseChannel) QueuePurge(name string, noWait bool) (int, error) {
+	var res int
+	err := ch.retry(func() error {
+		var err error
+		res, err = ch.amqpCh.QueuePurge(name, noWait)
+		return err
+	})
+
+	return res, err
+}
+
+// IsClosed returns true if the channel is marked as closed.
+func (ch *baseChannel) IsClosed() bool {
+	ch.closedM.Lock()
+	defer ch.closedM.Unlock()
+
+	return ch.closed
+}
+
+// Close closes channel.
+func (ch *baseChannel) Close() error {
+	ch.closedM.Lock()
+	defer ch.closedM.Unlock()
+
+	if ch.closed {
+		return amqp.ErrClosed
+	}
+
+	ch.closed = true
+
+	return ch.amqpCh.Close()
+}
+
+func (ch *baseChannel) retry(f func() error) error {
+	if !ch.isReconnectable {
+		return f()
+	}
+
+	// Add listeners before check on isClosed to prevent race condition.
+	listener := make(chan bool, 1)
+	ch.addListener(listener)
+
+	defer func() {
+		ch.removeListener(listener)
+		close(listener)
+	}()
+
+	if ch.IsClosed() {
+		return amqp.ErrClosed
+	}
+
+	err := f()
+	if err == amqp.ErrClosed {
+		if ch.waitReconnectionTimeout == 0 {
+			reconnected := <-listener
+			if reconnected {
+				err = f()
+			}
+		} else {
+			select {
+			case reconnected := <-listener:
+				if reconnected {
+					err = f()
+				}
+			case <-time.After(ch.waitReconnectionTimeout):
+				/* add timeout to prevent infinity waiting on bug */
+			}
+		}
+	}
+
+	return err
+}
+
+// addListener adds listener.
+func (ch *baseChannel) addListener(listener chan<- bool) {
+	ch.listenersM.Lock()
+	defer ch.listenersM.Unlock()
+	ch.listeners = append(ch.listeners, listener)
+}
+
+// removeListener removes listener.
+func (ch *baseChannel) removeListener(listener chan<- bool) {
+	ch.listenersM.Lock()
+	defer ch.listenersM.Unlock()
+	removeIndex := -1
+	for i := range ch.listeners {
+		if ch.listeners[i] == listener {
+			removeIndex = i
+		}
+	}
+
+	if removeIndex >= 0 {
+		ch.listeners = append(ch.listeners[:removeIndex], ch.listeners[removeIndex+1:]...)
+	}
+}
+
+// notifyListeners sends reconnection result to consumers and publishers.
+func (ch *baseChannel) notifyListeners(reconnected bool) {
+	ch.listenersM.Lock()
+	defer ch.listenersM.Unlock()
+
+	for _, listener := range ch.listeners {
+		listener <- reconnected
+	}
+}
+
+// reconnect listens connection.NotifyClose and tries to restore connection.
+// It notifies opened channels about reconnection result.
+func reconnect(url string, c *baseConnection) {
+	logPrefix := "reconnect:"
+	c.logger.Debug().Msgf("%s goroutine started", logPrefix)
+	defer c.logger.Debug().Msgf("%s goroutine stopped", logPrefix)
+	defer func() {
+		// Close channel before notify listeners to prevent race condition.
+		_ = c.Close()
+		c.notifyListeners(false)
+	}()
+
+	for {
+		closeErr, ok := <-c.amqpConn.NotifyClose(make(chan *amqp.Error))
+		if !ok {
+			c.logger.Debug().Msgf("%s connection normally closed", logPrefix)
+			break
+		}
+
+		c.logger.Err(closeErr).Msgf("%s connection closed", logPrefix)
+		timeout := c.minReconnectTimeout
+		var amqpConn *amqp.Connection
+		var err error
+
+		for try := 0; c.reconnectCount == -1 || try < c.reconnectCount; try++ {
+			time.Sleep(timeout)
+			timeout = minTimeDuration(timeout<<1, maxReconnectTimeout)
+
+			amqpConn, err = amqp.Dial(url)
+			if err == nil {
+				break
+			}
+
+			c.logger.Debug().Msgf("%s %d try to reconnect failed (%s)", logPrefix, try+1, err)
+		}
+
+		if err != nil {
+			c.logger.Debug().Msgf("%s reconnect failed", logPrefix)
+			break
+		}
+
+		c.logger.Debug().Msgf("%s connection reconnected", logPrefix)
+		c.amqpConn = amqpConn
+		c.notifyListeners(true)
+	}
+}
+
+// reconnectChannel listens channel.NotifyClose and tries to restore channel.
+// If connection is closed it waits restore connection before try to reopen channel.
+// It notifies consumers and publishers about reconnection result.
+func reconnectChannel(conn *baseConnection, ch *baseChannel, reconnectListener chan bool) {
+	logPrefix := "reconnectChannel:"
+	ch.logger.Debug().Msgf("%s goroutine started", logPrefix)
+	defer ch.logger.Debug().Msgf("%s goroutine stopped", logPrefix)
+	defer func() {
+		// Close channel before notify listeners to prevent race condition.
+		_ = ch.Close()
+		ch.notifyListeners(false)
+		conn.removeListener(reconnectListener)
+		close(reconnectListener)
+	}()
+
+	for {
+		closeErr, ok := <-ch.amqpCh.NotifyClose(make(chan *amqp.Error))
+		if !ok {
+			conn.logger.Debug().Msgf("%s channel normally closed", logPrefix)
+			break
+		}
+
+		conn.logger.Err(closeErr).Msgf("%s channel closed", logPrefix)
+		// Check real connection
+		if conn.amqpConn.IsClosed() {
+			conn.logger.Debug().Msgf("%s wait reconnection", logPrefix)
+
+			if conn.waitReconnectionTimeout == 0 {
+				reconnected := <-reconnectListener
+				if !reconnected {
+					return
+				}
+			} else {
+				select {
+				case reconnected := <-reconnectListener:
+					if !reconnected {
+						return
+					}
+				case <-time.After(conn.waitReconnectionTimeout):
+					/* add timeout to prevent infinity waiting on bug */
+					return
+				}
+			}
+		}
+
+		amqpCh, err := conn.amqpConn.Channel()
+		if err != nil {
+			ch.logger.Debug().Msgf("%s reconnect channel failed (%s)", logPrefix, err)
+			break
+		}
+
+		conn.logger.Debug().Msgf("%s channel reconnected", logPrefix)
+		ch.amqpCh = amqpCh
+		ch.notifyListeners(true)
+	}
+}
+
+func minTimeDuration(l, r time.Duration) time.Duration {
+	if l < r {
+		return l
+	}
+
+	return r
+}

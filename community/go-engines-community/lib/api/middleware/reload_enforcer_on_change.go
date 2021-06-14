@@ -1,0 +1,24 @@
+package middleware
+
+import (
+	"git.canopsis.net/canopsis/go-engines/lib/security"
+	"github.com/gin-gonic/gin"
+	"net/http"
+)
+
+// ReloadEnforcerPolicyOnChange loads security policy if request changes policy.
+func ReloadEnforcerPolicyOnChange(enforcer security.Enforcer) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		s := c.Writer.Status()
+		switch s {
+		case http.StatusOK, http.StatusNoContent, http.StatusCreated:
+			err := enforcer.LoadPolicy()
+
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		c.Next()
+	}
+}

@@ -1,0 +1,46 @@
+[
+  {
+    "_id": "canopsis_version",
+    "edition": "cat",
+    "stack": "go",
+    "version": "3.42.0"
+  },
+  {
+    "_id": "user_interface",
+    "app_title": "Canopsis Test",
+    "login_page_description": "Test login",
+    "loader_no_update": true,
+    "footer": "Test footer",
+    "language": "en",
+    "max_matched_items": 4,
+    "check_count_request_timeout": 30
+  },
+  {
+    "_id": "global_config",
+    "alarm": {
+      "flappingfreqlimit": 0,
+      "flappinginterval": 0,
+      "stealthyinterval": 0,
+      "baggottime": "1h",
+      "enablelasteventdate": true,
+      "cancelautosolvedelay": "1h",
+      "displaynamescheme": "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}",
+      "outputlength": 255
+    },
+    "global": {
+      "prefetchcount": 10000,
+      "prefetchsize": 0
+    },
+    "timezone": {
+      "timezone": "Europe/Paris"
+    },
+    "file": {
+      "remediation": "/tmp/canopsis/remediation",
+      "junit": "/tmp/canopsis/junit",
+      "junitapi": "/tmp/canopsis/junitapi"
+    },
+    "remediation": {
+      "jobexecutorfetchtimeoutseconds": 5
+    }
+  }
+]

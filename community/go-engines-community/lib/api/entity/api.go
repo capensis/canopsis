@@ -1,0 +1,190 @@
+package entity
+
+import (
+	"context"
+	"git.canopsis.net/canopsis/go-engines/lib/api/common"
+	"git.canopsis.net/canopsis/go-engines/lib/api/export"
+	"git.canopsis.net/canopsis/go-engines/lib/api/pagination"
+	"github.com/gin-gonic/gin"
+	"net/http"
+)
+
+type API interface {
+	List(c *gin.Context)
+	StartExport(c *gin.Context)
+	GetExport(c *gin.Context)
+	DownloadExport(c *gin.Context)
+}
+
+type api struct {
+	store               Store
+	exportExecutor      export.TaskExecutor
+	defaultExportFields []string
+	exportSeparators    map[string]rune
+}
+
+func NewApi(
+	store Store,
+	exportExecutor export.TaskExecutor,
+) API {
+	return &api{
+		store:               store,
+		exportExecutor:      exportExecutor,
+		defaultExportFields: []string{"_id", "name", "type", "enabled", "depends", "impact"},
+		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
+			"tab": '	', "space": ' '},
+	}
+}
+
+// Find all entities
+// @Summary Find entities
+// @Description Get paginated list of entities
+// @Tags entities
+// @ID entities-find-all
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Security BasicAuth
+// @Param request query ListRequest true "request"
+// @Success 200 {object} common.PaginatedListResponse{data=[]Entity}
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /entities [get]
+func (a *api) List(c *gin.Context) {
+	var query ListRequestWithPagination
+	query.Query = pagination.GetDefaultQuery()
+	if err := c.ShouldBind(&query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+		return
+	}
+
+	entities, err := a.store.Find(c.Request.Context(), query)
+	if err != nil {
+		panic(err)
+	}
+
+	res, err := common.NewPaginatedResponse(query.Query, entities)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// Start export entities
+// @Summary Start export entities
+// @Description Start export entities
+// @Tags entities
+// @ID entities-export-start
+// @Produce json
+// @Security ApiKeyAuth
+// @Security BasicAuth
+// @Param request query ExportRequest true "request"
+// @Success 200 {object} ExportResponse
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /entity-export [post]
+func (a *api) StartExport(c *gin.Context) {
+	var r ExportRequest
+	if err := c.ShouldBindQuery(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	separator := a.exportSeparators[r.Separator]
+	exportFields := r.SearchBy
+	if len(exportFields) == 0 {
+		exportFields = a.defaultExportFields
+	}
+
+	taskID, err := a.exportExecutor.StartExecute(c.Request.Context(), export.Task{
+		ExportFields: exportFields,
+		Separator:    separator,
+		DataFetcher: func(ctx context.Context, page, limit int64) ([]map[string]string, int64, error) {
+			res, err := a.store.Find(ctx, ListRequestWithPagination{
+				Query:       pagination.Query{Paginate: true, Page: page, Limit: limit},
+				ListRequest: r.ListRequest,
+			})
+			if err != nil {
+				return nil, 0, err
+			}
+			data, err := export.ConvertToMap(res.Data, exportFields, "", nil)
+			if err != nil {
+				return nil, 0, err
+			}
+
+			return data, res.TotalCount, err
+		},
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, ExportResponse{
+		ID:     taskID,
+		Status: export.TaskStatusRunning,
+	})
+}
+
+// Get status of export entities
+// @Summary Get status of export entities
+// @Description Get status of export entities
+// @Tags entities
+// @ID entities-export-get
+// @Produce json
+// @Security ApiKeyAuth
+// @Security BasicAuth
+// @Param id path string true "export task id"
+// @Success 200 {object} ExportResponse
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Failure 404 {object} common.ErrorResponse
+// @Router /entity-export/{id} [get]
+func (a *api) GetExport(c *gin.Context) {
+	id := c.Param("id")
+	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
+	if err != nil {
+		panic(err)
+	}
+
+	if t == nil {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.JSON(http.StatusOK, ExportResponse{
+		ID:     id,
+		Status: t.Status,
+	})
+}
+
+// Get result of export entities
+// @Summary Get result of export entities
+// @Description Get result of export entities
+// @Tags entities
+// @ID entities-export-download
+// @Produce text/csv
+// @Security ApiKeyAuth
+// @Security BasicAuth
+// @Param id path string true "export task id"
+// @Success 200 {object} http.Response
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Failure 404 {object} common.ErrorResponse
+// @Router /entity-export/{id}/download [get]
+func (a *api) DownloadExport(c *gin.Context) {
+	id := c.Param("id")
+	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
+	if err != nil {
+		panic(err)
+	}
+
+	if t == nil || t.Status != export.TaskStatusSucceeded {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.Status(http.StatusOK)
+	c.Header("Content-Disposition", `attachment; filename="entities.csv"`)
+	c.Header("Content-Type", "text/csv")
+	c.ContentType()
+	c.File(t.File)
+}
