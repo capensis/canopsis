@@ -1,0 +1,13 @@
+NAME="rabbitmq-server-conf"
+
+function build(){
+	true
+}
+
+function install(){
+	install_basic_source $NAME
+}
+
+function update(){
+    update_basic_source $NAME
+}

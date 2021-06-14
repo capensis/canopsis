@@ -1,0 +1,30 @@
+NAME="mongodb"
+
+function build(){
+	launch_cmd 0 service mongodb stop
+
+	cd $SRC_PATH/externals
+    BASE="mongodb-linux-$ARCH-$VERSION"
+
+	if [ ! -e $BASE ]; then
+		extract_archive "$BASE.tar.xz"
+	fi
+}
+
+function install(){
+    BASE="mongodb-linux-$ARCH-$VERSION"
+	cd $SRC_PATH/externals/$BASE
+	check_code $?
+
+    for a in `ls bin`; do
+        if [ ! -f $PREFIX/bin/$a ]
+        then
+            cp -R bin/$a $PREFIX/bin/
+            check_code $? "Failed to copy $a"
+
+            chown $HUSER:$HGROUP $PREFIX/bin/$a
+            check_code $? "Failed to fix permissions on $a"
+        fi
+    done
+	check_code $?
+}

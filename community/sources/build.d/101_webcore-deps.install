@@ -1,0 +1,40 @@
+NAME="webcore-deps"
+
+function build() {
+    true
+}
+
+function install() {
+    BASE="webcore_deps"
+    cd $SRC_PATH/externals
+
+    tar -xvf webcore_deps.tar.gz
+
+    LIB="$PREFIX/lib/node_modules"
+
+    if [ ! -e $LIB ]; then
+        mkdir -p $PREFIX/lib/node_modules
+    fi
+
+    cp -r $BASE/subcommand $LIB
+    cp -r $BASE/subcommander $LIB
+    cp -r $BASE/command-line-args $LIB
+    cp -r $BASE/command-line-commands $LIB
+    cp -r $BASE/connect $LIB
+    cp -r $BASE/serve-static $LIB
+    cp -r $BASE/sync-exec $LIB
+    cp -r $BASE/bower $LIB
+    cp -r $BASE/broccoli-cli $LIB
+    chown -R canopsis:canopsis $LIB
+    if [ ! -L $LIB/bin/bower ]; then
+        ln -sf $LIB/bower/bin/bower $PREFIX/bin/bower
+    fi
+    if [ ! -L $LIB/bin/broccoli ]; then
+        ln -sf $LIB/broccoli-cli/bin/broccoli $PREFIX/bin/broccoli
+    fi
+    ln -sf $PREFIX/var/www/bin/brickmanager $PREFIX/bin/brickmanager
+}
+
+function update() {
+    install
+}

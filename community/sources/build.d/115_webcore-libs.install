@@ -1,0 +1,14 @@
+NAME="webcore-libs"
+
+function build(){
+	true
+}
+
+function install(){
+	cp -R $SRC_PATH/externals/webcore-libs $PREFIX/var/www/
+	check_code $?
+}
+
+function update(){
+    install
+}

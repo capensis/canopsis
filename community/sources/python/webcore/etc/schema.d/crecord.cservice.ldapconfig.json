@@ -1,0 +1,65 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": ["default_role"]
+    },{
+        "title": "LDAP Server",
+        "keys": ["host", "port", "admin_dn", "admin_passwd", "ufilter", "user_dn"]
+    },{
+        "title": "Fields Mapping",
+        "keys": ["attrs"]
+    }],
+    "properties": {
+        "default_role": {
+            "type": "string",
+            "role": "stringclassifiedcrecordselector",
+            "multiselect": false,
+            "crecordtype": "role",
+            "valuekey": "id",
+            "description": "Default role for new users"
+        },
+        "host": {
+            "type": "string",
+            "required": true,
+            "title": "LDAP Server host"
+        },
+        "port": {
+            "type": "integer",
+            "required": true,
+            "title": "LDAP Server port"
+        },
+        "admin_dn": {
+            "type": "string",
+            "required": true,
+            "title": "Admin DN",
+            "description": "LDAP account name used to identify to LDAP Server for user research"
+        },
+        "admin_passwd": {
+            "type": "string",
+            "required": true,
+            "title": "Admin password",
+            "description": "Password used to identify to LDAP Server for user research",
+            "role": "password"
+        },
+        "attrs": {
+            "type": "object",
+            "role": "simpledict",
+            "required": true,
+            "title": "LDAP attributes",
+            "description": "Map user fields to LDAP fields"
+        },
+        "ufilter": {
+            "type": "string",
+            "required": true,
+            "title": "User filter",
+            "description": "Format string used to search user in LDAP (a single <pre>%s</pre> must appears, will be remplaced by the wanted user)"
+        },
+        "user_dn": {
+            "type": "string",
+            "required": true,
+            "title": "User base",
+            "description": "Base directory in LDAP to look for users in"
+        }
+    }
+}

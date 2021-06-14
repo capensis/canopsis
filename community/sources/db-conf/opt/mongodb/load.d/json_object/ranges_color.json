@@ -1,0 +1,42 @@
+[
+	{
+		"crecord_type": "rangecolor",
+		"_id": "range1",
+		"loader_id": "range1",
+		"loader_no_update": true,
+		"name": "Skyblue and red",
+		"colors": ["#113F59", "#19BEC0", "#20D6C7", "#F3EDD3", "#D54F58"]
+	},
+	{
+		"crecord_type": "rangecolor",
+		"_id": "range2",
+		"loader_id": "range2",
+		"loader_no_update": true,
+		"name": "Neutral",
+		"colors": ["#0A2A3F", "#6593A0", "#B9CCB8", "#FFEFA7", "#DB1522"]
+	},
+	{
+		"crecord_type": "rangecolor",
+		"_id": "range3",
+		"loader_id": "range3",
+		"loader_no_update": true,
+		"name": "Natural",
+		"colors": ["#529214", "#AACF81", "#FFD059", "#E5753D", "#C73924"]
+	},
+	{
+		"crecord_type": "rangecolor",
+		"_id": "range4",
+		"loader_id": "range4",
+		"loader_no_update": true,
+		"name": "Blue mono",
+		"colors": ["#005572", "#006573", "#008B8D", "#81BEAA", "#F4D4AD"]
+	},
+	{
+		"crecord_type": "rangecolor",
+		"_id": "range5",
+		"loader_id": "range5",
+		"loader_no_update": true,
+		"name": "Saber",
+		"colors": ["#E29665", "#54597F", "#232641", "#0E1020", "#894831"]
+	}
+]

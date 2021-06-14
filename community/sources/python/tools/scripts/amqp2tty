@@ -1,0 +1,76 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+from time import sleep
+
+from logging import basicConfig, DEBUG, getLogger
+
+from sys import argv
+
+from canopsis.old.rabbitmq import Amqp
+
+from signal import signal, SIGINT, SIGTERM
+
+DAEMON_NAME = "amqp2tty"
+DAEMON_TYPE = "logger"
+
+AMQP_HOST = "localhost"
+
+basicConfig(
+    level=DEBUG,
+    format='%(asctime)s %(name)s %(levelname)s %(message)s')
+logger = getLogger(DAEMON_NAME)
+amqp = None
+
+
+def on_message(body, msg):
+    source = "%s@%s" % (
+        msg.delivery_info['routing_key'], msg.delivery_info['exchange'])
+    text = "%s:\n\t%s\n" % (source, body)
+    logger.debug("New message:\n%s" % text)
+
+#### Connect signals
+RUN = 1
+
+
+def signal_handler(signum, frame):
+    logger.warning("Receive signal to stop daemon...")
+    global RUN
+    RUN = 0
+
+signal(SIGINT, signal_handler)
+signal(SIGTERM, signal_handler)
+
+amqp = Amqp()
+
+try:
+    exchange = argv[1]
+except:
+    exchange = amqp.exchange_name_events
+
+amqp.add_queue(DAEMON_NAME, '#', on_message, exchange)
+amqp.start()
+
+while RUN:
+    sleep(1)
+
+amqp.stop()
+amqp.join()

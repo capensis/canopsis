@@ -1,0 +1,146 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+from sys import argv, exit
+
+from getpass import getpass
+
+from argparse import ArgumentParser
+
+from logging import basicConfig, DEBUG, ERROR
+
+from canopsis.old.account import Account, caccount_get, caccount_getall
+from canopsis.old.storage import Storage
+
+basicConfig(
+    level=DEBUG, format='%(asctime)s %(name)s %(levelname)s %(message)s')
+
+parser = ArgumentParser()
+parser.add_argument('-list', '--list-users', action='store_const', const=True)
+parser.add_argument('-add', '--add-user', action='store_const', const=True)
+parser.add_argument('-del', '--delete-user', action='store_const', const=True)
+parser.add_argument('-chpa', '--user-chpass', action='store_const', const=True)
+
+parser.add_argument('-user', '--user-name')
+parser.add_argument('-pass', '--user-pass')
+parser.add_argument('-mail', '--user-mail')
+parser.add_argument('-fnam', '--first-name')
+parser.add_argument('-lnam', '--last-name')
+parser.add_argument('-debg', '--debug-output')
+
+if len(argv) == 1:
+    parser.print_help()
+    exit(1)
+
+args = parser.parse_args()
+if (args.debug_output):
+    verbosity = DEBUG
+else:
+    verbosity = ERROR
+
+whoami = Account(user="root", group="root")
+my_storage = Storage(whoami, namespace='object', logging_level=verbosity)
+
+
+def user_exist(Storage, user_name):
+    try:
+        my_user = caccount_get(Storage, user_name)
+    except:
+        my_user = None
+    if (args.debug_output):
+        print("DEBUG: my_user = %s \n" % my_user)
+    return my_user
+
+if (args.list_users):
+    all_users = caccount_getall(my_storage)
+    counter = 0
+    for each_user in all_users:
+        counter += 1
+        each_user.cat()
+        print(" + shadowpasswd:\t", each_user.shadowpasswd, "\n")
+    if (args.debug_output):
+        print("DEBUG: total accounts = %s" % counter)
+
+if (args.add_user):
+    if not args.user_name:
+        print("args.user_name is None")
+        exit(1)
+    elif not args.user_pass:
+        print("args.user_pass is None")
+        exit(1)
+    elif not args.first_name:
+        print("args.first_name is None")
+        exit(1)
+    elif not args.last_name:
+        print("args.last_name is None")
+        exit(1)
+    elif not args.user_mail:
+        print("args.user_mail is None")
+        exit(1)
+    else:
+        my_user = user_exist(my_storage, args.user_name)
+        if (my_user is None):
+            my_account = Account(
+                firstname=args.first_name, lastname=args.last_name,
+                user=args.user_name, group="capensis", mail=args.user_mail)
+            my_account.passwd(args.user_pass)
+            my_storage.put(my_account)
+            print("user %s added \n" % (args.user_name))
+        else:
+            print("user already exist \n")
+            exit(1)
+
+if (args.delete_user):
+    if not args.user_name:
+        print("args.user_name is None")
+        exit(1)
+    else:
+        my_user = user_exist(my_storage, args.user_name)
+        if (my_user is not None):
+            my_storage.remove(my_user, account=whoami)
+            print("user %s deleted \n" % (args.user_name))
+        else:
+            print("user doesn't exist \n")
+            exit(1)
+
+if (args.user_chpass):
+        if not args.user_name:
+            print("args.user_name is None")
+            exit(1)
+        else:
+            my_user = user_exist(my_storage, args.user_name)
+            if (my_user is not None):
+                if not args.user_pass:
+                    inputUserPassword1 = getpass("Enter password: ")
+                    inputUserPassword2 = getpass("Confirm  password: ")
+                    if (inputUserPassword1 == inputUserPassword2):
+                        password = inputUserPassword2
+                    else:
+                        print("password didn't match \n")
+                        exit(1)
+                elif args.user_pass:
+                    password = args.user_pass
+
+                my_user.passwd(password)
+                my_storage.put(my_user)
+            else:
+                print("user doesn't exist \n")
+                exit(1)

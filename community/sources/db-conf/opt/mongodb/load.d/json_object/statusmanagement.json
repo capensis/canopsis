@@ -1,0 +1,15 @@
+{
+ 	"loader_id" : "statusmanagement",
+    "loader_no_update": true,
+
+   	"_id": "statusmanagement",
+
+    "crecord_type": "statusmanagement",
+    "restore_event": true,
+
+    "bagot_time": 3600,
+    "bagot_freq": 10,
+
+    "stealthy_time": 300,
+    "stealthy_show": 300
+}

@@ -1,0 +1,42 @@
+NAME="collectd-libs"
+
+function build(){
+	true
+}
+
+function install(){
+	echo " + Post install configurations ..."
+
+	cd $SRC_PATH	
+	install_basic_source $NAME
+
+	install_conf "collectd.conf"
+
+	amqp_host=$(launch_cmd 0 $PREFIX/bin/initool get $PREFIX/etc/amqp.conf master host)
+	amqp_port=$(launch_cmd 0 $PREFIX/bin/initool get $PREFIX/etc/amqp.conf master port)
+	amqp_user=$(launch_cmd 0 $PREFIX/bin/initool get $PREFIX/etc/amqp.conf master userid)
+	amqp_pass=$(launch_cmd 0 $PREFIX/bin/initool get $PREFIX/etc/amqp.conf master password)
+	amqp_vhost=$(launch_cmd 0 $PREFIX/bin/initool get $PREFIX/etc/amqp.conf master virtual_host)
+
+	sed "s#@AMQP_HOST@#${amqp_host}#g" -i $PREFIX/etc/collectd.conf
+	sed "s#@AMQP_PORT@#${amqp_port}#g" -i $PREFIX/etc/collectd.conf
+	sed "s#@AMQP_USER@#${amqp_user}#g" -i $PREFIX/etc/collectd.conf
+	sed "s#@AMQP_PASSWORD@#${amqp_pass}#g" -i $PREFIX/etc/collectd.conf
+	sed "s#@AMQP_VHOST@#${amqp_vhost}#g" -i $PREFIX/etc/collectd.conf
+}
+
+function update(){
+	update_basic_source $NAME
+
+	amqp_host=$(launch_cmd 0 $PREFIX/bin/initool get $PREFIX/etc/amqp.conf master host)
+	amqp_port=$(launch_cmd 0 $PREFIX/bin/initool get $PREFIX/etc/amqp.conf master port)
+	amqp_user=$(launch_cmd 0 $PREFIX/bin/initool get $PREFIX/etc/amqp.conf master userid)
+	amqp_pass=$(launch_cmd 0 $PREFIX/bin/initool get $PREFIX/etc/amqp.conf master password)
+	amqp_vhost=$(launch_cmd 0 $PREFIX/bin/initool get $PREFIX/etc/amqp.conf master virtual_host)
+
+	sed "s#@AMQP_HOST@#${amqp_host}#g" -i $PREFIX/etc/collectd.conf
+	sed "s#@AMQP_PORT@#${amqp_port}#g" -i $PREFIX/etc/collectd.conf
+	sed "s#@AMQP_USER@#${amqp_user}#g" -i $PREFIX/etc/collectd.conf
+	sed "s#@AMQP_PASSWORD@#${amqp_pass}#g" -i $PREFIX/etc/collectd.conf
+	sed "s#@AMQP_VHOST@#${amqp_vhost}#g" -i $PREFIX/etc/collectd.conf
+}

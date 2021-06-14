@@ -1,0 +1,149 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["display_name", "description", "enable", "dostate", "output_tpl", "state_when_all_ack"]
+	},{
+		"title": "Event filter",
+		"keys":["mfilter"]
+	},{
+		"title": "Include events",
+		"keys":["include_ids"]
+	},{
+		"title": "Exclude events",
+		"keys":["exclude_ids"]
+	},{
+		"title": "Sla",
+		"keys":["dosla", "sla_timewindow", "sla_warning", "sla_critical", "alert_level", "sla_output_tpl"]
+	}],
+	"properties": {
+		"state_when_all_ack": {
+			"type": "string",
+			"enum": [
+				"worststate",
+				"off",
+				"minor",
+				"major",
+				"critical"
+			],
+			"default": "worststate",
+			"role": "simplelist",
+			"description": "Allow to set what state is applied to this selector produced selector event when all event are acknowleged. worst state compute all events worste state with no care about acknowlegement statement"
+		},
+		"alert_level": {
+			"type": "string",
+			"enum": [
+				"minor",
+				"major",
+				"critical"
+			],
+			"default": "minor",
+			"role": "simplelist",
+			"description": "Set alert level beyond witch sla percent is computed. <ul><li>If minor, sla alerts will consider time spent in minor, major and critical state.</li><li>If major, sla alert will consider time spent in major and critical state.</li></ul>"
+		},
+
+		"crecord_type": {
+			"enum": ["selector"],
+			"required": true
+		},
+		"description": {
+			"type": "string",
+			"description": "User information about this selector"
+		},
+		"downtimes_as_ok": {
+			"type": "boolean",
+			"default": true,
+			"description": "Consider selected events in downtime as Off state"
+		},
+		"enable": {
+			"type": "boolean",
+			"default": true,
+			"description": "Does canopsis have to compute this selector ?"
+		},
+		"mfilter": {
+			"type": "string",
+			"role": "cfilter",
+			"description": "Choose events to include in selector computation"
+		},
+		"include_ids": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role": "eventselector",
+			"description": "Choose events to include in selector computation"
+		},
+		"exclude_ids": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role": "eventselector",
+			"description": "Choose events to exclude in selector computation"
+
+		},
+		"display_name": {
+			"type": "string",
+			"required": true,
+			"description": "Selector name that will be used as produced event resource"
+		},
+		"loaded": {
+			"type": "boolean",
+			"default": false
+		},
+		"dostate": {
+			"type": "boolean",
+			"required": true,
+			"default": true,
+			"description": "Enable state computation"
+		},
+		"dosla": {
+			"type": "boolean",
+			"required": true,
+			"default": false,
+			"description": "Enable SLA computation for this selector"
+		},
+		"state": {
+			"type": "integer"
+		},
+		"state_algorithm": {
+			"type": "integer"
+		},
+		"sla_timewindow": {
+			"type": "object",
+			"description" : "Delay until take care of sla information for this selector.",
+			"role": "durationWithUnits"
+		},
+		"sla_warning": {
+			"type": "integer",
+			"max": 100,
+			"min": 0,
+			"tick": 1,
+			"default": 90,
+			"role": "slider",
+			"description": "Warning level that when sla available goes below, the sla produced event is in state minor"
+		},
+		"sla_critical": {
+			"type": "integer",
+			"max": 100,
+			"min": 0,
+			"tick": 1,
+			"default": 75,
+			"role": "slider",
+			"description": "Warning level that when sla available goes below, the sla produced event is in state critical"
+		},
+		"sla_output_tpl": {
+			"type": "string",
+			"default" :"Available: [P_AVAIL]%, Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%, Critical: [CRITICAL]%, Alerts [ALERTS]%, sla start [TSTART],  time available [T_AVAIL], time alert [T_ALERT]"
+		},
+		"output_tpl": {
+			"type": "string",
+			"default": "Off: [OFF], Minor: [MINOR], Major: [MAJOR], Critical: [CRITICAL], Ack count [ACK], Total: [TOTAL]",
+			"description": "Allow edit how produced event will be rendered. elements between bracket will be replaced by their computed values"
+		},
+		"last_dispatcher_update": {
+			"type": "integer",
+			"required": true
+		}
+	}
+}

@@ -1,0 +1,14 @@
+{
+    "type": "object",
+    "properties": {
+        "type": {"enum": ["ack"], "required": true},
+        "author": {"type": "string", "required": true},
+        "comment": {"type": "string", "required": true},
+        "downtime_id": {"type": "integer", "required": true},
+        "start": {"type": "integer", "required": true},
+        "end": {"type": "integer", "required": true},
+        "duration": {"type": "integer", "required": true},
+        "entry": {"type": "integer", "required": true},
+        "fixed": {"type": "boolean", "required": true}
+    }
+}

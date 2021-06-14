@@ -1,0 +1,77 @@
+#!/bin/bash
+
+SCRIPT_PATH="$(dirname `readlink -f $0`)"
+SRC_PATH=$SCRIPT_PATH/../sources/
+
+. $SRC_PATH/canohome/lib/common.sh
+. $SRC_PATH/build-control/config.sh
+
+if [ "x$SSL_KEY_BITS" == "x" ]
+then
+    SSL_KEY_BITS="2048"
+fi
+
+if [ "x$SSL_CHECK_SECONDS" == "x" ]
+then
+    SSL_CHECK_SECONDS="86400"
+fi
+
+if [ "x$SSL_CA_PATH" == "x" ]
+then
+    SSL_CA_PATH="$PREFIX/etc/ssl/ca.pem"
+fi
+
+if [ "x$SSL_CAKEY_PATH" == "x" ]
+then
+    SSL_CAKEY_PATH="$PREFIX/etc/ssl/cakey.pem"
+fi
+
+SSL_CONF_PATH="$SCRIPT_PATH/ssl-build/openssl.cnf"
+
+function effective_renew() {
+    OPENSSL_ARGS="$OPENSSL_ARGS -config $SSL_CONF_PATH"
+    OPENSSL_ARGS="$OPENSSL_ARGS -extensions ca_gen"
+    OPENSSL_ARGS="$OPENSSL_ARGS -new -x509 -newkey rsa:$SSL_KEY_BITS"
+    OPENSSL_ARGS="$OPENSSL_ARGS -keyout $SSL_CAKEY_PATH"
+    OPENSSL_ARGS="$OPENSSL_ARGS -out $SSL_CA_PATH"
+    OPENSSL_ARGS="$OPENSSL_ARGS -extensions ca_gen"
+
+    if [ "x$SSL_KEY_PASS" != "x" ]
+    then
+        OPENSSL_ARGS="$OPENSSL_ARGS -passout pass:$SSL_KEY_PASS"
+    fi
+
+    openssl req $OPENSSL_ARGS
+}
+
+function check_validity() {
+    if [ -e $SSL_CA_PATH ]
+    then
+        openssl x509 -in $SSL_CA_PATH -noout -checkend $SSL_CHECK_SECONDS
+
+        if [ $? -ne 0 ]
+        then
+            return 0
+        else
+            return 1
+        fi
+    fi
+}
+
+function main() {
+    mkdir -p $SCRIPT_PATH/ssl-build
+
+    cp $SRC_PATH/extra/conf/ssl/openssl.cnf $SCRIPT_PATH/ssl-build
+    sed "s#@PREFIX@#$PREFIX#g" -i $SCRIPT_PATH/ssl-build/openssl.cnf
+    sed "s#@HUSER@#$HUSER#g" -i $SCRIPT_PATH/ssl-build/openssl.cnf
+    sed "s#@HGROUP@#$HGROUP#g" -i $SCRIPT_PATH/ssl-build/openssl.cnf
+
+    if check_validity
+    then
+        echo "-- SSL CA certificate expired, renewing..."
+
+        effective_renew
+    fi
+}
+
+main

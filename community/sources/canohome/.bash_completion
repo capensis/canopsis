@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [ -e $HOME/lib/pkgmgr/completion ]; then
+	. $HOME/lib/pkgmgr/completion
+fi
+
+_service()
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts=`ls -1 ~/etc/init.d/ && ls -1 ~/etc/supervisord.d/ | cut -d "." -f1`
+    opts_action="start stop restart status"
+
+    #echo "cur: ${cur}"
+    #echo "prev: ${prev}"
+
+    if [[ ${prev} == "service" ]]; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${prev} != "service" && ${prev} != "start" && ${prev} != "stop" && ${prev} != "restart" && ${prev} != "status" ]]; then
+        COMPREPLY=( $(compgen -W "${opts_action}" -- ${cur}) )
+        return 0
+    fi
+
+    #if [[ ${cur} == * ]] ; then
+    #    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+    #    return 0
+    #fi
+}
+complete -F _service service

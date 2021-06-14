@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+
+import time
+import polib
+import sys
+from canopsis.old.storage import get_storage
+from canopsis.old.account import Account
+
+from os.path import join, isfile
+
+
+class i18n(object):
+
+    def __init__(self):
+        self.misc = get_storage(
+            namespace='object',
+            account=Account(
+                user="root",
+                group="root")
+            ).get_backend()
+        self.query = {'crecord_type': 'i18n', '_id': 'translations'}
+
+    def extract(self):
+
+        now_str = time.strftime("%Y-%m-%d %H:%M")
+
+        po = polib.POFile()
+        po.metadata = {
+            'Project-Id-Version': '1.0',
+            'Report-Msgid-Bugs-To': 'teamcanopsis@capensis.fr',
+            'POT-Creation-Date': '2014-08-22 10:00+0100',
+            'PO-Revision-Date': now_str + '+0100',
+            'Last-Translator': 'teamcanopsis <teamcanopsis@capensis.fr>',
+            'Language-Team': 'English <teamcanopsis@capensis.fr>',
+            'MIME-Version': '1.0',
+            'Content-Type': 'text/plain; charset=utf-8',
+            'Content-Transfer-Encoding': '8bit',
+        }
+
+        existing_terms = {}
+
+        # Update lang file with existing po file
+        base_lang_path = join(sys.prefix, 'locale', 'en', 'ui_lang.po')
+        if isfile(base_lang_path):
+            po_base = polib.pofile(base_lang_path)
+            for entry in po_base:
+                print (u'    -> {}'.format(entry.msgid))
+
+                # Dont add twice an entry
+                existing_terms[entry.msgid] = entry.msgstr
+                entry = polib.POEntry(
+                    msgid=entry.msgid,
+                    msgstr=entry.msgstr
+                )
+                po.append(entry)
+            print (u'Inegrated previous entries form lang file {}'.format(
+                base_lang_path)
+            )
+        else:
+            print (u'File not found @ {}'.format(base_lang_path))
+            print ('Could not integrate previous tranlations')
+
+        # Getting new fields to translate from db
+        # Upserting
+        translations = self.misc.find_one(self.query)
+        for term in translations['todo']:
+            if term not in existing_terms:
+                entry = polib.POEntry(
+                    msgid=term,
+                    msgstr=term,
+                )
+                po.append(entry)
+
+        output = join(sys.prefix, 'tmp', 'todo.po')
+        po.save(output)
+        print (
+            u'Database translation definitions updated into {} file.'.format(
+                output
+            )
+        )
+
+
+if __name__ == '__main__':
+    if 'extract' in sys.argv:
+        i18n().extract()
+    else:
+        print ('Available option is "extract"')

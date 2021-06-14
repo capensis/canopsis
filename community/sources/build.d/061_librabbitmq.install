@@ -1,0 +1,37 @@
+NAME="librabbitmq"
+
+function build(){
+	cd $SRC_PATH/externals
+
+	if [ ! -e $NAME ]; then
+		extract_archive "$NAME.tgz"
+	fi
+	cd  $NAME
+
+	if [ -e Makefile ]
+	then
+		echo "   + Clean ..."
+		launch_log $NAME "make clean"
+		check_code $?
+	fi
+
+	echo "   + Autoreconf ..."
+	launch_log $NAME "autoreconf -i"
+	check_code $? 'Impossible to autoreconf'
+
+	echo "   + Configure ..."
+	launch_log $NAME "./configure --prefix=$PREFIX"
+	check_code $? 'Impossible to configure'
+
+	echo "   + Build ..."
+	launch_log $NAME "make"
+	check_code $? 'Impossible to make'
+
+}
+
+function install(){
+	cd $SRC_PATH/externals/$NAME
+
+	launch_log $NAME "make install"
+	check_code $? 'Impossible to install'
+}

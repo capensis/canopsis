@@ -1,0 +1,18 @@
+{
+    "type": "object",
+    "properties": {
+        "type": {"enum": ["component"], "required": true},
+        "connector_name": {"type": "string", "required": true},
+        "hostgroups": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+
+        "mCrit": {"type": "string"},
+        "mWarn": {"type": "string"},
+        "state": {"type": "integer", "required": true},
+        "state_type": {"type": "integer", "required": true}
+    }
+}

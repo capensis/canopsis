@@ -1,0 +1,17 @@
+{
+	"type": "object",
+	"properties": {
+		"event_type": {
+			"enum": ["log"],
+			"required": true
+		},
+		"output": {
+			"type": "string",
+			"required": true
+		},
+		"long_output": {"type": "string"},
+		"display_name": {"type": "string"},
+		"level": {"type": "string"},
+		"facility": {"type": "string"}
+	}
+}

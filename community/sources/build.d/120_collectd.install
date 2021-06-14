@@ -1,0 +1,46 @@
+NAME="collectd"
+
+function build(){
+	BASE="$NAME-$VERSION"
+	cd $SRC_PATH/externals
+
+	if [ ! -e $BASE ]; then
+		extract_archive "$BASE.tar.gz"
+	fi
+	cd  $BASE
+
+	echo "   + Check for patches ..."
+	PATCH_FILE="$SRC_PATH/extra/patches/$DIST"_"$DIST_VERS/$BASE.diff"
+
+	[ -r $PATCH_FILE ] && {
+	    echo "   + Patch file found, applying patches"
+	    patch -Np2 < $PATCH_FILE
+	}
+
+	if [ -e Makefile ]
+	then
+		echo "   + Clean ..."
+		launch_log $NAME "make clean"
+		check_code $?
+	fi
+
+	echo "   + Configure ..."
+	launch_log $NAME "./configure --prefix=$PREFIX --sbindir=$PREFIX/bin --enable-python --enable-amqp --with-python=$PREFIX/bin/python --with-librabbitmq=$PREFIX"
+	check_code $?
+
+	echo "   + Build ..."
+	rm -Rf build/ &> /dev/null
+	launch_log $NAME "make"
+	check_code $?
+}
+
+function install(){
+	BASE="$NAME-$VERSION"
+	cd $SRC_PATH/externals/$BASE
+
+	launch_log $NAME "make install"
+	check_code $? 'Impossible to install ...'
+
+	# Clean
+	rm $PREFIX/etc/collectd.conf
+}

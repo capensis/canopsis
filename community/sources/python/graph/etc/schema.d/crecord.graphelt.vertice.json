@@ -1,0 +1,21 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": [
+            "id",
+            "type",
+            "info"
+        ]
+    }],
+    "properties": {
+        "_cls": {
+            "default": "canopsis.graph.elements.Vertice"
+        },
+        "_type": {
+            "type": "string",
+            "default": "vertice",
+            "required": true
+        }
+    }
+}

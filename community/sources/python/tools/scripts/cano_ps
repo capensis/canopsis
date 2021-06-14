@@ -1,0 +1,63 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+from psutil import process_iter
+
+import json
+import sys
+import os
+
+
+class CanopsisProcessInfo(object):
+    def __init__(self, *args, **kwargs):
+        super(CanopsisProcessInfo, self).__init__(*args, **kwargs)
+
+        envpath = os.path.join(sys.prefix, 'etc', 'canopsis-env.json')
+
+        try:
+            with open(envpath) as f:
+                self.conf = json.load(f)
+
+        except Exception:
+            self.conf = {
+                'canopsis': {
+                    'user': 'canopsis',
+                    'group': 'canopsis',
+                    'prefix': '/opt/canopsis'
+                }
+            }
+
+    def __call__(self):
+        usr = self.conf['canopsis']['user']
+        procs = [proc for proc in process_iter() if proc.username == usr]
+
+        for proc in procs:
+            print("[%s] CPU: %.2f%%, MEM: %.2f%%, Command: %s" % (
+                proc.name,
+                proc.get_cpu_percent(),
+                proc.get_memory_percent(),
+                ' '.join(proc.cmdline)
+            ))
+
+
+if __name__ == '__main__':
+    cps = CanopsisProcessInfo()
+    cps()

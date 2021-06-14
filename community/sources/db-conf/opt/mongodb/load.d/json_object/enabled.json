@@ -1,0 +1,8 @@
+{
+    "enabled" : [],
+    "crecord_name" : "enabledmodules",
+    "crecord_type" : "enabledmodules",
+    "loader_id": "enabledmodules",
+    "loader_no_update": true,
+    "_id": "enabledmodules"
+}

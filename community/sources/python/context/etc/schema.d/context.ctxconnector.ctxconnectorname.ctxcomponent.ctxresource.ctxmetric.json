@@ -1,0 +1,8 @@
+{
+    "type": "object",
+    "properties": {
+        "type": {"enum": ["metric"], "required": true},
+        "resource": {"type": "string", "required": true},
+        "internal": {"type": "boolean", "required": true}
+    }
+}

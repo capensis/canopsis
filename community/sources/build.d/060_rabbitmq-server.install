@@ -1,0 +1,35 @@
+NAME="rabbitmq-server"
+
+function build(){
+	true
+}
+
+function install(){
+	BASE="rabbitmq-server-$VERSION"
+	cd $SRC_PATH/externals
+
+	if [ ! -e $BASE ]; then
+		extract_archive "$NAME-generic-unix-$VERSION.tar.gz"
+	fi
+	cd rabbitmq_server-$VERSION
+
+	mkdir -p $PREFIX/var/lib/rabbitmq $PREFIX/var/log/rabbitmq $PREFIX/opt/rabbitmq-server
+	chown $HUSER:$HGROUP -R $PREFIX/var/lib/rabbitmq
+	chown $HUSER:$HGROUP -R $PREFIX/var/log/rabbitmq
+	chown $HUSER:$HGROUP -R $PREFIX/opt/rabbitmq-server
+
+	cp -R ebin $PREFIX/
+	check_code $?
+
+	cp -R sbin/* $PREFIX/bin/
+	check_code $?
+
+	cp -R include $PREFIX/
+	check_code $?
+
+	cp -R plugins $PREFIX/opt/rabbitmq-server/plugins
+	check_code $?
+	
+	easy_install_pylib httplib2
+	easy_install_pylib pyrabbit
+}

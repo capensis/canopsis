@@ -1,0 +1,16 @@
+language: python
+python:
+- '2.7'
+install:
+- cat /proc/version
+- sudo apt-get update
+- sudo apt-get install sudo git-core libcurl4-gnutls-dev libncurses5-dev
+- git submodule init
+- git submodule update
+- sudo ./build-install.sh -l
+- sudo su - canopsis -c "hypcontrol start"
+script:
+- sudo su - canopsis -c "unittest.sh"
+notifications:
+  slack:
+    secure: SCEPeSJFfN5Q5duWdrNeOXmYYxtqNgxnwLIo37rJNy+U1nUuPQn2FuvV5g1xZmRRuISRx/zCjuZrftk99G7SaVBpzLRnnlPa1OFr+QSjS2jDSxoOGZm4pj3dXWXwEIuaary6J+53MuIsX9k7nJEA3geDcFy4VMGYgYCIBlT50H4=

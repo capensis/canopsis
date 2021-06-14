@@ -1,0 +1,99 @@
+HOME = @PREFIX@/etc/ssl
+RANDFILE = $ENV::HOME/openssl/.rnd
+prompt = no
+
+### CA configuration
+# openssl ca
+
+[ca]
+
+default_ca = CA_default
+
+[CA_default]
+
+### Where files will be generated
+
+dir = @PREFIX@/etc/ssl
+certs = $dir/openssl/certsdb
+new_certs_dir = $certs
+database = $dir/openssl/index.txt
+serial = $dir/openssl/serial
+RANDFILE = $dir/ca.rnd
+
+private_key = $dir/cakey.pem
+
+crldir = $dir/crl
+crlnumber = $dir/openssl/crlnumber
+crl = $crldir/crl.pem
+
+### Default values when signing
+
+x509_extensions = ca_cert
+
+name_opt = ca_default
+cert_opt = ca_default
+
+default_days = 365
+default_crl_days = 30
+default_md = sha256
+
+### Ensure server certificate matches CA certificate when signing
+
+policy = policy_match
+
+[policy_match]
+
+countryName = match
+stateOrProvinceName = match
+organizationName = match
+organizationalUnitName = optional
+commonName = supplied
+emailAddress = optional
+
+### How to generate CA
+
+[ca_gen]
+
+basicConstraints = CA:true
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+
+### How to sign certificates
+
+[ca_cert]
+
+basicConstraints = CA:false
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+
+### Default values when generating CSRs
+# openssl req
+
+[req]
+
+defaults_bits = 2048
+default_keyfile = $ENV::HOME/key.pem
+default_md = sha256
+
+distinguished_name = req_dn
+attributes = req_attrs
+req_extensions = req_exts
+x509_extensions = ca_gen
+
+string_mask = nombstr
+
+[req_dn]
+
+countryName = FR
+stateOrProvinceName = France
+localityName = Wasquehal
+0.organizationName = Capensis
+organizationalUnitName = Canopsis
+commonName = cpsnode
+emailAddress = teamcanopsis@capensis.fr
+
+[req_attrs]
+
+[req_exts]
+
+subjectAltName = email:move

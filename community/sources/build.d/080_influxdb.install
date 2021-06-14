@@ -1,0 +1,32 @@
+NAME="influxdb"
+
+function build(){
+    launch_cmd 0 service influxdb stop
+
+    cd $SRC_PATH/externals
+    BASE="influxdb-$VERSION-$RELEASE_linux_$ARCH"
+
+    if [ ! -e $BASE ]; then
+        extract_archive "$BASE.tar.gz"
+    fi
+}
+
+function install(){
+    BASE="influxdb-$VERSION-$RELEASE"
+    cd $SRC_PATH/externals/$BASE
+    check_code $?
+
+    for a in `ls usr/bin`; do
+        if [ ! -f $PREFIX/bin/$a ]
+        then
+            cp -R usr/bin/$a $PREFIX/bin/
+            check_code $? "Failed to copy $a"
+
+            chown $HUSER:$HGROUP $PREFIX/bin/$a
+            check_code $? "Failed to fix permissions on $a"
+        fi
+    done
+    check_code $?
+
+    install_init "influxdb"
+}
