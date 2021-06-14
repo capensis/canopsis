@@ -1,0 +1,18 @@
+ARG GOLANG_IMAGE_TAG
+
+FROM golang:${GOLANG_IMAGE_TAG}
+
+ENV GOPATH /sources/go
+ENV PROJECT_PATH ${GOPATH}/src/git.canopsis.net/canopsis/go-engines
+ENV PATH ${PATH}:${GOPATH}/bin
+
+RUN mkdir -p ${PROJECT_PATH} ${GOPATH}/bin
+RUN apk update && apk add make git
+
+COPY . ${PROJECT_PATH}/
+
+WORKDIR ${PROJECT_PATH}
+
+ENV RELEASES_DIR /releases/
+
+# do not set entrypoint as this container will be run via docker-compose exec

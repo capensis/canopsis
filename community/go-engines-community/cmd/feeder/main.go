@@ -1,0 +1,161 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"math"
+	"strconv"
+	"time"
+
+	"git.canopsis.net/canopsis/go-engines/lib/amqp"
+	cps "git.canopsis.net/canopsis/go-engines/lib/canopsis"
+	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/go-engines/lib/log"
+	"github.com/rs/zerolog"
+	amqpmod "github.com/streadway/amqp"
+)
+
+type References struct {
+	channelPub *amqpmod.Channel
+}
+
+type Feeder struct {
+	flags      Flags
+	references References
+	logger     zerolog.Logger
+}
+
+func (f *Feeder) getDirtyEvent(state, Ci, ci, ri int64) types.Event {
+	return types.Event{
+		Connector:     "feeder2",
+		ConnectorName: "feeder2_inst" + strconv.Itoa(int(Ci)),
+		Component:     "feeder2_" + strconv.Itoa(int(ci)),
+		Resource:      "feeder2_" + strconv.Itoa(int(ri)),
+		State:         types.CpsNumber(state),
+		SourceType:    types.SourceTypeResource,
+		EventType:     types.EventTypeCheck,
+	}
+}
+
+func (f *Feeder) getCompatEvent(state, Ci, ci, ri int64) types.Event {
+	st := types.CpsNumber(1)
+	return types.Event{
+		Connector:     "feeder2",
+		ConnectorName: "feeder2_inst" + strconv.Itoa(int(Ci)),
+		Component:     "feeder2_" + strconv.Itoa(int(ci)),
+		Resource:      "feeder2_" + strconv.Itoa(int(ri)),
+		State:         types.CpsNumber(state),
+		StateType:     &st,
+		SourceType:    types.SourceTypeResource,
+		EventType:     types.EventTypeCheck,
+		Timestamp:     types.CpsTime{Time: time.Now()},
+	}
+}
+
+func (f *Feeder) sendBytes(content []byte, rk string) error {
+	return f.references.channelPub.Publish(
+		f.flags.ExchangeName,
+		rk,
+		false,
+		false,
+		amqpmod.Publishing{
+			Body:        content,
+			ContentType: "application/json",
+		},
+	)
+}
+
+func (f *Feeder) send(state, Ci, ci, ri int64) error {
+	var evt types.Event
+	if f.flags.DirtyEvent {
+		evt = f.getDirtyEvent(state, Ci, ci, ri)
+	} else {
+		evt = f.getCompatEvent(state, Ci, ci, ri)
+	}
+	bevt, _ := json.Marshal(evt)
+	return f.sendBytes(bevt, evt.GetCompatRK())
+}
+
+func (f *Feeder) adjust(target float64, sent, tsent int64) int64 {
+	eps := float64(sent * time.Second.Nanoseconds() / tsent)
+	variance := math.Abs(target-eps) * 100.0 / float64(target)
+	adj := int64(0)
+
+	if variance > 1 {
+		if eps < target {
+			adj = -tsent / 100
+		} else {
+			adj = tsent / 100
+		}
+	}
+
+	return adj
+}
+
+func (f *Feeder) setupAmqp() error {
+	amqpSession, err := amqp.NewSession()
+	if err != nil {
+		return fmt.Errorf("amqp session: %v", err)
+	}
+
+	channelPub, err := amqpSession.Channel()
+	if err != nil {
+		return fmt.Errorf("amqp pub channel: %v", err)
+	}
+
+	if err := channelPub.Confirm(false); err != nil {
+		return fmt.Errorf("confirm: %v", err)
+	}
+
+	f.references = References{
+		channelPub: channelPub,
+	}
+
+	return nil
+}
+
+func (f *Feeder) Run() error {
+	var err error
+	switch f.flags.Mode {
+	case "file":
+		if f.flags.PubHTTP {
+			f.modeSendEventHTTP()
+		} else if f.flags.PubAMQP {
+			err = f.modeSendEvent()
+		}
+	case "feeder":
+		err = f.modeFeeder()
+	default:
+		err = fmt.Errorf("Unknown mode \"%s\": please check help (-h)", f.flags.Mode)
+	}
+
+	return err
+}
+
+func NewFeeder(logger zerolog.Logger) (*Feeder, error) {
+	f := Feeder{
+		logger: logger,
+	}
+	if err := f.flags.ParseArgs(); err != nil {
+		return nil, err
+	}
+
+	if f.flags.Version {
+		cps.PrintVersionExit()
+	}
+
+	return &f, nil
+}
+
+func main() {
+	logger := log.NewLogger(false)
+
+	feeder, err := NewFeeder(logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("feeder init error")
+	}
+
+	if err = feeder.Run(); err != nil {
+		logger.Fatal().Err(err).Msg("feeder run error")
+	}
+}

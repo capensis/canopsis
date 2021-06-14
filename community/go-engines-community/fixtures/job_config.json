@@ -1,0 +1,47 @@
+[
+  {
+    "_id": "test-job-config-to-get",
+    "name": "test-job-config-name-to-get",
+    "type": "rundeck",
+    "author": "test-author",
+    "host": "http://example.com",
+    "auth_token": "test-auth-token",
+    "created": 1596550518
+  },
+  {
+    "_id": "test-job-config-to-update",
+    "name": "test-job-config-name-to-update",
+    "type": "rundeck",
+    "author": "test-author",
+    "host": "http://example.com",
+    "auth_token": "test-auth-token",
+    "created": 1596550518
+  },
+  {
+    "_id": "test-job-config-to-delete",
+    "name": "test-job-config-name-to-delete",
+    "type": "rundeck",
+    "author": "test-author",
+    "host": "http://example.com",
+    "auth_token": "test-auth-token",
+    "created": 1596550518
+  },
+  {
+    "_id": "test-job-config-to-link",
+    "name": "test-job-config-name-to-link",
+    "type": "rundeck",
+    "author": "test-author",
+    "host": "http://example.com",
+    "auth_token": "test-auth-token",
+    "created": 1596550518
+  },
+  {
+    "_id": "test-job-config-running",
+    "name": "test-job-config-running",
+    "type": "rundeck",
+    "author": "test-author",
+    "host": "http://example.com",
+    "auth_token": "test-auth-token",
+    "created": 1596550518
+  }
+]
