@@ -1,7 +1,5 @@
 # Canopsis, open-source hypervision
 
-[![Pipeline status](https://git.canopsis.net/canopsis/canopsis/badges/develop/pipeline.svg)](https://git.canopsis.net/canopsis/canopsis/commits/develop)
-
 ## About
 
 [Canopsis](https://www.capensis.fr/canopsis/) is a modular open-source technology whose goal is to **centralize**, **process** and **report** multiple sources of information, metrics and events into a single platform for monitoring and managing resources.
@@ -26,6 +24,6 @@ Canopsis is built with Python, Go and Vue.js. This open-source edition is licens
 
 Commercial offers are also available on [canopsis.com](http://www.canopsis.com).
 
-Main development is coordinated on [git.canopsis.net](https://git.canopsis.net/canopsis/canopsis), and then mirrored on [GitHub](https://github.com/capensis/canopsis).
+Main development is coordinated on [git.canopsis.net](https://git.canopsis.net/canopsis/canopsis-community), and then mirrored on [GitHub](https://github.com/capensis/canopsis).
 
 © 2011–2021 Capensis

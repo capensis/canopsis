@@ -93,7 +93,7 @@ Les réglages de mkdocs sont dans le fichier `mkdocs.yml` à la racine du dépô
 
 ### Visualisation
 
-À la racine du dépôt :
+À la racine de `/community` :
 
 ```sh
 $ mkdocs serve 

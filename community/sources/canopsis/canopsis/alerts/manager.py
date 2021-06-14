@@ -708,7 +708,6 @@ class Alerts(object):
         # Find the corresponding task
         try:
             task = get_task(name, cacheonly=True)
-            # FIXIT: https://git.canopsis.net/canopsis/canopsis/issues/298
             if not callable(task):
                 raise ImportError('cannot import task "{}"'.format(name))
 

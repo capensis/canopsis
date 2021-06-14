@@ -3,11 +3,11 @@ dependencies: []
 
 galaxy_info:
   author: Capensis
-  description: Canopsis open-core installation role
+  description: Canopsis Community installation role
   company: Capensis
 
   issue_tracker_url:
-    https://git.canopsis.net/canopsis/canopsis/issues
+    https://git.canopsis.net/canopsis/canopsis-community/issues
 
   license: AGPLv3
 
