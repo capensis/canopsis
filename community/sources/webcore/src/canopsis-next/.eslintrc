@@ -1,0 +1,47 @@
+{
+  "root": true,
+  "extends": [
+    "plugin:vue/essential",
+    "@vue/airbnb"
+  ],
+  "plugins": [
+    "vue"
+  ],
+  "globals": {
+    "sel": true
+  },
+  "rules": {
+    "default-case": "off",
+    "max-len": ["error", { "code": 120, "ignoreStrings": true }],
+    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state", "config", "acc", "Vue", "browser"] }],
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "no-return-assign": "off",
+    "no-underscore-dangle": ["error", { "allow": ["_id", "_embedded", "_t", "_filter", "type_", "_original"] }],
+    "no-bitwise": ["error", { "allow": ["&"] }],
+    "vue/order-in-components": ["error", {
+      "order": [
+        "el",
+        "name",
+        "parent",
+        "functional",
+        "$_veeValidate",
+        ["provide", "inject"],
+        ["delimiters", "comments"],
+        ["components", "directives", "filters"],
+        "extends",
+        "mixins",
+        "inheritAttrs",
+        "model",
+        ["props", "propsData"],
+        "data",
+        "computed",
+        "watch",
+        "LIFECYCLE_HOOKS",
+        "methods",
+        ["template", "render"],
+        "renderError"
+      ]
+    }],
+    "import/prefer-default-export": "off"
+  }
+}

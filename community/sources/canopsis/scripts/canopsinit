@@ -1,0 +1,116 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2018 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+from argparse import ArgumentParser
+import os
+import pwd
+import subprocess
+import sys
+import time
+
+
+from canopsis.common.mongo_store import MongoStore
+from pymongo.errors import ConnectionFailure
+from canopsis.common import root_path
+from canopsis.version import (get_version_file_path, CANOPSIS_EDITION_ARG,
+                              CANOPSIS_STACK_ARG, CANOPSIS_VERSION_ARG, read_version_file)
+
+COMMANDS = [root_path + "/bin/schema2db",
+            [root_path + "/bin/canopsis-filldb", "--yes"]]
+
+ENV_MAX_RETRY = "CPS_INIT_MAX_RETRY"
+ENV_RETRY_DELAY = "CPS_INIT_RETRY_DELAY"
+ENV_WAIT_FIRST_ATTEMPT = "CPS_INIT_WAIT_FIRST_ATTEMPT"
+
+DFT_MAX_RETRY = 10
+DFT_RETRY_DELAY = 30
+DFT_WAIT_FIRST_ATTEMPT = 0
+AUTH_REINIT = '--authorize-reinit'
+
+
+if __name__ == "__main__":
+    parser = ArgumentParser(description='Canopsinit')
+    parser.add_argument(AUTH_REINIT, dest='reinit', action='store_true')
+    parser.add_argument(CANOPSIS_EDITION_ARG, required=False,
+                        default="core", dest='canopsis_edition', choices=['cat', 'core'])
+    parser.add_argument(CANOPSIS_STACK_ARG, required=False,
+                        default="go", dest='canopsis_stack', choices=['go'])
+    args = parser.parse_args()
+
+    if args.reinit is True:
+        COMMANDS[1].append(AUTH_REINIT)
+
+    current_user = pwd.getpwuid(os.getuid()).pw_name
+    if current_user != 'canopsis':
+        print("Error: canopsinit is only meant to be run through \"canopsis\" user")
+        exit(1)
+
+    max_retry = int(os.getenv(ENV_MAX_RETRY, DFT_MAX_RETRY))
+    retry_delay = int(os.getenv(ENV_RETRY_DELAY, DFT_RETRY_DELAY))
+    wait_first_time = int(os.getenv(ENV_WAIT_FIRST_ATTEMPT,
+                                    DFT_WAIT_FIRST_ATTEMPT))
+    print("Waiting {}s.".format(wait_first_time))
+
+    time.sleep(wait_first_time)
+
+    started = False
+    retry = 0
+    while started is False and retry < max_retry:
+        print("Attempt {} : ".format(retry + 1))
+        try:
+            store = MongoStore.get_default()
+            store.authenticate()
+        except ConnectionFailure:
+            print("\tFailed")
+            retry += 1
+            time.sleep(retry_delay)
+        else:
+            print("\tSuccess")
+            started = True
+
+    sys.stdout.flush()
+
+    try:
+        canopsis_version = read_version_file(get_version_file_path(root_path))
+    except ValueError:
+        print("Error: could not parse the Canopsis version. Exit now.")
+        exit(3)
+    except IOError as exc:
+        print("{}. Exit now.".format(exc))
+        exit(4)
+
+    COMMANDS[1].append(CANOPSIS_VERSION_ARG)
+    COMMANDS[1].append(canopsis_version)
+
+    COMMANDS[1].append(CANOPSIS_EDITION_ARG)
+    COMMANDS[1].append(args.canopsis_edition)
+
+    COMMANDS[1].append(CANOPSIS_STACK_ARG)
+    COMMANDS[1].append(args.canopsis_stack)
+
+    if started is True:
+        for cmd in COMMANDS:
+            try:
+                subprocess.check_call(cmd)
+            except subprocess.CalledProcessError:
+                exit(2)
+
+    else:
+        exit(1)

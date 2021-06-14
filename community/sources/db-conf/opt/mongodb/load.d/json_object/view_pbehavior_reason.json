@@ -1,0 +1,113 @@
+{
+    "loader_id": "view.pbehavior_reasons",
+    "loader_no_update": true,
+    "_id": "userview_3d9f018b-06c7-95e3-4b99-ae86e8452b0a",
+    "crecord_write_time": 1517475345,
+    "enable": true,
+    "description": "CRUD on pbehavior reasons",
+    "author": "root",
+    "containerwidget": {
+        "widgetId": null,
+        "preference_id": null,
+        "xtype": "widgetcontainer",
+        "title": null,
+        "widgetslotTemplate": null,
+        "mixins": [
+            {
+                "name": "verticallayout"
+            }
+        ],
+        "tagName": null,
+        "items": [
+            {
+                "id": "widgetwrapper_b6d551a9-9d95-1c70-d90c-5422aa3a4ae7",
+                "widget": {
+                    "widgetId": "widget_list_f1057007-8a2f-f8ce-ea92-6d1950c848bf",
+                    "preference_id": "6479451d-c7f9-f46e-c447-3599ff609186",
+                    "xtype": "list",
+                    "title": "Motifs",
+                    "listed_crecord_type": "reason",
+                    "mixins": [
+                        {
+                            "EmberClass": {
+                                "mixins": [
+                                    {
+                                        "properties": {
+                                            "userCanCreateRecord": true,
+                                            "userCanUpdateRecord": true,
+                                            "actions": {},
+                                            "partials": {
+                                                "subHeader": [],
+                                                "actionToolbarButtons": [],
+                                                "itemactionbuttons": [],
+                                                "footer": [],
+                                                "selectionToolbarButtons": [],
+                                                "header": []
+                                            },
+                                            "userCanDeleteRecord": true,
+                                            "userCanReadRecord": true
+                                        }
+                                    },
+                                    {
+                                        "properties": {
+                                            "userCanDeleteRecord": {
+                                                "_dependentKeys": [
+                                                    "config.listed_crecord_type"
+                                                ],
+                                                "_readOnly": false,
+                                                "_cacheable": true
+                                            },
+                                            "userCanCreateRecord": {
+                                                "_dependentKeys": [
+                                                    "config.listed_crecord_type"
+                                                ],
+                                                "_readOnly": false,
+                                                "_cacheable": true
+                                            },
+                                            "userCanUpdateRecord": {
+                                                "_dependentKeys": [
+                                                    "config.listed_crecord_type"
+                                                ],
+                                                "_readOnly": false,
+                                                "_cacheable": true
+                                            },
+                                            "userCanReadRecord": {
+                                                "_dependentKeys": [
+                                                    "config.listed_crecord_type"
+                                                ],
+                                                "_readOnly": false,
+                                                "_cacheable": true
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "name": "crud",
+                            "description": "Add CRUD operations management on widgets"
+                        }
+                    ],
+                    "useRenderers": true,
+                    "id": "widget_list_f1057007-8a2f-f8ce-ea92-6d1950c848bf",
+                    "columnsOrder": [],
+                    "tagName": null,
+                    "displayed_columns": [
+                        "name"
+                    ],
+                    "default_column_sort": {
+                        "direction": "ASC"
+                    },
+                    "contentTruncatedLength": 150
+                },
+                "mixins": [],
+                "xtype": "widgetwrapper",
+                "title": "wrapper"
+            }
+        ],
+        "id": "container_ea69ea06-ee31-114a-c0e4-f83ae0bcb40c"
+    },
+    "tags": [],
+    "crecord_creation_time": 1517308009,
+    "crecord_type": "view",
+    "internal": false,
+    "crecord_name": "pbehavior_reasons"
+}

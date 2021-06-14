@@ -1,0 +1,12 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["title"]
+	}],
+	"properties": {
+		"title": {
+			"type": "string"
+		}
+	}
+}

@@ -1,0 +1,4 @@
+Defaults !env_reset
+Defaults !requiretty
+
+canopsis ALL = (ALL) NOPASSWD: /opt/canopsis/bin/env2cfg, /entrypoint-prov-sync.sh

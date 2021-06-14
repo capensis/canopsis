@@ -1,0 +1,226 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+from canopsis.common import root_path
+from canopsis.common.init import Init
+from canopsis.old.storage import get_storage
+from canopsis.old.account import Account
+from canopsis.old.record import Record
+
+import sys
+import os
+import json
+
+
+class ModelRecursionError(Exception):
+    def __init__(self, schema, *args, **kwargs):
+        super(ModelRecursionError, self).__init__(*args, **kwargs)
+
+        self.schema = schema
+
+    def __str__(self):
+        return 'Model {0} contains a recursion'.format(self.schema)
+
+    def __unicode__(self):
+        return u'Model {0} contains a recursion'.format(self.schema)
+
+
+class Schema2MongoDB(object):
+    stdtypes = [
+        'object',
+        'array',
+        'string',
+        'integer',
+        'number',
+        'boolean',
+        'null',
+        'any'
+    ]
+
+    def __init__(self, *args, **kwargs):
+        super(Schema2MongoDB, self).__init__(*args, **kwargs)
+
+        self.handler = Init()
+        self.logger = self.handler.getLogger('schema2db')
+        self.files_in_error = []
+
+    def load(self):
+        # Load schemas
+
+        schema_dir = os.path.join(root_path, 'etc', 'schema.d')
+        self.schemas = {}
+
+        for filepath in os.listdir(schema_dir):
+            abspath = os.path.join(schema_dir, filepath)
+            schema_id = os.path.splitext(filepath)[0]
+
+            with open(abspath) as f:
+                self.logger.info(u'Loading: {0}'.format(abspath))
+
+                try:
+                    self.schemas[schema_id] = json.load(f)
+
+                except Exception as e:
+                    self.logger.error(
+                        'Unable to load schema {} : {}'.format(
+                            filepath,
+                            e
+                        )
+                    )
+
+                    self.files_in_error.append({'file': filepath, 'cause': e})
+
+    def build_one(self, schema_id):
+        self.logger.info(u'Building: {0}'.format(schema_id))
+
+        self.hierarchy = [schema_id]
+
+        def _build(pkey, subschema):
+            updated = False
+
+            if 'type' in subschema and pkey != 'properties':
+                if isinstance(subschema['type'], list):
+                    for stype in subschema['type']:
+                        if stype not in self.stdtypes:
+                            if stype in self.hierarchy:
+                                raise ModelRecursionError(schema_id)
+
+                            else:
+                                model = self.schemas.get(stype)
+                                idx = subschema['type'].index(stype)
+                                subschema['type'][idx] = model
+
+                else:
+                    if subschema['type'] not in self.stdtypes:
+                        if subschema['type'] in self.hierarchy:
+                            raise ModelRecursionError(schema_id)
+
+                        else:
+                            model = self.schemas.get(subschema['type'])
+
+                            if model is None:
+                                raise RuntimeError(
+                                    'Impossible to find schema: {0}'.format(
+                                        subschema['type']
+                                    )
+                                )
+
+                            subschema.update(model)
+                            updated = True
+
+            for key in subschema:
+                if key != 'type' and isinstance(subschema[key], dict):
+                    subupdated = False
+
+                    if 'type' in subschema:
+                        if pkey not in [None, 'properties']:
+                            if isinstance(subschema['type'], list):
+                                length = - len(subschema['type'])
+                                self.hierarchy += subschema['type']
+
+                                subupdated = _build(key, subschema[key])
+
+                                del self.hierarchy[length:]
+
+                            else:
+                                self.hierarchy.append(subschema['type'])
+                                subupdated = _build(key, subschema[key])
+                                del self.hierarchy[-1]
+
+                        if key == 'properties':
+                            for subkey in subschema[key]:
+                                if _build(subkey, subschema[key][subkey]):
+                                    subupdated = True
+
+                        elif key == 'items':
+                            subupdated = _build(key, subschema[key])
+
+                    else:
+                        subupdated = _build(key, subschema[key])
+
+                    if subupdated:
+                        updated = True
+
+            return updated
+
+        return _build(None, self.schemas[schema_id])
+
+    def build(self):
+        keep_going = True
+
+        # Iterate until no update is done on any model
+        while keep_going:
+            keep_going = False
+
+            for schema_id in self.schemas:
+                if self.build_one(schema_id):
+                    keep_going = True
+
+    def save(self):
+        storage = get_storage(
+            'schemas',
+            account=Account(user='root', group='root')
+        ).get_backend()
+
+        storage.remove()
+
+        for schema_id in self.schemas:
+            self.logger.info(u'Saving: {0}'.format(schema_id))
+
+            crecord_name = schema_id.split(".")[-1]
+
+            schema = Record({
+                '_id': schema_id,
+                'schema': self.schemas[schema_id]
+            }, name=crecord_name)
+
+            storage.update({'_id': schema_id}, schema.dump(), upsert=True)
+
+        del storage
+
+    def show(self):
+        if self.files_in_error:
+            self.logger.error(u'-' * 40)
+            self.logger.error(u' + Files that could not be loaded')
+
+        for fileitem in self.files_in_error:
+            self.logger.error(
+                '{} file not loaded because : {}'.format(
+                    fileitem['file'],
+                    fileitem['cause']
+                )
+            )
+
+    def __call__(self):
+        self.load()
+        self.build()
+        self.save()
+        self.show()
+
+
+if __name__ == '__main__':
+    try:
+        app = Schema2MongoDB()
+        app()
+
+    except ModelRecursionError as err:
+        print >>sys.stderr, "Error in model:", err
+        sys.exit(1)

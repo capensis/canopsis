@@ -1,0 +1,18 @@
+{
+  "_id": "statusmanagement",
+  "loader_id": "statusmanagement",
+  "enable": false,
+  "restore_event": true,
+  "bagot_freq": 10,
+  "crecord_write_time": 1521019656,
+  "hard_limit": 100,
+  "stealthy_time": 5,
+  "flapping_persistant_steps": 10,
+  "crecord_type": "statusmanagement",
+  "cancel_autosolve_delay": 3600,
+  "done_autosolve_delay": 900,
+  "bagot_time": 60,
+  "crecord_creation_time": null,
+  "crecord_name": "",
+  "loader_no_update": true
+}

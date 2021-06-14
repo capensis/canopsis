@@ -1,0 +1,160 @@
+{
+  "_id": "view.current_alarms",
+  "loader_id": "view.current_alarms",
+  "loader_no_update" : true,
+  "crecord_write_time": 1521018467,
+  "enable": true,
+  "description": null,
+  "author": "root",
+  "containerwidget": {
+    "widgetId": "container_5a616f01-8e30-f84f-a744-d8de5580946b",
+    "preference_id": null,
+    "xtype": "widgetcontainer",
+    "title": null,
+    "widgetslotTemplate": "widgetslot-default",
+    "mixins": [
+      {
+        "name": "verticallayout"
+      },
+      {
+        "name": "widgetfullscreen",
+        "EmberClass": {
+          "mixins": [
+            {
+              "properties": {
+                "partials": {
+                  "titlebarsbuttons": [
+                    "titlebarbutton-widgetfullscreen"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "widgetrefresh"
+      }
+    ],
+    "tagName": null,
+    "items": [
+      {
+        "id": "widgetwrapper_f157bbd6-b904-747e-35a1-8157e51ac1e8",
+        "widget": {
+          "widgetId": "widget_listalarm_f88cc478-2555-a818-b0bb-01888bbd4228",
+          "preference_id": "7196c9fa-9df2-c1d0-9833-94163b2105d8",
+          "xtype": "listalarm",
+          "alarms_state_filter": {
+            "state": "opened"
+          },
+          "title": "Alarmes en cours",
+          "default_sort_column": {
+            "direction": "DESC",
+            "property": "last_update_date"
+          },
+          "mixins": [
+            {
+              "description": "Add a list of filters to manage displayed results",
+              "name": "customfilterlist",
+              "EmberClass": {
+                "mixins": [
+                  {
+                    "properties": {
+                      "filters_list": {
+                        "_dependentKeys": [
+                          "mixinOptions.customfilterlist.filters",
+                          "model.selected_filter"
+                        ],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      },
+                      "user_filters": {
+                        "_dependentKeys": [
+                          "model.user_filters",
+                          "model.selected_filter"
+                        ],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      },
+                      "partials": {
+                        "subHeader": [
+                          "customfilters"
+                        ]
+                      },
+                      "_actions": {},
+                      "canAddCustomFiltersInUserPreferences": true
+                    }
+                  },
+                  {
+                    "properties": {
+                      "loggedaccountRights": {
+                        "altKey": "controllers.login.record.rights",
+                        "_dependentKeys": [
+                          "controllers.login.record.rights"
+                        ]
+                      },
+                      "needs": [
+                        "login"
+                      ],
+                      "loggedaccountId": {
+                        "altKey": "controllers.login.record._id",
+                        "_dependentKeys": [
+                          "controllers.login.record._id"
+                        ]
+                      },
+                      "canAddCustomFiltersInUserPreferences": {
+                        "_dependentKeys": [],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "pagination",
+              "description": "Allow to iterate listed items by pages on widgets"
+            }
+          ],
+          "popup": [],
+          "tagName": null,
+          "id": "widget_listalarm_f88cc478-2555-a818-b0bb-01888bbd4228",
+          "columns": [
+            "connector",
+            "connector_name",
+            "component",
+            "resource",
+            "output",
+            "state",
+            "status",
+            "last_update_date",
+            "extra_details"
+          ],
+          "widget_columns": [
+            {"label": "Connector", "value": "connector"},
+            {"label":"Connector name", "value":"connector_name"},
+            {"label":"Component", "value": "component"},
+            {"label": "Resource", "value":"resource"},
+            {"label": "Output", "value": "output"},
+            {"label": "State", "value":"state"},
+            {"label": "status", "value":"status"},
+            {"label": "Last udpate", "value": "last_update_date"},
+            {"label": "Extra details", "value": "extra_details"}
+          ]
+        },
+        "mixins": [],
+        "xtype": "widgetwrapper",
+        "title": "wrapper"
+      }
+    ],
+    "id": "container_5a616f01-8e30-f84f-a744-d8de5580946b"
+  },
+  "tags": [
+    "default"
+  ],
+  "crecord_creation_time": 0,
+  "crecord_type": "view",
+  "internal": false,
+  "crecord_name": "Current_Alarms"
+}

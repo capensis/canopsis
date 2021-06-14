@@ -1,0 +1,11 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys": ["path", "body"]
+	}],
+	"properties": {
+		"path": {"type": "string", "required": true, "defaultValue": "~/tmp/{{timestamp}}_{{rk}}" },
+		"body": {"type": "string", "role": "textarea", "required": true}
+	}
+}

@@ -1,0 +1,75 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": [
+            "entity",
+            "operator",
+            "in_state",
+            "min_weight",
+            "then_state",
+            "else_state",
+            "label"
+        ]
+    }],
+    "properties": {
+        "crecord_type": {
+            "default": "toponode"
+        },
+        "_cls": {
+            "default": "canopsis.topology.elements.TopoNode"
+        },
+        "type": {
+            "default": "toponode"
+        },
+        "entity": {
+            "type": "string",
+            "required": false,
+            "default": "",
+            "role": "contextselector",
+            "description": "Bound entity id (ex: /topo/canopsis/deby/mytopo/mytopo)"
+        },
+        "operator": {
+            "enum": ["change_state", "worst_state", "best_state", "at_least", "_all", "nok"],
+            "type": "string",
+            "role": "simplelist",
+            "default": "change_state",
+            "required": false,
+            "description": "Topology operator"
+        },
+        "min_weight": {
+            "type": "number",
+            "default": 1,
+            "required": false,
+            "description": "Minimal weight in case of at_least operator"
+        },
+        "in_state": {
+            "enum": ["nok", "ok", "minor", "major", "critical"],
+            "type": "string",
+            "default": "nok",
+            "role": "simplelist",
+            "description": "State of child nodes in case of at_least/_all operator",
+            "required": false
+        },
+        "then_state": {
+            "enum": ["ok", "minor", "major", "critical", "worst_state", "best_state"],
+            "type": "string",
+            "default": "worst_state",
+            "role": "simplelist",
+            "description": "State to set if at_least/_all operator is checked",
+            "required": false
+        },
+        "else_state": {
+            "enum": ["ok", "minor", "major", "critical", "worst_state", "best_state"],
+            "type": "string",
+            "default": "ok",
+            "role": "simplelist",
+            "description": "State to set if at_least/_all operator is unchecked",
+            "required": false
+        },
+        "info": {
+            "task": "canopsis.topology.rule.action.change_state",
+            "state": 0
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "type": "object",
+    "properties": {
+        "connector": {
+            "type": "string",
+            "required": true
+        },
+        "connector_name": {
+            "type": "string",
+            "required": true
+        },
+        "component": {
+            "type": "string",
+            "required": true
+        },
+        "resource": {
+            "type": "string",
+            "required": false
+        }
+    }
+}

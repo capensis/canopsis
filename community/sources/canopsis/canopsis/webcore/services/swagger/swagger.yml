@@ -1,0 +1,409 @@
+swagger: '2.0'
+info: {title: bottle-swagger, version: 1.0.0}
+produces: [application/json]
+consumes: [application/json]
+securityDefinitions:
+  BasicAuth:
+    type: basic
+security:
+  - BasicAuth: []
+
+definitions:
+  metaalarm.RuleConfig:
+    properties:
+      time_interval: {type: integer}
+      threshold_count: {type: integer}
+      threshold_rate: {type: number}
+      value_paths:
+        type: array
+        items:
+          type: string
+      alarm_patterns:
+        type: array
+        items: 
+          type: object
+      entity_patterns:
+        type: array
+        items:
+          type: object
+      total_entity_patterns:
+        type: array
+        items:
+          type: object
+    type: object
+    x-nullable: true 
+  metaalarm.Rule:
+    properties:
+      _id: {type: string}
+      auto_resolve: {type: boolean}
+      output_template: {type: string}
+      name: {type: string}
+      type: {type: string}
+      patterns: 
+        type: object
+        x-nullable: true 
+      config: 
+        $ref: "#/definitions/metaalarm.RuleConfig"
+    required:
+      - type
+      - name
+    type: object
+
+  idle.Rule:
+    properties:
+      _id: {type: string}
+      name: {type: string}
+      author: {type: string}
+      description: {type: string}
+      type:
+        type: string
+        enum:
+          - last_event
+          - last_update
+      duration: {type: string}
+      alarm_patterns: 
+        type: array
+        items: 
+          type: object
+        x-nullable: true
+      entity_patterns: 
+        type: array
+        items: 
+          type: object
+        x-nullable: true 
+      operation: 
+        $ref: "#/definitions/idle.Operation"
+      disable_during_periods:
+        type: array
+        items:
+          type: string
+        x-nullable: true
+    required:
+      - type
+      - duration
+      - operation
+    type: object
+  idle.Parameters:
+    properties:
+      output: {type: string}
+      author: {type: string}
+      role: {type: string}
+    type: object
+  idle.AssocTicketParameters:
+    allOf:
+      - $ref: "#/definitions/idle.Parameters"
+      - type: object
+        properties:
+          output: {type: string}
+          role: {type: string}
+          ticket: {type: string}
+  idle.SnoozeParameters:
+    allOf:
+      - $ref: "#/definitions/idle.Parameters"
+      - type: object
+        properties:
+          message: {type: string}
+          duration: {type: integer}
+  idle.ChangeStateParameters:
+    allOf:
+      - $ref: "#/definitions/idle.Parameters"
+      - type: object
+        properties:
+          output: {type: string}
+          state: {type: integer}
+  idle.PBehaviorParameters:
+    allOf:
+      - $ref: "#/definitions/idle.Parameters"
+      - type: object
+        properties:
+          name: {type: string}
+          reason: {type: string}
+          type: {type: string}
+          rrule: {type: string}
+          tstart: {type: integer}
+          tstop: {type: integer}
+  idle.Operation:
+    properties:
+      type:
+        type: string
+        enum:
+          - pbehavior
+          - snooze
+          - changestate
+          - declareticket
+          - assocticket
+          - ack
+          - ackremove
+          - cancel
+      parameters:
+        $ref: "#/definitions/idle.Parameters"
+    type: object
+  link.Parameter:
+    type: array
+    items: 
+      type: object
+      properties:
+        entity: {type: string}
+        alarm: {type: string}
+      required:
+        - "entity"
+  link.Parameters:
+    properties:
+      entities:
+        items: 
+          $ref: '#/definitions/link.Parameter'
+        type: array
+  link.Links:
+    type: array
+    items: 
+      type: object
+      properties: 
+        alarm: {type: string}
+        entity: {type: string}
+        links: {type: object}
+      required:
+        - entity
+        - links
+    uniqueItems: true
+  link.LinksData:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/link.Links'
+        type: array
+
+paths:
+  /api/v2/metaalarmrule:
+    get:
+      summary: Get rules list
+      responses:
+        '200':
+          description: List of meta alarm rules
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/metaalarm.Rule"
+      tags:
+      - metaalarm
+
+    post:
+      summary: Create rule
+      parameters:
+        - in: body
+          name: rule
+          schema:
+            $ref: "#/definitions/metaalarm.Rule"
+      responses:
+        '200':
+          description: Rule has been created    
+        '400':
+          description: Rule create error
+          schema:
+            properties:
+              description:
+                type: string
+      tags:
+      - metaalarm
+  /api/v2/metaalarmrule/{rule_id}:
+    get:
+      summary: Returns a rule by ID
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          type: string
+          description: The ID of the rule to return
+      responses:
+        '200':
+            description: A Rule object
+            schema:
+              $ref: "#/definitions/metaalarm.Rule"
+        '404':
+          description: Rule not found
+          schema:
+            properties:
+              description:
+                type: string
+      tags:
+      - metaalarm
+    put:
+      summary: Update a rule by ID
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          type: string
+          description: The ID of the rule to update
+      responses:
+        '200':
+          description: Rule has been updated
+          schema:
+            properties:
+              is_success:
+                type: boolean
+        '400':
+          description: Rule update error
+          schema:
+            properties:
+              description:
+                type: string
+      tags:
+      - metaalarm
+    delete:
+      summary: Delete a rule by ID
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          type: string
+          description: The ID of the rule to delete
+      responses:
+        '200':
+          description: Rule has been deleted
+          schema:
+            properties:
+              acknowledged:
+                description: True for success
+                type: boolean
+              deletedCount:
+                description: 1 when document deleted
+                type: integer
+        '400':
+          description: Service rule cannot be deleted
+          schema:
+            properties:
+              description:
+                type: string
+      tags:
+      - metaalarm
+
+  /api/v2/idle-rule:
+    get:
+      summary: Get rules list
+      responses:
+        '200':
+          description: List of idle rules
+          schema:
+            properties:
+              data:
+                items:
+                  $ref: '#/definitions/idle.Rule'
+                type: array
+      tags:
+      - idle-rule
+
+    post:
+      summary: Create idle rule
+      parameters:
+        - in: body
+          name: rule
+          schema:
+            $ref: "#/definitions/idle.Rule"
+      responses:
+        '200':
+          description: Rule has been created
+          schema:
+            $ref: "#/definitions/idle.Rule"
+        '400':
+          description: Rule create error
+          schema:
+            properties:
+              description:
+                type: string
+      tags:
+      - idle-rule
+  /api/v2/idle-rule/{rule_id}:
+    get:
+      summary: Returns a rule by ID
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          type: string
+          description: The ID of the rule to return
+      responses:
+        '200':
+            description: A Rule object
+            schema:
+              $ref: "#/definitions/idle.Rule"
+        '404':
+          description: Rule not found
+          schema:
+            properties:
+              description:
+                type: string
+      tags:
+      - idle-rule
+    put:
+      summary: Update a rule by ID
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          type: string
+          description: The ID of the rule to update
+      responses:
+        '200':
+          description: Rule has been updated
+          schema:
+            $ref: "#/definitions/idle.Rule"
+        '400':
+          description: Rule update error
+          schema:
+            properties:
+              description:
+                type: string
+      tags:
+      - idle-rule
+    delete:
+      summary: Delete a rule by ID
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          type: string
+          description: The ID of the rule to delete
+      responses:
+        '200':
+          description: Rule has been deleted
+          schema:
+            properties:
+              acknowledged:
+                description: True for success
+                type: boolean
+              deletedCount:
+                description: 1 when document deleted
+                type: integer
+        '400':
+          description: Rule delete error
+          schema:
+            properties:
+              description:
+                type: string
+      tags:
+      - idle-rule
+  /api/v2/links:
+    post:
+      consumes:
+      - application/json
+      summary: Returns links for alarms or entities list
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/link.Parameters'
+      responses:
+        '200':
+            description: List of links
+            schema:
+              $ref: "#/definitions/link.LinksData"
+        '400':
+          description: Wrong entities payload
+          schema:
+            properties:
+              description:
+                type: string
+      tags:
+      - links

@@ -1,0 +1,18 @@
+---
+- hosts: canopsis
+  remote_user: root
+  roles:
+    -
+      role: "ansible-role-nginx"
+    -
+      role: "ansible-role-mongodb"
+    -
+      role: "ansible-role-rabbitmq"
+    -
+      role: "ansible-role-influxdb-maat"
+    -
+      role: "ansible-role-redis"
+    -
+      role: "canopsis"
+      tags:
+        - canopsis

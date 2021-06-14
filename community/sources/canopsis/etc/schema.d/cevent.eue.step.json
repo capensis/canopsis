@@ -1,0 +1,13 @@
+{
+	"type": "object",
+	"properties": {
+		"type_message": {
+			"enum": ["step"],
+			"required": true
+		},
+		"child": {
+			"type": "string",
+			"required": true
+		}
+	}
+}

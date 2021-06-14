@@ -1,0 +1,94 @@
+---
+canopsis_home: /opt/canopsis
+canopsis_user: canopsis
+canopsis_group: canopsis
+
+canopsis_oldapi_host: localhost
+canopsis_oldapi_port: "8081"
+
+canopsis_api_host: localhost
+canopsis_api_port: "8082"
+
+canopsis_amqp_host: localhost
+canopsis_amqp_user: canopsis
+canopsis_amqp_userid: cpsrabbit
+canopsis_amqp_password: canopsis
+canopsis_amqp_exchange: canopsis
+canopsis_amqp_vhost: canopsis
+canopsis_amqp_port: "5672"
+
+canopsis_rabbit_nodename: rabbit@{{ ansible_hostname }}
+
+canopsis_mongo_host: localhost
+canopsis_mongo_db: canopsis
+canopsis_mongo_user: cpsmongo
+canopsis_mongo_password: canopsis
+canopsis_mongo_port: "27017"
+
+canopsis_influxdb_host: localhost
+canopsis_influxdb_port: "8086"
+canopsis_influxdb_user: cpsinflux
+canopsis_influxdb_password: canopsis
+canopsis_influxdb_db: canopsis
+
+canopsis_redis_host: localhost
+canopsis_redis_port: "6379"
+canopsis_redis_dbnum: 0
+
+# 'core' by default; use 'cat' if you have CAT engines
+canopsis_edition: core
+
+# Default Python Core engines which haven't been replaced by a Go engine, yet
+canopsis_core_python_engines:
+  -
+    module: scheduler
+    name: scheduler
+  -
+    module: task_importctx
+    name: task_importctx
+
+# Additional Python engines in CAT
+canopsis_cat_python_additional_engines: []
+
+# Same as above, but snmp engine has no module name…
+canopsis_cat_python_additional_engines_broken_names:
+  -
+    name: snmp
+
+# Default Go Core engines
+canopsis_core_go_engines:
+  -
+    name: engine-action
+  -
+    name: engine-axe
+  -
+    name: engine-che
+  -
+    name: engine-fifo
+  -
+    name: engine-heartbeat
+  -
+    name: engine-pbehavior
+  -
+    name: engine-watcher
+
+# Additional Go engines in CAT
+canopsis_cat_go_additional_engines:
+  -
+    name: engine-dynamic-infos
+  -
+    name: engine-webhook
+  -
+    name: engine-correlation
+
+# Default other Core components
+canopsis_core_other_default_services:
+  -
+    name: canopsis-api
+  -
+    name: canopsis-oldapi
+
+# Default other CAT components
+canopsis_cat_other_default_services:
+  -
+    name: external-job-executor

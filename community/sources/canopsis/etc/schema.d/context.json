@@ -1,0 +1,23 @@
+{
+    "type": "object",
+    "categories": [
+        {
+            "title": "General",
+            "keys": ["type", "name"]
+        }
+    ],
+    "properties": {
+        "type": {
+            "type": "string",
+            "required": true
+        },
+        "_id": {
+            "type": "string",
+            "required": true
+        },
+        "name": {
+            "type": "string",
+            "required": true
+        }
+    }
+}

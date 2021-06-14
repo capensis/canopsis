@@ -1,0 +1,11 @@
+ARG CANOPSIS_DISTRIBUTION
+ARG CANOPSIS_TAG
+
+FROM canopsis/canopsis-core:${CANOPSIS_DISTRIBUTION}-${CANOPSIS_TAG}
+
+COPY sources/canopsis/test/ ${CPS_HOME}/test
+
+USER 0
+RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/test
+
+USER ${CPS_USER}:${CPS_GROUP}

@@ -1,0 +1,95 @@
+---
+
+#
+# Python stuff
+#
+- name: deploy Canopsis amqp storage configuration templates
+  template:
+    src: common-engines/storage-amqp.j2
+    dest: "{{ canopsis_home }}/etc/amqp.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: deploy Canopsis influx storage configuration templates
+  template:
+    src: common-engines/storage-influxdb.j2
+    dest: "{{ canopsis_home }}/etc/influx/storage.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: deploy Canopsis mongo store configuration templates
+  template:
+    src: common-engines/mongo_store.j2
+    dest: "{{ canopsis_home }}/etc/common/mongo_store.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: deploy Canopsis cstorage configuration templates
+  template:
+    src: common-engines/cstorage.j2
+    dest: "{{ canopsis_home }}/etc/cstorage.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: deploy Canopsis redis store configuration templates
+  template:
+    src: common-engines/redis_store.j2
+    dest: "{{ canopsis_home }}/etc/common/redis_store.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+#
+# Go stuff
+#
+- name: Deploy common environment variables for Go engines
+  template:
+    src: go-engines/go-engines-vars.j2
+    dest: "{{ canopsis_home }}/etc/go-engines-vars.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Override canopsis.toml with canopsis-core.toml.example
+  copy:
+    src: "{{ canopsis_home }}/etc/canopsis-core.toml.example"
+    dest: "{{ canopsis_home }}/etc/canopsis.toml"
+    remote_src: yes
+    owner: root
+    group: root
+    mode: preserve
+  when: canopsis_edition == "core"
+
+- name: Override canopsis.toml with canopsis-cat.toml.example
+  copy:
+    src: "{{ canopsis_home }}/etc/canopsis-cat.toml.example"
+    dest: "{{ canopsis_home }}/etc/canopsis.toml"
+    remote_src: yes
+    owner: root
+    group: root
+    mode: preserve
+  when: canopsis_edition == "cat"
+
+- name: Override amqp2engines.conf with amqp2engines-core.conf.example
+  copy:
+    src: "{{ canopsis_home }}/etc/amqp2engines-core.conf.example"
+    dest: "{{ canopsis_home }}/etc/amqp2engines.conf"
+    remote_src: yes
+    owner: root
+    group: root
+    mode: preserve
+  when: canopsis_edition == "core"
+
+- name: Override amqp2engines.conf with amqp2engines-cat.conf.example
+  copy:
+    src: "{{ canopsis_home }}/etc/amqp2engines-cat.conf.example"
+    dest: "{{ canopsis_home }}/etc/amqp2engines.conf"
+    remote_src: yes
+    owner: root
+    group: root
+    mode: preserve
+  when: canopsis_edition == "cat"

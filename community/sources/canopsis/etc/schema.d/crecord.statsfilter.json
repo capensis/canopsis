@@ -1,0 +1,24 @@
+{
+    "title": "StatsFilter",
+    "description": "Filter used to generate statistics counters",
+    "categories": [{
+        "title": "General",
+        "keys": ["crecord_name", "filter"]
+    }],
+    "type": "object",
+    "properties": {
+        "crecord_name": {
+            "title": "Filter Name",
+            "description": "Name used for metric",
+            "type": "string",
+            "required": true
+        },
+        "filter": {
+            "title": "Event filter",
+            "description": "Filter used to match events",
+            "type": "string",
+            "role": "cfilter",
+            "required": true
+        }
+    }
+}

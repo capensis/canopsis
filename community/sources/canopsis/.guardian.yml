@@ -1,0 +1,2 @@
+files: ./canopsis/**/*.py
+run: source ~/doc/pyvenv/cano/bin/activate && pip install --upgrade .

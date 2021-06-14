@@ -1,0 +1,40 @@
+{
+	"type": "object",
+	"properties": {
+		"id": {
+			"type": "string"
+		},
+		"crecord_type": {
+			"type": "string",
+			"optiontest": "test",
+			"required": true ,
+			"role": "crecord-type"
+		},
+		"crecord_write_time": {
+			"type": "integer",
+			"required": true ,
+			"role": "timestamp" ,
+			"hideDate": true,
+			"canDisplayAgo" : true,
+			"format": "r",
+			"title": "creation date"
+		},
+		"crecord_creation_time": {
+			"type": "integer",
+			"required": true ,
+			"role": "timestamp" ,
+			"hideDate": true,
+			"canDisplayAgo" : true,
+			"format": "r"
+		},
+		"crecord_name": {
+			"type": "string",
+			"required": true
+		},
+		"enable": {
+			"type": "boolean",
+			"required": true,
+			"default": true
+		}
+	}
+}

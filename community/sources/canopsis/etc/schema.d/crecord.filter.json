@@ -1,0 +1,61 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["name", "description", "enable", "priority", "break"]
+	},{
+		"title": "Filter",
+		"keys":["mfilter"]
+	},{
+		"title": "Actions",
+		"keys":["actions"]
+	}],
+	"properties": {
+		"crecord_type": {
+			"enum": ["filter"],
+			"required": true
+		},
+		"name": {
+			"type": "string",
+			"required": true,
+			"default": "no name"
+		},
+		"description": {
+			"type": "string"
+		},
+		"crecord_name": {
+			"type": "string",
+			"required": true
+		},
+		"mfilter": {
+			"type": "string",
+			"required": true,
+			"role": "cfilter"
+		},
+		"actions": {
+			"type": "array",
+			"required": true,
+			"items": {
+				"type": "object"
+			},
+			"role": "actionfilter"
+		},
+		"priority": {
+			"type": "integer",
+			"required": true,
+			"default": 1
+		},
+		"run_once": {
+			"type": "boolean",
+			"title": "is loaded",
+			"default": false,
+			"role": "boolean"
+		},
+		"break": {
+			"type": "boolean",
+			"title": "breaking rule",
+			"default": false,
+			"description": "When this rule is met and processed, following rules are not applied depending on priority order"
+		}
+	}
+}

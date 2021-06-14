@@ -1,0 +1,28 @@
+---
+- name: Deploy Canopsis default configuration file for Nginx
+  template:
+    src: nginx/default.j2
+    dest: /etc/nginx/conf.d/default.conf
+    owner: root
+    group: root
+    mode: 0644
+  vars:
+    # Note: requiring a local resolver to resolve localhost seems excessive, so just give 127.0.0.1
+    # to Nginx in this case, which should be OK in most setups.
+    CPS_API_URL: "http://{{ canopsis_api_host | replace('localhost', '127.0.0.1') }}:{{ canopsis_api_port }}"
+
+- name: Deploy Canopsis CORS configuration file for Nginx
+  template:
+    src: nginx/cors.j2
+    dest: /etc/nginx/cors.inc
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Deploy Canopsis resolver configuration file for Nginx
+  template:
+    src: nginx/resolvers.j2
+    dest: /etc/nginx/resolvers.inc
+    owner: root
+    group: root
+    mode: 0644

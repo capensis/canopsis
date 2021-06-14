@@ -1,0 +1,33 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": ["title", "server", "service", "default_role"]
+    }],
+    "properties": {
+        "title": {
+            "type": "string",
+            "required": true,
+            "description": "Login with CAS"
+        },
+        "server": {
+            "type": "string",
+            "required": true,
+            "description": "CAS server URL"
+        },
+        "service": {
+            "type": "string",
+            "required": true,
+            "default": "http://localhost:8082/",
+            "description": "Canopsis URL"
+        },
+        "default_role": {
+            "type": "string",
+            "role": "stringclassifiedcrecordselector",
+            "multiselect": false,
+            "crecordtype": "role",
+            "valuekey" : "id",
+            "description": "Default role for new users"
+        }
+    }
+}

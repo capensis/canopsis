@@ -1,0 +1,7 @@
+{
+    "type": "object",
+    "properties": {
+        "task_path": {"type": "string"},
+        "parameters": {"type": "object"}
+    }
+}

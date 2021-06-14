@@ -1,0 +1,27 @@
+[
+  {
+    "contact": {
+      "name": "Administrator",
+      "address": ""
+    },
+    "mail": "admin@canopsis.org",
+    "_id": "root",
+    "enable": true,
+    "external": false,
+    "shadowpasswd": "DC76E9F0C0006E8F919E0C515C66DBBA3982F785",
+    "role": "admin",
+    "rights": {}
+  }, {
+    "contact": {
+      "name": "Canopsis",
+      "address": ""
+    },
+    "mail": "canopsis@canopsis.org",
+    "_id": "canopsis",
+    "enable": true,
+    "external": false,
+    "shadowpasswd": "3f1889001882f411c2f476dd1f2fd0861fc6b49d",
+    "role": "Manager",
+    "rights": {}
+  }
+]
