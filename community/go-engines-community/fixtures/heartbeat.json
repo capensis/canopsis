@@ -1,0 +1,145 @@
+[
+  {
+    "_id": "test-heartbeat-to-get-1",
+    "name": "test-heartbeat-to-get-1-name",
+    "description": "test-heartbeat-to-get-1-description",
+    "author": "root",
+    "pattern": {
+      "name": "test-heartbeat-to-get-1-resource"
+    },
+    "expected_interval": "1000h",
+    "output": "test-heartbeat-to-get-1-output",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-heartbeat-to-get-2",
+    "name": "test-heartbeat-to-get-2-name",
+    "description": "test-heartbeat-to-get-2-description",
+    "author": "root",
+    "pattern": {
+      "name": "test-heartbeat-to-get-2-resource"
+    },
+    "expected_interval": "1000h",
+    "output": "test-heartbeat-to-get-2-output",
+    "created": 1592215347,
+    "updated": 1592215347
+  },
+  {
+    "_id": "test-heartbeat-to-update",
+    "name": "test-heartbeat-to-update-name",
+    "description": "test-heartbeat-to-update-description",
+    "author": "root",
+    "pattern": {
+      "name": "test-heartbeat-to-update-resource"
+    },
+    "expected_interval": "1000h",
+    "output": "test-heartbeat-to-update-output",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-heartbeat-to-bulk-update-1",
+    "name": "test-heartbeat-to-bulk-update-1-name",
+    "description": "test-heartbeat-to-bulk-update-1-description",
+    "author": "root",
+    "pattern": {
+      "name": "test-heartbeat-to-bulk-update-1-resource"
+    },
+    "expected_interval": "1000h",
+    "output": "test-heartbeat-to-bulk-update-1-output",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-heartbeat-to-bulk-update-2",
+    "name": "test-heartbeat-to-bulk-update-2-name",
+    "description": "test-heartbeat-to-bulk-update-2-description",
+    "author": "root",
+    "pattern": {
+      "name": "test-heartbeat-to-bulk-update-2-resource"
+    },
+    "expected_interval": "1000h",
+    "output": "test-heartbeat-to-bulk-update-2-output",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-heartbeat-to-bulk-update-3",
+    "name": "test-heartbeat-to-bulk-update-3-name",
+    "description": "test-heartbeat-to-bulk-update-3-description",
+    "author": "root",
+    "pattern": {
+      "name": "test-heartbeat-to-bulk-update-3-resource"
+    },
+    "expected_interval": "1000h",
+    "output": "test-heartbeat-to-bulk-update-3-output",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-heartbeat-to-delete",
+    "name": "test-heartbeat-to-delete-name",
+    "description": "test-heartbeat-to-delete-description",
+    "author": "root",
+    "pattern": {
+      "name": "test-heartbeat-to-delete-resource"
+    },
+    "expected_interval": "1000h",
+    "output": "test-heartbeat-to-delete-output",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-heartbeat-to-bulk-delete-1",
+    "name": "test-heartbeat-to-bulk-delete-1-name",
+    "description": "test-heartbeat-to-bulk-1-delete-description",
+    "author": "root",
+    "pattern": {
+      "name": "test-heartbeat-to-bulk-delete-1-resource"
+    },
+    "expected_interval": "1000h",
+    "output": "test-heartbeat-to-bulk-delete-1-output",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-heartbeat-to-bulk-delete-2",
+    "name": "test-heartbeat-to-bulk-delete-2-name",
+    "description": "test-heartbeat-to-bulk-2-delete-description",
+    "author": "root",
+    "pattern": {
+      "name": "test-heartbeat-to-bulk-delete-2-resource"
+    },
+    "expected_interval": "1000h",
+    "output": "test-heartbeat-to-bulk-delete-2-output",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-heartbeat-to-bulk-delete-3",
+    "name": "test-heartbeat-to-bulk-delete-3-name",
+    "description": "test-heartbeat-to-bulk-3-delete-description",
+    "author": "root",
+    "pattern": {
+      "name": "test-heartbeat-to-bulk-delete-3-resource"
+    },
+    "expected_interval": "1000h",
+    "output": "test-heartbeat-to-bulk-delete-3-output",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-heartbeat-to-check-unique-name",
+    "name": "test-heartbeat-to-check-unique-name-name",
+    "description": "test-heartbeat-to-check-unique-name-description",
+    "author": "root",
+    "pattern": {
+      "name": "test-heartbeat-to-check-unique-name-resource"
+    },
+    "expected_interval": "1000h",
+    "output": "test-heartbeat-check-unique-name-output",
+    "created": 1592215337,
+    "updated": 1592215337
+  }
+]

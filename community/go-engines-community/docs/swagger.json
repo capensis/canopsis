@@ -1,0 +1,5610 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a Canopsis server.",
+        "title": "Canopsis API",
+        "contact": {},
+        "license": {},
+        "version": "4.0"
+    },
+    "basePath": "/api/v4",
+    "paths": {
+        "/account/me": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get account",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "Get account",
+                "operationId": "account-get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/account.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/alarm-counters": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get counts of alarms",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alarms"
+                ],
+                "summary": "Count alarms",
+                "operationId": "alarms-get-counts",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "active_columns[]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "correlation",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "manual",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "opened",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "resolved",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "tstart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "tstop",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "with_instructions",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "without_instructions",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/alarm.Count"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/alarm-export": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Start export alarms",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alarms"
+                ],
+                "summary": "Start export alarms",
+                "operationId": "alarms-export-start",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "active_columns[]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "correlation",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "manual",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "opened",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "resolved",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "separator",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_dir",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "tstart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "tstop",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "with_consequences",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "with_instructions",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "with_steps",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "without_instructions",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/alarm.ExportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/alarm-export/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get status of export alarms",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alarms"
+                ],
+                "summary": "Get status of export alarms",
+                "operationId": "alarms-export-get",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "export task id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/alarm.ExportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/alarm-export/{id}/download": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get result of export alarms",
+                "produces": [
+                    "text/csv"
+                ],
+                "tags": [
+                    "alarms"
+                ],
+                "summary": "Get result of export alarms",
+                "operationId": "alarms-export-download",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "export task id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/alarms": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of alarms",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alarms"
+                ],
+                "summary": "Find all alarms",
+                "operationId": "alarms-find-all",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "active_columns[]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "correlation",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "manual",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "opened",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "paginate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "resolved",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_dir",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "tstart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "tstop",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "with_consequences",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "with_instructions",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "with_steps",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "without_instructions",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/alarm.Alarm"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/bulk/heartbeats": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk update heartbeats by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "heartbeats"
+                ],
+                "summary": "Bulk update heartbeats by id",
+                "operationId": "heartbeats-bulk-update-by-id",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/heartbeat.BulkUpdateRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk create heartbeats",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "heartbeats"
+                ],
+                "summary": "Bulk create heartbeats",
+                "operationId": "heartbeats-bulk-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/heartbeat.CreateRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk delete heartbeats by id",
+                "tags": [
+                    "heartbeats"
+                ],
+                "summary": "Bulk delete heartbeats by id",
+                "operationId": "heartbeats-bulk-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "ids",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/entities/pbehaviors": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get list of pbehaviors",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Find pbehaviors by entity id",
+                "operationId": "pbehaviors-find-by-entity-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pbehavior.PBehavior"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/entity-export": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Start export entities",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Start export entities",
+                "operationId": "entities-export-start",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "active_columns[]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "separator",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_by",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ExportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/entity-export/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get status of export entities",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Get status of export entities",
+                "operationId": "entities-export-get",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "export task id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ExportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/entity-export/{id}/download": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get result of export entities",
+                "produces": [
+                    "text/csv"
+                ],
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Get result of export entities",
+                "operationId": "entities-export-download",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "export task id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/heartbeats": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of heartbeats",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "heartbeats"
+                ],
+                "summary": "Find heartbeats",
+                "operationId": "heartbeats-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort_by",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create heartbeat",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "heartbeats"
+                ],
+                "summary": "Create heartbeat",
+                "operationId": "heartbeats-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/heartbeat.CreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/heartbeats/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get heartbeat by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "heartbeats"
+                ],
+                "summary": "Get heartbeat by id",
+                "operationId": "heartbeats-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "heartbeat id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update heartbeat by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "heartbeats"
+                ],
+                "summary": "Update heartbeat by id",
+                "operationId": "heartbeats-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "heartbeat id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/heartbeat.UpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete heartbeat by id",
+                "tags": [
+                    "heartbeats"
+                ],
+                "summary": "Delete heartbeat by id",
+                "operationId": "heartbeats-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "heartbeat id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehavior-comments": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create pbehavior comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-comments"
+                ],
+                "summary": "Create pbehavior comment",
+                "operationId": "pbehavior-comments-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviorcomment.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.Comment"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehavior-comments/:id": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete pbehavior comment by id",
+                "tags": [
+                    "pbehavior-comments"
+                ],
+                "summary": "Delete pbehavior comment by id",
+                "operationId": "pbehavior-comment-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pbehavior comment id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehavior-exceptions": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of behavior exceptions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-exceptions"
+                ],
+                "summary": "Find all pbehavior exceptions",
+                "operationId": "pbehavior-exceptions-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "with flags",
+                        "name": "with_flags",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/pbehaviorexception.Exception"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create pbehavior exception",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-exceptions"
+                ],
+                "summary": "Create pbehavior exception",
+                "operationId": "pbehavior-exceptions-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviorexception.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviorexception.Exception"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehavior-exceptions/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get pbehavior exception by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-exceptions"
+                ],
+                "summary": "Get pbehavior exception by id",
+                "operationId": "pbehavior-exceptions-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "exception id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviorexception.Exception"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update behavior exception by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-exceptions"
+                ],
+                "summary": "Update behavior exception by id",
+                "operationId": "pbehavior-exceptions-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "exception id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviorexception.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviorexception.Exception"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete pbehavior exception by id",
+                "tags": [
+                    "pbehavior-exceptions"
+                ],
+                "summary": "Delete pbehavior exception by id",
+                "operationId": "pbehavior-exceptions-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "exception id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehavior-ics/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get pbehavior ICS by id",
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "pbehavior-ics"
+                ],
+                "summary": "Get pbehavior ICS by id",
+                "operationId": "pbehavior-ics-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pbehavior id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehavior-reasons": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of behavior reasons",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-reasons"
+                ],
+                "summary": "Find pbehavior reasons",
+                "operationId": "pbehavior-reasons-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "with flags",
+                        "name": "with_flags",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/pbehaviorreason.Reason"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create pbehavior reason",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-reasons"
+                ],
+                "summary": "Create pbehavior reason",
+                "operationId": "pbehavior-reasons-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviorreason.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviorreason.Reason"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehavior-reasons/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get pbehavior reason by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-reasons"
+                ],
+                "summary": "Get pbehavior reason by id",
+                "operationId": "pbehavior-reasons-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "reason id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviorreason.Reason"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update behavior reason by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-reasons"
+                ],
+                "summary": "Update behavior reason by id",
+                "operationId": "pbehavior-reasons-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "reason id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviorreason.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviorreason.Reason"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete pbehavior reason by id",
+                "tags": [
+                    "pbehavior-reasons"
+                ],
+                "summary": "Delete pbehavior reason by id",
+                "operationId": "pbehavior-reasons-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "reason id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehavior-timespans": {
+            "post": {
+                "description": "Get time spans of calendar event within view span; {by_date: false} adds exception spans with types, {by_date: true} merges adjacent spans if gap between sequential ones less than 24 hours",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-timespans"
+                ],
+                "summary": "Get all pbehavior timespans",
+                "operationId": "pbehavior-timespans-get-all",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviortimespan.TimespansRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pbehaviortimespan.timespansItemResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehavior-types": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of behavior types",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-types"
+                ],
+                "summary": "Find pbehavior types",
+                "operationId": "pbehavior-types-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "with flags",
+                        "name": "with_flags",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/pbehavior.Type"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create pbehavior type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-types"
+                ],
+                "summary": "Create pbehavior type",
+                "operationId": "pbehavior-types-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviortype.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.Type"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehavior-types/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get pbehavior type by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-types"
+                ],
+                "summary": "Get pbehavior type by id",
+                "operationId": "pbehavior-types-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.Type"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update behavior type by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehavior-types"
+                ],
+                "summary": "Update behavior type by id",
+                "operationId": "pbehavior-types-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehaviortype.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.Type"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete pbehavior type by id",
+                "tags": [
+                    "pbehavior-types"
+                ],
+                "summary": "Delete pbehavior type by id",
+                "operationId": "pbehavior-types-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehaviors": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of pbehaviors",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Find all pbehaviors",
+                "operationId": "pbehaviors-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort_by",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/pbehavior.PBehavior"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create pbehavior",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Create pbehavior",
+                "operationId": "pbehaviors-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.PBehavior"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehaviors/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get pbehavior by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Get pbehavior by id",
+                "operationId": "pbehaviors-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pbehavior id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.PBehavior"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update behavior by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Update behavior by id",
+                "operationId": "pbehaviors-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pbehavior id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.PBehavior"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete pbehavior by id",
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Delete pbehavior by id",
+                "operationId": "pbehavior-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pbehavior id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pbehaviors/{id}/eids": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get pbehavior eids list",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Get pbehavior eids list",
+                "operationId": "pbehaviors-get-eids",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pbehavior id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort_by",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/pbehavior.EID"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/scenarios": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of scenarios",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Find scenarios",
+                "operationId": "scenarios-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort_by",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/scenario.Scenario"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create scenario",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Create scenario",
+                "operationId": "scenarios-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/scenario.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/scenario.Scenario"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/scenarios/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get scenario by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Get scenario by id",
+                "operationId": "scenarios-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "scenario id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/scenario.Scenario"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update scenario by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Update scenario by id",
+                "operationId": "scenarios-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "scenario id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/scenario.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/scenario.Scenario"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete scenario by id",
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Delete scenario by id",
+                "operationId": "scenarios-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "scenario id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/sessions-count": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get counts of active sessions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get counts of active sessions",
+                "operationId": "auth-get-session-counts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.sessionsCountResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/weather-watchers": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of watchers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "weather-watchers"
+                ],
+                "summary": "Find all watchers",
+                "operationId": "weather-watchers-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "filter query",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort_by",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/watcherweather.Watcher"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/weather-watchers/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of entities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "weather-watchers"
+                ],
+                "summary": "Find all entity by watcher id",
+                "operationId": "weather-watchers-find-all-entities",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "watcher id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort query",
+                        "name": "sort_by",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/watcherweather.Entity"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "account.User": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "authkey": {
+                    "type": "string"
+                },
+                "crecord_name": {
+                    "type": "string"
+                },
+                "defaultview": {
+                    "type": "string"
+                },
+                "enable": {
+                    "type": "boolean"
+                },
+                "external_id": {
+                    "type": "string"
+                },
+                "firstname": {
+                    "type": "string"
+                },
+                "groupsNavigationType": {
+                    "type": "string"
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "mail": {
+                    "type": "string"
+                },
+                "paused_executions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "_id": {
+                                "type": "string"
+                            },
+                            "alarm_name": {
+                                "type": "string"
+                            },
+                            "instruction_name": {
+                                "type": "string"
+                            },
+                            "paused": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                "rights": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "checksum": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                "role": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "tours": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
+                },
+                "ui_language": {
+                    "type": "string"
+                }
+            }
+        },
+        "alarm.Alarm": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "assigned_instructions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/alarm.InstructionWithAlarms"
+                    }
+                },
+                "causes": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.Causes"
+                },
+                "consequences": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.Children"
+                },
+                "entity": {
+                    "type": "object",
+                    "$ref": "#/definitions/entity.Entity"
+                },
+                "filtered_children": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
+                },
+                "links": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "metaalarm": {
+                    "type": "boolean"
+                },
+                "pbehavior": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.Pbehavior"
+                },
+                "rule": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.MetaAlarmRule"
+                },
+                "t": {
+                    "type": "integer"
+                },
+                "v": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmValue"
+                }
+            }
+        },
+        "alarm.AlarmStep": {
+            "type": "object",
+            "properties": {
+                "_t": {
+                    "type": "string"
+                },
+                "a": {
+                    "type": "string"
+                },
+                "m": {
+                    "type": "string"
+                },
+                "t": {
+                    "type": "integer"
+                },
+                "val": {
+                    "type": "integer"
+                }
+            }
+        },
+        "alarm.AlarmTicket": {
+            "type": "object",
+            "properties": {
+                "_t": {
+                    "type": "string"
+                },
+                "a": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "m": {
+                    "type": "string"
+                },
+                "t": {
+                    "type": "integer"
+                },
+                "val": {
+                    "type": "string"
+                }
+            }
+        },
+        "alarm.AlarmValue": {
+            "type": "object",
+            "properties": {
+                "ack": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "activation_date": {
+                    "type": "integer"
+                },
+                "canceled": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "component": {
+                    "type": "string"
+                },
+                "connector": {
+                    "type": "string"
+                },
+                "connector_name": {
+                    "type": "string"
+                },
+                "creation_date": {
+                    "type": "integer"
+                },
+                "current_state_duration": {
+                    "type": "integer"
+                },
+                "display_name": {
+                    "type": "string"
+                },
+                "done": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "duration": {
+                    "type": "integer"
+                },
+                "extra": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
+                },
+                "infos_rule_version": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "initial_long_output": {
+                    "type": "string"
+                },
+                "initial_output": {
+                    "type": "string"
+                },
+                "lastComment": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "last_event_date": {
+                    "type": "integer"
+                },
+                "last_update_date": {
+                    "type": "integer"
+                },
+                "long_output": {
+                    "type": "string"
+                },
+                "long_output_history": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "meta": {
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
+                },
+                "parents": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
+                },
+                "resolved": {
+                    "type": "integer"
+                },
+                "resource": {
+                    "type": "string"
+                },
+                "snooze": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "state": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "state_changes_since_status_update": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "steps": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/alarm.AlarmStep"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ticket": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmTicket"
+                },
+                "total_state_changes": {
+                    "type": "integer"
+                }
+            }
+        },
+        "alarm.Causes": {
+            "type": "object",
+            "properties": {
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/alarm.MetaAlarmRule"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "alarm.Children": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/alarm.Alarm"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "alarm.Count": {
+            "type": "object",
+            "properties": {
+                "ack": {
+                    "type": "integer"
+                },
+                "pbehavior_active": {
+                    "type": "integer"
+                },
+                "snooze": {
+                    "type": "integer"
+                },
+                "ticket": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "total_active": {
+                    "type": "integer"
+                }
+            }
+        },
+        "alarm.Execution": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "alarm.ExportRequest": {
+            "type": "object",
+            "properties": {
+                "active_columns[]": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "correlation": {
+                    "type": "boolean"
+                },
+                "filter": {
+                    "type": "string"
+                },
+                "manual": {
+                    "type": "boolean"
+                },
+                "opened": {
+                    "type": "boolean"
+                },
+                "resolved": {
+                    "type": "boolean"
+                },
+                "search": {
+                    "type": "string"
+                },
+                "separator": {
+                    "type": "string"
+                },
+                "sort_dir": {
+                    "type": "string"
+                },
+                "sort_key": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "with_consequences": {
+                    "type": "boolean"
+                },
+                "with_instructions": {
+                    "type": "string"
+                },
+                "with_steps": {
+                    "type": "boolean"
+                },
+                "without_instructions": {
+                    "type": "string"
+                }
+            }
+        },
+        "alarm.ExportResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "alarm.FilterRequest": {
+            "type": "object",
+            "properties": {
+                "active_columns[]": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "correlation": {
+                    "type": "boolean"
+                },
+                "filter": {
+                    "type": "string"
+                },
+                "manual": {
+                    "type": "boolean"
+                },
+                "opened": {
+                    "type": "boolean"
+                },
+                "resolved": {
+                    "type": "boolean"
+                },
+                "search": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "with_instructions": {
+                    "type": "string"
+                },
+                "without_instructions": {
+                    "type": "string"
+                }
+            }
+        },
+        "alarm.InstructionWithAlarms": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "active_on_pbh": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "disabled_on_pbh": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "execution": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.Execution"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "alarm.ListRequestWithPagination": {
+            "type": "object",
+            "properties": {
+                "active_columns[]": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "correlation": {
+                    "type": "boolean"
+                },
+                "filter": {
+                    "type": "string"
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "manual": {
+                    "type": "boolean"
+                },
+                "opened": {
+                    "type": "boolean"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginate": {
+                    "type": "boolean"
+                },
+                "resolved": {
+                    "type": "boolean"
+                },
+                "search": {
+                    "type": "string"
+                },
+                "sort_dir": {
+                    "type": "string"
+                },
+                "sort_key": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "with_consequences": {
+                    "type": "boolean"
+                },
+                "with_instructions": {
+                    "type": "string"
+                },
+                "with_steps": {
+                    "type": "boolean"
+                },
+                "without_instructions": {
+                    "type": "string"
+                }
+            }
+        },
+        "alarm.MetaAlarmRule": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "alarm.Pbehavior": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Type"
+                }
+            }
+        },
+        "auth.sessionsCountResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "common.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "common.PaginatedListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object"
+                },
+                "meta": {
+                    "type": "object",
+                    "$ref": "#/definitions/common.PaginatedMeta"
+                }
+            }
+        },
+        "common.PaginatedMeta": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "page_count": {
+                    "type": "integer"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "total_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "common.ValidationErrorResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "entity.Entity": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "component": {
+                    "type": "string"
+                },
+                "component_infos": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/entity.Info"
+                    }
+                },
+                "depends": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "enable_history": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "impact": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/entity.Info"
+                    }
+                },
+                "measurements": {
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.Info": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "object"
+                }
+            }
+        },
+        "entity.ExportRequest": {
+            "type": "object",
+            "properties": {
+                "active_columns[]": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "filter": {
+                    "type": "string"
+                },
+                "search": {
+                    "type": "string"
+                },
+                "separator": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "string"
+                },
+                "sort_by": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.ExportResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "heartbeat.BulkDeleteRequest": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "heartbeat.BulkUpdateRequestItem": {
+            "type": "object",
+            "required": [
+                "_id",
+                "author",
+                "description",
+                "expected_interval",
+                "name",
+                "pattern"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "expected_interval": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
+                },
+                "pattern": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "heartbeat.CreateRequest": {
+            "type": "object",
+            "required": [
+                "author",
+                "description",
+                "expected_interval",
+                "name",
+                "pattern"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "expected_interval": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
+                },
+                "pattern": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "heartbeat.Heartbeat": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "expected_interval": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
+                },
+                "pattern": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "heartbeat.UpdateRequest": {
+            "type": "object",
+            "required": [
+                "author",
+                "description",
+                "expected_interval",
+                "name",
+                "pattern"
+            ],
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "expected_interval": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
+                },
+                "pattern": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "http.Response": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "close": {
+                    "type": "boolean"
+                },
+                "contentLength": {
+                    "type": "integer"
+                },
+                "header": {
+                    "type": "Header"
+                },
+                "proto": {
+                    "type": "string"
+                },
+                "protoMajor": {
+                    "type": "integer"
+                },
+                "protoMinor": {
+                    "type": "integer"
+                },
+                "request": {
+                    "type": "Request"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "statusCode": {
+                    "type": "integer"
+                },
+                "tls": {
+                    "type": "string"
+                },
+                "trailer": {
+                    "type": "Header"
+                },
+                "transferEncoding": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "uncompressed": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "pattern.AlarmPattern": {
+            "type": "object",
+            "properties": {
+                "entityID": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "id": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "shouldBeNil": {
+                    "type": "boolean"
+                },
+                "shouldNotBeNil": {
+                    "description": "ShouldNotBeNil is a boolean indicating that the alarm should not be nil,\nand ShouldBeNil is a boolean indicating that the alarm should be nil.\nThe two booleans are needed to be able to make the difference between\nthe case where no alarm pattern was defined (in which case the alarm can\nbe nil or not), the case where a nil alarm pattern was defined (in which\ncase the alarm should be nil), and the case where a non-nil alarm\npattern was defined (in which case the alarm should not be nil).",
+                    "type": "boolean"
+                },
+                "time": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.TimePattern"
+                },
+                "unexpectedFields": {
+                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "value": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmValuePattern"
+                }
+            }
+        },
+        "pattern.AlarmPatternList": {
+            "type": "object",
+            "properties": {
+                "patterns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pattern.AlarmPattern"
+                    }
+                },
+                "set": {
+                    "description": "isSet is a boolean indicating whether the AlarmPatternList has been set\nexplicitly or not.",
+                    "type": "boolean"
+                },
+                "valid": {
+                    "description": "isValid is a boolean indicating whether the event patterns or valid or\nnot.\nisValid is also false if the AlarmPatternList has not been set.",
+                    "type": "boolean"
+                }
+            }
+        },
+        "pattern.AlarmStepRefPattern": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "message": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "shouldBeNil": {
+                    "type": "boolean"
+                },
+                "shouldNotBeNil": {
+                    "description": "ShouldNotBeNil is a boolean indicating that the alarm step should not be\nnil, and ShouldBeNil is a boolean indicating that the alarm step should\nbe nil.\nThe two booleans are needed to be able to make the difference between\nthe case where no pattern was defined (in which case the alarm step can\nbe nil or not), the case where a nil pattern was defined (in which case\nthe alarm step should be nil), and the case where a non-nil pattern was\ndefined (in which case the alarm step should not be nil).",
+                    "type": "boolean"
+                },
+                "timestamp": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.TimePattern"
+                },
+                "type": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "unexpectedFields": {
+                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "value": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.IntegerPattern"
+                }
+            }
+        },
+        "pattern.AlarmTicketRefPattern": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "data": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/pattern.StringPattern"
+                    }
+                },
+                "message": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "shouldBeNil": {
+                    "type": "boolean"
+                },
+                "shouldNotBeNil": {
+                    "description": "ShouldNotBeNil is a boolean indicating that the alarm step should not be\nnil, and ShouldBeNil is a boolean indicating that the alarm step should\nbe nil.\nThe two booleans are needed to be able to make the difference between\nthe case where no pattern was defined (in which case the alarm step can\nbe nil or not), the case where a nil pattern was defined (in which case\nthe alarm step should be nil), and the case where a non-nil pattern was\ndefined (in which case the alarm step should not be nil).",
+                    "type": "boolean"
+                },
+                "timestamp": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.TimePattern"
+                },
+                "type": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "unexpectedFields": {
+                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "value": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                }
+            }
+        },
+        "pattern.AlarmValuePattern": {
+            "type": "object",
+            "properties": {
+                "ack": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
+                },
+                "activationDate": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.TimeRefPattern"
+                },
+                "canceled": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
+                },
+                "component": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "connector": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "connectorName": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "creationDate": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.TimePattern"
+                },
+                "displayName": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "done": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
+                },
+                "extra": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/pattern.InterfacePattern"
+                    }
+                },
+                "hardLimit": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.IntegerRefPattern"
+                },
+                "initialLongOutput": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "initialOutput": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "lastEventDate": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.TimePattern"
+                },
+                "lastUpdateDate": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.TimePattern"
+                },
+                "longOutput": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "output": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "resolved": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.TimeRefPattern"
+                },
+                "resource": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "snooze": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
+                },
+                "state": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
+                },
+                "stateChangesSinceStatusUpdate": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.IntegerPattern"
+                },
+                "status": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
+                },
+                "ticket": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmTicketRefPattern"
+                },
+                "totalStateChanges": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.IntegerPattern"
+                },
+                "unexpectedFields": {
+                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.BoolPattern": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the bool. It should only be taken into\naccount if Set is true.",
+                    "type": "boolean"
+                }
+            }
+        },
+        "pattern.EntityPattern": {
+            "type": "object",
+            "properties": {
+                "component": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "componentInfos": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/pattern.InfoPattern"
+                    }
+                },
+                "enabled": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.BoolPattern"
+                },
+                "id": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/pattern.InfoPattern"
+                    }
+                },
+                "name": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "shouldBeNil": {
+                    "type": "boolean"
+                },
+                "shouldNotBeNil": {
+                    "description": "ShouldNotBeNil is a boolean indicating that the entity should not be\nnil, and ShouldBeNil is a boolean indicating that the entity should be\nnil.\nThe two booleans are needed to be able to make the difference between\nthe case where no entity pattern was defined (in which case the entity\ncan be nil or not), the case where a nil entity pattern was defined (in\nwhich case the entity should be nil), and the case where a non-nil\nentity pattern was defined (in which case the entity should not be nil).",
+                    "type": "boolean"
+                },
+                "type": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "unexpectedFields": {
+                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.EntityPatternList": {
+            "type": "object",
+            "properties": {
+                "patterns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pattern.EntityPattern"
+                    }
+                },
+                "set": {
+                    "description": "Set is a boolean indicating whether the EntityPatternList has been set\nexplicitly or not.",
+                    "type": "boolean"
+                },
+                "valid": {
+                    "description": "Valid is a boolean indicating whether the event patterns or valid or\nnot.\nValid is also false if the EntityPatternList has not been set.",
+                    "type": "boolean"
+                }
+            }
+        },
+        "pattern.InfoPattern": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "name": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "shouldNotBeSet": {
+                    "type": "boolean"
+                },
+                "unexpectedFields": {
+                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "value": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                }
+            }
+        },
+        "pattern.IntegerPattern": {
+            "type": "object",
+            "properties": {
+                "equal": {
+                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "gt": {
+                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "gte": {
+                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "lt": {
+                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "lte": {
+                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "unexpectedFields": {
+                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.IntegerRefPattern": {
+            "type": "object",
+            "properties": {
+                "equal": {
+                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "equalNil": {
+                    "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
+                    "type": "boolean"
+                },
+                "gt": {
+                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "gte": {
+                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "lt": {
+                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "lte": {
+                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "unexpectedFields": {
+                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.InterfacePattern": {
+            "type": "object",
+            "properties": {
+                "equal": {
+                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalString"
+                },
+                "equalNil": {
+                    "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
+                    "type": "boolean"
+                },
+                "gt": {
+                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "gte": {
+                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "hasEvery": {
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalStringArray"
+                },
+                "hasNot": {
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalStringArray"
+                },
+                "hasOneOf": {
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalStringArray"
+                },
+                "lt": {
+                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "lte": {
+                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "regexMatch": {
+                    "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalRegexp"
+                },
+                "unexpectedFields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.StringPattern": {
+            "type": "object",
+            "properties": {
+                "equal": {
+                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalString"
+                },
+                "regexMatch": {
+                    "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalRegexp"
+                },
+                "unexpectedFields": {
+                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.TimePattern": {
+            "type": "object",
+            "properties": {
+                "equal": {
+                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "gt": {
+                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "gte": {
+                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "lt": {
+                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "lte": {
+                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "unexpectedFields": {
+                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.TimeRefPattern": {
+            "type": "object",
+            "properties": {
+                "equal": {
+                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "equalNil": {
+                    "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
+                    "type": "boolean"
+                },
+                "gt": {
+                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "gte": {
+                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "lt": {
+                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "lte": {
+                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalInt64"
+                },
+                "unexpectedFields": {
+                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pbehavior.Comment": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "ts": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                }
+            }
+        },
+        "pbehavior.Comments": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/pbehavior.Comment"
+            }
+        },
+        "pbehavior.EID": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehavior.EditRequest": {
+            "type": "object",
+            "required": [
+                "author",
+                "enabled",
+                "filter",
+                "name",
+                "reason",
+                "tstart",
+                "type"
+            ],
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.ExdateRequest"
+                    }
+                },
+                "filter": {
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehavior.Filter": {
+            "type": "object"
+        },
+        "pbehavior.PBehavior": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "comments": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Comments"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.Exception"
+                    }
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.Exdate"
+                    }
+                },
+                "filter": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Filter"
+                },
+                "is_active_status": {
+                    "description": "IsActiveStatus represents if pbehavior is in action for current time.",
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehaviorreason.Reason"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Type"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pbehavior.Type": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "icon_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehaviorcomment.Request": {
+            "type": "object",
+            "required": [
+                "author",
+                "message",
+                "pbehavior"
+            ],
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "pbehavior": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehaviorexception.Exception": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "deletable": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.Exdate"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehaviorexception.Exdate": {
+            "type": "object",
+            "properties": {
+                "begin": {
+                    "type": "integer"
+                },
+                "end": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Type"
+                }
+            }
+        },
+        "pbehaviorexception.ExdateRequest": {
+            "type": "object",
+            "required": [
+                "begin",
+                "end",
+                "type"
+            ],
+            "properties": {
+                "begin": {
+                    "type": "integer"
+                },
+                "end": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehaviorexception.Request": {
+            "type": "object",
+            "required": [
+                "description",
+                "exdates",
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.ExdateRequest"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehaviorreason.Reason": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "deletable": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehaviorreason.Request": {
+            "type": "object",
+            "required": [
+                "description",
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehaviortimespan.ExdateRequest": {
+            "type": "object",
+            "required": [
+                "begin",
+                "end"
+            ],
+            "properties": {
+                "begin": {
+                    "type": "integer"
+                },
+                "end": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehaviortimespan.TimespansRequest": {
+            "type": "object",
+            "required": [
+                "start_at",
+                "view_from",
+                "view_to"
+            ],
+            "properties": {
+                "by_date": {
+                    "type": "boolean"
+                },
+                "end_at": {
+                    "type": "integer"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviortimespan.ExdateRequest"
+                    }
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "start_at": {
+                    "type": "integer"
+                },
+                "view_from": {
+                    "type": "integer"
+                },
+                "view_to": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pbehaviortimespan.timespansItemResponse": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "integer"
+                },
+                "to": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Type"
+                }
+            }
+        },
+        "pbehaviortype.EditRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "icon_name",
+                "name",
+                "priority",
+                "type"
+            ],
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "icon_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehaviortype.Type": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "deletable": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "editable": {
+                    "type": "boolean"
+                },
+                "icon_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "scenario.Action": {
+            "type": "object",
+            "properties": {
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "drop_scenario_if_not_matched": {
+                    "type": "boolean"
+                },
+                "emit_trigger": {
+                    "type": "boolean"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "parameters": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "scenario.ActionRequest": {
+            "type": "object",
+            "required": [
+                "drop_scenario_if_not_matched",
+                "emit_trigger",
+                "type"
+            ],
+            "properties": {
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "drop_scenario_if_not_matched": {
+                    "type": "boolean"
+                },
+                "emit_trigger": {
+                    "type": "boolean"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "parameters": {
+                    "type": "object"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "scenario.EditRequest": {
+            "type": "object",
+            "required": [
+                "actions",
+                "author",
+                "enabled",
+                "name",
+                "priority",
+                "triggers"
+            ],
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/scenario.ActionRequest"
+                    }
+                },
+                "author": {
+                    "type": "string"
+                },
+                "delay": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "disable_during_periods": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "triggers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "scenario.Scenario": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/scenario.Action"
+                    }
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "delay": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "disable_during_periods": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "triggers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.CpsTime": {
+            "type": "object"
+        },
+        "types.DurationWithUnit": {
+            "type": "object",
+            "required": [
+                "seconds",
+                "unit"
+            ],
+            "properties": {
+                "seconds": {
+                    "type": "integer"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.PbehaviorInfo": {
+            "type": "object",
+            "properties": {
+                "canonical_type": {
+                    "description": "CanonicalType is Type of pbehavior.Type.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID is ID of pbehavior.PBehavior.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name is Name of pbehavior.PBehavior.",
+                    "type": "string"
+                },
+                "reason": {
+                    "description": "Reason is Name of pbehavior.Reason.",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "TypeID is ID of pbehavior.Type.",
+                    "type": "string"
+                },
+                "type_name": {
+                    "description": "TypeName is Name of pbehavior.Type.",
+                    "type": "string"
+                }
+            }
+        },
+        "utils.OptionalInt64": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the int64. It should only be taken into\naccount if Set is true.",
+                    "type": "integer"
+                }
+            }
+        },
+        "utils.OptionalRegexp": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the regular expression. It should only be\ntaken into account if Set is true.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.RegexExpression"
+                }
+            }
+        },
+        "utils.OptionalString": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the string. It should only be taken into\naccount if Set is true.",
+                    "type": "string"
+                }
+            }
+        },
+        "utils.OptionalStringArray": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "type": "boolean"
+                },
+                "value": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "utils.RegexExpression": {
+            "type": "object"
+        },
+        "watcherweather.AlarmCounter": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehaviortype.Type"
+                }
+            }
+        },
+        "watcherweather.Entity": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "ack": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "alarm_creation_date": {
+                    "type": "integer"
+                },
+                "alarm_display_name": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "component": {
+                    "type": "string"
+                },
+                "connector": {
+                    "type": "string"
+                },
+                "connector_name": {
+                    "type": "string"
+                },
+                "entity_id": {
+                    "description": "Keep for compatibility.",
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/watcherweather.Info"
+                    }
+                },
+                "last_update_date": {
+                    "type": "integer"
+                },
+                "linklist": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/watcherweather.WeatherLink"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "org": {
+                    "type": "string"
+                },
+                "pbehavior": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehavior.PBehavior"
+                    }
+                },
+                "pbehaviors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehavior.PBehavior"
+                    }
+                },
+                "resource": {
+                    "type": "string"
+                },
+                "sla_text": {
+                    "type": "string"
+                },
+                "snooze": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "source_type": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "stats": {
+                    "type": "object",
+                    "$ref": "#/definitions/watcherweather.Stats"
+                },
+                "status": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "ticket": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmTicket"
+                }
+            }
+        },
+        "watcherweather.Info": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "object"
+                }
+            }
+        },
+        "watcherweather.Stats": {
+            "type": "object",
+            "properties": {
+                "ko": {
+                    "type": "integer"
+                },
+                "last_event": {
+                    "type": "integer"
+                },
+                "last_ko": {
+                    "type": "integer"
+                },
+                "ok": {
+                    "type": "integer"
+                }
+            }
+        },
+        "watcherweather.Watcher": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "ack": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "alarm_counters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/watcherweather.AlarmCounter"
+                    }
+                },
+                "color": {
+                    "type": "string"
+                },
+                "component": {
+                    "type": "string"
+                },
+                "connector": {
+                    "type": "string"
+                },
+                "connector_name": {
+                    "type": "string"
+                },
+                "display_name": {
+                    "type": "string"
+                },
+                "entity_id": {
+                    "description": "Keep for compatibility.",
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/watcherweather.Info"
+                    }
+                },
+                "isActionRequired": {
+                    "type": "boolean"
+                },
+                "isAllEntitiesPaused": {
+                    "type": "boolean"
+                },
+                "isWatcherPaused": {
+                    "type": "boolean"
+                },
+                "is_action_required": {
+                    "type": "boolean"
+                },
+                "last_update_date": {
+                    "type": "integer"
+                },
+                "linklist": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "cat_name": {
+                                "type": "string"
+                            },
+                            "links": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "mfilter": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
+                },
+                "pbehaviors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehavior.PBehavior"
+                    }
+                },
+                "resource": {
+                    "type": "string"
+                },
+                "secondary_icon": {
+                    "type": "string"
+                },
+                "sla_tex": {
+                    "type": "string"
+                },
+                "snooze": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "state": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "status": {
+                    "type": "object",
+                    "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "tileColor": {
+                    "type": "string"
+                },
+                "tileIcon": {
+                    "type": "string"
+                },
+                "tileSecondaryIcon": {
+                    "type": "string"
+                },
+                "watcher_pbehavior": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehavior.PBehavior"
+                    }
+                }
+            }
+        },
+        "watcherweather.WeatherLink": {
+            "type": "object",
+            "properties": {
+                "cat_name": {
+                    "type": "string"
+                },
+                "links": {
+                    "type": "object"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "x-canopsis-authkey",
+            "in": "header"
+        },
+        "BasicAuth": {
+            "type": "basic"
+        }
+    }
+}

@@ -1,0 +1,306 @@
+[
+  {
+    "_id": "api_event",
+    "crecord_type": "action",
+    "crecord_name": "api_event"
+  },
+  {
+    "_id": "api_alarm_read",
+    "crecord_type": "action",
+    "crecord_name": "api_alarm_read"
+  },
+  {
+    "_id": "api_entity_read",
+    "crecord_type": "action",
+    "crecord_name": "api_entity_read"
+  },
+  {
+    "_id": "api_action",
+    "crecord_type": "action",
+    "crecord_name": "api_action",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_metaalarmrule",
+    "crecord_type": "action",
+    "crecord_name": "api_metaalarmrule",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_idlerule",
+    "crecord_type": "action",
+    "crecord_name": "api_idlerule",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_webhook",
+    "crecord_type": "action",
+    "crecord_name": "api_webhook",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_watcher",
+    "crecord_type": "action",
+    "crecord_name": "api_watcher",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_pbehavior",
+    "crecord_type": "action",
+    "crecord_name": "api_pbehavior",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_pbehaviorreason",
+    "crecord_type": "action",
+    "crecord_name": "api_pbehaviorreason",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_pbehaviorexception",
+    "crecord_type": "action",
+    "crecord_name": "api_pbehaviorexception",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_pbehaviortype",
+    "crecord_type": "action",
+    "crecord_name": "api_pbehaviortype",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_heartbeat",
+    "crecord_type": "action",
+    "crecord_name": "api_heartbeat",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_job_config",
+    "crecord_type": "action",
+    "crecord_name": "api_job_config",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_job",
+    "crecord_type": "action",
+    "crecord_name": "api_job",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_instruction",
+    "crecord_type": "action",
+    "crecord_name": "api_instruction",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_execution",
+    "crecord_type": "action",
+    "crecord_name": "api_execution"
+  },
+  {
+    "_id": "api_dynamicinfos",
+    "crecord_type": "action",
+    "crecord_name": "api_dynamicinfos",
+    "type": "CRUD"
+  },
+  {
+    "_id": "admin",
+    "crecord_type": "role",
+    "crecord_name": "admin",
+    "rights": {
+      "api_event": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_alarm_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_entity_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_execution": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_action": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_metaalarmrule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_idlerule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_webhook": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_watcher": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_pbehavior": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_pbehaviorexception": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_pbehaviortype": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_pbehaviorreason": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_heartbeat": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_job_config": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_job": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_instruction": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_dynamicinfos": {
+        "checksum": 15,
+        "crecord_type": "right"
+      }
+    }
+  },
+  {
+    "_id": "noperms",
+    "crecord_type": "role",
+    "crecord_name": "noperms",
+    "rights": {}
+  },
+  {
+    "_id": "manager",
+    "crecord_type": "role",
+    "crecord_name": "manager",
+    "rights": {
+      "api_event": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_alarm_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_entity_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_execution": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_action": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_webhook": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_watcher": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_pbehavior": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_pbehaviorexception": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_pbehaviortype": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_pbehaviorreason": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_heartbeat": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_job_config": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_job": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_instruction": {
+        "checksum": 15,
+        "crecord_type": "right"
+      }
+    }
+  },
+  {
+    "_id": "root",
+    "crecord_type": "user",
+    "crecord_name": "root",
+    "role": "admin",
+    "mail": "admin@canopsis.net",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "2be1d0ee-5e9e-4b1f-9d80-e857e50f4191",
+    "contact": {
+      "name": "John Doe",
+      "address": "30 Rue du Triez 59290 Wasquehal France"
+    },
+    "enable": true
+  },
+  {
+    "_id": "nopermsuser",
+    "crecord_type": "user",
+    "crecord_name": "nopermsuser",
+    "role": "noperms",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa",
+    "enable": true
+  },
+  {
+    "_id": "test-user-to-get",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-get",
+    "firstname": "John",
+    "lastname": "Doe",
+    "mail": "test-user-to-get@canopsis.net",
+    "role": "manager",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "4de736d3-b2e9-451c-9367-bcf15acc3309",
+    "ui_language": "fr",
+    "groupsNavigationType": "side-bar",
+    "tours": {"alarmsExpandPanasdel": true},
+    "defaultview": "a1d329c8-9939-40bc-bb86-b63172ac44b4",
+    "enable": true
+  },
+  {
+    "_id": "test-user-to-test-paused-executions",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-test-paused-executions",
+    "role": "manager",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "b1f67e3e-f631-4140-a801-9a05cb683e2c",
+    "enable": true
+  }
+]

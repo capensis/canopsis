@@ -1,0 +1,40 @@
+// password contains password encoders.
+package password
+
+import (
+	"bytes"
+	"crypto/sha1"
+	"encoding/hex"
+)
+
+// Encoder is used to implement password encoder.
+type Encoder interface {
+	// EncodePassword encodes the raw password.
+	EncodePassword(password []byte) []byte
+	// IsValidPassword checks a raw password against an encoded password.
+	IsValidPassword(encodedPassword, password []byte) bool
+}
+
+type sha1Encoder struct{}
+
+// NewSha1Encoder creates new encoder.
+func NewSha1Encoder() Encoder {
+	return &sha1Encoder{}
+}
+
+func (e *sha1Encoder) EncodePassword(password []byte) []byte {
+	h := sha1.New()
+	_, err := h.Write(password)
+	if err != nil {
+		panic(err)
+	}
+	hash := h.Sum(nil)
+	encodedPassword := make([]byte, hex.EncodedLen(len(hash)))
+	hex.Encode(encodedPassword, hash)
+
+	return encodedPassword
+}
+
+func (e *sha1Encoder) IsValidPassword(encodedPassword, password []byte) bool {
+	return bytes.Equal(e.EncodePassword(password), encodedPassword)
+}

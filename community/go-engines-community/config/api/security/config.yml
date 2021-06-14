@@ -1,0 +1,15 @@
+security:
+  # auth_providers defines enabled authentication methods.
+  # Possible values:
+  # - basic Auth by username-password.
+  # - apikey Auth by token.
+  # - ldap Auth using LDAP service. Define LDAP config in object collection by cservice.ldapconfig id.
+  # - cas Auth using CAS service. Define CAS config in object collection by cservice.casconfig id.
+  auth_providers:
+    - basic
+    - apikey
+
+session:
+  # stats_frame uses for session stats. Session stats are accumulated during frame period.
+  # New stats row will be created if duration between stats requests are more then frame.
+  stats_frame: 5m

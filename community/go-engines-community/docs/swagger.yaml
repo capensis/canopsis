@@ -1,0 +1,3779 @@
+basePath: /api/v4
+definitions:
+  account.User:
+    properties:
+      _id:
+        type: string
+      authkey:
+        type: string
+      crecord_name:
+        type: string
+      defaultview:
+        type: string
+      enable:
+        type: boolean
+      external_id:
+        type: string
+      firstname:
+        type: string
+      groupsNavigationType:
+        type: string
+      lastname:
+        type: string
+      mail:
+        type: string
+      paused_executions:
+        items:
+          properties:
+            _id:
+              type: string
+            alarm_name:
+              type: string
+            instruction_name:
+              type: string
+            paused:
+              type: integer
+          type: object
+        type: array
+      rights:
+        additionalProperties:
+          properties:
+            checksum:
+              type: integer
+          type: object
+        type: object
+      role:
+        type: string
+      source:
+        type: string
+      tours:
+        additionalProperties:
+          type: boolean
+        type: object
+      ui_language:
+        type: string
+    type: object
+  alarm.Alarm:
+    properties:
+      _id:
+        type: string
+      assigned_instructions:
+        items:
+          $ref: '#/definitions/alarm.InstructionWithAlarms'
+        type: array
+      causes:
+        $ref: '#/definitions/alarm.Causes'
+        type: object
+      consequences:
+        $ref: '#/definitions/alarm.Children'
+        type: object
+      entity:
+        $ref: '#/definitions/entity.Entity'
+        type: object
+      filtered_children:
+        items:
+          type: string
+        type: array
+      infos:
+        additionalProperties:
+          additionalProperties: true
+          type: object
+        type: object
+      links:
+        additionalProperties: true
+        type: object
+      metaalarm:
+        type: boolean
+      pbehavior:
+        $ref: '#/definitions/alarm.Pbehavior'
+        type: object
+      rule:
+        $ref: '#/definitions/alarm.MetaAlarmRule'
+        type: object
+      t:
+        type: integer
+      v:
+        $ref: '#/definitions/alarm.AlarmValue'
+        type: object
+    type: object
+  alarm.AlarmStep:
+    properties:
+      _t:
+        type: string
+      a:
+        type: string
+      m:
+        type: string
+      t:
+        type: integer
+      val:
+        type: integer
+    type: object
+  alarm.AlarmTicket:
+    properties:
+      _t:
+        type: string
+      a:
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      m:
+        type: string
+      t:
+        type: integer
+      val:
+        type: string
+    type: object
+  alarm.AlarmValue:
+    properties:
+      ack:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      activation_date:
+        type: integer
+      canceled:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      children:
+        items:
+          type: string
+        type: array
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      creation_date:
+        type: integer
+      current_state_duration:
+        type: integer
+      display_name:
+        type: string
+      done:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      duration:
+        type: integer
+      extra:
+        additionalProperties: true
+        type: object
+      infos:
+        additionalProperties:
+          additionalProperties: true
+          type: object
+        type: object
+      infos_rule_version:
+        additionalProperties:
+          type: string
+        type: object
+      initial_long_output:
+        type: string
+      initial_output:
+        type: string
+      last_event_date:
+        type: integer
+      last_update_date:
+        type: integer
+      lastComment:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      long_output:
+        type: string
+      long_output_history:
+        items:
+          type: string
+        type: array
+      meta:
+        type: string
+      output:
+        type: string
+      parents:
+        items:
+          type: string
+        type: array
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
+      resolved:
+        type: integer
+      resource:
+        type: string
+      snooze:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      state:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      state_changes_since_status_update:
+        type: integer
+      status:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      steps:
+        items:
+          $ref: '#/definitions/alarm.AlarmStep'
+        type: array
+      tags:
+        items:
+          type: string
+        type: array
+      ticket:
+        $ref: '#/definitions/alarm.AlarmTicket'
+        type: object
+      total_state_changes:
+        type: integer
+    type: object
+  alarm.Causes:
+    properties:
+      rules:
+        items:
+          $ref: '#/definitions/alarm.MetaAlarmRule'
+        type: array
+      total:
+        type: integer
+    type: object
+  alarm.Children:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/alarm.Alarm'
+        type: array
+      total:
+        type: integer
+    type: object
+  alarm.Count:
+    properties:
+      ack:
+        type: integer
+      pbehavior_active:
+        type: integer
+      snooze:
+        type: integer
+      ticket:
+        type: integer
+      total:
+        type: integer
+      total_active:
+        type: integer
+    type: object
+  alarm.Execution:
+    properties:
+      _id:
+        type: string
+      status:
+        type: integer
+    type: object
+  alarm.ExportRequest:
+    properties:
+      active_columns[]:
+        items:
+          type: string
+        type: array
+      correlation:
+        type: boolean
+      filter:
+        type: string
+      manual:
+        type: boolean
+      opened:
+        type: boolean
+      resolved:
+        type: boolean
+      search:
+        type: string
+      separator:
+        type: string
+      sort_dir:
+        type: string
+      sort_key:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      with_consequences:
+        type: boolean
+      with_instructions:
+        type: string
+      with_steps:
+        type: boolean
+      without_instructions:
+        type: string
+    type: object
+  alarm.ExportResponse:
+    properties:
+      _id:
+        type: string
+      status:
+        type: integer
+    type: object
+  alarm.FilterRequest:
+    properties:
+      active_columns[]:
+        items:
+          type: string
+        type: array
+      correlation:
+        type: boolean
+      filter:
+        type: string
+      manual:
+        type: boolean
+      opened:
+        type: boolean
+      resolved:
+        type: boolean
+      search:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      with_instructions:
+        type: string
+      without_instructions:
+        type: string
+    type: object
+  alarm.InstructionWithAlarms:
+    properties:
+      _id:
+        type: string
+      active_on_pbh:
+        items:
+          type: string
+        type: array
+      disabled_on_pbh:
+        items:
+          type: string
+        type: array
+      execution:
+        $ref: '#/definitions/alarm.Execution'
+        type: object
+      name:
+        type: string
+    type: object
+  alarm.ListRequestWithPagination:
+    properties:
+      active_columns[]:
+        items:
+          type: string
+        type: array
+      correlation:
+        type: boolean
+      filter:
+        type: string
+      limit:
+        type: integer
+      manual:
+        type: boolean
+      opened:
+        type: boolean
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      resolved:
+        type: boolean
+      search:
+        type: string
+      sort_dir:
+        type: string
+      sort_key:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      with_consequences:
+        type: boolean
+      with_instructions:
+        type: string
+      with_steps:
+        type: boolean
+      without_instructions:
+        type: string
+    type: object
+  alarm.MetaAlarmRule:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  alarm.Pbehavior:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      name:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+        type: object
+    type: object
+  auth.sessionsCountResponse:
+    properties:
+      count:
+        type: integer
+    type: object
+  common.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  common.PaginatedListResponse:
+    properties:
+      data:
+        type: object
+      meta:
+        $ref: '#/definitions/common.PaginatedMeta'
+        type: object
+    type: object
+  common.PaginatedMeta:
+    properties:
+      page:
+        type: integer
+      page_count:
+        type: integer
+      per_page:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  common.ValidationErrorResponse:
+    properties:
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
+  entity.Entity:
+    properties:
+      _id:
+        type: string
+      component:
+        type: string
+      component_infos:
+        additionalProperties:
+          $ref: '#/definitions/entity.Info'
+        type: object
+      depends:
+        items:
+          type: string
+        type: array
+      enable_history:
+        items:
+          type: integer
+        type: array
+      enabled:
+        type: boolean
+      impact:
+        items:
+          type: string
+        type: array
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/entity.Info'
+        type: object
+      measurements:
+        type: object
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  entity.Info:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      value:
+        type: object
+    type: object
+  entity.ExportRequest:
+    properties:
+      active_columns[]:
+        items:
+          type: string
+        type: array
+      filter:
+        type: string
+      search:
+        type: string
+      separator:
+        type: string
+      sort:
+        type: string
+      sort_by:
+        type: string
+    type: object
+  entity.ExportResponse:
+    properties:
+      _id:
+        type: string
+      status:
+        type: integer
+    type: object
+  heartbeat.BulkDeleteRequest:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    required:
+    - ids
+    type: object
+  heartbeat.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      description:
+        type: string
+      expected_interval:
+        type: integer
+      name:
+        type: string
+      output:
+        type: string
+      pattern:
+        additionalProperties:
+          type: string
+        type: object
+    required:
+    - _id
+    - author
+    - description
+    - expected_interval
+    - name
+    - pattern
+    type: object
+  heartbeat.CreateRequest:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      description:
+        type: string
+      expected_interval:
+        type: integer
+      name:
+        type: string
+      output:
+        type: string
+      pattern:
+        additionalProperties:
+          type: string
+        type: object
+    required:
+    - author
+    - description
+    - expected_interval
+    - name
+    - pattern
+    type: object
+  heartbeat.Heartbeat:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      description:
+        type: string
+      expected_interval:
+        type: integer
+      name:
+        type: string
+      output:
+        type: string
+      pattern:
+        additionalProperties:
+          type: string
+        type: object
+      updated:
+        type: integer
+    type: object
+  heartbeat.UpdateRequest:
+    properties:
+      author:
+        type: string
+      description:
+        type: string
+      expected_interval:
+        type: integer
+      name:
+        type: string
+      output:
+        type: string
+      pattern:
+        additionalProperties:
+          type: string
+        type: object
+    required:
+    - author
+    - description
+    - expected_interval
+    - name
+    - pattern
+    type: object
+  http.Response:
+    properties:
+      body:
+        type: string
+      close:
+        type: boolean
+      contentLength:
+        type: integer
+      header:
+        type: Header
+      proto:
+        type: string
+      protoMajor:
+        type: integer
+      protoMinor:
+        type: integer
+      request:
+        type: Request
+      status:
+        type: string
+      statusCode:
+        type: integer
+      tls:
+        type: string
+      trailer:
+        type: Header
+      transferEncoding:
+        items:
+          type: string
+        type: array
+      uncompressed:
+        type: boolean
+    type: object
+  pattern.AlarmPattern:
+    properties:
+      entityID:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      id:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      shouldBeNil:
+        type: boolean
+      shouldNotBeNil:
+        description: |-
+          ShouldNotBeNil is a boolean indicating that the alarm should not be nil,
+          and ShouldBeNil is a boolean indicating that the alarm should be nil.
+          The two booleans are needed to be able to make the difference between
+          the case where no alarm pattern was defined (in which case the alarm can
+          be nil or not), the case where a nil alarm pattern was defined (in which
+          case the alarm should be nil), and the case where a non-nil alarm
+          pattern was defined (in which case the alarm should not be nil).
+        type: boolean
+      time:
+        $ref: '#/definitions/pattern.TimePattern'
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        description: |-
+          When unmarshalling a BSON document, the fields of this document that are
+          not defined in this struct are added to UnexpectedFields.
+        type: object
+      value:
+        $ref: '#/definitions/pattern.AlarmValuePattern'
+        type: object
+    type: object
+  pattern.AlarmPatternList:
+    properties:
+      patterns:
+        items:
+          $ref: '#/definitions/pattern.AlarmPattern'
+        type: array
+      set:
+        description: |-
+          isSet is a boolean indicating whether the AlarmPatternList has been set
+          explicitly or not.
+        type: boolean
+      valid:
+        description: |-
+          isValid is a boolean indicating whether the event patterns or valid or
+          not.
+          isValid is also false if the AlarmPatternList has not been set.
+        type: boolean
+    type: object
+  pattern.AlarmStepRefPattern:
+    properties:
+      author:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      message:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      shouldBeNil:
+        type: boolean
+      shouldNotBeNil:
+        description: |-
+          ShouldNotBeNil is a boolean indicating that the alarm step should not be
+          nil, and ShouldBeNil is a boolean indicating that the alarm step should
+          be nil.
+          The two booleans are needed to be able to make the difference between
+          the case where no pattern was defined (in which case the alarm step can
+          be nil or not), the case where a nil pattern was defined (in which case
+          the alarm step should be nil), and the case where a non-nil pattern was
+          defined (in which case the alarm step should not be nil).
+        type: boolean
+      timestamp:
+        $ref: '#/definitions/pattern.TimePattern'
+        type: object
+      type:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        description: |-
+          When unmarshalling a BSON document, the fields of this document that are
+          not defined in this struct are added to UnexpectedFields.
+        type: object
+      value:
+        $ref: '#/definitions/pattern.IntegerPattern'
+        type: object
+    type: object
+  pattern.AlarmTicketRefPattern:
+    properties:
+      author:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      data:
+        additionalProperties:
+          $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      message:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      shouldBeNil:
+        type: boolean
+      shouldNotBeNil:
+        description: |-
+          ShouldNotBeNil is a boolean indicating that the alarm step should not be
+          nil, and ShouldBeNil is a boolean indicating that the alarm step should
+          be nil.
+          The two booleans are needed to be able to make the difference between
+          the case where no pattern was defined (in which case the alarm step can
+          be nil or not), the case where a nil pattern was defined (in which case
+          the alarm step should be nil), and the case where a non-nil pattern was
+          defined (in which case the alarm step should not be nil).
+        type: boolean
+      timestamp:
+        $ref: '#/definitions/pattern.TimePattern'
+        type: object
+      type:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        description: |-
+          When unmarshalling a BSON document, the fields of this document that are
+          not defined in this struct are added to UnexpectedFields.
+        type: object
+      value:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+    type: object
+  pattern.AlarmValuePattern:
+    properties:
+      ack:
+        $ref: '#/definitions/pattern.AlarmStepRefPattern'
+        type: object
+      activationDate:
+        $ref: '#/definitions/pattern.TimeRefPattern'
+        type: object
+      canceled:
+        $ref: '#/definitions/pattern.AlarmStepRefPattern'
+        type: object
+      component:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      connector:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      connectorName:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      creationDate:
+        $ref: '#/definitions/pattern.TimePattern'
+        type: object
+      displayName:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      done:
+        $ref: '#/definitions/pattern.AlarmStepRefPattern'
+        type: object
+      extra:
+        additionalProperties:
+          $ref: '#/definitions/pattern.InterfacePattern'
+        type: object
+      hardLimit:
+        $ref: '#/definitions/pattern.IntegerRefPattern'
+        type: object
+      initialLongOutput:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      initialOutput:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      lastEventDate:
+        $ref: '#/definitions/pattern.TimePattern'
+        type: object
+      lastUpdateDate:
+        $ref: '#/definitions/pattern.TimePattern'
+        type: object
+      longOutput:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      output:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      resolved:
+        $ref: '#/definitions/pattern.TimeRefPattern'
+        type: object
+      resource:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      snooze:
+        $ref: '#/definitions/pattern.AlarmStepRefPattern'
+        type: object
+      state:
+        $ref: '#/definitions/pattern.AlarmStepRefPattern'
+        type: object
+      stateChangesSinceStatusUpdate:
+        $ref: '#/definitions/pattern.IntegerPattern'
+        type: object
+      status:
+        $ref: '#/definitions/pattern.AlarmStepRefPattern'
+        type: object
+      ticket:
+        $ref: '#/definitions/pattern.AlarmTicketRefPattern'
+        type: object
+      totalStateChanges:
+        $ref: '#/definitions/pattern.IntegerPattern'
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        description: |-
+          When unmarshalling a BSON document, the fields of this document that are
+          not defined in this struct are added to UnexpectedFields.
+        type: object
+    type: object
+  pattern.BoolPattern:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the bool. It should only be taken into
+          account if Set is true.
+        type: boolean
+    type: object
+  pattern.EntityPattern:
+    properties:
+      component:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      componentInfos:
+        additionalProperties:
+          $ref: '#/definitions/pattern.InfoPattern'
+        type: object
+      enabled:
+        $ref: '#/definitions/pattern.BoolPattern'
+        type: object
+      id:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/pattern.InfoPattern'
+        type: object
+      name:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      shouldBeNil:
+        type: boolean
+      shouldNotBeNil:
+        description: |-
+          ShouldNotBeNil is a boolean indicating that the entity should not be
+          nil, and ShouldBeNil is a boolean indicating that the entity should be
+          nil.
+          The two booleans are needed to be able to make the difference between
+          the case where no entity pattern was defined (in which case the entity
+          can be nil or not), the case where a nil entity pattern was defined (in
+          which case the entity should be nil), and the case where a non-nil
+          entity pattern was defined (in which case the entity should not be nil).
+        type: boolean
+      type:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        description: |-
+          When unmarshalling a BSON document, the fields of this document that are
+          not defined in this struct are added to UnexpectedFields.
+        type: object
+    type: object
+  pattern.EntityPatternList:
+    properties:
+      patterns:
+        items:
+          $ref: '#/definitions/pattern.EntityPattern'
+        type: array
+      set:
+        description: |-
+          Set is a boolean indicating whether the EntityPatternList has been set
+          explicitly or not.
+        type: boolean
+      valid:
+        description: |-
+          Valid is a boolean indicating whether the event patterns or valid or
+          not.
+          Valid is also false if the EntityPatternList has not been set.
+        type: boolean
+    type: object
+  pattern.InfoPattern:
+    properties:
+      description:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      name:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      shouldNotBeSet:
+        type: boolean
+      unexpectedFields:
+        additionalProperties: true
+        description: |-
+          When unmarshalling a BSON document, the fields of this document that are
+          not defined in this struct are added to UnexpectedFields.
+        type: object
+      value:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
+    type: object
+  pattern.IntegerPattern:
+    properties:
+      equal:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Equal is set, the value of a field has to be equal to the value of
+          Equal to be matched by the pattern.
+        type: object
+      gt:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Gt is set, the value of a field has to be greater than the value
+          of Gt to be matched by the pattern.
+        type: object
+      gte:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Gte is set, the value of a field has to be greater than the value
+          of Gte to be matched by the pattern.
+        type: object
+      lt:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Lt is set, the value of a field has to be greater than the value
+          of Lt to be matched by the pattern.
+        type: object
+      lte:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Lte is set, the value of a field has to be greater than the value
+          of Lte to be matched by the pattern.
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        description: |-
+          When unmarshalling a BSON document, the fields of this document that are
+          not defined in this struct are added to UnexpectedFields.
+          UnexpectedFields should always be empty.
+        type: object
+    type: object
+  pattern.IntegerRefPattern:
+    properties:
+      equal:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Equal is set, the value of a field has to be equal to the value of
+          Equal to be matched by the pattern.
+        type: object
+      equalNil:
+        description: |-
+          If EqualNil is true, the field should be nil or not be set to be matched
+          by the pattern.
+        type: boolean
+      gt:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Gt is set, the value of a field has to be greater than the value
+          of Gt to be matched by the pattern.
+        type: object
+      gte:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Gte is set, the value of a field has to be greater than the value
+          of Gte to be matched by the pattern.
+        type: object
+      lt:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Lt is set, the value of a field has to be greater than the value
+          of Lt to be matched by the pattern.
+        type: object
+      lte:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Lte is set, the value of a field has to be greater than the value
+          of Lte to be matched by the pattern.
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        description: |-
+          When unmarshalling a BSON document, the fields of this document that are
+          not defined in this struct are added to UnexpectedFields.
+          UnexpectedFields should always be empty.
+        type: object
+    type: object
+  pattern.InterfacePattern:
+    properties:
+      equal:
+        $ref: '#/definitions/utils.OptionalString'
+        description: |-
+          If Equal is set, the value of a field has to be equal to the value of
+          Equal to be matched by the pattern.
+        type: object
+      equalNil:
+        description: |-
+          If EqualNil is true, the field should be nil or not be set to be matched
+          by the pattern.
+        type: boolean
+      gt:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Gt is set, the value of a field has to be greater than the value
+          of Gt to be matched by the pattern.
+        type: object
+      gte:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Gte is set, the value of a field has to be greater than the value
+          of Gte to be matched by the pattern.
+        type: object
+      hasEvery:
+        $ref: '#/definitions/utils.OptionalStringArray'
+        type: object
+      hasNot:
+        $ref: '#/definitions/utils.OptionalStringArray'
+        type: object
+      hasOneOf:
+        $ref: '#/definitions/utils.OptionalStringArray'
+        type: object
+      lt:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Lt is set, the value of a field has to be greater than the value
+          of Lt to be matched by the pattern.
+        type: object
+      lte:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Lte is set, the value of a field has to be greater than the value
+          of Lte to be matched by the pattern.
+        type: object
+      regexMatch:
+        $ref: '#/definitions/utils.OptionalRegexp'
+        description: |-
+          If RegexMatch is set, the value of a field has to be matched by this
+          regular expression to be matched by the pattern.
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        type: object
+    type: object
+  pattern.StringPattern:
+    properties:
+      equal:
+        $ref: '#/definitions/utils.OptionalString'
+        description: |-
+          If Equal is set, the value of a field has to be equal to the value of
+          Equal to be matched by the pattern.
+        type: object
+      regexMatch:
+        $ref: '#/definitions/utils.OptionalRegexp'
+        description: |-
+          If RegexMatch is set, the value of a field has to be matched by this
+          regular expression to be matched by the pattern.
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        description: |-
+          When unmarshalling a BSON document, the fields of this document that are
+          not defined in this struct are added to UnexpectedFields.
+          UnexpectedFields should always be empty.
+        type: object
+    type: object
+  pattern.TimePattern:
+    properties:
+      equal:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Equal is set, the value of a field has to be equal to the value of
+          Equal to be matched by the pattern.
+        type: object
+      gt:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Gt is set, the value of a field has to be greater than the value
+          of Gt to be matched by the pattern.
+        type: object
+      gte:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Gte is set, the value of a field has to be greater than the value
+          of Gte to be matched by the pattern.
+        type: object
+      lt:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Lt is set, the value of a field has to be greater than the value
+          of Lt to be matched by the pattern.
+        type: object
+      lte:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Lte is set, the value of a field has to be greater than the value
+          of Lte to be matched by the pattern.
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        description: |-
+          When unmarshalling a BSON document, the fields of this document that are
+          not defined in this struct are added to UnexpectedFields.
+          UnexpectedFields should always be empty.
+        type: object
+    type: object
+  pattern.TimeRefPattern:
+    properties:
+      equal:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Equal is set, the value of a field has to be equal to the value of
+          Equal to be matched by the pattern.
+        type: object
+      equalNil:
+        description: |-
+          If EqualNil is true, the field should be nil or not be set to be matched
+          by the pattern.
+        type: boolean
+      gt:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Gt is set, the value of a field has to be greater than the value
+          of Gt to be matched by the pattern.
+        type: object
+      gte:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Gte is set, the value of a field has to be greater than the value
+          of Gte to be matched by the pattern.
+        type: object
+      lt:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Lt is set, the value of a field has to be greater than the value
+          of Lt to be matched by the pattern.
+        type: object
+      lte:
+        $ref: '#/definitions/utils.OptionalInt64'
+        description: |-
+          If Lte is set, the value of a field has to be greater than the value
+          of Lte to be matched by the pattern.
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        description: |-
+          When unmarshalling a BSON document, the fields of this document that are
+          not defined in this struct are added to UnexpectedFields.
+          UnexpectedFields should always be empty.
+        type: object
+    type: object
+  pbehavior.Comment:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      message:
+        type: string
+      ts:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+    type: object
+  pbehavior.Comments:
+    items:
+      $ref: '#/definitions/pbehavior.Comment'
+    type: array
+  pbehavior.EID:
+    properties:
+      id:
+        type: string
+    type: object
+  pbehavior.EditRequest:
+    properties:
+      author:
+        type: string
+      enabled:
+        type: boolean
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      filter:
+        type: object
+      name:
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - author
+    - enabled
+    - filter
+    - name
+    - reason
+    - tstart
+    - type
+    type: object
+  pbehavior.Filter:
+    type: object
+  pbehavior.PBehavior:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      comments:
+        $ref: '#/definitions/pbehavior.Comments'
+        type: object
+      created:
+        type: integer
+      enabled:
+        type: boolean
+      exceptions:
+        items:
+          $ref: '#/definitions/pbehaviorexception.Exception'
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.Exdate'
+        type: array
+      filter:
+        $ref: '#/definitions/pbehavior.Filter'
+        type: object
+      is_active_status:
+        description: IsActiveStatus represents if pbehavior is in action for current
+          time.
+        type: boolean
+      name:
+        type: string
+      reason:
+        $ref: '#/definitions/pbehaviorreason.Reason'
+        type: object
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+        type: object
+      updated:
+        type: integer
+    type: object
+  pbehavior.Type:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      description:
+        type: string
+      icon_name:
+        type: string
+      name:
+        type: string
+      priority:
+        type: integer
+      type:
+        type: string
+    type: object
+  pbehaviorcomment.Request:
+    properties:
+      author:
+        type: string
+      message:
+        type: string
+      pbehavior:
+        type: string
+    required:
+    - author
+    - message
+    - pbehavior
+    type: object
+  pbehaviorexception.Exception:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      deletable:
+        type: boolean
+      description:
+        type: string
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.Exdate'
+        type: array
+      name:
+        type: string
+    type: object
+  pbehaviorexception.Exdate:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+        type: object
+    type: object
+  pbehaviorexception.ExdateRequest:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+      type:
+        type: string
+    required:
+    - begin
+    - end
+    - type
+    type: object
+  pbehaviorexception.Request:
+    properties:
+      description:
+        type: string
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      name:
+        type: string
+    required:
+    - description
+    - exdates
+    - name
+    type: object
+  pbehaviorreason.Reason:
+    properties:
+      _id:
+        type: string
+      deletable:
+        type: boolean
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  pbehaviorreason.Request:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  pbehaviortimespan.ExdateRequest:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+      type:
+        type: string
+    required:
+    - begin
+    - end
+    type: object
+  pbehaviortimespan.TimespansRequest:
+    properties:
+      by_date:
+        type: boolean
+      end_at:
+        type: integer
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviortimespan.ExdateRequest'
+        type: array
+      rrule:
+        type: string
+      start_at:
+        type: integer
+      view_from:
+        type: integer
+      view_to:
+        type: integer
+    required:
+    - start_at
+    - view_from
+    - view_to
+    type: object
+  pbehaviortimespan.timespansItemResponse:
+    properties:
+      from:
+        type: integer
+      to:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+        type: object
+    type: object
+  pbehaviortype.EditRequest:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      icon_name:
+        type: string
+      name:
+        type: string
+      priority:
+        type: integer
+      type:
+        type: string
+    required:
+    - description
+    - icon_name
+    - name
+    - priority
+    - type
+    type: object
+  pbehaviortype.Type:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      deletable:
+        type: boolean
+      description:
+        type: string
+      editable:
+        type: boolean
+      icon_name:
+        type: string
+      name:
+        type: string
+      priority:
+        type: integer
+      type:
+        type: string
+    type: object
+  scenario.Action:
+    properties:
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      drop_scenario_if_not_matched:
+        type: boolean
+      emit_trigger:
+        type: boolean
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      parameters:
+        additionalProperties: true
+        type: object
+      type:
+        type: string
+    type: object
+  scenario.ActionRequest:
+    properties:
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      drop_scenario_if_not_matched:
+        type: boolean
+      emit_trigger:
+        type: boolean
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      parameters:
+        type: object
+      type:
+        type: string
+    required:
+    - drop_scenario_if_not_matched
+    - emit_trigger
+    - type
+    type: object
+  scenario.EditRequest:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/scenario.ActionRequest'
+        type: array
+      author:
+        type: string
+      delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      enabled:
+        type: boolean
+      name:
+        type: string
+      priority:
+        type: integer
+      triggers:
+        items:
+          type: string
+        type: array
+    required:
+    - actions
+    - author
+    - enabled
+    - name
+    - priority
+    - triggers
+    type: object
+  scenario.Scenario:
+    properties:
+      _id:
+        type: string
+      actions:
+        items:
+          $ref: '#/definitions/scenario.Action'
+        type: array
+      author:
+        type: string
+      created:
+        type: integer
+      delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      enabled:
+        type: boolean
+      name:
+        type: string
+      priority:
+        type: integer
+      triggers:
+        items:
+          type: string
+        type: array
+      updated:
+        type: integer
+    type: object
+  types.CpsTime:
+    type: object
+  types.DurationWithUnit:
+    properties:
+      seconds:
+        type: integer
+      unit:
+        type: string
+    required:
+    - seconds
+    - unit
+    type: object
+  types.PbehaviorInfo:
+    properties:
+      canonical_type:
+        description: CanonicalType is Type of pbehavior.Type.
+        type: string
+      id:
+        description: ID is ID of pbehavior.PBehavior.
+        type: string
+      name:
+        description: Name is Name of pbehavior.PBehavior.
+        type: string
+      reason:
+        description: Reason is Name of pbehavior.Reason.
+        type: string
+      type:
+        description: TypeID is ID of pbehavior.Type.
+        type: string
+      type_name:
+        description: TypeName is Name of pbehavior.Type.
+        type: string
+    type: object
+  utils.OptionalInt64:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the int64. It should only be taken into
+          account if Set is true.
+        type: integer
+    type: object
+  utils.OptionalRegexp:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        $ref: '#/definitions/utils.RegexExpression'
+        description: |-
+          Value contains the value of the regular expression. It should only be
+          taken into account if Set is true.
+        type: object
+    type: object
+  utils.OptionalString:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the string. It should only be taken into
+          account if Set is true.
+        type: string
+    type: object
+  utils.OptionalStringArray:
+    properties:
+      set:
+        type: boolean
+      value:
+        items:
+          type: string
+        type: array
+    type: object
+  utils.RegexExpression:
+    type: object
+  watcherweather.AlarmCounter:
+    properties:
+      count:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehaviortype.Type'
+        type: object
+    type: object
+  watcherweather.Entity:
+    properties:
+      _id:
+        type: string
+      ack:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      alarm_creation_date:
+        type: integer
+      alarm_display_name:
+        type: string
+      color:
+        type: string
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      entity_id:
+        description: Keep for compatibility.
+        type: string
+      icon:
+        type: string
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/watcherweather.Info'
+        type: object
+      last_update_date:
+        type: integer
+      linklist:
+        items:
+          $ref: '#/definitions/watcherweather.WeatherLink'
+        type: array
+      name:
+        type: string
+      org:
+        type: string
+      pbehavior:
+        items:
+          $ref: '#/definitions/pbehavior.PBehavior'
+        type: array
+      pbehaviors:
+        items:
+          $ref: '#/definitions/pbehavior.PBehavior'
+        type: array
+      resource:
+        type: string
+      sla_text:
+        type: string
+      snooze:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      source_type:
+        type: string
+      state:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      stats:
+        $ref: '#/definitions/watcherweather.Stats'
+        type: object
+      status:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      ticket:
+        $ref: '#/definitions/alarm.AlarmTicket'
+        type: object
+    type: object
+  watcherweather.Info:
+    properties:
+      description:
+        type: string
+      value:
+        type: object
+    type: object
+  watcherweather.Stats:
+    properties:
+      ko:
+        type: integer
+      last_event:
+        type: integer
+      last_ko:
+        type: integer
+      ok:
+        type: integer
+    type: object
+  watcherweather.Watcher:
+    properties:
+      _id:
+        type: string
+      ack:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      alarm_counters:
+        items:
+          $ref: '#/definitions/watcherweather.AlarmCounter'
+        type: array
+      color:
+        type: string
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      display_name:
+        type: string
+      entity_id:
+        description: Keep for compatibility.
+        type: string
+      icon:
+        type: string
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/watcherweather.Info'
+        type: object
+      is_action_required:
+        type: boolean
+      isActionRequired:
+        type: boolean
+      isAllEntitiesPaused:
+        type: boolean
+      isWatcherPaused:
+        type: boolean
+      last_update_date:
+        type: integer
+      linklist:
+        items:
+          properties:
+            cat_name:
+              type: string
+            links:
+              type: object
+          type: object
+        type: array
+      mfilter:
+        type: string
+      name:
+        type: string
+      output:
+        type: string
+      pbehaviors:
+        items:
+          $ref: '#/definitions/pbehavior.PBehavior'
+        type: array
+      resource:
+        type: string
+      secondary_icon:
+        type: string
+      sla_tex:
+        type: string
+      snooze:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      state:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      status:
+        $ref: '#/definitions/alarm.AlarmStep'
+        type: object
+      tileColor:
+        type: string
+      tileIcon:
+        type: string
+      tileSecondaryIcon:
+        type: string
+      watcher_pbehavior:
+        items:
+          $ref: '#/definitions/pbehavior.PBehavior'
+        type: array
+    type: object
+  watcherweather.WeatherLink:
+    properties:
+      cat_name:
+        type: string
+      links:
+        type: object
+    type: object
+info:
+  contact: {}
+  description: This is a Canopsis server.
+  license: {}
+  title: Canopsis API
+  version: "4.0"
+paths:
+  /account/me:
+    get:
+      description: Get account
+      operationId: account-get
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/account.User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get account
+      tags:
+      - account
+  /alarm-counters:
+    get:
+      consumes:
+      - application/json
+      description: Get counts of alarms
+      operationId: alarms-get-counts
+      parameters:
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: active_columns[]
+        type: array
+      - in: query
+        name: correlation
+        type: boolean
+      - in: query
+        name: filter
+        type: string
+      - in: query
+        name: manual
+        type: boolean
+      - in: query
+        name: opened
+        type: boolean
+      - in: query
+        name: resolved
+        type: boolean
+      - in: query
+        name: search
+        type: string
+      - in: query
+        name: tstart
+        type: integer
+      - in: query
+        name: tstop
+        type: integer
+      - in: query
+        name: with_instructions
+        type: string
+      - in: query
+        name: without_instructions
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/alarm.Count'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Count alarms
+      tags:
+      - alarms
+  /alarm-export:
+    post:
+      description: Start export alarms
+      operationId: alarms-export-start
+      parameters:
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: active_columns[]
+        type: array
+      - in: query
+        name: correlation
+        type: boolean
+      - in: query
+        name: filter
+        type: string
+      - in: query
+        name: manual
+        type: boolean
+      - in: query
+        name: opened
+        type: boolean
+      - in: query
+        name: resolved
+        type: boolean
+      - in: query
+        name: search
+        type: string
+      - in: query
+        name: separator
+        type: string
+      - in: query
+        name: sort_dir
+        type: string
+      - in: query
+        name: sort_key
+        type: string
+      - in: query
+        name: tstart
+        type: integer
+      - in: query
+        name: tstop
+        type: integer
+      - in: query
+        name: with_consequences
+        type: boolean
+      - in: query
+        name: with_instructions
+        type: string
+      - in: query
+        name: with_steps
+        type: boolean
+      - in: query
+        name: without_instructions
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/alarm.ExportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Start export alarms
+      tags:
+      - alarms
+  /alarm-export/{id}:
+    get:
+      description: Get status of export alarms
+      operationId: alarms-export-get
+      parameters:
+      - description: export task id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/alarm.ExportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get status of export alarms
+      tags:
+      - alarms
+  /alarm-export/{id}/download:
+    get:
+      description: Get result of export alarms
+      operationId: alarms-export-download
+      parameters:
+      - description: export task id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - text/csv
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get result of export alarms
+      tags:
+      - alarms
+  /alarms:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of alarms
+      operationId: alarms-find-all
+      parameters:
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: active_columns[]
+        type: array
+      - in: query
+        name: correlation
+        type: boolean
+      - in: query
+        name: filter
+        type: string
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: manual
+        type: boolean
+      - in: query
+        name: opened
+        type: boolean
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
+        name: resolved
+        type: boolean
+      - in: query
+        name: search
+        type: string
+      - in: query
+        name: sort_dir
+        type: string
+      - in: query
+        name: sort_key
+        type: string
+      - in: query
+        name: tstart
+        type: integer
+      - in: query
+        name: tstop
+        type: integer
+      - in: query
+        name: with_consequences
+        type: boolean
+      - in: query
+        name: with_instructions
+        type: string
+      - in: query
+        name: with_steps
+        type: boolean
+      - in: query
+        name: without_instructions
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/alarm.Alarm'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find all alarms
+      tags:
+      - alarms
+  /bulk/heartbeats:
+    delete:
+      description: Bulk delete heartbeats by id
+      operationId: heartbeats-bulk-delete-by-id
+      parameters:
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: ids
+        required: true
+        type: array
+      responses:
+        "204":
+          description: ""
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Bulk delete heartbeats by id
+      tags:
+      - heartbeats
+    post:
+      consumes:
+      - application/json
+      description: Bulk create heartbeats
+      operationId: heartbeats-bulk-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/heartbeat.CreateRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/heartbeat.Heartbeat'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Bulk create heartbeats
+      tags:
+      - heartbeats
+    put:
+      consumes:
+      - application/json
+      description: Bulk update heartbeats by id
+      operationId: heartbeats-bulk-update-by-id
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/heartbeat.BulkUpdateRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/heartbeat.Heartbeat'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Bulk update heartbeats by id
+      tags:
+      - heartbeats
+  /entities/pbehaviors:
+    get:
+      consumes:
+      - application/json
+      description: Get list of pbehaviors
+      operationId: pbehaviors-find-by-entity-id
+      parameters:
+      - description: Entity id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pbehavior.PBehavior'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find pbehaviors by entity id
+      tags:
+      - pbehaviors
+  /entity-export:
+    post:
+      description: Start export entities
+      operationId: entities-export-start
+      parameters:
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: active_columns[]
+        type: array
+      - in: query
+        name: filter
+        type: string
+      - in: query
+        name: search
+        type: string
+      - in: query
+        name: separator
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sort_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.ExportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Start export entities
+      tags:
+      - entities
+  /entity-export/{id}:
+    get:
+      description: Get status of export entities
+      operationId: entities-export-get
+      parameters:
+      - description: export task id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.ExportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get status of export entities
+      tags:
+      - entities
+  /entity-export/{id}/download:
+    get:
+      description: Get result of export entities
+      operationId: entities-export-download
+      parameters:
+      - description: export task id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - text/csv
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get result of export entities
+      tags:
+      - entities
+  /heartbeats:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of heartbeats
+      operationId: heartbeats-find-all
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: search query
+        in: query
+        name: search
+        type: string
+      - description: sort query
+        in: query
+        name: sort
+        type: string
+      - description: sort query
+        in: query
+        name: sort_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/heartbeat.Heartbeat'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find heartbeats
+      tags:
+      - heartbeats
+    post:
+      consumes:
+      - application/json
+      description: Create heartbeat
+      operationId: heartbeats-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/heartbeat.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/heartbeat.Heartbeat'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Create heartbeat
+      tags:
+      - heartbeats
+  /heartbeats/{id}:
+    delete:
+      description: Delete heartbeat by id
+      operationId: heartbeats-delete-by-id
+      parameters:
+      - description: heartbeat id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ""
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Delete heartbeat by id
+      tags:
+      - heartbeats
+    get:
+      description: Get heartbeat by id
+      operationId: heartbeats-get-by-id
+      parameters:
+      - description: heartbeat id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/heartbeat.Heartbeat'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get heartbeat by id
+      tags:
+      - heartbeats
+    put:
+      consumes:
+      - application/json
+      description: Update heartbeat by id
+      operationId: heartbeats-update-by-id
+      parameters:
+      - description: heartbeat id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/heartbeat.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/heartbeat.Heartbeat'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Update heartbeat by id
+      tags:
+      - heartbeats
+  /pbehavior-comments:
+    post:
+      consumes:
+      - application/json
+      description: Create pbehavior comment
+      operationId: pbehavior-comments-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehaviorcomment.Request'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/pbehavior.Comment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Create pbehavior comment
+      tags:
+      - pbehavior-comments
+  /pbehavior-comments/:id:
+    delete:
+      description: Delete pbehavior comment by id
+      operationId: pbehavior-comment-delete-by-id
+      parameters:
+      - description: pbehavior comment id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ""
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Delete pbehavior comment by id
+      tags:
+      - pbehavior-comments
+  /pbehavior-exceptions:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of behavior exceptions
+      operationId: pbehavior-exceptions-find-all
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: search query
+        in: query
+        name: search
+        type: string
+      - description: sort query
+        in: query
+        name: sort
+        type: string
+      - description: sort query
+        in: query
+        name: sort_by
+        type: string
+      - description: with flags
+        in: query
+        name: with_flags
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pbehaviorexception.Exception'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find all pbehavior exceptions
+      tags:
+      - pbehavior-exceptions
+    post:
+      consumes:
+      - application/json
+      description: Create pbehavior exception
+      operationId: pbehavior-exceptions-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehaviorexception.Request'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/pbehaviorexception.Exception'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Create pbehavior exception
+      tags:
+      - pbehavior-exceptions
+  /pbehavior-exceptions/{id}:
+    delete:
+      description: Delete pbehavior exception by id
+      operationId: pbehavior-exceptions-delete-by-id
+      parameters:
+      - description: exception id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Delete pbehavior exception by id
+      tags:
+      - pbehavior-exceptions
+    get:
+      description: Get pbehavior exception by id
+      operationId: pbehavior-exceptions-get-by-id
+      parameters:
+      - description: exception id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehaviorexception.Exception'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get pbehavior exception by id
+      tags:
+      - pbehavior-exceptions
+    put:
+      consumes:
+      - application/json
+      description: Update behavior exception by id
+      operationId: pbehavior-exceptions-update-by-id
+      parameters:
+      - description: exception id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehaviorexception.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehaviorexception.Exception'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Update behavior exception by id
+      tags:
+      - pbehavior-exceptions
+  /pbehavior-ics/{id}:
+    get:
+      description: Get pbehavior ICS by id
+      operationId: pbehavior-ics-get-by-id
+      parameters:
+      - description: pbehavior id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: ""
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get pbehavior ICS by id
+      tags:
+      - pbehavior-ics
+  /pbehavior-reasons:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of behavior reasons
+      operationId: pbehavior-reasons-find-all
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: search query
+        in: query
+        name: search
+        type: string
+      - description: sort query
+        in: query
+        name: sort
+        type: string
+      - description: sort query
+        in: query
+        name: sort_by
+        type: string
+      - description: with flags
+        in: query
+        name: with_flags
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pbehaviorreason.Reason'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find pbehavior reasons
+      tags:
+      - pbehavior-reasons
+    post:
+      consumes:
+      - application/json
+      description: Create pbehavior reason
+      operationId: pbehavior-reasons-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehaviorreason.Request'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/pbehaviorreason.Reason'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Create pbehavior reason
+      tags:
+      - pbehavior-reasons
+  /pbehavior-reasons/{id}:
+    delete:
+      description: Delete pbehavior reason by id
+      operationId: pbehavior-reasons-delete-by-id
+      parameters:
+      - description: reason id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Delete pbehavior reason by id
+      tags:
+      - pbehavior-reasons
+    get:
+      description: Get pbehavior reason by id
+      operationId: pbehavior-reasons-get-by-id
+      parameters:
+      - description: reason id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehaviorreason.Reason'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get pbehavior reason by id
+      tags:
+      - pbehavior-reasons
+    put:
+      consumes:
+      - application/json
+      description: Update behavior reason by id
+      operationId: pbehavior-reasons-update-by-id
+      parameters:
+      - description: reason id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehaviorreason.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehaviorreason.Reason'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Update behavior reason by id
+      tags:
+      - pbehavior-reasons
+  /pbehavior-timespans:
+    post:
+      consumes:
+      - application/json
+      description: 'Get time spans of calendar event within view span; {by_date: false}
+        adds exception spans with types, {by_date: true} merges adjacent spans if
+        gap between sequential ones less than 24 hours'
+      operationId: pbehavior-timespans-get-all
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehaviortimespan.TimespansRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pbehaviortimespan.timespansItemResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      summary: Get all pbehavior timespans
+      tags:
+      - pbehavior-timespans
+  /pbehavior-types:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of behavior types
+      operationId: pbehavior-types-find-all
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: search query
+        in: query
+        name: search
+        type: string
+      - description: sort query
+        in: query
+        name: sort
+        type: string
+      - description: sort query
+        in: query
+        name: sort_by
+        type: string
+      - description: with flags
+        in: query
+        name: with_flags
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pbehavior.Type'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find pbehavior types
+      tags:
+      - pbehavior-types
+    post:
+      consumes:
+      - application/json
+      description: Create pbehavior type
+      operationId: pbehavior-types-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehaviortype.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/pbehavior.Type'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Create pbehavior type
+      tags:
+      - pbehavior-types
+  /pbehavior-types/{id}:
+    delete:
+      description: Delete pbehavior type by id
+      operationId: pbehavior-types-delete-by-id
+      parameters:
+      - description: type id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Delete pbehavior type by id
+      tags:
+      - pbehavior-types
+    get:
+      description: Get pbehavior type by id
+      operationId: pbehavior-types-get-by-id
+      parameters:
+      - description: type id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehavior.Type'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get pbehavior type by id
+      tags:
+      - pbehavior-types
+    put:
+      consumes:
+      - application/json
+      description: Update behavior type by id
+      operationId: pbehavior-types-update-by-id
+      parameters:
+      - description: type id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehaviortype.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehavior.Type'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Update behavior type by id
+      tags:
+      - pbehavior-types
+  /pbehaviors:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of pbehaviors
+      operationId: pbehaviors-find-all
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: search query
+        in: query
+        name: search
+        type: string
+      - description: sort query
+        in: query
+        name: sort
+        type: string
+      - description: sort query
+        in: query
+        name: sort_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pbehavior.PBehavior'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find all pbehaviors
+      tags:
+      - pbehaviors
+    post:
+      consumes:
+      - application/json
+      description: Create pbehavior
+      operationId: pbehaviors-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehavior.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/pbehavior.PBehavior'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Create pbehavior
+      tags:
+      - pbehaviors
+  /pbehaviors/{id}:
+    delete:
+      description: Delete pbehavior by id
+      operationId: pbehavior-delete-by-id
+      parameters:
+      - description: pbehavior id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ""
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Delete pbehavior by id
+      tags:
+      - pbehaviors
+    get:
+      description: Get pbehavior by id
+      operationId: pbehaviors-get-by-id
+      parameters:
+      - description: pbehavior id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehavior.PBehavior'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get pbehavior by id
+      tags:
+      - pbehaviors
+    put:
+      consumes:
+      - application/json
+      description: Update behavior by id
+      operationId: pbehaviors-update-by-id
+      parameters:
+      - description: pbehavior id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehavior.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehavior.PBehavior'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Update behavior by id
+      tags:
+      - pbehaviors
+  /pbehaviors/{id}/eids:
+    get:
+      description: Get pbehavior eids list
+      operationId: pbehaviors-get-eids
+      parameters:
+      - description: pbehavior id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: search query
+        in: query
+        name: search
+        type: string
+      - description: sort query
+        in: query
+        name: sort
+        type: string
+      - description: sort query
+        in: query
+        name: sort_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pbehavior.EID'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get pbehavior eids list
+      tags:
+      - pbehaviors
+  /scenarios:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of scenarios
+      operationId: scenarios-find-all
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: search query
+        in: query
+        name: search
+        type: string
+      - description: sort query
+        in: query
+        name: sort
+        type: string
+      - description: sort query
+        in: query
+        name: sort_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/scenario.Scenario'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find scenarios
+      tags:
+      - scenarios
+    post:
+      consumes:
+      - application/json
+      description: Create scenario
+      operationId: scenarios-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/scenario.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/scenario.Scenario'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Create scenario
+      tags:
+      - scenarios
+  /scenarios/{id}:
+    delete:
+      description: Delete scenario by id
+      operationId: scenarios-delete-by-id
+      parameters:
+      - description: scenario id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ""
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Delete scenario by id
+      tags:
+      - scenarios
+    get:
+      description: Get scenario by id
+      operationId: scenarios-get-by-id
+      parameters:
+      - description: scenario id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/scenario.Scenario'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get scenario by id
+      tags:
+      - scenarios
+    put:
+      consumes:
+      - application/json
+      description: Update scenario by id
+      operationId: scenarios-update-by-id
+      parameters:
+      - description: scenario id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/scenario.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/scenario.Scenario'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Update scenario by id
+      tags:
+      - scenarios
+  /sessions-count:
+    get:
+      consumes:
+      - application/json
+      description: Get counts of active sessions
+      operationId: auth-get-session-counts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.sessionsCountResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get counts of active sessions
+      tags:
+      - auth
+  /weather-watchers:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of watchers
+      operationId: weather-watchers-find-all
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: filter query
+        in: query
+        name: filter
+        type: string
+      - description: sort query
+        in: query
+        name: sort
+        type: string
+      - description: sort query
+        in: query
+        name: sort_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/watcherweather.Watcher'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find all watchers
+      tags:
+      - weather-watchers
+  /weather-watchers/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of entities
+      operationId: weather-watchers-find-all-entities
+      parameters:
+      - description: watcher id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: sort query
+        in: query
+        name: sort
+        type: string
+      - description: sort query
+        in: query
+        name: sort_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/watcherweather.Entity'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find all entity by watcher id
+      tags:
+      - weather-watchers
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: x-canopsis-authkey
+    type: apiKey
+  BasicAuth:
+    type: basic
+swagger: "2.0"
