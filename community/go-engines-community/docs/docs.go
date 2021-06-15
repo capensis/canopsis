@@ -7907,6 +7907,9 @@ var doc = `{
                 "app_title": {
                     "type": "string"
                 },
+                "check_count_request_timeout": {
+                    "type": "integer"
+                },
                 "edition": {
                     "type": "string"
                 },
@@ -7924,6 +7927,9 @@ var doc = `{
                 },
                 "logo": {
                     "type": "string"
+                },
+                "max_matched_items": {
+                    "type": "integer"
                 },
                 "popup_timeout": {
                     "type": "object",
@@ -8017,6 +8023,9 @@ var doc = `{
                 "app_title": {
                     "type": "string"
                 },
+                "check_count_request_timeout": {
+                    "type": "integer"
+                },
                 "footer": {
                     "type": "string"
                 },
@@ -8028,6 +8037,9 @@ var doc = `{
                 },
                 "logo": {
                     "type": "string"
+                },
+                "max_matched_items": {
+                    "type": "integer"
                 },
                 "popup_timeout": {
                     "type": "object",
@@ -10096,6 +10108,9 @@ var doc = `{
                 "is_active_status": {
                     "description": "IsActiveStatus represents if pbehavior is in action for current time.",
                     "type": "boolean"
+                },
+                "last_alarm_date": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"

@@ -2,15 +2,18 @@ package main
 
 import (
 	"context"
+	"runtime/trace"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statsng"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
-	"runtime/trace"
 )
 
 type messageProcessor struct {
@@ -22,6 +25,7 @@ type messageProcessor struct {
 	Encoder                  encoding.Encoder
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
+	PbehaviorAdapter         pbehavior.Adapter
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -60,6 +64,39 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 	event.AlarmChange = &alarmChange
 
+	p.updatePbhLastAlarmDate(ctx, event)
+	p.updateStats(ctx, event, msg)
+
+	// Encode and publish the event to the next engine
+	var bevent []byte
+	trace.WithRegion(ctx, "encode-event", func() {
+		bevent, err = p.Encoder.Encode(event)
+	})
+	if err != nil {
+		p.logError(err, "cannot encode event", msg)
+		return nil, nil
+	}
+
+	return bevent, nil
+}
+
+// updatePbhLastAlarmDate updates last time in pbehavior when it was applied on alarm.
+func (p *messageProcessor) updatePbhLastAlarmDate(ctx context.Context, event types.Event) {
+	if event.AlarmChange.Type != types.AlarmChangeTypeCreateAndPbhEnter &&
+		event.AlarmChange.Type != types.AlarmChangeTypePbhEnter &&
+		event.AlarmChange.Type != types.AlarmChangeTypePbhLeaveAndEnter {
+		return
+	}
+
+	go func() {
+		err := p.PbehaviorAdapter.UpdateLastAlarmDate(ctx, event.PbehaviorInfo.ID, types.CpsTime{Time: time.Now()})
+		if err != nil {
+			p.Logger.Err(err).Msg("")
+		}
+	}()
+}
+
+func (p *messageProcessor) updateStats(ctx context.Context, event types.Event, msg []byte) {
 	if p.FeatureStatEvents {
 		if event.Alarm == nil {
 			p.Logger.Warn().Msg("event.Alarm should not be nil")
@@ -83,18 +120,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			}()
 		}
 	}
-
-	// Encode and publish the event to the next engine
-	var bevent []byte
-	trace.WithRegion(ctx, "encode-event", func() {
-		bevent, err = p.Encoder.Encode(event)
-	})
-	if err != nil {
-		p.logError(err, "cannot encode event", msg)
-		return nil, nil
-	}
-
-	return bevent, nil
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {

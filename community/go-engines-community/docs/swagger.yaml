@@ -427,6 +427,8 @@ definitions:
         type: boolean
       app_title:
         type: string
+      check_count_request_timeout:
+        type: integer
       edition:
         type: string
       footer:
@@ -439,6 +441,8 @@ definitions:
         type: string
       logo:
         type: string
+      max_matched_items:
+        type: integer
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
         type: object
@@ -500,6 +504,8 @@ definitions:
         type: boolean
       app_title:
         type: string
+      check_count_request_timeout:
+        type: integer
       footer:
         type: string
       language:
@@ -508,6 +514,8 @@ definitions:
         type: string
       logo:
         type: string
+      max_matched_items:
+        type: integer
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
         type: object
@@ -2099,6 +2107,8 @@ definitions:
         description: IsActiveStatus represents if pbehavior is in action for current
           time.
         type: boolean
+      last_alarm_date:
+        type: integer
       name:
         type: string
       reason:
@@ -7788,4 +7798,11 @@ paths:
       summary: Find all entity by service id
       tags:
       - weather-services
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: x-canopsis-authkey
+    type: apiKey
+  BasicAuth:
+    type: basic
 swagger: "2.0"
