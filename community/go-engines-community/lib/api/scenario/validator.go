@@ -158,6 +158,7 @@ func ValidateChangeStateParametersRequest(sl validator.StructLevel) {
 	// Validate state
 	if r.State != nil {
 		validTypes := []types.CpsNumber{
+			types.AlarmStateOK,
 			types.AlarmStateMinor,
 			types.AlarmStateMajor,
 			types.AlarmStateCritical,
