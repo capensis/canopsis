@@ -6,7 +6,7 @@
 site_name: Documentation Canopsis
 site_url: https://doc.canopsis.net
 
-repo_url: https://git.canopsis.net/canopsis/canopsis
+repo_url: https://git.canopsis.net/canopsis/canopsis-community
 repo_name: 'git.canopsis.net'
 
 docs_dir:
