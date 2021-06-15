@@ -394,6 +394,18 @@ func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Oper
 			Output:        event.Output,
 			Author:        event.Author,
 		}
+	case types.EventTypeInstructionStarted, types.EventTypeInstructionPaused,
+		types.EventTypeInstructionResumed, types.EventTypeInstructionCompleted,
+		types.EventTypeInstructionFailed, types.EventTypeInstructionAborted,
+		types.EventTypeAutoInstructionStarted, types.EventTypeAutoInstructionCompleted,
+		types.EventTypeAutoInstructionFailed, types.EventTypeAutoInstructionAlreadyRunning,
+		types.EventTypeInstructionJobStarted, types.EventTypeInstructionJobCompleted,
+		types.EventTypeInstructionJobAborted, types.EventTypeInstructionJobFailed:
+		parameters = types.OperationInstructionParameters{
+			Execution: event.Execution,
+			Output:    event.Output,
+			Author:    event.Author,
+		}
 	default:
 		parameters = types.OperationParameters{
 			Output: event.Output,

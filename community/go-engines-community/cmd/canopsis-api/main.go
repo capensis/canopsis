@@ -51,11 +51,10 @@ func main() {
 	if err != nil {
 		logger.Fatal().Err(err).Msg("cannot load config")
 	}
+	// Set mongodb setting.
+	dbClient.SetRetryCount(cfg.Global.ReconnectRetries)
+	dbClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
 	// Init security ACL enforcer.
-	dbClient, err = mongo.NewClient(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-	if err != nil {
-		logger.Fatal().Err(err).Msg("cannot connect to mongodb")
-	}
 	enforcer, err := libsecurity.NewEnforcer(flags.ConfigDir, dbClient)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("cannot create security enforce")
@@ -70,6 +69,14 @@ func main() {
 		enforcer,
 		nil,
 		logger,
+		func(ctx context.Context) error {
+			err := dbClient.Disconnect(ctx)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		},
 	)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("fail create api")

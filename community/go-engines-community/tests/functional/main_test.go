@@ -29,6 +29,7 @@ type Flags struct {
 	paths              arrayFlag
 	fixtures           arrayFlag
 	periodicalWaitTime time.Duration
+	dummyHttpPort      int64
 	eventWaitKey       string
 	eventWaitExchange  string
 	eventLogs          string
@@ -46,7 +47,8 @@ func (f *arrayFlag) Set(value string) error {
 }
 
 func TestMain(m *testing.M) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// Test allowed only with "API_URL" environment variable
 	if _, err := bdd.GetApiURL(); err != nil {
@@ -60,6 +62,7 @@ func TestMain(m *testing.M) {
 	flag.StringVar(&flags.eventWaitExchange, "ewe", "amq.direct", "Consume from exchange to detect the end of event processing.")
 	flag.StringVar(&flags.eventWaitKey, "ewk", canopsis.FIFOAckQueueName, "Consume by routing key to detect the end of event processing.")
 	flag.StringVar(&flags.eventLogs, "eventlogs", "", "Log all received events.")
+	flag.Int64Var(&flags.dummyHttpPort, "dummyHttpPort", 3000, "Port for dummy http server.")
 	flag.Parse()
 
 	if len(flags.paths) == 0 {
@@ -86,6 +89,11 @@ func TestMain(m *testing.M) {
 			Level(zerolog.DebugLevel).
 			With().Timestamp().
 			Logger()
+	}
+
+	err := bdd.RunDummyHttpServer(ctx, fmt.Sprintf("localhost:%d", flags.dummyHttpPort))
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	opts := godog.Options{

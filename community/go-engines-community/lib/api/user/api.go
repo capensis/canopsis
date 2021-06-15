@@ -36,6 +36,7 @@ func NewApi(
 // @Param limit query integer true "items per page"
 // @Param search query string false "search query"
 // @Param sort query string false "sort query"
+// @param permission query string false "role permission"
 // @Param sort_by query string false "sort query"
 // @Success 200 {object} common.PaginatedListResponse{data=[]User}
 // @Failure 400 {object} common.ValidationErrorResponse

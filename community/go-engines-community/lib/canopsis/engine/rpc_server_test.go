@@ -28,7 +28,11 @@ func TestRpcServer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 		zerolog.Logger{},
 	)
 	body := []byte("test-body")
-	d := amqp.Delivery{Body: body}
+	replyTo := "test-reply"
+	d := amqp.Delivery{
+		Body:    body,
+		ReplyTo: replyTo,
+	}
 	msgs := make(chan amqp.Delivery, 1)
 	msgs <- d
 	close(msgs)
@@ -39,7 +43,7 @@ func TestRpcServer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 	mockChannel.EXPECT().Close().AnyTimes()
 	mockChannel.EXPECT().Consume(gomock.Any(), gomock.Any(), gomock.Any(),
 		gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(msgs, nil)
-	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(),
+	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Eq(replyTo), gomock.Any(),
 		gomock.Any(), gomock.Any())
 
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Eq(d)).Return(body, nil)

@@ -93,6 +93,25 @@ func (mr *MockEnforcerMockRecorder) GetRolesForUser(arg0 interface{}, arg1 ...in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRolesForUser", reflect.TypeOf((*MockEnforcer)(nil).GetRolesForUser), varargs...)
 }
 
+// HasPermissionForUser mocks base method
+func (m *MockEnforcer) HasPermissionForUser(arg0 string, arg1 ...string) bool {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0}
+	for _, a := range arg1 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "HasPermissionForUser", varargs...)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// HasPermissionForUser indicates an expected call of HasPermissionForUser
+func (mr *MockEnforcerMockRecorder) HasPermissionForUser(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0}, arg1...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasPermissionForUser", reflect.TypeOf((*MockEnforcer)(nil).HasPermissionForUser), varargs...)
+}
+
 // LoadPolicy mocks base method
 func (m *MockEnforcer) LoadPolicy() error {
 	m.ctrl.T.Helper()

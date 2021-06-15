@@ -24,6 +24,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
@@ -85,6 +86,7 @@ const (
 	authUserInterfaceDelete = "api_user_interface_delete"
 	authEvent               = "api_event"
 	authObjIdleRule         = "api_idlerule"
+	authObjNotification     = "api_notification"
 
 	permRead   = model.PermissionRead
 	permCreate = model.PermissionCreate
@@ -834,6 +836,21 @@ func RegisterRoutes(
 			)
 		}
 
+		notificationRouter := protected.Group("/notification")
+		{
+			notificationApi := notification.NewApi(notification.NewStore(dbClient), actionLogger)
+			notificationRouter.PUT(
+				"/",
+				middleware.Authorize(authObjNotification, permCan, enforcer),
+				notificationApi.Update,
+			)
+			notificationRouter.GET(
+				"/",
+				middleware.Authorize(authObjNotification, permCan, enforcer),
+				notificationApi.Get,
+			)
+		}
+
 		playlistRouter := protected.Group("/playlists")
 		{
 			playlistApi := playlist.NewApi(playlist.NewStore(dbClient), actionLogger)
@@ -963,6 +980,7 @@ func RegisterRoutes(
 			idleRuleRouter.POST(
 				"",
 				middleware.Authorize(authObjIdleRule, permCreate, enforcer),
+				middleware.SetAuthor(),
 				idleRuleAPI.Create,
 			)
 			idleRuleRouter.GET(
@@ -978,6 +996,7 @@ func RegisterRoutes(
 			idleRuleRouter.PUT(
 				"/:id",
 				middleware.Authorize(authObjIdleRule, permUpdate, enforcer),
+				middleware.SetAuthor(),
 				idleRuleAPI.Update,
 			)
 			idleRuleRouter.DELETE(

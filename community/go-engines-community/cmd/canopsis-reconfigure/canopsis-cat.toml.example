@@ -223,6 +223,22 @@ noWait = false
   # args =
 
 [[RabbitMQ.queues]]
+name = "Engine_remediation_rpc_server"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
+name = "Engine_remediation_rpc_server_job"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
 name = "Engine_kpi"
 durable = true
 autoDelete = false
@@ -291,7 +307,15 @@ Timezone = "Europe/Paris"
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.remediation]
-JobExecutorFetchTimeoutSeconds = 30
+HttpTimeout = "1m"
+# LaunchJobRetriesAmount is used for request retries.
+LaunchJobRetriesAmount = 3
+# LaunchJobRetriesInterval is used for request retries.
+LaunchJobRetriesInterval = "5s"
+# WaitJobCompleteRetriesInterval is used during polling execution status and for request retries.
+WaitJobCompleteRetriesInterval = "5s"
+# WaitJobCompleteRetriesAmount is used for polling execution status.
+WaitJobCompleteRetriesAmount = 12
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.data_storage]

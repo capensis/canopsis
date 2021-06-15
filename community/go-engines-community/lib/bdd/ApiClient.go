@@ -17,11 +17,10 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/gin-gonic/gin/binding"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/cucumber/messages-go/v10"
+	"github.com/gin-gonic/gin/binding"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -151,7 +150,7 @@ func (a *ApiClient) TheResponseBodyShouldBe(doc *messages.PickleStepArgument_Pic
 	}
 
 	content := b.Bytes()
-	// Try to umarshal expected body as json
+	// Try to unmarshal expected body as json
 	var expectedBody interface{}
 	err = json.Unmarshal(content, &expectedBody)
 	if err != nil {
@@ -324,6 +323,8 @@ func (a *ApiClient) IAm(role string) error {
 	}
 
 	a.authApiKey = line.AuthApiKey
+	a.basicAuth = nil
+
 	return nil
 }
 
@@ -336,6 +337,7 @@ func (a *ApiClient) IAmAuthenticatedByBasicAuth(username, password string) error
 		username: username,
 		password: password,
 	}
+	a.authApiKey = ""
 
 	return nil
 }
@@ -351,6 +353,7 @@ func (a *ApiClient) IAmAuthenticatedByApiKey(apiKey string) error {
 	}
 
 	a.authApiKey = b.String()
+	a.basicAuth = nil
 
 	return nil
 }

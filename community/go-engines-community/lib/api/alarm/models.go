@@ -15,25 +15,28 @@ type ListRequestWithPagination struct {
 
 type ListRequest struct {
 	FilterRequest
-	WithSteps    bool   `form:"with_steps" json:"with_steps"`
-	WithChildren bool   `form:"with_consequences" json:"with_consequences"`
-	Sort         string `form:"sort_dir" json:"sort_dir" binding:"oneoforempty=asc desc"`
-	SortBy       string `form:"sort_key" json:"sort_key"`
+	WithSteps        bool   `form:"with_steps" json:"with_steps"`
+	WithChildren     bool   `form:"with_consequences" json:"with_consequences"`
+	WithInstructions bool   `form:"with_instructions" json:"with_instructions"`
+	Sort             string `form:"sort_dir" json:"sort_dir" binding:"oneoforempty=asc desc"`
+	SortBy           string `form:"sort_key" json:"sort_key"`
 }
 
 type FilterRequest struct {
-	Filter              string         `form:"filter" json:"filter"`
-	Search              string         `form:"search" json:"search"`
-	SearchBy            []string       `form:"active_columns[]" json:"active_columns[]"`
-	StartFrom           *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
-	StartTo             *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
-	OnlyOpened          bool           `form:"opened" json:"opened"`
-	OnlyResolved        bool           `form:"resolved" json:"resolved"`
-	OnlyParents         bool           `form:"correlation" json:"correlation"`
-	OnlyManual          bool           `form:"manual" json:"manual"`
-	WithInstructions    string         `form:"with_instructions" json:"with_instructions"`
-	WithoutInstructions string         `form:"without_instructions" json:"without_instructions"`
-	Category            string         `form:"category" json:"category"`
+	Filter                  string         `form:"filter" json:"filter"`
+	Search                  string         `form:"search" json:"search"`
+	SearchBy                []string       `form:"active_columns[]" json:"active_columns[]"`
+	StartFrom               *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
+	StartTo                 *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
+	OnlyOpened              bool           `form:"opened" json:"opened"`
+	OnlyResolved            bool           `form:"resolved" json:"resolved"`
+	OnlyParents             bool           `form:"correlation" json:"correlation"`
+	OnlyManual              bool           `form:"manual" json:"manual"`
+	Category                string         `form:"category" json:"category"`
+	IncludeInstructionTypes []int          `form:"include_instruction_types[]" json:"include_instruction_types"`
+	ExcludeInstructionTypes []int          `form:"exclude_instruction_types[]" json:"exclude_instruction_types"`
+	IncludeInstructions     []string       `form:"include_instructions[]" json:"include_instructions"`
+	ExcludeInstructions     []string       `form:"exclude_instructions[]" json:"exclude_instructions"`
 }
 
 type ExportRequest struct {
@@ -60,12 +63,14 @@ type Alarm struct {
 		Data  []string `bson:"data"`
 		Total int      `bson:"total"`
 	} `bson:"children_ids,omitempty" json:"-"`
-	Children             *Children               `bson:"children,omitempty" json:"consequences,omitempty"`
-	Causes               *Causes                 `bson:"causes,omitempty" json:"causes,omitempty"`
-	FilteredChildrenIDs  []string                `bson:"filtered_children_ids,omitempty" json:"filtered_children,omitempty"`
-	AssignedInstructions []InstructionWithAlarms `bson:"assigned_instructions,omitempty" json:"assigned_instructions,omitempty"`
-	Links                map[string]interface{}  `json:"links"`
-	ImpactState          int64                   `bson:"impact_state" json:"impact_state"`
+	Children                       *Children               `bson:"children,omitempty" json:"consequences,omitempty"`
+	Causes                         *Causes                 `bson:"causes,omitempty" json:"causes,omitempty"`
+	FilteredChildrenIDs            []string                `bson:"filtered_children_ids,omitempty" json:"filtered_children,omitempty"`
+	AssignedInstructions           []InstructionWithAlarms `bson:"assigned_instructions,omitempty" json:"assigned_instructions,omitempty"`
+	IsAutoInstructionRunning       *bool                   `bson:"is_auto_instruction_running,omitempty" json:"is_auto_instruction_running,omitempty"`
+	IsAllAutoInstructionsCompleted *bool                   `bson:"is_all_auto_instructions_completed,omitempty" json:"is_all_auto_instructions_completed,omitempty"`
+	Links                          map[string]interface{}  `json:"links"`
+	ImpactState                    int64                   `bson:"impact_state" json:"impact_state"`
 }
 
 type MetaAlarmRule struct {
@@ -131,6 +136,7 @@ type AlarmStep struct {
 	Message   string          `bson:"m" json:"m"`
 	Value     types.CpsNumber `bson:"val" json:"val"`
 	Initiator string          `bson:"initiator" json:"initiator"`
+	Execution string          `bson:"exec,omitempty" json:"-"`
 }
 
 type AlarmTicket struct {

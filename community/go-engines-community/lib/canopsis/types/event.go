@@ -64,31 +64,42 @@ const (
 	EventTypeUncancel          = "uncancel"
 	EventTypeUser              = "user"
 
-	EventTypeMetaAlarm               = "metaalarm"
-	EventTypeMetaAlarmUpdated        = "metaalarmupdated"
-	EventTypePbhEnter                = "pbhenter"
-	EventTypePbhLeaveAndEnter        = "pbhleaveandenter"
-	EventTypePbhLeave                = "pbhleave"
-	EventTypePbhCreate               = "pbhcreate"
-	EventTypeResolveDone             = "resolve_done"
-	EventTypeResolveCancel           = "resolve_cancel"
-	EventTypeResolveClose            = "resolve_close"
-	EventTypeUpdateStatus            = "updatestatus"
-	EventManualMetaAlarmGroup        = "manual_metaalarm_group"
-	EventManualMetaAlarmUngroup      = "manual_metaalarm_ungroup"
-	EventManualMetaAlarmUpdate       = "manual_metaalarm_update"
-	EventTypeActivate                = "activate"
-	EventTypeRunDelayedScenario      = "run_delayed_scenario"
-	EventTypeInstructionStarted      = "instructionstarted"
-	EventTypeInstructionPaused       = "instructionpaused"
-	EventTypeInstructionResumed      = "instructionresumed"
-	EventTypeInstructionCompleted    = "instructioncompleted"
-	EventTypeInstructionAborted      = "instructionaborted"
-	EventTypeInstructionFailed       = "instructionfailed"
+	EventTypeMetaAlarm          = "metaalarm"
+	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
+	EventTypePbhEnter           = "pbhenter"
+	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
+	EventTypePbhLeave           = "pbhleave"
+	EventTypePbhCreate          = "pbhcreate"
+	EventTypeResolveDone        = "resolve_done"
+	EventTypeResolveCancel      = "resolve_cancel"
+	EventTypeResolveClose       = "resolve_close"
+	EventTypeUpdateStatus       = "updatestatus"
+	EventManualMetaAlarmGroup   = "manual_metaalarm_group"
+	EventManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
+	EventManualMetaAlarmUpdate  = "manual_metaalarm_update"
+	EventTypeActivate           = "activate"
+	EventTypeRunDelayedScenario = "run_delayed_scenario"
+
+	// Following event types are used to add manual instruction execution to alarm steps.
+	EventTypeInstructionStarted   = "instructionstarted"
+	EventTypeInstructionPaused    = "instructionpaused"
+	EventTypeInstructionResumed   = "instructionresumed"
+	EventTypeInstructionCompleted = "instructioncompleted"
+	EventTypeInstructionFailed    = "instructionfailed"
+	// EventTypeInstructionAborted is the same for manual and auto instructions.
+	EventTypeInstructionAborted = "instructionaborted"
+	// Following event types are used to add auto instruction execution to alarm steps.
+	EventTypeAutoInstructionStarted        = "autoinstructionstarted"
+	EventTypeAutoInstructionCompleted      = "autoinstructioncompleted"
+	EventTypeAutoInstructionFailed         = "autoinstructionfailed"
+	EventTypeAutoInstructionAlreadyRunning = "autoinstructionalreadyrunning"
+	// Following event types are used to add job execution to alarm steps. Events are
+	// the same for manual and auto instructions.
 	EventTypeInstructionJobStarted   = "instructionjobstarted"
 	EventTypeInstructionJobCompleted = "instructionjobcompleted"
 	EventTypeInstructionJobAborted   = "instructionjobaborted"
 	EventTypeInstructionJobFailed    = "instructionjobfailed"
+
 	// EventTypeRecomputeEntityService is used to recompute service context graph and state.
 	EventTypeRecomputeEntityService = "recomputeentityservice"
 	// EventTypeUpdateEntityService is used to update service cache in engines.
@@ -188,6 +199,9 @@ type Event struct {
 
 	// IdleRuleApply is used if event is emitted by idle rule.
 	IdleRuleApply string `bson:"idle_rule_apply,omitempty" json:"idle_rule_apply,omitempty"`
+
+	// Execution is used only for instruction events: EventTypeInstructionStarted, EventTypeInstructionCompleted, etc..
+	Execution string `bson:"execution,omitempty" json:"execution,omitempty"`
 }
 
 // ContextInformation regroup context values necessary for creating a new entity

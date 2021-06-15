@@ -22,7 +22,7 @@ func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 	defer ctrl.Finish()
 	mockPeriodicalWorker := mock_engine.NewMockPeriodicalWorker(ctrl)
 	finish := (timesToRun+1)*interval - time.Millisecond
-	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval)
+	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval).Times(timesToRun + 1)
 	mockPeriodicalWorker.EXPECT().Work(gomock.Any()).Times(timesToRun)
 
 	engine := libengine.New(nil, nil, zerolog.Logger{})

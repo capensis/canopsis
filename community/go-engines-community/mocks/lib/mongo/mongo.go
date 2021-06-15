@@ -12,6 +12,7 @@ import (
 	mongo0 "go.mongodb.org/mongo-driver/mongo"
 	options "go.mongodb.org/mongo-driver/mongo/options"
 	reflect "reflect"
+	time "time"
 )
 
 // MockDbCollection is a mock of DbCollection interface
@@ -416,6 +417,44 @@ func (m *MockDbClient) Collection(arg0 string) mongo.DbCollection {
 func (mr *MockDbClientMockRecorder) Collection(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Collection", reflect.TypeOf((*MockDbClient)(nil).Collection), arg0)
+}
+
+// Disconnect mocks base method
+func (m *MockDbClient) Disconnect(arg0 context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Disconnect", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Disconnect indicates an expected call of Disconnect
+func (mr *MockDbClientMockRecorder) Disconnect(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Disconnect", reflect.TypeOf((*MockDbClient)(nil).Disconnect), arg0)
+}
+
+// SetMinRetryTimeout mocks base method
+func (m *MockDbClient) SetMinRetryTimeout(arg0 time.Duration) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetMinRetryTimeout", arg0)
+}
+
+// SetMinRetryTimeout indicates an expected call of SetMinRetryTimeout
+func (mr *MockDbClientMockRecorder) SetMinRetryTimeout(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetMinRetryTimeout", reflect.TypeOf((*MockDbClient)(nil).SetMinRetryTimeout), arg0)
+}
+
+// SetRetryCount mocks base method
+func (m *MockDbClient) SetRetryCount(arg0 int) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetRetryCount", arg0)
+}
+
+// SetRetryCount indicates an expected call of SetRetryCount
+func (mr *MockDbClientMockRecorder) SetRetryCount(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetRetryCount", reflect.TypeOf((*MockDbClient)(nil).SetRetryCount), arg0)
 }
 
 // MockSingleResultHelper is a mock of SingleResultHelper interface

@@ -89,6 +89,17 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		logger,
 	)
 
+	remediationRpcClient := engine.NewRPCClient(
+		canopsis.AxeRPCConsumerName,
+		canopsis.RemediationRPCQueueServerName,
+		"",
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		nil,
+		amqpChannel,
+		logger,
+	)
+
 	engineAxe := engine.New(nil, nil, logger)
 	engineAxe.AddConsumer(engine.NewDefaultConsumer(
 		canopsis.AxeConsumerName,
@@ -114,6 +125,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 				logger,
 			),
 			StatsService:           m.getDefaultStatsService(logger, cfg),
+			RemediationRpcClient:   remediationRpcClient,
 			TimezoneConfigProvider: timezoneConfigProvider,
 			Encoder:                json.NewEncoder(),
 			Decoder:                json.NewDecoder(),
@@ -269,6 +281,10 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeInstructionCompleted, executor.NewInstructionExecutor())
 	container.Set(types.EventTypeInstructionAborted, executor.NewInstructionExecutor())
 	container.Set(types.EventTypeInstructionFailed, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeAutoInstructionStarted, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeAutoInstructionCompleted, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeAutoInstructionFailed, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeAutoInstructionAlreadyRunning, executor.NewInstructionExecutor())
 	container.Set(types.EventTypeInstructionJobStarted, executor.NewInstructionExecutor())
 	container.Set(types.EventTypeInstructionJobCompleted, executor.NewInstructionExecutor())
 	container.Set(types.EventTypeInstructionJobAborted, executor.NewInstructionExecutor())

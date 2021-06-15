@@ -13,12 +13,16 @@ import (
 )
 
 const (
-	ActionCreate = "create"
-	ActionUpdate = "update"
-	ActionDelete = "delete"
-	ActionExport = "export"
-	ActionImport = "import"
+	ActionCreate   = "create"
+	ActionUpdate   = "update"
+	ActionDelete   = "delete"
+	ActionApproval = "approval"
+	ActionExport   = "export"
+	ActionImport   = "import"
 )
+
+const ApprovalDecisionApprove = "approve"
+const ApprovalDecisionDismiss = "dismiss"
 
 const (
 	ValueTypeUser               = "user"
@@ -59,11 +63,15 @@ type logger struct {
 }
 
 type LogEntry struct {
-	Action    string    `bson:"action"`
-	ValueType string    `bson:"value_type"`
-	ValueID   string    `bson:"value_id"`
-	Author    string    `bson:"author"`
-	Time      time.Time `bson:"time"`
+	Action         string    `bson:"action"`
+	ValueType      string    `bson:"value_type"`
+	ValueID        string    `bson:"value_id"`
+	Author         string    `bson:"author"`
+	Time           time.Time `bson:"time"`
+	ValidationTime time.Time `bson:"validation_time,omitempty"`
+	ApproverUser   string    `bson:"approver_user,omitempty"`
+	ApproverRole   string    `bson:"approver_role,omitempty"`
+	Decision       string    `bson:"decision,omitempty"`
 }
 
 func NewActionLogger(dbClient mongo.DbClient, zLog zerolog.Logger) ActionLogger {
@@ -78,9 +86,11 @@ func (l *logger) Action(c *gin.Context, logEntry LogEntry) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	userID := c.MustGet(auth.UserKey)
+	if logEntry.Author == "" {
+		userID := c.MustGet(auth.UserKey)
+		logEntry.Author = userID.(string)
+	}
 
-	logEntry.Author = userID.(string)
 	logEntry.Time = time.Now()
 
 	l.zLog.Info().

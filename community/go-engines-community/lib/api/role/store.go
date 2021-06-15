@@ -61,6 +61,9 @@ func (s *store) Find(r ListRequest) (*AggregationResult, error) {
 		{"$match": filter},
 	}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
+	if r.Permission != "" {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("permissions._id"): r.Permission}})
+	}
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,

@@ -569,6 +569,21 @@ func (a *Alarm) PartialUpdateComment(timestamp CpsTime, author, output, role, in
 	return nil
 }
 
+func (a *Alarm) PartialUpdateAddInstructionStep(stepType string, timestamp CpsTime,
+	execution, author, msg, role, initiator string) error {
+	newStep := NewAlarmStep(stepType, timestamp, author, msg, role, initiator)
+	err := a.Value.Steps.Add(newStep)
+	if err != nil {
+		return err
+	}
+
+	newStep.Execution = execution
+
+	a.addUpdate("$push", bson.M{"v.steps": newStep})
+
+	return nil
+}
+
 func (a *Alarm) PartialUpdateCropSteps() {
 	if a.CropSteps() {
 		a.addUpdate("$set", bson.M{"v.steps": a.Value.Steps})

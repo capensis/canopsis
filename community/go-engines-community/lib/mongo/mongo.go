@@ -16,43 +16,49 @@ import (
 )
 
 const (
-	DB                                  = "canopsis"
-	ConfigurationMongoCollection        = "configuration"
-	RightsMongoCollection               = "default_rights"
-	SessionMongoCollection              = "session"
-	SessionStatsMongoCollection         = "default_session"
-	AlarmMongoCollection                = "periodical_alarm"
-	EntityMongoCollection               = "default_entities"
-	PbehaviorMongoCollection            = "pbehavior"
-	PbehaviorTypeMongoCollection        = "pbehavior_type"
-	PbehaviorReasonMongoCollection      = "pbehavior_reason"
-	PbehaviorExceptionMongoCollection   = "pbehavior_exception"
-	ScenarioMongoCollection             = "action_scenario"
-	FileMongoCollection                 = "files"
+	DB                                = "canopsis"
+	ConfigurationMongoCollection      = "configuration"
+	RightsMongoCollection             = "default_rights"
+	SessionMongoCollection            = "session"
+	SessionStatsMongoCollection       = "default_session"
+	AlarmMongoCollection              = "periodical_alarm"
+	EntityMongoCollection             = "default_entities"
+	PbehaviorMongoCollection          = "pbehavior"
+	PbehaviorTypeMongoCollection      = "pbehavior_type"
+	PbehaviorReasonMongoCollection    = "pbehavior_reason"
+	PbehaviorExceptionMongoCollection = "pbehavior_exception"
+	ScenarioMongoCollection           = "action_scenario"
+	FileMongoCollection               = "files"
+	MetaAlarmRulesMongoCollection     = "meta_alarm_rules"
+	HeartbeatMongoCollection          = "heartbeat"
+	IdleRuleMongoCollection           = "idle_rule"
+	ExportTaskMongoCollection         = "export_task"
+	ActionLogMongoCollection          = "action_log"
+	EventFilterRulesMongoCollection   = "eventfilter"
+	DynamicInfosRulesMongoCollection  = "dynamic_infos"
+	WebhookMongoCollection            = "webhooks"
+	EntityCategoryMongoCollection     = "entity_category"
+	ImportJobMongoCollection          = "default_importgraph"
+	JunitTestSuiteMongoCollection     = "junit_test_suite"
+	JunitTestCaseMediaMongoCollection = "junit_test_case_media"
+	ViewMongoCollection               = "views"
+	ViewGroupMongoCollection          = "viewgroups"
+	PlaylistMongoCollection           = "view_playlist"
+	StateSettingsMongoCollection      = "state_settings"
+	BroadcastMessageMongoCollection   = "broadcast_message"
+	AssociativeTableCollection        = "default_associativetable"
+	NotificationMongoCollection       = "notification"
+
+	// Remediation collections
 	InstructionMongoCollection          = "instruction"
 	InstructionExecutionMongoCollection = "instruction_execution"
 	InstructionRatingMongoCollection    = "instruction_rating"
 	JobConfigMongoCollection            = "job_config"
 	JobMongoCollection                  = "job"
 	JobHistoryMongoCollection           = "job_history"
-	MetaAlarmRulesMongoCollection       = "meta_alarm_rules"
-	HeartbeatMongoCollection            = "heartbeat"
-	IdleRuleMongoCollection             = "idle_rule"
-	ExportTaskMongoCollection           = "export_task"
-	ActionLogMongoCollection            = "action_log"
-	EventFilterRulesMongoCollection     = "eventfilter"
-	DynamicInfosRulesMongoCollection    = "dynamic_infos"
-	WebhookMongoCollection              = "webhooks"
-	EntityCategoryMongoCollection       = "entity_category"
-	ImportJobMongoCollection            = "default_importgraph"
-	JunitTestSuiteMongoCollection       = "junit_test_suite"
-	JunitTestCaseMediaMongoCollection   = "junit_test_case_media"
-	ViewMongoCollection                 = "views"
-	ViewGroupMongoCollection            = "viewgroups"
-	PlaylistMongoCollection             = "view_playlist"
-	StateSettingsMongoCollection        = "state_settings"
-	BroadcastMessageMongoCollection     = "broadcast_message"
-	AssociativeTableCollection          = "default_associativetable"
+	// Instruction statistics collections
+	InstructionWeekStatsMongoCollection = "instruction_week_stats"
+	InstructionModStatsMongoCollection  = "instruction_mod_stats"
 )
 
 type SingleResultHelper interface {
@@ -95,6 +101,9 @@ type DbCollection interface {
 // DbClient connected MongoDB client settings
 type DbClient interface {
 	Collection(string) DbCollection
+	Disconnect(ctx context.Context) error
+	SetRetryCount(int)
+	SetMinRetryTimeout(time.Duration)
 }
 
 type dbClient struct {
@@ -280,6 +289,7 @@ func (c *dbCollection) InsertOne(ctx context.Context, document interface{},
 	if err != nil {
 		return nil, err
 	}
+
 	return res.InsertedID, nil
 }
 
@@ -407,6 +417,18 @@ func (c *dbClient) Collection(name string) DbCollection {
 		retryCount:      c.RetryCount,
 		minRetryTimeout: c.MinRetryTimeout,
 	}
+}
+
+func (c *dbClient) Disconnect(ctx context.Context) error {
+	return c.Client.Disconnect(ctx)
+}
+
+func (c *dbClient) SetRetryCount(v int) {
+	c.RetryCount = v
+}
+
+func (c *dbClient) SetMinRetryTimeout(v time.Duration) {
+	c.MinRetryTimeout = v
 }
 
 // getURL parses URL value in EnvURL environment variable

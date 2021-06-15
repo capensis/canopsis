@@ -64,6 +64,10 @@ func (s *store) Find(r ListRequest) (*AggregationResult, error) {
 		{"$match": filter},
 	}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
+	if r.Permission != "" {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("role.rights.%s", r.Permission): bson.M{"$exists": true}}})
+	}
+
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
@@ -207,8 +211,9 @@ func getNestedObjectsPipeline() []bson.M {
 		{"$unwind": bson.M{"path": "$role", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
 			"role": bson.M{
-				"_id":  "$role._id",
-				"name": "$role.crecord_name",
+				"_id":    "$role._id",
+				"name":   "$role.crecord_name",
+				"rights": "$role.rights",
 			},
 		}},
 		{"$lookup": bson.M{

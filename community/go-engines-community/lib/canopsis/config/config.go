@@ -41,7 +41,11 @@ type SectionTimezone struct {
 }
 
 type SectionRemediation struct {
-	JobExecutorFetchTimeoutSeconds int64 `toml:"JobExecutorFetchTimeoutSeconds"`
+	HttpTimeout                    string `toml:"HttpTimeout"`
+	LaunchJobRetriesAmount         int    `toml:"LaunchJobRetriesAmount"`
+	LaunchJobRetriesInterval       string `toml:"LaunchJobRetriesInterval"`
+	WaitJobCompleteRetriesAmount   int    `toml:"WaitJobCompleteRetriesAmount"`
+	WaitJobCompleteRetriesInterval string `toml:"WaitJobCompleteInterval"`
 }
 
 type SectionImportCtx struct {
@@ -76,6 +80,6 @@ type CanopsisConf struct {
 type UserInterfaceConf struct {
 	IsAllowChangeSeverityToInfo bool `bson:"allow_change_severity_to_info"`
 	// MaxMatchedItems need to warn user when number of items that match patterns is above this value
-	MaxMatchedItems int `bson:"max_matched_items"`
-	CheckCountRequestTimeout    int  `bson:"check_count_request_timeout"`
+	MaxMatchedItems          int `bson:"max_matched_items"`
+	CheckCountRequestTimeout int `bson:"check_count_request_timeout"`
 }

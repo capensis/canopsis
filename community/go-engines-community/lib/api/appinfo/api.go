@@ -47,10 +47,6 @@ func (a *api) GetAppInfo(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	remediationConf, err := a.store.RetrieveRemediationConf()
-	if err != nil {
-		panic(err)
-	}
 	version, err := a.store.RetrieveCanopsisVersionConfig()
 	if err != nil {
 		panic(err)
@@ -59,7 +55,6 @@ func (a *api) GetAppInfo(c *gin.Context) {
 		UserInterfaceConf:   userInterface,
 		TimezoneConf:        tz,
 		CanopsisVersionConf: version,
-		RemediationConf:     remediationConf,
 	})
 }
 

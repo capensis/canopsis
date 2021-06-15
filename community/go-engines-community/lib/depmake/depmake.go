@@ -43,8 +43,13 @@ func (m DependencyMaker) DepMongoClient(cfg config.CanopsisConf) mongo.DbClient 
 func (m DependencyMaker) DepConfig() config.CanopsisConf {
 	dbClient, err := mongo.NewClient(0, 0)
 	if err != nil {
-		panic(err)
+		Panic("mongo session", err)
 	}
+
+	defer func() {
+		err := dbClient.Disconnect(context.Background())
+		Panic("mongo session disconnect", err)
+	}()
 
 	cfg, err := config.NewAdapter(dbClient).GetConfig()
 	if err != nil {

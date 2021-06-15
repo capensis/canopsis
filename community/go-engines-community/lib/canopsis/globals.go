@@ -65,4 +65,10 @@ const (
 	PeriodicalWaitTime              = time.Minute
 	JsonContentType                 = "application/json"
 	CanopsisEventsExchange          = "canopsis.events"
+
+	RemediationEngineName            = "engine-remediation"
+	RemediationConsumerName          = "remediation"
+	RemediationRPCConsumerName       = "remediation_rpc"
+	RemediationRPCQueueServerName    = "Engine_remediation_rpc_server"
+	RemediationRPCQueueServerJobName = "Engine_remediation_rpc_server_job"
 )

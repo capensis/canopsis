@@ -8,11 +8,16 @@ import (
 
 // Default config values
 const (
-	AlarmBaggotTime                    = 60 * time.Second
-	AlarmCancelAutosolveDelay          = 60 * 60 * time.Second
-	AlarmDefaultNameScheme             = "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
-	RemediationJobExecutorFetchTimeout = 30 * time.Second
-	UserInterfaceMaxPbhEntities        = 10000
+	AlarmBaggotTime             = 60 * time.Second
+	AlarmCancelAutosolveDelay   = 60 * 60 * time.Second
+	AlarmDefaultNameScheme      = "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
+	UserInterfaceMaxPbhEntities = 10000
+
+	RemediationHttpTimeout                    = 30 * time.Second
+	RemediationLaunchJobRetriesAmount         = 3
+	RemediationLaunchJobRetriesInterval       = 5 * time.Second
+	RemediationWaitJobCompleteRetriesAmount   = 12
+	RemediationWaitJobCompleteRetriesInterval = 5 * time.Second
 )
 
 func CreateDisplayNameTpl(text string) (*template.Template, error) {

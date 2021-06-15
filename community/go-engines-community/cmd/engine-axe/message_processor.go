@@ -18,6 +18,7 @@ type messageProcessor struct {
 	FeatureStatEvents        bool
 	EventProcessor           alarm.EventProcessor
 	StatsService             statsng.Service
+	RemediationRpcClient     engine.RPCClient
 	TimezoneConfigProvider   config.TimezoneConfigProvider
 	Encoder                  encoding.Encoder
 	Decoder                  encoding.Decoder
@@ -60,29 +61,12 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 	event.AlarmChange = &alarmChange
 
-	if p.FeatureStatEvents {
-		if event.Alarm == nil {
-			p.Logger.Warn().Msg("event.Alarm should not be nil")
-		} else if event.Entity == nil {
-			p.Logger.Warn().Msg("event.Entity should not be nil")
-		} else {
-			go func() {
-				err := p.StatsService.ProcessAlarmChange(
-					ctx,
-					*event.AlarmChange,
-					event.Timestamp,
-					*event.Alarm,
-					*event.Entity,
-					event.Author,
-					event.EventType,
-					p.TimezoneConfigProvider.Get().Location,
-				)
-				if err != nil {
-					p.logError(err, "cannot update stats", msg)
-				}
-			}()
-		}
+	err = p.handleRemediation(event, msg)
+	if err != nil {
+		return nil, err
 	}
+
+	p.handleStats(ctx, event, msg)
 
 	// Encode and publish the event to the next engine
 	var bevent []byte
@@ -95,6 +79,68 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	return bevent, nil
+}
+
+func (p *messageProcessor) handleStats(ctx context.Context, event types.Event, msg []byte) {
+	if !p.FeatureStatEvents {
+		return
+	}
+
+	if event.Alarm == nil {
+		p.Logger.Warn().Msg("event.Alarm should not be nil")
+		return
+	}
+
+	if event.Entity == nil {
+		p.Logger.Warn().Msg("event.Entity should not be nil")
+		return
+	}
+
+	go func() {
+		err := p.StatsService.ProcessAlarmChange(
+			ctx,
+			*event.AlarmChange,
+			event.Timestamp,
+			*event.Alarm,
+			*event.Entity,
+			event.Author,
+			event.EventType,
+			p.TimezoneConfigProvider.Get().Location,
+		)
+		if err != nil {
+			p.logError(err, "cannot update stats", msg)
+		}
+	}()
+}
+
+func (p *messageProcessor) handleRemediation(event types.Event, msg []byte) error {
+	if event.AlarmChange.Type != types.AlarmChangeTypeCreate &&
+		event.AlarmChange.Type != types.AlarmChangeTypeCreateAndPbhEnter {
+		return nil
+	}
+
+	body, err := p.Encoder.Encode(types.RPCRemediationEvent{
+		Alarm:  event.Alarm,
+		Entity: event.Entity,
+	})
+	if err != nil {
+		p.logError(err, "failed to encode remediation event", msg)
+		return nil
+	}
+
+	err = p.RemediationRpcClient.Call(engine.RPCMessage{
+		CorrelationID: event.Alarm.ID,
+		Body:          body,
+	})
+	if err != nil {
+		if engine.IsConnectionError(err) {
+			return err
+		}
+
+		p.logError(err, "failed to send rpc call to remediation", msg)
+	}
+
+	return nil
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {

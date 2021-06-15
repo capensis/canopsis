@@ -42,6 +42,7 @@ func Default(
 	enforcer libsecurity.Enforcer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	logger zerolog.Logger,
+	deferFunc DeferFunc,
 ) (API, error) {
 	// Retrieve config.
 	dbClient, err := mongo.NewClient(0, 0)
@@ -58,15 +59,9 @@ func Default(
 	if timezoneConfigProvider == nil {
 		timezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
 	}
-	// Connect to mongodb.
-	dbClient, err = mongo.NewClient(
-		cfg.Global.ReconnectRetries,
-		cfg.Global.GetReconnectTimeout(),
-	)
-	if err != nil {
-		logger.Err(err).Msg("cannot connect to mongodb")
-		return nil, err
-	}
+	// Set mongodb setting.
+	dbClient.SetRetryCount(cfg.Global.ReconnectRetries)
+	dbClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
 	// Connect to rmq.
 	amqpConn, err := amqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
 	if err != nil {
@@ -144,7 +139,43 @@ func Default(
 	exportExecutor := export.NewTaskExecutor(dbClient, logger)
 
 	// Create api.
-	api := New(addr, logger)
+	api := New(
+		addr,
+		func(ctx context.Context) error {
+			close(pbhComputeChan)
+			close(entityPublChan)
+
+			var resErr error
+			err := dbClient.Disconnect(ctx)
+			if err != nil && resErr == nil {
+				resErr = err
+			}
+			err = amqpConn.Close()
+			if err != nil && resErr == nil {
+				resErr = err
+			}
+
+			err = pbhRedisSession.Close()
+			if err != nil && resErr == nil {
+				resErr = err
+			}
+
+			err = engineRedisSession.Close()
+			if err != nil && resErr == nil {
+				resErr = err
+			}
+
+			if deferFunc != nil {
+				err := deferFunc(ctx)
+				if err != nil && resErr == nil {
+					resErr = err
+				}
+			}
+
+			return resErr
+		},
+		logger,
+	)
 	api.AddRouter(func(router gin.IRouter) {
 		corsConfig := cors.DefaultConfig()
 		corsConfig.AllowAllOrigins = true

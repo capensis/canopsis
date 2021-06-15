@@ -21,7 +21,6 @@ type Store interface {
 	RetrieveUserInterfaceConfig() (UserInterfaceConf, error)
 	RetrieveCanopsisVersionConfig() (CanopsisVersionConf, error)
 	RetrieveTimezoneConf() (TimezoneConf, error)
-	RetrieveRemediationConf() (RemediationConf, error)
 	UpdateUserInterfaceConfig(*UserInterfaceConf) error
 	DeleteUserInterfaceConfig() error
 }
@@ -111,19 +110,6 @@ func (s *store) RetrieveTimezoneConf() (TimezoneConf, error) {
 	}
 	tz.Timezone = conf.Timezone.Timezone
 	return tz, nil
-}
-
-func (s *store) RetrieveRemediationConf() (RemediationConf, error) {
-	var remConf RemediationConf
-	conf, err := s.configAdpt.GetConfig()
-	if err == mongodriver.ErrNoDocuments {
-		return remConf, nil
-	}
-	if err != nil {
-		return remConf, err
-	}
-	remConf.JobExecutorFetchTimeoutSeconds = conf.Remediation.JobExecutorFetchTimeoutSeconds
-	return remConf, nil
 }
 
 func (s *store) UpdateUserInterfaceConfig(model *UserInterfaceConf) error {

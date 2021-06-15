@@ -181,20 +181,14 @@ func (a *adapter) loadRoles(
 					if permBitmasksByName, ok := permBitmasksByType[objConf.Type]; ok {
 						for permName, bitmask := range permBitmasksByName {
 							if permConfig.Bitmask&bitmask == bitmask {
-								model[sec][ptype].Policy = append(
-									model[sec][ptype].Policy,
-									[]string{roleName, objConf.Name, permName},
-								)
+								model.AddPolicy(sec, ptype, []string{roleName, objConf.Name, permName})
 							}
 						}
 					} else {
 						return nil, fmt.Errorf("unknown config type \"%s\"", objConf.Type)
 					}
 				} else if permConfig.Bitmask&libmodel.PermissionBitmaskCan == libmodel.PermissionBitmaskCan {
-					model[sec][ptype].Policy = append(
-						model[sec][ptype].Policy,
-						[]string{roleName, objConf.Name, libmodel.PermissionCan},
-					)
+					model.AddPolicy(sec, ptype, []string{roleName, objConf.Name, libmodel.PermissionCan})
 				}
 			}
 		}
@@ -245,10 +239,7 @@ func (a *adapter) loadSubjects(
 		subjectID := line.ID
 
 		if roleName, ok := roleNamesByID[line.Role]; ok {
-			model[sec][ptype].Policy = append(
-				model[sec][ptype].Policy,
-				[]string{subjectID, roleName},
-			)
+			model.AddPolicy(sec, ptype, []string{subjectID, roleName})
 		}
 	}
 

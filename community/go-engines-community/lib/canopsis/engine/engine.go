@@ -119,7 +119,8 @@ func (e *engine) runPeriodicalWorker(
 		}
 	}()
 
-	ticker := time.NewTicker(worker.GetInterval())
+	interval := worker.GetInterval()
+	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
 	for {
@@ -130,6 +131,13 @@ func (e *engine) runPeriodicalWorker(
 				e.logger.Err(err).Msg("periodical process has been failed")
 				exitCh <- err
 				return
+			}
+
+			newInterval := worker.GetInterval()
+			if newInterval != interval {
+				ticker.Stop()
+				interval = newInterval
+				ticker = time.NewTicker(interval)
 			}
 		case <-ctx.Done():
 			return
