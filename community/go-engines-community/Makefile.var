@@ -1,13 +1,10 @@
 VERSION:=$(shell git for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1)
 BUILDDATE:=$(shell date "+%Y-%m-%dT%H:%M:%S%z")
-OS:=linux
-ARCH:=amd64
 
 LINKPKG="git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 GITCOMMIT:=$(shell git log -n 1 --format=oneline --abbrev-commit --pretty="%h")
 GITBRANCH:=${VERSION}
 LDFLAGS:=-ldflags "-X ${LINKPKG}.BuildGitCommit=${GITCOMMIT} -X ${LINKPKG}.BuildGitBranch=${GITBRANCH} -X ${LINKPKG}.BuildDate=${BUILDDATE}"
-CGO:=1
 TAG:=${VERSION}
 
 # Use the trimpath option so that the logs do not contain the absolute paths to

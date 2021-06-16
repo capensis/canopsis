@@ -5,7 +5,7 @@ BINARY:=${PROJECT}
 
 build:
 	@echo "Building ${PROJECT} project"
-	@env GOOS=$(OS) GOARCH=$(ARCH) CGO_ENABLED=$(CGO) GO111MODULE=on go build ${GO_BUILD_FLAGS} ${GO_BUILD_CUSTOM_FLAGS} -o ${OUTPUT_DIR}/${BINARY} ${LDFLAGS}
+	@env CGO_ENABLED=1 GO111MODULE=on go build ${GO_BUILD_FLAGS} ${GO_BUILD_CUSTOM_FLAGS} -o ${OUTPUT_DIR}/${BINARY} ${LDFLAGS}
 
 clean:
 	@echo "Cleaning ${PROJECT} project"
