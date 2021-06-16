@@ -8,6 +8,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
+const (
+	OnlyOpened = iota
+	OpenedAndRecentResolved
+	OnlyResolved
+)
+
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
@@ -28,8 +34,7 @@ type FilterRequest struct {
 	SearchBy                []string       `form:"active_columns[]" json:"active_columns[]"`
 	StartFrom               *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
 	StartTo                 *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
-	OnlyOpened              bool           `form:"opened" json:"opened"`
-	OnlyResolved            bool           `form:"resolved" json:"resolved"`
+	Opened                  *bool          `form:"opened" json:"opened"`
 	OnlyParents             bool           `form:"correlation" json:"correlation"`
 	OnlyManual              bool           `form:"manual" json:"manual"`
 	Category                string         `form:"category" json:"category"`
@@ -37,6 +42,18 @@ type FilterRequest struct {
 	ExcludeInstructionTypes []int          `form:"exclude_instruction_types[]" json:"exclude_instruction_types"`
 	IncludeInstructions     []string       `form:"include_instructions[]" json:"include_instructions"`
 	ExcludeInstructions     []string       `form:"exclude_instructions[]" json:"exclude_instructions"`
+}
+
+func (r FilterRequest) GetOpenedFilter() int {
+	if r.Opened == nil {
+		return OpenedAndRecentResolved
+	}
+
+	if *r.Opened {
+		return OnlyOpened
+	}
+
+	return OnlyResolved
 }
 
 type ExportRequest struct {

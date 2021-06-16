@@ -64,3 +64,35 @@ func (a *adapter) UpdateHistoryRemediation(ctx context.Context, t types.CpsTime)
 
 	return nil
 }
+
+func (a *adapter) UpdateHistoryAlarm(ctx context.Context, history AlarmHistory) error {
+	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
+		"$set": bson.M{
+			"history.alarm": history,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount == 0 {
+		return fmt.Errorf("cannot find configuration _id=%s", ID)
+	}
+
+	return nil
+}
+
+func (a *adapter) UpdateHistoryEntity(ctx context.Context, history EntityHistory) error {
+	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
+		"$set": bson.M{
+			"history.entity": history,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount == 0 {
+		return fmt.Errorf("cannot find configuration _id=%s", ID)
+	}
+
+	return nil
+}

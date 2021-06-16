@@ -22,6 +22,8 @@ type SectionAlarm struct {
 	OutputLength         int    `toml:"OutputLength"`
 	// DisableActionSnoozeDelayOnPbh ignores Pbh state to resolve snoozed with Action alarm while is True
 	DisableActionSnoozeDelayOnPbh bool `toml:"DisableActionSnoozeDelayOnPbh"`
+	// TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
+	TimeToKeepResolvedAlarms string `toml:"TimeToKeepResolvedAlarms"`
 }
 
 // SectionGlobal ...

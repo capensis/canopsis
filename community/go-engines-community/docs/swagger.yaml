@@ -294,8 +294,6 @@ definitions:
         type: boolean
       opened:
         type: boolean
-      resolved:
-        type: boolean
       search:
         type: string
       separator:
@@ -355,8 +353,6 @@ definitions:
       manual:
         type: boolean
       opened:
-        type: boolean
-      resolved:
         type: boolean
       search:
         type: string
@@ -420,8 +416,6 @@ definitions:
       page:
         type: integer
       paginate:
-        type: boolean
-      resolved:
         type: boolean
       search:
         type: string
@@ -724,8 +718,26 @@ definitions:
             type: array
         type: object
     type: object
+  datastorage.AlarmHistory:
+    properties:
+      archived_alarms:
+        type: integer
+      deleted_alarms:
+        type: integer
+      time:
+        type: integer
+    type: object
   datastorage.Config:
     properties:
+      alarm:
+        properties:
+          archive_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+        type: object
       junit:
         properties:
           delete_after:
@@ -751,12 +763,36 @@ definitions:
         $ref: '#/definitions/datastorage.History'
         type: object
     type: object
+  datastorage.EntityHistory:
+    properties:
+      archived_entities:
+        type: integer
+      deleted_entities:
+        type: integer
+      time:
+        type: integer
+    type: object
   datastorage.History:
     properties:
+      alarm:
+        $ref: '#/definitions/datastorage.AlarmHistory'
+        type: object
+      entity:
+        $ref: '#/definitions/datastorage.EntityHistory'
+        type: object
       junit:
         type: integer
       remediation:
         type: integer
+    type: object
+  entity.CleanRequest:
+    properties:
+      archive:
+        type: boolean
+      archive_dependencies:
+        type: boolean
+    required:
+    - archive
     type: object
   entity.Entity:
     properties:
@@ -3498,9 +3534,6 @@ paths:
         name: opened
         type: boolean
       - in: query
-        name: resolved
-        type: boolean
-      - in: query
         name: search
         type: string
       - in: query
@@ -3575,9 +3608,6 @@ paths:
         type: boolean
       - in: query
         name: opened
-        type: boolean
-      - in: query
-        name: resolved
         type: boolean
       - in: query
         name: search
@@ -3748,9 +3778,6 @@ paths:
         type: integer
       - in: query
         name: paginate
-        type: boolean
-      - in: query
-        name: resolved
         type: boolean
       - in: query
         name: search
@@ -4471,6 +4498,35 @@ paths:
       - ApiKeyAuth: []
       - BasicAuth: []
       summary: Find entities
+      tags:
+      - entities
+  /entities/clean:
+    post:
+      consumes:
+      - application/json
+      description: Clean disabled entities
+      operationId: entities-clean
+      parameters:
+      - in: query
+        name: archive
+        required: true
+        type: boolean
+      - in: query
+        name: archive_dependencies
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Clean disabled entities
       tags:
       - entities
   /entities/pbehaviors:

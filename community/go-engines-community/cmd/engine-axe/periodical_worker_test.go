@@ -21,6 +21,7 @@ func TestPeriodicalWorker_Work_GivenObtainedLock_ShouldDoWork(t *testing.T) {
 
 	mockLockClient := mock_redis.NewMockLockClient(ctrl)
 	mockAlarmService := mock_alarm.NewMockService(ctrl)
+	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockIdleAlarmService := mock_idlealarm.NewMockService(ctrl)
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
 	interval := time.Minute
@@ -28,6 +29,7 @@ func TestPeriodicalWorker_Work_GivenObtainedLock_ShouldDoWork(t *testing.T) {
 		PeriodicalInterval:  interval,
 		LockerClient:        mockLockClient,
 		AlarmService:        mockAlarmService,
+		AlarmAdapter:        mockAlarmAdapter,
 		IdleAlarmService:    mockIdleAlarmService,
 		AlarmConfigProvider: mockAlarmConfigProvider,
 	}
@@ -45,6 +47,7 @@ func TestPeriodicalWorker_Work_GivenObtainedLock_ShouldDoWork(t *testing.T) {
 		OutputLength:         10,
 	}
 	mockAlarmConfigProvider.EXPECT().Get().Return(alarmConfig)
+	mockAlarmAdapter.EXPECT().DeleteResolvedAlarms(gomock.Any(), gomock.Any())
 	mockAlarmService.EXPECT().ResolveAlarms(gomock.Any(), gomock.Eq(alarmConfig))
 	mockAlarmService.EXPECT().ResolveSnoozes(gomock.Any(), gomock.Eq(alarmConfig))
 	mockAlarmService.EXPECT().ResolveCancels(gomock.Any(), gomock.Eq(alarmConfig))
@@ -63,11 +66,14 @@ func TestPeriodicalWorker_Work_GivenNotObtainedLock_ShouldDoNotAnything(t *testi
 
 	mockLockClient := mock_redis.NewMockLockClient(ctrl)
 	mockService := mock_alarm.NewMockService(ctrl)
+	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
+
 	interval := time.Minute
 	worker := periodicalWorker{
 		PeriodicalInterval: interval,
 		LockerClient:       mockLockClient,
 		AlarmService:       mockService,
+		AlarmAdapter:       mockAlarmAdapter,
 	}
 
 	mockLockClient.EXPECT().

@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
@@ -107,6 +106,7 @@ func RegisterRoutes(
 	pbhService libpbehavior.Service,
 	pbhComputeChan chan<- libpbehavior.ComputeTask,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
+	entityCleanerTaskChan chan<- entity.CleanTask,
 	runInfoManager engine.RunInfoManager,
 	exportExecutor export.TaskExecutor,
 	actionLogger logger.ActionLogger,
@@ -223,7 +223,7 @@ func RegisterRoutes(
 			)
 		}
 
-		entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor)
+		entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -353,11 +353,17 @@ func RegisterRoutes(
 		}
 		entityRouter := protected.Group("/entities")
 		{
-			entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor)
+			entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
 			entityRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
 				entityAPI.List,
+			)
+
+			entityRouter.POST(
+				"/clean",
+				middleware.Authorize(authObjEntity, permDelete, enforcer),
+				entityAPI.Clean,
 			)
 
 			entityRouter.GET(

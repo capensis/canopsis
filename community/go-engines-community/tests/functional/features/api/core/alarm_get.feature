@@ -476,9 +476,9 @@ Feature: Get alarms
     }
     """
 
-  Scenario: given get resolved request should return only resolved alarms
+  Scenario: given get recent resolved request should return only recent resolved alarms and opened
     When I am admin
-    When I do GET /api/v4/alarms?search=test-alarm-get&resolved=true
+    When I do GET /api/v4/alarms?search=test-alarm-get
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -486,6 +486,36 @@ Feature: Get alarms
       "data": [
         {
           "_id": "test-alarm-get-4"
+        },
+        {
+          "_id": "test-alarm-get-3"
+        },
+        {
+          "_id": "test-alarm-get-2"
+        },
+        {
+          "_id": "test-alarm-get-1"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
+
+  Scenario: given get resolved request should return only resolved alarms
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-get&opened=false
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-get-resolved-collection"
         }
       ],
       "meta": {

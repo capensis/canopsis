@@ -114,6 +114,13 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		return alarmChange, err
 	}
 
+	if changeType == types.AlarmChangeTypeResolve {
+		err := s.adapter.CopyAlarmToResolvedCollection(ctx, *event.Alarm)
+		if err != nil {
+			return alarmChange, err
+		}
+	}
+
 	if event.IdleRuleApply != "" {
 		event.Entity.LastIdleRuleApply = event.IdleRuleApply
 		err := s.entityAdapter.UpdateIdleFields(ctx, event.Entity.ID, event.Entity.IdleSince,
@@ -637,6 +644,12 @@ func (s *eventProcessor) handleAutoResolveMetaAlarm(ctx context.Context, alarm t
 		alarm.Resolve(&types.CpsTime{
 			Time: time.Now(),
 		})
+
+		err := s.adapter.CopyAlarmToResolvedCollection(ctx, alarm)
+		if err != nil {
+			return err
+		}
+
 		return s.adapter.Update(alarm)
 	}
 

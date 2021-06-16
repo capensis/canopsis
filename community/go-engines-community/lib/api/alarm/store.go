@@ -40,7 +40,8 @@ type Store interface {
 }
 
 type store struct {
-	dbCollection                     mongo.DbCollection
+	mainDbCollection                 mongo.DbCollection
+	resolvedDbCollection             mongo.DbCollection
 	dbInstructionCollection          mongo.DbCollection
 	dbInstructionExecutionCollection mongo.DbCollection
 	fieldsAliases                    map[string]string
@@ -57,7 +58,8 @@ type store struct {
 
 func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
 	s := &store{
-		dbCollection:                     dbClient.Collection(mongo.AlarmMongoCollection),
+		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
+		resolvedDbCollection:             dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
 		dbInstructionCollection:          dbClient.Collection(mongo.InstructionMongoCollection),
 		dbInstructionExecutionCollection: dbClient.Collection(mongo.InstructionExecutionMongoCollection),
 		fieldsAliases: map[string]string{
@@ -127,6 +129,11 @@ func (s *store) insertDeferred(r FilterRequest, pipeline *[]bson.M, project []bs
 }
 
 func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error) {
+	collection := s.mainDbCollection
+	if r.GetOpenedFilter() == OnlyResolved {
+		collection = s.resolvedDbCollection
+	}
+
 	pipeline := make([]bson.M, 0)
 	s.addNestedObjects(r.FilterRequest, &pipeline)
 	err := s.addFilter(ctx, r.FilterRequest, &pipeline)
@@ -138,7 +145,7 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 	project := s.getProject(r.ListRequest, entitiesToProject)
 	project = s.insertDeferred(r.FilterRequest, &pipeline, project)
 	project = s.adjustSort(sort, project)
-	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+	cursor, err := collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
 		sort,
@@ -164,7 +171,7 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 		return nil, err
 	}
 
-	if r.WithInstructions {
+	if r.WithInstructions || r.GetOpenedFilter() != OnlyResolved {
 		err = s.fillAssignedInstructions(ctx, &result)
 		if err != nil {
 			return nil, err
@@ -184,6 +191,11 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 }
 
 func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
+	collection := s.mainDbCollection
+	if r.GetOpenedFilter() == OnlyResolved {
+		collection = s.resolvedDbCollection
+	}
+
 	pipeline := make([]bson.M, 0)
 	s.addNestedObjects(r, &pipeline)
 	err := s.addFilter(ctx, r, &pipeline)
@@ -244,7 +256,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 		bson.M{"$count": "count"},
 	)
 
-	cursor, err := s.dbCollection.Aggregate(
+	cursor, err := collection.Aggregate(
 		ctx, []bson.M{
 			{"$facet": bson.M{
 				"total":           totalPipeline,
@@ -290,6 +302,11 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 }
 
 func (s *store) fillChildren(ctx context.Context, r ListRequest, result *AggregationResult) error {
+	collection := s.mainDbCollection
+	if r.GetOpenedFilter() == OnlyResolved {
+		collection = s.resolvedDbCollection
+	}
+
 	childrenIds := make([]string, 0)
 	for i := range result.Data {
 		if result.Data[i].ChildrenIDs != nil {
@@ -316,7 +333,7 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	s.addNestedObjects(r.FilterRequest, &pipeline)
 	pipeline = append(pipeline, s.getSort(r))
 	pipeline = append(pipeline, s.getProject(r, false)...)
-	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
+	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return err
 	}
@@ -483,7 +500,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		{"$replaceRoot": bson.M{"newRoot": "$ids"}},
 	}
 
-	assignedInstructionsCursor, err := s.dbCollection.Aggregate(
+	assignedInstructionsCursor, err := s.mainDbCollection.Aggregate(
 		ctx,
 		pipeline,
 	)
@@ -666,8 +683,8 @@ func (s *store) addFilter(ctx context.Context, r FilterRequest, pipeline *[]bson
 	match := make([]bson.M, 0)
 	s.addStartFromFilter(r, &match)
 	s.addStartToFilter(r, &match)
-	s.addOnlyOpenedFilter(r, &match)
-	s.addOnlyResolvedFilter(r, &match)
+	s.addOpenedFilter(r, &match)
+
 	replacedKeys, err := s.addQueryFilter(r, &match)
 	if err != nil {
 		return err
@@ -723,20 +740,12 @@ func (s *store) addStartToFilter(r FilterRequest, match *[]bson.M) {
 	*match = append(*match, bson.M{"t": bson.M{"$lte": r.StartTo}})
 }
 
-func (s *store) addOnlyOpenedFilter(r FilterRequest, match *[]bson.M) {
-	if !r.OnlyOpened || r.OnlyResolved {
+func (s *store) addOpenedFilter(r FilterRequest, match *[]bson.M) {
+	if r.GetOpenedFilter() != OnlyOpened {
 		return
 	}
 
 	*match = append(*match, bson.M{"v.resolved": bson.M{"$exists": false}})
-}
-
-func (s *store) addOnlyResolvedFilter(r FilterRequest, match *[]bson.M) {
-	if !r.OnlyResolved || r.OnlyOpened {
-		return
-	}
-
-	*match = append(*match, bson.M{"v.resolved": bson.M{"$exists": true}})
 }
 
 func (s *store) addQueryFilter(r FilterRequest, match *[]bson.M) ([]string, error) {

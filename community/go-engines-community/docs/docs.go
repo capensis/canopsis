@@ -175,11 +175,6 @@ var doc = `{
                         "in": "query"
                     },
                     {
-                        "type": "boolean",
-                        "name": "resolved",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "search",
                         "in": "query"
@@ -299,11 +294,6 @@ var doc = `{
                     {
                         "type": "boolean",
                         "name": "opened",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "resolved",
                         "in": "query"
                     },
                     {
@@ -579,11 +569,6 @@ var doc = `{
                     {
                         "type": "boolean",
                         "name": "paginate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "resolved",
                         "in": "query"
                     },
                     {
@@ -1750,6 +1735,54 @@ var doc = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/entities/clean": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Clean disabled entities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Clean disabled entities",
+                "operationId": "entities-clean",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "name": "archive",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "archive_dependencies",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
                         }
                     }
                 }
@@ -7922,9 +7955,6 @@ var doc = `{
                 "opened": {
                     "type": "boolean"
                 },
-                "resolved": {
-                    "type": "boolean"
-                },
                 "search": {
                     "type": "string"
                 },
@@ -8014,9 +8044,6 @@ var doc = `{
                     "type": "boolean"
                 },
                 "opened": {
-                    "type": "boolean"
-                },
-                "resolved": {
                     "type": "boolean"
                 },
                 "search": {
@@ -8112,9 +8139,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "paginate": {
-                    "type": "boolean"
-                },
-                "resolved": {
                     "type": "boolean"
                 },
                 "search": {
@@ -8572,9 +8596,36 @@ var doc = `{
                 }
             }
         },
+        "datastorage.AlarmHistory": {
+            "type": "object",
+            "properties": {
+                "archived_alarms": {
+                    "type": "integer"
+                },
+                "deleted_alarms": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "integer"
+                }
+            }
+        },
         "datastorage.Config": {
             "type": "object",
             "properties": {
+                "alarm": {
+                    "type": "object",
+                    "properties": {
+                        "archive_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        },
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
                 "junit": {
                     "type": "object",
                     "properties": {
@@ -8612,14 +8663,50 @@ var doc = `{
                 }
             }
         },
+        "datastorage.EntityHistory": {
+            "type": "object",
+            "properties": {
+                "archived_entities": {
+                    "type": "integer"
+                },
+                "deleted_entities": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "integer"
+                }
+            }
+        },
         "datastorage.History": {
             "type": "object",
             "properties": {
+                "alarm": {
+                    "type": "object",
+                    "$ref": "#/definitions/datastorage.AlarmHistory"
+                },
+                "entity": {
+                    "type": "object",
+                    "$ref": "#/definitions/datastorage.EntityHistory"
+                },
                 "junit": {
                     "type": "integer"
                 },
                 "remediation": {
                     "type": "integer"
+                }
+            }
+        },
+        "entity.CleanRequest": {
+            "type": "object",
+            "required": [
+                "archive"
+            ],
+            "properties": {
+                "archive": {
+                    "type": "boolean"
+                },
+                "archive_dependencies": {
+                    "type": "boolean"
                 }
             }
         },

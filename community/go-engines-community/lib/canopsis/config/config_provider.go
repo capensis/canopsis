@@ -57,6 +57,7 @@ type AlarmConfig struct {
 	OutputLength          int
 	// DisableActionSnoozeDelayOnPbh ignores Pbh state to resolve snoozed with Action alarm while is True
 	DisableActionSnoozeDelayOnPbh bool
+	TimeToKeepResolvedAlarms      time.Duration
 }
 
 type TimezoneConfig struct {
@@ -94,6 +95,7 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 		EnableLastEventDate:           parseBool(cfg.Alarm.EnableLastEventDate, "EnableLastEventDate", sectionName, logger),
 		CancelAutosolveDelay:          parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
 		DisableActionSnoozeDelayOnPbh: parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
+		TimeToKeepResolvedAlarms:      parseTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, 0, "TimeToKeepResolvedAlarms", sectionName, logger),
 	}
 	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDefaultNameScheme, "DisplayNameScheme", sectionName, logger)
 
@@ -180,6 +182,13 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
 	if ok {
 		p.mx.Lock()
 		p.conf.StealthyInterval = d
+		p.mx.Unlock()
+	}
+
+	d, ok = parseUpdatedTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, p.conf.TimeToKeepResolvedAlarms, "TimeToKeepResolvedAlarms", sectionName, p.logger)
+	if ok {
+		p.mx.Lock()
+		p.conf.TimeToKeepResolvedAlarms = d
 		p.mx.Unlock()
 	}
 
