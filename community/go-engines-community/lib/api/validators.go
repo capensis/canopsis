@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -226,4 +227,6 @@ func RegisterValidators(client mongo.DbClient) {
 		idlerule.ValidateEditRequest(sl)
 	}, idlerule.EditRequest{})
 	v.RegisterStructValidation(idlerule.ValidateCountPatternRequest, idlerule.CountByPatternRequest{})
+
+	v.RegisterStructValidation(alarm.ValidateListRequest, alarm.ListRequest{})
 }

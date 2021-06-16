@@ -235,6 +235,11 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "multi_sort",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "name": "opened",
                         "in": "query"
@@ -471,6 +476,11 @@ var doc = `{
                     {
                         "type": "boolean",
                         "name": "manual",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "multi_sort",
                         "in": "query"
                     },
                     {
@@ -7672,6 +7682,9 @@ var doc = `{
                 "manual": {
                     "type": "boolean"
                 },
+                "multi_sort": {
+                    "type": "string"
+                },
                 "opened": {
                     "type": "boolean"
                 },
@@ -7818,6 +7831,9 @@ var doc = `{
                 },
                 "manual": {
                     "type": "boolean"
+                },
+                "multi_sort": {
+                    "type": "string"
                 },
                 "opened": {
                     "type": "boolean"

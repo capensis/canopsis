@@ -219,6 +219,11 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "multi_sort",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "name": "opened",
                         "in": "query"
@@ -455,6 +460,11 @@
                     {
                         "type": "boolean",
                         "name": "manual",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "multi_sort",
                         "in": "query"
                     },
                     {
@@ -7656,6 +7666,9 @@
                 "manual": {
                     "type": "boolean"
                 },
+                "multi_sort": {
+                    "type": "string"
+                },
                 "opened": {
                     "type": "boolean"
                 },
@@ -7802,6 +7815,9 @@
                 },
                 "manual": {
                     "type": "boolean"
+                },
+                "multi_sort": {
+                    "type": "string"
                 },
                 "opened": {
                     "type": "boolean"

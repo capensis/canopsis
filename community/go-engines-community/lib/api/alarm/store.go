@@ -3,6 +3,7 @@ package alarm
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -127,7 +128,12 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 	if err != nil {
 		return nil, err
 	}
-	sort := s.getSort(r.ListRequest)
+
+	sort, err := s.getSort(r.ListRequest)
+	if err != nil {
+		return nil, err
+	}
+
 	entitiesToProject := s.resetEntities(r.ListRequest, &pipeline)
 	project := s.getProject(r.ListRequest, entitiesToProject)
 	project = s.insertDeferred(r.FilterRequest, &pipeline, project)
@@ -302,7 +308,13 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 		{"v.resolved": bson.M{"$exists": false}},
 	}}})
 	s.addNestedObjects(r.FilterRequest, &pipeline)
-	pipeline = append(pipeline, s.getSort(r))
+
+	sort, err := s.getSort(r)
+	if err != nil {
+		return err
+	}
+
+	pipeline = append(pipeline, sort)
 	pipeline = append(pipeline, s.getProject(r, false)...)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -1026,7 +1038,11 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 	return pipeline
 }
 
-func (s *store) getSort(r ListRequest) bson.M {
+func (s *store) getSort(r ListRequest) (bson.M, error) {
+	if r.MultiSort != "" {
+		return s.getMultiSort(r.MultiSort)
+	}
+
 	sortBy := s.resolveAlias(r.SortBy)
 	sort := r.Sort
 
@@ -1041,7 +1057,38 @@ func (s *store) getSort(r ListRequest) bson.M {
 		}
 	}
 
-	return common.GetSortQuery(sortBy, sort)
+	return common.GetSortQuery(sortBy, sort), nil
+}
+
+func (s *store) getMultiSort(multiSort string) (bson.M, error) {
+	idExist := false
+
+	q := bson.D{}
+
+	multiSortData := strings.Split(multiSort, ",")
+	if len(multiSortData)%2 != 0 {
+		return nil, errors.New("length of multi_sort is not an even number")
+	}
+
+	for i := 0; i < len(multiSortData); i += 2 {
+		sortBy := s.resolveAlias(multiSortData[i])
+		sortDir := 1
+		if multiSortData[i+1] == common.SortDesc {
+			sortDir = -1
+		}
+
+		if sortBy == "_id" {
+			idExist = true
+		}
+
+		q = append(q, bson.E{Key: sortBy, Value: sortDir})
+	}
+
+	if !idExist {
+		q = append(q, bson.E{Key: "_id", Value: 1})
+	}
+
+	return bson.M{"$sort": q}, nil
 }
 
 func (s *store) getCausesPipeline() []bson.M {
