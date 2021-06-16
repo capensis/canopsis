@@ -954,8 +954,8 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 			"foreignField": "_id",
 			"as":           "entity",
 		}},
-		bson.M{"$match": bson.M{"$or": []bson.M{{"entity.enabled": true}, {"entity": bson.M{"$exists": false}}}}},
 		bson.M{"$unwind": bson.M{"path": "$entity", "preserveNullAndEmptyArrays": true}},
+		bson.M{"$match": bson.M{"$or": []bson.M{{"entity.enabled": true}, {"entity": bson.M{"$exists": false}}}}},
 		bson.M{"$addFields": bson.M{
 			"impact_state": bson.M{"$multiply": bson.A{"$v.state.val", "$entity.impact_level"}},
 		}},
