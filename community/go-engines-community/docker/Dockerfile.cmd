@@ -6,15 +6,10 @@ ARG PROJECT_NAME
 ARG BINARY_NAME
 ARG OUTPUT_DIR
 
-ENV PROJECT_DIR=${CPS_BASE_DIR}/cmd/${PROJECT_NAME}
-
-RUN mkdir -p ${PROJECT_DIR}
-WORKDIR $PROJECT_DIR
-
 RUN make build -f ../../Makefile.cmd 
-RUN cp ${CPS_BASE_DIR}/build/${BINARY_NAME} /${BINARY_NAME}
+RUN cp build/${BINARY_NAME} /${BINARY_NAME}
 
-FROM alpine:3.11.6
+FROM alpine:3.11.11
 
 ARG BINARY_NAME
 ARG PROJECT_NAME
@@ -22,12 +17,10 @@ ARG PROJECT_NAME
 RUN /usr/sbin/addgroup canopsis && /usr/sbin/adduser -G canopsis -D -H -s /sbin/nologin canopsis
 RUN mkdir -p /opt/canopsis/etc /opt/canopsis/share && chown canopsis:canopsis /opt/canopsis /opt/canopsis/etc /opt/canopsis/share
 
-RUN apk update && apk add tzdata
+RUN apk update && apk add --no-cache ca-certificates tzdata
 
 USER canopsis:canopsis
 
-ENV CPS_BASE_DIR=/go/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/
-ENV PROJECT_DIR=${CPS_BASE_DIR}/cmd/${PROJECT_NAME}
 ENV _BINARY_NAME=${BINARY_NAME}
 
 COPY cmd/canopsis-reconfigure/canopsis-core.toml.example /opt/canopsis/etc/canopsis.toml

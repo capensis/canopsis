@@ -1,8 +1,10 @@
-FROM golang:latest
+# sync with Makefile.var:GOLANG_IMAGE_TAG
+FROM golang:1.16.4
 
-ADD . /go/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community
+ENV GO111MODULE on
 
-WORKDIR /go/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community
+WORKDIR /go/src/canopsis
+COPY . .
 
 RUN \
     go get -u github.com/swaggo/swag/cmd/swag@v1.6.7 && \
