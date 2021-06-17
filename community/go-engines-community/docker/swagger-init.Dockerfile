@@ -3,7 +3,7 @@ FROM golang:1.16.4
 
 ENV GO111MODULE on
 
-WORKDIR /go/src/canopsis
+WORKDIR /go/src/community/go-engines-community
 COPY . .
 
 RUN \

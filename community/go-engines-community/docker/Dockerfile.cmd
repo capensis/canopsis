@@ -2,17 +2,15 @@ ARG BASE
 
 FROM ${BASE} AS build
 
-ARG PROJECT_NAME
 ARG BINARY_NAME
-ARG OUTPUT_DIR
 
-RUN make build -f ../../Makefile.cmd 
-RUN cp build/${BINARY_NAME} /${BINARY_NAME}
+WORKDIR cmd/${BINARY_NAME}
+
+RUN make build && cp "build/${BINARY_NAME}" "/${BINARY_NAME}"
 
 FROM alpine:3.11.11
 
 ARG BINARY_NAME
-ARG PROJECT_NAME
 
 RUN /usr/sbin/addgroup canopsis && /usr/sbin/adduser -G canopsis -D -H -s /sbin/nologin canopsis
 RUN mkdir -p /opt/canopsis/etc /opt/canopsis/share && chown canopsis:canopsis /opt/canopsis /opt/canopsis/etc /opt/canopsis/share

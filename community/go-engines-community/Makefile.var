@@ -1,10 +1,10 @@
-VERSION:=$(shell git for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1)
+VERSION:=$(shell git for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1 || echo "unknown Git branch/version")
 BUILDDATE:=$(shell date "+%Y-%m-%dT%H:%M:%S%z")
 
 LINKPKG="git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-GITCOMMIT:=$(shell git log -n 1 --format=oneline --abbrev-commit --pretty="%h")
+GITCOMMIT:=$(shell git log -n 1 --format=oneline --abbrev-commit --pretty="%h" || echo "unknown Git commit")
 GITBRANCH:=${VERSION}
-LDFLAGS:=-ldflags "-X ${LINKPKG}.BuildGitCommit=${GITCOMMIT} -X ${LINKPKG}.BuildGitBranch=${GITBRANCH} -X ${LINKPKG}.BuildDate=${BUILDDATE}"
+LDFLAGS:=-ldflags "-X '${LINKPKG}.BuildGitCommit=${GITCOMMIT}' -X '${LINKPKG}.BuildGitBranch=${GITBRANCH}' -X '${LINKPKG}.BuildDate=${BUILDDATE}'"
 TAG:=${VERSION}
 
 GOLANG_IMAGE_TAG:="1.16.4-alpine"
@@ -16,7 +16,7 @@ VENDOR_DIR:="vendor"
 
 GO_TEST_PARAM:= -cover
 
-PROJECT:=`basename ${CURDIR}`
+PROJECT:=$(shell basename "${CURDIR}")
 
 IMAGE_NAME:=$(PROJECT)
 

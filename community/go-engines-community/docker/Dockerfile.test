@@ -6,7 +6,7 @@ ENV GO111MODULE on
 
 RUN apk update && apk add make git curl gcc build-base g++
 
-WORKDIR /go/src/canopsis
+WORKDIR /go/src/community/go-engines-community
 COPY . . 
 COPY docker/go-test.sh /go-test.sh
 

@@ -6,7 +6,7 @@ ENV CGO_ENABLED=1
 
 RUN apk update && apk add make git gcc build-base g++
 
-WORKDIR /go/src/canopsis
+WORKDIR /go/src/community/go-engines-community
 COPY . .
 
 RUN rm -rf vendor && go mod download

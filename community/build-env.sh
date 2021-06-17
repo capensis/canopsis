@@ -24,6 +24,14 @@ export CANOPSIS_BUILD_NEXT=${CANOPSIS_BUILD_NEXT:="0"}
 export http_proxy=${http_proxy:=""}
 export https_proxy=${https_proxy:=""}
 
+export FORCE_COLOR=0
+export NO_COLOR=1
+export DOCKER_SCAN_SUGGEST=false
+export NPM_CONFIG_PROGRESS=false
+export NPM_CONFIG_SPIN=false
+export NPM_CONFIG_COLOR=false
+export BUILDKIT_PROGRESS=plain
+
 function env_recap() {
     echo "CANOPSIS_TAG: ${CANOPSIS_TAG}"
     echo "CANOPSIS_DISTRIBUTION: ${CANOPSIS_DISTRIBUTION}"

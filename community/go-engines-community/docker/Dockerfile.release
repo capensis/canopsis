@@ -6,7 +6,7 @@ ENV GO111MODULE on
 
 RUN apk update && apk add make git
 
-WORKDIR /go/src/canopsis
+WORKDIR /go/src/community/go-engines-community
 COPY . .
 
 ENV RELEASES_DIR /releases/
