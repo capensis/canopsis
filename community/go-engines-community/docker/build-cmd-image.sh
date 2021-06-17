@@ -14,14 +14,14 @@ docker build \
 	.
 
 echo "BUILD BIN IMAGE"
-[ "${BINARY}" = "canopsis-api" ] && sed -i -e 's/^#EXPOSE 8082/EXPOSE 8082/' docker/Dockerfile.cmd
+[ "${BINARY}" = "canopsis-api" ] && sed -i'.beforesed' -e 's/^#EXPOSE 8082/EXPOSE 8082/' docker/Dockerfile.cmd
 docker build \
 	-f docker/Dockerfile.cmd \
 	--build-arg "BASE=${build_base}" \
 	--build-arg "BINARY_NAME=${BINARY}" \
 	-t "${bin_base}" \
 	.
-[ "${BINARY}" = "canopsis-api" ] && sed -i -e 's/^EXPOSE 8082/#EXPOSE 8082/' docker/Dockerfile.cmd
+[ "${BINARY}" = "canopsis-api" ] && mv -f docker/Dockerfile.cmd.beforesed docker/Dockerfile.cmd
 
 if [ -f "cmd/${BINARY}/Dockerfile" ]; then
 	echo "BUILD FINAL IMAGE"
