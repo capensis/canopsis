@@ -7,11 +7,6 @@ GITBRANCH:=${VERSION}
 LDFLAGS:=-ldflags "-X ${LINKPKG}.BuildGitCommit=${GITCOMMIT} -X ${LINKPKG}.BuildGitBranch=${GITBRANCH} -X ${LINKPKG}.BuildDate=${BUILDDATE}"
 TAG:=${VERSION}
 
-# Use the trimpath option so that the logs do not contain the absolute paths to
-# the source files.
-# This makes the log lines shorter, and independent from the build machine.
-GO_BUILD_FLAGS:=-gcflags="all=-trimpath \"${GOPATH}/src\""
-
 GOLANG_IMAGE_TAG:="1.16.4-alpine"
 
 ROOT_DIR:=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
@@ -22,7 +17,6 @@ VENDOR_DIR:="vendor"
 DEP_MANAGER=go mod
 SKIP_DEPENDENCIES=false
 GO_TEST_PARAM:= -cover
-GO_BUILD_CUSTOM_FLAGS=
 
 PROJECT:=`basename ${CURDIR}`
 
