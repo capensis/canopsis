@@ -2,7 +2,6 @@ package pbehaviorexception
 
 import (
 	"context"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -10,41 +9,37 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
 type Store interface {
-	Insert(model *Exception) error
-	Find(r ListRequest) (*AggregationResult, error)
-	GetOneBy(filter bson.M) (*Exception, error)
-	Update(model *Exception) (bool, error)
-	Delete(id string) (bool, error)
-	IsLinked(id string) (bool, error)
+	Insert(ctx context.Context, model *Exception) error
+	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
+	GetOneBy(ctx context.Context, filter bson.M) (*Exception, error)
+	Update(ctx context.Context, model *Exception) (bool, error)
+	Delete(ctx context.Context, id string) (bool, error)
+	IsLinked(ctx context.Context, id string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
-		dbClient:            dbClient,
-		dbCollection:        dbClient.Collection(pbehavior.ExceptionCollectionName),
-		pbehaviorCollection: dbClient.Collection(pbehavior.PBehaviorCollectionName),
-		defaultSortBy:       "created",
+		dbCollection:          dbClient.Collection(pbehavior.ExceptionCollectionName),
+		pbehaviorDbCollection: dbClient.Collection(pbehavior.PBehaviorCollectionName),
+		defaultSearchByFields: []string{"_id", "name", "description"},
+		defaultSortBy:         "created",
 	}
 }
 
 type store struct {
-	dbClient            mongo.DbClient
-	dbCollection        mongo.DbCollection
-	pbehaviorCollection mongo.DbCollection
-	defaultSortBy       string
+	dbCollection          mongo.DbCollection
+	pbehaviorDbCollection mongo.DbCollection
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
-func (s *store) Insert(model *Exception) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Insert(ctx context.Context, model *Exception) error {
 	if model.ID == "" {
 		model.ID = utils.NewID()
 	}
@@ -74,23 +69,11 @@ func (s *store) Insert(model *Exception) error {
 	return nil
 }
 
-func (s *store) Find(r ListRequest) (*AggregationResult, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	var filter bson.M
-	if r.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", r.Search),
-			Options: "i",
-		}
-
-		filter = bson.M{"$or": []bson.M{
-			{"name": searchRegexp},
-			{"description": searchRegexp},
-		}}
-	} else {
-		filter = bson.M{}
+func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
+	pipeline := make([]bson.M, 0)
+	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
 	sortBy := r.SortBy
@@ -99,7 +82,6 @@ func (s *store) Find(r ListRequest) (*AggregationResult, error) {
 	}
 
 	sort := common.GetSortQuery(sortBy, r.Sort)
-	pipeline := []bson.M{{"$match": filter}}
 	project := getNestedObjectsPipeline()
 	project = append(project, sort)
 	if r.WithFlags {
@@ -129,10 +111,7 @@ func (s *store) Find(r ListRequest) (*AggregationResult, error) {
 	return &result, nil
 }
 
-func (s *store) GetOneBy(filter bson.M) (*Exception, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) GetOneBy(ctx context.Context, filter bson.M) (*Exception, error) {
 	pipeline := []bson.M{
 		{"$match": filter},
 	}
@@ -157,9 +136,7 @@ func (s *store) GetOneBy(filter bson.M) (*Exception, error) {
 	return nil, nil
 }
 
-func (s *store) Update(model *Exception) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) Update(ctx context.Context, model *Exception) (bool, error) {
 	exdates := make([]pbehavior.Exdate, len(model.Exdates))
 	for i := range model.Exdates {
 		exdates[i].Type = model.Exdates[i].Type.ID
@@ -192,11 +169,8 @@ func (s *store) Update(model *Exception) (bool, error) {
 	return true, nil
 }
 
-func (s *store) Delete(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	isLinked, err := s.IsLinked(id)
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	isLinked, err := s.IsLinked(ctx, id)
 	if err != nil {
 		return false, err
 	}
@@ -211,10 +185,8 @@ func (s *store) Delete(id string) (bool, error) {
 }
 
 // IsLinked checks if there is pbehavior with linked exception.
-func (s *store) IsLinked(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	res := s.pbehaviorCollection.FindOne(ctx, bson.M{"exceptions": id})
+func (s *store) IsLinked(ctx context.Context, id string) (bool, error) {
+	res := s.pbehaviorDbCollection.FindOne(ctx, bson.M{"exceptions": id})
 	if err := res.Err(); err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return false, nil

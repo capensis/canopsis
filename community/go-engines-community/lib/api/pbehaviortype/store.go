@@ -3,31 +3,31 @@ package pbehaviortype
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Store is an interface for pbhavior types storage
 type Store interface {
-	Insert(model *Type) error
-	Find(r ListRequest) (*AggregationResult, error)
-	GetOneBy(id string) (*Type, error)
-	Update(id string, model *Type) (bool, error)
-	Delete(id string) (bool, error)
+	Insert(ctx context.Context, model *Type) error
+	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
+	GetOneBy(ctx context.Context, id string) (*Type, error)
+	Update(ctx context.Context, id string, model *Type) (bool, error)
+	Delete(ctx context.Context, id string) (bool, error)
 }
 
 type store struct {
-	db            mongo.DbClient
-	defaultSortBy string
+	db                    mongo.DbClient
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
 // NewStore instantiates pbehavior type store.
@@ -45,8 +45,9 @@ func NewStore(db mongo.DbClient) Store {
 	}
 
 	return &store{
-		db:            db,
-		defaultSortBy: "name",
+		db:                    db,
+		defaultSearchByFields: []string{"_id", "name", "description", "type"},
+		defaultSortBy:         "name",
 	}
 }
 
@@ -55,30 +56,21 @@ func (s *store) getCollection() mongo.DbCollection {
 }
 
 // Find pbhavior types according to query.
-func (s *store) Find(r ListRequest) (pbhResult *AggregationResult, err error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes()
+func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *AggregationResult, err error) {
+	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes(ctx)
 	if err != nil {
 		return nil, err
 	}
 	collection := s.getCollection()
-	filter := bson.M{}
 
-	if r.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", r.Search),
-			Options: "i",
-		}
-
-		filter["$or"] = []bson.M{
-			{"name": searchRegexp},
-			{"description": searchRegexp},
-		}
-	}
+	pipeline := make([]bson.M, 0)
 	if r.OnlyDefault {
-		filter["priority"] = bson.M{"$in": prioritiesOfDefaultTypes}
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"priority": bson.M{"$in": prioritiesOfDefaultTypes}}})
+	}
+
+	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
 	sortBy := r.SortBy
@@ -90,14 +82,16 @@ func (s *store) Find(r ListRequest) (pbhResult *AggregationResult, err error) {
 	if r.WithFlags {
 		project = getEditableAndDeletablePipeline(prioritiesOfDefaultTypes)
 	}
-	pipeline := pagination.CreateAggregationPipeline(
-		r.Query,
-		[]bson.M{{"$match": filter}},
-		common.GetSortQuery(sortBy, r.Sort),
-		project,
+	cursor, err := collection.Aggregate(
+		ctx,
+		pagination.CreateAggregationPipeline(
+			r.Query,
+			pipeline,
+			common.GetSortQuery(sortBy, r.Sort),
+			project,
+		),
+		options.Aggregate().SetCollation(&options.Collation{Locale: "en"}),
 	)
-	cursor, err := collection.Aggregate(ctx, pipeline,
-		options.Aggregate().SetCollation(&options.Collation{Locale: "en"}))
 
 	if err != nil {
 		return nil, err
@@ -113,11 +107,8 @@ func (s *store) Find(r ListRequest) (pbhResult *AggregationResult, err error) {
 }
 
 // GetOneBy pbehavior type by id.
-func (s *store) GetOneBy(id string) (*Type, error) {
+func (s *store) GetOneBy(ctx context.Context, id string) (*Type, error) {
 	res := &Type{}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	collection := s.getCollection()
 
 	if err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(res); err != nil {
@@ -131,9 +122,7 @@ func (s *store) GetOneBy(id string) (*Type, error) {
 }
 
 // Create new pbehavior type.
-func (s *store) Insert(pt *Type) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) Insert(ctx context.Context, pt *Type) error {
 
 	if pt.ID == "" {
 		pt.ID = utils.NewID()
@@ -152,17 +141,14 @@ func (s *store) Insert(pt *Type) error {
 }
 
 // Update pbehavior type.
-func (s *store) Update(id string, pt *Type) (bool, error) {
-	isDefault, err := s.IsDefault(id)
+func (s *store) Update(ctx context.Context, id string, pt *Type) (bool, error) {
+	isDefault, err := s.IsDefault(ctx, id)
 	if err != nil {
 		return false, err
 	}
 	if isDefault {
 		return false, ErrDefaultType
 	}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	if pt.ID != id {
 		pt.ID = id
@@ -175,22 +161,22 @@ func (s *store) Update(id string, pt *Type) (bool, error) {
 }
 
 // Delete pbehavior type by id
-func (s *store) Delete(id string) (bool, error) {
-	ToPbehavior, err := s.isLinkedToPbehavior(id)
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	ToPbehavior, err := s.isLinkedToPbehavior(ctx, id)
 	if err != nil {
 		return false, err
 	}
 	if ToPbehavior {
 		return false, ErrLinkedTypeToPbehavior
 	}
-	isLinkedToException, err := s.isLinkedToException(id)
+	isLinkedToException, err := s.isLinkedToException(ctx, id)
 	if err != nil {
 		return false, err
 	}
 	if isLinkedToException {
 		return false, ErrLinkedTypeToException
 	}
-	isLinkedToAction, err := s.isLinkedToAction(id)
+	isLinkedToAction, err := s.isLinkedToAction(ctx, id)
 	if err != nil {
 		return false, err
 	}
@@ -198,7 +184,7 @@ func (s *store) Delete(id string) (bool, error) {
 		return false, ErrLinkedToActionType
 	}
 
-	isDefault, err := s.IsDefault(id)
+	isDefault, err := s.IsDefault(ctx, id)
 	if err != nil {
 		return false, err
 	}
@@ -206,17 +192,13 @@ func (s *store) Delete(id string) (bool, error) {
 		return false, ErrDefaultType
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	r, err := s.getCollection().DeleteOne(ctx, bson.M{"_id": id})
 
 	return r > 0, err
 }
 
 // isLinkedToPbehavior checks if there is pbehavior with linked type.
-func (s *store) isLinkedToPbehavior(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) isLinkedToPbehavior(ctx context.Context, id string) (bool, error) {
 	pbhCollection := s.db.Collection(pbehavior.PBehaviorCollectionName)
 	res := pbhCollection.FindOne(ctx, bson.M{"$or": []bson.M{
 		{"type_": id},
@@ -232,9 +214,7 @@ func (s *store) isLinkedToPbehavior(id string) (bool, error) {
 }
 
 // isLinkedToException checks if there is execption with linked type.
-func (s *store) isLinkedToException(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) isLinkedToException(ctx context.Context, id string) (bool, error) {
 	exceptionCollection := s.db.Collection(pbehavior.ExceptionCollectionName)
 	res := exceptionCollection.FindOne(ctx, bson.M{"exdates.type": id})
 	if err := res.Err(); err == nil {
@@ -247,9 +227,7 @@ func (s *store) isLinkedToException(id string) (bool, error) {
 }
 
 // isLinkedToAction checks if there is action with linked type.
-func (s *store) isLinkedToAction(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
 	actionCollection := s.db.Collection(mongo.ScenarioMongoCollection)
 	res := actionCollection.FindOne(ctx, bson.M{
 		"actions": bson.M{
@@ -268,14 +246,12 @@ func (s *store) isLinkedToAction(id string) (bool, error) {
 	return false, nil
 }
 
-func (s *store) IsDefault(id string) (bool, error) {
-	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes()
+func (s *store) IsDefault(ctx context.Context, id string) (bool, error) {
+	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes(ctx)
 	if err != nil {
 		return false, err
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	res := s.getCollection().FindOne(ctx, bson.M{"_id": id})
 	if err := res.Err(); err == nil {
 		var pbhType Type
@@ -296,9 +272,7 @@ func (s *store) IsDefault(id string) (bool, error) {
 	return false, nil
 }
 
-func (s *store) getPrioritiesOfDefaultTypes() ([]int, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int, error) {
 	collection := s.getCollection()
 	cursor, err := collection.Aggregate(ctx, []bson.M{
 		{"$group": bson.M{

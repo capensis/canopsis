@@ -2,7 +2,6 @@ package pbehaviorreason
 
 import (
 	"context"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -10,52 +9,39 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
 type Store interface {
-	Insert(model *Reason) error
-	Find(query ListRequest) (*AggregationResult, error)
-	GetOneBy(filter bson.M) (*Reason, error)
-	Update(model *Reason) (bool, error)
-	Delete(id string) (bool, error)
-	IsLinkedToPbehavior(id string) (bool, error)
+	Insert(ctx context.Context, model *Reason) error
+	Find(ctx context.Context, query ListRequest) (*AggregationResult, error)
+	GetOneBy(ctx context.Context, filter bson.M) (*Reason, error)
+	Update(ctx context.Context, model *Reason) (bool, error)
+	Delete(ctx context.Context, id string) (bool, error)
+	IsLinkedToPbehavior(ctx context.Context, id string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
-		dbClient:      dbClient,
-		defaultSortBy: "created",
+		dbClient:              dbClient,
+		defaultSearchByFields: []string{"_id", "name", "description"},
+		defaultSortBy:         "created",
 	}
 }
 
 type store struct {
-	dbClient      mongo.DbClient
-	defaultSortBy string
+	dbClient              mongo.DbClient
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
-func (s *store) Find(query ListRequest) (*AggregationResult, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	var filter bson.M
-
-	if query.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", query.Search),
-			Options: "i",
-		}
-
-		filter = bson.M{
-			"$or": []bson.M{
-				{"name": searchRegexp},
-			},
-		}
-	} else {
-		filter = bson.M{}
+func (s *store) Find(ctx context.Context, query ListRequest) (*AggregationResult, error) {
+	pipeline := make([]bson.M, 0)
+	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
 	sortBy := query.SortBy
@@ -69,14 +55,16 @@ func (s *store) Find(query ListRequest) (*AggregationResult, error) {
 	}
 
 	collection := s.dbClient.Collection(pbehavior.ReasonCollectionName)
-	pipeline := pagination.CreateAggregationPipeline(
-		query.Query,
-		[]bson.M{{"$match": filter}},
-		common.GetSortQuery(sortBy, query.Sort),
-		project,
+	cursor, err := collection.Aggregate(
+		ctx,
+		pagination.CreateAggregationPipeline(
+			query.Query,
+			pipeline,
+			common.GetSortQuery(sortBy, query.Sort),
+			project,
+		),
+		options.Aggregate().SetCollation(&options.Collation{Locale: "en"}),
 	)
-	cursor, err := collection.Aggregate(ctx, pipeline,
-		options.Aggregate().SetCollation(&options.Collation{Locale: "en"}))
 
 	if err != nil {
 		return nil, err
@@ -94,9 +82,7 @@ func (s *store) Find(query ListRequest) (*AggregationResult, error) {
 	return &result, nil
 }
 
-func (s *store) Insert(model *Reason) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) Insert(ctx context.Context, model *Reason) error {
 	doc := transformModelToDoc(model)
 
 	if model.ID == "" {
@@ -115,10 +101,7 @@ func (s *store) Insert(model *Reason) error {
 	return nil
 }
 
-func (s *store) GetOneBy(filter bson.M) (*Reason, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) GetOneBy(ctx context.Context, filter bson.M) (*Reason, error) {
 	var reason Reason
 
 	err := s.dbClient.Collection(pbehavior.ReasonCollectionName).FindOne(ctx, filter).Decode(&reason)
@@ -133,10 +116,7 @@ func (s *store) GetOneBy(filter bson.M) (*Reason, error) {
 	return &reason, nil
 }
 
-func (s *store) Update(model *Reason) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Update(ctx context.Context, model *Reason) (bool, error) {
 	doc := transformModelToDoc(model)
 	result, err := s.dbClient.Collection(pbehavior.ReasonCollectionName).UpdateOne(
 		ctx,
@@ -153,11 +133,8 @@ func (s *store) Update(model *Reason) (bool, error) {
 	return result.MatchedCount > 0, nil
 }
 
-func (s *store) Delete(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	isLinkedToPbehavior, err := s.IsLinkedToPbehavior(id)
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	isLinkedToPbehavior, err := s.IsLinkedToPbehavior(ctx, id)
 	if err != nil {
 		return false, err
 	}
@@ -166,7 +143,7 @@ func (s *store) Delete(id string) (bool, error) {
 		return false, ErrLinkedReasonToPbehavior
 	}
 
-	isLinkedToAction, err := s.isLinkedToAction(id)
+	isLinkedToAction, err := s.isLinkedToAction(ctx, id)
 	if err != nil {
 		return false, err
 	}
@@ -184,10 +161,7 @@ func (s *store) Delete(id string) (bool, error) {
 }
 
 // IsLinked checks if there is pbehavior with linked reason.
-func (s *store) IsLinkedToPbehavior(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) IsLinkedToPbehavior(ctx context.Context, id string) (bool, error) {
 	res := s.dbClient.
 		Collection(pbehavior.PBehaviorCollectionName).
 		FindOne(ctx, bson.M{"reason": id})
@@ -202,10 +176,7 @@ func (s *store) IsLinkedToPbehavior(id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) isLinkedToAction(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
 	res := s.dbClient.
 		Collection(mongo.ScenarioMongoCollection).
 		FindOne(ctx, bson.M{

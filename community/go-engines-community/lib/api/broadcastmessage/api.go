@@ -17,7 +17,7 @@ type API interface {
 }
 
 type api struct {
-	store Store
+	store        Store
 	actionLogger logger.ActionLogger
 }
 
@@ -41,7 +41,7 @@ func (a api) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.store.Insert(&request)
+	err := a.store.Insert(c.Request.Context(), &request)
 	if err != nil {
 		panic(err)
 	}
@@ -82,7 +82,7 @@ func (a api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(query)
+	aggregationResult, err := a.store.Find(c.Request.Context(), query)
 	if err != nil {
 		panic(err)
 	}
@@ -109,7 +109,7 @@ func (a api) List(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /broadcast-message/{id} [get]
 func (a api) Get(c *gin.Context) {
-	bm, err := a.store.GetById(c.Param("id"))
+	bm, err := a.store.GetById(c.Request.Context(), c.Param("id"))
 
 	if err == mongodriver.ErrNoDocuments || bm == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -133,13 +133,13 @@ func (a api) Get(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param id path string true "broadcast-message id"
-// @Param body body BroadcastMessage true "body"
+// @Param body body Payload true "body"
 // @Success 200 {object} BroadcastMessage
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /broadcast-message/{id} [put]
 func (a api) Update(c *gin.Context) {
-	var request BroadcastMessagePayload
+	var request Payload
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 
@@ -147,9 +147,9 @@ func (a api) Update(c *gin.Context) {
 	}
 
 	var data BroadcastMessage
-	data.BroadcastMessagePayload = request
+	data.Payload = request
 	data.ID = c.Param("id")
-	ok, _ := a.store.Update(&data)
+	ok, _ := a.store.Update(c.Request.Context(), &data)
 
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -180,7 +180,7 @@ func (a api) Update(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /broadcast-message/{id} [delete]
 func (a api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Param("id"))
+	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -210,7 +210,7 @@ func (a api) Delete(c *gin.Context) {
 // @Success 200 {object} []BroadcastMessage
 // @Router /active-broadcast-message [get]
 func (a api) GetActive(c *gin.Context) {
-	actives, err := a.store.GetActive()
+	actives, err := a.store.GetActive(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
@@ -222,7 +222,7 @@ func NewApi(
 	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
-		store: store,
+		store:        store,
 		actionLogger: actionLogger,
 	}
 }

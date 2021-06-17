@@ -897,7 +897,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/broadcastmessage.BroadcastMessage"
+                            "$ref": "#/definitions/broadcastmessage.Payload"
                         }
                     }
                 ],
@@ -1001,7 +1001,10 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/heartbeat.Response"
+                                }
                             }
                         }
                     },
@@ -1060,7 +1063,10 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/heartbeat.Response"
+                                }
                             }
                         }
                     },
@@ -1704,7 +1710,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pbehavior.PBehavior"
+                                "$ref": "#/definitions/pbehavior.Response"
                             }
                         }
                     },
@@ -2496,7 +2502,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "400": {
@@ -2540,7 +2546,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "404": {
@@ -2594,7 +2600,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "400": {
@@ -3029,7 +3035,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                                "$ref": "#/definitions/heartbeat.Response"
                                             }
                                         }
                                     }
@@ -3081,7 +3087,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                            "$ref": "#/definitions/heartbeat.Response"
                         }
                     },
                     "400": {
@@ -3125,7 +3131,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                            "$ref": "#/definitions/heartbeat.Response"
                         }
                     },
                     "404": {
@@ -3179,7 +3185,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                            "$ref": "#/definitions/heartbeat.Response"
                         }
                     },
                     "400": {
@@ -4782,7 +4788,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/pbehavior.PBehavior"
+                                                "$ref": "#/definitions/pbehavior.Response"
                                             }
                                         }
                                     }
@@ -4834,7 +4840,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "400": {
@@ -4933,7 +4939,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "404": {
@@ -4987,7 +4993,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "400": {
@@ -7907,6 +7913,9 @@ var doc = `{
                 "app_title": {
                     "type": "string"
                 },
+                "check_count_request_timeout": {
+                    "type": "integer"
+                },
                 "edition": {
                     "type": "string"
                 },
@@ -7924,6 +7933,9 @@ var doc = `{
                 },
                 "logo": {
                     "type": "string"
+                },
+                "max_matched_items": {
+                    "type": "integer"
                 },
                 "popup_timeout": {
                     "type": "object",
@@ -8017,6 +8029,9 @@ var doc = `{
                 "app_title": {
                     "type": "string"
                 },
+                "check_count_request_timeout": {
+                    "type": "integer"
+                },
                 "footer": {
                     "type": "string"
                 },
@@ -8028,6 +8043,9 @@ var doc = `{
                 },
                 "logo": {
                     "type": "string"
+                },
+                "max_matched_items": {
+                    "type": "integer"
                 },
                 "popup_timeout": {
                     "type": "object",
@@ -8074,6 +8092,35 @@ var doc = `{
                 "_id": {
                     "type": "string"
                 },
+                "color": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "end": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "broadcastmessage.Payload": {
+            "type": "object",
+            "required": [
+                "color",
+                "end",
+                "message",
+                "start"
+            ],
+            "properties": {
                 "color": {
                     "type": "string"
                 },
@@ -8685,7 +8732,7 @@ var doc = `{
                 }
             }
         },
-        "entityservice.EntityService": {
+        "entityservice.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -8950,7 +8997,7 @@ var doc = `{
                 }
             }
         },
-        "heartbeat.Heartbeat": {
+        "heartbeat.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -10058,7 +10105,7 @@ var doc = `{
                 }
             }
         },
-        "pbehavior.PBehavior": {
+        "pbehavior.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -10824,7 +10871,7 @@ var doc = `{
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.PBehavior"
+                        "$ref": "#/definitions/pbehavior.Response"
                     }
                 },
                 "resource": {
@@ -10945,7 +10992,7 @@ var doc = `{
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.PBehavior"
+                        "$ref": "#/definitions/pbehavior.Response"
                     }
                 },
                 "resource": {

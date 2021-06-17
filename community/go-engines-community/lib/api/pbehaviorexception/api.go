@@ -63,7 +63,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(r)
+	aggregationResult, err := a.store.Find(c.Request.Context(), r)
 	if err != nil {
 		panic(err)
 	}
@@ -98,7 +98,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	exception, err := a.transformer.TransformCreateRequestToModel(request)
+	exception, err := a.transformer.TransformCreateRequestToModel(c.Request.Context(), request)
 	if err != nil {
 		if err == ErrTypeNotExists {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -107,7 +107,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.store.Insert(exception)
+	err = a.store.Insert(c.Request.Context(), exception)
 	if err != nil {
 		panic(err)
 	}
@@ -149,7 +149,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	exception, err := a.transformer.TransformUpdateRequestToModel(request)
+	exception, err := a.transformer.TransformUpdateRequestToModel(c.Request.Context(), request)
 	if err != nil {
 		if err == ErrTypeNotExists {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -158,7 +158,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	ok, err := a.store.Update(exception)
+	ok, err := a.store.Update(c.Request.Context(), exception)
 	if err != nil {
 		panic(err)
 	}
@@ -168,7 +168,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	isLinked, err := a.store.IsLinked(exception.ID)
+	isLinked, err := a.store.IsLinked(c.Request.Context(), exception.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -202,7 +202,7 @@ func (a *api) Update(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /pbehavior-exceptions/{id} [get]
 func (a *api) Get(c *gin.Context) {
-	exception, err := a.store.GetOneBy(bson.M{"_id": c.Param("id")})
+	exception, err := a.store.GetOneBy(c.Request.Context(), bson.M{"_id": c.Param("id")})
 	if err != nil {
 		panic(err)
 	}
@@ -228,7 +228,7 @@ func (a *api) Get(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /pbehavior-exceptions/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Param("id"))
+	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 
 	if err != nil {
 		if err == ErrLinkedException {

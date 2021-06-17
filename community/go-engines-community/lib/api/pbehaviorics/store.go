@@ -10,7 +10,7 @@ import (
 )
 
 type Store interface {
-	GetOneBy(ctx context.Context, id string) (*pbehaviorapi.PBehavior, error)
+	GetOneBy(ctx context.Context, id string) (*pbehaviorapi.Response, error)
 	FindMaxPriority(ctx context.Context) (int64, error)
 	FindMinPriority(ctx context.Context) (int64, error)
 }
@@ -25,7 +25,7 @@ type store struct {
 	dbClient mongo.DbClient
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*pbehaviorapi.PBehavior, error) {
+func (s *store) GetOneBy(ctx context.Context, id string) (*pbehaviorapi.Response, error) {
 	return pbehaviorapi.NewStore(s.dbClient, nil, nil, nil, nil).GetOneBy(ctx, bson.M{"_id": id})
 }
 
