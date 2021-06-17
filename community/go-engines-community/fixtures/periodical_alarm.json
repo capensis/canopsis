@@ -4607,5 +4607,81 @@
       "creation_date": 1618279310,
       "resource": "test-resource-to-stats-executions-get-8"
     }
+  },
+  {
+    "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-1",
+    "d": "test-resource-to-stats-executions-get-with-resolved-alarms-1/test-component-to-stats-executions-get-with-resolved-alarms-1",
+    "t": 1596942720,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "",
+        "m": "",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        }
+      ],
+      "component": "test-component-to-stats-executions-get-with-resolved-alarms-1",
+      "connector": "test-connector-to-stats-executions-get-with-resolved-alarms-1",
+      "connector_name": "test-connector-name-to-stats-executions-get-with-resolved-alarms-1",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "",
+      "output": "",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-resource-to-stats-executions-get-with-resolved-alarms-1",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
   }
 ]
