@@ -1,6 +1,6 @@
 include Makefile.var
 
-ARCHIVE_NAME:=canopsis-${TAG}-${OS}-${ARCH}.tar.gz
+ARCHIVE_NAME:=canopsis-${TAG}-go-engines-community.tar.gz
 ARCHIVE:=${RELEASES_DIR}/${ARCHIVE_NAME}
 CHECKSUMS:=checksums.txt
 SUBDIRS:=$(dir $(shell ls -d cmd/*/))
