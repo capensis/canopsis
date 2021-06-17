@@ -9,7 +9,7 @@ virtualenv --no-download --system-site-packages ${CPS_HOME}/venv-ansible
 source ${CPS_HOME}/venv-ansible/bin/activate
 
 pip install -U setuptools "pip==20.1.1"
-pip install -U wheel
+pip --no-color install -U wheel
 
 # jmespath is required by ansible role repository adder maat
 # pymongo 3.5.0 is required by ansible 2.4.x module mongodb
@@ -41,6 +41,6 @@ requests==2.24.0
 six==1.15.0
 urllib3==1.25.11
 EOF
-pip install --no-use-pep517 -U -r ./tmprequirements.txt
+pip --no-color install --no-use-pep517 -U -r ./tmprequirements.txt
 
 rm -rf /tmp/pipbuild ~/.cache tmprequirements.txt

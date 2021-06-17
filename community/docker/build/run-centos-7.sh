@@ -6,21 +6,21 @@ set -e
 set -o pipefail
 set -u
 
-yum clean metadata
-yum clean all
+yum --color=never clean metadata
+yum --color=never clean all
 rm -rf /var/cache/yum/*
 
 echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 rm -f /etc/localtime
 ln -s /usr/share/zoneinfo/UTC /etc/localtime
 
-yum makecache
-yum install -y epel-release
-yum makecache
+yum --color=never makecache
+yum --color=never install -y epel-release
+yum --color=never makecache
 
-yum update -y
+yum --color=never update -y
 
-yum install -y \
+yum --color=never install -y \
     bzip2 \
     bind-utils \
     curl \
