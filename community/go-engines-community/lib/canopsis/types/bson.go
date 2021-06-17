@@ -1,9 +1,9 @@
-package utils
+package types
 
 import (
 	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"text/template"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -298,7 +298,7 @@ type OptionalRegexp struct {
 
 	// Value contains the value of the regular expression. It should only be
 	// taken into account if Set is true.
-	Value RegexExpression
+	Value utils.RegexExpression
 }
 
 func (r *OptionalRegexp) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
@@ -309,7 +309,7 @@ func (r *OptionalRegexp) UnmarshalBSONValue(valueType bsontype.Type, b []byte) e
 			return errors.New("unable to parse regular expression")
 		}
 
-		if re, err := NewRegexExpression(value); err != nil {
+		if re, err := utils.NewRegexExpression(value); err != nil {
 			return err
 		} else {
 			r.Value = re
@@ -361,7 +361,7 @@ func (t *OptionalTemplate) UnmarshalBSONValue(valueType bsontype.Type, b []byte)
 			return errors.New("unable to parse template")
 		}
 
-		t.Value, err = template.New(value).Funcs(types.GetTemplateFunc()).Parse(value)
+		t.Value, err = template.New(value).Funcs(GetTemplateFunc()).Parse(value)
 		if err != nil {
 			return fmt.Errorf("unable to parse template: %v", err)
 		}
