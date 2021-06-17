@@ -14,8 +14,6 @@ OUTPUT_DIR:=${ROOT_DIR}/build
 RELEASES_DIR?=${ROOT_DIR}/releases
 VENDOR_DIR:="vendor"
 
-DEP_MANAGER=go mod
-SKIP_DEPENDENCIES=false
 GO_TEST_PARAM:= -cover
 
 PROJECT:=`basename ${CURDIR}`

@@ -6,13 +6,8 @@ ARG PROJECT_NAME
 ARG BINARY_NAME
 ARG OUTPUT_DIR
 
-ENV PROJECT_DIR=${CPS_BASE_DIR}/cmd/${PROJECT_NAME}
-
-RUN mkdir -p ${PROJECT_DIR}
-WORKDIR $PROJECT_DIR
-
 RUN make build -f ../../Makefile.cmd 
-RUN cp ${CPS_BASE_DIR}/build/${BINARY_NAME} /${BINARY_NAME}
+RUN cp build/${BINARY_NAME} /${BINARY_NAME}
 
 FROM alpine:3.11.6
 
@@ -26,8 +21,6 @@ RUN apk update && apk add tzdata
 
 USER canopsis:canopsis
 
-ENV CPS_BASE_DIR=${GOPATH}/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/
-ENV PROJECT_DIR=${CPS_BASE_DIR}/cmd/${PROJECT_NAME}
 ENV _BINARY_NAME=${BINARY_NAME}
 
 COPY cmd/canopsis-reconfigure/canopsis-core.toml.example /opt/canopsis/etc/canopsis.toml

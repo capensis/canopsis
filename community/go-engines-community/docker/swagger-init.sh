@@ -3,7 +3,7 @@ set -e
 set -o pipefail
 
 build_image="swagger-init"
-build_dir="${GOPATH:-/go}/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/docs"
+build_dir="/go/src/canopsis/docs"
 
 docker build -f docker/swagger-init.Dockerfile -t "$build_image" . && \
     docker run --rm -v "$(pwd)/docs:$build_dir" "$build_image" && \

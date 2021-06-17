@@ -2,15 +2,11 @@ ARG GOLANG_IMAGE_TAG
 
 FROM golang:${GOLANG_IMAGE_TAG}
 
-ENV GOPATH=/go
 ENV CGO_ENABLED=1
-ENV GOOS=linux
-ENV CPS_BASE_DIR=${GOPATH}/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/
 
 RUN apk update && apk add make git gcc build-base g++
 
-COPY . ${CPS_BASE_DIR}
-
-WORKDIR ${CPS_BASE_DIR}
+WORKDIR /go/src/canopsis
+COPY . .
 
 RUN rm -rf vendor && go mod download
