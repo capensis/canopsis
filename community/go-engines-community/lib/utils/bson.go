@@ -3,6 +3,7 @@ package utils
 import (
 	"errors"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"text/template"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -360,7 +361,7 @@ func (t *OptionalTemplate) UnmarshalBSONValue(valueType bsontype.Type, b []byte)
 			return errors.New("unable to parse template")
 		}
 
-		t.Value, err = template.New(value).Parse(value)
+		t.Value, err = template.New(value).Funcs(types.GetTemplateFunc()).Parse(value)
 		if err != nil {
 			return fmt.Errorf("unable to parse template: %v", err)
 		}
