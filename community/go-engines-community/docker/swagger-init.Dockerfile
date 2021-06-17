@@ -1,8 +1,9 @@
-FROM golang:latest
+# sync with Makefile.var:GOLANG_IMAGE_TAG
+FROM golang:1.16.4
 
-ADD . /go/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community
+ADD . ${GOPATH}/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community
 
-WORKDIR /go/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community
+WORKDIR ${GOPATH}/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community
 
 RUN \
     go get -u github.com/swaggo/swag/cmd/swag@v1.6.7 && \
