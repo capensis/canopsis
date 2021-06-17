@@ -6,8 +6,9 @@ ARG PROJECT_NAME
 ARG BINARY_NAME
 ARG OUTPUT_DIR
 
-RUN make build -f ../../Makefile.cmd 
-RUN cp build/${BINARY_NAME} /${BINARY_NAME}
+WORKDIR cmd/${BINARY_NAME}
+
+RUN make build && cp "build/${BINARY_NAME}" "/${BINARY_NAME}"
 
 FROM alpine:3.11.11
 
