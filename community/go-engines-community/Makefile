@@ -22,10 +22,10 @@ endif
 release: clean
 release: build
 	@echo "Building $(ARCHIVE_NAME) for release"
-	@mkdir -p ${RELEASES_DIR}
-	@cd ${BUILD_OUTPUT_DIR}
-	@tar -czf $(ARCHIVE) -C ${BUILD_OUTPUT_DIR} --transform "s/^\./${BUILD_DIRNAME}/" .
-	@rm -rf ${BUILD_OUTPUT_DIR} && mkdir -p ${BUILD_OUTPUT_DIR}
+	mkdir -p ${RELEASES_DIR}
+	cd ${BUILD_OUTPUT_DIR}
+	tar -czf $(ARCHIVE) -C ${BUILD_OUTPUT_DIR} --transform "s/^\./${BUILD_DIRNAME}/" .
+	rm -rf ${BUILD_OUTPUT_DIR} && mkdir -p ${BUILD_OUTPUT_DIR}
 	@echo "Build finished. Release file: $(ARCHIVE)"
 
 clean: RULE = clean
@@ -58,7 +58,7 @@ docker_images: PARAM:=CLEAN_UP=false
 docker_images: .iter_project
 
 docker_test_image:
-	@docker build \
+	docker build \
 		-f docker/Dockerfile.test \
 		--build-arg GOLANG_IMAGE_TAG=${GOLANG_IMAGE_TAG} \
 		-t canopsis/go-test:latest \
@@ -66,12 +66,12 @@ docker_test_image:
 
 docker_release:
 	@cd ${ROOT_DIR}
-	@docker build \
+	docker build \
 		-f docker/Dockerfile.release \
 		--build-arg GOLANG_IMAGE_TAG=${GOLANG_IMAGE_TAG} \
 		-t canopsis/go-release:${VERSION} \
 		.
-	@docker run \
+	docker run \
 		-v ${ROOT_DIR}/releases/docker/:/releases/ \
 		canopsis/go-release:${VERSION} \
 		make release
