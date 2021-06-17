@@ -1,4 +1,4 @@
-FROM node:10.6-alpine AS build
+FROM node:10.24.1-alpine AS build
 
 WORKDIR /canopsis-next
 COPY sources/webcore/src/canopsis-next /canopsis-next

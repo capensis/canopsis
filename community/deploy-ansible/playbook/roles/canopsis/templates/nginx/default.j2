@@ -51,9 +51,9 @@ server {
 	# Redirect API calls to canopsis-api. /backend depends on the baseURL
 	# setting of request.js.
 	location ~ ^/backend(/.*) {
-        set $api_uri $1;
-        include /etc/nginx/cors.inc;
-        proxy_pass $canopsis_api_url$api_uri$is_args$args;
+		set $api_uri $1;
+		include /etc/nginx/cors.inc;
+		proxy_pass $canopsis_api_url$api_uri$is_args$args;
 		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 		proxy_read_timeout 90s;
