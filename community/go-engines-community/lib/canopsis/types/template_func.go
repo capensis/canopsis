@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-func getTemplateFunc() template.FuncMap {
+func GetTemplateFunc() template.FuncMap {
 	return template.FuncMap{
 		// json will convert an item to an JSON-compatible element,
 		// ie ints will be returned as integers and strings returned as strings with quotes
@@ -78,6 +78,23 @@ func getTemplateFunc() template.FuncMap {
 				return re.ReplaceAllString(s, new)
 			}
 			log.Printf("replace : %+v is not a string", v)
+			return ""
+		},
+		// upper string
+		"uppercase": func(v interface{}) string {
+			if s, ok := v.(string); ok {
+				return strings.ToUpper(s)
+			}
+			log.Printf("trim : %+v is not a string", v)
+			return ""
+		},
+
+		// upper string
+		"lowercase": func(v interface{}) string {
+			if s, ok := v.(string); ok {
+				return strings.ToLower(s)
+			}
+			log.Printf("trim : %+v is not a string", v)
 			return ""
 		},
 	}
