@@ -4,7 +4,8 @@ function genID() {
 
 db.pbehavior_type.insertMany([
     {
-        "_id": genID(),
+        "_id": "default_inactive",
+        "loader_id": "default_inactive",
         "name": "Default inactive",
         "description": "Default inactive",
         "icon_name": "brightness_3",
@@ -12,7 +13,8 @@ db.pbehavior_type.insertMany([
         "type": "inactive"
     },
     {
-        "_id": genID(),
+        "_id": "default_active",
+        "loader_id": "default_active",
         "name": "Default active",
         "description": "Default active",
         "icon_name": "",
@@ -20,7 +22,8 @@ db.pbehavior_type.insertMany([
         "type": "active"
     },
     {
-        "_id": genID(),
+        "_id": "default_maintenance",
+        "loader_id": "default_maintenance",
         "name": "Default maintenance",
         "description": "Default maintenance",
         "icon_name": "build",
@@ -28,7 +31,8 @@ db.pbehavior_type.insertMany([
         "type": "maintenance"
     },
     {
-        "_id": genID(),
+        "_id": "default_pause",
+        "loader_id": "default_pause",
         "name": "Default pause",
         "description": "Default pause",
         "icon_name": "pause",
