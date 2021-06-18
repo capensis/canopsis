@@ -35,7 +35,6 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.2.1
-	github.com/influxdata/influxdb v1.8.3
 	github.com/json-iterator/go v1.1.10
 	github.com/mailru/easyjson v0.7.1 // indirect
 	github.com/mitchellh/mapstructure v1.4.1

@@ -6,11 +6,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/influx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	redismod "github.com/go-redis/redis/v8"
-	influxmod "github.com/influxdata/influxdb/client/v2"
 	"github.com/rs/zerolog"
 	amqpmod "github.com/streadway/amqp"
 )
@@ -96,13 +94,6 @@ func (m DependencyMaker) DepRedisSession(ctx context.Context, db int, logger zer
 	s, err := redis.NewSession(ctx, db, logger, cfg.Global.ReconnectRetries,
 		cfg.Global.GetReconnectTimeout())
 	Panic("redis", err)
-	return s
-}
-
-// DepInfluxSession opens an influx session.
-func (m DependencyMaker) DepInfluxSession() influxmod.Client {
-	s, err := influx.NewSession()
-	Panic("influx", err)
 	return s
 }
 
