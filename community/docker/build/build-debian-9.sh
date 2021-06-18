@@ -6,8 +6,8 @@ set -e
 set -o pipefail
 set -u
 
-apt-get update
-apt-get -y --no-install-recommends install \
+apt-get -q -o=Dpkg::Use-Pty=0 update
+apt-get -q -o=Dpkg::Use-Pty=0 -y --no-install-recommends install \
     build-essential \
     curl \
     libcurl4-openssl-dev \
@@ -30,4 +30,4 @@ apt-get -y --no-install-recommends install \
     net-tools \
     procps
 
-apt-get clean
+apt-get -q -o=Dpkg::Use-Pty=0 clean
