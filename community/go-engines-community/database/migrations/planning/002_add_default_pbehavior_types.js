@@ -1,7 +1,3 @@
-function genID() {
-    return UUID().toString().split('"')[1]
-}
-
 db.pbehavior_type.insertMany([
     {
         "_id": "default_inactive",
