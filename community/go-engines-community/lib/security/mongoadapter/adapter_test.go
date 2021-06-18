@@ -93,6 +93,7 @@ func TestAdapter_LoadPolicy_GivenRole_ShouldAddCRUDPermissionsToRole(t *testing.
 
 func TestAdapter_LoadPolicy_GivenRole_ShouldAddRWPermissionsToRole(t *testing.T) {
 	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 	mockObjCursor := createMockCursor(ctrl, []libmodel.Rbac{
 		{
 			ID:         "testobj1",
