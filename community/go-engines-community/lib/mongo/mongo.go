@@ -30,7 +30,6 @@ const (
 	ScenarioMongoCollection           = "action_scenario"
 	FileMongoCollection               = "files"
 	MetaAlarmRulesMongoCollection     = "meta_alarm_rules"
-	HeartbeatMongoCollection          = "heartbeat"
 	IdleRuleMongoCollection           = "idle_rule"
 	ExportTaskMongoCollection         = "export_task"
 	ActionLogMongoCollection          = "action_log"

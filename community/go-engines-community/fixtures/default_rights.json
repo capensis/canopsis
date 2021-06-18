@@ -87,12 +87,6 @@
     "type": "CRUD"
   },
   {
-    "_id": "api_heartbeat",
-    "crecord_type": "action",
-    "crecord_name": "api_heartbeat",
-    "type": "CRUD"
-  },
-  {
     "_id": "api_job_config",
     "crecord_type": "action",
     "crecord_name": "api_job_config",
@@ -283,10 +277,6 @@
         "crecord_type": "right"
       },
       "api_pbehaviorreason": {
-        "checksum": 15,
-        "crecord_type": "right"
-      },
-      "api_heartbeat": {
         "checksum": 15,
         "crecord_type": "right"
       },
@@ -518,10 +508,6 @@
         "crecord_type": "right"
       },
       "api_pbehaviorreason": {
-        "checksum": 15,
-        "crecord_type": "right"
-      },
-      "api_heartbeat": {
         "checksum": 15,
         "crecord_type": "right"
       },

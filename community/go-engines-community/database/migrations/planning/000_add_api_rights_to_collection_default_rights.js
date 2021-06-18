@@ -85,13 +85,6 @@ db.default_rights.insertMany([
         type: "CRUD",
     },
     {
-        _id: "api_heartbeat",
-        crecord_name: "api_heartbeat",
-        crecord_type: "action",
-        desc: "Heartbeats",
-        type: "CRUD",
-    },
-    {
         _id: "api_watcher",
         crecord_name: "api_watcher",
         crecord_type: "action",
@@ -186,7 +179,6 @@ db.default_rights.find({
             "api_metaalarmrule",
             "api_playlist",
             "api_dynamicinfos",
-            "api_heartbeat",
             "api_watcher",
             "api_viewgroup",
             "api_view",

@@ -41,7 +41,6 @@ const (
 	ValueTypePbehaviorReason    = "pbehaviorreason"
 	ValueTypePbehaviorException = "pbehaviorexception"
 	ValueTypePbehavior          = "pbehavior"
-	ValueTypeHeartbeat          = "heartbeat"
 	ValueTypeJobConfig          = "jobconfig"
 	ValueTypeJob                = "job"
 	ValueTypeInstruction        = "instruction"

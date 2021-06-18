@@ -11,7 +11,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/heartbeat"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
@@ -120,22 +119,6 @@ func RegisterValidators(client mongo.DbClient) {
 
 	v.RegisterStructValidation(pbehaviortimespan.ValidateTimespansRequest, pbehaviortimespan.TimespansRequest{})
 	v.RegisterStructValidation(pbehaviortimespan.ValidateExdateRequest, pbehaviortimespan.ExdateRequest{})
-
-	heartbeatUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.HeartbeatMongoCollection, "ID")
-	heartbeatUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.HeartbeatMongoCollection, "Name")
-	heartbeatBulkUniqueIDValidator := common.NewUniqueBulkFieldValidator("ID")
-	heartbeatBulkUniqueNameValidator := common.NewUniqueBulkFieldValidator("Name")
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		heartbeatUniqueIDValidator.Validate(ctx, sl)
-		heartbeatUniqueNameValidator.Validate(ctx, sl)
-	}, heartbeat.CreateRequest{})
-	v.RegisterStructValidationCtx(heartbeatUniqueNameValidator.Validate, heartbeat.UpdateRequest{})
-	v.RegisterStructValidationCtx(heartbeatUniqueNameValidator.Validate, heartbeat.BulkUpdateRequestItem{})
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		heartbeatBulkUniqueIDValidator.Validate(ctx, sl)
-		heartbeatBulkUniqueNameValidator.Validate(ctx, sl)
-	}, heartbeat.BulkCreateRequest{})
-	v.RegisterStructValidationCtx(heartbeatBulkUniqueNameValidator.Validate, heartbeat.BulkUpdateRequest{})
 
 	scenarioUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "Name")
 	scenarioUniquePriorityValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "Priority")

@@ -28,9 +28,6 @@ const (
 	DoneAutosolveDelay              = 15 * 60
 	DynamicInfosQueueName           = "Engine_dynamic_infos"
 	DynamicInfosConsumerName        = "dynamic-infos"
-	HeartBeatExchangeName           = "canopsis.events"
-	HeartBeatQueueName              = "Engine_heartbeat"
-	HeartBeatConsumerName           = "heartbeat"
 	StatsngExchangeName             = "amq.direct"
 	StatsngQueueName                = "Engine_statsng"
 	PBehaviorEngineName             = "engine-pbehavior"
