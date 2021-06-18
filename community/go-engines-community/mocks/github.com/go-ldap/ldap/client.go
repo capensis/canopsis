@@ -118,6 +118,20 @@ func (mr *MockClientMockRecorder) ExternalBind() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExternalBind", reflect.TypeOf((*MockClient)(nil).ExternalBind))
 }
 
+// IsClosing mocks base method
+func (m *MockClient) IsClosing() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsClosing")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsClosing indicates an expected call of IsClosing
+func (mr *MockClientMockRecorder) IsClosing() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsClosing", reflect.TypeOf((*MockClient)(nil).IsClosing))
+}
+
 // Modify mocks base method
 func (m *MockClient) Modify(arg0 *ldap.ModifyRequest) error {
 	m.ctrl.T.Helper()
