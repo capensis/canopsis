@@ -272,8 +272,10 @@ definitions:
         type: string
       manual:
         type: boolean
-      multi_sort:
-        type: string
+      multi_sort[]:
+        items:
+          type: string
+        type: array
       opened:
         type: boolean
       resolved:
@@ -371,8 +373,10 @@ definitions:
         type: integer
       manual:
         type: boolean
-      multi_sort:
-        type: string
+      multi_sort[]:
+        items:
+          type: string
+        type: array
       opened:
         type: boolean
       page:
@@ -3457,8 +3461,10 @@ paths:
         name: manual
         type: boolean
       - in: query
-        name: multi_sort
-        type: string
+        items:
+          type: string
+        name: multi_sort[]
+        type: array
       - in: query
         name: opened
         type: boolean
@@ -3606,8 +3612,10 @@ paths:
         name: manual
         type: boolean
       - in: query
-        name: multi_sort
-        type: string
+        items:
+          type: string
+        name: multi_sort[]
+        type: array
       - in: query
         name: opened
         type: boolean

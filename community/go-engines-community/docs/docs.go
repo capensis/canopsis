@@ -235,8 +235,11 @@ var doc = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "name": "multi_sort",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "name": "multi_sort[]",
                         "in": "query"
                     },
                     {
@@ -479,8 +482,11 @@ var doc = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "name": "multi_sort",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "name": "multi_sort[]",
                         "in": "query"
                     },
                     {
@@ -7682,8 +7688,11 @@ var doc = `{
                 "manual": {
                     "type": "boolean"
                 },
-                "multi_sort": {
-                    "type": "string"
+                "multi_sort[]": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "opened": {
                     "type": "boolean"
@@ -7832,8 +7841,11 @@ var doc = `{
                 "manual": {
                     "type": "boolean"
                 },
-                "multi_sort": {
-                    "type": "string"
+                "multi_sort[]": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "opened": {
                     "type": "boolean"
