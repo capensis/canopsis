@@ -1,13 +1,11 @@
 package canopsis
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"time"
 )
 
 // Globals
 const (
-	EnvCpsAMQPTestExchange          = "canopsis.tests"
 	ActionEngineName                = "engine-action"
 	ActionQueueName                 = "Engine_action"
 	ActionAxeRPCClientQueueName     = "Engine_action_axe_rpc_client"
@@ -25,7 +23,6 @@ const (
 	CheEngineName                   = "engine-che"
 	CheQueueName                    = "Engine_che"
 	CheConsumerName                 = "che"
-	DbName                          = mongo.DB
 	DefaultBulkSize                 = 1000
 	DefaultEventAuthor              = "system"
 	DoneAutosolveDelay              = 15 * 60
@@ -34,12 +31,6 @@ const (
 	HeartBeatExchangeName           = "canopsis.events"
 	HeartBeatQueueName              = "Engine_heartbeat"
 	HeartBeatConsumerName           = "heartbeat"
-	MaxPythonTimestamp              = 253402297199 // compat: max timestamp in python
-	StatsExchangeName               = "canopsis.events"
-	StatsQueueName                  = "Engine_stat"
-	StatsConsumerName               = "stat"
-	StatsDatabase                   = "canopsis"
-	StatsMeasurement                = "event_state_history"
 	StatsngExchangeName             = "amq.direct"
 	StatsngQueueName                = "Engine_statsng"
 	PBehaviorEngineName             = "engine-pbehavior"

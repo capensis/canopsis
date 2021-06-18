@@ -36,7 +36,6 @@ const (
 	ActionLogMongoCollection          = "action_log"
 	EventFilterRulesMongoCollection   = "eventfilter"
 	DynamicInfosRulesMongoCollection  = "dynamic_infos"
-	WebhookMongoCollection            = "webhooks"
 	EntityCategoryMongoCollection     = "entity_category"
 	ImportJobMongoCollection          = "default_importgraph"
 	JunitTestSuiteMongoCollection     = "junit_test_suite"

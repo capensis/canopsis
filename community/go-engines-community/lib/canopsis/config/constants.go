@@ -8,10 +8,9 @@ import (
 
 // Default config values
 const (
-	AlarmBaggotTime             = 60 * time.Second
-	AlarmCancelAutosolveDelay   = 60 * 60 * time.Second
-	AlarmDefaultNameScheme      = "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
-	UserInterfaceMaxPbhEntities = 10000
+	AlarmBaggotTime           = 60 * time.Second
+	AlarmCancelAutosolveDelay = 60 * 60 * time.Second
+	AlarmDefaultNameScheme    = "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
 
 	RemediationHttpTimeout                    = 30 * time.Second
 	RemediationLaunchJobRetriesAmount         = 3

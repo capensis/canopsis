@@ -31,14 +31,12 @@ const (
 
 //Event types
 const (
-	EventTypeAck           = "ack"
-	EventTypeAckremove     = "ackremove"
-	EventTypeAssocTicket   = "assocticket"
-	EventTypeCalendar      = "calendar"
-	EventTypeCancel        = "cancel"
-	EventTypeCheck         = "check"
-	EventTypeComment       = "comment"
-	EventTypeConsolidation = "consolidation"
+	EventTypeAck         = "ack"
+	EventTypeAckremove   = "ackremove"
+	EventTypeAssocTicket = "assocticket"
+	EventTypeCancel      = "cancel"
+	EventTypeCheck       = "check"
+	EventTypeComment     = "comment"
 	// EventTypeDeclareTicket is used for manual declareticket trigger which is designed
 	// to trigger webhook with declare ticket parameter.
 	EventTypeDeclareTicket = "declareticket"
@@ -46,23 +44,16 @@ const (
 	EventTypeDeclareTicketWebhook = "declareticketwebhook"
 
 	EventTypeDone              = "done"
-	EventTypeDowntime          = "downtime"
-	EventTypeEue               = "eue"
-	EventTypeLog               = "log"
 	EventTypeChangestate       = "changestate"
 	EventTypeKeepstate         = "keepstate"
 	EventTypePBehavior         = "pbehavior"
 	EventTypePerf              = "perf"
-	EventTypeSelector          = "selector"
-	EventTypeSLA               = "sla"
 	EventTypeSnooze            = "snooze"
 	EventTypeUnsnooze          = "unsnooze"
-	EventTypeTrap              = "trap"
 	EventTypeStatCounterInc    = "statcounterinc"
 	EventTypeStatDuration      = "statduration"
 	EventTypeStatStateInterval = "statstateinterval"
 	EventTypeUncancel          = "uncancel"
-	EventTypeUser              = "user"
 
 	EventTypeMetaAlarm          = "metaalarm"
 	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
