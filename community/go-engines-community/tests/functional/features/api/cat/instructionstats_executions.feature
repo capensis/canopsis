@@ -84,6 +84,78 @@ Feature: get instruction statistics
     }
     """
 
+  Scenario: given get request should return instruction stats with resolved alarms
+    When I am admin
+    When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-executions-get-with-resolved-alarms-1/executions
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "executed_on": 1618280210,
+          "alarm": {
+            "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-1"
+          }
+        },
+        {
+          "executed_on": 1518280210,
+          "alarm": {
+            "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-resolved"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-executions-get-with-resolved-alarms-1/executions?from=1500000000&to=1600000000
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "executed_on": 1518280210,
+          "alarm": {
+            "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-resolved"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-executions-get-with-resolved-alarms-1/executions?from=1600000000&to=1700000000
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "executed_on": 1618280210,
+          "alarm": {
+            "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
   Scenario: given get request and user without instruction create permission should return instruction stats
     When I am test-role-to-stats-instruction-get
     When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-executions-get-1/executions
