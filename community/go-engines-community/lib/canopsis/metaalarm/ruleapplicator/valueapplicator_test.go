@@ -14,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/bsm/redislock"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -33,7 +32,7 @@ func testNewValueApplicator() (*ValueApplicator, alarm.Adapter, entity.Adapter, 
 		panic(err)
 	}
 
-	redisLockClient := redislock.New(redisClient2)
+	redisLockClient := redis.NewLockClient(redisClient2)
 
 	dbClient, err := mongo.NewClient(0, 0)
 	if err != nil {

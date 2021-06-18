@@ -59,23 +59,13 @@ func TestScheduler(t *testing.T) {
 	bytesEvent := []byte(`{"_id":"testEvent","component":"testschedulerComponent","connector":"testschedulerConnector"}`)
 	event := types.Event{}
 
-	amqpSession, err := amqpLib.NewConnection(log.NewLogger(false), 0, 0)
-	if err != nil {
-		panic(err)
-	}
-
-	pubChannel, err := amqpSession.Channel()
-	if err != nil {
-		panic(err)
-	}
-
 	Convey("scheduler should process event without errors", t, func() {
 		decoder := json.NewDecoder()
 		err := decoder.Decode(bytesEvent, &event)
 		So(err, ShouldBeNil)
 
 		lockID := event.GetLockID()
-		err = shd.ProcessEvent(ctx, pubChannel, lockID, bytesEvent)
+		err = shd.ProcessEvent(ctx, lockID, bytesEvent)
 		So(err, ShouldBeNil)
 
 		Convey("Then event should be locked and should not be queued", func() {
@@ -86,7 +76,7 @@ func TestScheduler(t *testing.T) {
 			So(queued, ShouldBeFalse)
 
 			Convey("Then event should be acked without errors and should not be locked", func() {
-				err = shd.AckEvent(ctx, pubChannel, event)
+				err = shd.AckEvent(ctx, event)
 				So(err, ShouldBeNil)
 
 				//sleep one second, because unlock processed in goroutine
@@ -117,10 +107,10 @@ func TestScheduler(t *testing.T) {
 		lockID1 := event1.GetLockID()
 		lockID2 := event2.GetLockID()
 
-		err = shd.ProcessEvent(ctx, pubChannel, lockID1, bytesEvent1)
+		err = shd.ProcessEvent(ctx, lockID1, bytesEvent1)
 		So(err, ShouldBeNil)
 
-		err = shd.ProcessEvent(ctx, pubChannel, lockID2, bytesEvent2)
+		err = shd.ProcessEvent(ctx, lockID2, bytesEvent2)
 		So(err, ShouldBeNil)
 
 		Convey("Then event should be locked and one event queued", func() {
@@ -131,7 +121,7 @@ func TestScheduler(t *testing.T) {
 			So(queued, ShouldBeTrue)
 
 			Convey("Then ack message, event should be locked and queue should be empty", func() {
-				err = shd.AckEvent(ctx, pubChannel, *event1)
+				err = shd.AckEvent(ctx, *event1)
 				So(err, ShouldBeNil)
 
 				locked = queue.IsLocked(ctx, event1.GetLockID())

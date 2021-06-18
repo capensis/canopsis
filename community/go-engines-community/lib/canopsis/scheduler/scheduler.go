@@ -23,8 +23,8 @@ var (
 type Scheduler interface {
 	Start(ctx context.Context)
 	Stop(ctx context.Context)
-	ProcessEvent(context.Context, libamqp.Channel, string, []byte) error
-	AckEvent(context.Context, libamqp.Channel, types.Event) error
+	ProcessEvent(context.Context, string, []byte) error
+	AckEvent(context.Context, types.Event) error
 }
 
 type scheduler struct {
@@ -107,7 +107,7 @@ func (s *scheduler) Stop(ctx context.Context) {
 	}
 }
 
-func (s *scheduler) ProcessEvent(ctx context.Context, channelPub libamqp.Channel, lockID string, bevent []byte) error {
+func (s *scheduler) ProcessEvent(ctx context.Context, lockID string, bevent []byte) error {
 	var eventDecoded types.Event
 	err := s.jsonDecoder.Decode(bevent, &eventDecoded)
 	if err != nil {
@@ -115,7 +115,7 @@ func (s *scheduler) ProcessEvent(ctx context.Context, channelPub libamqp.Channel
 	}
 
 	if s.IsMetaAlarm(eventDecoded) && s.enableMetaAlarmProcessing {
-		return s.ProcessMetaAlarm(ctx, channelPub, lockID, bevent)
+		return s.ProcessMetaAlarm(ctx, lockID, bevent)
 	}
 
 	locked, err := s.queueLock.LockOrPush(ctx, lockID, bevent)
@@ -124,7 +124,7 @@ func (s *scheduler) ProcessEvent(ctx context.Context, channelPub libamqp.Channel
 		return err
 	}
 
-	return s.publishToNext(channelPub, bevent)
+	return s.publishToNext(bevent)
 }
 
 func (s *scheduler) IsMetaAlarm(event types.Event) bool {
@@ -133,7 +133,7 @@ func (s *scheduler) IsMetaAlarm(event types.Event) bool {
 		strings.HasPrefix(event.Resource, "meta-alarm-entity-")
 }
 
-func (s *scheduler) ProcessMetaAlarm(ctx context.Context, channelPub libamqp.Channel, lockID string, bevent []byte) error {
+func (s *scheduler) ProcessMetaAlarm(ctx context.Context, lockID string, bevent []byte) error {
 	s.logger.Debug().Msg("Processing meta-alarm event")
 
 	var event types.Event
@@ -162,15 +162,15 @@ func (s *scheduler) ProcessMetaAlarm(ctx context.Context, channelPub libamqp.Cha
 
 	s.logger.Debug().Msg("sending meta-alarm event")
 
-	return s.publishToNext(channelPub, bevent)
+	return s.publishToNext(bevent)
 }
 
-func (s *scheduler) AckEvent(ctx context.Context, channelPub libamqp.Channel, event types.Event) error {
+func (s *scheduler) AckEvent(ctx context.Context, event types.Event) error {
 	lockID := event.GetLockID()
 	s.logger.Debug().Str("lockID", lockID).Msg("AckEvent")
 
 	if s.IsMetaAlarm(event) && s.enableMetaAlarmProcessing {
-		return s.processMetaAlarmUnlock(ctx, channelPub, event)
+		return s.processMetaAlarmUnlock(ctx, event)
 	}
 
 	nextEvent, err := s.queueLock.PopOrUnlock(ctx, lockID)
@@ -182,17 +182,17 @@ func (s *scheduler) AckEvent(ctx context.Context, channelPub libamqp.Channel, ev
 	if nextEvent == nil {
 		go func() {
 			if s.enableMetaAlarmProcessing {
-				s.processMetaAlarmChildUnlock(ctx, channelPub, event)
+				s.processMetaAlarmChildUnlock(ctx, event)
 			}
 		}()
 
 		return nil
 	}
 
-	return s.publishToNext(channelPub, nextEvent)
+	return s.publishToNext(nextEvent)
 }
 
-func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, channelPub libamqp.Channel, event types.Event) error {
+func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, event types.Event) error {
 	lockID := event.GetEID()
 
 	// process children
@@ -210,7 +210,7 @@ func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, channelPub libam
 				continue
 			}
 
-			err = s.publishToNext(channelPub, nextEvent)
+			err = s.publishToNext(nextEvent)
 			if err != nil {
 				return err
 			}
@@ -228,10 +228,10 @@ func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, channelPub libam
 		return nil
 	}
 
-	return s.publishToNext(channelPub, nextMetaAlarmEvent)
+	return s.publishToNext(nextMetaAlarmEvent)
 }
 
-func (s *scheduler) processMetaAlarmChildUnlock(ctx context.Context, channelPub libamqp.Channel, event types.Event) {
+func (s *scheduler) processMetaAlarmChildUnlock(ctx context.Context, event types.Event) {
 	if metaAlarmParents := event.MetaAlarmParents; metaAlarmParents != nil && len(*metaAlarmParents) > 0 {
 		for _, metaAlarmLock := range *metaAlarmParents {
 			nextEvent, err := s.queueLock.PopOrUnlock(ctx, metaAlarmLock)
@@ -245,7 +245,7 @@ func (s *scheduler) processMetaAlarmChildUnlock(ctx context.Context, channelPub 
 				continue
 			}
 
-			err = s.ProcessMetaAlarm(ctx, channelPub, metaAlarmLock, nextEvent)
+			err = s.ProcessMetaAlarm(ctx, metaAlarmLock, nextEvent)
 			if err != nil {
 				s.logger.Err(err).
 					Str(metaAlarmLock, "meta-alarm-lockID").
@@ -255,8 +255,8 @@ func (s *scheduler) processMetaAlarmChildUnlock(ctx context.Context, channelPub 
 	}
 }
 
-func (s *scheduler) publishToNext(channelPub libamqp.Channel, eventByte []byte) error {
-	return channelPub.Publish(
+func (s *scheduler) publishToNext(eventByte []byte) error {
+	return s.channelPub.Publish(
 		"",
 		s.publishToQueue,
 		false,
@@ -300,7 +300,7 @@ func (s *scheduler) processExpiredLock(ctx context.Context, lockID string) {
 		return
 	}
 
-	err = s.publishToNext(s.channelPub, nextEvent)
+	err = s.publishToNext(nextEvent)
 	if err != nil {
 		s.logger.
 			Err(err).

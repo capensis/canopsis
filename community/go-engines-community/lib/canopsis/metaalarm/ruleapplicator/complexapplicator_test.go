@@ -21,7 +21,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/bsm/redislock"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -41,7 +40,7 @@ func testNewComplexApplicator() (*ruleapplicator.ComplexApplicator, alarm.Adapte
 	}
 	redisClient2.FlushDB(ctx)
 
-	redisLockClient := redislock.New(redisClient2)
+	redisLockClient := redis.NewLockClient(redisClient2)
 
 	dbClient, err := libmongo.NewClient(0, 0)
 	if err != nil {

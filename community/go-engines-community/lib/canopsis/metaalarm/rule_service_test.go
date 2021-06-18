@@ -16,13 +16,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/bsm/redislock"
 	redisV8 "github.com/go-redis/redis/v8"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.Adapter, metaalarm.RulesAdapter, *redisV8.Client, *redislock.Client, mongo.DbClient, error) {
+func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.Adapter, metaalarm.RulesAdapter, *redisV8.Client, redis.LockClient, mongo.DbClient, error) {
 	logger := log.NewLogger(true)
 	ctx := context.Background()
 
@@ -36,7 +35,7 @@ func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.
 		return nil, nil, nil, nil, nil, nil, nil, err
 	}
 
-	redisLockClient := redislock.New(redisClient2)
+	redisLockClient := redis.NewLockClient(redisClient2)
 
 	client, err := mongo.NewClient(0, 0)
 	if err != nil {

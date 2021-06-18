@@ -26,6 +26,7 @@ const (
 	DefaultBulkSize                 = 1000
 	DefaultEventAuthor              = "system"
 	DoneAutosolveDelay              = 15 * 60
+	DynamicInfosEngineName          = "engine-dynamic-infos"
 	DynamicInfosQueueName           = "Engine_dynamic_infos"
 	DynamicInfosConsumerName        = "dynamic-infos"
 	StatsngExchangeName             = "amq.direct"
@@ -43,11 +44,14 @@ const (
 	ServiceRPCConsumerName          = "service_rpc"
 	WebhookRPCQueueServerName       = "Engine_webhook_rpc_server"
 	WebhookRPCConsumerName          = "webhook_rpc"
+	FIFOEngineName                  = "engine-fifo"
 	FIFOExchangeName                = ""
 	FIFOQueueName                   = "Engine_fifo"
 	FIFOAckExchangeName             = ""
 	FIFOAckQueueName                = "FIFO_ack"
 	FIFOConsumerName                = "fifo"
+	FIFOAckConsumerName             = "fifo_ack"
+	CorrelationEngineName           = "\"engine-correlation\""
 	CorrelationQueueName            = "Engine_correlation"
 	CorrelationConsumerName         = "correlation"
 	PeriodicalWaitTime              = time.Minute
