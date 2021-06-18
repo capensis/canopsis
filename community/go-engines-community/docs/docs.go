@@ -8596,20 +8596,6 @@ var doc = `{
                 }
             }
         },
-        "datastorage.AlarmHistory": {
-            "type": "object",
-            "properties": {
-                "archived_alarms": {
-                    "type": "integer"
-                },
-                "deleted_alarms": {
-                    "type": "integer"
-                },
-                "time": {
-                    "type": "integer"
-                }
-            }
-        },
         "datastorage.Config": {
             "type": "object",
             "properties": {
@@ -8627,6 +8613,15 @@ var doc = `{
                     }
                 },
                 "junit": {
+                    "type": "object",
+                    "properties": {
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
+                "pbehavior": {
                     "type": "object",
                     "properties": {
                         "delete_after": {
@@ -8663,35 +8658,38 @@ var doc = `{
                 }
             }
         },
-        "datastorage.EntityHistory": {
-            "type": "object",
-            "properties": {
-                "archived_entities": {
-                    "type": "integer"
-                },
-                "deleted_entities": {
-                    "type": "integer"
-                },
-                "time": {
-                    "type": "integer"
-                }
-            }
-        },
         "datastorage.History": {
             "type": "object",
             "properties": {
                 "alarm": {
                     "type": "object",
-                    "$ref": "#/definitions/datastorage.AlarmHistory"
+                    "$ref": "#/definitions/datastorage.HistoryWithCount"
                 },
                 "entity": {
                     "type": "object",
-                    "$ref": "#/definitions/datastorage.EntityHistory"
+                    "$ref": "#/definitions/datastorage.HistoryWithCount"
                 },
                 "junit": {
                     "type": "integer"
                 },
+                "pbehavior": {
+                    "type": "integer"
+                },
                 "remediation": {
+                    "type": "integer"
+                }
+            }
+        },
+        "datastorage.HistoryWithCount": {
+            "type": "object",
+            "properties": {
+                "archived": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "integer"
+                },
+                "time": {
                     "type": "integer"
                 }
             }

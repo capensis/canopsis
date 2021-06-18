@@ -43,9 +43,9 @@ func (w *worker) RunCleanerProcess(ctx context.Context, ch <-chan CleanTask) {
 					continue
 				}
 
-				err = w.dataStorageAdapter.UpdateHistoryEntity(ctx, datastorage.EntityHistory{
-					Time:             types.CpsTime{Time: time.Now()},
-					EntitiesArchived: archived,
+				err = w.dataStorageAdapter.UpdateHistoryEntity(ctx, datastorage.HistoryWithCount{
+					Time:     types.CpsTime{Time: time.Now()},
+					Archived: archived,
 				})
 				if err != nil {
 					w.logger.Err(err).Msg("Failed to update entity history")
@@ -62,9 +62,9 @@ func (w *worker) RunCleanerProcess(ctx context.Context, ch <-chan CleanTask) {
 				continue
 			}
 
-			err = w.dataStorageAdapter.UpdateHistoryEntity(ctx, datastorage.EntityHistory{
-				Time:            types.CpsTime{Time: time.Now()},
-				EntitiesDeleted: deleted,
+			err = w.dataStorageAdapter.UpdateHistoryEntity(ctx, datastorage.HistoryWithCount{
+				Time:    types.CpsTime{Time: time.Now()},
+				Deleted: deleted,
 			})
 			if err != nil {
 				w.logger.Err(err).Msg("Failed to update entity history")

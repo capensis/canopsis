@@ -718,15 +718,6 @@ definitions:
             type: array
         type: object
     type: object
-  datastorage.AlarmHistory:
-    properties:
-      archived_alarms:
-        type: integer
-      deleted_alarms:
-        type: integer
-      time:
-        type: integer
-    type: object
   datastorage.Config:
     properties:
       alarm:
@@ -739,6 +730,12 @@ definitions:
             type: object
         type: object
       junit:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+        type: object
+      pbehavior:
         properties:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
@@ -763,26 +760,28 @@ definitions:
         $ref: '#/definitions/datastorage.History'
         type: object
     type: object
-  datastorage.EntityHistory:
-    properties:
-      archived_entities:
-        type: integer
-      deleted_entities:
-        type: integer
-      time:
-        type: integer
-    type: object
   datastorage.History:
     properties:
       alarm:
-        $ref: '#/definitions/datastorage.AlarmHistory'
+        $ref: '#/definitions/datastorage.HistoryWithCount'
         type: object
       entity:
-        $ref: '#/definitions/datastorage.EntityHistory'
+        $ref: '#/definitions/datastorage.HistoryWithCount'
         type: object
       junit:
         type: integer
+      pbehavior:
+        type: integer
       remediation:
+        type: integer
+    type: object
+  datastorage.HistoryWithCount:
+    properties:
+      archived:
+        type: integer
+      deleted:
+        type: integer
+      time:
         type: integer
     type: object
   entity.CleanRequest:

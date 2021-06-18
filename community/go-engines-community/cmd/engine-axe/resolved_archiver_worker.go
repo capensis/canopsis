@@ -93,10 +93,10 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) error {
 	}
 
 	if updated {
-		err := w.LimitConfigAdapter.UpdateHistoryAlarm(ctx, datastorage.AlarmHistory{
-			Time:           types.CpsTime{Time: now},
-			AlarmsArchived: archived,
-			AlarmsDeleted:  deleted,
+		err := w.LimitConfigAdapter.UpdateHistoryAlarm(ctx, datastorage.HistoryWithCount{
+			Time:     types.CpsTime{Time: now},
+			Archived: archived,
+			Deleted:  deleted,
 		})
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot update config history")

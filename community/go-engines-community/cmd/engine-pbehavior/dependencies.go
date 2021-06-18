@@ -5,6 +5,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -31,28 +32,19 @@ type DependencyMaker struct {
 	depmake.DependencyMaker
 }
 
-func (m DependencyMaker) getRedisLockerClient(ctx context.Context, logger zerolog.Logger, cfg config.CanopsisConf) redis.LockClient {
-	return redis.NewLockClient(m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg))
-}
-
-func (m DependencyMaker) getRedisStore(ctx context.Context, logger zerolog.Logger, cfg config.CanopsisConf) redis.Store {
-	store := redis.NewStore(m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg), "pbehaviors", 0)
-
-	return store
-}
-
 func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
 	cfg := m.DepConfig()
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
+	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel, err := amqpConnection.Channel()
 	if err != nil {
 		panic(err)
 	}
 
-	lockerClient := m.getRedisLockerClient(ctx, logger, cfg)
-	store := m.getRedisStore(ctx, logger, cfg)
+	lockerClient := redis.NewLockClient(m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg))
+	store := redis.NewStore(m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg), "pbehaviors", 0)
 
 	dbClient, err := mongo.NewClient(
 		cfg.Global.ReconnectRetries,
@@ -212,10 +204,25 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		Logger:                 logger,
 		TimezoneConfigProvider: timezoneConfigProvider,
 	})
+	enginePbehavior.AddPeriodicalWorker(&cleanPeriodicalWorker{
+		PeriodicalInterval:        time.Hour,
+		TimezoneConfigProvider:    timezoneConfigProvider,
+		DataStorageConfigProvider: dataStorageConfigProvider,
+		LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
+		LockerClient:              lockerClient,
+		PbehaviorCleaner:          pbehavior.NewCleaner(dbClient, logger),
+		Logger:                    logger,
+	})
 	enginePbehavior.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		timezoneConfigProvider,
+		logger,
+	))
+	enginePbehavior.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		config.NewAdapter(dbClient),
+		dataStorageConfigProvider,
 		logger,
 	))
 

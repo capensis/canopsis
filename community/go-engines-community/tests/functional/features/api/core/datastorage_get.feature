@@ -36,6 +36,13 @@ Feature: Get and update data storage config
           "seconds": 1728000,
           "unit": "d"
         }
+      },
+      "pbehavior": {
+        "delete_after": {
+          "enabled": true,
+          "seconds": 1728000,
+          "unit": "d"
+        }
       }
     }
     """
@@ -74,13 +81,21 @@ Feature: Get and update data storage config
             "seconds": 1728000,
             "unit": "d"
           }
+        },
+        "pbehavior": {
+          "delete_after": {
+            "enabled": true,
+            "seconds": 1728000,
+            "unit": "d"
+          }
         }
       },
       "history": {
         "junit": null,
         "remediation": null,
         "alarm": null,
-        "entity": null
+        "entity": null,
+        "pbehavior": null
       }
     }
     """
@@ -120,13 +135,21 @@ Feature: Get and update data storage config
             "seconds": 1728000,
             "unit": "d"
           }
+        },
+        "pbehavior": {
+          "delete_after": {
+            "enabled": true,
+            "seconds": 1728000,
+            "unit": "d"
+          }
         }
       },
       "history": {
         "junit": null,
         "remediation": null,
         "alarm": null,
-        "entity": null
+        "entity": null,
+        "pbehavior": null
       }
     }
     """
@@ -149,13 +172,17 @@ Feature: Get and update data storage config
         "alarm": {
           "archive_after": null,
           "delete_after": null
+        },
+        "pbehavior": {
+          "delete_after": null
         }
       },
       "history": {
         "junit": null,
         "remediation": null,
         "alarm": null,
-        "entity": null
+        "entity": null,
+        "pbehavior": null
       }
     }
     """
@@ -175,13 +202,17 @@ Feature: Get and update data storage config
         "alarm": {
           "archive_after": null,
           "delete_after": null
+        },
+        "pbehavior": {
+          "delete_after": null
         }
       },
       "history": {
         "junit": null,
         "remediation": null,
         "alarm": null,
-        "entity": null
+        "entity": null,
+        "pbehavior": null
       }
     }
     """
