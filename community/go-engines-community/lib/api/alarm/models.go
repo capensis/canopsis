@@ -17,7 +17,7 @@ type ListRequest struct {
 	FilterRequest
 	WithSteps    bool   `form:"with_steps" json:"with_steps"`
 	WithChildren bool   `form:"with_consequences" json:"with_consequences"`
-	MultiSort    string `form:"multi_sort" json:"multi_sort"`
+	MultiSort    []string `form:"multi_sort[]" json:"multi_sort"`
 	Sort         string `form:"sort_dir" json:"sort_dir" binding:"oneoforempty=asc desc"`
 	SortBy       string `form:"sort_key" json:"sort_key"`
 }

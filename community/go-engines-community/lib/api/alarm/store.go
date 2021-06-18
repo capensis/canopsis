@@ -1039,7 +1039,7 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 }
 
 func (s *store) getSort(r ListRequest) (bson.M, error) {
-	if r.MultiSort != "" {
+	if len(r.MultiSort) != 0 {
 		return s.getMultiSort(r.MultiSort)
 	}
 
@@ -1060,20 +1060,20 @@ func (s *store) getSort(r ListRequest) (bson.M, error) {
 	return common.GetSortQuery(sortBy, sort), nil
 }
 
-func (s *store) getMultiSort(multiSort string) (bson.M, error) {
+func (s *store) getMultiSort(multiSort []string) (bson.M, error) {
 	idExist := false
 
 	q := bson.D{}
 
-	multiSortData := strings.Split(multiSort, ",")
-	if len(multiSortData)%2 != 0 {
-		return nil, errors.New("length of multi_sort is not an even number")
-	}
+	for _, multiSortValue := range multiSort {
+		multiSortData := strings.Split(multiSortValue, ",")
+		if len(multiSortData) != 2 {
+			return nil, errors.New("length of multi_sort value should be equal 2")
+		}
 
-	for i := 0; i < len(multiSortData); i += 2 {
-		sortBy := s.resolveAlias(multiSortData[i])
+		sortBy := s.resolveAlias(multiSortData[0])
 		sortDir := 1
-		if multiSortData[i+1] == common.SortDesc {
+		if multiSortData[1] == common.SortDesc {
 			sortDir = -1
 		}
 

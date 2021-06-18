@@ -9,24 +9,25 @@ import (
 func ValidateListRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(ListRequest)
 
-	if r.SortBy != "" && r.MultiSort != "" {
+	if r.SortBy != "" && len(r.MultiSort) != 0 {
 		sl.ReportError(r.SortBy, "SortBy", "SortBy", "required_not_both", "MultiSort")
 		return
 	}
 
-	if r.MultiSort == "" {
+	if len(r.MultiSort) == 0 {
 		return
 	}
 
-	multiSortData := strings.Split(r.MultiSort, ",")
-	if len(multiSortData)%2 != 0 {
-		sl.ReportError(r.MultiSort, "MultiSort", "MultiSort", "multi_sort_invalid", "MultiSort")
-		return
-	}
-
-	for i := 0; i < len(multiSortData); i += 2 {
-		if multiSortData[i+1] != common.SortAsc && multiSortData[i+1] != common.SortDesc {
+	for _, multiSortValue := range r.MultiSort {
+		multiSortData := strings.Split(multiSortValue, ",")
+		if len(multiSortData) != 2 {
 			sl.ReportError(r.MultiSort, "MultiSort", "MultiSort", "multi_sort_invalid", "MultiSort")
+			return
+		}
+
+		if multiSortData[1] != common.SortAsc && multiSortData[1] != common.SortDesc {
+			sl.ReportError(r.MultiSort, "MultiSort", "MultiSort", "multi_sort_invalid", "MultiSort")
+			return
 		}
 	}
 }
