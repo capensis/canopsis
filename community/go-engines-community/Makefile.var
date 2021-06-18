@@ -1,19 +1,11 @@
-VERSION:=$(shell git for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1)
+VERSION:=$(shell git for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1 || echo "unknown Git branch/version")
 BUILDDATE:=$(shell date "+%Y-%m-%dT%H:%M:%S%z")
-OS:=linux
-ARCH:=amd64
 
 LINKPKG="git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-GITCOMMIT:=$(shell git log -n 1 --format=oneline --abbrev-commit --pretty="%h")
+GITCOMMIT:=$(shell git log -n 1 --format=oneline --abbrev-commit --pretty="%h" || echo "unknown Git commit")
 GITBRANCH:=${VERSION}
-LDFLAGS:=-ldflags "-X ${LINKPKG}.BuildGitCommit=${GITCOMMIT} -X ${LINKPKG}.BuildGitBranch=${GITBRANCH} -X ${LINKPKG}.BuildDate=${BUILDDATE}"
-CGO:=1
+LDFLAGS:=-ldflags "-X '${LINKPKG}.BuildGitCommit=${GITCOMMIT}' -X '${LINKPKG}.BuildGitBranch=${GITBRANCH}' -X '${LINKPKG}.BuildDate=${BUILDDATE}'"
 TAG:=${VERSION}
-
-# Use the trimpath option so that the logs do not contain the absolute paths to
-# the source files.
-# This makes the log lines shorter, and independent from the build machine.
-GO_BUILD_FLAGS:=-gcflags="all=-trimpath \"${GOPATH}/src\""
 
 GOLANG_IMAGE_TAG:="1.16.4-alpine"
 
@@ -22,12 +14,9 @@ OUTPUT_DIR:=${ROOT_DIR}/build
 RELEASES_DIR?=${ROOT_DIR}/releases
 VENDOR_DIR:="vendor"
 
-DEP_MANAGER=go mod
-SKIP_DEPENDENCIES=false
 GO_TEST_PARAM:= -cover
-GO_BUILD_CUSTOM_FLAGS=
 
-PROJECT:=`basename ${CURDIR}`
+PROJECT:=$(shell basename "${CURDIR}")
 
 IMAGE_NAME:=$(PROJECT)
 

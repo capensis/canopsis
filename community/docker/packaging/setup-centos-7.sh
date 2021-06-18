@@ -3,8 +3,8 @@ set -e
 set -o pipefail
 set -u
 
-yum makecache
-yum groupinstall -y "Development tools"
-yum install -y yum-utils
+yum --color=never makecache
+yum --color=never groupinstall -y "Development tools"
+yum --color=never install -y yum-utils
 
 rm -rf /var/cache/yum

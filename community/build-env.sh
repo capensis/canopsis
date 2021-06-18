@@ -16,18 +16,21 @@ export CANOPSIS_ENV_CONFIRM=${CANOPSIS_ENV_CONFIRM:=1}
 export CANOPSIS_PACKAGE_TAG=${CANOPSIS_PACKAGE_TAG:="${CANOPSIS_TAG}"}
 export CANOPSIS_PACKAGE_REL=${CANOPSIS_PACKAGE_REL:="1"}
 
-# Do not check GOPATH and Go installation.
-# Can be used by any other script to avoid doing anything with Go.
-export CANOPSIS_SKIP_GO=${CANOPSIS_SKIP_GO:="0"}
-
 # By default, pull, commit and push sources/webcore/src/canopsis-next from
 # the canopsis/canopsis-next repository.
 export CANOPSIS_BUILD_NEXT=${CANOPSIS_BUILD_NEXT:="0"}
 
 # Only avoid undefined variable error
-export GOPATH=${GOPATH:=""}
 export http_proxy=${http_proxy:=""}
 export https_proxy=${https_proxy:=""}
+
+export FORCE_COLOR=0
+export NO_COLOR=1
+export DOCKER_SCAN_SUGGEST=false
+export NPM_CONFIG_PROGRESS=false
+export NPM_CONFIG_SPIN=false
+export NPM_CONFIG_COLOR=false
+export BUILDKIT_PROGRESS=plain
 
 function env_recap() {
     echo "CANOPSIS_TAG: ${CANOPSIS_TAG}"
@@ -36,21 +39,9 @@ function env_recap() {
     echo "CANOPSIS_PACKAGE_REL: ${CANOPSIS_PACKAGE_REL}"
     echo "CANOPSIS_DOCKER_MODE: ${CANOPSIS_DOCKER_MODE}"
     echo "CANOPSIS_BUILD_NEXT: ${CANOPSIS_BUILD_NEXT}"
-    echo "GOPATH: ${GOPATH}"
 }
 
 function ensure_env() {
-    if [ ! "${CANOPSIS_SKIP_GO}" = "1" ]; then
-        if [ "${GOPATH}" = "" ]; then
-            echo "\$GOPATH is not initialised: setup go environment properly."
-            exit 1
-        fi
-
-        if [ ! -d "${GOPATH}/src" ]; then
-            mkdir -p ${GOPATH}/src
-        fi
-    fi
-
     if [ "${CANOPSIS_TAG}" = "" ]; then
         echo "\$CANOPSIS_TAG is not initialised: provide TAG for release"
         exit 3
@@ -73,9 +64,7 @@ function ensure_env() {
     # it will exit with command not found
     rsync --version 2>&1 > /dev/null
     git --version 2>&1 > /dev/null
-    if [ ! "${CANOPSIS_SKIP_GO}" = "1" ]; then
-        go version 2>&1 > /dev/null
-    fi
+    go version 2>&1 > /dev/null
 
     if [ ! "${CANOPSIS_ENV_RECAP}" = "0" ]; then
         env_recap

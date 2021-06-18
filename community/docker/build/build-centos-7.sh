@@ -6,9 +6,9 @@ set -e
 set -o pipefail
 set -u
 
-yum makecache
+yum --color=never makecache
 
-yum install -y \
+yum --color=never install -y \
     bzip2-devel \
     cyrus-sasl-devel \
     gcc \

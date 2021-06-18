@@ -12,11 +12,11 @@ echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.
 rm -f /etc/localtime
 ln -s /usr/share/zoneinfo/UTC /etc/localtime
 
-apt-get update
+apt-get -q -o=Dpkg::Use-Pty=0 update
 
-apt-get dist-upgrade -y
+apt-get -q -o=Dpkg::Use-Pty=0 dist-upgrade -y
 
-apt-get -y --no-install-recommends install locales
+apt-get -q -o=Dpkg::Use-Pty=0 -y --no-install-recommends install locales
 
 export LANG="en_US.UTF-8"
 export LC_ALL="$LANG"
@@ -24,7 +24,7 @@ echo "LANG=${LANG}" > /etc/locale.conf
 echo "${LANG} UTF-8" > /etc/locale.gen
 locale-gen
 
-apt-get -y --no-install-recommends install \
+apt-get -q -o=Dpkg::Use-Pty=0 -y --no-install-recommends install \
     apt-transport-https \
     base-files \
     bash \
@@ -64,4 +64,4 @@ apt-get -y --no-install-recommends install \
     tmux \
     vim
 
-apt-get clean
+apt-get -q -o=Dpkg::Use-Pty=0 clean

@@ -2,16 +2,12 @@ ARG GOLANG_IMAGE_TAG
 
 FROM golang:${GOLANG_IMAGE_TAG}
 
-ENV GOPATH /sources/go
-ENV PROJECT_PATH ${GOPATH}/src/git.canopsis.net/canopsis/canopsis-community/community/go-engines-community
-ENV PATH ${PATH}:${GOPATH}/bin
+ENV GO111MODULE on
 
-RUN mkdir -p ${PROJECT_PATH} ${GOPATH}/bin
 RUN apk update && apk add make git
 
-COPY . ${PROJECT_PATH}/
-
-WORKDIR ${PROJECT_PATH}
+WORKDIR /go/src/community/go-engines-community
+COPY . .
 
 ENV RELEASES_DIR /releases/
 
