@@ -23,6 +23,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/heartbeat"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
@@ -85,6 +86,8 @@ const (
 	authUserInterfaceDelete = "api_user_interface_delete"
 	authEvent               = "api_event"
 	authObjIdleRule         = "api_idlerule"
+
+	authMessageRateStatsRead = "api_message_rate_stats_read"
 
 	permRead   = model.PermissionRead
 	permCreate = model.PermissionCreate
@@ -954,6 +957,16 @@ func RegisterRoutes(
 				"",
 				middleware.Authorize(authDataStorageUpdate, permCan, enforcer),
 				dateStorageAPI.Update,
+			)
+		}
+
+		messageRateStatsRouter := protected.Group("/message-rate-stats")
+		{
+			messageRateStatsAPI := messageratestats.NewApi(messageratestats.NewStore(dbClient))
+			messageRateStatsRouter.GET(
+				"",
+				middleware.Authorize(authMessageRateStatsRead, permCan, enforcer),
+				messageRateStatsAPI.List,
 			)
 		}
 
