@@ -47,6 +47,10 @@ const (
 	AssociativeTableCollection        = "default_associativetable"
 	NotificationMongoCollection       = "notification"
 
+	// Following collections are used for event statistics.
+	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
+	MessageRateStatsHourCollectionName   = "message_rate_statistic_hour"
+
 	// Remediation collections
 	InstructionMongoCollection          = "instruction"
 	InstructionExecutionMongoCollection = "instruction_execution"

@@ -1284,6 +1284,36 @@ definitions:
         $ref: '#/definitions/types.CpsTime'
         type: object
     type: object
+  messageratestats.ListRequest:
+    properties:
+      from:
+        type: integer
+      interval:
+        type: string
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      sort:
+        type: string
+      sort_by:
+        type: string
+      to:
+        type: integer
+    required:
+    - from
+    - interval
+    - to
+    type: object
+  messageratestats.StatsResponse:
+    properties:
+      _id:
+        type: integer
+      received:
+        type: integer
+    type: object
   notification.InstructionNotification:
     properties:
       rate:
@@ -5352,6 +5382,64 @@ paths:
       summary: update user interface
       tags:
       - internal
+  /message-rate-stats:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of stats
+      operationId: message-rate-stats-find-all
+      parameters:
+      - in: query
+        name: from
+        required: true
+        type: integer
+      - in: query
+        name: interval
+        required: true
+        type: string
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sort_by
+        type: string
+      - in: query
+        name: to
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/messageratestats.StatsResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find message rate stats
+      tags:
+      - message-rate-stats
   /notification:
     get:
       consumes:

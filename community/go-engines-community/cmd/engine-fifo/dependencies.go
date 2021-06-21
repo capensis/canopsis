@@ -5,10 +5,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
+	"time"
 )
 
 type Options struct {
@@ -18,6 +22,7 @@ type Options struct {
 	PublishToQueue            string
 	LockTtl                   int
 	EnableMetaAlarmProcessing bool
+	EventsStatsFlushInterval  time.Duration
 }
 
 // DependencyMaker can be created with DependencyMaker{}
@@ -34,6 +39,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
 	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
+	statsRedisClient := m.DepRedisSession(ctx, redis.FIFOMessageStatisticsStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	scheduler := libscheduler.NewSchedulerService(
 		lockRedisClient,
@@ -44,6 +50,18 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		options.LockTtl,
 		json.NewDecoder(),
 		options.EnableMetaAlarmProcessing,
+	)
+	statsCh := make(chan statistics.Message)
+	statsSender := ratelimit.NewStatsSender(statsCh, logger)
+	statsListener := statistics.NewStatsListener(
+		dbClient,
+		statsRedisClient,
+		options.EventsStatsFlushInterval,
+		map[string]int64{
+			mongo.MessageRateStatsMinuteCollectionName: 1,  // 1 minute
+			mongo.MessageRateStatsHourCollectionName:   60, // 60 minutes
+		},
+		logger,
 	)
 
 	engine := libengine.New(
@@ -72,6 +90,11 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
 
+			err = statsRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
 			err = runInfoRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
@@ -94,6 +117,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		&messageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,
 			Scheduler:                scheduler,
+			StatsSender:              statsSender,
 			Decoder:                  json.NewDecoder(),
 			Logger:                   logger,
 		},
