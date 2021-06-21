@@ -54,7 +54,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	statsCh := make(chan statistics.Message)
 	statsSender := ratelimit.NewStatsSender(statsCh, logger)
 	statsListener := statistics.NewStatsListener(
-		dbClient,
+		mongoClient,
 		statsRedisClient,
 		options.EventsStatsFlushInterval,
 		map[string]int64{
@@ -67,9 +67,14 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			scheduler.Start(ctx)
+
+			go statsListener.Listen(ctx, statsCh)
+
 			return nil
 		},
 		func() {
+			close(statsCh)
+
 			err := mongoClient.Disconnect(context.Background())
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")

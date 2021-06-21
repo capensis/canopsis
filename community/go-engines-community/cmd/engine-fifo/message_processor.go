@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
@@ -16,6 +17,7 @@ import (
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
 	Scheduler                scheduler.Scheduler
+	StatsSender              ratelimit.StatsSender
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
 }
@@ -48,6 +50,9 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		p.logError(err, "invalid event", msg)
 		return nil, nil
 	}
+
+	event.Format()
+	p.StatsSender.Add(event.Timestamp.Unix(), true)
 
 	p.Logger.Debug().Str("event", fmt.Sprintf("%+v", event)).Msg("sent to scheduler")
 	err = p.Scheduler.ProcessEvent(ctx, event.GetLockID(), msg)
