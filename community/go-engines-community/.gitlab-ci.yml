@@ -4,8 +4,8 @@ stages:
 variables:
   COMPOSE_HTTP_TIMEOUT: "180"
   CI_COMPOSE_PROJECT: "gorev-ci-${CI_JOB_ID}"
-  CI_COMPOSE_PROJECT_DIR: "${CI_PROJECT_DIR}/community/go-engines-community/CI/"
-  CI_COMPOSE_FILE: "${CI_COMPOSE_PROJECT_DIR}/docker-compose.ci.yml"
+  CI_COMPOSE_PROJECT_DIR: "CI/"
+  CI_COMPOSE_FILE: "$CI_COMPOSE_PROJECT_DIR/docker-compose.ci.yml"
 
 before_script:
   - cd community/go-engines-community/
