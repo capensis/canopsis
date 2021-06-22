@@ -1,7 +1,6 @@
 package pattern
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -329,8 +328,11 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		resultBson[bsonFieldName] = p.StatName
 	}
 
-	// return emty document unless EventsPattern fields not set
-	return bson.MarshalValue(resultBson)
+	if len(resultBson) > 0 {
+		return bson.MarshalValue(resultBson)
+	}
+
+	return bsontype.Undefined, nil, nil
 }
 
 // EventPatternList is a type representing a list of event patterns.
@@ -481,25 +483,24 @@ func (l *EventPatternList) UnmarshalBSONValue(valueType bsontype.Type, b []byte)
 			return err
 		}
 
-		valuesCount := len(array)
-		emptyDoc := []byte{5, 0, 0, 0, 0}
 		for _, v := range array {
+			if v.Type == bsontype.Null {
+				continue
+			}
+			document, ok := v.DocumentOK()
+			if !ok {
+				return fmt.Errorf("unable to parse event pattern list element")
+			}
+
 			var pattern EventPattern
 
-			document, ok := v.DocumentOK()
-			if ok && !bytes.Equal(v.Value, emptyDoc) {
-				err = bson.Unmarshal(document, &pattern)
-				if err != nil {
-					if errors.As(err, &UnexpectedFieldsError{}) {
-						return nil
-					}
-
-					return err
+			err = bson.Unmarshal(document, &pattern)
+			if err != nil {
+				if errors.As(err, &UnexpectedFieldsError{}) {
+					return nil
 				}
-			} else if v.Type != bsontype.Null && v.Type != bsontype.Undefined &&
-				v.Type != bsontype.EmbeddedDocument || valuesCount > 1 {
-				// empty object, null or undefined allowed as only value and treated as [{}]
-				return fmt.Errorf("unable to parse event pattern list element")
+
+				return err
 			}
 
 			l.Patterns = append(l.Patterns, pattern)

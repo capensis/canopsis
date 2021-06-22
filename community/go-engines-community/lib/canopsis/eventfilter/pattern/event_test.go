@@ -10,6 +10,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type eventPatternWrapper struct {
@@ -225,7 +226,7 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 		{
 			TestName: "test for undefined",
 			ExpectedUnmarshalled: bson.M{
-				"pattern": bson.M{},
+				"pattern": primitive.Undefined{},
 			},
 			Pattern: pattern.EventPattern{},
 		},
