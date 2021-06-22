@@ -1,12 +1,6 @@
 stages:
   - test
 
-workflow:
-    rules:
-        - changes:
-            - community/go-engines-community/**/*
-          when: never
-
 before_script:
   - cd community/
   - uname -a
