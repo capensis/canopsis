@@ -1,8 +1,9 @@
-package scheduler
+package scheduler_test
 
 import (
 	"bytes"
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
 	"github.com/go-redis/redis/v8"
 	"github.com/golang/mock/gomock"
@@ -17,13 +18,12 @@ func TestQueueLock_LockOrPush_GivenLockIsNotSet_ShouldSetLock(t *testing.T) {
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
+	logger := zerolog.Nop()
 	lockExpirationTime := time.Second
-	queueLock := NewQueueLock(
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		lockExpirationTime,
 		queueClient,
-		false,
 		logger,
 	)
 	lockID := "testlock"
@@ -31,7 +31,7 @@ func TestQueueLock_LockOrPush_GivenLockIsNotSet_ShouldSetLock(t *testing.T) {
 
 	lockClient.
 		EXPECT().
-		SetNX(gomock.Any(), gomock.Eq(lockID), gomock.Eq(defaultLockValue), gomock.Eq(lockExpirationTime)).
+		SetNX(gomock.Any(), gomock.Eq(lockID), gomock.Eq(1), gomock.Eq(lockExpirationTime)).
 		Times(1).
 		Return(redis.NewBoolResult(true, nil))
 
@@ -52,12 +52,11 @@ func TestQueueLock_LockOrPush_GivenLockIsNotSet_ShouldNotAddItemToQueue(t *testi
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
-	queueLock := NewQueueLock(
+	logger := zerolog.Nop()
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		time.Second,
 		queueClient,
-		false,
 		logger,
 	)
 	lockID := "testlock"
@@ -82,12 +81,11 @@ func TestQueueLock_LockOrPush_GivenLockIsSet_ShouldAddItemToQueue(t *testing.T) 
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
-	queueLock := NewQueueLock(
+	logger := zerolog.Nop()
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		time.Second,
 		queueClient,
-		false,
 		logger,
 	)
 	lockID := "testlock"
@@ -121,23 +119,28 @@ func TestQueueLock_LockMultipleOrPush_GivenLockIsNotSet_ShouldSetLock(t *testing
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
+	logger := zerolog.Nop()
 	lockExpirationTime := time.Second
-	queueLock := NewQueueLock(
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		lockExpirationTime,
 		queueClient,
-		false,
 		logger,
 	)
-	lockIDList := []string{"testlock1", "testlock2", "testlock3"}
-	lockList := map[string]interface{}{"testlock1": defaultLockValue, "testlock2": defaultLockValue, "testlock3": defaultLockValue}
+	lockIDList := []string{"testlock2", "testlock3"}
+	lockList := map[string]interface{}{"testlock1": 1, "testlock2": 1, "testlock3": 1}
 	lockID := "testlock1"
 	item := make([]byte, 1)
 
 	lockClient.
 		EXPECT().
 		MSetNX(gomock.Any(), gomock.Eq(lockList)).
+		Times(1).
+		Return(redis.NewBoolResult(true, nil))
+
+	lockClient.
+		EXPECT().
+		Expire(gomock.Any(), gomock.Eq(lockID), gomock.Eq(lockExpirationTime)).
 		Times(1).
 		Return(redis.NewBoolResult(true, nil))
 
@@ -150,12 +153,6 @@ func TestQueueLock_LockMultipleOrPush_GivenLockIsNotSet_ShouldSetLock(t *testing
 	lockClient.
 		EXPECT().
 		Expire(gomock.Any(), gomock.Eq(lockIDList[1]), gomock.Eq(lockExpirationTime)).
-		Times(1).
-		Return(redis.NewBoolResult(true, nil))
-
-	lockClient.
-		EXPECT().
-		Expire(gomock.Any(), gomock.Eq(lockIDList[2]), gomock.Eq(lockExpirationTime)).
 		Times(1).
 		Return(redis.NewBoolResult(true, nil))
 
@@ -176,12 +173,11 @@ func TestQueueLock_LockMultipleOrPush_GivenLockIsNotSet_ShouldNotAddItemToQueue(
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
-	queueLock := NewQueueLock(
+	logger := zerolog.Nop()
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		time.Second,
 		queueClient,
-		false,
 		logger,
 	)
 	lockIDList := []string{"testlock1", "testlock2", "testlock3"}
@@ -213,12 +209,11 @@ func TestQueueLock_LockMultipleOrPush_GivenLockIsSet_ShouldAddItemToQueue(t *tes
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
-	queueLock := NewQueueLock(
+	logger := zerolog.Nop()
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		time.Second,
 		queueClient,
-		false,
 		logger,
 	)
 	lockIDList := []string{"testlock1", "testlock2", "testlock3"}
@@ -252,19 +247,218 @@ func TestQueueLock_LockMultipleOrPush_GivenLockIsSet_ShouldAddItemToQueue(t *tes
 	}
 }
 
+func TestBaseQueueLock_LockAndPopMultiple_GivenLockIsSetAndQueueIsNotEmpty_ShouldReturnNextItem(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	lockClient := mock_v8.NewMockCmdable(ctrl)
+	queueClient := mock_v8.NewMockCmdable(ctrl)
+	logger := zerolog.Nop()
+	lockExpirationTime := time.Second
+	queueLock := scheduler.NewQueueLock(
+		lockClient,
+		lockExpirationTime,
+		queueClient,
+		logger,
+	)
+	lockIDList := []string{"testlock2", "testlock3"}
+	lockList := map[string]interface{}{"testlock2": 1, "testlock3": 1}
+	lockID := "testlock1"
+	expectedItem := make([]byte, 1)
+
+	lockClient.
+		EXPECT().
+		SetNX(gomock.Any(), gomock.Eq(lockID), gomock.Eq(1), gomock.Eq(lockExpirationTime)).
+		Return(redis.NewBoolResult(true, nil))
+
+	queueClient.
+		EXPECT().
+		LPop(gomock.Any(), gomock.Eq(lockID)).
+		Return(redis.NewStringResult(string(expectedItem), nil))
+
+	lockClient.
+		EXPECT().
+		MSetNX(gomock.Any(), gomock.Eq(lockList)).
+		Return(redis.NewBoolResult(true, nil))
+
+	lockClient.
+		EXPECT().
+		Expire(gomock.Any(), gomock.Eq(lockIDList[0]), gomock.Eq(lockExpirationTime)).
+		Times(1).
+		Return(redis.NewBoolResult(true, nil))
+
+	lockClient.
+		EXPECT().
+		Expire(gomock.Any(), gomock.Eq(lockIDList[1]), gomock.Eq(lockExpirationTime)).
+		Times(1).
+		Return(redis.NewBoolResult(true, nil))
+
+	item, err := queueLock.LockAndPopMultiple(ctx, lockID, func(i []byte) ([]string, error) {
+		return lockIDList, nil
+	}, false)
+
+	if !bytes.Equal(item, expectedItem) {
+		t.Errorf("expected item: %v but got %v", expectedItem, item)
+	}
+
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+}
+
+func TestBaseQueueLock_LockAndPopMultiple_GivenLockIsNotSet_ShouldNotReturnNextItem(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	lockClient := mock_v8.NewMockCmdable(ctrl)
+	queueClient := mock_v8.NewMockCmdable(ctrl)
+	logger := zerolog.Nop()
+	lockExpirationTime := time.Second
+	queueLock := scheduler.NewQueueLock(
+		lockClient,
+		lockExpirationTime,
+		queueClient,
+		logger,
+	)
+	lockIDList := []string{"testlock2", "testlock3"}
+	lockID := "testlock1"
+
+	lockClient.
+		EXPECT().
+		SetNX(gomock.Any(), gomock.Eq(lockID), gomock.Eq(1), gomock.Eq(lockExpirationTime)).
+		Return(redis.NewBoolResult(false, nil))
+
+	item, err := queueLock.LockAndPopMultiple(ctx, lockID, func(i []byte) ([]string, error) {
+		return lockIDList, nil
+	}, false)
+
+	if item != nil {
+		t.Errorf("expected item: nil but got %v", item)
+	}
+
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+}
+
+func TestBaseQueueLock_LockAndPopMultiple_GivenLockIsSetAndQueueIsEmpty_ShouldNotReturnNextItem(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	lockClient := mock_v8.NewMockCmdable(ctrl)
+	queueClient := mock_v8.NewMockCmdable(ctrl)
+	logger := zerolog.Nop()
+	lockExpirationTime := time.Second
+	queueLock := scheduler.NewQueueLock(
+		lockClient,
+		lockExpirationTime,
+		queueClient,
+		logger,
+	)
+	lockIDList := []string{"testlock2", "testlock3"}
+	lockID := "testlock1"
+
+	lockClient.
+		EXPECT().
+		SetNX(gomock.Any(), gomock.Eq(lockID), gomock.Eq(1), gomock.Eq(lockExpirationTime)).
+		Return(redis.NewBoolResult(true, nil))
+
+	lockClient.
+		EXPECT().
+		Del(gomock.Any(), gomock.Eq(lockID)).
+		Return(redis.NewIntResult(1, nil))
+
+	queueClient.
+		EXPECT().
+		LPop(gomock.Any(), gomock.Eq(lockID)).
+		Return(redis.NewStringResult("", redis.Nil))
+
+	item, err := queueLock.LockAndPopMultiple(ctx, lockID, func(i []byte) ([]string, error) {
+		return lockIDList, nil
+	}, false)
+
+	if item != nil {
+		t.Errorf("expected item: %v but got %v", nil, item)
+	}
+
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+}
+
+func TestBaseQueueLock_LockAndPopMultiple_GivenLockIsSetAndQueueIsNotEmptyAndAnotherLocksIsNotSet_ShouldNotReturnNextItem(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	lockClient := mock_v8.NewMockCmdable(ctrl)
+	queueClient := mock_v8.NewMockCmdable(ctrl)
+	logger := zerolog.Nop()
+	lockExpirationTime := time.Second
+	queueLock := scheduler.NewQueueLock(
+		lockClient,
+		lockExpirationTime,
+		queueClient,
+		logger,
+	)
+	lockIDList := []string{"testlock2", "testlock3"}
+	lockList := map[string]interface{}{"testlock2": 1, "testlock3": 1}
+	lockID := "testlock1"
+	nextItem := make([]byte, 1)
+
+	lockClient.
+		EXPECT().
+		SetNX(gomock.Any(), gomock.Eq(lockID), gomock.Eq(1), gomock.Eq(lockExpirationTime)).
+		Return(redis.NewBoolResult(true, nil))
+
+	lockClient.
+		EXPECT().
+		Del(gomock.Any(), gomock.Eq(lockID)).
+		Return(redis.NewIntResult(1, nil))
+
+	queueClient.
+		EXPECT().
+		LPop(gomock.Any(), gomock.Eq(lockID)).
+		Return(redis.NewStringResult(string(nextItem), nil))
+
+	queueClient.
+		EXPECT().
+		LPush(gomock.Any(), gomock.Eq(lockID), gomock.Eq(nextItem)).
+		Return(redis.NewIntResult(1, nil))
+
+	lockClient.
+		EXPECT().
+		MSetNX(gomock.Any(), gomock.Eq(lockList)).
+		Return(redis.NewBoolResult(false, nil))
+
+	item, err := queueLock.LockAndPopMultiple(ctx, lockID, func(i []byte) ([]string, error) {
+		return lockIDList, nil
+	}, false)
+
+	if item != nil {
+		t.Errorf("expected item: %v but got %v", nil, item)
+	}
+
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+}
+
 func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsNotEmpty_ShouldReturnNextItem(t *testing.T) {
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
+	logger := zerolog.Nop()
 	lockExpirationTime := time.Second
-	queueLock := NewQueueLock(
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		lockExpirationTime,
 		queueClient,
-		false,
 		logger,
 	)
 	lockID := "testlock"
@@ -282,9 +476,9 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsNotEmpty_ShouldReturnNext
 		Times(1).
 		Return(redis.NewStringResult(string(expectedItem), nil))
 
-	item, err := queueLock.PopOrUnlock(ctx, lockID)
+	item, err := queueLock.PopOrUnlock(ctx, lockID, false)
 
-	if 0 != bytes.Compare(item, expectedItem) {
+	if !bytes.Equal(item, expectedItem) {
 		t.Errorf("expected item: %v but got %v", expectedItem, item)
 	}
 
@@ -299,12 +493,11 @@ func TestQueueLock_PopOrUnlock_GivenLockIsNotSet_ShouldNotReturnNextItem(t *test
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
-	queueLock := NewQueueLock(
+	logger := zerolog.Nop()
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		time.Second,
 		queueClient,
-		false,
 		logger,
 	)
 	lockID := "testlock"
@@ -324,7 +517,7 @@ func TestQueueLock_PopOrUnlock_GivenLockIsNotSet_ShouldNotReturnNextItem(t *test
 		LPop(gomock.Any(), gomock.Any()).
 		Times(0)
 
-	item, err := queueLock.PopOrUnlock(ctx, lockID)
+	item, err := queueLock.PopOrUnlock(ctx, lockID, false)
 
 	if item != nil {
 		t.Errorf("expected item: nil but got %v", item)
@@ -341,12 +534,11 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsEmpty_ShouldNotReturnNext
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
-	queueLock := NewQueueLock(
+	logger := zerolog.Nop()
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		time.Second,
 		queueClient,
-		false,
 		logger,
 	)
 	lockID := "testlock"
@@ -367,7 +559,7 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsEmpty_ShouldNotReturnNext
 		Times(1).
 		Return(redis.NewStringResult("", redis.Nil))
 
-	item, err := queueLock.PopOrUnlock(ctx, lockID)
+	item, err := queueLock.PopOrUnlock(ctx, lockID, false)
 
 	if item != nil {
 		t.Errorf("expected item: nil but got %v", item)
@@ -384,12 +576,11 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsEmpty_ShouldDeleteLock(t 
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
-	queueLock := NewQueueLock(
+	logger := zerolog.Nop()
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		time.Second,
 		queueClient,
-		false,
 		logger,
 	)
 	lockID := "testlock"
@@ -410,7 +601,7 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsEmpty_ShouldDeleteLock(t 
 		LPop(gomock.Any(), gomock.Any()).
 		Return(redis.NewStringResult("", redis.Nil))
 
-	_, _ = queueLock.PopOrUnlock(ctx, lockID)
+	_, _ = queueLock.PopOrUnlock(ctx, lockID, false)
 }
 
 func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsNotEmpty_ShouldReturnNextItem(t *testing.T) {
@@ -419,13 +610,12 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsNotEmpty_ShouldReturnNe
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
+	logger := zerolog.Nop()
 	lockExpirationTime := time.Second
-	queueLock := NewQueueLock(
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		lockExpirationTime,
 		queueClient,
-		false,
 		logger,
 	)
 	lockID := "testlock"
@@ -433,7 +623,7 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsNotEmpty_ShouldReturnNe
 
 	lockClient.
 		EXPECT().
-		SetNX(gomock.Any(), gomock.Eq(lockID), gomock.Eq(defaultLockValue), gomock.Eq(lockExpirationTime)).
+		SetNX(gomock.Any(), gomock.Eq(lockID), gomock.Eq(1), gomock.Eq(lockExpirationTime)).
 		Times(1).
 		Return(redis.NewBoolResult(true, nil))
 
@@ -443,9 +633,9 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsNotEmpty_ShouldReturnNe
 		Times(1).
 		Return(redis.NewStringResult(string(expectedItem), nil))
 
-	item, err := queueLock.LockAndPop(ctx, lockID)
+	item, err := queueLock.LockAndPop(ctx, lockID, false)
 
-	if 0 != bytes.Compare(item, expectedItem) {
+	if !bytes.Equal(item, expectedItem) {
 		t.Errorf("expected item: %v but got %v", expectedItem, item)
 	}
 
@@ -460,12 +650,11 @@ func TestQueueLock_LockAndPop_GivenLockIsSet_ShouldNotReturnNextItem(t *testing.
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
-	queueLock := NewQueueLock(
+	logger := zerolog.Nop()
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		time.Second,
 		queueClient,
-		false,
 		logger,
 	)
 	lockID := "testlock"
@@ -480,7 +669,7 @@ func TestQueueLock_LockAndPop_GivenLockIsSet_ShouldNotReturnNextItem(t *testing.
 		LPop(gomock.Any(), gomock.Any()).
 		Times(0)
 
-	item, err := queueLock.LockAndPop(ctx, lockID)
+	item, err := queueLock.LockAndPop(ctx, lockID, false)
 
 	if item != nil {
 		t.Errorf("expected item: nil but got %v", item)
@@ -497,12 +686,11 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsEmpty_ShouldNotReturnNe
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
-	queueLock := NewQueueLock(
+	logger := zerolog.Nop()
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		time.Second,
 		queueClient,
-		false,
 		logger,
 	)
 	lockID := "testlock"
@@ -523,7 +711,7 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsEmpty_ShouldNotReturnNe
 		Times(1).
 		Return(redis.NewStringResult("", redis.Nil))
 
-	item, err := queueLock.LockAndPop(ctx, lockID)
+	item, err := queueLock.LockAndPop(ctx, lockID, false)
 
 	if item != nil {
 		t.Errorf("expected item: nil but got %v", item)
@@ -540,12 +728,11 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsEmpty_ShouldDeleteLock(
 	defer ctrl.Finish()
 	lockClient := mock_v8.NewMockCmdable(ctrl)
 	queueClient := mock_v8.NewMockCmdable(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
-	queueLock := NewQueueLock(
+	logger := zerolog.Nop()
+	queueLock := scheduler.NewQueueLock(
 		lockClient,
 		time.Second,
 		queueClient,
-		false,
 		logger,
 	)
 	lockID := "testlock"
@@ -566,5 +753,5 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsEmpty_ShouldDeleteLock(
 		LPop(gomock.Any(), gomock.Any()).
 		Return(redis.NewStringResult("", redis.Nil))
 
-	_, _ = queueLock.LockAndPop(ctx, lockID)
+	_, _ = queueLock.LockAndPop(ctx, lockID, false)
 }
