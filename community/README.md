@@ -1,5 +1,7 @@
 # Canopsis Community, open-source hypervision
 
+[![pipeline status](https://git.canopsis.net/canopsis/canopsis-pro/badges/develop/pipeline.svg)](https://git.canopsis.net/canopsis/canopsis-pro/-/commits/develop)
+
 ## About
 
 [Canopsis Community](https://www.capensis.fr/canopsis/) is a modular open-source technology whose goal is to **centralize**, **process** and **report** multiple sources of information, metrics and events into a single platform for monitoring and managing resources.
