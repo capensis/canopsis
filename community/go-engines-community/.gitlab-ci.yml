@@ -25,6 +25,7 @@ stage_test:
     - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} exec -T testing /bin/sh /go-test.sh
 
 after_script:
+    - cd community/go-engines-community/
     - echo "After script"
     - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} kill
     - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} rm -sf
