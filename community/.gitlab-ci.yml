@@ -2,6 +2,7 @@ stages:
   - test
 
 before_script:
+  - cd community/
   - uname -a
   - docker -v
   - git --no-pager show

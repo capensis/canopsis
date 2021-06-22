@@ -8,6 +8,7 @@ variables:
   CI_PROJECT_DIR: "CI/"
 
 before_script:
+  - cd community/go-engines-community/
   - uname -a
   - docker -v
   - echo "Go version $(awk -F'\"' '/^GOLANG_IMAGE_TAG:/ { print $2 }' Makefile.var)"
