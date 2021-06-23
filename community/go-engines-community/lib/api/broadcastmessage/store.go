@@ -2,41 +2,32 @@ package broadcastmessage
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 )
 
 type Store interface {
-	Insert(model *BroadcastMessage) error
-	GetById(id string) (*BroadcastMessage, error)
-	Find(query FilteredQuery) (*AggregationResult, error)
-	Update(model *BroadcastMessage) (bool, error)
-	Delete(id string) (bool, error)
-	GetActive() ([]*BroadcastMessage, error)
-}
-
-type AggregationResult struct {
-	Data       []*BroadcastMessage `bson:"data" json:"data"`
-	TotalCount int64               `bson:"total_count" json:"total_count"`
+	Insert(ctx context.Context, model *BroadcastMessage) error
+	GetById(ctx context.Context, id string) (*BroadcastMessage, error)
+	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
+	Update(ctx context.Context, model *BroadcastMessage) (bool, error)
+	Delete(ctx context.Context, id string) (bool, error)
+	GetActive(ctx context.Context) ([]*BroadcastMessage, error)
 }
 
 type store struct {
-	dbCollection mongo.DbCollection
+	dbCollection          mongo.DbCollection
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
-func (s store) Insert(model *BroadcastMessage) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s store) Insert(ctx context.Context, model *BroadcastMessage) error {
 	if model.ID == "" {
 		model.ID = utils.NewID()
 	}
@@ -52,9 +43,7 @@ func (s store) Insert(model *BroadcastMessage) error {
 	return err
 }
 
-func (s store) GetById(id string) (*BroadcastMessage, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s store) GetById(ctx context.Context, id string) (*BroadcastMessage, error) {
 	bm := &BroadcastMessage{}
 	d := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
 	if d.Err() != nil {
@@ -66,31 +55,14 @@ func (s store) GetById(id string) (*BroadcastMessage, error) {
 	return bm, nil
 }
 
-func (s store) Find(query FilteredQuery) (*AggregationResult, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	var filter bson.M
-
-	if query.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", query.Search),
-			Options: "i",
-		}
-
-		filter = bson.M{
-			"$or": []bson.M{
-				{"_id": searchRegexp},
-				{"message": searchRegexp},
-			},
-		}
-	} else {
-		filter = bson.M{}
-	}
-	pipeline := []bson.M{
-		{"$match": filter},
+func (s store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
+	pipeline := make([]bson.M, 0)
+	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := "_id"
+	sortBy := s.defaultSortBy
 	if query.SortBy != "" {
 		sortBy = query.SortBy
 	}
@@ -116,10 +88,7 @@ func (s store) Find(query FilteredQuery) (*AggregationResult, error) {
 	return &result, nil
 }
 
-func (s store) Update(model *BroadcastMessage) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s store) Update(ctx context.Context, model *BroadcastMessage) (bool, error) {
 	var data BroadcastMessage
 	updated := types.NewCpsTime(time.Now().Unix())
 	model.Created = nil
@@ -137,10 +106,7 @@ func (s store) Update(model *BroadcastMessage) (bool, error) {
 	return true, nil
 }
 
-func (s store) Delete(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s store) Delete(ctx context.Context, id string) (bool, error) {
 	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err
@@ -149,10 +115,7 @@ func (s store) Delete(id string) (bool, error) {
 	return deleted > 0, nil
 }
 
-func (s store) GetActive() ([]*BroadcastMessage, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s store) GetActive(ctx context.Context) ([]*BroadcastMessage, error) {
 	now := time.Now().Unix()
 	cursor, err := s.dbCollection.Find(ctx, bson.M{"$and": bson.A{
 		bson.M{
@@ -187,14 +150,8 @@ func NewStore(
 	dbClient mongo.DbClient,
 ) Store {
 	return &store{
-		dbCollection: dbClient.Collection(mongo.BroadcastMessageMongoCollection),
+		dbCollection:          dbClient.Collection(mongo.BroadcastMessageMongoCollection),
+		defaultSortBy:         "_id",
+		defaultSearchByFields: []string{"_id", "message"},
 	}
-}
-
-func (r *AggregationResult) GetData() interface{} {
-	return r.Data
-}
-
-func (r *AggregationResult) GetTotal() int64 {
-	return r.TotalCount
 }

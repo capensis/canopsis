@@ -16,22 +16,16 @@ type Store interface {
 }
 
 type store struct {
-	db                    mongo.DbClient
-	dbCollection          mongo.DbCollection
-	defaultSearchByFields []string
-	defaultSortBy         string
-	basicTypes            []string
+	db           mongo.DbClient
+	dbCollection mongo.DbCollection
+	basicTypes   []string
 }
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
 		db:           db,
 		dbCollection: db.Collection(mongo.EntityMongoCollection),
-		defaultSearchByFields: []string{
-			"name", "type",
-		},
-		defaultSortBy: "name",
-		basicTypes:    []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector},
+		basicTypes:   []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector},
 	}
 }
 

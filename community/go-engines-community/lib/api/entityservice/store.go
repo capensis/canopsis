@@ -15,11 +15,11 @@ import (
 )
 
 type Store interface {
-	GetOneBy(ctx context.Context, id string) (*EntityService, error)
+	GetOneBy(ctx context.Context, id string) (*Response, error)
 	GetDependencies(ctx context.Context, id string, query pagination.Query) (*ContextGraphAggregationResult, error)
 	GetImpacts(ctx context.Context, id string, query pagination.Query) (*ContextGraphAggregationResult, error)
-	Create(ctx context.Context, request CreateRequest) (*EntityService, error)
-	Update(ctx context.Context, request UpdateRequest) (*EntityService, ServiceChanges, error)
+	Create(ctx context.Context, request CreateRequest) (*Response, error)
+	Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error)
 	Delete(ctx context.Context, id string) (bool, *types.Alarm, error)
 }
 
@@ -40,7 +40,7 @@ func NewStore(db mongo.DbClient) Store {
 	}
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*EntityService, error) {
+func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": id, "type": types.EntityTypeService}},
 		{"$lookup": bson.M{
@@ -56,7 +56,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*EntityService, error)
 	}
 
 	if cursor.Next(ctx) {
-		res := EntityService{}
+		res := Response{}
 		err := cursor.Decode(&res)
 		if err != nil {
 			return nil, err
@@ -217,7 +217,7 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 	return result, nil
 }
 
-func (s *store) Create(ctx context.Context, request CreateRequest) (*EntityService, error) {
+func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, error) {
 	entity := entityservice.EntityService{
 		Entity: types.Entity{
 			ID:            utils.NewID(),
@@ -249,7 +249,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*EntityServi
 	return s.GetOneBy(ctx, entity.ID)
 }
 
-func (s *store) Update(ctx context.Context, request UpdateRequest) (*EntityService, ServiceChanges, error) {
+func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error) {
 	serviceChanges := ServiceChanges{}
 	res := s.dbCollection.FindOneAndUpdate(
 		ctx,

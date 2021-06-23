@@ -63,7 +63,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	types, err := a.store.Find(r)
+	types, err := a.store.Find(c.Request.Context(), r)
 	if err != nil {
 		panic(err)
 	}
@@ -90,7 +90,7 @@ func (a *api) List(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /pbehavior-types/{id} [get]
 func (a *api) Get(c *gin.Context) {
-	pt, err := a.store.GetOneBy(c.Param("id"))
+	pt, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -123,7 +123,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	pt := a.transformer.TransformCreateRequestToModel(request)
-	if err := a.store.Insert(pt); err != nil {
+	if err := a.store.Insert(c.Request.Context(), pt); err != nil {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -174,7 +174,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	pt := a.transformer.TransformUpdateRequestToModel(request)
-	ok, err := a.store.Update(c.Param("id"), pt)
+	ok, err := a.store.Update(c.Request.Context(), c.Param("id"), pt)
 	if err != nil {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
@@ -216,7 +216,7 @@ func (a *api) Update(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /pbehavior-types/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Param("id"))
+	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
