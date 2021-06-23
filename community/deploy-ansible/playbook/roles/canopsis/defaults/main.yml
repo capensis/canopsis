@@ -91,4 +91,6 @@ canopsis_core_other_default_services:
 # Default other CAT components
 canopsis_cat_other_default_services:
   -
+    name: connector-junit
+  -
     name: external-job-executor
