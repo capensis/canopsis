@@ -1,6 +1,7 @@
 db.default_rights.insertMany([
     {
         _id: "api_contextgraph",
+        loader_id: "api_contextgraph",
         crecord_name: "api_contextgraph",
         crecord_type: "action",
         type: "CRUD"
