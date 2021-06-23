@@ -69,7 +69,7 @@ type Adapter interface {
 	// GetOpenedAlarmsByIDs gets ongoing alarms related the provided entity ids
 	GetOpenedAlarmsByIDs(ids []string, alarms *[]types.Alarm) error
 	GetOpenedAlarmsWithEntityByIDs(ids []string, alarms *[]types.AlarmWithEntity) error
-	GetCountOpenedAlarmsByIDs(ids []string) (int, error)
+	GetCountOpenedAlarmsByIDs(ids []string) (int64, error)
 
 	// GetOpenedAlarmsByAlarmIDs gets ongoing alarms related the provided alarm ids
 	GetOpenedAlarmsByAlarmIDs(ids []string, alarms *[]types.Alarm) error
