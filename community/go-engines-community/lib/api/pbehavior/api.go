@@ -64,7 +64,7 @@ func NewApi(
 // @Param search query string false "search query"
 // @Param sort query string false "sort query"
 // @Param sort_by query string false "sort query"
-// @Success 200 {object} common.PaginatedListResponse{data=[]PBehavior}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /pbehaviors [get]
 func (a *api) List(c *gin.Context) {
@@ -101,7 +101,7 @@ func (a *api) List(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param id query string true "Entity id"
-// @Success 200 {array} PBehavior
+// @Success 200 {array} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /entities/pbehaviors [get]
 func (a *api) ListByEntityID(c *gin.Context) {
@@ -129,7 +129,7 @@ func (a *api) ListByEntityID(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param id path string true "pbehavior id"
-// @Success 200 {object} PBehavior
+// @Success 200 {object} Response
 // @Failure 404 {object} common.ErrorResponse
 // @Router /pbehaviors/{id} [get]
 func (a *api) Get(c *gin.Context) {
@@ -208,7 +208,7 @@ func (a *api) GetEIDs(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param body body EditRequest true "body"
-// @Success 201 {object} PBehavior
+// @Success 201 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /pbehaviors [post]
 func (a *api) Create(c *gin.Context) {
@@ -220,7 +220,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	model, err := a.transformer.TransformCreateRequestToModel(request)
+	model, err := a.transformer.TransformCreateRequestToModel(c.Request.Context(), request)
 	if err != nil {
 		if err == ErrReasonNotExists || err == ErrExceptionNotExists || err == pbehaviorexception.ErrTypeNotExists {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -263,7 +263,7 @@ func (a *api) Create(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "pbehavior id"
 // @Param body body EditRequest true "body"
-// @Success 200 {object} PBehavior
+// @Success 200 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /pbehaviors/{id} [put]
@@ -278,7 +278,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	model, err := a.transformer.TransformUpdateRequestToModel(request)
+	model, err := a.transformer.TransformUpdateRequestToModel(c.Request.Context(), request)
 	if err != nil {
 		if err == ErrReasonNotExists || err == ErrExceptionNotExists || err == pbehaviorexception.ErrTypeNotExists {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))

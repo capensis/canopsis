@@ -113,9 +113,9 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 	for i := range res.Data {
 		if v, ok := pbhs[res.Data[i].PbehaviorID]; ok {
-			res.Data[i].Pbehaviors = []pbehavior.PBehavior{v}
+			res.Data[i].Pbehaviors = []pbehavior.Response{v}
 		} else {
-			res.Data[i].Pbehaviors = []pbehavior.PBehavior{}
+			res.Data[i].Pbehaviors = []pbehavior.Response{}
 		}
 	}
 
@@ -253,9 +253,9 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 
 	for i := range res.Data {
 		if v, ok := pbhs[res.Data[i].PbehaviorInfo.ID]; ok {
-			res.Data[i].Pbehaviors = []pbehavior.PBehavior{v}
+			res.Data[i].Pbehaviors = []pbehavior.Response{v}
 		} else {
-			res.Data[i].Pbehaviors = []pbehavior.PBehavior{}
+			res.Data[i].Pbehaviors = []pbehavior.Response{}
 		}
 
 		if s.statsStore != nil {
@@ -274,7 +274,7 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 	return &res, nil
 }
 
-func (s *store) findPbehaviors(ctx context.Context, ids []string) (map[string]pbehavior.PBehavior, error) {
+func (s *store) findPbehaviors(ctx context.Context, ids []string) (map[string]pbehavior.Response, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -288,13 +288,13 @@ func (s *store) findPbehaviors(ctx context.Context, ids []string) (map[string]pb
 		return nil, err
 	}
 
-	var pbhs []pbehavior.PBehavior
+	var pbhs []pbehavior.Response
 	err = cursor.All(ctx, &pbhs)
 	if err != nil {
 		return nil, err
 	}
 
-	pbhsByID := make(map[string]pbehavior.PBehavior, len(pbhs))
+	pbhsByID := make(map[string]pbehavior.Response, len(pbhs))
 	for _, pbh := range pbhs {
 		pbhsByID[pbh.ID] = pbh
 	}

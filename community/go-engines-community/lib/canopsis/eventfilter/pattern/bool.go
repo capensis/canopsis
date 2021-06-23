@@ -1,7 +1,7 @@
 package pattern
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
@@ -9,7 +9,7 @@ import (
 // BoolPattern is a type representing a pattern that can be applied to the value
 // of a field of an event that contains a boolean.
 type BoolPattern struct {
-	utils.OptionalBool
+	types.OptionalBool
 }
 
 // Matches returns true if the value is matched by the pattern.

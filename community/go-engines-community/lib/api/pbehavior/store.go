@@ -3,7 +3,6 @@ package pbehavior
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -15,19 +14,18 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const limitMatch = 100
 
 type Store interface {
-	Insert(ctx context.Context, model *PBehavior) error
+	Insert(ctx context.Context, model *Response) error
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
-	FindByEntityID(ctx context.Context, entityID string) ([]PBehavior, error)
-	GetOneBy(ctx context.Context, filter bson.M) (*PBehavior, error)
+	FindByEntityID(ctx context.Context, entityID string) ([]Response, error)
+	GetOneBy(ctx context.Context, filter bson.M) (*Response, error)
 	GetEIDs(ctx context.Context, pbhID string, request EIDsListRequest) (AggregationEIDsResult, error)
-	Update(ctx context.Context, model *PBehavior) (bool, error)
+	Update(ctx context.Context, model *Response) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	Count(context.Context, Filter, int) (*CountFilterResult, error)
 }
@@ -63,7 +61,7 @@ func NewStore(
 	}
 }
 
-func (s *store) Insert(ctx context.Context, model *PBehavior) error {
+func (s *store) Insert(ctx context.Context, model *Response) error {
 	if model.ID == "" {
 		model.ID = utils.NewID()
 	}
@@ -120,7 +118,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &result, nil
 }
 
-func (s *store) FindByEntityID(ctx context.Context, entityID string) ([]PBehavior, error) {
+func (s *store) FindByEntityID(ctx context.Context, entityID string) ([]Response, error) {
 	pbhIDs, err := s.getMatchedPbhIDs(ctx, entityID)
 	if err != nil {
 		return nil, err
@@ -134,7 +132,7 @@ func (s *store) FindByEntityID(ctx context.Context, entityID string) ([]PBehavio
 		return nil, err
 	}
 
-	res := make([]PBehavior, 0)
+	res := make([]Response, 0)
 	err = cursor.All(ctx, &res)
 	if err != nil {
 		return nil, err
@@ -212,7 +210,7 @@ func (s *store) getMatchedPbhIDsByFilters(
 	return pbhIDs, nil
 }
 
-func (s *store) GetOneBy(ctx context.Context, filter bson.M) (*PBehavior, error) {
+func (s *store) GetOneBy(ctx context.Context, filter bson.M) (*Response, error) {
 	pipeline := []bson.M{
 		{"$match": filter},
 	}
@@ -225,7 +223,7 @@ func (s *store) GetOneBy(ctx context.Context, filter bson.M) (*PBehavior, error)
 
 	defer cursor.Close(ctx)
 	if cursor.Next(ctx) {
-		var pbh PBehavior
+		var pbh Response
 		err = cursor.Decode(&pbh)
 		if err != nil {
 			return nil, err
@@ -238,23 +236,27 @@ func (s *store) GetOneBy(ctx context.Context, filter bson.M) (*PBehavior, error)
 }
 
 func (s *store) GetEIDs(ctx context.Context, pbhID string, request EIDsListRequest) (AggregationEIDsResult, error) {
-	var filter bson.M
-
 	result := AggregationEIDsResult{
 		Data:       make([]EID, 0),
 		TotalCount: 0,
 	}
 
-	if request.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", request.Search),
-			Options: "i",
-		}
-
-		filter = bson.M{"d": searchRegexp}
-	} else {
-		filter = bson.M{}
+	pipeline := []bson.M{
+		{"$match": bson.M{"v.pbehavior_info.id": pbhID}},
 	}
+	filter := common.GetSearchQuery(request.Search, []string{"d"})
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
+	}
+
+	pipeline = append(pipeline,
+		bson.M{
+			"$project": bson.M{
+				"id": "$d",
+				"t":  1,
+			},
+		},
+	)
 
 	sortBy := request.SortBy
 	if sortBy == "" {
@@ -262,27 +264,11 @@ func (s *store) GetEIDs(ctx context.Context, pbhID string, request EIDsListReque
 	}
 
 	collection := s.dbClient.Collection(mongo.AlarmMongoCollection)
-	pipeline := pagination.CreateAggregationPipeline(
+	cursor, err := collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
-		[]bson.M{
-			{
-				"$match": bson.M{
-					"$and": []bson.M{
-						{"v.pbehavior_info.id": pbhID},
-						filter,
-					},
-				},
-			},
-			{
-				"$project": bson.M{
-					"id": "$d",
-					"t":  1,
-				},
-			},
-		},
+		pipeline,
 		common.GetSortQuery(sortBy, request.Sort),
-	)
-	cursor, err := collection.Aggregate(ctx, pipeline)
+	))
 
 	if err != nil {
 		return result, err
@@ -299,7 +285,7 @@ func (s *store) GetEIDs(ctx context.Context, pbhID string, request EIDsListReque
 	return result, nil
 }
 
-func (s *store) Update(ctx context.Context, model *PBehavior) (bool, error) {
+func (s *store) Update(ctx context.Context, model *Response) (bool, error) {
 	doc, err := s.transformModelToDocument(model)
 	if err != nil {
 		return false, err
@@ -334,7 +320,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return deleted > 0, nil
 }
 
-func (s *store) transformModelToDocument(model *PBehavior) (*pbehavior.PBehavior, error) {
+func (s *store) transformModelToDocument(model *Response) (*pbehavior.PBehavior, error) {
 	exdates := make([]pbehavior.Exdate, len(model.Exdates))
 	for i := range model.Exdates {
 		exdates[i].Type = model.Exdates[i].Type.ID
@@ -367,7 +353,7 @@ func (s *store) transformModelToDocument(model *PBehavior) (*pbehavior.PBehavior
 	}, nil
 }
 
-func (s *store) fillActiveStatuses(ctx context.Context, result []PBehavior) error {
+func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error {
 	ok, err := s.redisStore.Restore(ctx, s.service)
 	if err != nil {
 		return err
@@ -384,7 +370,7 @@ func (s *store) fillActiveStatuses(ctx context.Context, result []PBehavior) erro
 		ids[i] = pbh.ID
 	}
 
-	statusesByID, err := s.service.GetPbehaviorStatus(context.Background(), ids, now)
+	statusesByID, err := s.service.GetPbehaviorStatus(ctx, ids, now)
 	if err != nil {
 		return err
 	}

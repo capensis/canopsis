@@ -2,7 +2,6 @@ package viewgroup
 
 import (
 	"context"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -10,52 +9,43 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
 type Store interface {
-	Find(r ListRequest, authorizedViewIds []string) (*AggregationResult, error)
-	GetOneBy(string) (*ViewGroup, error)
-	Insert([]EditRequest) ([]ViewGroup, error)
-	Update([]BulkUpdateRequestItem) ([]ViewGroup, error)
-	Delete([]string) (bool, error)
+	Find(ctx context.Context, r ListRequest, authorizedViewIds []string) (*AggregationResult, error)
+	GetOneBy(ctx context.Context, id string) (*ViewGroup, error)
+	Insert(ctx context.Context, r []EditRequest) ([]ViewGroup, error)
+	Update(ctx context.Context, r []BulkUpdateRequestItem) ([]ViewGroup, error)
+	Delete(ctx context.Context, ids []string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
-		dbCollection:     dbClient.Collection(mongo.ViewGroupMongoCollection),
-		dbViewCollection: dbClient.Collection(mongo.ViewMongoCollection),
+		dbCollection:          dbClient.Collection(mongo.ViewGroupMongoCollection),
+		dbViewCollection:      dbClient.Collection(mongo.ViewMongoCollection),
+		defaultSearchByFields: []string{"_id", "title", "author"},
+		defaultSortBy:         "position",
 	}
 }
 
 type store struct {
-	dbCollection     mongo.DbCollection
-	dbViewCollection mongo.DbCollection
+	dbCollection          mongo.DbCollection
+	dbViewCollection      mongo.DbCollection
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
-func (s *store) Find(r ListRequest, authorizedViewIds []string) (*AggregationResult, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	filter := bson.M{}
-
-	if r.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", r.Search),
-			Options: "i",
-		}
-
-		filter["$or"] = []bson.M{
-			{"title": searchRegexp},
-			{"description": searchRegexp},
-		}
+func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []string) (*AggregationResult, error) {
+	pipeline := make([]bson.M, 0)
+	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sort := common.GetSortQuery("position", common.SortAsc)
-	pipeline := []bson.M{{"$match": filter}}
+	sort := common.GetSortQuery(s.defaultSortBy, common.SortAsc)
 	project := make([]bson.M, 0)
 
 	if r.WithFlags || r.WithViews {
@@ -143,10 +133,7 @@ func (s *store) Find(r ListRequest, authorizedViewIds []string) (*AggregationRes
 	return &res, nil
 }
 
-func (s *store) GetOneBy(id string) (*ViewGroup, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) GetOneBy(ctx context.Context, id string) (*ViewGroup, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -168,10 +155,7 @@ func (s *store) GetOneBy(id string) (*ViewGroup, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(r []EditRequest) ([]ViewGroup, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Insert(ctx context.Context, r []EditRequest) ([]ViewGroup, error) {
 	count, err := s.dbCollection.CountDocuments(ctx, bson.M{})
 	if err != nil {
 		return nil, err
@@ -207,10 +191,7 @@ func (s *store) Insert(r []EditRequest) ([]ViewGroup, error) {
 	return groups, nil
 }
 
-func (s *store) Update(r []BulkUpdateRequestItem) ([]ViewGroup, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Update(ctx context.Context, r []BulkUpdateRequestItem) ([]ViewGroup, error) {
 	ids := make([]string, len(r))
 	rByID := make(map[string]BulkUpdateRequestItem, len(r))
 	for i, item := range r {
@@ -267,10 +248,7 @@ func (s *store) findByIDs(ctx context.Context, ids []string) ([]ViewGroup, error
 	return groups, nil
 }
 
-func (s *store) Delete(ids []string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Delete(ctx context.Context, ids []string) (bool, error) {
 	res := s.dbViewCollection.FindOne(ctx, bson.M{"group_id": bson.M{"$in": ids}})
 	if err := res.Err(); err != nil {
 		if err != mongodriver.ErrNoDocuments {

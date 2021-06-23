@@ -1,10 +1,10 @@
 package heartbeat
 
 type ModelTransformer interface {
-	TransformCreateRequestToModel(request CreateRequest) *Heartbeat
-	TransformUpdateRequestToModel(request UpdateRequest) *Heartbeat
-	TransformBulkCreateRequestToModels(request BulkCreateRequest) []*Heartbeat
-	TransformBulkUpdateRequestToModels(request BulkUpdateRequest) []*Heartbeat
+	TransformCreateRequestToModel(request CreateRequest) *Response
+	TransformUpdateRequestToModel(request UpdateRequest) *Response
+	TransformBulkCreateRequestToModels(request BulkCreateRequest) []*Response
+	TransformBulkUpdateRequestToModels(request BulkUpdateRequest) []*Response
 }
 
 func NewModelTransformer() ModelTransformer {
@@ -13,9 +13,9 @@ func NewModelTransformer() ModelTransformer {
 
 type modelTransformer struct{}
 
-func (modelTransformer) TransformCreateRequestToModel(request CreateRequest) *Heartbeat {
-	return &Heartbeat{
-		ID:				  request.ID,
+func (modelTransformer) TransformCreateRequestToModel(request CreateRequest) *Response {
+	return &Response{
+		ID:               request.ID,
 		Name:             request.Name,
 		Description:      request.Description,
 		Author:           request.Author,
@@ -25,15 +25,15 @@ func (modelTransformer) TransformCreateRequestToModel(request CreateRequest) *He
 	}
 }
 
-func (t *modelTransformer) TransformUpdateRequestToModel(request UpdateRequest) *Heartbeat {
+func (t *modelTransformer) TransformUpdateRequestToModel(request UpdateRequest) *Response {
 	return t.TransformCreateRequestToModel(CreateRequest{
 		BaseEditRequest: request.BaseEditRequest,
 		ID:              request.ID,
 	})
 }
 
-func (t *modelTransformer) TransformBulkCreateRequestToModels(request BulkCreateRequest) []*Heartbeat {
-	heartbeats := make([]*Heartbeat, len(request.Items))
+func (t *modelTransformer) TransformBulkCreateRequestToModels(request BulkCreateRequest) []*Response {
+	heartbeats := make([]*Response, len(request.Items))
 	for i := range heartbeats {
 		heartbeats[i] = t.TransformCreateRequestToModel(request.Items[i])
 	}
@@ -41,8 +41,8 @@ func (t *modelTransformer) TransformBulkCreateRequestToModels(request BulkCreate
 	return heartbeats
 }
 
-func (t *modelTransformer) TransformBulkUpdateRequestToModels(request BulkUpdateRequest) []*Heartbeat {
-	heartbeats := make([]*Heartbeat, len(request.Items))
+func (t *modelTransformer) TransformBulkUpdateRequestToModels(request BulkUpdateRequest) []*Response {
+	heartbeats := make([]*Response, len(request.Items))
 	for i := range heartbeats {
 		heartbeats[i] = t.TransformCreateRequestToModel(CreateRequest{
 			BaseEditRequest: request.Items[i].BaseEditRequest,

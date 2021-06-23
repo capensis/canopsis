@@ -212,10 +212,10 @@ func (a Action) MarshalBSONValue() (bsontype.Type, []byte, error) {
 // a constant.
 type SetFieldProcessor struct {
 	// Name is the name of the field that is modified.
-	Name utils.OptionalString `bson:"name"`
+	Name types.OptionalString `bson:"name"`
 
 	// Value is the new value of the field.
-	Value utils.OptionalInterface `bson:"value"`
+	Value types.OptionalInterface `bson:"value"`
 
 	// When unmarshalling a BSON document, the fields of this document that are
 	// not defined in this struct are added to UnexpectedFields.
@@ -246,10 +246,10 @@ func (p SetFieldProcessor) Apply(event types.Event, parameters ActionParameters,
 // field of an event using a template.
 type SetFieldFromTemplateProcessor struct {
 	// Name is the name of the field that is modified.
-	Name utils.OptionalString `bson:"name"`
+	Name types.OptionalString `bson:"name"`
 
 	// Value is the template used to set the new value of the field.
-	Value utils.OptionalTemplate `bson:"value"`
+	Value types.OptionalTemplate `bson:"value"`
 
 	// buffer is a buffer used when executing the templates.
 	buffer strings.Builder
@@ -288,13 +288,13 @@ func (p SetFieldFromTemplateProcessor) Apply(event types.Event, parameters Actio
 // information of an entity.
 type SetEntityInfoFromTemplateProcessor struct {
 	// Name is the name of the information that is modified.
-	Name utils.OptionalString `bson:"name"`
+	Name types.OptionalString `bson:"name"`
 
 	// Value is the new value of the information.
-	Value utils.OptionalTemplate `bson:"value"`
+	Value types.OptionalTemplate `bson:"value"`
 
 	// Description is the description of the information.
-	Description utils.OptionalString `bson:"description"`
+	Description types.OptionalString `bson:"description"`
 
 	// buffer is a buffer used when executing the templates.
 	buffer strings.Builder
@@ -343,10 +343,10 @@ func (p SetEntityInfoFromTemplateProcessor) Apply(event types.Event, parameters 
 type CopyProcessor struct {
 	// From is the name of the field of the ActionParameters the value will be
 	// copied from.
-	From utils.OptionalString `bson:"from"`
+	From types.OptionalString `bson:"from"`
 
 	// To is the name of the field of the event the value will be copied to.
-	To utils.OptionalString `bson:"to"`
+	To types.OptionalString `bson:"to"`
 
 	// When unmarshalling a BSON document, the fields of this document that are
 	// not defined in this struct are added to UnexpectedFields.
@@ -386,13 +386,13 @@ func (p CopyProcessor) Apply(event types.Event, parameters ActionParameters, rep
 // information of an entity.
 type SetEntityInfoProcessor struct {
 	// Name is the name of the information that is modified.
-	Name utils.OptionalString `bson:"name"`
+	Name types.OptionalString `bson:"name"`
 
 	// Description is the description of the information.
-	Description utils.OptionalString `bson:"description"`
+	Description types.OptionalString `bson:"description"`
 
 	// Value is the new value of the field.
-	Value utils.OptionalInterface `bson:"value"`
+	Value types.OptionalInterface `bson:"value"`
 
 	// When unmarshalling a BSON document, the fields of this document that are
 	// not defined in this struct are added to UnexpectedFields.
@@ -428,14 +428,14 @@ func (p SetEntityInfoProcessor) Apply(event types.Event, parameters ActionParame
 // information of an entity.
 type CopyToEntityInfoProcessor struct {
 	// Name is the name of the information that is modified.
-	Name utils.OptionalString `bson:"name"`
+	Name types.OptionalString `bson:"name"`
 
 	// Description is the description of the information.
-	Description utils.OptionalString `bson:"description"`
+	Description types.OptionalString `bson:"description"`
 
 	// From is the name of the field of the ActionParameters the value will be
 	// copied from.
-	From utils.OptionalString `bson:"from"`
+	From types.OptionalString `bson:"from"`
 
 	// When unmarshalling a BSON document, the fields of this document that are
 	// not defined in this struct are added to UnexpectedFields.
@@ -471,7 +471,7 @@ func (p CopyToEntityInfoProcessor) Apply(event types.Event, parameters ActionPar
 	return event, nil
 }
 
-func setEntityInfo(entity *types.Entity, value interface{}, name, description utils.OptionalString) bool {
+func setEntityInfo(entity *types.Entity, value interface{}, name, description types.OptionalString) bool {
 	info, ok := entity.Infos[name.Value]
 	if !ok {
 		info = types.Info{}

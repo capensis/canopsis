@@ -969,7 +969,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/broadcastmessage.BroadcastMessage"
+                            "$ref": "#/definitions/broadcastmessage.Payload"
                         }
                     }
                 ],
@@ -1073,7 +1073,10 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/heartbeat.Response"
+                                }
                             }
                         }
                     },
@@ -1132,7 +1135,10 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/heartbeat.Response"
+                                }
                             }
                         }
                     },
@@ -1776,7 +1782,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pbehavior.PBehavior"
+                                "$ref": "#/definitions/pbehavior.Response"
                             }
                         }
                     },
@@ -2568,7 +2574,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "400": {
@@ -2612,7 +2618,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "404": {
@@ -2666,7 +2672,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "400": {
@@ -3101,7 +3107,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                                "$ref": "#/definitions/heartbeat.Response"
                                             }
                                         }
                                     }
@@ -3153,7 +3159,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                            "$ref": "#/definitions/heartbeat.Response"
                         }
                     },
                     "400": {
@@ -3197,7 +3203,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                            "$ref": "#/definitions/heartbeat.Response"
                         }
                     },
                     "404": {
@@ -3251,7 +3257,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                            "$ref": "#/definitions/heartbeat.Response"
                         }
                     },
                     "400": {
@@ -5075,7 +5081,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/pbehavior.PBehavior"
+                                                "$ref": "#/definitions/pbehavior.Response"
                                             }
                                         }
                                     }
@@ -5127,7 +5133,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "400": {
@@ -5226,7 +5232,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "404": {
@@ -5280,7 +5286,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "400": {
@@ -8468,6 +8474,35 @@
                 }
             }
         },
+        "broadcastmessage.Payload": {
+            "type": "object",
+            "required": [
+                "color",
+                "end",
+                "message",
+                "start"
+            ],
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "end": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -9075,7 +9110,7 @@
                 }
             }
         },
-        "entityservice.EntityService": {
+        "entityservice.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -9340,7 +9375,7 @@
                 }
             }
         },
-        "heartbeat.Heartbeat": {
+        "heartbeat.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -10514,7 +10549,7 @@
                 }
             }
         },
-        "pbehavior.PBehavior": {
+        "pbehavior.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -11280,7 +11315,7 @@
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.PBehavior"
+                        "$ref": "#/definitions/pbehavior.Response"
                     }
                 },
                 "resource": {
@@ -11401,7 +11436,7 @@
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.PBehavior"
+                        "$ref": "#/definitions/pbehavior.Response"
                     }
                 },
                 "resource": {

@@ -64,7 +64,7 @@ type BulkDeleteRequest struct {
 	IDs []string `form:"ids[]" binding:"required,notblank"`
 }
 
-type Heartbeat struct {
+type Response struct {
 	ID               string                 `bson:"_id,omitempty" json:"_id"`
 	Name             string                 `bson:"name" json:"name"`
 	Description      string                 `bson:"description" json:"description"`
@@ -77,8 +77,8 @@ type Heartbeat struct {
 }
 
 type AggregationResult struct {
-	Data       []Heartbeat `bson:"data" json:"data"`
-	TotalCount int64       `bson:"total_count" json:"total_count"`
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
 // GetTotal implementation PaginatedData interface

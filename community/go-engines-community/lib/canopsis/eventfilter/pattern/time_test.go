@@ -7,7 +7,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -460,7 +459,7 @@ func TestTimePatternMarshalBSON(t *testing.T) {
 			Pattern: pattern.TimePattern{
 				IntegerPattern: pattern.IntegerPattern{
 					IntegerConditions: pattern.IntegerConditions{
-						Equal: utils.OptionalInt64{
+						Equal: types.OptionalInt64{
 							Set:   true,
 							Value: 7,
 						},
@@ -479,11 +478,11 @@ func TestTimePatternMarshalBSON(t *testing.T) {
 			Pattern: pattern.TimePattern{
 				IntegerPattern: pattern.IntegerPattern{
 					IntegerConditions: pattern.IntegerConditions{
-						Gte: utils.OptionalInt64{
+						Gte: types.OptionalInt64{
 							Set:   true,
 							Value: 0,
 						},
-						Lte: utils.OptionalInt64{
+						Lte: types.OptionalInt64{
 							Set:   true,
 							Value: 2,
 						},
@@ -502,11 +501,11 @@ func TestTimePatternMarshalBSON(t *testing.T) {
 			Pattern: pattern.TimePattern{
 				IntegerPattern: pattern.IntegerPattern{
 					IntegerConditions: pattern.IntegerConditions{
-						Gt: utils.OptionalInt64{
+						Gt: types.OptionalInt64{
 							Set:   true,
 							Value: 0,
 						},
-						Lt: utils.OptionalInt64{
+						Lt: types.OptionalInt64{
 							Set:   true,
 							Value: 3,
 						},
@@ -525,11 +524,11 @@ func TestTimePatternMarshalBSON(t *testing.T) {
 			Pattern: pattern.TimePattern{
 				IntegerPattern: pattern.IntegerPattern{
 					IntegerConditions: pattern.IntegerConditions{
-						Gte: utils.OptionalInt64{
+						Gte: types.OptionalInt64{
 							Set:   true,
 							Value: 2,
 						},
-						Lt: utils.OptionalInt64{
+						Lt: types.OptionalInt64{
 							Set:   true,
 							Value: 3,
 						},
@@ -584,7 +583,7 @@ func TestTimeRefPatternMarshalBSON(t *testing.T) {
 				IntegerRefPattern: pattern.IntegerRefPattern{
 					IntegerPattern: pattern.IntegerPattern{
 						IntegerConditions: pattern.IntegerConditions{
-							Equal: utils.OptionalInt64{
+							Equal: types.OptionalInt64{
 								Set:   true,
 								Value: 7,
 							},
@@ -605,11 +604,11 @@ func TestTimeRefPatternMarshalBSON(t *testing.T) {
 				IntegerRefPattern: pattern.IntegerRefPattern{
 					IntegerPattern: pattern.IntegerPattern{
 						IntegerConditions: pattern.IntegerConditions{
-							Gte: utils.OptionalInt64{
+							Gte: types.OptionalInt64{
 								Set:   true,
 								Value: 0,
 							},
-							Lte: utils.OptionalInt64{
+							Lte: types.OptionalInt64{
 								Set:   true,
 								Value: 2,
 							},
@@ -630,11 +629,11 @@ func TestTimeRefPatternMarshalBSON(t *testing.T) {
 				IntegerRefPattern: pattern.IntegerRefPattern{
 					IntegerPattern: pattern.IntegerPattern{
 						IntegerConditions: pattern.IntegerConditions{
-							Gt: utils.OptionalInt64{
+							Gt: types.OptionalInt64{
 								Set:   true,
 								Value: 0,
 							},
-							Lt: utils.OptionalInt64{
+							Lt: types.OptionalInt64{
 								Set:   true,
 								Value: 3,
 							},
@@ -655,11 +654,11 @@ func TestTimeRefPatternMarshalBSON(t *testing.T) {
 				IntegerRefPattern: pattern.IntegerRefPattern{
 					IntegerPattern: pattern.IntegerPattern{
 						IntegerConditions: pattern.IntegerConditions{
-							Gte: utils.OptionalInt64{
+							Gte: types.OptionalInt64{
 								Set:   true,
 								Value: 2,
 							},
-							Lt: utils.OptionalInt64{
+							Lt: types.OptionalInt64{
 								Set:   true,
 								Value: 3,
 							},
