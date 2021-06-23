@@ -1853,31 +1853,31 @@ definitions:
   pattern.IntegerPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
         type: object
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
@@ -1893,7 +1893,7 @@ definitions:
   pattern.IntegerRefPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
@@ -1904,25 +1904,25 @@ definitions:
           by the pattern.
         type: boolean
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
@@ -1938,7 +1938,7 @@ definitions:
   pattern.InterfacePattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalString'
+        $ref: '#/definitions/types.OptionalString'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
@@ -1949,40 +1949,40 @@ definitions:
           by the pattern.
         type: boolean
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       hasEvery:
-        $ref: '#/definitions/utils.OptionalStringArray'
+        $ref: '#/definitions/types.OptionalStringArray'
         type: object
       hasNot:
-        $ref: '#/definitions/utils.OptionalStringArray'
+        $ref: '#/definitions/types.OptionalStringArray'
         type: object
       hasOneOf:
-        $ref: '#/definitions/utils.OptionalStringArray'
+        $ref: '#/definitions/types.OptionalStringArray'
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
         type: object
       regexMatch:
-        $ref: '#/definitions/utils.OptionalRegexp'
+        $ref: '#/definitions/types.OptionalRegexp'
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
@@ -1994,13 +1994,13 @@ definitions:
   pattern.StringPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalString'
+        $ref: '#/definitions/types.OptionalString'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
         type: object
       regexMatch:
-        $ref: '#/definitions/utils.OptionalRegexp'
+        $ref: '#/definitions/types.OptionalRegexp'
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
@@ -2016,7 +2016,7 @@ definitions:
   pattern.StringRefPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalString'
+        $ref: '#/definitions/types.OptionalString'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
@@ -2027,7 +2027,7 @@ definitions:
           by the pattern.
         type: boolean
       regexMatch:
-        $ref: '#/definitions/utils.OptionalRegexp'
+        $ref: '#/definitions/types.OptionalRegexp'
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
@@ -2043,31 +2043,31 @@ definitions:
   pattern.TimePattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
         type: object
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
@@ -2083,7 +2083,7 @@ definitions:
   pattern.TimeRefPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
@@ -2094,25 +2094,25 @@ definitions:
           by the pattern.
         type: boolean
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
@@ -3097,6 +3097,49 @@ definitions:
     - seconds
     - unit
     type: object
+  types.OptionalInt64:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the int64. It should only be taken into
+          account if Set is true.
+        type: integer
+    type: object
+  types.OptionalRegexp:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        $ref: '#/definitions/utils.RegexExpression'
+        description: |-
+          Value contains the value of the regular expression. It should only be
+          taken into account if Set is true.
+        type: object
+    type: object
+  types.OptionalString:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the string. It should only be taken into
+          account if Set is true.
+        type: string
+    type: object
+  types.OptionalStringArray:
+    properties:
+      set:
+        type: boolean
+      value:
+        items:
+          type: string
+        type: array
+    type: object
   types.PbehaviorInfo:
     properties:
       canonical_type:
@@ -3198,49 +3241,6 @@ definitions:
         type: string
       title:
         type: string
-    type: object
-  utils.OptionalInt64:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        description: |-
-          Value contains the value of the int64. It should only be taken into
-          account if Set is true.
-        type: integer
-    type: object
-  utils.OptionalRegexp:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        $ref: '#/definitions/utils.RegexExpression'
-        description: |-
-          Value contains the value of the regular expression. It should only be
-          taken into account if Set is true.
-        type: object
-    type: object
-  utils.OptionalString:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        description: |-
-          Value contains the value of the string. It should only be taken into
-          account if Set is true.
-        type: string
-    type: object
-  utils.OptionalStringArray:
-    properties:
-      set:
-        type: boolean
-      value:
-        items:
-          type: string
-        type: array
     type: object
   utils.RegexExpression:
     type: object

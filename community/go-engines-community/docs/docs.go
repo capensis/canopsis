@@ -10218,27 +10218,27 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -10253,7 +10253,7 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "equalNil": {
                     "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
@@ -10262,22 +10262,22 @@ var doc = `{
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -10292,7 +10292,7 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalString"
+                    "$ref": "#/definitions/types.OptionalString"
                 },
                 "equalNil": {
                     "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
@@ -10301,39 +10301,39 @@ var doc = `{
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "hasEvery": {
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalStringArray"
+                    "$ref": "#/definitions/types.OptionalStringArray"
                 },
                 "hasNot": {
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalStringArray"
+                    "$ref": "#/definitions/types.OptionalStringArray"
                 },
                 "hasOneOf": {
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalStringArray"
+                    "$ref": "#/definitions/types.OptionalStringArray"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "regexMatch": {
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalRegexp"
+                    "$ref": "#/definitions/types.OptionalRegexp"
                 },
                 "unexpectedFields": {
                     "type": "object",
@@ -10347,12 +10347,12 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalString"
+                    "$ref": "#/definitions/types.OptionalString"
                 },
                 "regexMatch": {
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalRegexp"
+                    "$ref": "#/definitions/types.OptionalRegexp"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -10367,7 +10367,7 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalString"
+                    "$ref": "#/definitions/types.OptionalString"
                 },
                 "equalNil": {
                     "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
@@ -10376,7 +10376,7 @@ var doc = `{
                 "regexMatch": {
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalRegexp"
+                    "$ref": "#/definitions/types.OptionalRegexp"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -10391,27 +10391,27 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -10426,7 +10426,7 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "equalNil": {
                     "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
@@ -10435,22 +10435,22 @@ var doc = `{
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -11890,6 +11890,60 @@ var doc = `{
                 }
             }
         },
+        "types.OptionalInt64": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the int64. It should only be taken into\naccount if Set is true.",
+                    "type": "integer"
+                }
+            }
+        },
+        "types.OptionalRegexp": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the regular expression. It should only be\ntaken into account if Set is true.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.RegexExpression"
+                }
+            }
+        },
+        "types.OptionalString": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the string. It should only be taken into\naccount if Set is true.",
+                    "type": "string"
+                }
+            }
+        },
+        "types.OptionalStringArray": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "type": "boolean"
+                },
+                "value": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "types.PbehaviorInfo": {
             "type": "object",
             "properties": {
@@ -12037,60 +12091,6 @@ var doc = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "utils.OptionalInt64": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the int64. It should only be taken into\naccount if Set is true.",
-                    "type": "integer"
-                }
-            }
-        },
-        "utils.OptionalRegexp": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the regular expression. It should only be\ntaken into account if Set is true.",
-                    "type": "object",
-                    "$ref": "#/definitions/utils.RegexExpression"
-                }
-            }
-        },
-        "utils.OptionalString": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the string. It should only be taken into\naccount if Set is true.",
-                    "type": "string"
-                }
-            }
-        },
-        "utils.OptionalStringArray": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "type": "boolean"
-                },
-                "value": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         },
