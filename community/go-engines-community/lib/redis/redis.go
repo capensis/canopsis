@@ -32,6 +32,7 @@ const (
 	PBehaviorLockStorage
 	ActionScenarioStorage
 	EntityServiceStorage
+	FIFOMessageStatisticsStorage
 	EngineLockStorage
 )
 

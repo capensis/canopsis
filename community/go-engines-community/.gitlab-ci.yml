@@ -4,10 +4,11 @@ stages:
 variables:
   COMPOSE_HTTP_TIMEOUT: "180"
   CI_COMPOSE_PROJECT: "gorev-ci-${CI_JOB_ID}"
-  CI_COMPOSE_FILE: "CI/docker-compose.ci.yml"
-  CI_PROJECT_DIR: "CI/"
+  CI_COMPOSE_PROJECT_DIR: "CI/"
+  CI_COMPOSE_FILE: "$CI_COMPOSE_PROJECT_DIR/docker-compose.ci.yml"
 
 before_script:
+  - cd community/go-engines-community/
   - uname -a
   - docker -v
   - echo "Go version $(awk -F'\"' '/^GOLANG_IMAGE_TAG:/ { print $2 }' Makefile.var)"
@@ -19,12 +20,13 @@ stage_test:
   script:
     - echo "Begin script"
     - make docker_test_image
-    - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} up -d
-    - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} exec -T webserver ./bin/canopsinit && sleep 2
-    - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} exec -T testing /bin/sh /go-test.sh
+    - docker-compose --project-directory ${CI_COMPOSE_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} up -d
+    - docker-compose --project-directory ${CI_COMPOSE_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} exec -T webserver ./bin/canopsinit && sleep 2
+    - docker-compose --project-directory ${CI_COMPOSE_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} exec -T testing /bin/sh /go-test.sh
 
 after_script:
+    - cd community/go-engines-community/
     - echo "After script"
-    - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} kill
-    - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} rm -sf
-    - docker-compose --project-directory ${CI_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} down -v
+    - docker-compose --project-directory ${CI_COMPOSE_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} kill
+    - docker-compose --project-directory ${CI_COMPOSE_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} rm -sf
+    - docker-compose --project-directory ${CI_COMPOSE_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} down -v

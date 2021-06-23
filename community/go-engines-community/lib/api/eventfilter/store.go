@@ -2,12 +2,9 @@ package eventfilter
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 
@@ -19,11 +16,11 @@ import (
 )
 
 type Store interface {
-	Insert(model *EventFilter) error
-	GetById(id string) (*EventFilter, error)
-	Find(query FilteredQuery) (*AggregationResult, error)
-	Update(model *EventFilter) (bool, error)
-	Delete(id string) (bool, error)
+	Insert(ctx context.Context, model *EventFilter) error
+	GetById(ctx context.Context, id string) (*EventFilter, error)
+	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
+	Update(ctx context.Context, model *EventFilter) (bool, error)
+	Delete(ctx context.Context, id string) (bool, error)
 }
 
 type AggregationResult struct {
@@ -32,22 +29,22 @@ type AggregationResult struct {
 }
 
 type store struct {
-	dbClient     mongo.DbClient
-	dbCollection mongo.DbCollection
+	dbCollection          mongo.DbCollection
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
 ) Store {
 	return &store{
-		dbClient:     dbClient,
-		dbCollection: dbClient.Collection(mongo.EventFilterRulesMongoCollection),
+		dbCollection:          dbClient.Collection(mongo.EventFilterRulesMongoCollection),
+		defaultSearchByFields: []string{"_id", "author", "description", "type"},
+		defaultSortBy:         "created",
 	}
 }
 
-func (s *store) Insert(model *EventFilter) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) Insert(ctx context.Context, model *EventFilter) error {
 	if model.ID == "" {
 		model.ID = utils.NewID()
 	}
@@ -63,9 +60,7 @@ func (s *store) Insert(model *EventFilter) error {
 	return err
 }
 
-func (s *store) GetById(id string) (*EventFilter, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) GetById(ctx context.Context, id string) (*EventFilter, error) {
 	ef := &EventFilter{}
 	d := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
 	if d.Err() != nil {
@@ -77,33 +72,14 @@ func (s *store) GetById(id string) (*EventFilter, error) {
 	return ef, nil
 }
 
-func (s *store) Find(query FilteredQuery) (*AggregationResult, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	var filter bson.M
-
-	if query.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", query.Search),
-			Options: "i",
-		}
-
-		filter = bson.M{
-			"$or": []bson.M{
-				{"_id": searchRegexp},
-				{"author": searchRegexp},
-				{"description": searchRegexp},
-				{"type": searchRegexp},
-			},
-		}
-	} else {
-		filter = bson.M{}
-	}
-	pipeline := []bson.M{
-		{"$match": filter},
+func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
+	pipeline := make([]bson.M, 0)
+	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := "created"
+	sortBy := s.defaultSortBy
 	if query.SortBy != "" {
 		sortBy = query.SortBy
 	}
@@ -129,10 +105,7 @@ func (s *store) Find(query FilteredQuery) (*AggregationResult, error) {
 	return &result, nil
 }
 
-func (s *store) Update(model *EventFilter) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Update(ctx context.Context, model *EventFilter) (bool, error) {
 	var data EventFilter
 	updated := types.NewCpsTime(time.Now().Unix())
 	model.Created = nil
@@ -150,10 +123,7 @@ func (s *store) Update(model *EventFilter) (bool, error) {
 	return true, nil
 }
 
-func (s *store) Delete(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err

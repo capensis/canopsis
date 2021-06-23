@@ -560,6 +560,26 @@ definitions:
     - message
     - start
     type: object
+  broadcastmessage.Payload:
+    properties:
+      color:
+        type: string
+      created:
+        type: integer
+      end:
+        type: integer
+      message:
+        type: string
+      start:
+        type: integer
+      updated:
+        type: integer
+    required:
+    - color
+    - end
+    - message
+    - start
+    type: object
   common.ErrorResponse:
     properties:
       error:
@@ -952,7 +972,7 @@ definitions:
     - name
     - output_template
     type: object
-  entityservice.EntityService:
+  entityservice.Response:
     properties:
       _id:
         type: string
@@ -1136,7 +1156,7 @@ definitions:
     - name
     - pattern
     type: object
-  heartbeat.Heartbeat:
+  heartbeat.Response:
     properties:
       _id:
         type: string
@@ -1330,6 +1350,36 @@ definitions:
       updated:
         $ref: '#/definitions/types.CpsTime'
         type: object
+    type: object
+  messageratestats.ListRequest:
+    properties:
+      from:
+        type: integer
+      interval:
+        type: string
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      sort:
+        type: string
+      sort_by:
+        type: string
+      to:
+        type: integer
+    required:
+    - from
+    - interval
+    - to
+    type: object
+  messageratestats.StatsResponse:
+    properties:
+      _id:
+        type: integer
+      received:
+        type: integer
     type: object
   pattern.AlarmPattern:
     properties:
@@ -2079,7 +2129,7 @@ definitions:
     required:
     - filter
     type: object
-  pbehavior.PBehavior:
+  pbehavior.Response:
     properties:
       _id:
         type: string
@@ -2598,7 +2648,7 @@ definitions:
         type: string
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.PBehavior'
+          $ref: '#/definitions/pbehavior.Response'
         type: array
       resource:
         type: string
@@ -2680,7 +2730,7 @@ definitions:
         type: string
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.PBehavior'
+          $ref: '#/definitions/pbehavior.Response'
         type: array
       resource:
         type: string
@@ -3888,7 +3938,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/broadcastmessage.BroadcastMessage'
+          $ref: '#/definitions/broadcastmessage.Payload'
       produces:
       - application/json
       responses:
@@ -3956,7 +4006,9 @@ paths:
           description: Created
           schema:
             items:
-              $ref: '#/definitions/heartbeat.Heartbeat'
+              items:
+                $ref: '#/definitions/heartbeat.Response'
+              type: array
             type: array
         "400":
           description: Bad Request
@@ -3989,7 +4041,9 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/heartbeat.Heartbeat'
+              items:
+                $ref: '#/definitions/heartbeat.Response'
+              type: array
             type: array
         "400":
           description: Bad Request
@@ -4363,7 +4417,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/pbehavior.PBehavior'
+              $ref: '#/definitions/pbehavior.Response'
             type: array
         "400":
           description: Bad Request
@@ -4850,7 +4904,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/entityservice.EntityService'
+            $ref: '#/definitions/entityservice.Response'
         "400":
           description: Bad Request
           schema:
@@ -4899,7 +4953,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entityservice.EntityService'
+            $ref: '#/definitions/entityservice.Response'
         "404":
           description: Not Found
           schema:
@@ -4933,7 +4987,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entityservice.EntityService'
+            $ref: '#/definitions/entityservice.Response'
         "400":
           description: Bad Request
           schema:
@@ -5179,7 +5233,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/heartbeat.Heartbeat'
+                    $ref: '#/definitions/heartbeat.Response'
                   type: array
               type: object
         "400":
@@ -5210,7 +5264,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/heartbeat.Heartbeat'
+            $ref: '#/definitions/heartbeat.Response'
         "400":
           description: Bad Request
           schema:
@@ -5259,7 +5313,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/heartbeat.Heartbeat'
+            $ref: '#/definitions/heartbeat.Response'
         "404":
           description: Not Found
           schema:
@@ -5293,7 +5347,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/heartbeat.Heartbeat'
+            $ref: '#/definitions/heartbeat.Response'
         "400":
           description: Bad Request
           schema:
@@ -5584,6 +5638,64 @@ paths:
       summary: update user interface
       tags:
       - internal
+  /message-rate-stats:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of stats
+      operationId: message-rate-stats-find-all
+      parameters:
+      - in: query
+        name: from
+        required: true
+        type: integer
+      - in: query
+        name: interval
+        required: true
+        type: string
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sort_by
+        type: string
+      - in: query
+        name: to
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/messageratestats.StatsResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find message rate stats
+      tags:
+      - message-rate-stats
   /pbehavior-comments:
     post:
       consumes:
@@ -6264,7 +6376,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/pbehavior.PBehavior'
+                    $ref: '#/definitions/pbehavior.Response'
                   type: array
               type: object
         "400":
@@ -6295,7 +6407,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/pbehavior.PBehavior'
+            $ref: '#/definitions/pbehavior.Response'
         "400":
           description: Bad Request
           schema:
@@ -6344,7 +6456,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pbehavior.PBehavior'
+            $ref: '#/definitions/pbehavior.Response'
         "404":
           description: Not Found
           schema:
@@ -6378,7 +6490,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pbehavior.PBehavior'
+            $ref: '#/definitions/pbehavior.Response'
         "400":
           description: Bad Request
           schema:

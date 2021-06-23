@@ -897,7 +897,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/broadcastmessage.BroadcastMessage"
+                            "$ref": "#/definitions/broadcastmessage.Payload"
                         }
                     }
                 ],
@@ -1001,7 +1001,10 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/heartbeat.Response"
+                                }
                             }
                         }
                     },
@@ -1060,7 +1063,10 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/heartbeat.Response"
+                                }
                             }
                         }
                     },
@@ -1704,7 +1710,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pbehavior.PBehavior"
+                                "$ref": "#/definitions/pbehavior.Response"
                             }
                         }
                     },
@@ -2496,7 +2502,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "400": {
@@ -2540,7 +2546,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "404": {
@@ -2594,7 +2600,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "400": {
@@ -3029,7 +3035,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                                "$ref": "#/definitions/heartbeat.Response"
                                             }
                                         }
                                     }
@@ -3081,7 +3087,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                            "$ref": "#/definitions/heartbeat.Response"
                         }
                     },
                     "400": {
@@ -3125,7 +3131,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                            "$ref": "#/definitions/heartbeat.Response"
                         }
                     },
                     "404": {
@@ -3179,7 +3185,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                            "$ref": "#/definitions/heartbeat.Response"
                         }
                     },
                     "400": {
@@ -3678,6 +3684,104 @@ var doc = `{
                 "responses": {
                     "204": {
                         "description": ""
+                    }
+                }
+            }
+        },
+        "/message-rate-stats": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of stats",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "message-rate-stats"
+                ],
+                "summary": "Find message rate stats",
+                "operationId": "message-rate-stats-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "interval",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "paginate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/messageratestats.StatsResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
                     }
                 }
             }
@@ -4782,7 +4886,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/pbehavior.PBehavior"
+                                                "$ref": "#/definitions/pbehavior.Response"
                                             }
                                         }
                                     }
@@ -4834,7 +4938,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "400": {
@@ -4933,7 +5037,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "404": {
@@ -4987,7 +5091,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "400": {
@@ -8106,6 +8210,35 @@ var doc = `{
                 }
             }
         },
+        "broadcastmessage.Payload": {
+            "type": "object",
+            "required": [
+                "color",
+                "end",
+                "message",
+                "start"
+            ],
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "end": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -8697,7 +8830,7 @@ var doc = `{
                 }
             }
         },
-        "entityservice.EntityService": {
+        "entityservice.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -8962,7 +9095,7 @@ var doc = `{
                 }
             }
         },
-        "heartbeat.Heartbeat": {
+        "heartbeat.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -9242,6 +9375,51 @@ var doc = `{
                 "updated": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                }
+            }
+        },
+        "messageratestats.ListRequest": {
+            "type": "object",
+            "required": [
+                "from",
+                "interval",
+                "to"
+            ],
+            "properties": {
+                "from": {
+                    "type": "integer"
+                },
+                "interval": {
+                    "type": "string"
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginate": {
+                    "type": "boolean"
+                },
+                "sort": {
+                    "type": "string"
+                },
+                "sort_by": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "integer"
+                }
+            }
+        },
+        "messageratestats.StatsResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "integer"
+                },
+                "received": {
+                    "type": "integer"
                 }
             }
         },
@@ -10070,7 +10248,7 @@ var doc = `{
                 }
             }
         },
-        "pbehavior.PBehavior": {
+        "pbehavior.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -10839,7 +11017,7 @@ var doc = `{
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.PBehavior"
+                        "$ref": "#/definitions/pbehavior.Response"
                     }
                 },
                 "resource": {
@@ -10960,7 +11138,7 @@ var doc = `{
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.PBehavior"
+                        "$ref": "#/definitions/pbehavior.Response"
                     }
                 },
                 "resource": {

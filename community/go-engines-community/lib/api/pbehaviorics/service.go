@@ -15,7 +15,7 @@ import (
 // Service is used to implement ICS calendar generation.
 type Service interface {
 	// GenICSFrom creates ICS calendar from pbehavior.
-	GenICSFrom(pbh pbehaviorapi.PBehavior, maxPriority, minPriority int64) (ics.Calendar, error)
+	GenICSFrom(pbh pbehaviorapi.Response, maxPriority, minPriority int64) (ics.Calendar, error)
 }
 
 // NewService creates new service.
@@ -31,7 +31,7 @@ type service struct {
 }
 
 func (s *service) GenICSFrom(
-	pbh pbehaviorapi.PBehavior,
+	pbh pbehaviorapi.Response,
 	maxPriority, minPriority int64,
 ) (ics.Calendar, error) {
 	location := s.timezoneConfigProvider.Get().Location
