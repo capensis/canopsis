@@ -1,7 +1,7 @@
-package utils_test
+package types_test
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 	"strings"
@@ -9,7 +9,7 @@ import (
 )
 
 type intWrapper struct {
-	Value utils.OptionalInt64 `bson:"value"`
+	Value types.OptionalInt64 `bson:"value"`
 }
 
 func TestOptionalInt64MongoDriver(t *testing.T) {
@@ -78,7 +78,7 @@ func TestOptionalInt64MongoDriver(t *testing.T) {
 }
 
 type boolWrapper struct {
-	Value utils.OptionalBool `bson:"value"`
+	Value types.OptionalBool `bson:"value"`
 }
 
 func TestOptionalBoolMongoDriver(t *testing.T) {
@@ -161,7 +161,7 @@ func TestOptionalBoolMongoDriver(t *testing.T) {
 }
 
 type stringWrapper struct {
-	Value utils.OptionalString `bson:"value"`
+	Value types.OptionalString `bson:"value"`
 }
 
 func TestOptionalStringMongoDriver(t *testing.T) {
@@ -213,7 +213,7 @@ func TestOptionalStringMongoDriver(t *testing.T) {
 }
 
 type interfaceWrapper struct {
-	Value utils.OptionalInterface `bson:"value"`
+	Value types.OptionalInterface `bson:"value"`
 }
 
 func TestOptionalInterfaceMongoDriver(t *testing.T) {
@@ -270,7 +270,7 @@ func TestOptionalInterfaceMongoDriver(t *testing.T) {
 }
 
 type regexpWrapper struct {
-	Value utils.OptionalRegexp `bson:"value"`
+	Value types.OptionalRegexp `bson:"value"`
 }
 
 func TestOptionalRegexpMongoDriver(t *testing.T) {
@@ -358,7 +358,7 @@ func TestOptionalRegexpMongoDriver(t *testing.T) {
 }
 
 type templateWrapper struct {
-	Value utils.OptionalTemplate `bson:"value"`
+	Value types.OptionalTemplate `bson:"value"`
 }
 
 func TestOptionalTemplateMongoDriver(t *testing.T) {

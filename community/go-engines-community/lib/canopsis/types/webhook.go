@@ -14,19 +14,19 @@ type WebhookParameters struct {
 }
 
 func (p *WebhookParameters) Template(data interface{}) error {
-	url, err := renderTemplate(p.Request.URL, data, getTemplateFunc())
+	url, err := renderTemplate(p.Request.URL, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}
 	p.Request.URL = url
-	payload, err := renderTemplate(p.Request.Payload, data, getTemplateFunc())
+	payload, err := renderTemplate(p.Request.Payload, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}
 	p.Request.Payload = payload
 
 	for k, h := range p.Request.Headers {
-		renderedHeader, err := renderTemplate(h, data, getTemplateFunc())
+		renderedHeader, err := renderTemplate(h, data, GetTemplateFunc())
 		if err != nil {
 			return err
 		}
