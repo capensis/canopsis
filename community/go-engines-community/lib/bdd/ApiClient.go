@@ -373,9 +373,14 @@ Step example:
 */
 func (a *ApiClient) ISendAnEvent(doc *messages.PickleStepArgument_PickleDocString) (err error) {
 	uri := fmt.Sprintf("%s/api/v4/event", a.url)
-	body, err := a.getRequestBody(doc.Content)
+	body, err := a.executeTemplate(doc.Content)
 	if err != nil {
 		return err
+	}
+
+	responseStr := strings.TrimSpace(body.String())
+	if responseStr == "" || responseStr[0] != '[' {
+		responseStr = "[" + responseStr + "]"
 	}
 
 	req, err := http.NewRequest(http.MethodPost, uri, body)
@@ -395,7 +400,7 @@ func (a *ApiClient) ISendAnEvent(doc *messages.PickleStepArgument_PickleDocStrin
 	}
 
 	return a.TheResponseBodyShouldContain(&messages.PickleStepArgument_PickleDocString{
-		Content: fmt.Sprintf("{\"sent_events\":[{%s}]}", body),
+		Content: fmt.Sprintf("{\"sent_events\":%s}", responseStr),
 	})
 }
 
