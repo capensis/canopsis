@@ -39,7 +39,6 @@ require (
 	github.com/json-iterator/go v1.1.10
 	github.com/mailru/easyjson v0.7.1 // indirect
 	github.com/mitchellh/mapstructure v1.4.1
-	github.com/neverlee/keymutex v0.0.0-20171121013845-f593aa834bf9
 	github.com/pelletier/go-toml v1.9.1
 	github.com/rs/zerolog v1.20.0
 	github.com/russellhaering/gosaml2 v0.6.0
