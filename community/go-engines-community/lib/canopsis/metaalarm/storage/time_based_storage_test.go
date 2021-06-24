@@ -140,26 +140,27 @@ func TestStorageSetGetNew(t *testing.T) {
 			alarmGroup, err := storage.Get(ctx, tx, "test_rule39")
 			So(err, ShouldBeNil)
 			So(alarmGroup.GetGroupLength(), ShouldEqual, 0)
+			So(alarmGroup.GetKey(), ShouldEqual, "test_rule39")
 
-			alarmGroup = NewAlarmGroup("test_rule")
-			err = storage.Set(ctx, tx, testRule.ID, alarmGroup, 60)
+			alarmGroup = NewAlarmGroup(testRule.ID)
+			err = storage.Set(ctx, tx, alarmGroup, 60)
 			So(err, ShouldBeNil)
 			alarmGroup, err = storage.Get(ctx, tx, "test_rule")
 			So(err, ShouldBeNil)
 			So(alarmGroup.GetGroupLength(), ShouldEqual, 0)
 
 			alarmGroup.Push(testAlarm, 60)
-			err = storage.Set(ctx, tx, testRule.ID, alarmGroup, 60)
+			err = storage.Set(ctx, tx, alarmGroup, 60)
 			So(err, ShouldBeNil)
 
 			alarmGroup, err = storage.Get(ctx, tx, "test_rule")
 			So(err, ShouldBeNil)
 			So(alarmGroup.GetGroupLength(), ShouldEqual, 1)
 
-			alarmGroup = NewAlarmGroup("test_rule_2")
+			alarmGroup = NewAlarmGroup(testRule2.ID)
 			alarmGroup.Push(testAlarm, 60)
 			alarmGroup.Push(testAlarm2, 60)
-			err = storage.Set(ctx, tx, testRule2.ID, alarmGroup, 60)
+			err = storage.Set(ctx, tx, alarmGroup, 60)
 			So(err, ShouldBeNil)
 
 			alarmGroup, err = storage.Get(ctx, tx, "test_rule_2")
@@ -167,16 +168,16 @@ func TestStorageSetGetNew(t *testing.T) {
 			So(alarmGroup.GetGroupLength(), ShouldEqual, 2)
 
 			alarmGroup.Push(testAlarm2, 60)
-			err = storage.Set(ctx, tx, testRule2.ID, alarmGroup, 60)
+			err = storage.Set(ctx, tx, alarmGroup, 60)
 			So(err, ShouldBeNil)
 
 			alarmGroup, err = storage.Get(ctx, tx, "test_rule_2")
 			So(err, ShouldBeNil)
 			So(alarmGroup.GetGroupLength(), ShouldEqual, 2)
 
-			alarmGroup = NewAlarmGroup("test_rule_2")
+			alarmGroup = NewAlarmGroup(testRule2.ID)
 			alarmGroup.Push(testAlarm3, 60)
-			err = storage.Set(ctx, tx, testRule2.ID, alarmGroup, 60)
+			err = storage.Set(ctx, tx, alarmGroup, 60)
 			So(err, ShouldBeNil)
 
 			alarmGroup, err = storage.Get(ctx, tx, "test_rule_2")
