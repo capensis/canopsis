@@ -10,7 +10,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-type RedisGroupingStorage struct {}
+type RedisGroupingStorage struct{}
 
 func (s *RedisGroupingStorage) Push(ctx context.Context, tx *redis.Tx, rule metaalarm.Rule, newAlarm types.Alarm, key string) error {
 	return s.set(ctx, tx, rule, newAlarm, false, key)
@@ -79,7 +79,7 @@ func (s *RedisGroupingStorage) set(ctx context.Context, tx *redis.Tx, rule metaa
 
 	pipe.Del(ctx, key)
 	pipe.RPush(ctx, key, EncodeGroup(alarmGroup))
-	pipe.Expire(ctx, key, time.Duration(rule.Config.TimeInterval) * time.Second)
+	pipe.Expire(ctx, key, time.Duration(rule.Config.TimeInterval)*time.Second)
 
 	_, err = pipe.Exec(ctx)
 	return err
