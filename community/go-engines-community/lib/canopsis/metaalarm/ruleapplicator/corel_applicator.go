@@ -204,6 +204,7 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 			parentId := ""
 			parentIds := parentGroup.GetAlarmIds()
 			if len(parentIds) != 0 {
+				// we are interested only in first parent
 				parentId = parentIds[0]
 			}
 
@@ -225,6 +226,7 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 
 			if childrenGroup.GetGroupLength() >= childrenThreshold {
 				if corelType == CorelTypeParent {
+					//parent should be the first one
 					if len(parentOpenedAlarms) != 0 && parentOpenedAlarms[0].Alarm.ID != event.Alarm.ID {
 						return nil
 					}
