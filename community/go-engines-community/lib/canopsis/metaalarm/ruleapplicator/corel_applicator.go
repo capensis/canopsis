@@ -13,6 +13,7 @@ import (
 	"github.com/rs/zerolog"
 	"html/template"
 	"strings"
+	"time"
 )
 
 const (
@@ -181,6 +182,19 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 				parentGroup.RemoveBefore(event.Alarm.Value.LastUpdateDate.Unix() - timeInterval)
 			}
 
+			metaAlarmLock, err = a.redisLockClient.Obtain(ctx, childGroupID, 100*time.Millisecond, &redislock.Options{
+				RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(11*time.Millisecond), MaxRedisLockRetries),
+			})
+
+			if err != nil {
+				a.logger.Err(err).
+					Str("rule_id", rule.ID).
+					Str("alarm_id", event.Alarm.ID).
+					Msg("Update meta-alarm: obtain redlock failed, alarm will be skipped")
+
+				return err
+			}
+
 			// get updated alarms for alarm groups
 			err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(childrenGroup.GetAlarmIds(), &childrenOpenedAlarms)
 			if err != nil {
@@ -251,9 +265,24 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 
 					metaAlarmEvents = append(metaAlarmEvents, metaAlarmEvent)
 				}
-
-				return nil
 			}
+
+			err = metaAlarmLock.Release(ctx)
+			if err != nil {
+				if err == redislock.ErrLockNotHeld {
+					a.logger.Err(err).
+						Str("rule_id", rule.ID).
+						Str("alarm_id", event.Alarm.ID).
+						Msg("Update meta-alarm: the update process took more time than redlock ttl, data might be inconsistent")
+				} else {
+					a.logger.Warn().
+						Str("rule_id", rule.ID).
+						Str("alarm_id", event.Alarm.ID).
+						Msg("Update meta-alarm: failed to manually release redlock, the lock will be released by ttl")
+				}
+			}
+
+			metaAlarmLock = nil
 
 			return err
 		}, childGroupID, parentGroupId)
