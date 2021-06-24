@@ -19,7 +19,7 @@ type TimeBasedAlarmGroup interface {
 
 type GroupingStorageNew interface {
 	SetMany(ctx context.Context, tx *redis.Tx, timeInterval int64, alarmGroups ...TimeBasedAlarmGroup) error
-	Set(ctx context.Context, tx *redis.Tx, key string, alarmGroup TimeBasedAlarmGroup, timeInterval int64) error
+	Set(ctx context.Context, tx *redis.Tx, alarmGroup TimeBasedAlarmGroup, timeInterval int64) error
 	Clean(ctx context.Context, tx *redis.Tx, ruleID string) error
 	Get(ctx context.Context, tx *redis.Tx, key string) (TimeBasedAlarmGroup, error)
 }
