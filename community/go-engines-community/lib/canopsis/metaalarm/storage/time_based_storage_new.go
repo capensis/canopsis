@@ -24,11 +24,11 @@ func (s *redisGroupingStorageNew) SetMany(ctx context.Context, tx *redis.Tx, tim
 	return err
 }
 
-func (s *redisGroupingStorageNew) Set(ctx context.Context, tx *redis.Tx, key string, alarmGroup TimeBasedAlarmGroup, timeInterval int64) error {
+func (s *redisGroupingStorageNew) Set(ctx context.Context, tx *redis.Tx, group TimeBasedAlarmGroup, timeInterval int64) error {
 	pipe := tx.TxPipeline()
 
-	pipe.Del(ctx, key)
-	pipe.Set(ctx, key, alarmGroup, time.Duration(timeInterval) * time.Second)
+	pipe.Del(ctx, group.GetKey())
+	pipe.Set(ctx, group.GetKey(), group, time.Duration(timeInterval) * time.Second)
 
 	_, err := pipe.Exec(ctx)
 	return err
