@@ -165,7 +165,7 @@ func TestAddChildToMetaAlarmWorstState(t *testing.T) {
 			updatedAlarms = &alarms
 			return nil
 		})
-	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(1, nil)
+	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(int64(1), nil)
 
 	updateEvent, err := s.AddChildToMetaAlarm(event, metaAlarm, child, rule)
 	if err != nil {
@@ -386,7 +386,7 @@ func TestAddMultipleChildsToMetaAlarmWorstState(t *testing.T) {
 			updatedAlarms = &alarms
 			return nil
 		})
-	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(1, nil)
+	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(int64(1), nil)
 
 	updateEvent, err := s.AddMultipleChildsToMetaAlarm(event, metaAlarm, children, rule)
 	if err != nil {
@@ -548,7 +548,7 @@ func TestUpdateChildToMetaAlarmIncreaseWorstState(t *testing.T) {
 			updatedAlarms = &alarms
 			return nil
 		})
-	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(1, nil)
+	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(int64(1), nil)
 
 	updateEvent, err := s.AddChildToMetaAlarm(event, metaAlarm, child, rule)
 	if err != nil {
@@ -737,7 +737,7 @@ func TestUpdateChildToMetaAlarmDecreaseWorstState(t *testing.T) {
 			updatedAlarms = &alarms
 			return nil
 		})
-	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(1, nil)
+	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(int64(1), nil)
 
 	updateEvent, err := s.AddChildToMetaAlarm(event, metaAlarm, types.AlarmWithEntity{Alarm: child}, rule)
 	if err != nil {
@@ -823,7 +823,7 @@ func TestUpdateAllChildrenToMetaAlarmDecreaseWorstState(t *testing.T) {
 			updatedAlarms = &alarms
 			return nil
 		})
-	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(1, nil)
+	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(int64(1), nil)
 
 	updateEvent, err := s.AddMultipleChildsToMetaAlarm(event, metaAlarm, children, rule)
 	if err != nil {
@@ -932,7 +932,7 @@ func TestUpdateSomeChildrenToMetaAlarmDecreaseWorstState(t *testing.T) {
 			updatedAlarms = &alarms
 			return nil
 		})
-	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(1, nil)
+	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(int64(1), nil)
 
 	updateEvent, err := s.AddMultipleChildsToMetaAlarm(event, metaAlarm, childrenToUpdate, rule)
 	if err != nil {
@@ -1252,7 +1252,7 @@ func TestChildInheritMetaAlarmActions(t *testing.T) {
 					updatedAlarms = &alarms
 					return nil
 				})
-			alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(1, nil)
+			alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(int64(1), nil)
 
 			event := &types.Event{}
 			rule := metaalarm.Rule{}
