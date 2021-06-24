@@ -41,7 +41,7 @@ type Service struct {
 		Name  string      `json:"cat_name" bson:"cat_name"`
 		Links interface{} `json:"links" bson:"links"`
 	} `json:"linklist" bson:"links"`
-	Pbehaviors  []pbehavior.PBehavior    `json:"pbehaviors" bson:"-"`
+	Pbehaviors  []pbehavior.Response     `json:"pbehaviors" bson:"-"`
 	PbehaviorID string                   `json:"-" bson:"pbehavior_id"`
 	ImpactLevel int                      `json:"impact_level" bson:"impact_level"`
 	ImpactState int                      `json:"impact_state" bson:"impact_state"`
@@ -92,7 +92,7 @@ type Entity struct {
 	CreationDate   types.CpsTime            `json:"alarm_creation_date" bson:"creation_date" swaggertype:"integer"`
 	DisplayName    string                   `json:"alarm_display_name" bson:"display_name"`
 	Icon           string                   `json:"icon" bson:"icon"`
-	Pbehaviors     []pbehavior.PBehavior    `json:"pbehaviors" bson:"-"`
+	Pbehaviors     []pbehavior.Response     `json:"pbehaviors" bson:"-"`
 	PbehaviorInfo  types.PbehaviorInfo      `json:"-" bson:"pbehavior_info"`
 	Links          []WeatherLink            `json:"linklist" bson:"-"`
 	Stats          Stats                    `json:"stats" bson:"-"`

@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
@@ -21,23 +20,23 @@ import (
 type IntegerConditions struct {
 	// If Equal is set, the value of a field has to be equal to the value of
 	// Equal to be matched by the pattern.
-	Equal utils.OptionalInt64
+	Equal types.OptionalInt64
 
 	// If Gt is set, the value of a field has to be greater than the value
 	// of Gt to be matched by the pattern.
-	Gt utils.OptionalInt64 `bson:">,omitempty"`
+	Gt types.OptionalInt64 `bson:">,omitempty"`
 
 	// If Gte is set, the value of a field has to be greater than the value
 	// of Gte to be matched by the pattern.
-	Gte utils.OptionalInt64 `bson:">=,omitempty"`
+	Gte types.OptionalInt64 `bson:">=,omitempty"`
 
 	// If Lt is set, the value of a field has to be greater than the value
 	// of Lt to be matched by the pattern.
-	Lt utils.OptionalInt64 `bson:"<,omitempty"`
+	Lt types.OptionalInt64 `bson:"<,omitempty"`
 
 	// If Lte is set, the value of a field has to be greater than the value
 	// of Lte to be matched by the pattern.
-	Lte utils.OptionalInt64 `bson:"<=,omitempty"`
+	Lte types.OptionalInt64 `bson:"<=,omitempty"`
 
 	// When unmarshalling a BSON document, the fields of this document that are
 	// not defined in this struct are added to UnexpectedFields.

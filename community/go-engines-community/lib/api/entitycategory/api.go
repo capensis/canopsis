@@ -50,7 +50,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	categories, err := a.store.Find(r)
+	categories, err := a.store.Find(c.Request.Context(), r)
 	if err != nil {
 		panic(err)
 	}
@@ -77,7 +77,7 @@ func (a *api) List(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /entity-categories/{id} [get]
 func (a *api) Get(c *gin.Context) {
-	category, err := a.store.GetOneBy(c.Param("id"))
+	category, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -110,7 +110,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	category, err := a.store.Insert(request)
+	category, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -152,7 +152,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	category, err := a.store.Update(request)
+	category, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -187,7 +187,7 @@ func (a *api) Update(c *gin.Context) {
 // @Router /entity-categories/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(id)
+	ok, err := a.store.Delete(c.Request.Context(), id)
 
 	if err != nil {
 		if err == ErrLinkedCategoryToEntity {

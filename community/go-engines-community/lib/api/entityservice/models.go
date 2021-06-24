@@ -8,7 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-type EntityService struct {
+type Response struct {
 	entity.Entity  `bson:",inline"`
 	EntityPatterns pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
 	OutputTemplate string                    `bson:"output_template" json:"output_template"`

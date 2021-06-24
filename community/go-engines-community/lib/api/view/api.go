@@ -65,7 +65,7 @@ func (a *api) List(c *gin.Context) {
 	var err error
 
 	if len(r.Ids) > 0 {
-		views, err = a.store.Find(r)
+		views, err = a.store.Find(c.Request.Context(), r)
 	}
 
 	if err != nil {
@@ -94,7 +94,7 @@ func (a *api) List(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /views/{id} [get]
 func (a *api) Get(c *gin.Context) {
-	view, err := a.store.GetOneBy(c.Param("id"))
+	view, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -132,7 +132,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	views, err := a.store.Insert(userID.(string), []EditRequest{request})
+	views, err := a.store.Insert(c.Request.Context(), userID.(string), []EditRequest{request})
 	if err != nil {
 		panic(err)
 	}
@@ -174,7 +174,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	views, err := a.store.Update([]BulkUpdateRequestItem{{
+	views, err := a.store.Update(c.Request.Context(), []BulkUpdateRequestItem{{
 		ID:              request.ID,
 		BaseEditRequest: request.BaseEditRequest,
 	}})
@@ -212,7 +212,7 @@ func (a *api) Update(c *gin.Context) {
 // @Router /views/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete([]string{id})
+	ok, err := a.store.Delete(c.Request.Context(), []string{id})
 
 	if err != nil {
 		panic(err)
@@ -276,7 +276,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		}
 	}
 
-	ok, err := a.store.UpdatePositions(request)
+	ok, err := a.store.UpdatePositions(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -315,7 +315,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		return
 	}
 
-	views, err := a.store.Insert(userID.(string), request.Items)
+	views, err := a.store.Insert(c.Request.Context(), userID.(string), request.Items)
 	if err != nil {
 		panic(err)
 	}
@@ -373,7 +373,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		}
 	}
 
-	views, err := a.store.Update(request.Items)
+	views, err := a.store.Update(c.Request.Context(), request.Items)
 	if err != nil {
 		panic(err)
 	}
@@ -433,7 +433,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		}
 	}
 
-	ok, err := a.store.Delete(request.IDs)
+	ok, err := a.store.Delete(c.Request.Context(), request.IDs)
 	if err != nil {
 		panic(err)
 	}

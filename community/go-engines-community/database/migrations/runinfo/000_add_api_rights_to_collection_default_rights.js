@@ -1,6 +1,7 @@
 db.default_rights.insertMany([
     {
         _id: "api_engine",
+        loader_id: "api_engine",
         crecord_name: "api_engine",
         crecord_type: "action",
         desc: "Engine Info",

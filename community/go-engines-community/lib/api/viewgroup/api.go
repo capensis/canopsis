@@ -57,7 +57,7 @@ func (a *api) List(c *gin.Context) {
 		authorizedIds = ids.([]string)
 	}
 
-	viewgroups, err := a.store.Find(query, authorizedIds)
+	viewgroups, err := a.store.Find(c.Request.Context(), query, authorizedIds)
 	if err != nil {
 		panic(err)
 	}
@@ -84,7 +84,7 @@ func (a *api) List(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /view-groups/{id} [get]
 func (a *api) Get(c *gin.Context) {
-	viewgroup, err := a.store.GetOneBy(c.Param("id"))
+	viewgroup, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -116,7 +116,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	groups, err := a.store.Insert([]EditRequest{request})
+	groups, err := a.store.Insert(c.Request.Context(), []EditRequest{request})
 	if err != nil {
 		panic(err)
 	}
@@ -158,7 +158,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	groups, err := a.store.Update([]BulkUpdateRequestItem{{
+	groups, err := a.store.Update(c.Request.Context(), []BulkUpdateRequestItem{{
 		ID:              request.ID,
 		BaseEditRequest: request.BaseEditRequest,
 	}})
@@ -197,7 +197,7 @@ func (a *api) Update(c *gin.Context) {
 // @Router /view-groups/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete([]string{id})
+	ok, err := a.store.Delete(c.Request.Context(), []string{id})
 
 	if err != nil {
 		if errors.Is(err, ErrLinkedToView) {
@@ -244,7 +244,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		return
 	}
 
-	groups, err := a.store.Insert(request.Items)
+	groups, err := a.store.Insert(c.Request.Context(), request.Items)
 	if err != nil {
 		panic(err)
 	}
@@ -284,7 +284,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		return
 	}
 
-	groups, err := a.store.Update(request.Items)
+	groups, err := a.store.Update(c.Request.Context(), request.Items)
 	if err != nil {
 		panic(err)
 	}
@@ -326,7 +326,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Delete(request.IDs)
+	ok, err := a.store.Delete(c.Request.Context(), request.IDs)
 	if err != nil {
 		if errors.Is(err, ErrLinkedToView) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))

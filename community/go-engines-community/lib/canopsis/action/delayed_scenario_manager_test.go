@@ -5,7 +5,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	"github.com/golang/mock/gomock"
@@ -350,7 +349,7 @@ func newTestMatchResourceAlarmPattern(resource string) pattern.AlarmPattern {
 				AlarmValueFields: pattern.AlarmValueFields{
 					Resource: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							Equal: utils.OptionalString{
+							Equal: types.OptionalString{
 								Set:   true,
 								Value: resource,
 							},

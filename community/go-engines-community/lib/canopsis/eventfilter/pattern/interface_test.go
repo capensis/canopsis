@@ -1,6 +1,7 @@
 package pattern_test
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"testing"
 
@@ -543,7 +544,7 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.InterfacePattern{
 				StringConditions: pattern.StringConditions{
-					Equal: utils.OptionalString{
+					Equal: types.OptionalString{
 						Set:   true,
 						Value: "value",
 					},
@@ -557,7 +558,7 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.InterfacePattern{
 				StringConditions: pattern.StringConditions{
-					RegexMatch: utils.OptionalRegexp{
+					RegexMatch: types.OptionalRegexp{
 						Set:   true,
 						Value: testRegexp,
 					},
@@ -575,15 +576,15 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.InterfacePattern{
 				StringArrayConditions: pattern.StringArrayConditions{
-					HasEvery: utils.OptionalStringArray{
+					HasEvery: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test1"},
 					},
-					HasOneOf: utils.OptionalStringArray{
+					HasOneOf: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test2"},
 					},
-					HasNot: utils.OptionalStringArray{
+					HasNot: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test3"},
 					},
@@ -597,7 +598,7 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.InterfacePattern{
 				IntegerConditions: pattern.IntegerConditions{
-					Equal: utils.OptionalInt64{
+					Equal: types.OptionalInt64{
 						Set:   true,
 						Value: 5,
 					},
@@ -614,11 +615,11 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.InterfacePattern{
 				IntegerConditions: pattern.IntegerConditions{
-					Gte: utils.OptionalInt64{
+					Gte: types.OptionalInt64{
 						Set:   true,
 						Value: 0,
 					},
-					Lte: utils.OptionalInt64{
+					Lte: types.OptionalInt64{
 						Set:   true,
 						Value: 2,
 					},

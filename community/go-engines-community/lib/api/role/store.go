@@ -3,52 +3,50 @@ package role
 import (
 	"context"
 	"fmt"
+	"sort"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"sort"
 )
 
 type Store interface {
-	Find(ListRequest) (*AggregationResult, error)
-	GetOneBy(string) (*Role, error)
-	Insert(CreateRequest) (*Role, error)
-	Update(string, EditRequest) (*Role, error)
-	Delete(string) (bool, error)
+	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
+	GetOneBy(ctx context.Context, id string) (*Role, error)
+	Insert(ctx context.Context, r CreateRequest) (*Role, error)
+	Update(ctx context.Context, id string, r EditRequest) (*Role, error)
+	Delete(ctx context.Context, id string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
-		dbClient:     dbClient,
-		dbCollection: dbClient.Collection(mongo.RightsMongoCollection),
+		dbClient:              dbClient,
+		dbCollection:          dbClient.Collection(mongo.RightsMongoCollection),
+		defaultSearchByFields: []string{"_id", "crecord_name", "description"},
+		defaultSortBy:         "name",
 	}
 }
 
 type store struct {
-	dbClient     mongo.DbClient
-	dbCollection mongo.DbCollection
+	dbClient              mongo.DbClient
+	dbCollection          mongo.DbCollection
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
-func (s *store) Find(r ListRequest) (*AggregationResult, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	filter := bson.M{}
-
-	if r.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", r.Search),
-			Options: "i",
-		}
-
-		filter["$or"] = []bson.M{
-			{"crecord_name": searchRegexp},
-			{"description": searchRegexp},
-		}
+func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
+	pipeline := []bson.M{
+		{"$match": bson.M{"crecord_type": securitymodel.LineTypeRole}},
+		{"$addFields": bson.M{
+			"name": "$crecord_name",
+		}},
+	}
+	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
 	sortBy := "name"
@@ -56,10 +54,6 @@ func (s *store) Find(r ListRequest) (*AggregationResult, error) {
 		sortBy = r.SortBy
 	}
 
-	pipeline := []bson.M{
-		{"$match": bson.M{"crecord_type": securitymodel.LineTypeRole}},
-		{"$match": filter},
-	}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	if r.Permission != "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("permissions._id"): r.Permission}})
@@ -92,10 +86,7 @@ func (s *store) Find(r ListRequest) (*AggregationResult, error) {
 	return &res, nil
 }
 
-func (s *store) GetOneBy(id string) (*Role, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) GetOneBy(ctx context.Context, id string) (*Role, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{
 			"_id":          id,
@@ -125,10 +116,7 @@ func (s *store) GetOneBy(id string) (*Role, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(r CreateRequest) (*Role, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Role, error) {
 	_, err := s.dbCollection.InsertOne(ctx, bson.M{
 		"_id":          r.Name,
 		"crecord_name": r.Name,
@@ -141,13 +129,10 @@ func (s *store) Insert(r CreateRequest) (*Role, error) {
 		return nil, err
 	}
 
-	return s.GetOneBy(r.Name)
+	return s.GetOneBy(ctx, r.Name)
 }
 
-func (s *store) Update(id string, r EditRequest) (*Role, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, error) {
 	res, err := s.dbCollection.UpdateOne(ctx,
 		bson.M{"_id": id, "crecord_type": securitymodel.LineTypeRole},
 		bson.M{"$set": bson.M{
@@ -164,13 +149,10 @@ func (s *store) Update(id string, r EditRequest) (*Role, error) {
 		return nil, nil
 	}
 
-	return s.GetOneBy(id)
+	return s.GetOneBy(ctx, id)
 }
 
-func (s *store) Delete(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	res := s.dbCollection.FindOne(ctx, bson.M{
 		"crecord_type": securitymodel.LineTypeSubject,
 		"role":         id,
