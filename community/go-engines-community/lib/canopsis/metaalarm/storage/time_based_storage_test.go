@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"fmt"
+	"math"
 	"testing"
 	"time"
 
@@ -20,6 +21,10 @@ func TestStorageSetGet(t *testing.T) {
 
 	redisClient, err := redis.NewSession(ctx, redis.AlarmGroupStorage, log.NewLogger(true), 0, 0)
 	if err != nil {
+		panic(err)
+	}
+	res := redisClient.FlushDB(ctx)
+	if res.Err() != nil {
 		panic(err)
 	}
 
@@ -93,6 +98,10 @@ func TestStorageSetGetNew(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+	res := redisClient.FlushDB(ctx)
+	if res.Err() != nil {
+		panic(err)
+	}
 
 	Convey("Test basic manipulations with storage", t, func() {
 		testRule := metaalarm.Rule{
@@ -115,12 +124,24 @@ func TestStorageSetGetNew(t *testing.T) {
 			ID: "test_alarm_2",
 		}
 
+		testAlarm4 := types.Alarm{
+			ID: "test_alarm_4",
+		}
+
+		testAlarm5 := types.Alarm{
+			ID: "test_alarm_5",
+		}
+
+		testAlarm6 := types.Alarm{
+			ID: "test_alarm_6",
+		}
+
 		_ = redisClient.Watch(ctx, func(tx *redisV8.Tx) error {
 			alarmGroup, err := storage.Get(ctx, tx, "test_rule39")
 			So(err, ShouldBeNil)
 			So(alarmGroup.GetGroupLength(), ShouldEqual, 0)
 
-			alarmGroup = TimeBasedAlarmGroup{}
+			alarmGroup = NewAlarmGroup("test_rule")
 			err = storage.Set(ctx, tx, testRule.ID, alarmGroup, 60)
 			So(err, ShouldBeNil)
 			alarmGroup, err = storage.Get(ctx, tx, "test_rule")
@@ -135,7 +156,7 @@ func TestStorageSetGetNew(t *testing.T) {
 			So(err, ShouldBeNil)
 			So(alarmGroup.GetGroupLength(), ShouldEqual, 1)
 
-			alarmGroup = TimeBasedAlarmGroup{}
+			alarmGroup = NewAlarmGroup("test_rule_2")
 			alarmGroup.Push(testAlarm, 60)
 			alarmGroup.Push(testAlarm2, 60)
 			err = storage.Set(ctx, tx, testRule2.ID, alarmGroup, 60)
@@ -153,12 +174,29 @@ func TestStorageSetGetNew(t *testing.T) {
 			So(err, ShouldBeNil)
 			So(alarmGroup.GetGroupLength(), ShouldEqual, 2)
 
-			alarmGroup = TimeBasedAlarmGroup{}
+			alarmGroup = NewAlarmGroup("test_rule_2")
 			alarmGroup.Push(testAlarm3, 60)
 			err = storage.Set(ctx, tx, testRule2.ID, alarmGroup, 60)
 			So(err, ShouldBeNil)
 
 			alarmGroup, err = storage.Get(ctx, tx, "test_rule_2")
+			So(err, ShouldBeNil)
+			So(alarmGroup.GetGroupLength(), ShouldEqual, 1)
+
+			alarmGroup1 := NewAlarmGroup("test_set_many_1")
+			alarmGroup1.Push(testAlarm4, 60)
+			alarmGroup1.Push(testAlarm5, 60)
+			alarmGroup2 := NewAlarmGroup("test_set_many_2")
+			alarmGroup2.Push(testAlarm6, 60)
+
+			err = storage.SetMany(ctx, tx, 60, alarmGroup1, alarmGroup2)
+			So(err, ShouldBeNil)
+
+			alarmGroup, err = storage.Get(ctx, tx, "test_set_many_1")
+			So(err, ShouldBeNil)
+			So(alarmGroup.GetGroupLength(), ShouldEqual, 2)
+
+			alarmGroup, err = storage.Get(ctx, tx, "test_set_many_2")
 			So(err, ShouldBeNil)
 			So(alarmGroup.GetGroupLength(), ShouldEqual, 1)
 
@@ -173,6 +211,10 @@ func TestStorageShiftTimeInterval(t *testing.T) {
 
 	redisClient, err := redis.NewSession(ctx, redis.AlarmGroupStorage, log.NewLogger(true), 0, 0)
 	if err != nil {
+		panic(err)
+	}
+	res := redisClient.FlushDB(ctx)
+	if res.Err() != nil {
 		panic(err)
 	}
 
@@ -557,7 +599,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 		times[5] = types.NewCpsTime(now.Add(time.Second * 50).Unix())
 
 		//fill alarm group, should be sorted by time
-		alarmGroup := TimeBasedAlarmGroup{}
+		alarmGroup := NewAlarmGroup("test")
 		alarmGroup.Push(types.Alarm{
 			ID: "test_alarm_3",
 			Value: types.AlarmValue{
@@ -595,12 +637,12 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 			},
 		}, int64(minuteRule.Config.TimeInterval))
 
-		So(len(alarmGroup.times), ShouldEqual, 6)
+		So(len(alarmGroup.GetTimes()), ShouldEqual, 6)
 		So(alarmGroup.GetOpenTime() == now.Unix(), ShouldBeTrue)
 
 		for idx := 0; idx < 6; idx++ {
-			So(alarmGroup.times[idx] == times[idx].Unix(), ShouldBeTrue)
-			So(alarmGroup.ids[idx] == fmt.Sprintf("test_alarm_%d", idx), ShouldBeTrue)
+			So(alarmGroup.GetTimes()[idx] == times[idx].Unix(), ShouldBeTrue)
+			So(alarmGroup.GetAlarmIds()[idx] == fmt.Sprintf("test_alarm_%d", idx), ShouldBeTrue)
 		}
 
 		//This call should shift time interval => so the storage should delete the first alarm in the Group
@@ -612,7 +654,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 			},
 		}, int64(minuteRule.Config.TimeInterval))
 
-		So(len(alarmGroup.ids), ShouldEqual, 6)
+		So(len(alarmGroup.GetAlarmIds()), ShouldEqual, 6)
 		So(alarmGroup.GetOpenTime() == now.Add(time.Second*10).Unix(), ShouldBeTrue)
 
 		alarmGroup.Push(types.Alarm{
@@ -622,7 +664,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 			},
 		}, int64(minuteRule.Config.TimeInterval))
 
-		So(len(alarmGroup.ids), ShouldEqual, 1)
+		So(len(alarmGroup.GetAlarmIds()), ShouldEqual, 1)
 		So(alarmGroup.GetOpenTime() == now.Add(time.Second*300).Unix(), ShouldBeTrue)
 	})
 
@@ -636,7 +678,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 
 		now := types.NewCpsTime(time.Now().Unix())
 
-		alarmGroup := TimeBasedAlarmGroup{}
+		alarmGroup := NewAlarmGroup("test")
 		alarmGroup.Push(types.Alarm{
 			ID: "test_alarm",
 			Value: types.AlarmValue{
@@ -650,7 +692,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 			},
 		}, int64(minuteRule.Config.TimeInterval))
 
-		So(len(alarmGroup.ids), ShouldEqual, 2)
+		So(len(alarmGroup.GetAlarmIds()), ShouldEqual, 2)
 		So(alarmGroup.GetOpenTime() == now.Add(time.Second*-10).Unix(), ShouldBeTrue)
 	})
 
@@ -664,7 +706,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 
 		now := types.NewCpsTime(time.Now().Unix())
 
-		alarmGroup := TimeBasedAlarmGroup{}
+		alarmGroup := NewAlarmGroup("test")
 		alarmGroup.Push(types.Alarm{
 			ID: "test_alarm",
 			Value: types.AlarmValue{
@@ -690,7 +732,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 			},
 		}, int64(minuteRule.Config.TimeInterval))
 
-		So(len(alarmGroup.ids), ShouldEqual, 4)
+		So(len(alarmGroup.GetAlarmIds()), ShouldEqual, 4)
 		So(alarmGroup.GetOpenTime() == now.Unix(), ShouldBeTrue)
 
 		//test_alarm_4 will be missed, so there shouldn't be any interval shifting
@@ -701,7 +743,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 			},
 		}, int64(minuteRule.Config.TimeInterval))
 
-		So(len(alarmGroup.ids), ShouldEqual, 4)
+		So(len(alarmGroup.GetAlarmIds()), ShouldEqual, 4)
 		So(alarmGroup.GetOpenTime() == now.Unix(), ShouldBeTrue)
 
 		//Interval can be shifted, since none alarm will be lost
@@ -712,7 +754,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 			},
 		}, int64(minuteRule.Config.TimeInterval))
 
-		So(len(alarmGroup.ids), ShouldEqual, 5)
+		So(len(alarmGroup.GetAlarmIds()), ShouldEqual, 5)
 		So(alarmGroup.GetOpenTime() == now.Add(time.Second*-5).Unix(), ShouldBeTrue)
 	})
 
@@ -727,7 +769,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 		now := types.NewCpsTime(time.Now().Unix())
 
 		//every new alarm has bigger timestamp as previous so the map is sorted by default
-		alarmGroup := TimeBasedAlarmGroup{}
+		alarmGroup := NewAlarmGroup("test")
 		alarmGroup.Push(types.Alarm{
 			ID: "test_alarm",
 			Value: types.AlarmValue{
@@ -765,7 +807,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 			},
 		}, int64(minuteRule.Config.TimeInterval))
 
-		So(len(alarmGroup.ids), ShouldEqual, 6)
+		So(len(alarmGroup.GetAlarmIds()), ShouldEqual, 6)
 		So(alarmGroup.GetOpenTime() == now.Unix(), ShouldBeTrue)
 
 		alarmGroup.Push(types.Alarm{
@@ -805,7 +847,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 			},
 		}, int64(minuteRule.Config.TimeInterval))
 
-		So(len(alarmGroup.ids), ShouldEqual, 6)
+		So(len(alarmGroup.GetAlarmIds()), ShouldEqual, 6)
 		So(alarmGroup.GetOpenTime() == now.Add(time.Second*30).Unix(), ShouldBeTrue)
 
 		//This call should shift time interval, but no alarms should be deleted, since they belong to the new time interval.
@@ -816,7 +858,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 			},
 		}, int64(minuteRule.Config.TimeInterval))
 
-		So(len(alarmGroup.ids), ShouldEqual, 7)
+		So(len(alarmGroup.GetAlarmIds()), ShouldEqual, 7)
 		//The new start time should be equal the minimum alarm's time.
 		So(alarmGroup.GetOpenTime() == now.Add(time.Second*30).Unix(), ShouldBeTrue)
 	})
@@ -832,7 +874,7 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 		now := types.NewCpsTime(time.Now().Unix())
 
 		//every new alarm has bigger timestamp as previous so the map is sorted by default
-		alarmGroup := TimeBasedAlarmGroup{}
+		alarmGroup := NewAlarmGroup("test")
 		alarmGroup.Push(types.Alarm{
 			ID: "test_alarm",
 			Value: types.AlarmValue{
@@ -870,18 +912,18 @@ func TestNewStorageShiftTimeInterval(t *testing.T) {
 			},
 		}, int64(minuteRule.Config.TimeInterval))
 
-		So(len(alarmGroup.ids), ShouldEqual, 6)
+		So(len(alarmGroup.GetAlarmIds()), ShouldEqual, 6)
 		So(alarmGroup.GetOpenTime() == now.Unix(), ShouldBeTrue)
 
 		alarmGroup.RemoveBefore(now.Add(time.Second * 20).Unix())
 
-		So(len(alarmGroup.ids), ShouldEqual, 2)
+		So(len(alarmGroup.GetAlarmIds()), ShouldEqual, 2)
 		So(alarmGroup.GetOpenTime() == now.Add(time.Second*20).Unix(), ShouldBeTrue)
 
-		alarmGroup = TimeBasedAlarmGroup{}
+		alarmGroup = NewAlarmGroup("test")
 		alarmGroup.RemoveBefore(1)
 
-		So(len(alarmGroup.ids), ShouldEqual, 0)
-		So(alarmGroup.GetOpenTime() == 0, ShouldBeTrue)
+		So(len(alarmGroup.GetAlarmIds()), ShouldEqual, 0)
+		So(alarmGroup.GetOpenTime() == math.MaxInt64, ShouldBeTrue)
 	})
 }

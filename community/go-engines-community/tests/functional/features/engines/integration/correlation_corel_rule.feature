@@ -920,6 +920,7 @@ Feature: correlation feature - corel use case
     }
     """
     When I wait the end of 1 events processing
+    When I wait 3s
     When I send an event:
     """
     {
@@ -936,7 +937,6 @@ Feature: correlation feature - corel use case
     }
     """
     When I wait the end of 2 events processing
-    When I wait 3s
     When I send an event:
     """
     {

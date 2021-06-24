@@ -11,27 +11,40 @@ import (
 	"strings"
 )
 
-//TODO: refactor all applicators with the new TimeBasedAlarmGroup
+//TODO: refactor all applicators with the new timeBasedAlarmGroup
 
-type TimeBasedAlarmGroup struct {
+type timeBasedAlarmGroup struct {
+	key   string
 	times []int64
 	ids   []string
 }
 
-func (g TimeBasedAlarmGroup) GetAlarmIds() []string {
-	if len(g.ids) != 0 {
-		return g.ids
+func NewAlarmGroup(key string) TimeBasedAlarmGroup {
+	return &timeBasedAlarmGroup{
+		key:   key,
+		times: make([]int64, 0),
+		ids:   make([]string, 0),
 	}
-
-	return []string{}
 }
 
-func (g *TimeBasedAlarmGroup) GetGroupLength() int {
+func (g timeBasedAlarmGroup) GetKey() string {
+	return g.key
+}
+
+func (g timeBasedAlarmGroup) GetAlarmIds() []string {
+	return g.ids
+}
+
+func (g timeBasedAlarmGroup) GetTimes() []int64 {
+	return g.times
+}
+
+func (g *timeBasedAlarmGroup) GetGroupLength() int {
 	return len(g.ids)
 }
 
 // in empty group returns MaxInt64 for easy minimal timestamp checks
-func (g *TimeBasedAlarmGroup) GetOpenTime() int64 {
+func (g *timeBasedAlarmGroup) GetOpenTime() int64 {
 	if len(g.times) != 0 {
 		return g.times[0]
 	}
@@ -39,8 +52,8 @@ func (g *TimeBasedAlarmGroup) GetOpenTime() int64 {
 	return math.MaxInt64
 }
 
-func (g TimeBasedAlarmGroup) MarshalJSON() ([]byte, error) {
-	var encodedGroup []string
+func (g timeBasedAlarmGroup) MarshalJSON() ([]byte, error) {
+	encodedGroup := make([]string, 0)
 
 	for i := 0; i < len(g.ids); i++ {
 		encodedGroup = append(encodedGroup, fmt.Sprintf("%s,%d", g.ids[i], g.times[i]))
@@ -49,11 +62,11 @@ func (g TimeBasedAlarmGroup) MarshalJSON() ([]byte, error) {
 	return json.Marshal(encodedGroup)
 }
 
-func (g TimeBasedAlarmGroup) MarshalBinary() ([]byte, error) {
+func (g timeBasedAlarmGroup) MarshalBinary() ([]byte, error) {
 	return json.Marshal(g)
 }
 
-func (g *TimeBasedAlarmGroup) UnmarshalJSON(b []byte) error {
+func (g *timeBasedAlarmGroup) UnmarshalJSON(b []byte) error {
 	var encodedGroup []string
 	err := json.Unmarshal(b, &encodedGroup)
 	if err != nil {
@@ -81,7 +94,7 @@ func (g *TimeBasedAlarmGroup) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (g *TimeBasedAlarmGroup) Push(newAlarm types.Alarm, ruleTimeInterval int64) {
+func (g *timeBasedAlarmGroup) Push(newAlarm types.Alarm, ruleTimeInterval int64) {
 	newAlarmTimestamp := newAlarm.Value.LastUpdateDate.Unix()
 
 	for idx, v := range g.ids {
@@ -141,7 +154,7 @@ func (g *TimeBasedAlarmGroup) Push(newAlarm types.Alarm, ruleTimeInterval int64)
 	g.ids = append(g.ids[:insertIdx], append([]string{newAlarm.ID}, g.ids[insertIdx:]...)...)
 }
 
-func (g *TimeBasedAlarmGroup) RemoveBefore(timestamp int64) {
+func (g *timeBasedAlarmGroup) RemoveBefore(timestamp int64) {
 	idx := sort.Search(len(g.times), func(i int) bool {
 		return g.times[i] >= timestamp
 	})
