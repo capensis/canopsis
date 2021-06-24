@@ -3,7 +3,18 @@ Feature: Export entities
 
   Scenario: given export request should return entities
     When I am admin
-    When I do POST /api/v4/entity-export?search=test-entity-to-export&active_columns[]=_id&active_columns[]=name&active_columns[]=type&active_columns[]=infos
+    When I do POST /api/v4/entity-export:
+    """json
+    {
+      "search": "test-entity-to-export",
+      "fields": [
+         {"name": "_id", "label": "ID"},
+         {"name": "name", "label": "Name"},
+         {"name": "type", "label": "Type"},
+         {"name": "infos", "label": "Infos"}
+      ]
+    }
+    """
     Then the response code should be 200
     When I do GET /api/v4/entity-export/{{ .lastResponse._id }}
     Then the response code should be 200
@@ -11,8 +22,8 @@ Feature: Export entities
     When I do GET /api/v4/entity-export/{{ .lastResponse._id }}/download
     Then the response code should be 200
     Then the response raw body should be:
-    """
-    _id,name,type,infos
+    """csv
+    ID,Name,Type,Infos
     test-entity-to-export-resource-1/test-entity-to-export-component,test-entity-to-export-resource-1,resource,"{""test-entity-to-export-resource-1-info-1"":{""name"":""test-entity-to-export-resource-1-info-1-name"",""description"":""test-entity-to-export-resource-1-info-1-description"",""value"":""test-entity-to-export-resource-1-info-1-value""}}"
     test-entity-to-export-resource-2/test-entity-to-export-component,test-entity-to-export-resource-2,resource,{}
 
@@ -20,7 +31,18 @@ Feature: Export entities
 
   Scenario: given export request should return empty response
     When I am admin
-    When I do POST /api/v4/entity-export?search=not-found&active_columns[]=_id&active_columns[]=name&active_columns[]=type&active_columns[]=infos
+    When I do POST /api/v4/entity-export:
+    """json
+    {
+      "search": "not found",
+      "fields": [
+         {"name": "_id", "label": "ID"},
+         {"name": "name", "label": "Name"},
+         {"name": "type", "label": "Type"},
+         {"name": "infos", "label": "Infos"}
+      ]
+    }
+    """
     Then the response code should be 200
     When I do GET /api/v4/entity-export/{{ .lastResponse._id }}
     Then the response code should be 200
@@ -28,8 +50,8 @@ Feature: Export entities
     When I do GET /api/v4/entity-export/{{ .lastResponse._id }}/download
     Then the response code should be 200
     Then the response raw body should be:
-    """
-    _id,name,type,infos
+    """csv
+    ID,Name,Type,Infos
 
     """
 

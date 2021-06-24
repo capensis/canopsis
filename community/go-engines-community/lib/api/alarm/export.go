@@ -33,8 +33,15 @@ func getDataFetcher(
 ) export.DataFetcher {
 	return func(ctx context.Context, page, limit int64) ([]map[string]string, int64, error) {
 		res, err := store.Find(ctx, apiKey, ListRequestWithPagination{
-			Query:       pagination.Query{Page: page, Limit: limit, Paginate: true},
-			ListRequest: r.ListRequest,
+			Query: pagination.Query{Page: page, Limit: limit, Paginate: true},
+			ListRequest: ListRequest{
+				FilterRequest: FilterRequest{
+					BaseFilterRequest: r.BaseFilterRequest,
+					SearchBy:          exportFields,
+				},
+				WithSteps:    r.WithSteps,
+				WithChildren: r.WithChildren,
+			},
 		})
 		if err != nil {
 			return nil, 0, err
