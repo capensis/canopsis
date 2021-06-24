@@ -171,10 +171,10 @@ func (mr *MockAdapterMockRecorder) GetAllOpenedResourceAlarmsByComponent(arg0 in
 }
 
 // GetCountOpenedAlarmsByIDs mocks base method
-func (m *MockAdapter) GetCountOpenedAlarmsByIDs(arg0 []string) (int, error) {
+func (m *MockAdapter) GetCountOpenedAlarmsByIDs(arg0 []string) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCountOpenedAlarmsByIDs", arg0)
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
