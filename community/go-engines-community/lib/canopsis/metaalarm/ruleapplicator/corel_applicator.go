@@ -27,7 +27,7 @@ const DayInSeconds = 86400
 type CorelApplicator struct {
 	alarmAdapter      alarm.Adapter
 	metaAlarmService  service.MetaAlarmService
-	storage           *storage.RedisGroupingStorageNew
+	storage           storage.GroupingStorageNew
 	redisClient       *redis.Client
 	redisLockClient   *redislock.Client
 	ruleEntityCounter metaalarm.RuleEntityCounter
@@ -149,23 +149,17 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 					//that means that metaAlarms were created and we can reset
 					//both groups and start to gather again.
 					if len(parentOpenedAlarms) != 0 {
-						if corelType == CorelTypeParent {
-							parentGroup = storage.TimeBasedAlarmGroup{}
-							parentGroup.Push(*event.Alarm, timeInterval)
-							childrenGroup = storage.TimeBasedAlarmGroup{}
-						} else {
-							childrenGroup = storage.TimeBasedAlarmGroup{}
-							childrenGroup.Push(*event.Alarm, timeInterval)
-							parentGroup = storage.TimeBasedAlarmGroup{}
-						}
+						parentGroup = storage.NewAlarmGroup(parentGroupId)
+						childrenGroup = storage.NewAlarmGroup(childGroupID)
 
-						err = a.storage.Set(ctx, tx, childGroupID, childrenGroup, timeInterval)
-						if err != nil {
-							return err
+						if corelType == CorelTypeParent {
+							parentGroup.Push(*event.Alarm, timeInterval)
+						} else {
+							childrenGroup.Push(*event.Alarm, timeInterval)
 						}
 
 						// there is 100% group is not gathered, because were reset, so we can return
-						return a.storage.Set(ctx, tx, parentGroupId, parentGroup, timeInterval)
+						return a.storage.SetMany(ctx, tx, timeInterval, parentGroup, childrenGroup)
 					}
 
 					//If there were no parent, then basically we can assume, that group wasn't completed,
@@ -214,15 +208,7 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 			}
 
 			// update groups
-			err = a.storage.Set(ctx, tx, childGroupID, childrenGroup, timeInterval)
-			if err != nil {
-				return err
-			}
-
-			err = a.storage.Set(ctx, tx, parentGroupId, parentGroup, timeInterval)
-			if err != nil {
-				return err
-			}
+			err = a.storage.SetMany(ctx, tx, timeInterval, parentGroup, childrenGroup)
 
 			if childrenGroup.GetGroupLength() >= childrenThreshold {
 				if corelType == CorelTypeParent {
@@ -320,15 +306,15 @@ func (a CorelApplicator) getGroupWithOpenedAlarmsWithEntity(ctx context.Context,
 
 	alarmGroup, err := a.storage.Get(ctx, tx, key)
 	if err != nil {
-		return storage.TimeBasedAlarmGroup{}, nil, err
+		return nil, nil, err
 	}
 
 	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(alarmGroup.GetAlarmIds(), &alarms)
 	if err != nil {
-		return storage.TimeBasedAlarmGroup{}, nil, err
+		return nil, nil, err
 	}
 
-	alarmGroup = storage.TimeBasedAlarmGroup{}
+	alarmGroup = storage.NewAlarmGroup(key)
 	for _, v := range alarms {
 		alarmGroup.Push(v.Alarm, timeInterval)
 	}
@@ -351,11 +337,11 @@ func (a CorelApplicator) renderTemplate(templateStr string, data interface{}, f 
 }
 
 // NewCorelApplicator instantiates CorelApplicator with MetaAlarmService
-func NewCorelApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, redisClient *redis.Client, redisLockClient *redislock.Client, logger zerolog.Logger) CorelApplicator {
+func NewCorelApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, storage storage.GroupingStorageNew, redisClient *redis.Client, redisLockClient *redislock.Client, logger zerolog.Logger) CorelApplicator {
 	return CorelApplicator{
 		alarmAdapter:     alarmAdapter,
 		metaAlarmService: metaAlarmService,
-		storage:          storage.NewRedisGroupingStorageNew(),
+		storage:          storage,
 		redisClient:      redisClient,
 		redisLockClient:  redisLockClient,
 		logger:           logger,
