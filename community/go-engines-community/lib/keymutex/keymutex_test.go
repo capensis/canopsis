@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const waitTimeout = time.Millisecond * 10
+const waitTimeout = time.Second
 
 func TestKeyMutex_Lock_GivenKey_ShouldLockKey(t *testing.T) {
 	done := make(chan bool)
@@ -60,7 +60,7 @@ func TestKeyMutex_Lock_GivenMultipleLocks_ShouldWaitUnlockBeforeNextLock(t *test
 			lockTime = time.Now()
 		}()
 
-		time.Sleep(waitTimeout / 2)
+		time.Sleep(time.Millisecond * 100)
 		err = mx.Unlock(key)
 		unlockTime = time.Now()
 
@@ -105,7 +105,7 @@ func TestKeyMutex_LockMultiple_GivenMultipleLocks_ShouldWaitUnlockBeforeNextLock
 			lockTime2 = time.Now()
 		}()
 
-		time.Sleep(waitTimeout / 2)
+		time.Sleep(time.Millisecond * 100)
 		err = mx.UnlockMultiple(keys...)
 		unlockTime = time.Now()
 
@@ -199,7 +199,7 @@ func TestKeyMutex_Unlock_GivenMoreLocksThenUnlocks_ShouldReturnError(t *testing.
 			}
 		}()
 
-		time.Sleep(waitTimeout / 2)
+		time.Sleep(time.Millisecond * 100)
 		unlockErr := mx.Unlock(key)
 		if unlockErr != nil {
 			t.Errorf("expected no error but got %v", unlockErr)
