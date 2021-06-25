@@ -27,7 +27,7 @@ type ActionPBehaviorParameters struct {
 }
 
 func (p *ActionPBehaviorParameters) Template(data interface{}) error {
-	author, err := renderTemplate(p.Author, data, nil)
+	author, err := renderTemplate(p.Author, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}

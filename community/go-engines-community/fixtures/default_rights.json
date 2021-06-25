@@ -200,6 +200,11 @@
     "type": "CRUD"
   },
   {
+    "_id": "api_message_rate_stats_read",
+    "crecord_type": "action",
+    "crecord_name": "api_message_rate_stats_read"
+  },
+  {
     "_id": "admin",
     "crecord_type": "role",
     "crecord_name": "admin",
@@ -217,6 +222,10 @@
         "crecord_type": "right"
       },
       "api_execution": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_message_rate_stats_read": {
         "checksum": 1,
         "crecord_type": "right"
       },

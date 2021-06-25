@@ -10,7 +10,6 @@ import (
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
 )
@@ -18,47 +17,42 @@ import (
 const permissionPrefix = "Rights on playlist :"
 
 type Store interface {
-	Find(r ListRequest) (*AggregationResult, error)
-	GetById(id string) (*Playlist, error)
-	Insert(userID string, r EditRequest) (*Playlist, error)
-	Update(r EditRequest) (*Playlist, error)
-	Delete(id string) (bool, error)
+	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
+	GetById(ctx context.Context, id string) (*Playlist, error)
+	Insert(ctx context.Context, userID string, r EditRequest) (*Playlist, error)
+	Update(ctx context.Context, r EditRequest) (*Playlist, error)
+	Delete(ctx context.Context, id string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
-		dbCollection:    dbClient.Collection(mongo.PlaylistMongoCollection),
-		aclDbCollection: dbClient.Collection(mongo.RightsMongoCollection),
+		dbCollection:          dbClient.Collection(mongo.PlaylistMongoCollection),
+		aclDbCollection:       dbClient.Collection(mongo.RightsMongoCollection),
+		defaultSearchByFields: []string{"_id", "name", "author"},
+		defaultSortBy:         "name",
 	}
 }
 
 type store struct {
-	dbCollection    mongo.DbCollection
-	aclDbCollection mongo.DbCollection
+	dbCollection          mongo.DbCollection
+	aclDbCollection       mongo.DbCollection
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
-func (s *store) Find(r ListRequest) (*AggregationResult, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	filter := bson.M{}
+func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
+	pipeline := make([]bson.M, 0)
 
 	if len(r.Ids) > 0 {
-		filter["_id"] = bson.M{"$in": r.Ids}
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"_id": bson.M{"$in": r.Ids}}})
 	}
 
-	if r.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", r.Search),
-			Options: "i",
-		}
-
-		filter["$or"] = []bson.M{
-			{"name": searchRegexp},
-		}
+	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := "name"
+	sortBy := s.defaultSortBy
 	if r.SortBy != "" {
 		sortBy = r.SortBy
 	}
@@ -66,7 +60,6 @@ func (s *store) Find(r ListRequest) (*AggregationResult, error) {
 		sortBy = "interval.seconds"
 	}
 
-	pipeline := []bson.M{{"$match": filter}}
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
@@ -91,10 +84,7 @@ func (s *store) Find(r ListRequest) (*AggregationResult, error) {
 	return &res, nil
 }
 
-func (s *store) GetById(id string) (*Playlist, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) GetById(ctx context.Context, id string) (*Playlist, error) {
 	playlist := &Playlist{}
 
 	if err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&playlist); err != nil {
@@ -108,10 +98,7 @@ func (s *store) GetById(id string) (*Playlist, error) {
 	return playlist, nil
 }
 
-func (s *store) Insert(userID string, r EditRequest) (*Playlist, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Insert(ctx context.Context, userID string, r EditRequest) (*Playlist, error) {
 	id := utils.NewID()
 	now := types.CpsTime{Time: time.Now()}
 	model := Playlist{
@@ -131,7 +118,7 @@ func (s *store) Insert(userID string, r EditRequest) (*Playlist, error) {
 		return nil, err
 	}
 
-	err = s.createPermission(userID, id, r.Name)
+	err = s.createPermission(ctx, userID, id, r.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -139,11 +126,8 @@ func (s *store) Insert(userID string, r EditRequest) (*Playlist, error) {
 	return &model, nil
 }
 
-func (s *store) Update(r EditRequest) (*Playlist, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	prevModel, err := s.GetById(r.ID)
+func (s *store) Update(ctx context.Context, r EditRequest) (*Playlist, error) {
+	prevModel, err := s.GetById(ctx, r.ID)
 	if err != nil || prevModel == nil {
 		return nil, err
 	}
@@ -170,7 +154,7 @@ func (s *store) Update(r EditRequest) (*Playlist, error) {
 
 	model.ID = r.ID
 
-	err = s.updatePermission(r.ID, r.Name)
+	err = s.updatePermission(ctx, r.ID, r.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -178,10 +162,7 @@ func (s *store) Update(r EditRequest) (*Playlist, error) {
 	return &model, nil
 }
 
-func (s *store) Delete(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err
@@ -191,7 +172,7 @@ func (s *store) Delete(id string) (bool, error) {
 		return false, nil
 	}
 
-	err = s.deletePermission(id)
+	err = s.deletePermission(ctx, id)
 	if err != nil {
 		return false, err
 	}
@@ -199,9 +180,7 @@ func (s *store) Delete(id string) (bool, error) {
 	return deleted > 0, nil
 }
 
-func (s *store) createPermission(userID, playlistID, playlistName string) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) createPermission(ctx context.Context, userID, playlistID, playlistName string) error {
 
 	_, err := s.aclDbCollection.InsertOne(ctx, bson.M{
 		"_id":          playlistID,
@@ -252,9 +231,7 @@ func (s *store) createPermission(userID, playlistID, playlistName string) error 
 	return err
 }
 
-func (s *store) updatePermission(playlistID, playlistName string) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) updatePermission(ctx context.Context, playlistID, playlistName string) error {
 
 	_, err := s.aclDbCollection.UpdateOne(ctx,
 		bson.M{
@@ -271,9 +248,7 @@ func (s *store) updatePermission(playlistID, playlistName string) error {
 	return err
 }
 
-func (s *store) deletePermission(playlistID string) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) deletePermission(ctx context.Context, playlistID string) error {
 
 	_, err := s.aclDbCollection.UpdateMany(ctx,
 		bson.M{

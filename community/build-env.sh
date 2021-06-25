@@ -64,7 +64,6 @@ function ensure_env() {
     # it will exit with command not found
     rsync --version 2>&1 > /dev/null
     git --version 2>&1 > /dev/null
-    go version 2>&1 > /dev/null
 
     if [ ! "${CANOPSIS_ENV_RECAP}" = "0" ]; then
         env_recap

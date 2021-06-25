@@ -74,8 +74,16 @@ func getParseDataSets() []dateSet {
 			Expected:   bson.M{"name": bson.M{"$regex": "criticité"}},
 		},
 		{
+			Expression: "name LIKE 10",
+			Expected:   bson.M{"name": bson.M{"$regex": "10"}},
+		},
+		{
 			Expression: "connector NOT LIKE \"test_connector\"",
 			Expected:   bson.M{"connector": bson.M{"$not": bson.M{"$regex": "test_connector"}}},
+		},
+		{
+			Expression: "connector NOT LIKE 10",
+			Expected:   bson.M{"connector": bson.M{"$not": bson.M{"$regex": "10"}}},
 		},
 		{
 			Expression: "children CONTAINS \"test_connector\"",

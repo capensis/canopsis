@@ -1,11 +1,11 @@
 package pattern_test
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -125,7 +125,7 @@ func TestBoolPatternMarshalBSON(t *testing.T) {
 				"pattern": true,
 			},
 			Pattern: pattern.BoolPattern{
-				OptionalBool: utils.OptionalBool{
+				OptionalBool: types.OptionalBool{
 					Set:   true,
 					Value: true,
 				},
@@ -137,7 +137,7 @@ func TestBoolPatternMarshalBSON(t *testing.T) {
 				"pattern": false,
 			},
 			Pattern: pattern.BoolPattern{
-				OptionalBool: utils.OptionalBool{
+				OptionalBool: types.OptionalBool{
 					Set:   true,
 					Value: false,
 				},

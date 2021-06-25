@@ -13,7 +13,7 @@ import (
 )
 
 type api struct {
-	store Store
+	store        Store
 	actionLogger logger.ActionLogger
 }
 
@@ -37,7 +37,7 @@ func (a api) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.store.Insert(&request)
+	err := a.store.Insert(c.Request.Context(), &request)
 	if err != nil {
 		panic(err)
 	}
@@ -78,7 +78,7 @@ func (a api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(query)
+	aggregationResult, err := a.store.Find(c.Request.Context(), query)
 	if err != nil {
 		panic(err)
 	}
@@ -105,7 +105,7 @@ func (a api) List(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /eventfilter/rules/{id} [get]
 func (a api) Get(c *gin.Context) {
-	evf, err := a.store.GetById(c.Param("id"))
+	evf, err := a.store.GetById(c.Request.Context(), c.Param("id"))
 
 	if err == mongodriver.ErrNoDocuments || evf == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -145,7 +145,7 @@ func (a api) Update(c *gin.Context) {
 	var data EventFilter
 	data.EventFilterPayload = request
 	data.ID = c.Param("id")
-	ok, _ := a.store.Update(&data)
+	ok, _ := a.store.Update(c.Request.Context(), &data)
 
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -176,7 +176,7 @@ func (a api) Update(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /eventfilter/rules/{id} [delete]
 func (a api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Param("id"))
+	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -203,7 +203,7 @@ func NewApi(
 	actionLogger logger.ActionLogger,
 ) common.CrudAPI {
 	return &api{
-		store: store,
+		store:        store,
 		actionLogger: actionLogger,
 	}
 }

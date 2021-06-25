@@ -1,42 +1,49 @@
 db.default_rights.insertMany([
     {
         _id: "api_entity_read",
+        loader_id: "api_entity_read",
         crecord_name: "api_entity_read",
         crecord_type: "action",
         desc: "Read entities",
     },
     {
         _id: "api_entity_update",
+        loader_id: "api_entity_update",
         crecord_name: "api_entity_update",
         crecord_type: "action",
         desc: "Update entities",
     },
     {
         _id: "api_entity_delete",
+        loader_id: "api_entity_delete",
         crecord_name: "api_entity_delete",
         crecord_type: "action",
         desc: "Delete entities",
     },
     {
         _id: "api_alarm_read",
+        loader_id: "api_alarm_read",
         crecord_name: "api_alarm_read",
         crecord_type: "action",
         desc: "Read alarms",
     },
     {
         _id: "api_alarm_update",
+        loader_id: "api_alarm_update",
         crecord_name: "api_alarm_update",
         crecord_type: "action",
         desc: "Update alarms",
     },
     {
         _id: "api_alarm_delete",
+        loader_id: "api_alarm_delete",
         crecord_name: "api_alarm_delete",
         crecord_type: "action",
         desc: "Delete alarms",
     },
     {
         _id: "api_alarmfilter",
+        loader_id: "api_alarmfilter",
         crecord_name: "api_alarmfilter",
         crecord_type: "action",
         desc: "Alarm filters",
@@ -44,6 +51,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_idlerule",
+        loader_id: "api_idlerule",
         crecord_name: "api_idlerule",
         crecord_type: "action",
         desc: "Idle rules",
@@ -51,6 +59,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_eventfilter",
+        loader_id: "api_eventfilter",
         crecord_name: "api_eventfilter",
         crecord_type: "action",
         desc: "Event filters",
@@ -58,6 +67,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_action",
+        loader_id: "api_action",
         crecord_name: "api_action",
         crecord_type: "action",
         desc: "Actions",
@@ -65,6 +75,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_metaalarmrule",
+        loader_id: "api_metaalarmrule",
         crecord_name: "api_metaalarmrule",
         crecord_type: "action",
         desc: "Meta-alarm rules",
@@ -72,6 +83,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_playlist",
+        loader_id: "api_playlist",
         crecord_name: "api_playlist",
         crecord_type: "action",
         desc: "Playlists",
@@ -79,6 +91,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_dynamicinfos",
+        loader_id: "api_dynamicinfos",
         crecord_name: "api_dynamicinfos",
         crecord_type: "action",
         desc: "Dynamic infos",
@@ -86,6 +99,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_heartbeat",
+        loader_id: "api_heartbeat",
         crecord_name: "api_heartbeat",
         crecord_type: "action",
         desc: "Heartbeats",
@@ -93,6 +107,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_watcher",
+        loader_id: "api_watcher",
         crecord_name: "api_watcher",
         crecord_type: "action",
         desc: "Watchers",
@@ -100,6 +115,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_viewgroup",
+        loader_id: "api_viewgroup",
         crecord_name: "api_viewgroup",
         crecord_type: "action",
         desc: "View groups",
@@ -107,6 +123,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_view",
+        loader_id: "api_view",
         crecord_name: "api_view",
         crecord_type: "action",
         desc: "Views",
@@ -114,6 +131,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_pbehavior",
+        loader_id: "api_pbehavior",
         crecord_name: "api_pbehavior",
         crecord_type: "action",
         desc: "PBehaviors",
@@ -121,6 +139,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_pbehaviortype",
+        loader_id: "api_pbehaviortype",
         crecord_name: "api_pbehaviortype",
         crecord_type: "action",
         desc: "PBehaviorTypes",
@@ -128,6 +147,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_pbehaviorreason",
+        loader_id: "api_pbehaviorreason",
         crecord_name: "api_pbehaviorreason",
         crecord_type: "action",
         desc: "PBehaviorReasons",
@@ -135,6 +155,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_pbehaviorexception",
+        loader_id: "api_pbehaviorexception",
         crecord_name: "api_pbehaviorexception",
         crecord_type: "action",
         desc: "PBehaviorExceptions",
@@ -142,6 +163,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_event",
+        loader_id: "api_event",
         crecord_name: "api_event",
         crecord_type: "action",
         desc: "Event",

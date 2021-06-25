@@ -2,16 +2,16 @@ package pattern
 
 import (
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 	"strings"
 )
 
 type StringArrayConditions struct {
-	HasEvery         utils.OptionalStringArray `bson:"has_every,omitempty"`
-	HasOneOf         utils.OptionalStringArray `bson:"has_one_of,omitempty"`
-	HasNot           utils.OptionalStringArray `bson:"has_not,omitempty"`
+	HasEvery         types.OptionalStringArray `bson:"has_every,omitempty"`
+	HasOneOf         types.OptionalStringArray `bson:"has_one_of,omitempty"`
+	HasNot           types.OptionalStringArray `bson:"has_not,omitempty"`
 	UnexpectedFields map[string]interface{}    `bson:",inline"`
 }
 

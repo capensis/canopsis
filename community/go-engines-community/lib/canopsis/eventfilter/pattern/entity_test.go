@@ -293,14 +293,14 @@ func TestEntityPatternMarshalBSON(t *testing.T) {
 				EntityFields: pattern.EntityFields{
 					ID: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							Equal: utils.OptionalString{
+							Equal: types.OptionalString{
 								Set:   true,
 								Value: "123456",
 							},
 						},
 					},
 					Enabled: pattern.BoolPattern{
-						OptionalBool: utils.OptionalBool{
+						OptionalBool: types.OptionalBool{
 							Set:   true,
 							Value: true,
 						},
@@ -310,7 +310,7 @@ func TestEntityPatternMarshalBSON(t *testing.T) {
 							InfoFields: pattern.InfoFields{
 								Description: pattern.StringPattern{
 									StringConditions: pattern.StringConditions{
-										Equal: utils.OptionalString{
+										Equal: types.OptionalString{
 											Set:   true,
 											Value: "test",
 										},
@@ -322,7 +322,7 @@ func TestEntityPatternMarshalBSON(t *testing.T) {
 							InfoFields: pattern.InfoFields{
 								Description: pattern.StringPattern{
 									StringConditions: pattern.StringConditions{
-										Equal: utils.OptionalString{
+										Equal: types.OptionalString{
 											Set:   true,
 											Value: "test",
 										},
@@ -330,7 +330,7 @@ func TestEntityPatternMarshalBSON(t *testing.T) {
 								},
 								Value: pattern.StringPattern{
 									StringConditions: pattern.StringConditions{
-										Equal: utils.OptionalString{
+										Equal: types.OptionalString{
 											Set:   true,
 											Value: "testtest",
 										},
@@ -341,7 +341,7 @@ func TestEntityPatternMarshalBSON(t *testing.T) {
 					},
 					Type: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							RegexMatch: utils.OptionalRegexp{
+							RegexMatch: types.OptionalRegexp{
 								Set:   true,
 								Value: testRegexp,
 							},
@@ -426,7 +426,7 @@ func TestEntityListPatternMarshalBSON(t *testing.T) {
 						EntityFields: pattern.EntityFields{
 							ID: pattern.StringPattern{
 								StringConditions: pattern.StringConditions{
-									Equal: utils.OptionalString{
+									Equal: types.OptionalString{
 										Set:   true,
 										Value: "id1",
 									},
@@ -440,7 +440,7 @@ func TestEntityListPatternMarshalBSON(t *testing.T) {
 						EntityFields: pattern.EntityFields{
 							ID: pattern.StringPattern{
 								StringConditions: pattern.StringConditions{
-									Equal: utils.OptionalString{
+									Equal: types.OptionalString{
 										Set:   true,
 										Value: "id2",
 									},
@@ -457,7 +457,7 @@ func TestEntityListPatternMarshalBSON(t *testing.T) {
 									InfoFields: pattern.InfoFields{
 										Value: pattern.StringPattern{
 											StringConditions: pattern.StringConditions{
-												Equal: utils.OptionalString{
+												Equal: types.OptionalString{
 													Set:   true,
 													Value: "tata",
 												},

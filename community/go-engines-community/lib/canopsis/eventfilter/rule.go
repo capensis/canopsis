@@ -7,7 +7,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
@@ -33,7 +32,7 @@ type Rule struct {
 	Priority int `bson:"priority"`
 
 	// Enabled is a boolean indicating whether the rule is enabled or not.
-	Enabled utils.OptionalBool `bson:"enabled"`
+	Enabled types.OptionalBool `bson:"enabled"`
 
 	// EnrichmentRule contains parameters that are specific to enrichment
 	// rules.

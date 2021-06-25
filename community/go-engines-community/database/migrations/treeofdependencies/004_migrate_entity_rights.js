@@ -7,6 +7,7 @@
     db.default_rights.insertMany([
         {
             _id: "api_entity",
+            loader_id: "api_entity",
             crecord_name: "api_entity",
             crecord_type: "action",
             desc: "Entity",
@@ -14,6 +15,7 @@
         },
         {
             _id: "api_entityservice",
+            loader_id: "api_entityservice",
             crecord_name: "api_entityservice",
             crecord_type: "action",
             desc: "Entity service",
