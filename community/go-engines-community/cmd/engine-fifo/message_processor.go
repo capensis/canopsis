@@ -54,8 +54,14 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	event.Format()
 	p.StatsSender.Add(event.Timestamp.Unix(), true)
 
+	err = event.InjectExtraInfos(msg)
+	if err != nil {
+		p.logError(err, "cannot inject extra infos", msg)
+		return nil, nil
+	}
+
 	p.Logger.Debug().Str("event", fmt.Sprintf("%+v", event)).Msg("sent to scheduler")
-	err = p.Scheduler.ProcessEvent(ctx, event.GetLockID(), msg)
+	err = p.Scheduler.ProcessEvent(ctx, event)
 	if err != nil {
 		if engine.IsConnectionError(err) {
 			return nil, err
