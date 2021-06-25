@@ -49,7 +49,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	roles, err := a.store.Find(query)
+	roles, err := a.store.Find(c.Request.Context(), query)
 	if err != nil {
 		panic(err)
 	}
@@ -76,7 +76,7 @@ func (a *api) List(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /roles/{id} [get]
 func (a *api) Get(c *gin.Context) {
-	role, err := a.store.GetOneBy(c.Param("id"))
+	role, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -108,7 +108,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	role, err := a.store.Insert(request)
+	role, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -148,7 +148,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	role, err := a.store.Update(c.Param("id"), request)
+	role, err := a.store.Update(c.Request.Context(), c.Param("id"), request)
 	if err != nil {
 		panic(err)
 	}
@@ -183,7 +183,7 @@ func (a *api) Update(c *gin.Context) {
 // @Router /roles/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(id)
+	ok, err := a.store.Delete(c.Request.Context(), id)
 
 	if err != nil {
 		if err == ErrLinkedToUser {

@@ -114,6 +114,10 @@ func (p *messageProcessor) handleStats(ctx context.Context, event types.Event, m
 }
 
 func (p *messageProcessor) handleRemediation(event types.Event, msg []byte) error {
+	if p.RemediationRpcClient == nil {
+		return nil
+	}
+
 	if event.AlarmChange.Type != types.AlarmChangeTypeCreate &&
 		event.AlarmChange.Type != types.AlarmChangeTypeCreateAndPbhEnter {
 		return nil

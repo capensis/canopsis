@@ -970,7 +970,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/broadcastmessage.BroadcastMessage"
+                            "$ref": "#/definitions/broadcastmessage.Payload"
                         }
                     }
                 ],
@@ -1074,7 +1074,10 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/heartbeat.Response"
+                                }
                             }
                         }
                     },
@@ -1133,7 +1136,10 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/heartbeat.Response"
+                                }
                             }
                         }
                     },
@@ -1825,7 +1831,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pbehavior.PBehavior"
+                                "$ref": "#/definitions/pbehavior.Response"
                             }
                         }
                     },
@@ -2617,7 +2623,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "400": {
@@ -2661,7 +2667,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "404": {
@@ -2715,7 +2721,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "400": {
@@ -3150,7 +3156,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/heartbeat.Heartbeat"
+                                                "$ref": "#/definitions/heartbeat.Response"
                                             }
                                         }
                                     }
@@ -3202,7 +3208,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                            "$ref": "#/definitions/heartbeat.Response"
                         }
                     },
                     "400": {
@@ -3246,7 +3252,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                            "$ref": "#/definitions/heartbeat.Response"
                         }
                     },
                     "404": {
@@ -3300,7 +3306,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
+                            "$ref": "#/definitions/heartbeat.Response"
                         }
                     },
                     "400": {
@@ -3799,6 +3805,104 @@ var doc = `{
                 "responses": {
                     "204": {
                         "description": ""
+                    }
+                }
+            }
+        },
+        "/message-rate-stats": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of stats",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "message-rate-stats"
+                ],
+                "summary": "Find message rate stats",
+                "operationId": "message-rate-stats-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "interval",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "paginate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/messageratestats.StatsResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
                     }
                 }
             }
@@ -5026,7 +5130,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/pbehavior.PBehavior"
+                                                "$ref": "#/definitions/pbehavior.Response"
                                             }
                                         }
                                     }
@@ -5078,7 +5182,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "400": {
@@ -5177,7 +5281,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "404": {
@@ -5231,7 +5335,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "400": {
@@ -8410,6 +8514,35 @@ var doc = `{
                 }
             }
         },
+        "broadcastmessage.Payload": {
+            "type": "object",
+            "required": [
+                "color",
+                "end",
+                "message",
+                "start"
+            ],
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "end": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -9078,7 +9211,7 @@ var doc = `{
                 }
             }
         },
-        "entityservice.EntityService": {
+        "entityservice.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -9343,7 +9476,7 @@ var doc = `{
                 }
             }
         },
-        "heartbeat.Heartbeat": {
+        "heartbeat.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -9619,6 +9752,51 @@ var doc = `{
                 "updated": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                }
+            }
+        },
+        "messageratestats.ListRequest": {
+            "type": "object",
+            "required": [
+                "from",
+                "interval",
+                "to"
+            ],
+            "properties": {
+                "from": {
+                    "type": "integer"
+                },
+                "interval": {
+                    "type": "string"
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginate": {
+                    "type": "boolean"
+                },
+                "sort": {
+                    "type": "string"
+                },
+                "sort_by": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "integer"
+                }
+            }
+        },
+        "messageratestats.StatsResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "integer"
+                },
+                "received": {
+                    "type": "integer"
                 }
             }
         },
@@ -10125,27 +10303,27 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -10160,7 +10338,7 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "equalNil": {
                     "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
@@ -10169,22 +10347,22 @@ var doc = `{
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -10199,7 +10377,7 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalString"
+                    "$ref": "#/definitions/types.OptionalString"
                 },
                 "equalNil": {
                     "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
@@ -10208,39 +10386,39 @@ var doc = `{
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "hasEvery": {
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalStringArray"
+                    "$ref": "#/definitions/types.OptionalStringArray"
                 },
                 "hasNot": {
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalStringArray"
+                    "$ref": "#/definitions/types.OptionalStringArray"
                 },
                 "hasOneOf": {
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalStringArray"
+                    "$ref": "#/definitions/types.OptionalStringArray"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "regexMatch": {
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalRegexp"
+                    "$ref": "#/definitions/types.OptionalRegexp"
                 },
                 "unexpectedFields": {
                     "type": "object",
@@ -10254,12 +10432,12 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalString"
+                    "$ref": "#/definitions/types.OptionalString"
                 },
                 "regexMatch": {
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalRegexp"
+                    "$ref": "#/definitions/types.OptionalRegexp"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -10274,7 +10452,7 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalString"
+                    "$ref": "#/definitions/types.OptionalString"
                 },
                 "equalNil": {
                     "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
@@ -10283,7 +10461,7 @@ var doc = `{
                 "regexMatch": {
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalRegexp"
+                    "$ref": "#/definitions/types.OptionalRegexp"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -10298,27 +10476,27 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -10333,7 +10511,7 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "equalNil": {
                     "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
@@ -10342,22 +10520,22 @@ var doc = `{
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -10472,7 +10650,7 @@ var doc = `{
                 }
             }
         },
-        "pbehavior.PBehavior": {
+        "pbehavior.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -11238,7 +11416,7 @@ var doc = `{
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.PBehavior"
+                        "$ref": "#/definitions/pbehavior.Response"
                     }
                 },
                 "resource": {
@@ -11359,7 +11537,7 @@ var doc = `{
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.PBehavior"
+                        "$ref": "#/definitions/pbehavior.Response"
                     }
                 },
                 "resource": {
@@ -11797,6 +11975,60 @@ var doc = `{
                 }
             }
         },
+        "types.OptionalInt64": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the int64. It should only be taken into\naccount if Set is true.",
+                    "type": "integer"
+                }
+            }
+        },
+        "types.OptionalRegexp": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the regular expression. It should only be\ntaken into account if Set is true.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.RegexExpression"
+                }
+            }
+        },
+        "types.OptionalString": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the string. It should only be taken into\naccount if Set is true.",
+                    "type": "string"
+                }
+            }
+        },
+        "types.OptionalStringArray": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "type": "boolean"
+                },
+                "value": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "types.PbehaviorInfo": {
             "type": "object",
             "properties": {
@@ -11944,60 +12176,6 @@ var doc = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "utils.OptionalInt64": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the int64. It should only be taken into\naccount if Set is true.",
-                    "type": "integer"
-                }
-            }
-        },
-        "utils.OptionalRegexp": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the regular expression. It should only be\ntaken into account if Set is true.",
-                    "type": "object",
-                    "$ref": "#/definitions/utils.RegexExpression"
-                }
-            }
-        },
-        "utils.OptionalString": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the string. It should only be taken into\naccount if Set is true.",
-                    "type": "string"
-                }
-            }
-        },
-        "utils.OptionalStringArray": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "type": "boolean"
-                },
-                "value": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         },

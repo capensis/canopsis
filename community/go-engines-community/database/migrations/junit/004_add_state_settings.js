@@ -2,6 +2,7 @@
     db.state_settings.insertMany([
         {
             "_id": "junit",
+            "loader_id": "junit",
             "type": "junit",
             "method": "worst_of_share",
             "junit_thresholds": {

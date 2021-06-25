@@ -3,6 +3,7 @@ package pattern
 import (
 	"errors"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -24,11 +25,11 @@ type RegexMatches map[string]string
 type StringConditions struct {
 	// If Equal is set, the value of a field has to be equal to the value of
 	// Equal to be matched by the pattern.
-	Equal utils.OptionalString
+	Equal types.OptionalString
 
 	// If RegexMatch is set, the value of a field has to be matched by this
 	// regular expression to be matched by the pattern.
-	RegexMatch utils.OptionalRegexp `bson:"regex_match,omitempty"`
+	RegexMatch types.OptionalRegexp `bson:"regex_match,omitempty"`
 
 	// When unmarshalling a BSON document, the fields of this document that are
 	// not defined in this struct are added to UnexpectedFields.

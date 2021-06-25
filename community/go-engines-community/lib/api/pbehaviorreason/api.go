@@ -63,7 +63,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(r)
+	aggregationResult, err := a.store.Find(c.Request.Context(), r)
 	if err != nil {
 		panic(err)
 	}
@@ -100,7 +100,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	reason := a.transformer.TransformCreateRequestToModel(request)
-	err := a.store.Insert(reason)
+	err := a.store.Insert(c.Request.Context(), reason)
 	if err != nil {
 		panic(err)
 	}
@@ -130,7 +130,7 @@ func (a *api) Create(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /pbehavior-reasons/{id} [get]
 func (a *api) Get(c *gin.Context) {
-	reason, err := a.store.GetOneBy(bson.M{"_id": c.Param("id")})
+	reason, err := a.store.GetOneBy(c.Request.Context(), bson.M{"_id": c.Param("id")})
 	if err != nil {
 		panic(err)
 	}
@@ -170,7 +170,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	reason := a.transformer.TransformUpdateRequestToModel(request)
-	ok, err := a.store.Update(reason)
+	ok, err := a.store.Update(c.Request.Context(), reason)
 
 	if err != nil {
 		panic(err)
@@ -181,7 +181,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	isLinked, err := a.store.IsLinkedToPbehavior(reason.ID)
+	isLinked, err := a.store.IsLinkedToPbehavior(c.Request.Context(), reason.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -214,7 +214,7 @@ func (a *api) Update(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /pbehavior-reasons/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Param("id"))
+	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {

@@ -596,6 +596,26 @@ definitions:
     - message
     - start
     type: object
+  broadcastmessage.Payload:
+    properties:
+      color:
+        type: string
+      created:
+        type: integer
+      end:
+        type: integer
+      message:
+        type: string
+      start:
+        type: integer
+      updated:
+        type: integer
+    required:
+    - color
+    - end
+    - message
+    - start
+    type: object
   common.ErrorResponse:
     properties:
       error:
@@ -1040,7 +1060,7 @@ definitions:
     - name
     - output_template
     type: object
-  entityservice.EntityService:
+  entityservice.Response:
     properties:
       _id:
         type: string
@@ -1224,7 +1244,7 @@ definitions:
     - name
     - pattern
     type: object
-  heartbeat.Heartbeat:
+  heartbeat.Response:
     properties:
       _id:
         type: string
@@ -1415,6 +1435,36 @@ definitions:
       updated:
         $ref: '#/definitions/types.CpsTime'
         type: object
+    type: object
+  messageratestats.ListRequest:
+    properties:
+      from:
+        type: integer
+      interval:
+        type: string
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      sort:
+        type: string
+      sort_by:
+        type: string
+      to:
+        type: integer
+    required:
+    - from
+    - interval
+    - to
+    type: object
+  messageratestats.StatsResponse:
+    properties:
+      _id:
+        type: integer
+      received:
+        type: integer
     type: object
   notification.InstructionNotification:
     properties:
@@ -1838,31 +1888,31 @@ definitions:
   pattern.IntegerPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
         type: object
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
@@ -1878,7 +1928,7 @@ definitions:
   pattern.IntegerRefPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
@@ -1889,25 +1939,25 @@ definitions:
           by the pattern.
         type: boolean
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
@@ -1923,7 +1973,7 @@ definitions:
   pattern.InterfacePattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalString'
+        $ref: '#/definitions/types.OptionalString'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
@@ -1934,40 +1984,40 @@ definitions:
           by the pattern.
         type: boolean
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       hasEvery:
-        $ref: '#/definitions/utils.OptionalStringArray'
+        $ref: '#/definitions/types.OptionalStringArray'
         type: object
       hasNot:
-        $ref: '#/definitions/utils.OptionalStringArray'
+        $ref: '#/definitions/types.OptionalStringArray'
         type: object
       hasOneOf:
-        $ref: '#/definitions/utils.OptionalStringArray'
+        $ref: '#/definitions/types.OptionalStringArray'
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
         type: object
       regexMatch:
-        $ref: '#/definitions/utils.OptionalRegexp'
+        $ref: '#/definitions/types.OptionalRegexp'
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
@@ -1979,13 +2029,13 @@ definitions:
   pattern.StringPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalString'
+        $ref: '#/definitions/types.OptionalString'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
         type: object
       regexMatch:
-        $ref: '#/definitions/utils.OptionalRegexp'
+        $ref: '#/definitions/types.OptionalRegexp'
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
@@ -2001,7 +2051,7 @@ definitions:
   pattern.StringRefPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalString'
+        $ref: '#/definitions/types.OptionalString'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
@@ -2012,7 +2062,7 @@ definitions:
           by the pattern.
         type: boolean
       regexMatch:
-        $ref: '#/definitions/utils.OptionalRegexp'
+        $ref: '#/definitions/types.OptionalRegexp'
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
@@ -2028,31 +2078,31 @@ definitions:
   pattern.TimePattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
         type: object
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
@@ -2068,7 +2118,7 @@ definitions:
   pattern.TimeRefPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
@@ -2079,25 +2129,25 @@ definitions:
           by the pattern.
         type: boolean
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
@@ -2181,7 +2231,7 @@ definitions:
     required:
     - filter
     type: object
-  pbehavior.PBehavior:
+  pbehavior.Response:
     properties:
       _id:
         type: string
@@ -2698,7 +2748,7 @@ definitions:
         type: string
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.PBehavior'
+          $ref: '#/definitions/pbehavior.Response'
         type: array
       resource:
         type: string
@@ -2780,7 +2830,7 @@ definitions:
         type: string
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.PBehavior'
+          $ref: '#/definitions/pbehavior.Response'
         type: array
       resource:
         type: string
@@ -3082,6 +3132,49 @@ definitions:
     - seconds
     - unit
     type: object
+  types.OptionalInt64:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the int64. It should only be taken into
+          account if Set is true.
+        type: integer
+    type: object
+  types.OptionalRegexp:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        $ref: '#/definitions/utils.RegexExpression'
+        description: |-
+          Value contains the value of the regular expression. It should only be
+          taken into account if Set is true.
+        type: object
+    type: object
+  types.OptionalString:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the string. It should only be taken into
+          account if Set is true.
+        type: string
+    type: object
+  types.OptionalStringArray:
+    properties:
+      set:
+        type: boolean
+      value:
+        items:
+          type: string
+        type: array
+    type: object
   types.PbehaviorInfo:
     properties:
       canonical_type:
@@ -3183,49 +3276,6 @@ definitions:
         type: string
       title:
         type: string
-    type: object
-  utils.OptionalInt64:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        description: |-
-          Value contains the value of the int64. It should only be taken into
-          account if Set is true.
-        type: integer
-    type: object
-  utils.OptionalRegexp:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        $ref: '#/definitions/utils.RegexExpression'
-        description: |-
-          Value contains the value of the regular expression. It should only be
-          taken into account if Set is true.
-        type: object
-    type: object
-  utils.OptionalString:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        description: |-
-          Value contains the value of the string. It should only be taken into
-          account if Set is true.
-        type: string
-    type: object
-  utils.OptionalStringArray:
-    properties:
-      set:
-        type: boolean
-      value:
-        items:
-          type: string
-        type: array
     type: object
   utils.RegexExpression:
     type: object
@@ -4043,7 +4093,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/broadcastmessage.BroadcastMessage'
+          $ref: '#/definitions/broadcastmessage.Payload'
       produces:
       - application/json
       responses:
@@ -4111,7 +4161,9 @@ paths:
           description: Created
           schema:
             items:
-              $ref: '#/definitions/heartbeat.Heartbeat'
+              items:
+                $ref: '#/definitions/heartbeat.Response'
+              type: array
             type: array
         "400":
           description: Bad Request
@@ -4144,7 +4196,9 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/heartbeat.Heartbeat'
+              items:
+                $ref: '#/definitions/heartbeat.Response'
+              type: array
             type: array
         "400":
           description: Bad Request
@@ -4547,7 +4601,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/pbehavior.PBehavior'
+              $ref: '#/definitions/pbehavior.Response'
             type: array
         "400":
           description: Bad Request
@@ -5034,7 +5088,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/entityservice.EntityService'
+            $ref: '#/definitions/entityservice.Response'
         "400":
           description: Bad Request
           schema:
@@ -5083,7 +5137,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entityservice.EntityService'
+            $ref: '#/definitions/entityservice.Response'
         "404":
           description: Not Found
           schema:
@@ -5117,7 +5171,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entityservice.EntityService'
+            $ref: '#/definitions/entityservice.Response'
         "400":
           description: Bad Request
           schema:
@@ -5363,7 +5417,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/heartbeat.Heartbeat'
+                    $ref: '#/definitions/heartbeat.Response'
                   type: array
               type: object
         "400":
@@ -5394,7 +5448,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/heartbeat.Heartbeat'
+            $ref: '#/definitions/heartbeat.Response'
         "400":
           description: Bad Request
           schema:
@@ -5443,7 +5497,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/heartbeat.Heartbeat'
+            $ref: '#/definitions/heartbeat.Response'
         "404":
           description: Not Found
           schema:
@@ -5477,7 +5531,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/heartbeat.Heartbeat'
+            $ref: '#/definitions/heartbeat.Response'
         "400":
           description: Bad Request
           schema:
@@ -5768,6 +5822,64 @@ paths:
       summary: update user interface
       tags:
       - internal
+  /message-rate-stats:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of stats
+      operationId: message-rate-stats-find-all
+      parameters:
+      - in: query
+        name: from
+        required: true
+        type: integer
+      - in: query
+        name: interval
+        required: true
+        type: string
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sort_by
+        type: string
+      - in: query
+        name: to
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/messageratestats.StatsResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find message rate stats
+      tags:
+      - message-rate-stats
   /notification:
     get:
       consumes:
@@ -6523,7 +6635,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/pbehavior.PBehavior'
+                    $ref: '#/definitions/pbehavior.Response'
                   type: array
               type: object
         "400":
@@ -6554,7 +6666,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/pbehavior.PBehavior'
+            $ref: '#/definitions/pbehavior.Response'
         "400":
           description: Bad Request
           schema:
@@ -6603,7 +6715,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pbehavior.PBehavior'
+            $ref: '#/definitions/pbehavior.Response'
         "404":
           description: Not Found
           schema:
@@ -6637,7 +6749,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pbehavior.PBehavior'
+            $ref: '#/definitions/pbehavior.Response'
         "400":
           description: Bad Request
           schema:

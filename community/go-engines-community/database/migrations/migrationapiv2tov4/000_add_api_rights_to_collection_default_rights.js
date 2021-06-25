@@ -1,24 +1,28 @@
 db.default_rights.insertMany([
     {
         _id: "api_app_info_read",
+        loader_id: "api_app_info_read",
         crecord_name: "api_app_info_read",
         crecord_type: "action",
         desc: "read app info",
     },
     {
         _id: "api_user_interface_update",
+        loader_id: "api_user_interface_update",
         crecord_name: "api_user_interface_update",
         crecord_type: "action",
         desc: "update user interface",
     },
     {
         _id: "api_user_interface_delete",
+        loader_id: "api_user_interface_delete",
         crecord_name: "api_user_interface_delete",
         crecord_type: "action",
         desc: "delete user interface",
     },
     {
         _id: "api_broadcast_message",
+        loader_id: "api_broadcast_message",
         crecord_name: "api_broadcast_message",
         crecord_type: "action",
         desc: "Broadcast Message",
@@ -26,6 +30,7 @@ db.default_rights.insertMany([
     },
     {
         _id: "api_associative_table",
+        loader_id: "api_associative_table",
         crecord_name: "api_associative_table",
         crecord_type: "action",
         desc: "Associative table",

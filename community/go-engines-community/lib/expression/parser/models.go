@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"reflect"
 )
@@ -138,7 +139,7 @@ func (l *Like) Query() bson.M {
 		operand = l.Operand.Val()
 	}
 
-	return bson.M{"$regex": operand}
+	return bson.M{"$regex": fmt.Sprintf("%v", operand)}
 }
 
 type NotLike struct {
@@ -151,7 +152,7 @@ func (l *NotLike) Query() bson.M {
 		operand = l.Operand.Val()
 	}
 
-	return bson.M{"$not": bson.M{"$regex": operand}}
+	return bson.M{"$not": bson.M{"$regex": fmt.Sprintf("%v", operand)}}
 }
 
 type Contains struct {

@@ -3,14 +3,11 @@ package entity
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -37,7 +34,7 @@ func NewStore(db mongo.DbClient) Store {
 		mainCollection:     db.Collection(mongo.EntityMongoCollection),
 		archivedCollection: db.Collection(mongo.ArchivedEntitiesMongoCollection),
 		defaultSearchByFields: []string{
-			"name", "type",
+			"_id", "name", "type",
 		},
 		defaultSortBy: "_id",
 	}
@@ -289,37 +286,15 @@ func (s *store) addQueryFilter(r ListRequest, match *[]bson.M) error {
 }
 
 func (s *store) addSearchFilter(r ListRequest, match *[]bson.M) {
-	if r.Search == "" {
-		return
+	searchBy := r.SearchBy
+	if len(searchBy) == 0 {
+		searchBy = s.defaultSearchByFields
 	}
 
-	p := parser.NewParser()
-	expr, err := p.Parse(r.Search)
-	if err == nil {
-		query := expr.Query()
+	query := common.GetSearchQuery(r.Search, searchBy)
+	if len(query) != 0 {
 		*match = append(*match, query)
-
-		return
 	}
-
-	searchRegexp := primitive.Regex{
-		Pattern: fmt.Sprintf(".*%s.*", r.Search),
-		Options: "i",
-	}
-
-	fields := r.SearchBy
-	if len(fields) == 0 {
-		fields = s.defaultSearchByFields
-	}
-
-	searchMatch := make([]bson.M, len(fields))
-	for i := range fields {
-		searchMatch[i] = bson.M{fields[i]: searchRegexp}
-	}
-
-	*match = append(*match, bson.M{
-		"$or": searchMatch,
-	})
 }
 
 func (s *store) getSort(r ListRequest) bson.M {

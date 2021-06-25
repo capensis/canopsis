@@ -50,7 +50,7 @@ func NewApi(
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param id path string true "entity service id"
-// @Success 200 {object} EntityService
+// @Success 200 {object} Response
 // @Failure 404 {object} common.ErrorResponse
 // @Router /entityservices/{id} [get]
 func (a *api) Get(c *gin.Context) {
@@ -160,7 +160,7 @@ func (a *api) GetImpacts(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param body body EditRequest true "body"
-// @Success 201 {object} EntityService
+// @Success 201 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /entityservices [post]
 func (a *api) Create(c *gin.Context) {
@@ -206,7 +206,7 @@ func (a *api) Create(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "entity service id"
 // @Param body body EditRequest true "body"
-// @Success 200 {object} EntityService
+// @Success 200 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /entityservices/{id} [put]

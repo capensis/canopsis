@@ -3,12 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"runtime/trace"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/streadway/amqp"
+	"runtime/trace"
 )
 
 type EngineFIFO struct {
@@ -101,8 +100,17 @@ func (e *EngineFIFO) WorkerProcess(parentCtx context.Context, msg amqp.Delivery)
 		return
 	}
 
+	event.Format()
+	e.References.StatsSender.Add(event.Timestamp.Unix(), true)
+
+	err = event.InjectExtraInfos(msg.Body)
+	if err != nil {
+		e.processWorkerError(err, msg)
+		return
+	}
+
 	e.Logger().Debug().Str("event", fmt.Sprintf("%+v", event)).Msg("sent to scheduler")
-	err = e.References.Scheduler.ProcessEvent(ctx, e.References.ChannelPub, event.GetLockID(), msg.Body)
+	err = e.References.Scheduler.ProcessEvent(ctx, event)
 
 	if err != nil {
 		e.processWorkerError(err, msg)
@@ -153,7 +161,7 @@ func (e *EngineFIFO) ackManager(ctx context.Context) {
 			continue
 		}
 
-		if err := e.References.Scheduler.AckEvent(ctx, e.References.AckChanPub, event); err != nil {
+		if err := e.References.Scheduler.AckEvent(ctx, event); err != nil {
 			e.Logger().Err(err).
 				Str("lockID", event.GetLockID()).
 				Msg("Error on acking message")

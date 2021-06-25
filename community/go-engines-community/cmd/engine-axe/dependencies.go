@@ -35,6 +35,7 @@ type Options struct {
 	PostProcessorsDirectory  string
 	IgnoreDefaultTomlConfig  bool
 	PeriodicalWaitTime       time.Duration
+	WithRemediation          bool
 }
 
 // NewEngineAXE returns the default AXE engine with default connections.
@@ -90,16 +91,19 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		logger,
 	)
 
-	remediationRpcClient := engine.NewRPCClient(
-		canopsis.AxeRPCConsumerName,
-		canopsis.RemediationRPCQueueServerName,
-		"",
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
-		nil,
-		amqpChannel,
-		logger,
-	)
+	var remediationRpcClient engine.RPCClient
+	if options.WithRemediation {
+		remediationRpcClient = engine.NewRPCClient(
+			canopsis.AxeRPCConsumerName,
+			canopsis.RemediationRPCQueueServerName,
+			"",
+			cfg.Global.PrefetchCount,
+			cfg.Global.PrefetchSize,
+			nil,
+			amqpChannel,
+			logger,
+		)
+	}
 
 	engineAxe := engine.New(nil, nil, logger)
 	engineAxe.AddConsumer(engine.NewDefaultConsumer(

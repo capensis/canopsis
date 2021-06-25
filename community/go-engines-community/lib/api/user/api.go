@@ -50,7 +50,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	users, err := a.store.Find(query)
+	users, err := a.store.Find(c.Request.Context(), query)
 	if err != nil {
 		panic(err)
 	}
@@ -77,7 +77,7 @@ func (a *api) List(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /users/{id} [get]
 func (a *api) Get(c *gin.Context) {
-	user, err := a.store.GetOneBy(c.Param("id"))
+	user, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -109,7 +109,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Insert(request)
+	user, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -151,7 +151,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Update(request)
+	user, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -186,7 +186,7 @@ func (a *api) Update(c *gin.Context) {
 // @Router /users/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(id)
+	ok, err := a.store.Delete(c.Request.Context(), id)
 
 	if err != nil {
 		panic(err)

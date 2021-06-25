@@ -55,7 +55,7 @@ type FindByEntityIDRequest struct {
 	ID string `form:"id" binding:"required"`
 }
 
-type PBehavior struct {
+type Response struct {
 	ID         string                         `bson:"_id" json:"_id"`
 	Author     string                         `bson:"author" json:"author"`
 	Comments   pbehavior.Comments             `bson:"comments" json:"comments"`
@@ -98,8 +98,8 @@ func (f *Filter) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
 }
 
 type AggregationResult struct {
-	Data       []PBehavior `bson:"data" json:"data"`
-	TotalCount int64       `bson:"total_count" json:"total_count"`
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
 func (r *AggregationResult) GetData() interface{} {

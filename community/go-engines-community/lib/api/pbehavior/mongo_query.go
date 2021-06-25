@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,9 +15,10 @@ import (
 )
 
 type MongoQuery struct {
-	typeCollection   mongo.DbCollection
-	reasonCollection mongo.DbCollection
-	defaultSortBy    string
+	typeCollection        mongo.DbCollection
+	reasonCollection      mongo.DbCollection
+	defaultSearchByFields []string
+	defaultSortBy         string
 
 	match             bson.M
 	sort              bson.M
@@ -27,10 +29,11 @@ type MongoQuery struct {
 
 func CreateMongoQuery(client mongo.DbClient) MongoQuery {
 	return MongoQuery{
-		typeCollection:    client.Collection(mongo.PbehaviorTypeMongoCollection),
-		reasonCollection:  client.Collection(mongo.PbehaviorReasonMongoCollection),
-		defaultSortBy:     "created",
-		lookupBeforeLimit: map[string][]bson.M{},
+		typeCollection:        client.Collection(mongo.PbehaviorTypeMongoCollection),
+		reasonCollection:      client.Collection(mongo.PbehaviorReasonMongoCollection),
+		defaultSearchByFields: []string{"_id", "name", "author", "comments.author", "comments.message", "filter", "author"},
+		defaultSortBy:         "created",
+		lookupBeforeLimit:     map[string][]bson.M{},
 		lookupAfterLimit: map[string][]bson.M{
 			"type":   GetNestedTypePipeline(),
 			"reason": GetNestedReasonPipeline(),
@@ -60,7 +63,9 @@ func (q *MongoQuery) CreateAggregationPipeline(ctx context.Context, r ListReques
 	}
 
 	beforeLimit := make([]bson.M, 0)
-	beforeLimit = append(beforeLimit, bson.M{"$match": q.match})
+	if len(q.match) > 0 {
+		beforeLimit = append(beforeLimit, bson.M{"$match": q.match})
+	}
 	for _, m := range q.lookupBeforeLimit {
 		beforeLimit = append(beforeLimit, m...)
 	}
@@ -114,6 +119,12 @@ func (q *MongoQuery) handleSort(_ context.Context, r ListRequest) error {
 func (q *MongoQuery) getSearchFilter(ctx context.Context, search string) (bson.M, error) {
 	if search == "" {
 		return bson.M{}, nil
+	}
+
+	p := parser.NewParser()
+	expr, err := p.Parse(search)
+	if err == nil {
+		return expr.Query(), nil
 	}
 
 	searchRegexp := primitive.Regex{

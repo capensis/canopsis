@@ -144,7 +144,18 @@ func (a mongoAdapter) GetAlarmsWithFlappingStatus() ([]types.Alarm, error) {
 }
 
 func (a mongoAdapter) GetAllOpenedResourceAlarmsByComponent(component string) ([]types.AlarmWithEntity, error) {
-	panic("not implemented")
+	req := bson.M{
+		"v.component":  component,
+		"v.resource":   bson.M{"$exists": true},
+		"v.status.val": bson.M{"$ne": 0},
+		"v.meta":       bson.M{"$exists": false},
+		"$or": []bson.M{
+			{"v.resolved": nil},
+			{"v.resolved": bson.M{"$exists": false}},
+		},
+	}
+
+	return a.getAlarmsWithEntity(req)
 }
 
 func (a mongoAdapter) GetUnacknowledgedAlarmsByComponent(component string) ([]types.Alarm, error) {
@@ -273,8 +284,11 @@ func (a mongoAdapter) GetOpenedAlarmsWithEntityByIDs(ids []string, alarms *[]typ
 	return err
 }
 
-func (a mongoAdapter) GetCountOpenedAlarmsByIDs(ids []string) (int, error) {
-	panic("not implemented")
+func (a mongoAdapter) GetCountOpenedAlarmsByIDs(ids []string) (int64, error) {
+	return a.getAlarmsCount(bson.M{
+		"d":          bson.M{"$in": ids},
+		"v.resolved": bson.M{"$in": []interface{}{"", nil}},
+	})
 }
 
 // GetOpenedAlarmsByAlarmIDs gets ongoing alarms related the provided alarm ids

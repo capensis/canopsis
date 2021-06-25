@@ -1,8 +1,8 @@
-# Canopsis, open-source hypervision
+# Canopsis Community, open-source hypervision
 
 ## About
 
-[Canopsis](https://www.capensis.fr/canopsis/) is a modular open-source technology whose goal is to **centralize**, **process** and **report** multiple sources of information, metrics and events into a single platform for monitoring and managing resources.
+[Canopsis Community](https://www.capensis.fr/canopsis/) is a modular open-source technology whose goal is to **centralize**, **process** and **report** multiple sources of information, metrics and events into a single platform for monitoring and managing resources.
 
 [Multiple connectors](https://doc.canopsis.net/interconnexions/) can be plugged in Canopsis, such as Icinga, Nagios®, Centreon, Zabbix, Logstash, SNMP, and more.
 
@@ -20,10 +20,10 @@ Documentation is available (in French) at: [doc.canopsis.net](https://doc.canops
 
 ## Contributing
 
-Canopsis is built with Python, Go and Vue.js. This open-source edition is licensed under the GNU AGPLv3.
+Canopsis is built with Python, Go and Vue.js. This open-source Community edition is licensed under the GNU AGPLv3.
 
-Commercial offers are also available on [canopsis.com](http://www.canopsis.com).
+Commercial offers (Canopsis Pro) are also available on [canopsis.com](http://www.canopsis.com).
 
-Main development is coordinated on [git.canopsis.net](https://git.canopsis.net/canopsis/canopsis-community), and then mirrored on [GitHub](https://github.com/capensis/canopsis).
+Main development of Canopsis Community is coordinated on [git.canopsis.net](https://git.canopsis.net/canopsis/canopsis-community), and then mirrored on [GitHub](https://github.com/capensis/canopsis).
 
 © 2011–2021 Capensis
