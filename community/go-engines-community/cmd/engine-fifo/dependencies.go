@@ -49,6 +49,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		logger,
 		options.LockTtl,
 		json.NewDecoder(),
+		json.NewEncoder(),
 		options.EnableMetaAlarmProcessing,
 	)
 	statsCh := make(chan statistics.Message)

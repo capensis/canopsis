@@ -272,6 +272,10 @@ func (e *Event) GetLockID() string {
 // InjectExtraInfos takes the raw JSON event document and puts any unknown
 // field into Event.ExtraInfos
 func (e *Event) InjectExtraInfos(source []byte) error {
+	if len(e.ExtraInfos) > 0 {
+		return nil
+	}
+
 	unmatchedParams := make(map[string]interface{})
 	if err := json.Unmarshal(source, &unmatchedParams); err == nil {
 		for _, jsonKey := range e.GetRequiredKeys() {

@@ -82,14 +82,18 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					break
 				}
 
+				event := &types.Event{
+					Connector:         alarm.Value.Connector,
+					ConnectorName:     alarm.Value.ConnectorName,
+					Component:         alarm.Value.Component,
+					Resource:          alarm.Value.Resource,
+					Alarm:             &alarm,
+					MetaAlarmParents:  &alarm.Value.Parents,
+					MetaAlarmChildren: &alarm.Value.Children,
+				}
+
 				if result.Err != nil {
-					s.sendEventToFifoAck(&types.Event{
-						Connector:     alarm.Value.Connector,
-						ConnectorName: alarm.Value.ConnectorName,
-						Component:     alarm.Value.Component,
-						Resource:      alarm.Value.Resource,
-						Alarm:         &alarm,
-					})
+					s.sendEventToFifoAck(event)
 					break
 				}
 
@@ -100,13 +104,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 				}
 
 				if !ok {
-					s.sendEventToFifoAck(&types.Event{
-						Connector:     alarm.Value.Connector,
-						ConnectorName: alarm.Value.ConnectorName,
-						Component:     alarm.Value.Component,
-						Resource:      alarm.Value.Resource,
-						Alarm:         &alarm,
-					})
+					s.sendEventToFifoAck(event)
 				}
 			}
 		}
