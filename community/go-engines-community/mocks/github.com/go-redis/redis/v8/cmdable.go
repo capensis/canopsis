@@ -7671,6 +7671,63 @@ func (mr *MockUniversalClientMockRecorder) ZCount(arg0, arg1, arg2, arg3 interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ZCount", reflect.TypeOf((*MockUniversalClient)(nil).ZCount), arg0, arg1, arg2, arg3)
 }
 
+// ZDiff mocks base method
+func (m *MockUniversalClient) ZDiff(arg0 context.Context, arg1 ...string) *redis.StringSliceCmd {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0}
+	for _, a := range arg1 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ZDiff", varargs...)
+	ret0, _ := ret[0].(*redis.StringSliceCmd)
+	return ret0
+}
+
+// ZDiff indicates an expected call of ZDiff
+func (mr *MockUniversalClientMockRecorder) ZDiff(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0}, arg1...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ZDiff", reflect.TypeOf((*MockUniversalClient)(nil).ZDiff), varargs...)
+}
+
+// ZDiffStore mocks base method
+func (m *MockUniversalClient) ZDiffStore(arg0 context.Context, arg1 string, arg2 ...string) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ZDiffStore", varargs...)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// ZDiffStore indicates an expected call of ZDiffStore
+func (mr *MockUniversalClientMockRecorder) ZDiffStore(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ZDiffStore", reflect.TypeOf((*MockUniversalClient)(nil).ZDiffStore), varargs...)
+}
+
+// ZDiffWithScores mocks base method
+func (m *MockUniversalClient) ZDiffWithScores(arg0 context.Context, arg1 ...string) *redis.ZSliceCmd {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0}
+	for _, a := range arg1 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ZDiffWithScores", varargs...)
+	ret0, _ := ret[0].(*redis.ZSliceCmd)
+	return ret0
+}
+
+// ZDiffWithScores indicates an expected call of ZDiffWithScores
+func (mr *MockUniversalClientMockRecorder) ZDiffWithScores(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0}, arg1...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ZDiffWithScores", reflect.TypeOf((*MockUniversalClient)(nil).ZDiffWithScores), varargs...)
+}
+
 // ZIncr mocks base method
 func (m *MockUniversalClient) ZIncr(arg0 context.Context, arg1 string, arg2 *redis.Z) *redis.FloatCmd {
 	m.ctrl.T.Helper()
@@ -7727,6 +7784,20 @@ func (mr *MockUniversalClientMockRecorder) ZIncrXX(arg0, arg1, arg2 interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ZIncrXX", reflect.TypeOf((*MockUniversalClient)(nil).ZIncrXX), arg0, arg1, arg2)
 }
 
+// ZInter mocks base method
+func (m *MockUniversalClient) ZInter(arg0 context.Context, arg1 *redis.ZStore) *redis.StringSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ZInter", arg0, arg1)
+	ret0, _ := ret[0].(*redis.StringSliceCmd)
+	return ret0
+}
+
+// ZInter indicates an expected call of ZInter
+func (mr *MockUniversalClientMockRecorder) ZInter(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ZInter", reflect.TypeOf((*MockUniversalClient)(nil).ZInter), arg0, arg1)
+}
+
 // ZInterStore mocks base method
 func (m *MockUniversalClient) ZInterStore(arg0 context.Context, arg1 string, arg2 *redis.ZStore) *redis.IntCmd {
 	m.ctrl.T.Helper()
@@ -7739,6 +7810,20 @@ func (m *MockUniversalClient) ZInterStore(arg0 context.Context, arg1 string, arg
 func (mr *MockUniversalClientMockRecorder) ZInterStore(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ZInterStore", reflect.TypeOf((*MockUniversalClient)(nil).ZInterStore), arg0, arg1, arg2)
+}
+
+// ZInterWithScores mocks base method
+func (m *MockUniversalClient) ZInterWithScores(arg0 context.Context, arg1 *redis.ZStore) *redis.ZSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ZInterWithScores", arg0, arg1)
+	ret0, _ := ret[0].(*redis.ZSliceCmd)
+	return ret0
+}
+
+// ZInterWithScores indicates an expected call of ZInterWithScores
+func (mr *MockUniversalClientMockRecorder) ZInterWithScores(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ZInterWithScores", reflect.TypeOf((*MockUniversalClient)(nil).ZInterWithScores), arg0, arg1)
 }
 
 // ZLexCount mocks base method
