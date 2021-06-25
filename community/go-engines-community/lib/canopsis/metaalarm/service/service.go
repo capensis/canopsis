@@ -181,7 +181,7 @@ func (s *service) AddChildToMetaAlarm(
 	}
 	infos := eventExtraInfosMeta{
 		Rule:     rule,
-		Count:    childrenCount,
+		Count:    int(childrenCount),
 		Children: child,
 	}
 	output, err := s.executeOutputTpl(infos)
@@ -263,7 +263,7 @@ func (s *service) AddMultipleChildsToMetaAlarm(
 	}
 	infos := eventExtraInfosMeta{
 		Rule:     rule,
-		Count:    childrenCount,
+		Count:    int(childrenCount),
 		Children: children[len(children)-1],
 	}
 	output, err := s.executeOutputTpl(infos)

@@ -30,10 +30,8 @@ type Options struct {
 type References struct {
 	Scheduler      scheduler.Scheduler
 	RunInfoManager engine.RunInfoManager
-	ChannelPub     libamqp.Channel
 	ChannelSub     libamqp.Channel
 	AckChanSub     libamqp.Channel
-	AckChanPub     libamqp.Channel
 	JSONDecoder    encoding.Decoder
 	StatsSender    ratelimit.StatsSender
 	StatsListener  statistics.StatsListener
@@ -59,13 +57,10 @@ func (m DependencyMaker) GetDefaultReferences(ctx context.Context, options Optio
 	channelSub := m.DepAMQPChannelSub(m.DepAmqpConnection(logger, cfg), cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
 	ackChanSub := m.DepAMQPChannelSub(m.DepAmqpConnection(logger, cfg), cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
 	channelPub := m.DepAMQPChannelPub(m.DepAmqpConnection(logger, cfg))
-	ackChanPub := m.DepAMQPChannelPub(m.DepAmqpConnection(logger, cfg))
 
 	redisLockStorage := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
 	redisQueueStorage := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
 	statsRedisClient := m.DepRedisSession(ctx, redis.FIFOMessageStatisticsStorage, logger, cfg)
-
-	jsonDecoder := json.NewDecoder()
 
 	eventScheduler := scheduler.NewSchedulerService(
 		redisLockStorage,
@@ -73,7 +68,8 @@ func (m DependencyMaker) GetDefaultReferences(ctx context.Context, options Optio
 		channelPub, options.PublishToQueue,
 		logger,
 		options.LockTtl,
-		jsonDecoder,
+		json.NewDecoder(),
+		json.NewEncoder(),
 		options.EnableMetaAlarmProcessing,
 	)
 
@@ -95,10 +91,8 @@ func (m DependencyMaker) GetDefaultReferences(ctx context.Context, options Optio
 		Scheduler:      eventScheduler,
 		RunInfoManager: engine.NewRunInfoManager(m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)),
 		ChannelSub:     channelSub,
-		ChannelPub:     channelPub,
 		AckChanSub:     ackChanSub,
-		AckChanPub:     ackChanPub,
-		JSONDecoder:    jsonDecoder,
+		JSONDecoder:    json.NewDecoder(),
 		StatsSender:    statsSender,
 		StatsListener:  statsListener,
 		StatsCh:        statsCh,

@@ -2,7 +2,8 @@ package view
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/junit"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/filemask"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
@@ -61,14 +62,14 @@ func ValidateWidgetParametersJunitRequest(sl validator.StructLevel) {
 	}
 
 	if r.ScreenshotFilemask != "" {
-		_, err := junit.NewFileMask(r.ScreenshotFilemask)
+		_, err := filemask.NewFileMask(r.ScreenshotFilemask)
 		if err != nil {
 			sl.ReportError(r.ScreenshotFilemask, "ScreenshotFilemask", "ScreenshotFilemask", "filemask", "")
 		}
 	}
 
 	if r.VideoFilemask != "" {
-		_, err := junit.NewFileMask(r.VideoFilemask)
+		_, err := filemask.NewFileMask(r.VideoFilemask)
 		if err != nil {
 			sl.ReportError(r.VideoFilemask, "VideoFilemask", "VideoFilemask", "filemask", "")
 		}
