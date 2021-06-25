@@ -38,13 +38,14 @@ func TestPeriodicalWorker_Work_GivenObtainedLock_ShouldDoWork(t *testing.T) {
 		Obtain(gomock.Any(), gomock.Eq(PeriodicalLockKey), gomock.Eq(interval), gomock.Any()).
 		Return(nil, nil)
 	alarmConfig := config.AlarmConfig{
-		FlappingFreqLimit:    1,
-		FlappingInterval:     time.Second,
-		StealthyInterval:     time.Second,
-		BaggotTime:           time.Second,
-		EnableLastEventDate:  true,
-		CancelAutosolveDelay: time.Second,
-		OutputLength:         10,
+		FlappingFreqLimit:        1,
+		FlappingInterval:         time.Second,
+		StealthyInterval:         time.Second,
+		BaggotTime:               time.Second,
+		EnableLastEventDate:      true,
+		CancelAutosolveDelay:     time.Second,
+		OutputLength:             10,
+		TimeToKeepResolvedAlarms: time.Second,
 	}
 	mockAlarmConfigProvider.EXPECT().Get().Return(alarmConfig)
 	mockAlarmAdapter.EXPECT().DeleteResolvedAlarms(gomock.Any(), gomock.Any())
