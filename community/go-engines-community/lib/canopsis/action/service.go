@@ -146,21 +146,29 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		}
 	}
 
+	additionalData := AdditionalData{
+		AlarmChangeType: event.AlarmChange.Type,
+		Author:          event.Author,
+		Initiator:       event.Initiator,
+	}
+
 	if event.EventType == types.EventTypeRunDelayedScenario {
 		s.scenarioInputChannel <- ExecuteScenariosTask{
 			Alarm:             alarm,
 			Entity:            entity,
 			DelayedScenarioID: event.DelayedScenarioID,
+			AdditionalData:    additionalData,
 		}
 
 		return nil
 	}
 
 	s.scenarioInputChannel <- ExecuteScenariosTask{
-		Triggers:     event.AlarmChange.GetTriggers(),
-		Alarm:        alarm,
-		Entity:       entity,
-		AckResources: event.AckResources,
+		Triggers:       event.AlarmChange.GetTriggers(),
+		Alarm:          alarm,
+		Entity:         entity,
+		AckResources:   event.AckResources,
+		AdditionalData: additionalData,
 	}
 
 	return nil
@@ -202,6 +210,7 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 			Alarm:                alarm,
 			Entity:               execution.Entity,
 			AbandonedExecutionID: execution.ID,
+			AdditionalData:       execution.AdditionalData,
 		}
 	}
 
