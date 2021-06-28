@@ -15,6 +15,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { MODALS } from '@/constants';
 
 import { generateCopyOfViewTab, getViewsTabsWidgetsIdsMappings } from '@/helpers/entities';
+import { viewToRequest } from '@/helpers/forms/view';
 
 import { authMixin } from '@/mixins/auth';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
@@ -106,11 +107,7 @@ export default {
         tabs: [...view.tabs, tab],
       };
 
-      return this.updateView({
-        data,
-
-        id: viewId,
-      });
+      return this.updateView({ id: viewId, data: viewToRequest(data) });
     },
   },
 };
