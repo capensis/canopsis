@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"git.canopsis.net/canopsis/go-engines/lib/api/common"
 	"git.canopsis.net/canopsis/go-engines/lib/api/heartbeat"
 	"git.canopsis.net/canopsis/go-engines/lib/api/pagination"
@@ -52,21 +53,21 @@ func RegisterValidators(client mongo.DbClient) {
 
 		v.RegisterStructValidation(scenario.ValidateEditRequest, scenario.EditRequest{})
 		v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-			scenarioUniqueNameValidator.Validate(ctx, sl)
-			scenarioUniquePriorityValidator.Validate(ctx, sl)
-			scenarioExistIdValidator.Validate(ctx, sl)
+			scenarioUniqueNameValidator.Validate(sl)
+			scenarioUniquePriorityValidator.Validate(sl)
+			scenarioExistIdValidator.Validate(sl)
 		}, scenario.CreateRequest{})
 		v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-			scenarioUniqueNameValidator.Validate(ctx, sl)
-			scenarioUniquePriorityValidator.Validate(ctx, sl)
+			scenarioUniqueNameValidator.Validate(sl)
+			scenarioUniquePriorityValidator.Validate(sl)
 		}, scenario.UpdateRequest{})
 
 		v.RegisterStructValidation(scenario.ValidateActionRequest, scenario.ActionRequest{})
 		v.RegisterStructValidation(scenario.ValidateChangeStateParametersRequest, scenario.ChangeStateParametersRequest{})
 		v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 			scenario.ValidatePbehaviorParametersRequest(sl)
-			scenarioExistReasonValidator.Validate(ctx, sl)
-			scenarioExistTypeValidator.Validate(ctx, sl)
+			scenarioExistReasonValidator.Validate(sl)
+			scenarioExistTypeValidator.Validate(sl)
 		}, scenario.PbehaviorParametersRequest{})
 		v.RegisterStructValidation(scenario.ValidateWebhookRequest, scenario.WebhookRequest{})
 		v.RegisterStructValidation(watcherweather.ValidateRequest, watcherweather.ListRequest{})
