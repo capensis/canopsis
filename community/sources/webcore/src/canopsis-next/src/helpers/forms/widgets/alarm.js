@@ -8,6 +8,7 @@ import {
   EXPORT_CSV_SEPARATORS,
   GRID_SIZES,
   SORT_ORDERS,
+  WIDGET_TYPES,
 } from '@/constants';
 import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
 
@@ -187,6 +188,7 @@ export const alarmListWidgetToForm = (alarmListWidget = {}) => {
 
   return {
     ...widget,
+    type: WIDGET_TYPES.alarmList,
     parameters: alarmListWidgetParametersToForm(alarmListWidget.parameters),
   };
 };

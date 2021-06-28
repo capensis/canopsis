@@ -1,4 +1,4 @@
-import { DEFAULT_PERIODIC_REFRESH, TEST_CASE_FILE_MASK } from '@/constants';
+import { DEFAULT_PERIODIC_REFRESH, TEST_CASE_FILE_MASK, WIDGET_TYPES } from '@/constants';
 
 import { addKeyInEntities } from '@/helpers/entities';
 import { widgetToForm } from '@/helpers/forms/widgets/common';
@@ -76,6 +76,7 @@ export const testingWeatherWidgetToForm = (testingWeatherWidget = {}) => {
 
   return {
     ...widget,
+    type: WIDGET_TYPES.testingWeather,
     parameters: testingWeatherWidgetParametersToForm(testingWeatherWidget.parameters),
   };
 };

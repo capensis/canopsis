@@ -58,6 +58,13 @@ export function defaultColumnsToColumns(columns = []) {
 export const generateViewTabId = () => uuid('view-tab');
 
 /**
+ * Generate id for widget tab
+ *
+ * @returns {string}
+ */
+export const generateWidgetId = type => uuid(`widget_${type}`);
+
+/**
  * Generate widget by type
  *
  * @param {string} type
