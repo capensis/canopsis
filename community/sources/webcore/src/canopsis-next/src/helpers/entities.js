@@ -17,7 +17,7 @@ import {
   SORT_ORDERS,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
-  GRID_SIZES, AVAILABLE_COUNTERS,
+  AVAILABLE_COUNTERS,
   DEFAULT_COUNTER_BLOCK_TEMPLATE,
   TIME_UNITS,
   WORKFLOW_TYPES,
@@ -66,6 +66,9 @@ export const generateViewTabId = () => uuid('view-tab');
 export function generateWidgetByType(type) {
   const widget = widgetToForm({ type });
 
+  /**
+   * TODO: Should be used prepare function(alarmListWidgetParametersToForm)
+   */
   const alarmsListDefaultParameters = {
     itemsPerPage: PAGINATION_LIMIT,
     infoPopups: [],
@@ -90,32 +93,6 @@ export function generateWidgetByType(type) {
   let specialParameters = {};
 
   switch (type) {
-    case WIDGET_TYPES.alarmList:
-      specialParameters = {
-        ...alarmsListDefaultParameters,
-
-        viewFilters: [],
-        mainFilter: null,
-        mainFilterUpdatedAt: 0,
-        infoPopups: [],
-        liveReporting: {},
-        periodic_refresh: {
-          enabled: false,
-          interval: 60,
-          unit: 's',
-        },
-        sort: {
-          order: SORT_ORDERS.asc,
-        },
-        alarmsStateFilter: {
-          opened: true,
-        },
-        expandGridRangeSize: [GRID_SIZES.min, GRID_SIZES.max],
-        exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
-        exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds,
-      };
-      break;
-
     case WIDGET_TYPES.context:
       specialParameters = {
         itemsPerPage: PAGINATION_LIMIT,

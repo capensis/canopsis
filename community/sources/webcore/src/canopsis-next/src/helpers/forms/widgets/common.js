@@ -13,6 +13,18 @@ import uuid from '@/helpers/uuid';
  */
 
 /**
+ * @typedef { 'comma' | 'semicolon' | 'tab' | 'space' } CsvSeparators
+ */
+
+/**
+ * @typedef {Object} WidgetColumn
+ * @property {string} value
+ * @property {string} label
+ * @property {boolean} isHtml
+ * @property {boolean} colorIndicator
+ */
+
+/**
  * @typedef {Object} WidgetGridParameter
  * @property {number} y
  * @property {number} x
