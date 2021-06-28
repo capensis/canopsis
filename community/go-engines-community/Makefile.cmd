@@ -9,7 +9,7 @@ build:
 
 clean:
 	@echo "Cleaning ${PROJECT} project"
-	rm -rf ${OUTPUT_DIR}/${BINARY}
+	rm -rf "${OUTPUT_DIR}/${BINARY}"
 
 docker_image:
 	@echo "Building ${PROJECT} project docker image"
