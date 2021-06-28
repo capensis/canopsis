@@ -5,11 +5,6 @@ import { widgetToForm } from '@/helpers/forms/widgets/common';
 import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/date/duration';
 
 /**
- * @typedef {Interval} PeriodicRefresh
- * @property {boolean} enabled
- */
-
-/**
  * @typedef {string} Storage
  */
 
@@ -21,7 +16,7 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
 
 /**
  * @typedef {Object} TestingWeatherWidgetParameters
- * @property {PeriodicRefresh} periodic_refresh
+ * @property {DurationWithEnabled} periodic_refresh
  * @property {string} directory
  * @property {string} screenshot_filemask
  * @property {string} video_filemask
