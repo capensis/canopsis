@@ -39,13 +39,12 @@ import VRuntimeTemplate from 'v-runtime-template';
 import {
   MODALS,
   USERS_PERMISSIONS,
-  WIDGET_TYPES,
   WEATHER_ICONS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { generateWidgetByType } from '@/helpers/entities';
+import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
 import { getEntityColor } from '@/helpers/color';
 
 import { authMixin } from '@/mixins/auth';
@@ -191,7 +190,7 @@ export default {
 
     async showAlarmListModal() {
       try {
-        const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+        const widget = alarmListWidgetToForm();
 
         const filter = { $and: [{ 'entity.impact': this.service._id }] };
 
