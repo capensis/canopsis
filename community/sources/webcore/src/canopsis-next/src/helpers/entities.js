@@ -1,10 +1,8 @@
 import { get, omit, cloneDeep, isObject } from 'lodash';
 
 import i18n from '@/i18n';
-import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS, DEFAULT_CATEGORIES_LIMIT } from '@/config';
+import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
 import {
-  DEFAULT_ALARMS_WIDGET_COLUMNS,
-  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   WIDGET_TYPES,
   STATS_CALENDAR_COLORS,
@@ -27,6 +25,7 @@ import {
 } from '@/constants';
 
 import { widgetToForm } from '@/helpers/forms/widgets/common';
+import { alarmListWidgetDefaultParametersToForm } from '@/helpers/forms/widgets/alarm';
 
 import uuid from './uuid';
 import uid from './uid';
@@ -76,26 +75,7 @@ export function generateWidgetByType(type) {
   /**
    * TODO: Should be used prepare function(alarmListWidgetParametersToForm)
    */
-  const alarmsListDefaultParameters = {
-    itemsPerPage: PAGINATION_LIMIT,
-    infoPopups: [],
-    moreInfoTemplate: '',
-    isAckNoteRequired: false,
-    isSnoozeNoteRequired: false,
-    isMultiAckEnabled: false,
-    isHtmlEnabledOnTimeLine: false,
-    fastAckOutput: {
-      enabled: false,
-      value: 'auto ack',
-    },
-    widgetColumns: defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
-    widgetGroupColumns: defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS),
-    serviceDependenciesColumns: defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
-    linksCategoriesAsList: {
-      enabled: false,
-      limit: DEFAULT_CATEGORIES_LIMIT,
-    },
-  };
+  const alarmsListDefaultParameters = alarmListWidgetDefaultParametersToForm();
 
   let specialParameters = {};
 
