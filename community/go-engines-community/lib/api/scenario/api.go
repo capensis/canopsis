@@ -102,7 +102,7 @@ func (a *api) Get(c *gin.Context) {
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /scenarios [post]
 func (a *api) Create(c *gin.Context) {
-	var request EditRequest
+	var request CreateRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -141,7 +141,7 @@ func (a *api) Create(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /scenarios/{id} [put]
 func (a *api) Update(c *gin.Context) {
-	request := EditRequest{
+	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
 

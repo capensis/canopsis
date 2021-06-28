@@ -44,23 +44,29 @@ func RegisterValidators(client mongo.DbClient) {
 		v.RegisterStructValidation(heartbeatUniqueNameValidator.Validate, heartbeat.BulkUpdateRequestItem{})
 		v.RegisterStructValidation(heartbeatBulkUniqueNameValidator.Validate, heartbeat.BulkCreateRequest{})
 		v.RegisterStructValidation(heartbeatBulkUniqueNameValidator.Validate, heartbeat.BulkUpdateRequest{})
-		v.RegisterStructValidation(func(sl validator.StructLevel) {
-			uniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "Name")
-			uniquePriorityValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "Priority")
+		scenarioUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "Name")
+		scenarioUniquePriorityValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "Priority")
+		scenarioExistReasonValidator := common.NewExistFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Reason")
+		scenarioExistTypeValidator := common.NewExistFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Type")
+		scenarioExistIdValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "ID")
 
-			scenario.ValidateEditRequest(sl)
-			uniqueNameValidator.Validate(sl)
-			uniquePriorityValidator.Validate(sl)
-		}, scenario.EditRequest{})
+		v.RegisterStructValidation(scenario.ValidateEditRequest, scenario.EditRequest{})
+		v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+			scenarioUniqueNameValidator.Validate(ctx, sl)
+			scenarioUniquePriorityValidator.Validate(ctx, sl)
+			scenarioExistIdValidator.Validate(ctx, sl)
+		}, scenario.CreateRequest{})
+		v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+			scenarioUniqueNameValidator.Validate(ctx, sl)
+			scenarioUniquePriorityValidator.Validate(ctx, sl)
+		}, scenario.UpdateRequest{})
+
 		v.RegisterStructValidation(scenario.ValidateActionRequest, scenario.ActionRequest{})
 		v.RegisterStructValidation(scenario.ValidateChangeStateParametersRequest, scenario.ChangeStateParametersRequest{})
-		v.RegisterStructValidation(func(sl validator.StructLevel) {
-			existReasonValidator := common.NewExistFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Reason")
-			existTypeValidator := common.NewExistFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Type")
-
+		v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 			scenario.ValidatePbehaviorParametersRequest(sl)
-			existReasonValidator.Validate(sl)
-			existTypeValidator.Validate(sl)
+			scenarioExistReasonValidator.Validate(ctx, sl)
+			scenarioExistTypeValidator.Validate(ctx, sl)
 		}, scenario.PbehaviorParametersRequest{})
 		v.RegisterStructValidation(scenario.ValidateWebhookRequest, scenario.WebhookRequest{})
 		v.RegisterStructValidation(watcherweather.ValidateRequest, watcherweather.ListRequest{})
