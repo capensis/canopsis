@@ -21,7 +21,7 @@ const (
 	CorelTypeChild
 )
 
-const DayInSeconds = 86400
+const DefaultConfigTimeInterval = 86400
 
 // CorelApplicator implements RuleApplicator interface
 type CorelApplicator struct {
@@ -122,7 +122,7 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 	childrenThreshold := int(*rule.Config.ThresholdCount - 1)
 	timeInterval := int64(rule.Config.TimeInterval)
 	if rule.Config.TimeInterval == 0 {
-		timeInterval = DayInSeconds
+		timeInterval = DefaultConfigTimeInterval
 	}
 
 	for redisRetries := MaxRedisRetries; redisRetries >= 0; redisRetries-- {
