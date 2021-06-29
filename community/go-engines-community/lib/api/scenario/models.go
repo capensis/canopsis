@@ -29,7 +29,7 @@ type EditRequest struct {
 
 type CreateRequest struct {
 	EditRequest
-	ID string `json:"_id" binding:"id"`
+	ID string `json:"_id"`
 }
 
 type UpdateRequest struct {
