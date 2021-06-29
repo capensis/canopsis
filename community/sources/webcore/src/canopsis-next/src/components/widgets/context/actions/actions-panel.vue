@@ -173,7 +173,15 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.removeContextEntity({ id: this.item._id }),
+          action: async () => {
+            if (this.item.type === ENTITY_TYPES.service) {
+              await this.removeService({ id: this.item._id });
+            } else {
+              await this.removeContextEntity({ id: this.item._id });
+            }
+
+            await this.fetchContextEntitiesListWithPreviousParams();
+          },
         },
       });
     },
