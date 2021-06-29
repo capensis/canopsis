@@ -87,9 +87,5 @@ export default createEntityModule({
     fetchItemWithoutStore(context, { id, params }) {
       return request.get(`${API_ROUTES.service}/${id}`, { params });
     },
-
-    remove(context, { id }) {
-      return request.delete(`${API_ROUTES.service}/${id}`);
-    },
   },
 });
