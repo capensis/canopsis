@@ -32,6 +32,7 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
 
 /**
  * @typedef {TestingWeatherWidgetParameters} TestingWeatherWidgetParametersForm
+ * @property {DurationWithEnabledForm} periodic_refresh
  * @property {StorageForm[]} screenshot_directories
  * @property {StorageForm[]} video_directories
  */

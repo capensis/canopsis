@@ -72,9 +72,6 @@ export const generateWidgetId = type => uuid(`widget_${type}`);
 export function generateWidgetByType(type) {
   const widget = widgetToForm({ type });
 
-  /**
-   * TODO: Should be used prepare function(alarmListWidgetParametersToForm)
-   */
   const alarmsListDefaultParameters = alarmListWidgetDefaultParametersToForm();
 
   let specialParameters = {};
