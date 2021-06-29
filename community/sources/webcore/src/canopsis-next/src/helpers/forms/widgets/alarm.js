@@ -1,4 +1,5 @@
 import { isString } from 'lodash';
+
 import {
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
@@ -47,11 +48,17 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
  */
 
 /**
+ * @typedef {Object} InfoPopup
+ * @property {string} column
+ * @property {string} template
+ */
+
+/**
  * @typedef {Object} AlarmListWidgetDefaultParameters
  * @property {FastAckOutput} fastAckOutput
  * @property {LinksCategoriesAsList} linksCategoriesAsList
  * @property {number} itemsPerPage
- * @property {Array} infoPopups
+ * @property {InfoPopup[]} infoPopups
  * @property {string} moreInfoTemplate
  * @property {WidgetColumn[]} widgetColumns
  * @property {WidgetColumn[]} widgetGroupColumns
@@ -75,7 +82,7 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
  * @property {LiveReporting} liveReporting
  * @property {Sort} sort
  * @property {AlarmsStateFilter} alarmsStateFilter
- * @property {number} expandGridRangeSize
+ * @property {number[]} expandGridRangeSize
  * @property {CsvSeparators} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
  */
@@ -91,7 +98,7 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
  */
 
 /**
- * @typedef {AlarmListWidget} AlarmListWidgetForm
+ * @typedef {Widget & AlarmListWidget} AlarmListWidgetForm
  * @property {AlarmListWidgetParametersForm} parameters
  */
 
@@ -128,8 +135,8 @@ export const widgetColumnsToForm = (widgetColumns = []) => widgetColumns.map(col
 /**
  * Convert alarm list infoPopups parameters to form
  *
- * @param {Array} [infoPopups = []]
- * @return {Array}
+ * @param {InfoPopup[]} [infoPopups = []]
+ * @return {InfoPopup[]}
  */
 const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({
   ...infoPopup,
@@ -187,6 +194,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
  * @return {AlarmListWidgetParametersForm}
  */
 const alarmListWidgetParametersToForm = (parameters = {}) => ({
+  ...parameters,
   ...alarmListWidgetDefaultParametersToForm(parameters),
 
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh || DEFAULT_PERIODIC_REFRESH),
@@ -244,8 +252,8 @@ export const formWidgetColumnsToColumns = widgetColumns => widgetColumns.map(col
 /**
  * Convert infoPopups parameters to alarm list
  *
- * @param {Array} infoPopups
- * @return {Array}
+ * @param {InfoPopup[]} infoPopups
+ * @return {InfoPopup[]}
  */
 const formInfoPopupsToInfoPopups = infoPopups => infoPopups.map(infoPopup => ({
   ...infoPopup,
