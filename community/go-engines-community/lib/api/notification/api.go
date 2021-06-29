@@ -42,7 +42,7 @@ func NewApi(
 // @Success 200 {object} common.PaginatedListResponse{data=[]Notification}
 // @Router /notification [get]
 func (a *api) Get(c *gin.Context) {
-	notification, err := a.store.Get()
+	notification, err := a.store.Get(c.Request.Context())
 	if err == mongo.ErrNoDocuments {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
@@ -75,7 +75,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	notification, err := a.store.Update(request)
+	notification, err := a.store.Update(c.Request.Context(), request)
 	if err == mongo.ErrNoDocuments {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return

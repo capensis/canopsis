@@ -2,7 +2,6 @@ package event
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -32,7 +31,7 @@ type API interface {
 
 type api struct {
 	publisher                   amqp.Publisher
-	dbClient                    mongo.DbClient
+	alarmCollection             mongo.DbCollection
 	isAllowChangeSeverityToInfo bool
 	logger                      zerolog.Logger
 }
@@ -46,7 +45,7 @@ func NewApi(
 	return &api{
 		publisher:                   publisher,
 		isAllowChangeSeverityToInfo: isAllowChangeSeverityToInfo,
-		dbClient:                    client,
+		alarmCollection:             client.Collection(mongo.AlarmMongoCollection),
 		logger:                      logger,
 	}
 }
@@ -307,11 +306,8 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		}
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	var alarm types.Alarm
-	err = api.dbClient.Collection(mongo.AlarmMongoCollection).FindOne(ctx, bson.M{"d": eid}).Decode(&alarm)
+	err = api.alarmCollection.FindOne(c.Request.Context(), bson.M{"d": eid}).Decode(&alarm)
 	if err != nil && err != mongodriver.ErrNoDocuments {
 		api.logger.Err(err).Str("event", string(value.MarshalTo(nil))).Msg("Failed to get alarm from mongo")
 		return false

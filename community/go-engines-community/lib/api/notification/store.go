@@ -10,8 +10,8 @@ import (
 const NotificationID = "notification"
 
 type Store interface {
-	Get() (Notification, error)
-	Update(request Notification) (Notification, error)
+	Get(ctx context.Context) (Notification, error)
+	Update(ctx context.Context, request Notification) (Notification, error)
 }
 
 type store struct {
@@ -26,20 +26,14 @@ func NewStore(
 	}
 }
 
-func (s *store) Get() (Notification, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Get(ctx context.Context) (Notification, error) {
 	notification := Notification{}
 	err := s.dbCollection.FindOne(ctx, bson.M{"_id": NotificationID}).Decode(&notification)
 
 	return notification, err
 }
 
-func (s *store) Update(request Notification) (Notification, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Update(ctx context.Context, request Notification) (Notification, error) {
 	notification := Notification{}
 	err := s.dbCollection.FindOneAndUpdate(
 		ctx,

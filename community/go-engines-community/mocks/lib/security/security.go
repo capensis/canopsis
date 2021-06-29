@@ -162,18 +162,18 @@ func (m *MockProvider) EXPECT() *MockProviderMockRecorder {
 }
 
 // Auth mocks base method
-func (m *MockProvider) Auth(arg0, arg1 string) (*security.User, error) {
+func (m *MockProvider) Auth(arg0 context.Context, arg1, arg2 string) (*security.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Auth", arg0, arg1)
+	ret := m.ctrl.Call(m, "Auth", arg0, arg1, arg2)
 	ret0, _ := ret[0].(*security.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Auth indicates an expected call of Auth
-func (mr *MockProviderMockRecorder) Auth(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockProviderMockRecorder) Auth(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Auth", reflect.TypeOf((*MockProvider)(nil).Auth), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Auth", reflect.TypeOf((*MockProvider)(nil).Auth), arg0, arg1, arg2)
 }
 
 // MockHttpProvider is a mock of HttpProvider interface
@@ -239,77 +239,77 @@ func (m *MockUserProvider) EXPECT() *MockUserProviderMockRecorder {
 }
 
 // FindByAuthApiKey mocks base method
-func (m *MockUserProvider) FindByAuthApiKey(arg0 string) (*security.User, error) {
+func (m *MockUserProvider) FindByAuthApiKey(arg0 context.Context, arg1 string) (*security.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByAuthApiKey", arg0)
+	ret := m.ctrl.Call(m, "FindByAuthApiKey", arg0, arg1)
 	ret0, _ := ret[0].(*security.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindByAuthApiKey indicates an expected call of FindByAuthApiKey
-func (mr *MockUserProviderMockRecorder) FindByAuthApiKey(arg0 interface{}) *gomock.Call {
+func (mr *MockUserProviderMockRecorder) FindByAuthApiKey(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByAuthApiKey", reflect.TypeOf((*MockUserProvider)(nil).FindByAuthApiKey), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByAuthApiKey", reflect.TypeOf((*MockUserProvider)(nil).FindByAuthApiKey), arg0, arg1)
 }
 
 // FindByExternalSource mocks base method
-func (m *MockUserProvider) FindByExternalSource(arg0 string, arg1 security.Source) (*security.User, error) {
+func (m *MockUserProvider) FindByExternalSource(arg0 context.Context, arg1 string, arg2 security.Source) (*security.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByExternalSource", arg0, arg1)
+	ret := m.ctrl.Call(m, "FindByExternalSource", arg0, arg1, arg2)
 	ret0, _ := ret[0].(*security.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindByExternalSource indicates an expected call of FindByExternalSource
-func (mr *MockUserProviderMockRecorder) FindByExternalSource(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockUserProviderMockRecorder) FindByExternalSource(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByExternalSource", reflect.TypeOf((*MockUserProvider)(nil).FindByExternalSource), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByExternalSource", reflect.TypeOf((*MockUserProvider)(nil).FindByExternalSource), arg0, arg1, arg2)
 }
 
 // FindByID mocks base method
-func (m *MockUserProvider) FindByID(arg0 string) (*security.User, error) {
+func (m *MockUserProvider) FindByID(arg0 context.Context, arg1 string) (*security.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByID", arg0)
+	ret := m.ctrl.Call(m, "FindByID", arg0, arg1)
 	ret0, _ := ret[0].(*security.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindByID indicates an expected call of FindByID
-func (mr *MockUserProviderMockRecorder) FindByID(arg0 interface{}) *gomock.Call {
+func (mr *MockUserProviderMockRecorder) FindByID(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockUserProvider)(nil).FindByID), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockUserProvider)(nil).FindByID), arg0, arg1)
 }
 
 // FindByUsername mocks base method
-func (m *MockUserProvider) FindByUsername(arg0 string) (*security.User, error) {
+func (m *MockUserProvider) FindByUsername(arg0 context.Context, arg1 string) (*security.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByUsername", arg0)
+	ret := m.ctrl.Call(m, "FindByUsername", arg0, arg1)
 	ret0, _ := ret[0].(*security.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindByUsername indicates an expected call of FindByUsername
-func (mr *MockUserProviderMockRecorder) FindByUsername(arg0 interface{}) *gomock.Call {
+func (mr *MockUserProviderMockRecorder) FindByUsername(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUsername", reflect.TypeOf((*MockUserProvider)(nil).FindByUsername), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUsername", reflect.TypeOf((*MockUserProvider)(nil).FindByUsername), arg0, arg1)
 }
 
 // Save mocks base method
-func (m *MockUserProvider) Save(arg0 *security.User) error {
+func (m *MockUserProvider) Save(arg0 context.Context, arg1 *security.User) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Save", arg0)
+	ret := m.ctrl.Call(m, "Save", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Save indicates an expected call of Save
-func (mr *MockUserProviderMockRecorder) Save(arg0 interface{}) *gomock.Call {
+func (mr *MockUserProviderMockRecorder) Save(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockUserProvider)(nil).Save), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockUserProvider)(nil).Save), arg0, arg1)
 }
 
 // MockConfigProvider is a mock of ConfigProvider interface
@@ -336,31 +336,31 @@ func (m *MockConfigProvider) EXPECT() *MockConfigProviderMockRecorder {
 }
 
 // LoadCasConfig mocks base method
-func (m *MockConfigProvider) LoadCasConfig() (*security.CasConfig, error) {
+func (m *MockConfigProvider) LoadCasConfig(arg0 context.Context) (*security.CasConfig, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "LoadCasConfig")
+	ret := m.ctrl.Call(m, "LoadCasConfig", arg0)
 	ret0, _ := ret[0].(*security.CasConfig)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // LoadCasConfig indicates an expected call of LoadCasConfig
-func (mr *MockConfigProviderMockRecorder) LoadCasConfig() *gomock.Call {
+func (mr *MockConfigProviderMockRecorder) LoadCasConfig(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadCasConfig", reflect.TypeOf((*MockConfigProvider)(nil).LoadCasConfig))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadCasConfig", reflect.TypeOf((*MockConfigProvider)(nil).LoadCasConfig), arg0)
 }
 
 // LoadLdapConfig mocks base method
-func (m *MockConfigProvider) LoadLdapConfig() (*security.LdapConfig, error) {
+func (m *MockConfigProvider) LoadLdapConfig(arg0 context.Context) (*security.LdapConfig, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "LoadLdapConfig")
+	ret := m.ctrl.Call(m, "LoadLdapConfig", arg0)
 	ret0, _ := ret[0].(*security.LdapConfig)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // LoadLdapConfig indicates an expected call of LoadLdapConfig
-func (mr *MockConfigProviderMockRecorder) LoadLdapConfig() *gomock.Call {
+func (mr *MockConfigProviderMockRecorder) LoadLdapConfig(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadLdapConfig", reflect.TypeOf((*MockConfigProvider)(nil).LoadLdapConfig))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadLdapConfig", reflect.TypeOf((*MockConfigProvider)(nil).LoadLdapConfig), arg0)
 }

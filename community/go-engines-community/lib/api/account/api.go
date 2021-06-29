@@ -36,7 +36,7 @@ type api struct {
 func (a *api) Me(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey)
 
-	user, err := a.store.GetOneBy(userID.(string))
+	user, err := a.store.GetOneBy(c.Request.Context(), userID.(string))
 	if err != nil {
 		panic(err)
 	}

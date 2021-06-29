@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"context"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -83,9 +82,6 @@ func NewActionLogger(dbClient mongo.DbClient, zLog zerolog.Logger) ActionLogger 
 }
 
 func (l *logger) Action(c *gin.Context, logEntry LogEntry) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	if logEntry.Author == "" {
 		userID := c.MustGet(auth.UserKey)
 		logEntry.Author = userID.(string)
@@ -101,7 +97,7 @@ func (l *logger) Action(c *gin.Context, logEntry LogEntry) error {
 		Str("time", logEntry.Time.String()).
 		Msg("ActionLog: ")
 
-	_, err := l.dbCollection.UpdateOne(ctx, bson.M{"value_type": logEntry.ValueType, "value_id": logEntry.ValueID}, bson.M{"$set": logEntry}, options.Update().SetUpsert(true))
+	_, err := l.dbCollection.UpdateOne(c.Request.Context(), bson.M{"value_type": logEntry.ValueType, "value_id": logEntry.ValueID}, bson.M{"$set": logEntry}, options.Update().SetUpsert(true))
 	return err
 }
 

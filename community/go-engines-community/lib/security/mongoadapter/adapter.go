@@ -37,19 +37,22 @@ type objectConfig struct {
 
 // LoadPolicy loads all policy rules from mongo collection.
 func (a *adapter) LoadPolicy(model model.Model) (resErr error) {
-	objConfByID, err := a.findObjects()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	objConfByID, err := a.findObjects(ctx)
 
 	if err != nil {
 		return err
 	}
 
-	roleNamesByID, err := a.loadRoles(model, objConfByID)
+	roleNamesByID, err := a.loadRoles(ctx, model, objConfByID)
 
 	if err != nil {
 		return err
 	}
 
-	err = a.loadSubjects(model, roleNamesByID)
+	err = a.loadSubjects(ctx, model, roleNamesByID)
 
 	if err != nil {
 		return err
@@ -78,9 +81,7 @@ func (adapter) RemoveFilteredPolicy(string, string, int, ...string) error {
 }
 
 // findObjects fetches objects from mongo collection and returns map[objectID]objectConfig.
-func (a *adapter) findObjects() (_ map[string]objectConfig, resErr error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (a *adapter) findObjects(ctx context.Context) (_ map[string]objectConfig, resErr error) {
 	cursor, err := a.collection.Find(
 		ctx,
 		bson.M{
@@ -125,11 +126,10 @@ func (a *adapter) findObjects() (_ map[string]objectConfig, resErr error) {
 // loadRoles fetches roles from mongo collection and adds them to casbin policy.
 // Method returns map[roleID]roleName.
 func (a *adapter) loadRoles(
+	ctx context.Context,
 	model model.Model,
 	objConfByID map[string]objectConfig,
 ) (_ map[string]string, resErr error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	cursor, err := a.collection.Find(
 		ctx,
 		bson.M{
@@ -205,11 +205,10 @@ func (a *adapter) loadRoles(
 
 // loadSubjects loads subjects from mongo collection and adds them to casbin policy.
 func (a *adapter) loadSubjects(
+	ctx context.Context,
 	model model.Model,
 	roleNamesByID map[string]string,
 ) (resErr error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	cursor, err := a.collection.Find(ctx, bson.M{
 		"crecord_type": libmodel.LineTypeSubject,
 		"role":         bson.M{"$exists": true, "$ne": ""},

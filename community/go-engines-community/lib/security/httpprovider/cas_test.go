@@ -48,12 +48,12 @@ func TestCasProvider_Auth_GivenTicketByQueryParam_ShouldAuthUser(t *testing.T) {
 	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
 	mockConfigProvider.
 		EXPECT().
-		LoadCasConfig().
+		LoadCasConfig(gomock.Any()).
 		Return(config, nil)
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByExternalSource(gomock.Eq(externalID), gomock.Eq(security.SourceCas)).
+		FindByExternalSource(gomock.Any(), gomock.Eq(externalID), gomock.Eq(security.SourceCas)).
 		Return(expectedUser, nil)
 
 	p := NewCasProvider(mockDoer, mockConfigProvider, mockUserProvider)
@@ -90,12 +90,12 @@ func TestCasProvider_Auth_GivenNoQueryParam_ShouldReturnNil(t *testing.T) {
 	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
 	mockConfigProvider.
 		EXPECT().
-		LoadCasConfig().
+		LoadCasConfig(gomock.Any()).
 		Times(0)
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByExternalSource(gomock.Any(), gomock.Any()).
+		FindByExternalSource(gomock.Any(), gomock.Any(), gomock.Any()).
 		Times(0)
 
 	p := NewCasProvider(mockDoer, mockConfigProvider, mockUserProvider)
@@ -143,12 +143,12 @@ func TestCasProvider_Auth_GivenInvalidTicketInQueryParam_ShouldReturnNil(t *test
 	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
 	mockConfigProvider.
 		EXPECT().
-		LoadCasConfig().
+		LoadCasConfig(gomock.Any()).
 		Return(config, nil)
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByExternalSource(gomock.Any(), gomock.Any()).
+		FindByExternalSource(gomock.Any(), gomock.Any(), gomock.Any()).
 		Times(0)
 
 	p := NewCasProvider(mockDoer, mockConfigProvider, mockUserProvider)
@@ -209,16 +209,16 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndNoUserInStore_ShouldCreateNe
 	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
 	mockConfigProvider.
 		EXPECT().
-		LoadCasConfig().
+		LoadCasConfig(gomock.Any()).
 		Return(config, nil)
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByExternalSource(gomock.Eq(externalID), gomock.Eq(security.SourceCas)).
+		FindByExternalSource(gomock.Any(), gomock.Eq(externalID), gomock.Eq(security.SourceCas)).
 		Return(nil, nil)
 	mockUserProvider.
 		EXPECT().
-		Save(gomock.Eq(expectedUser)).
+		Save(gomock.Any(), gomock.Eq(expectedUser)).
 		Return(nil)
 
 	p := NewCasProvider(mockDoer, mockConfigProvider, mockUserProvider)
@@ -266,16 +266,16 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndUserInStore_ShouldNotUpdateU
 	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
 	mockConfigProvider.
 		EXPECT().
-		LoadCasConfig().
+		LoadCasConfig(gomock.Any()).
 		Return(config, nil)
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByExternalSource(gomock.Eq(externalID), gomock.Eq(security.SourceCas)).
+		FindByExternalSource(gomock.Any(), gomock.Eq(externalID), gomock.Eq(security.SourceCas)).
 		Return(expectedUser, nil)
 	mockUserProvider.
 		EXPECT().
-		Save(gomock.Any()).
+		Save(gomock.Any(), gomock.Any()).
 		Times(0)
 
 	p := NewCasProvider(mockDoer, mockConfigProvider, mockUserProvider)

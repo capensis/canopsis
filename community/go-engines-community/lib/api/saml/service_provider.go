@@ -48,7 +48,7 @@ type serviceProvider struct {
 }
 
 func NewServiceProvider(userProvider security.UserProvider, sessionStore libsession.Store, config *security.Config, logger zerolog.Logger) (ServiceProvider, error) {
-	if config.Security.Saml.IdpMetadataUrl != "" && config.Security.Saml.IdpMetadataXml != ""{
+	if config.Security.Saml.IdpMetadataUrl != "" && config.Security.Saml.IdpMetadataXml != "" {
 		return nil, fmt.Errorf("should provide only idp metadata url or xml, not both")
 	}
 
@@ -151,8 +151,8 @@ func NewServiceProvider(userProvider security.UserProvider, sessionStore libsess
 		},
 		userProvider: userProvider,
 		sessionStore: sessionStore,
-		config: config,
-		logger: logger,
+		config:       config,
+		logger:       logger,
 	}, nil
 }
 
@@ -281,7 +281,7 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 			return
 		}
 
-		user, err := sp.userProvider.FindByExternalSource(assertionInfo.NameID, security.SourceSaml)
+		user, err := sp.userProvider.FindByExternalSource(c.Request.Context(), assertionInfo.NameID, security.SourceSaml)
 		if err != nil {
 			sp.logger.Err(err).Msg("SamlAcsHandler: userProvider FindByExternalSource error")
 			panic(err)
@@ -303,7 +303,7 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 				Lastname:   sp.getAssocAttribute(assertionInfo.Values, "lastname", ""),
 				Email:      sp.getAssocAttribute(assertionInfo.Values, "email", ""),
 			}
-			err = sp.userProvider.Save(user)
+			err = sp.userProvider.Save(c.Request.Context(), user)
 			if err != nil {
 				sp.logger.Err(err).Msg("SamlAcsHandler: userProvider Save error")
 				panic(fmt.Errorf("cannot save user: %v", err))
@@ -364,7 +364,7 @@ func (sp *serviceProvider) SamlSloHandler() gin.HandlerFunc {
 			return
 		}
 
-		user, err := sp.userProvider.FindByExternalSource(request.NameID.Value, security.SourceSaml)
+		user, err := sp.userProvider.FindByExternalSource(c.Request.Context(), request.NameID.Value, security.SourceSaml)
 		if err != nil {
 			sp.logger.Err(err).Msg("SamlSloHandler: userProvider FindByExternalSource error")
 			panic(err)
@@ -381,7 +381,7 @@ func (sp *serviceProvider) SamlSloHandler() gin.HandlerFunc {
 			return
 		}
 
-		err = sp.sessionStore.ExpireSessions(user.ID, "saml")
+		err = sp.sessionStore.ExpireSessions(c.Request.Context(), user.ID, "saml")
 		if err != nil {
 			responseUrl, err := sp.buildLogoutResponseUrl(saml2.StatusCodeUnknownPrincipal, request.ID, relayState)
 			if err != nil {
@@ -420,7 +420,7 @@ func (sp *serviceProvider) buildLogoutResponseUrl(status, reqID, relayState stri
 	}
 
 	query := responseUrl.Query()
-	query.Set("SAMLResponse", string(buffer.Bytes()))
+	query.Set("SAMLResponse", buffer.String())
 	query.Set("RelayState", relayState)
 
 	responseUrl.RawQuery = query.Encode()
