@@ -2,7 +2,6 @@ package storage
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"math"
@@ -53,10 +52,10 @@ func (g *timeBasedAlarmGroup) GetOpenTime() int64 {
 }
 
 func (g timeBasedAlarmGroup) MarshalJSON() ([]byte, error) {
-	encodedGroup := make([]string, 0)
+	encodedGroup := make([]string, len(g.ids))
 
 	for i := 0; i < len(g.ids); i++ {
-		encodedGroup = append(encodedGroup, fmt.Sprintf("%s,%d", g.ids[i], g.times[i]))
+		encodedGroup[i] = fmt.Sprintf("%s,%d", g.ids[i], g.times[i])
 	}
 
 	return json.Marshal(encodedGroup)
@@ -79,7 +78,7 @@ func (g *timeBasedAlarmGroup) UnmarshalJSON(b []byte) error {
 	for idx, groupItem := range encodedGroup {
 		split := strings.Split(groupItem, ",")
 		if len(split) != 2 {
-			return errors.New("group item should contain 2 elements")
+			return fmt.Errorf("group item should contain 2 elements, group: %v", split)
 		}
 
 		timestamp, err := strconv.ParseInt(split[1], 10, 64)
@@ -119,12 +118,9 @@ func (g *timeBasedAlarmGroup) Push(newAlarm types.Alarm, ruleTimeInterval int64)
 
 	//if alarm is late
 	if newAlarmTimestamp < openTimestamp {
-		//check if interval can be shifted
-		for _, alarmTime := range g.times {
-			//if any alarm in the Group will be lost => then we cannot shift time
-			if alarmTime > newAlarmTimestamp+ruleTimeInterval {
-				return
-			}
+		//check if interval can be shifted, if any alarm in the Group will be lost => then we cannot shift time
+		if g.times[len(g.times)-1] > newAlarmTimestamp+ruleTimeInterval {
+			return
 		}
 
 		// Push to front, because it's new minimal value
@@ -134,9 +130,10 @@ func (g *timeBasedAlarmGroup) Push(newAlarm types.Alarm, ruleTimeInterval int64)
 		return
 	}
 
-	if newAlarmTimestamp > openTimestamp+ruleTimeInterval {
+	newAlarmRuleStartTime := newAlarmTimestamp-ruleTimeInterval
+	if newAlarmRuleStartTime > openTimestamp {
 		idx := sort.Search(len(g.times), func(i int) bool {
-			return g.times[i] >= newAlarmTimestamp-ruleTimeInterval
+			return g.times[i] >= newAlarmRuleStartTime
 		})
 
 		//remove outdated from front, push to the end, because it's the oldest value
