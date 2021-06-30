@@ -15,6 +15,8 @@ const (
 	RuleValueGroup RuleType = "valuegroup"
 
 	RuleManualGroup RuleType = "manualgroup"
+
+	RuleCorel RuleType = "corel"
 )
 
 type Rule struct {
