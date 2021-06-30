@@ -76,6 +76,10 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		func() {
 			close(statsCh)
 
+			deferCtx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			scheduler.Stop(deferCtx)
+
 			err := mongoClient.Disconnect(context.Background())
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
