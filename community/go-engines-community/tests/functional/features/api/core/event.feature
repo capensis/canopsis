@@ -452,7 +452,7 @@ Feature: send an event
       "initiator": "user",
       "state_type": 1,
       "output": "Output test",
-      "display_name":"Test MetaAlarm 1", 
+      "display_name":"Test MetaAlarm 1",
       "ma_children": [
         "test-manual-group-alarms-3/manual_group",
         "test-manual-group-alarms-1/manual_group",
@@ -477,7 +477,7 @@ Feature: send an event
           "initiator": "user",
           "state_type": 1,
           "output": "Output test",
-          "display_name":"Test MetaAlarm 1", 
+          "display_name":"Test MetaAlarm 1",
           "ma_children": [
             "test-manual-group-alarms-3/manual_group",
             "test-manual-group-alarms-1/manual_group",
