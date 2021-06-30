@@ -32,6 +32,7 @@ export default {
       fetchServicesList: 'fetchList',
       createService: 'create',
       editService: 'update',
+      removeService: 'remove',
     }),
   },
 };
