@@ -24,7 +24,7 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *periodicalWorker) Work(ctx context.Context) error {
-	err := w.ActionScenarioStorage.ReloadScenarios()
+	err := w.ActionScenarioStorage.ReloadScenarios(ctx)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("Periodical process: failed to reload actions")
 		return nil

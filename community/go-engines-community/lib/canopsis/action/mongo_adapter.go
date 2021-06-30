@@ -8,20 +8,16 @@ import (
 )
 
 type mongoAdapter struct {
-	dbClient     mongo.DbClient
 	dbCollection mongo.DbCollection
 }
 
 func NewAdapter(dbClient mongo.DbClient) Adapter {
 	return &mongoAdapter{
-		dbClient:     dbClient,
 		dbCollection: dbClient.Collection(mongo.ScenarioMongoCollection),
 	}
 }
 
-func (a *mongoAdapter) GetEnabled() ([]Scenario, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (a *mongoAdapter) GetEnabled(ctx context.Context) ([]Scenario, error) {
 	cursor, err := a.dbCollection.Find(ctx, bson.M{"$or": []bson.M{
 		{"enabled": true},
 		{"enabled": bson.M{"$exists": false}},
@@ -47,9 +43,7 @@ func (a *mongoAdapter) GetEnabled() ([]Scenario, error) {
 	return scenarios, nil
 }
 
-func (a *mongoAdapter) GetEnabledById(id string) (Scenario, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (a *mongoAdapter) GetEnabledById(ctx context.Context, id string) (Scenario, error) {
 	scenario := Scenario{}
 	res := a.dbCollection.FindOne(ctx, bson.M{"$and": []bson.M{
 		{"_id": id},
@@ -70,9 +64,7 @@ func (a *mongoAdapter) GetEnabledById(id string) (Scenario, error) {
 	return scenario, nil
 }
 
-func (a *mongoAdapter) GetEnabledByIDs(ids []string) ([]Scenario, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (a *mongoAdapter) GetEnabledByIDs(ctx context.Context, ids []string) ([]Scenario, error) {
 	cursor, err := a.dbCollection.Find(ctx, bson.M{"$and": []bson.M{
 		{"_id": bson.M{"$in": ids}},
 		{"$or": []bson.M{

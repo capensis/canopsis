@@ -104,7 +104,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 				return err
 			}
 
-			err = actionScenarioStorage.ReloadScenarios()
+			err = actionScenarioStorage.ReloadScenarios(ctx)
 			if err != nil {
 				logger.Error().Err(err).Msg("Initialize: failed to load actions! Engine will be stopped.")
 				return err

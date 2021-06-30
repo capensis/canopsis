@@ -156,7 +156,7 @@ func (m *delayedScenarioManager) checkExpiredTimeoutScenario(ctx context.Context
 		return
 	}
 
-	tasks, err := m.getExpiredTimeoutScenarios(expired)
+	tasks, err := m.getExpiredTimeoutScenarios(ctx, expired)
 	if err != nil {
 		m.logger.Err(err).Msg("couldn't resolve expired delayed scenarios")
 		return
@@ -206,7 +206,7 @@ func (m *delayedScenarioManager) waitAlmostExpiredTimeoutScenario(ctx context.Co
 			return
 		}
 
-		tasks, err := m.getExpiredTimeoutScenarios([]DelayedScenario{*updatedScenario})
+		tasks, err := m.getExpiredTimeoutScenarios(ctx, []DelayedScenario{*updatedScenario})
 		if err != nil {
 			m.logger.Err(err).Msg("failed to load delayed scenario")
 			return
@@ -255,6 +255,7 @@ func (m *delayedScenarioManager) getDelayedScenarios(ctx context.Context) (
 }
 
 func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
+	ctx context.Context,
 	delayedScenarios []DelayedScenario,
 ) (
 	[]DelayedScenarioTask,
@@ -272,7 +273,7 @@ func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
 		alarmIDs[i] = delayedScenario.AlarmID
 	}
 
-	scenariosByID, err := m.loadScenarios(scenarioIDs)
+	scenariosByID, err := m.loadScenarios(ctx, scenarioIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -303,8 +304,8 @@ func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
 	return tasks, nil
 }
 
-func (m *delayedScenarioManager) loadScenarios(ids []string) (map[string]*Scenario, error) {
-	scenarios, err := m.scenarioAdapter.GetEnabledByIDs(ids)
+func (m *delayedScenarioManager) loadScenarios(ctx context.Context, ids []string) (map[string]*Scenario, error) {
+	scenarios, err := m.scenarioAdapter.GetEnabledByIDs(ctx, ids)
 	if err != nil {
 		return nil, err
 	}
