@@ -103,23 +103,20 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
  */
 
 /**
- * Prefix formatter for column value
+ * Add 'alarm.' prefix in column value
  *
  * @param {string} [value]
- * @param {boolean} [isInitialization=false]
  * @returns {string}
  */
-export const columnValuePrefixFormatter = (value, isInitialization = false) => {
-  if (value && isString(value)) {
-    if (isInitialization) {
-      return value.replace(/^v\./, 'alarm.v.');
-    }
+export const columnValueToForm = value => (value && isString(value) ? value.replace(/^v\./, 'alarm.v.') : value);
 
-    return value.replace(/^alarm\./, '');
-  }
-
-  return value;
-};
+/**
+ * Remove 'alarm.' prefix from column value
+ *
+ * @param {string} [value]
+ * @returns {string}
+ */
+export const formToColumnValue = value => (value && isString(value) ? value.replace(/^alarm\./, '') : value);
 
 /**
  * Convert columns parameters to form
@@ -129,7 +126,7 @@ export const columnValuePrefixFormatter = (value, isInitialization = false) => {
  */
 export const widgetColumnsToForm = (widgetColumns = []) => widgetColumns.map(column => ({
   ...column,
-  value: columnValuePrefixFormatter(column.value, true),
+  value: columnValueToForm(column.value),
 }));
 
 /**
@@ -140,7 +137,7 @@ export const widgetColumnsToForm = (widgetColumns = []) => widgetColumns.map(col
  */
 const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({
   ...infoPopup,
-  column: columnValuePrefixFormatter(infoPopup.column, true),
+  column: columnValueToForm(infoPopup.column),
 }));
 
 /**
@@ -151,7 +148,7 @@ const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({
  */
 const widgetSortToForm = (sort = {}) => ({
   order: sort.order || SORT_ORDERS.asc,
-  column: sort.column ? columnValuePrefixFormatter(sort.column, true) : '',
+  column: sort.column ? columnValueToForm(sort.column) : '',
 });
 
 /**
@@ -235,7 +232,7 @@ export const alarmListWidgetToForm = (alarmListWidget = {}) => {
  */
 const formSortToWidgetSort = (sort = {}) => ({
   order: sort.order,
-  column: columnValuePrefixFormatter(sort.column, false),
+  column: formToColumnValue(sort.column),
 });
 
 /**
@@ -246,7 +243,7 @@ const formSortToWidgetSort = (sort = {}) => ({
  */
 export const formWidgetColumnsToColumns = widgetColumns => widgetColumns.map(column => ({
   ...column,
-  value: columnValuePrefixFormatter(column.value),
+  value: formToColumnValue(column.value),
 }));
 
 /**
@@ -257,7 +254,7 @@ export const formWidgetColumnsToColumns = widgetColumns => widgetColumns.map(col
  */
 const formInfoPopupsToInfoPopups = infoPopups => infoPopups.map(infoPopup => ({
   ...infoPopup,
-  column: columnValuePrefixFormatter(infoPopup.column, true),
+  column: columnValueToForm(infoPopup.column),
 }));
 
 /**
