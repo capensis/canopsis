@@ -104,7 +104,7 @@ func (a *api) Get(c *gin.Context) {
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /scenarios [post]
 func (a *api) Create(c *gin.Context) {
-	var request CreateRequest
+	var request EditRequest
 
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -112,7 +112,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	userId := c.MustGet(auth.UserKey)
-	setActionParameterAuthor(&request.EditRequest, userId.(string))
+	setActionParameterAuthor(&request, userId.(string))
 
 	scenario, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
@@ -147,7 +147,7 @@ func (a *api) Create(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /scenarios/{id} [put]
 func (a *api) Update(c *gin.Context) {
-	request := UpdateRequest{
+	request := EditRequest{
 		ID: c.Param("id"),
 	}
 
@@ -157,7 +157,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	userId := c.MustGet(auth.UserKey)
-	setActionParameterAuthor(&request.EditRequest, userId.(string))
+	setActionParameterAuthor(&request, userId.(string))
 
 	scenario, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
