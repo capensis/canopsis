@@ -10,20 +10,13 @@ Feature: Get login information
     {
       "login_config": {
         "casconfig": {
-          "_id": "cservice.casconfig",
-          "crecord_name": "casconfig",
-          "crecord_type": "cservice",
-          "default_role": "Visualisation",
-          "login_url": "http://localhost:8443/cas/login",
-          "title": "Connexion CAS",
-          "validate_url": "http://10.0.2.2:8443/cas/serviceValidate"
+          "enable": false
         },
         "ldapconfig": {
           "enable": false
         },
-        "providers": {
-          "apikey": 1,
-          "basic": 1
+         "saml2config": {
+          "enable": false
         }
       }
     }
@@ -38,20 +31,13 @@ Feature: Get login information
     {
       "login_config": {
         "casconfig": {
-          "_id": "cservice.casconfig",
-          "crecord_name": "casconfig",
-          "crecord_type": "cservice",
-          "default_role": "Visualisation",
-          "login_url": "http://localhost:8443/cas/login",
-          "title": "Connexion CAS",
-          "validate_url": "http://10.0.2.2:8443/cas/serviceValidate"
+          "enable": false
         },
         "ldapconfig": {
           "enable": false
         },
-        "providers": {
-          "apikey": 1,
-          "basic": 1
+         "saml2config": {
+          "enable": false
         }
       },
       "edition": "cat",
