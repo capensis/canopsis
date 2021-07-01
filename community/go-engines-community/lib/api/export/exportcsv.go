@@ -22,7 +22,7 @@ const pageLimit = 5000
 // ExportCsv fetches data by page and saves it in csv file.
 func ExportCsv(
 	ctx context.Context,
-	exportFields []string,
+	exportFields Fields,
 	separator rune,
 	dataFetcher DataFetcher,
 ) (resFileName string, resErr error) {
@@ -54,7 +54,10 @@ func ExportCsv(
 		w.Comma = separator
 	}
 
-	err = w.WriteAll([][]string{exportFields})
+	fieldsLabels := exportFields.Labels()
+	fields := exportFields.Fields()
+
+	err = w.WriteAll([][]string{fieldsLabels})
 	if err != nil {
 		return "", err
 	}
@@ -66,7 +69,7 @@ func ExportCsv(
 	}
 
 	if totalCount > 0 {
-		err = writeToCsv(w, data, exportFields)
+		err = writeToCsv(w, data, fields)
 		if err != nil {
 			return "", err
 		}
@@ -93,14 +96,14 @@ func ExportCsv(
 				}
 
 				if res.Page == page {
-					err = writeToCsv(w, res.Data, exportFields)
+					err = writeToCsv(w, res.Data, fields)
 					if err != nil {
 						return "", err
 					}
 
 					for p := page + 1; p <= pageCount; p++ {
 						if d, ok := dataByPage[p]; ok {
-							err = writeToCsv(w, d, exportFields)
+							err = writeToCsv(w, d, fields)
 							if err != nil {
 								return "", err
 							}
@@ -264,6 +267,8 @@ func getNestedMapValAsString(
 				}
 			}
 		}
+
+		return "", nil
 	}
 
 	return interfaceToString(val.Interface(), timeFormat, location)
