@@ -42,12 +42,13 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	mongoClient := m.DepMongoClient(cfg)
 	actionAdapter := action.NewAdapter(mongoClient)
 	alarmAdapter := alarm.NewAdapter(mongoClient)
-	redisSession := m.DepRedisSession(ctx, redis.ActionScenarioStorage, logger, cfg)
+	actionRedisSession := m.DepRedisSession(ctx, redis.ActionScenarioStorage, logger, cfg)
+	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	delayedScenarioManager := action.NewDelayedScenarioManager(actionAdapter, alarmAdapter,
-		action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, redisSession, json.NewEncoder(), json.NewDecoder()),
+		action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, actionRedisSession, json.NewEncoder(), json.NewDecoder()),
 		options.PeriodicalWaitTime, logger)
 	scenarioExecChan := make(chan action.ExecuteScenariosTask)
-	storage := action.NewRedisScenarioExecutionStorage(redis.ScenarioExecutionKey, redisSession, json.NewEncoder(), json.NewDecoder(), logger)
+	storage := action.NewRedisScenarioExecutionStorage(redis.ScenarioExecutionKey, actionRedisSession, json.NewEncoder(), json.NewDecoder(), logger)
 	actionScenarioStorage := action.NewScenarioStorage(actionAdapter, delayedScenarioManager, logger)
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
 		delayedScenarioManager, storage, json.NewEncoder(), amqpChannel,
@@ -133,7 +134,26 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		func() {
 			close(scenarioExecChan)
 			close(rpcResultChannel)
-			_ = amqpConnection.Close()
+
+			err := mongoClient.Disconnect(context.Background())
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close mongo connection")
+			}
+
+			err = amqpConnection.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = actionRedisSession.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = runInfoRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
 		},
 		logger,
 	)
@@ -162,7 +182,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	}
 	engineAction.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
-		engine.NewRunInfoManager(m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)),
+		engine.NewRunInfoManager(runInfoRedisClient),
 		engine.RunInfo{
 			Name:         canopsis.ActionEngineName,
 			ConsumeQueue: canopsis.ActionQueueName,
@@ -171,7 +191,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	))
 	engineAction.AddPeriodicalWorker(&periodicalWorker{
 		PeriodicalInterval:    options.PeriodicalWaitTime,
-		LockerClient:          redis.NewLockClient(redisSession),
+		LockerClient:          redis.NewLockClient(actionRedisSession),
 		ActionService:         actionService,
 		ActionScenarioStorage: actionScenarioStorage,
 		Logger:                logger,
