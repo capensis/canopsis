@@ -2,6 +2,7 @@ package entity
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,17 +19,22 @@ type ListRequestWithPagination struct {
 }
 
 type ListRequest struct {
-	Search   string   `form:"search" json:"search"`
-	Filter   string   `form:"filter" json:"filter"`
+	BaseFilterRequest
 	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
 	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name type category impact_level category.name idle_since"`
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
-	Category string   `form:"category" json:"category"`
+}
+
+type BaseFilterRequest struct {
+	Search   string `form:"search" json:"search"`
+	Filter   string `form:"filter" json:"filter"`
+	Category string `form:"category" json:"category"`
 }
 
 type ExportRequest struct {
-	ListRequest
-	Separator string `form:"separator" json:"separator" binding:"oneoforempty=comma semicolon tab space"`
+	BaseFilterRequest
+	Fields    export.Fields `json:"fields"`
+	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
 }
 
 type ExportResponse struct {
