@@ -84,7 +84,7 @@ func (a AttributeApplicator) Apply(ctx context.Context, event *types.Event, rule
 								Alarm:  *event.Alarm,
 								Entity: *event.Entity,
 							}}
-							metaAlarmEvent, err = a.service.CreateMetaAlarm(event, children, rule)
+							metaAlarmEvent, err = a.service.CreateMetaAlarm(*event, children, rule)
 							if err != nil {
 								return err
 							}
@@ -118,7 +118,8 @@ func (a AttributeApplicator) Apply(ctx context.Context, event *types.Event, rule
 					}
 
 					metaAlarmEvent, err = a.service.AddChildToMetaAlarm(
-						event,
+						ctx,
+						*event,
 						metaAlarm,
 						types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity},
 						rule,

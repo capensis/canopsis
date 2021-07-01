@@ -237,9 +237,9 @@ func (a *Alarm) PartialUpdateNoEvents(state CpsNumber, timestamp CpsTime, author
 }
 
 // PartialUpdateAssocTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, author, ticketNumber, role, initiator string) error {
+func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, ticketData map[string]string, author, ticketNumber, role, initiator string) error {
 	newStep := NewAlarmStep(AlarmStepAssocTicket, timestamp, author, ticketNumber, role, initiator)
-	ticketStep := newStep.NewTicket(ticketNumber, nil)
+	ticketStep := newStep.NewTicket(ticketNumber, ticketData)
 	a.Value.Ticket = &ticketStep
 
 	err := a.Value.Steps.Add(newStep)
@@ -587,6 +587,17 @@ func (a *Alarm) PartialUpdateAddStep(stepType string, timestamp CpsTime, author,
 	return nil
 }
 
+func (a *Alarm) PartialUpdateAddStepWithStep(newStep AlarmStep) error {
+	err := a.Value.Steps.Add(newStep)
+	if err != nil {
+		return err
+	}
+
+	a.addUpdate("$push", bson.M{"v.steps": newStep})
+
+	return nil
+}
+
 // addUpdate adds new mongo updates.
 func (a *Alarm) addUpdate(key string, update bson.M) {
 	if a.update == nil {
@@ -612,6 +623,10 @@ func (a *Alarm) GetUpdate() bson.M {
 // CleanUpdate removes mongo updates. Call it after succeeded update.
 func (a *Alarm) CleanUpdate() {
 	a.update = nil
+	a.childrenUpdate = nil
+	a.parentsUpdate = nil
+	a.childrenRemove = nil
+	a.parentsRemove = nil
 }
 
 func ResolveSnoozeAfterPbhLeave(timestamp CpsTime, alarm *Alarm) {

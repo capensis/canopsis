@@ -3,8 +3,8 @@ package service
 //go:generate mockgen -destination=../../../../mocks/lib/canopsis/metaalarm/service/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service MetaAlarmService
 
 import (
+	"context"
 	"fmt"
-	"go.mongodb.org/mongo-driver/mongo"
 	"strings"
 	"text/template"
 
@@ -19,24 +19,27 @@ import (
 // MetaAlarmService ...
 type MetaAlarmService interface {
 	CreateMetaAlarm(
-		event *types.Event,
+		event types.Event,
 		children []types.AlarmWithEntity,
 		rule metaalarm.Rule,
 	) (types.Event, error)
 	AddChildToMetaAlarm(
-		event *types.Event,
+		ctx context.Context,
+		event types.Event,
 		metaAlarm types.Alarm,
 		childAlarm types.AlarmWithEntity,
 		rule metaalarm.Rule,
 	) (types.Event, error)
 	AddMultipleChildsToMetaAlarm(
-		event *types.Event,
+		ctx context.Context,
+		event types.Event,
 		metaAlarm types.Alarm,
 		children []types.AlarmWithEntity,
 		rule metaalarm.Rule,
 	) (types.Event, error)
 	RemoveMultipleChildToMetaAlarm(
-		event *types.Event,
+		ctx context.Context,
+		event types.Event,
 		metaAlarm types.Alarm,
 		children []types.AlarmWithEntity,
 		rule metaalarm.Rule,
@@ -47,88 +50,130 @@ type service struct {
 	alarmAdapter        alarm.Adapter
 	logger              zerolog.Logger
 	alarmConfigProvider config.AlarmConfigProvider
-	ruleAdapter         metaalarm.RulesAdapter
 }
 
-const metaAlarmEntityPrefix = "meta-alarm-entity-"
-
-type eventExtraInfosMeta struct {
+type EventExtraInfosMeta struct {
 	Rule     metaalarm.Rule
-	Count    int
+	Count    int64
 	Children types.AlarmWithEntity
 }
 
 // NewMetaAlarmService instantiates meta-alarm service; receives alarmAdapter as adapter to db Alarm collection
-func NewMetaAlarmService(
-	alarmAdapter alarm.Adapter, ruleApt metaalarm.RulesAdapter,
-	alarmConfigProvider config.AlarmConfigProvider, logger zerolog.Logger) MetaAlarmService {
+func NewMetaAlarmService(alarmAdapter alarm.Adapter, alarmConfigProvider config.AlarmConfigProvider, logger zerolog.Logger) MetaAlarmService {
 	return &service{
 		alarmAdapter:        alarmAdapter,
-		ruleAdapter:         ruleApt,
 		alarmConfigProvider: alarmConfigProvider,
 		logger:              logger,
 	}
 }
 
-// CreateMetaAlarm ...
 func (s *service) CreateMetaAlarm(
-	event *types.Event,
+	event types.Event,
 	children []types.AlarmWithEntity,
 	rule metaalarm.Rule,
 ) (types.Event, error) {
-	var lastChild types.AlarmWithEntity
-	if len(children) > 0 {
-		lastChild = children[len(children)-1]
+	if len(children) == 0 {
+		return types.Event{}, metaalarm.ErrNoChildren
 	}
-	infos := eventExtraInfosMeta{
+
+	infos := EventExtraInfosMeta{
 		Rule:     rule,
-		Count:    len(children),
-		Children: lastChild,
+		Count:    int64(len(children)),
+		Children: children[len(children)-1],
 	}
 	output, err := s.executeOutputTpl(infos)
 	if err != nil {
 		return types.Event{}, err
 	}
-	metaAlarmEvent := s.genCreateMetaAlarmEvent(*event, infos)
-	metaAlarmEvent.Output = output
+
+	eventChildren := make([]string, 0, len(children))
 	for i := 0; i < len(children); i++ {
-		*metaAlarmEvent.MetaAlarmChildren = append(*metaAlarmEvent.MetaAlarmChildren, children[i].Alarm.EntityID)
+		eventChildren = append(eventChildren, children[i].Entity.ID)
 	}
 
-	return metaAlarmEvent, nil
-}
-
-func (s *service) genCreateMetaAlarmEvent(
-	event types.Event,
-	infos eventExtraInfosMeta,
-) types.Event {
-	chlds := make([]string, 0)
-	resource := metaAlarmEntityPrefix + utils.NewID()
-	metaAlarmEvent := types.Event{
+	return types.Event{
 		Timestamp:         event.Timestamp,
 		Author:            event.Author,
 		State:             event.State,
 		Component:         "metaalarm",
 		Connector:         "engine",
 		ConnectorName:     "correlation",
-		Resource:          resource,
+		Resource:          metaalarm.DefaultMetaAlarmEntityPrefix + utils.NewID(),
 		SourceType:        types.SourceTypeResource,
 		EventType:         types.EventTypeMetaAlarm,
-		MetaAlarmChildren: &chlds,
-		MetaAlarmRuleID:   infos.Rule.ID,
+		MetaAlarmChildren: &eventChildren,
+		MetaAlarmRuleID:   rule.ID,
+		Output:            output,
 		ExtraInfos: map[string]interface{}{
 			"Meta": infos,
 		},
-	}
-	return metaAlarmEvent
+	}, nil
 }
 
-func (s *service) genUpdatedMetaAlarmEvent(
+// AddChildToMetaAlarm makes references from meta-alarm to child and from child to parent,
+// updates mata-alarm's state to worst from children
+func (s *service) AddChildToMetaAlarm(
+	ctx context.Context,
 	event types.Event,
 	metaAlarm types.Alarm,
-	infos eventExtraInfosMeta,
-) types.Event {
-	metaAlarmEvent := types.Event{
+	child types.AlarmWithEntity,
+	rule metaalarm.Rule,
+) (types.Event, error) {
+	if metaAlarm.HasChildByEID(child.Entity.ID) {
+		return types.Event{}, metaalarm.ErrChildAlreadyExist
+	}
+
+	childAlarm := child.Alarm
+
+	metaAlarm.AddChild(childAlarm.EntityID)
+	childAlarm.AddParent(metaAlarm.EntityID)
+
+	childrenCount, err := s.alarmAdapter.GetCountOpenedAlarmsByIDs(metaAlarm.Value.Children)
+	if err != nil {
+		return types.Event{}, err
+	}
+
+	infos := EventExtraInfosMeta{
+		Rule:     rule,
+		Count:    childrenCount,
+		Children: child,
+	}
+	output, err := s.executeOutputTpl(infos)
+	if err != nil {
+		return types.Event{}, err
+	}
+
+	metaAlarm.UpdateOutput(output)
+
+	if childAlarm.Value.State != nil {
+		maCurrentState := metaAlarm.CurrentState()
+		if childAlarm.Value.State.Value > maCurrentState {
+			err = metaAlarm.PartialUpdateState(childAlarm.Value.LastUpdateDate, childAlarm.Value.State.Value, metaAlarm.Value.Output, s.alarmConfigProvider.Get())
+			if err != nil {
+				return types.Event{}, err
+			}
+		}
+	}
+	maActions, ticket := metaAlarm.GetAppliedActions()
+	if err := childAlarm.ApplyActions(maActions, ticket); err != nil {
+		s.logger.Warn().Err(err).Str("alarm-ID", childAlarm.ID).Msg("adding child to metaalarm")
+		return types.Event{}, err
+	}
+
+	if err := childAlarm.PartialUpdateAddStepWithStep(types.NewMetaAlarmAttachStep(metaAlarm, rule.Name)); err != nil {
+		s.logger.Err(err).Str("metaalarm", metaAlarm.EntityID).
+			Str("child", childAlarm.EntityID).
+			Msg("Failed to add metaalarmattach step to child")
+		return types.Event{}, err
+	}
+
+	updatedAlarms := []types.Alarm{childAlarm, metaAlarm}
+	err = s.alarmAdapter.PartialMassUpdateOpen(ctx, updatedAlarms)
+	if err != nil {
+		return types.Event{}, err
+	}
+
+	return types.Event{
 		Timestamp:         event.Timestamp,
 		Author:            event.Author,
 		Component:         metaAlarm.Value.Component,
@@ -138,132 +183,60 @@ func (s *service) genUpdatedMetaAlarmEvent(
 		EventType:         types.EventTypeMetaAlarmUpdated,
 		MetaAlarmRuleID:   infos.Rule.ID,
 		MetaAlarmChildren: &metaAlarm.Value.Children,
+		SourceType:        types.SourceTypeResource,
+		Output:            output,
 		ExtraInfos: map[string]interface{}{
 			"Meta": infos,
 		},
-	}
-	metaAlarmEvent.SourceType = metaAlarmEvent.DetectSourceType()
-
-	return metaAlarmEvent
-}
-
-func (s *service) mkMetaAlarmAttachStep(metaAlarm types.Alarm) types.AlarmStep {
-	ruleIdentifier := metaAlarm.Value.Meta
-	rule, err := s.ruleAdapter.GetRule(metaAlarm.Value.Meta)
-	if err != nil {
-		if err != mongo.ErrNoDocuments {
-			s.logger.Err(err).Str("rule", metaAlarm.Value.Meta).Msg("Get rule had failed")
-		}
-	} else {
-		ruleIdentifier = rule.Name
-	}
-	newStep := types.NewMetaAlarmAttachStep(metaAlarm, ruleIdentifier)
-	return newStep
-}
-
-// AddChildToMetaAlarm makes references from meta-alarm to child and from child to parent,
-// updates mata-alarm's state to worst from children
-func (s *service) AddChildToMetaAlarm(
-	event *types.Event,
-	metaAlarm types.Alarm,
-	child types.AlarmWithEntity,
-	rule metaalarm.Rule,
-) (types.Event, error) {
-	childAlarm := child.Alarm
-	isExistedAlarm := s.isExisted(metaAlarm, childAlarm)
-	if !isExistedAlarm {
-		metaAlarm.Value.Children = append(metaAlarm.Value.Children, childAlarm.EntityID)
-		childAlarm.Value.Parents = append(childAlarm.Value.Parents, metaAlarm.EntityID)
-	}
-	childrenCount, err := s.alarmAdapter.GetCountOpenedAlarmsByIDs(metaAlarm.Value.Children)
-	if err != nil {
-		return types.Event{}, err
-	}
-	infos := eventExtraInfosMeta{
-		Rule:     rule,
-		Count:    int(childrenCount),
-		Children: child,
-	}
-	output, err := s.executeOutputTpl(infos)
-	if err != nil {
-		return types.Event{}, err
-	}
-	metaAlarm.UpdateOutput(output)
-
-	if childAlarm.Value.State != nil {
-		maCurrentState := metaAlarm.CurrentState()
-		if childAlarm.Value.State.Value > maCurrentState {
-			metaAlarm.UpdateState(childAlarm.Value.State.Value, childAlarm.Value.LastUpdateDate)
-		} else if isExistedAlarm && childAlarm.Value.State.Value < maCurrentState {
-			alarm.UpdateToWorstState(&metaAlarm, []*types.Alarm{&childAlarm}, s.alarmAdapter, s.alarmConfigProvider.Get())
-		}
-	}
-	maActions, ticket := metaAlarm.GetAppliedActions()
-	if _, err := childAlarm.ApplyActions(maActions, ticket); err != nil {
-		s.logger.Warn().Err(err).Str("alarm-ID", childAlarm.ID).Msg("adding child to metaalarm")
-	}
-
-	newStep := s.mkMetaAlarmAttachStep(metaAlarm)
-	if err := childAlarm.Value.Steps.Add(newStep); err != nil {
-		s.logger.Err(err).Str("metaalarm", metaAlarm.EntityID).
-			Str("child", childAlarm.EntityID).
-			Msg("Failed to add metaalarmattach step to child")
-	}
-
-	updatedAlarms := []types.Alarm{metaAlarm, childAlarm}
-	err = s.alarmAdapter.MassUpdate(updatedAlarms, true)
-	if err != nil {
-		return types.Event{}, err
-	}
-
-	metaAlarmEvent := s.genUpdatedMetaAlarmEvent(*event, metaAlarm, infos)
-	metaAlarmEvent.Output = output
-
-	return metaAlarmEvent, nil
+	}, nil
 }
 
 func (s *service) AddMultipleChildsToMetaAlarm(
-	event *types.Event,
+	ctx context.Context,
+	event types.Event,
 	metaAlarm types.Alarm,
 	children []types.AlarmWithEntity,
 	rule metaalarm.Rule,
 ) (types.Event, error) {
 	worstState, worstStateDate := types.CpsNumber(types.AlarmStateOK), metaAlarm.Value.LastUpdateDate
-	updateChildren := make([]*types.Alarm, 0, len(children))
 	maActions, ticket := metaAlarm.GetAppliedActions()
+
 	for i := 0; i < len(children); i++ {
 		childAlarm := children[i].Alarm
-		if !s.isExisted(metaAlarm, childAlarm) {
-			metaAlarm.Value.Children = append(metaAlarm.Value.Children, childAlarm.EntityID)
-			childAlarm.Value.Parents = append(childAlarm.Value.Parents, metaAlarm.EntityID)
 
-			newStep := s.mkMetaAlarmAttachStep(metaAlarm)
-			if err := childAlarm.Value.Steps.Add(newStep); err != nil {
-				s.logger.Err(err).Str("metaalarm", metaAlarm.EntityID).
-					Str("child", childAlarm.EntityID).
-					Msg("Failed to add metaalarmattach step to child")
-			}
-			children[i].Alarm = childAlarm
-		} else {
-			updateChildren = append(updateChildren, &childAlarm)
+		if metaAlarm.HasChildByEID(children[i].Entity.ID) {
+			return types.Event{}, metaalarm.ErrChildAlreadyExist
 		}
+
+		metaAlarm.AddChild(childAlarm.EntityID)
+		childAlarm.AddParent(metaAlarm.EntityID)
+
+		if err := childAlarm.PartialUpdateAddStepWithStep(types.NewMetaAlarmAttachStep(metaAlarm, rule.Name)); err != nil {
+			s.logger.Err(err).Str("metaalarm", metaAlarm.EntityID).
+				Str("child", childAlarm.EntityID).
+				Msg("Failed to add metaalarmattach step to child")
+			return types.Event{}, err
+		}
+
 		if childAlarm.Value.State != nil && childAlarm.Value.State.Value > worstState {
 			worstState, worstStateDate = childAlarm.Value.State.Value, childAlarm.Value.LastUpdateDate
 		}
-		if done, err := childAlarm.ApplyActions(maActions, ticket); err != nil {
+
+		if err := childAlarm.ApplyActions(maActions, ticket); err != nil {
 			s.logger.Warn().Err(err).Str("alarm-ID", childAlarm.ID).Msg("adding children to metaalarm")
-		} else if done {
-			children[i].Alarm = childAlarm
+			return types.Event{}, err
 		}
+
+		children[i].Alarm = childAlarm
 	}
 
 	childrenCount, err := s.alarmAdapter.GetCountOpenedAlarmsByIDs(metaAlarm.Value.Children)
 	if err != nil {
 		return types.Event{}, err
 	}
-	infos := eventExtraInfosMeta{
+	infos := EventExtraInfosMeta{
 		Rule:     rule,
-		Count:    int(childrenCount),
+		Count:    childrenCount,
 		Children: children[len(children)-1],
 	}
 	output, err := s.executeOutputTpl(infos)
@@ -274,42 +247,51 @@ func (s *service) AddMultipleChildsToMetaAlarm(
 
 	maCurrentState := metaAlarm.CurrentState()
 	if worstState > maCurrentState {
-		metaAlarm.UpdateState(worstState, worstStateDate)
-	} else if worstState < maCurrentState && len(updateChildren) > 0 {
-		alarm.UpdateToWorstState(&metaAlarm, updateChildren, s.alarmAdapter, s.alarmConfigProvider.Get())
+		err = metaAlarm.PartialUpdateState(worstStateDate, worstState, metaAlarm.Value.Output, s.alarmConfigProvider.Get())
+		if err != nil {
+			return types.Event{}, err
+		}
 	}
 
-	updated := make([]types.Alarm, len(children))
+	updated := make([]types.Alarm, len(children)+1)
 	for i := 0; i < len(children); i++ {
 		updated[i] = children[i].Alarm
 	}
 
-	updated = append(updated, metaAlarm)
-	err = s.alarmAdapter.MassUpdate(updated, true)
+	updated[len(children)] = metaAlarm
+	err = s.alarmAdapter.PartialMassUpdateOpen(ctx, updated)
 	if err != nil {
 		return types.Event{}, err
 	}
 
-	metaAlarmEvent := s.genUpdatedMetaAlarmEvent(*event, metaAlarm, infos)
-	metaAlarmEvent.Output = output
-
-	return metaAlarmEvent, nil
+	return types.Event{
+		Timestamp:         event.Timestamp,
+		Author:            event.Author,
+		Component:         metaAlarm.Value.Component,
+		Connector:         metaAlarm.Value.Connector,
+		ConnectorName:     metaAlarm.Value.ConnectorName,
+		Resource:          metaAlarm.Value.Resource,
+		EventType:         types.EventTypeMetaAlarmUpdated,
+		MetaAlarmRuleID:   infos.Rule.ID,
+		MetaAlarmChildren: &metaAlarm.Value.Children,
+		SourceType:        types.SourceTypeResource,
+		Output:            output,
+		ExtraInfos: map[string]interface{}{
+			"Meta": infos,
+		},
+	}, nil
 }
 
 func (s *service) RemoveMultipleChildToMetaAlarm(
-	event *types.Event,
+	ctx context.Context,
+	event types.Event,
 	metaAlarm types.Alarm,
 	children []types.AlarmWithEntity,
 	rule metaalarm.Rule,
 ) (types.Event, error) {
-	for i := 0; i < len(children); i++ {
-		if childrenIndex := s.indexOfChildren(metaAlarm, children[i].Alarm); childrenIndex != -1 {
-			metaAlarm.Value.Children = s.removeIndex(metaAlarm.Value.Children, childrenIndex)
-		}
-
-		if parentIndex := s.indexOfParents(metaAlarm, children[i].Alarm); parentIndex != -1 {
-			children[i].Alarm.Value.Parents = s.removeIndex(children[i].Alarm.Value.Parents, parentIndex)
-		}
+	for _, child := range children {
+		metaAlarm.RemoveChild(child.Alarm.EntityID)
+		child.Alarm.RemoveParent(metaAlarm.EntityID)
 	}
 
 	metaAlarmChildren := make([]types.AlarmWithEntity, 0)
@@ -317,10 +299,10 @@ func (s *service) RemoveMultipleChildToMetaAlarm(
 	if err != nil {
 		return types.Event{}, err
 	}
-	infos := eventExtraInfosMeta{
+	infos := EventExtraInfosMeta{
 		Rule:     rule,
-		Count:    len(metaAlarmChildren),
-		Children: metaAlarmChildren[len(children)-1],
+		Count:    int64(len(metaAlarmChildren)),
+		Children: metaAlarmChildren[len(metaAlarmChildren)-1],
 	}
 	output, err := s.executeOutputTpl(infos)
 	if err != nil {
@@ -328,60 +310,37 @@ func (s *service) RemoveMultipleChildToMetaAlarm(
 	}
 	metaAlarm.UpdateOutput(output)
 
-	updated := make([]types.Alarm, len(children))
+	updated := make([]types.Alarm, len(children)+1)
 	for i := 0; i < len(children); i++ {
 		updated[i] = children[i].Alarm
 	}
 
-	updated = append(updated, metaAlarm)
-	err = s.alarmAdapter.MassUpdate(updated, true)
+	updated[len(children)] = metaAlarm
+	err = s.alarmAdapter.PartialMassUpdateOpen(ctx, updated)
 	if err != nil {
 		return types.Event{}, err
 	}
 
-	metaAlarmEvent := s.genUpdatedMetaAlarmEvent(*event, metaAlarm, infos)
-	metaAlarmEvent.Output = output
-
-	return metaAlarmEvent, nil
-}
-
-func (s *service) removeIndex(sl []string, idx int) []string {
-	sl[idx] = sl[len(sl)-1]
-	sl[len(sl)-1] = ""
-	sl = sl[:len(sl)-1]
-	return sl
-}
-
-func (s *service) indexOfParents(metaAlarm types.Alarm, alarm types.Alarm) int {
-	for i := 0; i < len(alarm.Value.Parents); i++ {
-		if alarm.Value.Parents[i] == metaAlarm.EntityID {
-			return i
-		}
-	}
-	return -1
-}
-
-func (s *service) indexOfChildren(metaAlarm types.Alarm, alarm types.Alarm) int {
-	for i := 0; i < len(metaAlarm.Value.Children); i++ {
-		if metaAlarm.Value.Children[i] == alarm.EntityID {
-			return i
-		}
-	}
-	return -1
-}
-
-func (s *service) isExisted(metaAlarm types.Alarm, alarm types.Alarm) bool {
-	for _, childrenID := range metaAlarm.Value.Children {
-		if childrenID == alarm.EntityID {
-			return true
-		}
-	}
-
-	return false
+	return types.Event{
+		Timestamp:         event.Timestamp,
+		Author:            event.Author,
+		Component:         metaAlarm.Value.Component,
+		Connector:         metaAlarm.Value.Connector,
+		ConnectorName:     metaAlarm.Value.ConnectorName,
+		Resource:          metaAlarm.Value.Resource,
+		EventType:         types.EventTypeMetaAlarmUpdated,
+		MetaAlarmRuleID:   infos.Rule.ID,
+		MetaAlarmChildren: &metaAlarm.Value.Children,
+		SourceType:        types.SourceTypeResource,
+		Output:            output,
+		ExtraInfos: map[string]interface{}{
+			"Meta": infos,
+		},
+	}, nil
 }
 
 func (s *service) executeOutputTpl(
-	data eventExtraInfosMeta,
+	data EventExtraInfosMeta,
 ) (string, error) {
 	rule := data.Rule
 	if rule.OutputTemplate == "" {

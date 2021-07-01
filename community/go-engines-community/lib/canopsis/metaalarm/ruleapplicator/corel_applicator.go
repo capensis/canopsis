@@ -217,11 +217,12 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 						return nil
 					}
 
-					event.Alarm.Value.Meta = rule.ID
-					event.Alarm.Value.MetaValuePath = childGroupID
+					event.Alarm.SetMeta(rule.ID)
+					event.Alarm.SetMetaValuePath(childGroupID)
 
 					metaAlarmEvent, err := a.metaAlarmService.AddMultipleChildsToMetaAlarm(
-						event,
+						ctx,
+						*event,
 						*event.Alarm,
 						childrenOpenedAlarms,
 						rule,
@@ -235,11 +236,12 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 				}
 
 				if len(parentOpenedAlarms) != 0 {
-					parentOpenedAlarms[0].Alarm.Value.Meta = rule.ID
-					parentOpenedAlarms[0].Alarm.Value.MetaValuePath = childGroupID
+					parentOpenedAlarms[0].Alarm.SetMeta(rule.ID)
+					parentOpenedAlarms[0].Alarm.SetMetaValuePath(childGroupID)
 
 					metaAlarmEvent, err := a.metaAlarmService.AddChildToMetaAlarm(
-						event,
+						ctx,
+						*event,
 						parentOpenedAlarms[0].Alarm,
 						types.AlarmWithEntity{
 							Alarm:  *event.Alarm,

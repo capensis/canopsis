@@ -44,13 +44,7 @@ func testNewValueApplicator() (*ValueApplicator, alarm.Adapter, entity.Adapter, 
 
 	entityAdapter := entity.NewAdapter(dbClient)
 
-	rulesAdapter, er := getRuleAdapter()
-	if er != nil {
-		return nil, nil, nil, err
-	}
-
-	metaAlarmService := service.NewMetaAlarmService(alarmAdapter, rulesAdapter,
-		config.NewAlarmConfigProvider(config.CanopsisConf{}, logger), log.NewTestLogger())
+	metaAlarmService := service.NewMetaAlarmService(alarmAdapter, config.NewAlarmConfigProvider(config.CanopsisConf{}, logger), log.NewTestLogger())
 
 	redisClient3, err := redis.NewSession(ctx, redis.RuleTotalEntitiesStorage, logger, 0, 0)
 	if err != nil {

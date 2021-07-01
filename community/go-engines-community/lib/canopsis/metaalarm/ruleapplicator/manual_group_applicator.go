@@ -93,6 +93,7 @@ func (a ManualGroupApplicator) retrieveListAssociatedAlarms(event *types.Event) 
 }
 
 func (a ManualGroupApplicator) addAlarmsToGroups(
+	ctx context.Context,
 	event *types.Event,
 	children []types.AlarmWithEntity,
 	metaalarms *[]types.Alarm,
@@ -100,7 +101,7 @@ func (a ManualGroupApplicator) addAlarmsToGroups(
 ) ([]types.Event, error) {
 	metaAlarmEvents := make([]types.Event, 0)
 	for _, ma := range *metaalarms {
-		metaAlarmEvent, err := a.metaAlarmService.AddMultipleChildsToMetaAlarm(event, ma, children, rule)
+		metaAlarmEvent, err := a.metaAlarmService.AddMultipleChildsToMetaAlarm(ctx, *event, ma, children, rule)
 		if err != nil {
 			return nil, err
 		}
@@ -111,6 +112,7 @@ func (a ManualGroupApplicator) addAlarmsToGroups(
 }
 
 func (a ManualGroupApplicator) removeAlarmsToGroups(
+	ctx context.Context,
 	event *types.Event,
 	children []types.AlarmWithEntity,
 	metaalarms *[]types.Alarm,
@@ -118,7 +120,7 @@ func (a ManualGroupApplicator) removeAlarmsToGroups(
 ) ([]types.Event, error) {
 	metaAlarmEvents := make([]types.Event, 0)
 	for _, ma := range *metaalarms {
-		metaAlarmEvent, err := a.metaAlarmService.RemoveMultipleChildToMetaAlarm(event, ma, children, rule)
+		metaAlarmEvent, err := a.metaAlarmService.RemoveMultipleChildToMetaAlarm(ctx, *event, ma, children, rule)
 		if err != nil {
 			return nil, err
 		}
@@ -148,7 +150,7 @@ func (a ManualGroupApplicator) groupAlarms(event *types.Event) (types.Event, err
 		return metaAlarmEvent, err
 	}
 
-	metaAlarmEvent, err = a.metaAlarmService.CreateMetaAlarm(event, children, rule)
+	metaAlarmEvent, err = a.metaAlarmService.CreateMetaAlarm(*event, children, rule)
 	if err != nil {
 		return metaAlarmEvent, err
 	}
@@ -176,9 +178,9 @@ func (a ManualGroupApplicator) Apply(ctx context.Context, event *types.Event, r 
 	}
 
 	if event.EventType == types.EventManualMetaAlarmUngroup {
-		metaAlarmEvents, err = a.removeAlarmsToGroups(event, children, metaAlarms, r)
+		metaAlarmEvents, err = a.removeAlarmsToGroups(ctx, event, children, metaAlarms, r)
 	} else if event.EventType == types.EventManualMetaAlarmUpdate {
-		metaAlarmEvents, err = a.addAlarmsToGroups(event, children, metaAlarms, r)
+		metaAlarmEvents, err = a.addAlarmsToGroups(ctx, event, children, metaAlarms, r)
 	}
 
 	return metaAlarmEvents, err

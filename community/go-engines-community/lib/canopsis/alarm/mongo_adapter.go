@@ -16,6 +16,8 @@ const (
 	AlarmCollectionName = libmongo.AlarmMongoCollection
 )
 
+const bulkMaxSize = 10000
+
 type mongoAdapter struct {
 	dbClient     libmongo.DbClient
 	dbCollection libmongo.DbCollection
@@ -78,6 +80,48 @@ func (a mongoAdapter) PartialUpdateOpen(ctx context.Context, alarm *types.Alarm)
 	}
 
 	return nil
+}
+
+func (a mongoAdapter) PartialMassUpdateOpen(ctx context.Context, alarms []types.Alarm) error {
+	var err error
+	writeModels := make([]mongo.WriteModel, 0, bulkMaxSize)
+
+	for _, alarm := range alarms {
+		update := alarm.GetUpdate()
+		if len(update) == 0 {
+			continue
+		}
+
+		writeModels = append(
+			writeModels,
+			mongo.NewUpdateOneModel().
+				SetFilter(bson.M{
+					"_id": alarm.ID,
+					"$or": []bson.M{
+						{"v.resolved": nil},
+						{"v.resolved": bson.M{"$exists": false}},
+					},
+				}).
+				SetUpdate(update),
+		)
+
+		alarm.CleanUpdate()
+
+		if len(writeModels) == bulkMaxSize {
+			_, err = a.dbCollection.BulkWrite(ctx, writeModels)
+			if err != nil {
+				return err
+			}
+
+			writeModels = writeModels[:0]
+		}
+	}
+
+	if len(writeModels) > 0 {
+		_, err = a.dbCollection.BulkWrite(ctx, writeModels)
+	}
+
+	return err
 }
 
 func (a mongoAdapter) RemoveId(id string) error {

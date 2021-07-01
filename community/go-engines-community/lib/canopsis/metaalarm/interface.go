@@ -1,8 +1,21 @@
 package metaalarm
 
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/metaalarm/metaalarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm RulesAdapter
+
 import (
 	"context"
+	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+)
+
+var ErrNoChildren = errors.New("no children")
+var ErrChildAlreadyExist = errors.New("child already exists")
+
+const (
+	DefaultMetaAlarmComponent     = "metaalarm"
+	DefaultMetaAlarmConnector     = "engine"
+	DefaultMetaAlarmConnectorName = "correlation"
+	DefaultMetaAlarmEntityPrefix  = "meta-alarm-entity-"
 )
 
 type RulesAdapter interface {

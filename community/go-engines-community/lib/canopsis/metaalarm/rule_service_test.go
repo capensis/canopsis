@@ -3,6 +3,7 @@ package metaalarm_test
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"testing"
 	"time"
 
@@ -101,6 +102,10 @@ func TestProcessAttributes(t *testing.T) {
 	ctx := context.Background()
 
 	s, entityAdapter, alarmAdapter, rulesAdapter, redisClient, redlockClient, mongoSession, err := testNewMetaAlarmService()
+	if err != nil {
+		panic(err)
+	}
+
 	displayNameScheme, err := config.CreateDisplayNameTpl(config.AlarmDefaultNameScheme)
 	if err != nil {
 		panic(err)
@@ -149,11 +154,13 @@ func TestProcessAttributes(t *testing.T) {
 		}`), &rule)
 		So(err, ShouldBeNil)
 
-		_, err = s.CreateMetaAlarm(&testEvent, []types.AlarmWithEntity{{
+		ev, err := s.CreateMetaAlarm(&testEvent, []types.AlarmWithEntity{{
 			Alarm:  alarm,
 			Entity: entity,
 		}}, rule)
 		So(err, ShouldBeNil)
+
+		fmt.Printf("%v\n", ev)
 
 		container := metaalarm.NewRuleApplicatorContainer()
 		attributeApplicator := ruleapplicator.NewAttributeApplicator(alarmAdapter, log.NewTestLogger(), s, redisClient, redlockClient)

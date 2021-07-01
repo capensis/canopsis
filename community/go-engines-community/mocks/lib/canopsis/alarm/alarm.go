@@ -432,6 +432,20 @@ func (mr *MockAdapterMockRecorder) MassUpdateWithEntity(arg0 interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MassUpdateWithEntity", reflect.TypeOf((*MockAdapter)(nil).MassUpdateWithEntity), arg0)
 }
 
+// PartialMassUpdateOpen mocks base method
+func (m *MockAdapter) PartialMassUpdateOpen(arg0 context.Context, arg1 []types.Alarm) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PartialMassUpdateOpen", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// PartialMassUpdateOpen indicates an expected call of PartialMassUpdateOpen
+func (mr *MockAdapterMockRecorder) PartialMassUpdateOpen(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PartialMassUpdateOpen", reflect.TypeOf((*MockAdapter)(nil).PartialMassUpdateOpen), arg0, arg1)
+}
+
 // PartialUpdateOpen mocks base method
 func (m *MockAdapter) PartialUpdateOpen(arg0 context.Context, arg1 *types.Alarm) error {
 	m.ctrl.T.Helper()

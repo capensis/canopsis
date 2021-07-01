@@ -141,7 +141,8 @@ func (a ComplexApplicator) Apply(ctx context.Context, event *types.Event, rule m
 								}
 
 								metaAlarmEvent, err = a.metaAlarmService.AddChildToMetaAlarm(
-									event,
+									ctx,
+									*event,
 									metaAlarm,
 									types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity},
 									rule,
@@ -283,7 +284,8 @@ func (a ComplexApplicator) Apply(ctx context.Context, event *types.Event, rule m
 								}
 
 								metaAlarmEvent, err = a.metaAlarmService.AddChildToMetaAlarm(
-									event,
+									ctx,
+									*event,
 									metaAlarm,
 									types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity},
 									rule,
@@ -417,7 +419,7 @@ func (a ComplexApplicator) createMetaAlarm(ctx context.Context, tx *redis.Tx, ev
 		return types.Event{}, err
 	}
 
-	return a.metaAlarmService.CreateMetaAlarm(event, children, rule)
+	return a.metaAlarmService.CreateMetaAlarm(*event, children, rule)
 }
 
 func (a ComplexApplicator) getGroupLen(ctx context.Context, tx *redis.Tx, ruleId string) (int64, error) {

@@ -66,10 +66,7 @@ func testNewComplexApplicator() (*ruleapplicator.ComplexApplicator, alarm.Adapte
 		return nil, nil, nil, err
 	}
 
-	rulesAdapter := metaalarm.NewRuleAdapter(dbClient)
-
-	metaAlarmService := service.NewMetaAlarmService(alarmAdapter, rulesAdapter,
-		config.NewAlarmConfigProvider(testutils.GetTestConf(), logger), log.NewLogger(true))
+	metaAlarmService := service.NewMetaAlarmService(alarmAdapter, config.NewAlarmConfigProvider(testutils.GetTestConf(), logger), log.NewLogger(true))
 
 	redisClient3, err := redis.NewSession(ctx, redis.RuleTotalEntitiesStorage, logger, 0, 0)
 	if err != nil {

@@ -18,6 +18,8 @@ type Adapter interface {
 
 	PartialUpdateOpen(ctx context.Context, alarm *types.Alarm) error
 
+	PartialMassUpdateOpen(ctx context.Context, alarms []types.Alarm) error
+
 	// RemoveAll remove all alarms
 	RemoveAll() error
 

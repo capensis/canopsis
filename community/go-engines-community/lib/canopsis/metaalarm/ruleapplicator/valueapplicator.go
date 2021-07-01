@@ -148,7 +148,8 @@ func (a ValueApplicator) Apply(ctx context.Context, event *types.Event, rule met
 								}
 
 								metaAlarmEvent, err = a.metaAlarmService.AddChildToMetaAlarm(
-									event,
+									ctx,
+									*event,
 									metaAlarm,
 									types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity},
 									rule,
@@ -290,7 +291,8 @@ func (a ValueApplicator) Apply(ctx context.Context, event *types.Event, rule met
 								}
 
 								metaAlarmEvent, err = a.metaAlarmService.AddChildToMetaAlarm(
-									event,
+									ctx,
+									*event,
 									metaAlarm,
 									types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity},
 									rule,
@@ -432,7 +434,7 @@ func (a ValueApplicator) createMetaAlarm(ctx context.Context, tx *redis.Tx, even
 		return types.Event{}, err
 	}
 
-	metaAlarmEvent, err := a.metaAlarmService.CreateMetaAlarm(event, children, rule)
+	metaAlarmEvent, err := a.metaAlarmService.CreateMetaAlarm(*event, children, rule)
 	if err != nil {
 		return metaAlarmEvent, err
 	}

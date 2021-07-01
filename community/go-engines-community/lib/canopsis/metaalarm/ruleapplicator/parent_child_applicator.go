@@ -61,7 +61,7 @@ func (a ParentChildApplicator) Apply(ctx context.Context, event *types.Event, ru
 					return nil, err
 				}
 
-				metaAlarmEvent, err = a.metaAlarmService.AddMultipleChildsToMetaAlarm(event, componentAlarm, resourceAlarms, rule)
+				metaAlarmEvent, err = a.metaAlarmService.AddMultipleChildsToMetaAlarm(ctx, *event, componentAlarm, resourceAlarms, rule)
 				if err != nil {
 					return nil, err
 				}
@@ -120,7 +120,8 @@ func (a ParentChildApplicator) Apply(ctx context.Context, event *types.Event, ru
 		}
 
 		metaAlarmEvent, err = a.metaAlarmService.AddChildToMetaAlarm(
-			event,
+			ctx,
+			*event,
 			componentAlarm,
 			types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity},
 			rule,
