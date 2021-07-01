@@ -314,18 +314,8 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	if err != mongodriver.ErrNoDocuments {
-		parents, children := fastjson.MustParse(`[]`), fastjson.MustParse(`[]`)
-
-		for idx, parent := range alarm.Value.Parents {
-			parents.SetArrayItem(idx, fastjson.MustParse(fmt.Sprintf("\"%s\"", parent)))
-		}
-
-		for idx, child := range alarm.Value.Children {
-			children.SetArrayItem(idx, fastjson.MustParse(fmt.Sprintf("\"%s\"", child)))
-		}
-
-		value.Set("ma_parents", parents)
-		value.Set("ma_children", children)
+		processArray(value, "ma_parents", alarm.Value.Parents)
+		processArray(value, "ma_children", alarm.Value.Children)
 	}
 
 	err = api.publisher.Publish(
@@ -345,6 +335,17 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	return true
+}
+
+func processArray(value *fastjson.Value, key string, values []string) {
+	if value.Exists(key) {
+		return
+	}
+	items := fastjson.MustParse(`[]`)
+	for idx, item := range values {
+		items.SetArrayItem(idx, fastjson.MustParse(fmt.Sprintf("%q", item)))
+	}
+	value.Set(key, items)
 }
 
 func getStringField(value *fastjson.Value, key string) (string, error) {
