@@ -15,7 +15,8 @@ import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
  *   'timebased' |
  *   'attribute' |
  *   'complex' |
- *   'valuegroup'
+ *   'valuegroup' |
+ *   'corel'
  * } MetaAlarmRuleType
  */
 
@@ -66,20 +67,35 @@ import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
  */
 
 /**
+ * @typedef {MetaAlarmRuleAttributeConfig} MetaAlarmRuleCorelConfig
+ * @property {string} corel_id
+ * @property {string} corel_status
+ * @property {string} corel_parent
+ * @property {string} corel_child
+ * @property {string} threshold_count
+ */
+
+/**
+ * @typedef {MetaAlarmRuleCorelConfig} MetaAlarmRuleCorelConfigForm
+ */
+
+/**
  * @typedef {
  *   MetaAlarmRuleAttributeConfig &
  *   MetaAlarmRuleTimeBasedConfig &
  *   MetaAlarmRuleComplexConfig &
- *   MetaAlarmRuleValueGroupConfig
+ *   MetaAlarmRuleValueGroupConfig &
+ *   MetaAlarmRuleCorelConfig
  * } MetaAlarmRuleConfig
  */
 
 /**
  * @typedef {
  *   MetaAlarmRuleAttributeConfigForm &
- *   MetaAlarmRuleTimeBasedConfig &
- *   MetaAlarmRuleComplexConfig &
- *   MetaAlarmRuleValueGroupConfig
+ *   MetaAlarmRuleTimeBasedConfigForm &
+ *   MetaAlarmRuleComplexConfigForm &
+ *   MetaAlarmRuleValueGroupConfigForm &
+ *   MetaAlarmRuleCorelConfigForm
  * } MetaAlarmRuleConfigForm
  */
 
