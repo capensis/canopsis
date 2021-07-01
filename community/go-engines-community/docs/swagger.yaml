@@ -458,16 +458,21 @@ definitions:
   appinfo.LoginConfig:
     properties:
       casconfig:
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
         type: object
       ldapconfig:
-        properties:
-          enable:
-            type: boolean
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
         type: object
-      providers:
-        additionalProperties:
-          type: integer
+      saml2config:
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
         type: object
+    type: object
+  appinfo.LoginConfigMethod:
+    properties:
+      enable:
+        type: boolean
+      title:
+        type: string
     type: object
   appinfo.LoginConfigResponse:
     properties:

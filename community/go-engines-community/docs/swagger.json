@@ -7926,21 +7926,27 @@
             "type": "object",
             "properties": {
                 "casconfig": {
-                    "type": "object"
+                    "type": "object",
+                    "$ref": "#/definitions/appinfo.LoginConfigMethod"
                 },
                 "ldapconfig": {
                     "type": "object",
-                    "properties": {
-                        "enable": {
-                            "type": "boolean"
-                        }
-                    }
+                    "$ref": "#/definitions/appinfo.LoginConfigMethod"
                 },
-                "providers": {
+                "saml2config": {
                     "type": "object",
-                    "additionalProperties": {
-                        "type": "integer"
-                    }
+                    "$ref": "#/definitions/appinfo.LoginConfigMethod"
+                }
+            }
+        },
+        "appinfo.LoginConfigMethod": {
+            "type": "object",
+            "properties": {
+                "enable": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },
