@@ -304,11 +304,9 @@ export default {
       this.exportWidgetAsCsv({
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
         data: {
-          ...pick(query, ['correlation', 'opened', 'resolved']),
+          ...pick(query, ['search', 'category', 'correlation', 'opened', 'resolved']),
 
           fields,
-          search: query.search,
-          category: query.category,
           filter: JSON.stringify(query.filter),
           separator: this.widget.parameters.exportCsvSeparator,
           time_format: this.widget.parameters.exportCsvDatetimeFormat,
