@@ -33,7 +33,7 @@ clean: .iter_project
 full_clean: RULE = clean
 full_clean: .iter_project
 
-test:
+test: 
 	@echo "Running tests"
 	go build -o "${BUILD_OUTPUT_DIR}/ready" ./cmd/ready
 	"${BUILD_OUTPUT_DIR}/ready" -retries 0 -timeout 2m
