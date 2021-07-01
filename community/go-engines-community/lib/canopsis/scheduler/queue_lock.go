@@ -5,8 +5,8 @@ import (
 	"sort"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/keymutex"
 	redismod "github.com/go-redis/redis/v8"
-	"github.com/neverlee/keymutex"
 	"github.com/rs/zerolog"
 )
 
@@ -49,7 +49,7 @@ type baseQueueLock struct {
 	// queueClient is used to set queue.
 	queueClient redismod.Cmdable
 	// mutex is used to synchronize operations on lockClient and queueClient.
-	mutex  *keymutex.KeyMutex
+	mutex  keymutex.KeyMutex
 	logger zerolog.Logger
 }
 
@@ -69,13 +69,18 @@ func NewQueueLock(
 		lockExpirationTime: lockExpirationTime,
 		queueClient:        queueClient,
 		logger:             logger,
-		mutex:              keymutex.New(113),
+		mutex:              keymutex.New(),
 	}
 }
 
 func (s *baseQueueLock) LockOrPush(ctx context.Context, lockID string, item []byte) (bool, error) {
 	s.mutex.Lock(lockID)
-	defer s.mutex.Unlock(lockID)
+	defer func() {
+		err := s.mutex.Unlock(lockID)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot unlock mutex")
+		}
+	}()
 
 	locked, err := s.lock(ctx, lockID)
 
@@ -99,14 +104,12 @@ func (s *baseQueueLock) LockMultipleOrPush(
 	allLockIDList := append([]string{lockID}, lockIDList...)
 	// Sort to prevent deadlock
 	sort.Strings(allLockIDList)
-
-	for _, lockID := range allLockIDList {
-		s.mutex.Lock(lockID)
-	}
+	s.mutex.LockMultiple(allLockIDList...)
 
 	defer func() {
-		for _, lockID := range allLockIDList {
-			s.mutex.Unlock(lockID)
+		err := s.mutex.UnlockMultiple(allLockIDList...)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot unlock mutex")
 		}
 	}()
 
@@ -134,14 +137,22 @@ func (s *baseQueueLock) LockAndPopMultiple(
 
 	defer func() {
 		if resErr == nil && res != nil {
-			s.mutex.Unlock(lockID)
+			err := s.mutex.Unlock(lockID)
+			if err != nil {
+				s.logger.Err(err).Msg("cannot unlock mutex")
+			}
 			return
 		}
 
 		// Unlock in another goroutine for performance.
 		if asyncUnlock {
 			go func() {
-				defer s.mutex.Unlock(lockID)
+				defer func() {
+					err := s.mutex.Unlock(lockID)
+					if err != nil {
+						s.logger.Err(err).Msg("cannot unlock mutex")
+					}
+				}()
 				if locked {
 					err := s.Unlock(ctx, lockID)
 					if err != nil {
@@ -150,7 +161,11 @@ func (s *baseQueueLock) LockAndPopMultiple(
 				}
 			}()
 		} else {
-			s.mutex.Unlock(lockID)
+			err := s.mutex.Unlock(lockID)
+			if err != nil {
+				s.logger.Err(err).Msg("cannot unlock mutex")
+			}
+
 			if locked {
 				err := s.Unlock(ctx, lockID)
 				if err != nil {
@@ -177,14 +192,12 @@ func (s *baseQueueLock) LockAndPopMultiple(
 
 	// Sort to prevent deadlock
 	sort.Strings(lockIDList)
-
-	for _, v := range lockIDList {
-		s.mutex.Lock(v)
-	}
+	s.mutex.LockMultiple(lockIDList...)
 
 	defer func() {
-		for _, v := range lockIDList {
-			s.mutex.Unlock(v)
+		err := s.mutex.UnlockMultiple(lockIDList...)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot unlock mutex")
 		}
 	}()
 
@@ -207,7 +220,10 @@ func (s *baseQueueLock) PopOrUnlock(ctx context.Context, lockID string, asyncUnl
 
 	defer func() {
 		if !unlock {
-			s.mutex.Unlock(lockID)
+			err := s.mutex.Unlock(lockID)
+			if err != nil {
+				s.logger.Err(err).Msg("cannot unlock mutex")
+			}
 		}
 	}()
 
@@ -227,7 +243,12 @@ func (s *baseQueueLock) PopOrUnlock(ctx context.Context, lockID string, asyncUnl
 		if asyncUnlock {
 			unlock = true
 			go func() {
-				defer s.mutex.Unlock(lockID)
+				defer func() {
+					err := s.mutex.Unlock(lockID)
+					if err != nil {
+						s.logger.Err(err).Msg("cannot unlock mutex")
+					}
+				}()
 
 				err := s.Unlock(ctx, lockID)
 				if err != nil {
@@ -251,7 +272,10 @@ func (s *baseQueueLock) LockAndPop(ctx context.Context, lockID string, asyncUnlo
 
 	defer func() {
 		if !unlock {
-			s.mutex.Unlock(lockID)
+			err := s.mutex.Unlock(lockID)
+			if err != nil {
+				s.logger.Err(err).Msg("cannot unlock mutex")
+			}
 		}
 	}()
 
@@ -271,7 +295,12 @@ func (s *baseQueueLock) LockAndPop(ctx context.Context, lockID string, asyncUnlo
 		if asyncUnlock {
 			unlock = true
 			go func() {
-				defer s.mutex.Unlock(lockID)
+				defer func() {
+					err := s.mutex.Unlock(lockID)
+					if err != nil {
+						s.logger.Err(err).Msg("cannot unlock mutex")
+					}
+				}()
 
 				err := s.Unlock(ctx, lockID)
 				if err != nil {

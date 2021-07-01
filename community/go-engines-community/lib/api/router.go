@@ -572,7 +572,7 @@ func RegisterRoutes(
 				eventApi.Send)
 		}
 
-		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient), security.GetConfig())
+		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, security.GetConfig().Security.AuthProviders))
 		appInfoRouter := protected.Group("/internal")
 		{
 			appInfoRouter.GET("login_info", appInfoApi.LoginInfo)
