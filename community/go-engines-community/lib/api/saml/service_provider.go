@@ -428,26 +428,30 @@ func (sp *serviceProvider) buildLogoutResponseUrl(status, reqID, relayState stri
 	return responseUrl, nil
 }
 
-func (sp *serviceProvider) encodeAndCompress(doc io.WriterTo) (*bytes.Buffer, error) {
+func (sp *serviceProvider) encodeAndCompress(doc io.WriterTo) (_ *bytes.Buffer, resErr error) {
 	buffer := &bytes.Buffer{}
 	encoder := base64.NewEncoder(base64.StdEncoding, buffer)
+
+	defer func() {
+		err := encoder.Close()
+		if err != nil && resErr == nil {
+			resErr = err
+		}
+	}()
 
 	compressor, err := flate.NewWriter(encoder, flate.BestCompression)
 	if err != nil {
 		return nil, err
 	}
 
+	defer func() {
+		err = compressor.Close()
+		if err != nil && resErr == nil {
+			resErr = err
+		}
+	}()
+
 	_, err = doc.WriteTo(compressor)
-	if err != nil {
-		return nil, err
-	}
-
-	err = compressor.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	err = encoder.Close()
 	if err != nil {
 		return nil, err
 	}
