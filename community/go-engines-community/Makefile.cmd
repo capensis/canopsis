@@ -5,11 +5,11 @@ BINARY:=${PROJECT}
 
 build:
 	@echo "Building ${PROJECT} project"
-	env CGO_ENABLED=1 GO111MODULE=on go build ${LDFLAGS} -trimpath -o "${OUTPUT_DIR}/${BINARY}"
+	env CGO_ENABLED=1 GO111MODULE=on go build -trimpath -o "${OUTPUT_DIR}/${BINARY}" ${LDFLAGS}
 
 clean:
 	@echo "Cleaning ${PROJECT} project"
-	rm -rf "${OUTPUT_DIR}/${BINARY}"
+	rm -rf ${OUTPUT_DIR}/${BINARY}
 
 docker_image:
 	@echo "Building ${PROJECT} project docker image"

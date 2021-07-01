@@ -299,12 +299,17 @@ export default {
 
     exportAlarmsList() {
       const query = this.getQuery();
+      const fields = this.widget.parameters.widgetColumns.map(({ label, value }) => ({ label, name: value }));
 
       this.exportWidgetAsCsv({
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
-        params: {
-          ...pick(query, ['search', 'filter', 'correlation', 'opened', 'resolved', 'active_columns']),
+        data: {
+          ...pick(query, ['correlation', 'opened', 'resolved']),
 
+          fields,
+          search: query.search,
+          category: query.category,
+          filter: JSON.stringify(query.filter),
           separator: this.widget.parameters.exportCsvSeparator,
           time_format: this.widget.parameters.exportCsvDatetimeFormat,
         },

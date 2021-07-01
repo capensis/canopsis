@@ -27,16 +27,6 @@ type EditRequest struct {
 	Actions              []ActionRequest         `json:"actions" binding:"required,notblank,dive"`
 }
 
-type CreateRequest struct {
-	EditRequest
-	ID string `json:"_id" binding:"id"`
-}
-
-type UpdateRequest struct {
-	EditRequest
-	ID string `json:"-"`
-}
-
 type ActionRequest struct {
 	Type                     string                    `json:"type" binding:"required"`
 	Parameters               interface{}               `json:"parameters,omitempty"`

@@ -140,19 +140,11 @@ func RegisterValidators(client mongo.DbClient) {
 	scenarioUniquePriorityValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "Priority")
 	scenarioExistReasonValidator := common.NewExistFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Reason")
 	scenarioExistTypeValidator := common.NewExistFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Type")
-	scenarioExistIdValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "ID")
-
-	v.RegisterStructValidation(scenario.ValidateEditRequest, scenario.EditRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		scenario.ValidateEditRequest(sl)
 		scenarioUniqueNameValidator.Validate(ctx, sl)
 		scenarioUniquePriorityValidator.Validate(ctx, sl)
-		scenarioExistIdValidator.Validate(ctx, sl)
-	}, scenario.CreateRequest{})
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		scenarioUniqueNameValidator.Validate(ctx, sl)
-		scenarioUniquePriorityValidator.Validate(ctx, sl)
-	}, scenario.UpdateRequest{})
-
+	}, scenario.EditRequest{})
 	v.RegisterStructValidation(scenario.ValidateActionRequest, scenario.ActionRequest{})
 	v.RegisterStructValidation(scenario.ValidateChangeStateParametersRequest, scenario.ChangeStateParametersRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
