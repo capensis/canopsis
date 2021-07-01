@@ -2,6 +2,7 @@ package alarm
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -29,9 +30,13 @@ type ListRequest struct {
 }
 
 type FilterRequest struct {
+	BaseFilterRequest
+	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
+}
+
+type BaseFilterRequest struct {
 	Filter                  string         `form:"filter" json:"filter"`
 	Search                  string         `form:"search" json:"search"`
-	SearchBy                []string       `form:"active_columns[]" json:"active_columns[]"`
 	StartFrom               *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
 	StartTo                 *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
 	Opened                  *bool          `form:"opened" json:"opened"`
@@ -57,9 +62,12 @@ func (r FilterRequest) GetOpenedFilter() int {
 }
 
 type ExportRequest struct {
-	ListRequest
-	Separator  string `form:"separator" json:"separator" binding:"oneoforempty=comma semicolon tab space"`
-	TimeFormat string `form:"time_format" json:"time_format" binding:"time_format"`
+	BaseFilterRequest
+	WithSteps    bool          `json:"with_steps"`
+	WithChildren bool          `json:"with_consequences"`
+	Fields       export.Fields `json:"fields"`
+	Separator    string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
+	TimeFormat   string        `json:"time_format" binding:"time_format"`
 }
 
 type ExportResponse struct {

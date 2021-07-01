@@ -8,6 +8,7 @@ import (
 const (
 	ConfigKeyName        = "global_config"
 	UserInterfaceKeyName = "user_interface"
+	VersionKeyName       = "canopsis_version"
 )
 
 // SectionAlarm ...

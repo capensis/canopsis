@@ -264,10 +264,6 @@ definitions:
     type: object
   alarm.ExportRequest:
     properties:
-      active_columns[]:
-        items:
-          type: string
-        type: array
       category:
         type: string
       correlation:
@@ -280,6 +276,9 @@ definitions:
         items:
           type: string
         type: array
+      fields:
+        $ref: '#/definitions/export.Fields'
+        type: object
       filter:
         type: string
       include_instruction_types:
@@ -298,10 +297,6 @@ definitions:
         type: string
       separator:
         type: string
-      sort_dir:
-        type: string
-      sort_key:
-        type: string
       time_format:
         type: string
       tstart:
@@ -309,8 +304,6 @@ definitions:
       tstop:
         type: integer
       with_consequences:
-        type: boolean
-      with_instructions:
         type: boolean
       with_steps:
         type: boolean
@@ -499,16 +492,21 @@ definitions:
   appinfo.LoginConfig:
     properties:
       casconfig:
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
         type: object
       ldapconfig:
-        properties:
-          enable:
-            type: boolean
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
         type: object
-      providers:
-        additionalProperties:
-          type: integer
+      saml2config:
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
         type: object
+    type: object
+  appinfo.LoginConfigMethod:
+    properties:
+      enable:
+        type: boolean
+      title:
+        type: string
     type: object
   appinfo.LoginConfigResponse:
     properties:
@@ -857,21 +855,16 @@ definitions:
     type: object
   entity.ExportRequest:
     properties:
-      active_columns[]:
-        items:
-          type: string
-        type: array
       category:
         type: string
+      fields:
+        $ref: '#/definitions/export.Fields'
+        type: object
       filter:
         type: string
       search:
         type: string
       separator:
-        type: string
-      sort:
-        type: string
-      sort_by:
         type: string
     type: object
   entity.ExportResponse:
@@ -1190,6 +1183,17 @@ definitions:
     - enabled
     - type
     type: object
+  export.Field:
+    properties:
+      label:
+        type: string
+      name:
+        type: string
+    type: object
+  export.Fields:
+    items:
+      $ref: '#/definitions/export.Field'
+    type: array
   heartbeat.BulkDeleteRequest:
     properties:
       ids:
@@ -3613,81 +3617,12 @@ paths:
       description: Start export alarms
       operationId: alarms-export-start
       parameters:
-      - collectionFormat: multi
-        in: query
-        items:
-          type: string
-        name: active_columns[]
-        type: array
-      - in: query
-        name: category
-        type: string
-      - in: query
-        name: correlation
-        type: boolean
-      - collectionFormat: multi
-        in: query
-        items:
-          type: integer
-        name: exclude_instruction_types
-        type: array
-      - collectionFormat: multi
-        in: query
-        items:
-          type: string
-        name: exclude_instructions
-        type: array
-      - in: query
-        name: filter
-        type: string
-      - collectionFormat: multi
-        in: query
-        items:
-          type: integer
-        name: include_instruction_types
-        type: array
-      - collectionFormat: multi
-        in: query
-        items:
-          type: string
-        name: include_instructions
-        type: array
-      - in: query
-        name: manual
-        type: boolean
-      - in: query
-        name: opened
-        type: boolean
-      - in: query
-        name: search
-        type: string
-      - in: query
-        name: separator
-        type: string
-      - in: query
-        name: sort_dir
-        type: string
-      - in: query
-        name: sort_key
-        type: string
-      - in: query
-        name: time_format
-        type: string
-      - in: query
-        name: tstart
-        type: integer
-      - in: query
-        name: tstop
-        type: integer
-      - in: query
-        name: with_consequences
-        type: boolean
-      - in: query
-        name: with_instructions
-        type: boolean
-      - in: query
-        name: with_steps
-        type: boolean
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/alarm.ExportRequest'
       produces:
       - application/json
       responses:
@@ -4787,30 +4722,12 @@ paths:
       description: Start export entities
       operationId: entities-export-start
       parameters:
-      - collectionFormat: multi
-        in: query
-        items:
-          type: string
-        name: active_columns[]
-        type: array
-      - in: query
-        name: category
-        type: string
-      - in: query
-        name: filter
-        type: string
-      - in: query
-        name: search
-        type: string
-      - in: query
-        name: separator
-        type: string
-      - in: query
-        name: sort
-        type: string
-      - in: query
-        name: sort_by
-        type: string
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.ExportRequest'
       produces:
       - application/json
       responses:
