@@ -81,7 +81,7 @@ func (adapter) RemoveFilteredPolicy(string, string, int, ...string) error {
 }
 
 // findObjects fetches objects from mongo collection and returns map[objectID]objectConfig.
-func (a *adapter) findObjects(ctx context.Context) (_ map[string]objectConfig, resErr error) {
+func (a *adapter) findObjects(ctx context.Context) (objConfByID map[string]objectConfig, resErr error) {
 	cursor, err := a.collection.Find(
 		ctx,
 		bson.M{
@@ -100,7 +100,7 @@ func (a *adapter) findObjects(ctx context.Context) (_ map[string]objectConfig, r
 		}
 	}()
 
-	objConfByID := make(map[string]objectConfig)
+	objConfByID = make(map[string]objectConfig)
 
 	for cursor.Next(ctx) {
 		var line libmodel.Rbac
@@ -129,7 +129,7 @@ func (a *adapter) loadRoles(
 	ctx context.Context,
 	model model.Model,
 	objConfByID map[string]objectConfig,
-) (_ map[string]string, resErr error) {
+) (roleNamesByID map[string]string, resErr error) {
 	cursor, err := a.collection.Find(
 		ctx,
 		bson.M{
@@ -148,7 +148,7 @@ func (a *adapter) loadRoles(
 		}
 	}()
 
-	roleNamesByID := make(map[string]string)
+	roleNamesByID = make(map[string]string)
 	ptype := CasbinPtypePolicy
 	sec := ptype
 	permBitmasksByType := map[string]map[string]int{
