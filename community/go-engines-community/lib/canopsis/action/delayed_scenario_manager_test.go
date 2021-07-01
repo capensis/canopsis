@@ -251,9 +251,9 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByTick(t 
 	}, nil).Times(2)
 	mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
 	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
-	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByAlarmIDs(gomock.Any(), gomock.Any()).
-		Do(func(ids []string, alarms *[]types.Alarm) {
-			if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
+	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).
+		Do(func(_ context.Context, ids []string, alarms *[]types.Alarm) {
+		if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
 				t.Errorf("expected %v but got %v", []string{expectedAlarm.ID}, ids)
 			}
 
@@ -311,7 +311,7 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByWaiting
 	mockStorage.EXPECT().Get(gomock.Any(), gomock.Eq(delayedScenario.ID)).Return(&delayedScenario, nil)
 	mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
 	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
-	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByAlarmIDs(gomock.Any(), gomock.Any()).Do(func(ids []string, alarms *[]types.Alarm) {
+	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).Do(func(_ context.Context, ids []string, alarms *[]types.Alarm) {
 		if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
 			t.Errorf("expected %v but got %v", []string{expectedAlarm.ID}, ids)
 		}

@@ -113,13 +113,13 @@ func TestApply(t *testing.T) {
 			}
 
 			entity1 := types.NewEntity("testResource1/testComponent", "testResource", "resource", nil, nil, nil)
-			err := entityAdapter.Insert(entity1)
+			err := entityAdapter.Insert(ctx, entity1)
 			So(err, ShouldBeNil)
 
 			alarm1, err := types.NewAlarm(testEvent1, cfg)
 			So(err, ShouldBeNil)
 
-			err = alarmAdapter.Insert(alarm1)
+			err = alarmAdapter.Insert(ctx, alarm1)
 			So(err, ShouldBeNil)
 
 			testEvent1.Alarm = &alarm1
@@ -141,12 +141,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity2 := types.NewEntity("testResource2/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity2)
+			err = entityAdapter.Insert(ctx, entity2)
 			So(err, ShouldBeNil)
 
 			alarm2, err := types.NewAlarm(testEvent2, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm2)
+			err = alarmAdapter.Insert(ctx, alarm2)
 			So(err, ShouldBeNil)
 
 			testEvent2.Alarm = &alarm2
@@ -169,12 +169,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity3 := types.NewEntity("testResource3/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity3)
+			err = entityAdapter.Insert(ctx, entity3)
 			So(err, ShouldBeNil)
 
 			alarm3, err := types.NewAlarm(testEvent3, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm3)
+			err = alarmAdapter.Insert(ctx, alarm3)
 			So(err, ShouldBeNil)
 
 			testEvent3.Alarm = &alarm3
@@ -196,12 +196,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity4 := types.NewEntity("testResource4/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity4)
+			err = entityAdapter.Insert(ctx, entity4)
 			So(err, ShouldBeNil)
 
 			alarm4, err := types.NewAlarm(testEvent4, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm4)
+			err = alarmAdapter.Insert(ctx, alarm4)
 			So(err, ShouldBeNil)
 
 			testEvent4.Alarm = &alarm4
@@ -224,12 +224,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity5 := types.NewEntity("testResource5/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity5)
+			err = entityAdapter.Insert(ctx, entity5)
 			So(err, ShouldBeNil)
 
 			alarm5, err := types.NewAlarm(testEvent5, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm5)
+			err = alarmAdapter.Insert(ctx, alarm5)
 			So(err, ShouldBeNil)
 
 			testEvent5.Alarm = &alarm5
@@ -251,12 +251,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity6 := types.NewEntity("testResource6/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity6)
+			err = entityAdapter.Insert(ctx, entity6)
 			So(err, ShouldBeNil)
 
 			alarm6, err := types.NewAlarm(testEvent6, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm6)
+			err = alarmAdapter.Insert(ctx, alarm6)
 			So(err, ShouldBeNil)
 
 			testEvent6.Alarm = &alarm6
@@ -279,12 +279,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity7 := types.NewEntity("testResource7/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity7)
+			err = entityAdapter.Insert(ctx, entity7)
 			So(err, ShouldBeNil)
 
 			alarm7, err := types.NewAlarm(testEvent7, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm7)
+			err = alarmAdapter.Insert(ctx, alarm7)
 			So(err, ShouldBeNil)
 
 			testEvent7.Alarm = &alarm7
@@ -306,12 +306,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity8 := types.NewEntity("testResource8/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity8)
+			err = entityAdapter.Insert(ctx, entity8)
 			So(err, ShouldBeNil)
 
 			alarm8, err := types.NewAlarm(testEvent8, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm8)
+			err = alarmAdapter.Insert(ctx, alarm8)
 			So(err, ShouldBeNil)
 
 			testEvent8.Alarm = &alarm8
@@ -382,12 +382,12 @@ func TestApply(t *testing.T) {
 				}
 
 				entity10 := types.NewEntity("testResource10/testComponent", "testResource", "resource", nil, nil, nil)
-				err = entityAdapter.Insert(entity10)
+				err = entityAdapter.Insert(ctx, entity10)
 				So(err, ShouldBeNil)
 
 				alarm1, err := types.NewAlarm(testEvent1, cfg)
 				So(err, ShouldBeNil)
-				err = alarmAdapter.Insert(alarm1)
+				err = alarmAdapter.Insert(ctx, alarm1)
 				So(err, ShouldBeNil)
 
 				testEvent1.Alarm = &alarm1
@@ -408,12 +408,12 @@ func TestApply(t *testing.T) {
 				}
 
 				entity20 := types.NewEntity("testResource20/testComponent", "testResource", "resource", nil, nil, nil)
-				err = entityAdapter.Insert(entity20)
+				err = entityAdapter.Insert(ctx, entity20)
 				So(err, ShouldBeNil)
 
 				alarm2, err := types.NewAlarm(testEvent2, cfg)
 				So(err, ShouldBeNil)
-				err = alarmAdapter.Insert(alarm2)
+				err = alarmAdapter.Insert(ctx, alarm2)
 				So(err, ShouldBeNil)
 
 				testEvent2.Alarm = &alarm2
@@ -435,12 +435,12 @@ func TestApply(t *testing.T) {
 				}
 
 				entity30 := types.NewEntity("testResource30/testComponent", "testResource", "resource", nil, nil, nil)
-				err = entityAdapter.Insert(entity30)
+				err = entityAdapter.Insert(ctx, entity30)
 				So(err, ShouldBeNil)
 
 				alarm3, err := types.NewAlarm(testEvent3, cfg)
 				So(err, ShouldBeNil)
-				err = alarmAdapter.Insert(alarm3)
+				err = alarmAdapter.Insert(ctx, alarm3)
 				So(err, ShouldBeNil)
 
 				testEvent3.Alarm = &alarm3
@@ -461,12 +461,12 @@ func TestApply(t *testing.T) {
 				}
 
 				entity40 := types.NewEntity("testResource40/testComponent", "testResource", "resource", nil, nil, nil)
-				err = entityAdapter.Insert(entity40)
+				err = entityAdapter.Insert(ctx, entity40)
 				So(err, ShouldBeNil)
 
 				alarm4, err := types.NewAlarm(testEvent4, cfg)
 				So(err, ShouldBeNil)
-				err = alarmAdapter.Insert(alarm4)
+				err = alarmAdapter.Insert(ctx, alarm4)
 				So(err, ShouldBeNil)
 
 				testEvent4.Alarm = &alarm4
@@ -513,12 +513,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity100 := types.NewEntity("testResource100/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity100)
+			err = entityAdapter.Insert(ctx, entity100)
 			So(err, ShouldBeNil)
 
 			alarm1, err := types.NewAlarm(testEvent1, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm1)
+			err = alarmAdapter.Insert(ctx, alarm1)
 			So(err, ShouldBeNil)
 
 			testEvent1.Alarm = &alarm1
@@ -540,12 +540,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity200 := types.NewEntity("testResource200/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity200)
+			err = entityAdapter.Insert(ctx, entity200)
 			So(err, ShouldBeNil)
 
 			alarm2, err := types.NewAlarm(testEvent2, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm2)
+			err = alarmAdapter.Insert(ctx, alarm2)
 			So(err, ShouldBeNil)
 
 			testEvent2.Alarm = &alarm2
@@ -568,12 +568,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity300 := types.NewEntity("testResource300/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity300)
+			err = entityAdapter.Insert(ctx, entity300)
 			So(err, ShouldBeNil)
 
 			alarm3, err := types.NewAlarm(testEvent3, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm3)
+			err = alarmAdapter.Insert(ctx, alarm3)
 			So(err, ShouldBeNil)
 
 			testEvent3.Alarm = &alarm3
@@ -595,12 +595,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity400 := types.NewEntity("testResource400/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity400)
+			err = entityAdapter.Insert(ctx, entity400)
 			So(err, ShouldBeNil)
 
 			alarm4, err := types.NewAlarm(testEvent4, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm4)
+			err = alarmAdapter.Insert(ctx, alarm4)
 			So(err, ShouldBeNil)
 
 			testEvent4.Alarm = &alarm4
@@ -652,12 +652,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity1000 := types.NewEntity("testResource1000/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity1000)
+			err = entityAdapter.Insert(ctx, entity1000)
 			So(err, ShouldBeNil)
 
 			alarm1, err := types.NewAlarm(testEvent1, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm1)
+			err = alarmAdapter.Insert(ctx, alarm1)
 			So(err, ShouldBeNil)
 
 			testEvent1.Alarm = &alarm1
@@ -679,12 +679,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity2000 := types.NewEntity("testResource2000/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity2000)
+			err = entityAdapter.Insert(ctx, entity2000)
 			So(err, ShouldBeNil)
 
 			alarm2, err := types.NewAlarm(testEvent2, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm2)
+			err = alarmAdapter.Insert(ctx, alarm2)
 			So(err, ShouldBeNil)
 
 			testEvent2.Alarm = &alarm2
@@ -707,12 +707,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity3000 := types.NewEntity("testResource3000/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity3000)
+			err = entityAdapter.Insert(ctx, entity3000)
 			So(err, ShouldBeNil)
 
 			alarm3, err := types.NewAlarm(testEvent3, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm3)
+			err = alarmAdapter.Insert(ctx, alarm3)
 			So(err, ShouldBeNil)
 
 			testEvent3.Alarm = &alarm3
@@ -734,12 +734,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity4000 := types.NewEntity("testResource4000/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity4000)
+			err = entityAdapter.Insert(ctx, entity4000)
 			So(err, ShouldBeNil)
 
 			alarm4, err := types.NewAlarm(testEvent4, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm4)
+			err = alarmAdapter.Insert(ctx, alarm4)
 			So(err, ShouldBeNil)
 
 			testEvent4.Alarm = &alarm4
@@ -787,12 +787,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity1 := types.NewEntity("testResource01/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity1)
+			err = entityAdapter.Insert(ctx, entity1)
 			So(err, ShouldBeNil)
 
 			alarm1, err := types.NewAlarm(testEvent1, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm1)
+			err = alarmAdapter.Insert(ctx, alarm1)
 			So(err, ShouldBeNil)
 
 			testEvent1.Alarm = &alarm1
@@ -805,7 +805,7 @@ func TestApply(t *testing.T) {
 			resolveTime := types.NewCpsTime(time.Now().Unix())
 			alarm1.Resolve(&resolveTime)
 
-			err = alarmAdapter.Update(alarm1)
+			err = alarmAdapter.Update(ctx, alarm1)
 			So(err, ShouldBeNil)
 
 			testEvent2 := types.Event{
@@ -821,12 +821,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity2 := types.NewEntity("testResource02/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity2)
+			err = entityAdapter.Insert(ctx, entity2)
 			So(err, ShouldBeNil)
 
 			alarm2, err := types.NewAlarm(testEvent2, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm2)
+			err = alarmAdapter.Insert(ctx, alarm2)
 			So(err, ShouldBeNil)
 
 			testEvent2.Alarm = &alarm2
@@ -849,12 +849,12 @@ func TestApply(t *testing.T) {
 			}
 
 			entity3 := types.NewEntity("testResource03/testComponent", "testResource", "resource", nil, nil, nil)
-			err = entityAdapter.Insert(entity3)
+			err = entityAdapter.Insert(ctx, entity3)
 			So(err, ShouldBeNil)
 
 			alarm3, err := types.NewAlarm(testEvent3, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm3)
+			err = alarmAdapter.Insert(ctx, alarm3)
 			So(err, ShouldBeNil)
 
 			testEvent3.Alarm = &alarm3
@@ -1017,7 +1017,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm1, err := types.NewAlarm(testEvent1, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm1)
+			err = alarmAdapter.Insert(ctx, alarm1)
 			So(err, ShouldBeNil)
 
 			testEvent1.Alarm = &alarm1
@@ -1037,7 +1037,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm2, err := types.NewAlarm(testEvent2, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm2)
+			err = alarmAdapter.Insert(ctx, alarm2)
 			So(err, ShouldBeNil)
 
 			testEvent2.Alarm = &alarm2
@@ -1058,7 +1058,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm3, err := types.NewAlarm(testEvent3, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm3)
+			err = alarmAdapter.Insert(ctx, alarm3)
 			So(err, ShouldBeNil)
 
 			testEvent3.Alarm = &alarm3
@@ -1078,7 +1078,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm4, err := types.NewAlarm(testEvent4, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm4)
+			err = alarmAdapter.Insert(ctx, alarm4)
 			So(err, ShouldBeNil)
 
 			testEvent4.Alarm = &alarm4
@@ -1099,7 +1099,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm5, err := types.NewAlarm(testEvent5, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm5)
+			err = alarmAdapter.Insert(ctx, alarm5)
 			So(err, ShouldBeNil)
 
 			testEvent5.Alarm = &alarm5
@@ -1119,7 +1119,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm6, err := types.NewAlarm(testEvent6, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm6)
+			err = alarmAdapter.Insert(ctx, alarm6)
 			So(err, ShouldBeNil)
 
 			testEvent6.Alarm = &alarm6
@@ -1140,7 +1140,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm7, err := types.NewAlarm(testEvent7, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm7)
+			err = alarmAdapter.Insert(ctx, alarm7)
 			So(err, ShouldBeNil)
 
 			testEvent7.Alarm = &alarm7
@@ -1160,7 +1160,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm8, err := types.NewAlarm(testEvent8, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm8)
+			err = alarmAdapter.Insert(ctx, alarm8)
 			So(err, ShouldBeNil)
 
 			testEvent8.Alarm = &alarm8
@@ -1202,7 +1202,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm1, err := types.NewAlarm(testEvent1, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm1)
+			err = alarmAdapter.Insert(ctx, alarm1)
 			So(err, ShouldBeNil)
 
 			testEvent1.Alarm = &alarm1
@@ -1222,7 +1222,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm2, err := types.NewAlarm(testEvent2, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm2)
+			err = alarmAdapter.Insert(ctx, alarm2)
 			So(err, ShouldBeNil)
 
 			testEvent2.Alarm = &alarm2
@@ -1243,7 +1243,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm3, err := types.NewAlarm(testEvent3, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm3)
+			err = alarmAdapter.Insert(ctx, alarm3)
 			So(err, ShouldBeNil)
 
 			testEvent3.Alarm = &alarm3
@@ -1263,7 +1263,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm4, err := types.NewAlarm(testEvent4, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm4)
+			err = alarmAdapter.Insert(ctx, alarm4)
 			So(err, ShouldBeNil)
 
 			testEvent4.Alarm = &alarm4
@@ -1284,7 +1284,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm5, err := types.NewAlarm(testEvent5, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm5)
+			err = alarmAdapter.Insert(ctx, alarm5)
 			So(err, ShouldBeNil)
 
 			testEvent5.Alarm = &alarm5
@@ -1304,7 +1304,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm6, err := types.NewAlarm(testEvent6, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm6)
+			err = alarmAdapter.Insert(ctx, alarm6)
 			So(err, ShouldBeNil)
 
 			testEvent6.Alarm = &alarm6
@@ -1325,7 +1325,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm7, err := types.NewAlarm(testEvent7, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm7)
+			err = alarmAdapter.Insert(ctx, alarm7)
 			So(err, ShouldBeNil)
 
 			testEvent7.Alarm = &alarm7
@@ -1345,7 +1345,7 @@ func TestApplyWithRate(t *testing.T) {
 
 			alarm8, err := types.NewAlarm(testEvent8, cfg)
 			So(err, ShouldBeNil)
-			err = alarmAdapter.Insert(alarm8)
+			err = alarmAdapter.Insert(ctx, alarm8)
 			So(err, ShouldBeNil)
 
 			testEvent8.Alarm = &alarm8

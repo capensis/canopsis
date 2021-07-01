@@ -32,7 +32,7 @@ func (c *ruleEntityCounter) CountTotalEntitiesAmount(ctx context.Context, rule R
 			filter = rule.Config.TotalEntityPatterns.AsMongoDriverQuery()
 		}
 
-		err := c.entityAdapter.GetIDs(filter, &ids)
+		err := c.entityAdapter.GetIDs(ctx, filter, &ids)
 		if err != nil {
 			c.logger.Err(err).Msgf("Failed to count entities for the %s rule", rule.ID)
 

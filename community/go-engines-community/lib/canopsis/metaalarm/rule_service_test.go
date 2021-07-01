@@ -135,7 +135,7 @@ func TestProcessAttributes(t *testing.T) {
 		entity := types.Entity{ID: testEvent.GetEID()}
 		So(err, ShouldBeNil)
 
-		err = alarmAdapter.Insert(alarm)
+		err = alarmAdapter.Insert(ctx, alarm)
 		So(err, ShouldBeNil)
 
 		testEvent.Alarm = &alarm
@@ -189,7 +189,7 @@ func TestProcessAttributes(t *testing.T) {
 		alarm, err = types.NewAlarm(testEvent, c)
 		So(err, ShouldBeNil)
 
-		err = alarmAdapter.Insert(alarm)
+		err = alarmAdapter.Insert(ctx, alarm)
 		So(err, ShouldBeNil)
 
 		testEvent.Alarm = &alarm

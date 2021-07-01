@@ -112,7 +112,7 @@ func (a ValueApplicator) Apply(ctx context.Context, event *types.Event, rule met
 						updated := false
 
 						for mongoRetries := maxRetries; mongoRetries >= 0 && !updated; mongoRetries-- {
-							metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, valuePath)
+							metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(ctx, rule.ID, valuePath)
 							switch err.(type) {
 							case errt.NotFound:
 								if mongoRetries == maxRetries {
@@ -249,7 +249,7 @@ func (a ValueApplicator) Apply(ctx context.Context, event *types.Event, rule met
 						updated := false
 
 						for mongoRetries := maxRetries; mongoRetries >= 0 && !updated; mongoRetries-- {
-							metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, valuePath)
+							metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(ctx, rule.ID, valuePath)
 							switch err.(type) {
 							case errt.NotFound:
 								if mongoRetries == maxRetries {
@@ -428,7 +428,7 @@ func (a ValueApplicator) createMetaAlarm(ctx context.Context, tx *redis.Tx, even
 	var children []types.AlarmWithEntity
 
 	alarmGroup, _ := a.storage.Get(ctx, tx, fmt.Sprintf("%s&&%s", rule.ID, valuePath))
-	err := a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(alarmGroup.GetAlarmIds(), &children)
+	err := a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, alarmGroup.GetAlarmIds(), &children)
 	if err != nil {
 		return types.Event{}, err
 	}
@@ -452,7 +452,7 @@ func (a ValueApplicator) getGroupLen(ctx context.Context, tx *redis.Tx, ruleKey 
 	}
 
 	// We need to check for resolved alarms here
-	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(alarmGroup.GetAlarmIds(), &children)
+	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, alarmGroup.GetAlarmIds(), &children)
 
 	return int64(len(children)), err
 }

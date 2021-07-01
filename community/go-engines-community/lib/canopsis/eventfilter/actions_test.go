@@ -204,7 +204,7 @@ func TestSetFieldProcessor_Apply_GivenInvalidData_ShouldReturnError(t *testing.T
 	event := types.Event{
 		State: 1,
 	}
-	event, err := processor.Apply(event, eventfilter.ActionParameters{}, &report)
+	_, err := processor.Apply(event, eventfilter.ActionParameters{}, &report)
 	if err == nil {
 		t.Errorf("expected error but nothing")
 	}
