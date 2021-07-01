@@ -184,7 +184,7 @@ export const formToMetaAlarmRule = (form = {}) => {
       const fields = ['threshold_type', thresholdField];
       const patternsKeys = ['alarm_patterns', 'entity_patterns', 'event_patterns', 'total_entity_patterns'];
 
-      if (isComplex) {
+      if (isComplex || isCorel) {
         fields.push('value_paths');
       }
 
