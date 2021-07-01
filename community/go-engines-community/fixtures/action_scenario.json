@@ -226,27 +226,5 @@
     "priority": 8,
     "created": 1605263992,
     "updated": 1605263992
-  },
-  {
-    "_id": "test-scenario-to-check-id",
-    "name": "test-scenario-to-check-id-name",
-    "author": "test-scenario-to-check-id-author",
-    "actions": [
-      {
-        "type": "ack",
-        "alarm_patterns": [
-          {
-            "_id": "test-scenario-to-check-id-alarm"
-          }
-        ],
-        "drop_scenario_if_not_matched": false,
-        "emit_trigger": false
-      }
-    ],
-    "triggers": ["create"],
-    "enabled": true,
-    "priority": 1,
-    "created": 1605263992,
-    "updated": 1605263992
   }
 ]
