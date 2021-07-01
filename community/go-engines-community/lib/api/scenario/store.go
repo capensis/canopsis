@@ -14,10 +14,10 @@ import (
 
 // Store is an interface for scenarios storage
 type Store interface {
-	Insert(ctx context.Context, r EditRequest) (*Scenario, error)
+	Insert(ctx context.Context, r CreateRequest) (*Scenario, error)
 	Find(ctx context.Context, q FilteredQuery) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*Scenario, error)
-	Update(ctx context.Context, r EditRequest) (*Scenario, error)
+	Update(ctx context.Context, r UpdateRequest) (*Scenario, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
@@ -96,10 +96,16 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Scenario, error) {
 }
 
 // Create new scenario.
-func (s *store) Insert(ctx context.Context, r EditRequest) (*Scenario, error) {
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) {
 	now := types.CpsTime{Time: time.Now()}
-	model := s.transformer.TransformEditRequestToModel(r)
-	model.ID = utils.NewID()
+	model := s.transformer.TransformEditRequestToModel(r.EditRequest)
+
+	if r.ID == "" {
+		r.ID = utils.NewID()
+	}
+
+	model.ID = r.ID
+
 	model.Created = now
 	model.Updated = now
 
@@ -112,9 +118,9 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Scenario, error) {
 }
 
 // Update scenario.
-func (s *store) Update(ctx context.Context, r EditRequest) (*Scenario, error) {
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) {
 	now := types.CpsTime{Time: time.Now()}
-	model := s.transformer.TransformEditRequestToModel(r)
+	model := s.transformer.TransformEditRequestToModel(r.EditRequest)
 	model.Updated = now
 
 	res, err := s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})

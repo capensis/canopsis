@@ -985,3 +985,101 @@ Feature: Create a scenario
       }
     }
     """
+
+  Scenario: given create request with custom_id should return ok
+    When I am admin
+    When I do POST /api/v4/scenarios:
+    """
+    {
+      "_id": "my_scenario",
+      "name": "my_scenario-name",
+      "enabled": true,
+      "priority": 987654,
+      "triggers": ["create"],
+      "actions": [
+        {
+          "alarm_patterns": [
+            {
+              "_id": "test-scenario-to-create-1-action-1-alarm"
+            }
+          ],
+          "entity_patterns": [
+            {
+              "name": "test-scenario-to-create-1-action-1-resource"
+            }
+          ],
+          "type": "snooze",
+          "parameters": {
+            "output": "test-scenario-to-create-1-action-1-output",
+            "duration": {
+              "seconds": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """
+    {
+      "_id": "my_scenario"
+    }
+    """
+    When I do GET /api/v4/scenarios/my_scenario
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "_id": "my_scenario"
+    }
+    """
+
+  Scenario: given create request with custom_id should be failed, because of existing id
+    When I am admin
+    When I do POST /api/v4/scenarios:
+    """
+    {
+      "_id": "test-scenario-to-check-id",
+      "name": "my_scenario-name",
+      "enabled": true,
+      "priority": 987653,
+      "triggers": ["create"],
+      "actions": [
+        {
+          "alarm_patterns": [
+            {
+              "_id": "test-scenario-to-create-1-action-1-alarm"
+            }
+          ],
+          "entity_patterns": [
+            {
+              "name": "test-scenario-to-create-1-action-1-resource"
+            }
+          ],
+          "type": "snooze",
+          "parameters": {
+            "output": "test-scenario-to-create-1-action-1-output",
+            "duration": {
+              "seconds": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "_id": "ID already exists."
+      }
+    }
+    """
