@@ -124,44 +124,8 @@ var doc = `{
                         "in": "query"
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "exclude_instruction_types",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "exclude_instructions",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "filter",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "include_instruction_types",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "include_instructions",
                         "in": "query"
                     },
                     {
@@ -192,6 +156,16 @@ var doc = `{
                     {
                         "type": "integer",
                         "name": "tstop",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "with_instructions",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "without_instructions",
                         "in": "query"
                     }
                 ],
@@ -232,129 +206,13 @@ var doc = `{
                 "operationId": "alarms-export-start",
                 "parameters": [
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "active_columns[]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "category",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "correlation",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "exclude_instruction_types",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "exclude_instructions",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "filter",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "include_instruction_types",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "include_instructions",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "manual",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "opened",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "resolved",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "separator",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort_dir",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort_key",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "time_format",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "tstart",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "tstop",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "with_consequences",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "with_instructions",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "with_steps",
-                        "in": "query"
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/alarm.ExportRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -516,44 +374,8 @@ var doc = `{
                         "in": "query"
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "exclude_instruction_types",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "exclude_instructions",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "filter",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "include_instruction_types",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "include_instructions",
                         "in": "query"
                     },
                     {
@@ -617,13 +439,18 @@ var doc = `{
                         "in": "query"
                     },
                     {
-                        "type": "boolean",
+                        "type": "string",
                         "name": "with_instructions",
                         "in": "query"
                     },
                     {
                         "type": "boolean",
                         "name": "with_steps",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "without_instructions",
                         "in": "query"
                     }
                 ],
@@ -2106,43 +1933,13 @@ var doc = `{
                 "operationId": "entities-export-start",
                 "parameters": [
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "active_columns[]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "category",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "filter",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "separator",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort_by",
-                        "in": "query"
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.ExportRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -3869,129 +3666,6 @@ var doc = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/notification": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Get notification settings",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "notification"
-                ],
-                "summary": "Get notification settings",
-                "operationId": "notification-get",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "current page",
-                        "name": "page",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "items per page",
-                        "name": "limit",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/common.PaginatedListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/notification.Notification"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Update notification settings",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "notification"
-                ],
-                "summary": "Update notification settings",
-                "operationId": "notification-update",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "type id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/notification.Notification"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/notification.Notification"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
                         }
                     }
                 }
@@ -6576,12 +6250,6 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "role permission",
-                        "name": "permission",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "sort query",
                         "name": "sort_by",
                         "in": "query"
@@ -7689,12 +7357,6 @@ var doc = `{
                         "additionalProperties": true
                     }
                 },
-                "is_all_auto_instructions_completed": {
-                    "type": "boolean"
-                },
-                "is_auto_instruction_running": {
-                    "type": "boolean"
-                },
                 "links": {
                     "type": "object",
                     "additionalProperties": true
@@ -7981,44 +7643,18 @@ var doc = `{
         "alarm.ExportRequest": {
             "type": "object",
             "properties": {
-                "active_columns[]": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "category": {
                     "type": "string"
                 },
                 "correlation": {
                     "type": "boolean"
                 },
-                "exclude_instruction_types": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "exclude_instructions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "fields": {
+                    "type": "object",
+                    "$ref": "#/definitions/export.Fields"
                 },
                 "filter": {
                     "type": "string"
-                },
-                "include_instruction_types": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "include_instructions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 },
                 "manual": {
                     "type": "boolean"
@@ -8035,12 +7671,6 @@ var doc = `{
                 "separator": {
                     "type": "string"
                 },
-                "sort_dir": {
-                    "type": "string"
-                },
-                "sort_key": {
-                    "type": "string"
-                },
                 "time_format": {
                     "type": "string"
                 },
@@ -8054,10 +7684,13 @@ var doc = `{
                     "type": "boolean"
                 },
                 "with_instructions": {
-                    "type": "boolean"
+                    "type": "string"
                 },
                 "with_steps": {
                     "type": "boolean"
+                },
+                "without_instructions": {
+                    "type": "string"
                 }
             }
         },
@@ -8087,32 +7720,8 @@ var doc = `{
                 "correlation": {
                     "type": "boolean"
                 },
-                "exclude_instruction_types": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "exclude_instructions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "filter": {
                     "type": "string"
-                },
-                "include_instruction_types": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "include_instructions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 },
                 "manual": {
                     "type": "boolean"
@@ -8131,6 +7740,12 @@ var doc = `{
                 },
                 "tstop": {
                     "type": "integer"
+                },
+                "with_instructions": {
+                    "type": "string"
+                },
+                "without_instructions": {
+                    "type": "string"
                 }
             }
         },
@@ -8176,32 +7791,8 @@ var doc = `{
                 "correlation": {
                     "type": "boolean"
                 },
-                "exclude_instruction_types": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "exclude_instructions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "filter": {
                     "type": "string"
-                },
-                "include_instruction_types": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "include_instructions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 },
                 "limit": {
                     "type": "integer"
@@ -8240,10 +7831,13 @@ var doc = `{
                     "type": "boolean"
                 },
                 "with_instructions": {
-                    "type": "boolean"
+                    "type": "string"
                 },
                 "with_steps": {
                     "type": "boolean"
+                },
+                "without_instructions": {
+                    "type": "string"
                 }
             }
         },
@@ -8303,6 +7897,9 @@ var doc = `{
                 "footer": {
                     "type": "string"
                 },
+                "jobexecutorfetchtimeoutseconds": {
+                    "type": "integer"
+                },
                 "language": {
                     "type": "string"
                 },
@@ -8345,21 +7942,27 @@ var doc = `{
             "type": "object",
             "properties": {
                 "casconfig": {
-                    "type": "object"
+                    "type": "object",
+                    "$ref": "#/definitions/appinfo.LoginConfigMethod"
                 },
                 "ldapconfig": {
                     "type": "object",
-                    "properties": {
-                        "enable": {
-                            "type": "boolean"
-                        }
-                    }
+                    "$ref": "#/definitions/appinfo.LoginConfigMethod"
                 },
-                "providers": {
+                "saml2config": {
                     "type": "object",
-                    "additionalProperties": {
-                        "type": "integer"
-                    }
+                    "$ref": "#/definitions/appinfo.LoginConfigMethod"
+                }
+            }
+        },
+        "appinfo.LoginConfigMethod": {
+            "type": "object",
+            "properties": {
+                "enable": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },
@@ -8716,19 +8319,6 @@ var doc = `{
                             "$ref": "#/definitions/types.DurationWithEnabled"
                         }
                     }
-                },
-                "remediation": {
-                    "type": "object",
-                    "properties": {
-                        "accumulate_after": {
-                            "type": "object",
-                            "$ref": "#/definitions/types.DurationWithEnabled"
-                        },
-                        "delete_after": {
-                            "type": "object",
-                            "$ref": "#/definitions/types.DurationWithEnabled"
-                        }
-                    }
                 }
             }
         },
@@ -8749,9 +8339,6 @@ var doc = `{
             "type": "object",
             "properties": {
                 "junit": {
-                    "type": "integer"
-                },
-                "remediation": {
                     "type": "integer"
                 }
             }
@@ -8821,14 +8408,12 @@ var doc = `{
         "entity.ExportRequest": {
             "type": "object",
             "properties": {
-                "active_columns[]": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "category": {
                     "type": "string"
+                },
+                "fields": {
+                    "type": "object",
+                    "$ref": "#/definitions/export.Fields"
                 },
                 "filter": {
                     "type": "string"
@@ -8837,12 +8422,6 @@ var doc = `{
                     "type": "string"
                 },
                 "separator": {
-                    "type": "string"
-                },
-                "sort": {
-                    "type": "string"
-                },
-                "sort_by": {
                     "type": "string"
                 }
             }
@@ -9312,6 +8891,23 @@ var doc = `{
                 }
             }
         },
+        "export.Field": {
+            "type": "object",
+            "properties": {
+                "label": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "export.Fields": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/export.Field"
+            }
+        },
         "heartbeat.BulkDeleteRequest": {
             "type": "object",
             "required": [
@@ -9535,6 +9131,7 @@ var doc = `{
         "idlerule.EditRequest": {
             "type": "object",
             "required": [
+                "author",
                 "duration",
                 "enabled",
                 "name",
@@ -9548,6 +9145,9 @@ var doc = `{
                 "alarm_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "author": {
+                    "type": "string"
                 },
                 "description": {
                     "type": "string"
@@ -9712,31 +9312,6 @@ var doc = `{
                 },
                 "received": {
                     "type": "integer"
-                }
-            }
-        },
-        "notification.InstructionNotification": {
-            "type": "object",
-            "required": [
-                "rate",
-                "rate_frequency"
-            ],
-            "properties": {
-                "rate": {
-                    "type": "boolean"
-                },
-                "rate_frequency": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.DurationWithUnit"
-                }
-            }
-        },
-        "notification.Notification": {
-            "type": "object",
-            "properties": {
-                "instruction": {
-                    "type": "object",
-                    "$ref": "#/definitions/notification.InstructionNotification"
                 }
             }
         },
@@ -11613,17 +11188,13 @@ var doc = `{
                 "a": {
                     "type": "string"
                 },
-                "exec": {
-                    "description": "Execution contains id if instruction execution for instruction steps only.",
-                    "type": "string"
-                },
                 "initiator": {
                     "type": "string"
                 },
                 "m": {
                     "type": "string"
                 },
-                "pbehavior_canonical_type": {
+                "pbehaviorCanonicalType": {
                     "type": "string"
                 },
                 "role": {

@@ -119,8 +119,8 @@ export default {
       }
     },
 
-    async createAlarmsListExport({ commit }, { widgetId, params }) {
-      const exportData = await request.post(API_ROUTES.alarmListExport, {}, { params });
+    async createAlarmsListExport({ commit }, { widgetId, data = {} }) {
+      const exportData = await request.post(API_ROUTES.alarmListExport, data);
 
       commit(types.EXPORT_LIST_COMPLETED, {
         widgetId,
