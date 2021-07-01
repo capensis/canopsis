@@ -11,7 +11,7 @@ ifndef VERBOSE
 .SILENT:
 endif
 
-.PHONY: init test release clean full_clean build
+.PHONY: test release clean full_clean test build docker_images docker_test_image docker_release help
 
 .iter_project:
 	@for dir in $(SUBDIRS) ; do \
@@ -33,11 +33,7 @@ clean: .iter_project
 full_clean: RULE = clean
 full_clean: .iter_project
 
-init: 
-	@echo "Init is deprecated and no longer needed to build"
-
-
-test: 
+test:
 	@echo "Running tests"
 	go build -o "${BUILD_OUTPUT_DIR}/ready" ./cmd/ready
 	"${BUILD_OUTPUT_DIR}/ready" -retries 0 -timeout 2m
@@ -78,7 +74,6 @@ docker_release:
 
 help:
 	@echo "Available targets: "
-	@echo "   init: download go dependancies."
 	@echo "   build: Builds the binary for production and writes the checksums of the generated file"
 	@echo "   test: run test"
 	@echo "   release: performs tests, build and creates an archive ready for deployment"
