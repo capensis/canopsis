@@ -121,6 +121,10 @@ export const metaAlarmRuleToForm = (rule = {}) => {
       total_entity_patterns: config.total_entity_patterns ? cloneDeep(config.total_entity_patterns) : [],
       threshold_rate: config.threshold_rate ? config.threshold_rate * 100 : 100,
       threshold_count: config.threshold_count || 1,
+      corel_id: config.corel_id || '',
+      corel_status: config.corel_status || '',
+      corel_parent: config.corel_parent || '',
+      corel_child: config.corel_child || '',
       threshold_type: isNumber(config.threshold_count)
         ? META_ALARMS_THRESHOLD_TYPES.thresholdCount
         : META_ALARMS_THRESHOLD_TYPES.thresholdRate,
@@ -150,12 +154,14 @@ export const formToMetaAlarmRule = (form = {}) => {
       );
       break;
     }
+    case META_ALARMS_RULE_TYPES.corel:
     case META_ALARMS_RULE_TYPES.complex:
     case META_ALARMS_RULE_TYPES.valuegroup: {
       const isComplex = form.type === META_ALARMS_RULE_TYPES.complex;
       const isValueGroup = form.type === META_ALARMS_RULE_TYPES.valuegroup;
+      const isCorel = form.type === META_ALARMS_RULE_TYPES.corel;
 
-      const thresholdField = form.config.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount
+      const thresholdField = isCorel || form.config.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount
         ? 'threshold_rate'
         : 'threshold_count';
 
