@@ -67,6 +67,10 @@ definitions:
           additionalProperties: true
           type: object
         type: object
+      is_all_auto_instructions_completed:
+        type: boolean
+      is_auto_instruction_running:
+        type: boolean
       links:
         additionalProperties: true
         type: object
@@ -264,11 +268,27 @@ definitions:
         type: string
       correlation:
         type: boolean
+      exclude_instruction_types:
+        items:
+          type: integer
+        type: array
+      exclude_instructions:
+        items:
+          type: string
+        type: array
       fields:
         $ref: '#/definitions/export.Fields'
         type: object
       filter:
         type: string
+      include_instruction_types:
+        items:
+          type: integer
+        type: array
+      include_instructions:
+        items:
+          type: string
+        type: array
       manual:
         type: boolean
       opened:
@@ -287,12 +307,8 @@ definitions:
         type: integer
       with_consequences:
         type: boolean
-      with_instructions:
-        type: string
       with_steps:
         type: boolean
-      without_instructions:
-        type: string
     type: object
   alarm.ExportResponse:
     properties:
@@ -311,8 +327,24 @@ definitions:
         type: string
       correlation:
         type: boolean
+      exclude_instruction_types:
+        items:
+          type: integer
+        type: array
+      exclude_instructions:
+        items:
+          type: string
+        type: array
       filter:
         type: string
+      include_instruction_types:
+        items:
+          type: integer
+        type: array
+      include_instructions:
+        items:
+          type: string
+        type: array
       manual:
         type: boolean
       opened:
@@ -325,10 +357,6 @@ definitions:
         type: integer
       tstop:
         type: integer
-      with_instructions:
-        type: string
-      without_instructions:
-        type: string
     type: object
   alarm.InstructionWithAlarms:
     properties:
@@ -358,8 +386,24 @@ definitions:
         type: string
       correlation:
         type: boolean
+      exclude_instruction_types:
+        items:
+          type: integer
+        type: array
+      exclude_instructions:
+        items:
+          type: string
+        type: array
       filter:
         type: string
+      include_instruction_types:
+        items:
+          type: integer
+        type: array
+      include_instructions:
+        items:
+          type: string
+        type: array
       limit:
         type: integer
       manual:
@@ -385,11 +429,9 @@ definitions:
       with_consequences:
         type: boolean
       with_instructions:
-        type: string
+        type: boolean
       with_steps:
         type: boolean
-      without_instructions:
-        type: string
     type: object
   alarm.MetaAlarmRule:
     properties:
@@ -428,8 +470,6 @@ definitions:
         type: string
       footer:
         type: string
-      jobexecutorfetchtimeoutseconds:
-        type: integer
       language:
         type: string
       login_page_description:
@@ -710,6 +750,15 @@ definitions:
             $ref: '#/definitions/types.DurationWithEnabled'
             type: object
         type: object
+      remediation:
+        properties:
+          accumulate_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+        type: object
     type: object
   datastorage.DataStorage:
     properties:
@@ -723,6 +772,8 @@ definitions:
   datastorage.History:
     properties:
       junit:
+        type: integer
+      remediation:
         type: integer
     type: object
   entity.Entity:
@@ -1263,8 +1314,6 @@ definitions:
       alarm_patterns:
         $ref: '#/definitions/pattern.AlarmPatternList'
         type: object
-      author:
-        type: string
       description:
         type: string
       disable_during_periods:
@@ -1289,7 +1338,6 @@ definitions:
       type:
         type: string
     required:
-    - author
     - duration
     - enabled
     - name
@@ -1386,6 +1434,23 @@ definitions:
         type: integer
       received:
         type: integer
+    type: object
+  notification.InstructionNotification:
+    properties:
+      rate:
+        type: boolean
+      rate_frequency:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+    required:
+    - rate
+    - rate_frequency
+    type: object
+  notification.Notification:
+    properties:
+      instruction:
+        $ref: '#/definitions/notification.InstructionNotification'
+        type: object
     type: object
   pattern.AlarmPattern:
     properties:
@@ -2844,11 +2909,15 @@ definitions:
         type: string
       a:
         type: string
+      exec:
+        description: Execution contains id if instruction execution for instruction
+          steps only.
+        type: string
       initiator:
         type: string
       m:
         type: string
-      pbehaviorCanonicalType:
+      pbehavior_canonical_type:
         type: string
       role:
         type: string
@@ -3449,9 +3518,33 @@ paths:
       - in: query
         name: correlation
         type: boolean
+      - collectionFormat: multi
+        in: query
+        items:
+          type: integer
+        name: exclude_instruction_types
+        type: array
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: exclude_instructions
+        type: array
       - in: query
         name: filter
         type: string
+      - collectionFormat: multi
+        in: query
+        items:
+          type: integer
+        name: include_instruction_types
+        type: array
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: include_instructions
+        type: array
       - in: query
         name: manual
         type: boolean
@@ -3470,12 +3563,6 @@ paths:
       - in: query
         name: tstop
         type: integer
-      - in: query
-        name: with_instructions
-        type: string
-      - in: query
-        name: without_instructions
-        type: string
       produces:
       - application/json
       responses:
@@ -3602,9 +3689,33 @@ paths:
       - in: query
         name: correlation
         type: boolean
+      - collectionFormat: multi
+        in: query
+        items:
+          type: integer
+        name: exclude_instruction_types
+        type: array
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: exclude_instructions
+        type: array
       - in: query
         name: filter
         type: string
+      - collectionFormat: multi
+        in: query
+        items:
+          type: integer
+        name: include_instruction_types
+        type: array
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: include_instructions
+        type: array
       - in: query
         name: limit
         type: integer
@@ -3643,13 +3754,10 @@ paths:
         type: boolean
       - in: query
         name: with_instructions
-        type: string
+        type: boolean
       - in: query
         name: with_steps
         type: boolean
-      - in: query
-        name: without_instructions
-        type: string
       produces:
       - application/json
       responses:
@@ -5631,6 +5739,81 @@ paths:
       summary: Find message rate stats
       tags:
       - message-rate-stats
+  /notification:
+    get:
+      consumes:
+      - application/json
+      description: Get notification settings
+      operationId: notification-get
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/notification.Notification'
+                  type: array
+              type: object
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get notification settings
+      tags:
+      - notification
+    put:
+      consumes:
+      - application/json
+      description: Update notification settings
+      operationId: notification-update
+      parameters:
+      - description: type id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/notification.Notification'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/notification.Notification'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Update notification settings
+      tags:
+      - notification
   /pbehavior-comments:
     post:
       consumes:
@@ -7217,6 +7400,10 @@ paths:
       - description: sort query
         in: query
         name: sort
+        type: string
+      - description: role permission
+        in: query
+        name: permission
         type: string
       - description: sort query
         in: query
