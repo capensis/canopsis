@@ -170,6 +170,10 @@ export const EVENT_ENTITY_TYPES = {
   instructionJobComplete: 'instructionjobcomplete',
   instructionJobAbort: 'instructionjobabort',
   instructionJobFail: 'instructionjobfail',
+  autoInstructionStart: 'autoinstructionstart',
+  autoInstructionComplete: 'autoinstructioncomplete',
+  autoInstructionFail: 'autoinstructionfail',
+  autoInstructionAlreadyRunning: 'autoinstructionalreadyrunning',
   junitTestSuiteUpdate: 'junittestsuiteupdate',
   junitTestCaseUpdate: 'junittestcaseupdate',
 };
@@ -465,6 +469,18 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'assignment',
   },
   [EVENT_ENTITY_TYPES.instructionJobFail]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.autoInstructionStart]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.autoInstructionComplete]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.autoInstructionFail]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: {
     icon: 'assignment',
   },
   [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: {

@@ -4,6 +4,7 @@
     v-flex(v-else, offset-xs1, md10)
       v-form(@submit.prevent="submit")
         notifications-settings-form(v-model="form")
+        v-divider.mt-3
         v-layout.mt-3(row, justify-end)
           v-btn.primary.mr-0(
             :disabled="isDisabled",

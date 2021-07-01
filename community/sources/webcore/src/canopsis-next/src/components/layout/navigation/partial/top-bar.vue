@@ -18,16 +18,14 @@
     v-spacer
     portal-target(:name="$constants.PORTALS_NAMES.additionalTopBarItems")
     v-toolbar-items
-      top-bar-menu(:title="$tc('common.notification', 2)", :links="notificationLinks")
       top-bar-exploitation-menu
       top-bar-administration-menu
+      top-bar-notifications-menu
       top-bar-user-menu
     groups-top-bar(v-if="isShownGroupsTopBar", slot="extension")
 </template>
 
 <script>
-import { USERS_PERMISSIONS } from '@/constants';
-
 import { authMixin } from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -37,8 +35,8 @@ import ActiveSessionsCount from './active-sessions-count.vue';
 import GroupsTopBar from './groups-top-bar/groups-top-bar.vue';
 import TopBarExploitationMenu from './top-bar-exploitation-menu.vue';
 import TopBarAdministrationMenu from './top-bar-administration-menu.vue';
+import TopBarNotificationsMenu from './top-bar-notifications-menu.vue';
 import TopBarUserMenu from './top-bar-user-menu.vue';
-import TopBarMenu from './top-bar-menu.vue';
 
 /**
  * Component for the top bar of the application
@@ -53,25 +51,13 @@ export default {
     GroupsTopBar,
     TopBarExploitationMenu,
     TopBarAdministrationMenu,
+    TopBarNotificationsMenu,
     TopBarUserMenu,
-    TopBarMenu,
   },
   mixins: [
     authMixin,
     entitiesInfoMixin,
   ],
-  computed: {
-    notificationLinks() {
-      return [
-        {
-          route: { name: 'notification-instruction-stats' },
-          title: this.$t('common.instructionRating'),
-          icon: 'star_half',
-          permission: USERS_PERMISSIONS.technical.notification.instructionStats,
-        },
-      ].filter(({ permission }) => this.checkAppInfoAccessByPermission(permission) && this.checkReadAccess(permission));
-    },
-  },
 };
 </script>
 

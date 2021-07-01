@@ -18,13 +18,10 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MAX_LIMIT } from '@/constants';
 
-import formBaseMixin from '@/mixins/form/base';
-
 const { mapActions } = createNamespacedHelpers('role');
 
 export default {
   inject: ['$validator'],
-  mixins: [formBaseMixin],
   props: {
     value: {
       type: [Object, String],

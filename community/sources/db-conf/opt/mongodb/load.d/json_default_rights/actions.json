@@ -1408,19 +1408,5 @@
         "crecord_name": "api_instruction_approve",
         "crecord_type": "action",
         "desc": "Instruction approve"
-    },
-    {
-        "_id": "api_datastorage_read",
-        "loader_id": "api_datastorage_read",
-        "crecord_name": "api_datastorage_read",
-        "crecord_type": "action",
-        "desc": "Data storage settings read"
-    },
-    {
-        "_id": "api_datastorage_update",
-        "loader_id": "api_datastorage_update",
-        "crecord_name": "api_datastorage_update",
-        "crecord_type": "action",
-        "desc": "Data storage settings update"
     }
 ]

@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-menu(v-show="administrationGroupedLinks.length", bottom, offset-y, offset-x)
+  v-menu(v-show="administrationGroupedLinks.length", bottom, offset-y)
     v-btn.white--text(slot="activator", flat) {{ $t('common.administration') }}
     v-list.py-0
       template(v-for="(group, index) in administrationGroupedLinks")
@@ -66,13 +66,13 @@ export default {
         },
         {
           route: { name: 'admin-roles' },
-          title: this.$t('common.roles'),
+          title: this.$tc('common.role', 2),
           icon: 'supervised_user_circle',
           permission: USERS_PERMISSIONS.technical.role,
         },
         {
           route: { name: 'admin-users' },
-          title: this.$t('common.users'),
+          title: this.$tc('common.user', 2),
           icon: 'people',
           permission: USERS_PERMISSIONS.technical.user,
         },
@@ -135,7 +135,7 @@ export default {
     linksFilterHandler({ permission } = {}) {
       return this.permissionsWithDefaultType.includes(permission)
         ? this.checkAccess(permission)
-        : this.checkAppInfoAccessByRight(permission) && this.checkReadAccess(permission);
+        : this.checkAppInfoAccessByPermission(permission) && this.checkReadAccess(permission);
     },
   },
 };
