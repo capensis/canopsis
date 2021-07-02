@@ -13,7 +13,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { ENTITIES_TYPES, WIDGET_TYPES } from '@/constants';
 
-import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 
 import { authMixin } from '@/mixins/auth';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
@@ -51,7 +51,7 @@ export default {
       const widget = this.getEntityItem(ENTITIES_TYPES.widget, this.widgetId);
 
       return !widget || widget.type !== WIDGET_TYPES.alarmList
-        ? alarmListWidgetToForm()
+        ? generateDefaultAlarmListWidget()
         : widget;
     },
 
