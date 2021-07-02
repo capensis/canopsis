@@ -10,7 +10,7 @@ import {
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
-import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
 import queryMixin from '@/mixins/query';
@@ -167,7 +167,7 @@ export default {
     },
 
     showHistoryModal() {
-      const widget = alarmListWidgetToForm();
+      const widget = generateDefaultAlarmListWidget();
 
       const filter = { $and: [{ 'entity._id': get(this.item, 'entity._id') }] };
       const entityFilter = {

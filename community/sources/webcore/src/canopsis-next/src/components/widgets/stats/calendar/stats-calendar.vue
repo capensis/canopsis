@@ -33,7 +33,7 @@ import { Calendar, Units } from 'dayspan';
 import { DATETIME_FORMATS, MODALS, MAX_LIMIT } from '@/constants';
 
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/dayspan';
-import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
@@ -154,7 +154,7 @@ export default {
     },
 
     showAlarmsListModal(meta) {
-      const widget = alarmListWidgetToForm();
+      const widget = generateDefaultAlarmListWidget();
 
       const widgetParameters = {
         ...this.widget.parameters.alarmsList,

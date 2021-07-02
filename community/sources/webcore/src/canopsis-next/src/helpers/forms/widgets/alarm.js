@@ -214,7 +214,7 @@ const alarmListWidgetParametersToForm = (parameters = {}) => ({
  * @param {AlarmListWidget} [alarmListWidget = {}]
  * @returns {AlarmListWidgetForm}
  */
-export const alarmListWidgetToForm = (alarmListWidget = {}) => {
+export const alarmListWidgetToForm = (alarmListWidget = { type: WIDGET_TYPES.alarmList }) => {
   const widget = widgetToForm(alarmListWidget);
 
   return {
@@ -223,6 +223,13 @@ export const alarmListWidgetToForm = (alarmListWidget = {}) => {
     parameters: alarmListWidgetParametersToForm(alarmListWidget.parameters),
   };
 };
+
+/**
+ * Generate alarm list widget with default parameters.
+ *
+ * @return {AlarmListWidgetForm}
+ */
+export const generateDefaultAlarmListWidget = () => alarmListWidgetToForm();
 
 /**
  * Convert form sort parameters to widget sort

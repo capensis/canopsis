@@ -32,7 +32,7 @@ import {
   TEST_SUITE_COLORS,
 } from '@/constants';
 
-import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -75,7 +75,7 @@ export default {
     },
 
     showAlarmListModal() {
-      const widget = alarmListWidgetToForm();
+      const widget = generateDefaultAlarmListWidget();
 
       const testSuiteFilter = {
         title: this.testSuite.name,

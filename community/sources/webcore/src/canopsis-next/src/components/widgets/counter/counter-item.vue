@@ -33,7 +33,7 @@ import {
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';
@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     async showAlarmListModal() {
-      const widget = alarmListWidgetToForm();
+      const widget = generateDefaultAlarmListWidget();
 
       widget.parameters = {
         ...widget.parameters,

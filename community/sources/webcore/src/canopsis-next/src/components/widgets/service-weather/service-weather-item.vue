@@ -44,7 +44,7 @@ import {
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 import { getEntityColor } from '@/helpers/color';
 
 import { authMixin } from '@/mixins/auth';
@@ -190,7 +190,7 @@ export default {
 
     async showAlarmListModal() {
       try {
-        const widget = alarmListWidgetToForm();
+        const widget = generateDefaultAlarmListWidget();
 
         const filter = { $and: [{ 'entity.impact': this.service._id }] };
 
