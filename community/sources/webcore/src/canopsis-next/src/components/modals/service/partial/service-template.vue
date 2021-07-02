@@ -101,7 +101,7 @@ export default {
           :widget-parameters="widgetParameters"
           entity-name-field="${entityNameField}"
           @add:event="addEventToQueue"
-        />
+        ></service-entities-wrapper>
       `);
     });
   },
