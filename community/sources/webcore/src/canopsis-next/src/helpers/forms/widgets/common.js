@@ -61,7 +61,7 @@ import { generateWidgetId } from '@/helpers/entities';
  * @returns {WidgetForm}
  */
 export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
-  _id: widget._id || generateWidgetId(),
+  _id: widget._id || generateWidgetId(widget.type),
   type: widget.type,
   title: widget.title || '',
   parameters: widget.parameters ? cloneDeep(widget.parameters) : {},
