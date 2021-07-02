@@ -180,7 +180,12 @@ export default {
   },
   methods: {
     isActionDisabled(action) {
-      return this.clickedActions.includes(action);
+      const SERVICE_ENTITY_EVENT_TYPES_TO_EVENT_ENTITY_TYPES = {
+        [EVENT_ENTITY_TYPES.validate]: EVENT_ENTITY_TYPES.changeState,
+        [EVENT_ENTITY_TYPES.invalidate]: EVENT_ENTITY_TYPES.cancel,
+      };
+
+      return this.clickedActions.includes(SERVICE_ENTITY_EVENT_TYPES_TO_EVENT_ENTITY_TYPES[action] || action);
     },
 
     showPbehaviorsListModal() {
