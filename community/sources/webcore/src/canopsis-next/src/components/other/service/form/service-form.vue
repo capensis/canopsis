@@ -28,7 +28,7 @@
         v-flex
           c-enabled-field(v-field="form.enabled")
     v-tabs(slider-color="primary", centered)
-      v-tab(:class="{ 'error--text': errors.has('entity_patterns') }") {{ $tc('common.pattern') }}
+      v-tab(:class="{ 'error--text': errors.has('entity_patterns') }") {{ $tc('common.entityPatterns') }}
       v-tab-item
         patterns-list(v-field="form.entity_patterns", v-validate="'required'", name="entity_patterns")
       v-tab.validation-header(:disabled="advancedJsonWasChanged") {{ $t('entity.fields.manageInfos') }}
