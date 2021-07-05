@@ -1,4 +1,4 @@
-Feature: correlation feature - corel use case
+Feature: correlation feature - corel rule
 
   Scenario: given meta alarm rule and events should create meta alarm
     Given I am admin
