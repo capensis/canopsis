@@ -161,13 +161,17 @@ func TestAddChildToMetaAlarm(t *testing.T) {
 	existedChild := types.Alarm{EntityID: "existed-child"}
 	existedChild.Value.Parents = []string{"metaalarm"}
 
-	metaAlarm := types.Alarm{EntityID: "metaalarm"}
-	metaAlarm.Value.Children = []string{"existed-child"}
-	metaAlarm.Value.Connector = "meta-alarm-connector"
-	metaAlarm.Value.ConnectorName = "meta-alarm-connector-name"
-	metaAlarm.Value.Component = "meta-alarm-component"
-	metaAlarm.Value.Resource = "meta-alarm-resource"
-	metaAlarm.Value.Meta = rule.ID
+	metaAlarm := types.Alarm{
+		EntityID: "metaalarm",
+		Value: types.AlarmValue{
+			Children: []string{"existed-child"},
+			Connector: "meta-alarm-connector",
+			ConnectorName: "meta-alarm-connector-name",
+			Component: "meta-alarm-component",
+			Resource: "meta-alarm-resource",
+			Meta: rule.ID,
+		},
+	}
 
 	newChild := types.Alarm{EntityID: "new-child"}
 	newChildWithEntity := types.AlarmWithEntity{
@@ -279,6 +283,66 @@ func TestAddChildToMetaAlarm(t *testing.T) {
 	}
 }
 
+func TestAddChildToMetaAlarmComponent(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
+	alarmConfigProviderMock := mock_config.NewMockAlarmConfigProvider(ctrl)
+
+	s := service.NewMetaAlarmService(alarmAdapterMock, alarmConfigProviderMock, log.NewTestLogger())
+
+	rule := metaalarm.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
+	event := types.Event{
+		Timestamp: types.NewCpsTime(time.Now().Unix()),
+		Author:    "test",
+		State:     types.CpsNumber(1),
+	}
+
+	existedChild := types.Alarm{EntityID: "existed-child"}
+	existedChild.Value.Parents = []string{"metaalarm"}
+
+	metaAlarm := types.Alarm{
+		EntityID: "metaalarm",
+		Value: types.AlarmValue{
+			Children: []string{"existed-child"},
+			Connector: "meta-alarm-connector",
+			ConnectorName: "meta-alarm-connector-name",
+			Component: "meta-alarm-component",
+			Meta: rule.ID,
+		},
+	}
+
+	newChild := types.Alarm{EntityID: "new-child"}
+	newChildWithEntity := types.AlarmWithEntity{
+		Alarm: newChild,
+		Entity: types.Entity{ID: newChild.EntityID},
+	}
+
+	expectedUpdates := []types.Alarm{newChild, metaAlarm}
+	alarmAdapterMock.
+		EXPECT().
+		PartialMassUpdateOpen(gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, alarms []types.Alarm) error {
+			for idx, alarm := range alarms {
+				if alarm.EntityID != expectedUpdates[idx].EntityID {
+					t.Errorf("expected %v, but got %v", expectedUpdates[idx].EntityID, alarm.EntityID)
+				}
+			}
+
+			return nil
+		})
+	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(int64(2), nil)
+
+	metaAlarmEvent, err := s.AddChildToMetaAlarm(context.Background(), event, metaAlarm, newChildWithEntity, rule)
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	if metaAlarmEvent.SourceType != types.SourceTypeComponent {
+		t.Errorf("expected %v, but got %v", types.SourceTypeComponent, metaAlarmEvent.SourceType)
+	}
+}
+
 func TestAddMultipleChildrenToMetaAlarm(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -297,13 +361,17 @@ func TestAddMultipleChildrenToMetaAlarm(t *testing.T) {
 	existedChild := types.Alarm{EntityID: "existed-child"}
 	existedChild.Value.Parents = []string{"metaalarm"}
 
-	metaAlarm := types.Alarm{EntityID: "metaalarm"}
-	metaAlarm.Value.Children = []string{"existed-child"}
-	metaAlarm.Value.Connector = "meta-alarm-connector"
-	metaAlarm.Value.ConnectorName = "meta-alarm-connector-name"
-	metaAlarm.Value.Component = "meta-alarm-component"
-	metaAlarm.Value.Resource = "meta-alarm-resource"
-	metaAlarm.Value.Meta = rule.ID
+	metaAlarm := types.Alarm{
+		EntityID: "metaalarm",
+		Value: types.AlarmValue{
+			Children: []string{"existed-child"},
+			Connector: "meta-alarm-connector",
+			ConnectorName: "meta-alarm-connector-name",
+			Component: "meta-alarm-component",
+			Resource: "meta-alarm-resource",
+			Meta: rule.ID,
+		},
+	}
 
 	newChild1 := types.Alarm{EntityID: "new-child-1"}
 	newChild2 := types.Alarm{EntityID: "new-child-2"}
@@ -426,6 +494,73 @@ func TestAddMultipleChildrenToMetaAlarm(t *testing.T) {
 	}
 }
 
+func TestAddMultipleChildrenToMetaAlarmComponent(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
+	alarmConfigProviderMock := mock_config.NewMockAlarmConfigProvider(ctrl)
+
+	s := service.NewMetaAlarmService(alarmAdapterMock, alarmConfigProviderMock, log.NewTestLogger())
+
+	rule := metaalarm.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
+	event := types.Event{
+		Timestamp: types.NewCpsTime(time.Now().Unix()),
+		Author:    "test",
+		State:     types.CpsNumber(1),
+	}
+
+	existedChild := types.Alarm{EntityID: "existed-child"}
+	existedChild.Value.Parents = []string{"metaalarm"}
+
+	metaAlarm := types.Alarm{
+		EntityID: "metaalarm",
+		Value: types.AlarmValue{
+			Children: []string{"existed-child"},
+			Connector: "meta-alarm-connector",
+			ConnectorName: "meta-alarm-connector-name",
+			Component: "meta-alarm-component",
+			Meta: rule.ID,
+		},
+	}
+
+	newChild1 := types.Alarm{EntityID: "new-child-1"}
+	newChild2 := types.Alarm{EntityID: "new-child-2"}
+	newChildrenWithEntity := []types.AlarmWithEntity{
+		{
+			Alarm: newChild1,
+			Entity: types.Entity{ID: newChild1.EntityID},
+		},
+		{
+			Alarm: newChild2,
+			Entity: types.Entity{ID: newChild2.EntityID},
+		},
+	}
+
+	expectedUpdates := []types.Alarm{newChild1, newChild2, metaAlarm}
+	alarmAdapterMock.
+		EXPECT().
+		PartialMassUpdateOpen(gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, alarms []types.Alarm) error {
+			for idx, alarm := range alarms {
+				if alarm.EntityID != expectedUpdates[idx].EntityID {
+					t.Errorf("expected %v, but got %v", expectedUpdates[idx].EntityID, alarm.EntityID)
+				}
+			}
+
+			return nil
+		})
+	alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(int64(3), nil)
+
+	metaAlarmEvent, err := s.AddMultipleChildsToMetaAlarm(context.Background(), event, metaAlarm, newChildrenWithEntity, rule)
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	if metaAlarmEvent.SourceType != types.SourceTypeComponent {
+		t.Errorf("expected %v, but got %v", types.SourceTypeComponent, metaAlarmEvent.SourceType)
+	}
+}
+
 func TestRemoveMultipleChildToMetaAlarm(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -442,7 +577,16 @@ func TestRemoveMultipleChildToMetaAlarm(t *testing.T) {
 	}
 
 	childAlarm1, childAlarm2, childAlarm3, childAlarm4 := types.Alarm{EntityID: "child-1"}, types.Alarm{EntityID: "child-2"}, types.Alarm{EntityID: "child-3"}, types.Alarm{EntityID: "child-4"}
-	metaAlarm := types.Alarm{EntityID: "parent-1"}
+	metaAlarm := types.Alarm{
+		EntityID: "parent-1",
+		Value: types.AlarmValue{
+			Connector: "meta-alarm-connector",
+			ConnectorName: "meta-alarm-connector-name",
+			Component: "meta-alarm-component",
+			Resource: "meta-alarm-resource",
+			Meta: rule.ID,
+		},
+	}
 	metaAlarm.AddChild(childAlarm1.EntityID)
 	metaAlarm.AddChild(childAlarm2.EntityID)
 	metaAlarm.AddChild(childAlarm3.EntityID)
@@ -569,6 +713,93 @@ func TestRemoveMultipleChildToMetaAlarm(t *testing.T) {
 		if expectedChildren[i].Entity.ID != (*metaAlarmEvent.MetaAlarmChildren)[i] {
 			t.Errorf("expected %v, but got %v", expectedChildren[i].Entity.ID, (*metaAlarmEvent.MetaAlarmChildren)[i])
 		}
+	}
+}
+
+func TestRemoveMultipleChildToMetaAlarmComponent(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
+	alarmConfigProviderMock := mock_config.NewMockAlarmConfigProvider(ctrl)
+
+	s := service.NewMetaAlarmService(alarmAdapterMock, alarmConfigProviderMock, log.NewTestLogger())
+
+	rule := metaalarm.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
+	event := types.Event{
+		Timestamp: types.NewCpsTime(time.Now().Unix()),
+		Author:    "test",
+		State:     types.CpsNumber(1),
+	}
+
+	childAlarm1, childAlarm2, childAlarm3, childAlarm4 := types.Alarm{EntityID: "child-1"}, types.Alarm{EntityID: "child-2"}, types.Alarm{EntityID: "child-3"}, types.Alarm{EntityID: "child-4"}
+	metaAlarm := types.Alarm{
+		EntityID: "parent-1",
+		Value: types.AlarmValue{
+			Children: []string{"existed-child"},
+			Connector: "meta-alarm-connector",
+			ConnectorName: "meta-alarm-connector-name",
+			Component: "meta-alarm-component",
+			Meta: rule.ID,
+		},
+	}
+	metaAlarm.AddChild(childAlarm1.EntityID)
+	metaAlarm.AddChild(childAlarm2.EntityID)
+	metaAlarm.AddChild(childAlarm3.EntityID)
+	metaAlarm.AddChild(childAlarm4.EntityID)
+	childAlarm1.AddParent(metaAlarm.EntityID)
+	childAlarm2.AddParent(metaAlarm.EntityID)
+	childAlarm3.AddParent(metaAlarm.EntityID)
+	childAlarm4.AddParent(metaAlarm.EntityID)
+
+	removeChildrenWithEntity := []types.AlarmWithEntity{
+		{
+			Alarm: childAlarm2,
+			Entity: types.Entity{ID: childAlarm2.EntityID},
+		},
+		{
+			Alarm: childAlarm3,
+			Entity: types.Entity{ID: childAlarm3.EntityID},
+		},
+	}
+
+	expectedChildren := []types.AlarmWithEntity{
+		{
+			Alarm: childAlarm1,
+			Entity: types.Entity{ID: childAlarm1.EntityID},
+		},
+		{
+			Alarm: childAlarm4,
+			Entity: types.Entity{ID: childAlarm4.EntityID},
+		},
+	}
+
+	expectedUpdates := []types.Alarm{childAlarm2, childAlarm3, metaAlarm}
+	alarmAdapterMock.
+		EXPECT().
+		PartialMassUpdateOpen(gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, alarms []types.Alarm) error {
+			for idx, alarm := range alarms {
+				if alarm.EntityID != expectedUpdates[idx].EntityID {
+					t.Errorf("expected %v, but got %v", expectedUpdates[idx].EntityID, alarm.EntityID)
+				}
+			}
+
+			return nil
+		})
+	alarmAdapterMock.EXPECT().GetOpenedAlarmsWithEntityByIDs(gomock.Any(), gomock.Any()).DoAndReturn(
+		func(ids []string, alarms *[]types.AlarmWithEntity) error {
+			*alarms = expectedChildren
+
+			return nil
+		})
+
+	metaAlarmEvent, err := s.RemoveMultipleChildToMetaAlarm(context.Background(), event, metaAlarm, removeChildrenWithEntity, rule)
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	if metaAlarmEvent.SourceType != types.SourceTypeComponent {
+		t.Errorf("expected %v, but got %v", types.SourceTypeComponent, metaAlarmEvent.SourceType)
 	}
 }
 

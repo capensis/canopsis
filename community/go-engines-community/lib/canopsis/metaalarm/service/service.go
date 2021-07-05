@@ -173,22 +173,7 @@ func (s *service) AddChildToMetaAlarm(
 		return types.Event{}, err
 	}
 
-	return types.Event{
-		Timestamp:         event.Timestamp,
-		Author:            event.Author,
-		Component:         metaAlarm.Value.Component,
-		Connector:         metaAlarm.Value.Connector,
-		ConnectorName:     metaAlarm.Value.ConnectorName,
-		Resource:          metaAlarm.Value.Resource,
-		EventType:         types.EventTypeMetaAlarmUpdated,
-		MetaAlarmRuleID:   infos.Rule.ID,
-		MetaAlarmChildren: &metaAlarm.Value.Children,
-		SourceType:        types.SourceTypeResource,
-		Output:            output,
-		ExtraInfos: map[string]interface{}{
-			"Meta": infos,
-		},
-	}, nil
+	return genUpdatedMetaAlarmEvent(event, metaAlarm, infos, output), nil
 }
 
 func (s *service) AddMultipleChildsToMetaAlarm(
@@ -264,22 +249,7 @@ func (s *service) AddMultipleChildsToMetaAlarm(
 		return types.Event{}, err
 	}
 
-	return types.Event{
-		Timestamp:         event.Timestamp,
-		Author:            event.Author,
-		Component:         metaAlarm.Value.Component,
-		Connector:         metaAlarm.Value.Connector,
-		ConnectorName:     metaAlarm.Value.ConnectorName,
-		Resource:          metaAlarm.Value.Resource,
-		EventType:         types.EventTypeMetaAlarmUpdated,
-		MetaAlarmRuleID:   infos.Rule.ID,
-		MetaAlarmChildren: &metaAlarm.Value.Children,
-		SourceType:        types.SourceTypeResource,
-		Output:            output,
-		ExtraInfos: map[string]interface{}{
-			"Meta": infos,
-		},
-	}, nil
+	return genUpdatedMetaAlarmEvent(event, metaAlarm, infos, output), nil
 }
 
 func (s *service) RemoveMultipleChildToMetaAlarm(
@@ -321,7 +291,16 @@ func (s *service) RemoveMultipleChildToMetaAlarm(
 		return types.Event{}, err
 	}
 
-	return types.Event{
+	return genUpdatedMetaAlarmEvent(event, metaAlarm, infos, output), nil
+}
+
+func genUpdatedMetaAlarmEvent(
+	event types.Event,
+	metaAlarm types.Alarm,
+	infos EventExtraInfosMeta,
+	output string,
+) types.Event {
+	metaAlarmEvent := types.Event{
 		Timestamp:         event.Timestamp,
 		Author:            event.Author,
 		Component:         metaAlarm.Value.Component,
@@ -336,7 +315,11 @@ func (s *service) RemoveMultipleChildToMetaAlarm(
 		ExtraInfos: map[string]interface{}{
 			"Meta": infos,
 		},
-	}, nil
+	}
+
+	metaAlarmEvent.SourceType = metaAlarmEvent.DetectSourceType()
+
+	return metaAlarmEvent
 }
 
 func (s *service) executeOutputTpl(
