@@ -450,6 +450,7 @@ export default {
     defaultSortColumn: 'Colonne de tri par défaut',
     sortColumnNoData: 'Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
     columnNames: 'Nom des colonnes',
+    exportColumnNames: 'Nom des colonnes des exporter',
     groupColumnNames: 'Nom des colonnes des meta alarmes',
     trackColumnNames: 'Suivre les colonnes de source d\'alarme',
     treeOfDependenciesColumnNames: 'Noms de colonne pour l\'arborescence des dépendances',
