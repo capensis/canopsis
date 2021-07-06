@@ -70,7 +70,7 @@ const routes = [
     component: Alarm,
     meta: {
       requiresLogin: true,
-      requiresRight: {
+      requiresPermission: {
         id: USERS_PERMISSIONS.technical.view,
       },
     },
