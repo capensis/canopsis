@@ -5,7 +5,7 @@ import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 
 import commentModule from './comment';
-import eidsModule from './eids';
+import entitiesModule from './entities';
 
 const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -18,7 +18,7 @@ const types = {
 
 export default {
   namespaced: true,
-  modules: { comment: commentModule, eids: eidsModule },
+  modules: { comment: commentModule, entities: entitiesModule },
   state: {
     allIds: [],
     pending: false,
