@@ -856,8 +856,7 @@ export const USERS_PERMISSIONS = {
       dynamicInfo: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_dynamicInfo`,
       metaAlarmRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_metaAlarmRule`,
       scenario: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_scenario`,
-      // idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
-      idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_scenario`,
+      idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
