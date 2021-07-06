@@ -2,6 +2,10 @@ package action_test
 
 import (
 	"context"
+	"reflect"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -9,9 +13,6 @@ import (
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
-	"reflect"
-	"testing"
-	"time"
 )
 
 func TestDelayedScenarioManager_AddDelayedScenario_GivenNotDelayedScenario_ShouldReturnError(t *testing.T) {
@@ -250,10 +251,10 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByTick(t 
 		},
 	}, nil).Times(2)
 	mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
-	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
+	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Any(), gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).
 		Do(func(_ context.Context, ids []string, alarms *[]types.Alarm) {
-		if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
+			if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
 				t.Errorf("expected %v but got %v", []string{expectedAlarm.ID}, ids)
 			}
 
@@ -310,7 +311,7 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByWaiting
 	}, nil).Times(2)
 	mockStorage.EXPECT().Get(gomock.Any(), gomock.Eq(delayedScenario.ID)).Return(&delayedScenario, nil)
 	mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
-	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
+	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Any(), gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).Do(func(_ context.Context, ids []string, alarms *[]types.Alarm) {
 		if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
 			t.Errorf("expected %v but got %v", []string{expectedAlarm.ID}, ids)

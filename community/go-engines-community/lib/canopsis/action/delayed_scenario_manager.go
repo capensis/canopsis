@@ -273,7 +273,7 @@ func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
 		alarmIDs[i] = delayedScenario.AlarmID
 	}
 
-	scenariosByID, err := m.loadScenarios(scenarioIDs)
+	scenariosByID, err := m.loadScenarios(ctx, scenarioIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -304,8 +304,8 @@ func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
 	return tasks, nil
 }
 
-func (m *delayedScenarioManager) loadScenarios(ids []string) (map[string]*Scenario, error) {
-	scenarios, err := m.scenarioAdapter.GetEnabledByIDs(ids)
+func (m *delayedScenarioManager) loadScenarios(ctx context.Context, ids []string) (map[string]*Scenario, error) {
+	scenarios, err := m.scenarioAdapter.GetEnabledByIDs(ctx, ids)
 	if err != nil {
 		return nil, err
 	}
