@@ -247,6 +247,10 @@ func getNestedMapValAsString(
 	switch val.Kind() {
 	case reflect.Map:
 		val = val.MapIndex(reflect.ValueOf(k))
+		if !val.IsValid() || val.IsZero() {
+			return "", nil
+		}
+
 		if len(keys) > 1 {
 			return getNestedMapValAsString(val, keys[1:], timeFormat, location)
 		}

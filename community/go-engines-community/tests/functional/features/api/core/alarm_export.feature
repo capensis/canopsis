@@ -16,7 +16,8 @@ Feature: Export alarms
          {"name": "t", "label": "Date"},
          {"name": "v.ack.t", "label": "Ack date"},
          {"name": "entity.infos", "label": "Infos"},
-         {"name": "entity.infos.datecustom.value", "label": "Not found infos"}
+         {"name": "entity.infos.datecustom.value", "label": "Not found infos"},
+         {"name": "links.notexist", "label": "Not found links"}
       ],
       "time_format": "DD MMM YYYY hh:mm:ss ZZ"
     }
@@ -29,9 +30,9 @@ Feature: Export alarms
     Then the response code should be 200
     Then the response raw body should be:
     """csv
-    ID,Entity,Not found field,State,Status,Date,Ack date,Infos,Not found infos
-    test-alarm-to-export-2,test-entity-to-export-resource-2/test-entity-to-export-component,,minor,ongoing,10 Aug 2020 05:30 CEST,,{},
-    test-alarm-to-export-1,test-entity-to-export-resource-1/test-entity-to-export-component,,critical,ongoing,09 Aug 2020 05:12 CEST,10 Aug 2020 06:17 CEST,"{""test-entity-to-export-resource-1-info-1"":{""name"":""test-entity-to-export-resource-1-info-1-name"",""description"":""test-entity-to-export-resource-1-info-1-description"",""value"":""test-entity-to-export-resource-1-info-1-value""}}",
+    ID,Entity,Not found field,State,Status,Date,Ack date,Infos,Not found infos,Not found links
+    test-alarm-to-export-2,test-entity-to-export-resource-2/test-entity-to-export-component,,minor,ongoing,10 Aug 2020 05:30 CEST,,{},,
+    test-alarm-to-export-1,test-entity-to-export-resource-1/test-entity-to-export-component,,critical,ongoing,09 Aug 2020 05:12 CEST,10 Aug 2020 06:17 CEST,"{""test-entity-to-export-resource-1-info-1"":{""name"":""test-entity-to-export-resource-1-info-1-name"",""description"":""test-entity-to-export-resource-1-info-1-description"",""value"":""test-entity-to-export-resource-1-info-1-value""}}",,
 
     """
 
@@ -50,7 +51,8 @@ Feature: Export alarms
         {"name": "t", "label": "Date"},
         {"name": "v.ack.t", "label": "Ack date"},
         {"name": "entity.infos", "label": "Infos"},
-        {"name": "entity.infos.datecustom.value", "label": "Not found infos"}
+        {"name": "entity.infos.datecustom.value", "label": "Not found infos"},
+        {"name": "links.notexist", "label": "Not found links"}
       ],
       "time_format": "DD MMM YYYY hh:mm:ss ZZ"
     }
@@ -63,10 +65,9 @@ Feature: Export alarms
     Then the response code should be 200
     Then the response raw body should be:
     """csv
-    ID,Entity,Not found field,State,Status,Date,Ack date,Infos,Not found infos
+    ID,Entity,Not found field,State,Status,Date,Ack date,Infos,Not found infos,Not found links
 
     """
-
 
   Scenario: given not exit export task should return not found error
     When I am admin
