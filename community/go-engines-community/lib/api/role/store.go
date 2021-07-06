@@ -2,7 +2,6 @@ package role
 
 import (
 	"context"
-	"fmt"
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -56,7 +55,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	if r.Permission != "" {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("permissions._id"): r.Permission}})
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
 	}
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,

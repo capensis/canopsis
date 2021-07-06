@@ -3,6 +3,7 @@ package provider
 //go:generate mockgen -destination=../../../mocks/lib/security/provider/provider.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/provider LdapDialer
 
 import (
+	"context"
 	"crypto/tls"
 	"errors"
 	"fmt"
@@ -49,23 +50,23 @@ func NewLdapProvider(
 	}
 }
 
-func (p *ldapProvider) Auth(username, password string) (*security.User, error) {
-	config, err := p.configProvider.LoadLdapConfig()
+func (p *ldapProvider) Auth(ctx context.Context, username, password string) (*security.User, error) {
+	config, err := p.configProvider.LoadLdapConfig(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("cannot find ldap config: %v", err)
+		return nil, fmt.Errorf("cannot find ldap config: %w", err)
 	}
 
 	if config == nil {
 		return nil, errors.New("ldap config not found")
 	}
 
-	entry, err := p.validateUser(username, password, config)
+	entry, err := p.validateUser(ctx, username, password, config)
 	if err != nil {
 		return nil, err
 	}
 
 	if entry != nil {
-		return p.saveUser(username, config, entry)
+		return p.saveUser(ctx, username, config, entry)
 	}
 
 	return nil, nil
@@ -73,26 +74,39 @@ func (p *ldapProvider) Auth(username, password string) (*security.User, error) {
 
 // validateUser calls LDAP server to authenticate user.
 func (p *ldapProvider) validateUser(
+	ctx context.Context,
 	username, password string,
 	config *security.LdapConfig,
 ) (*ldap.Entry, error) {
 	l, err := p.ldapDialer.DialURL(config)
 	if err != nil {
-		return nil, fmt.Errorf("cannot connect to ldap server: %v", err)
+		return nil, fmt.Errorf("cannot connect to ldap server: %w", err)
 	}
 	defer l.Close()
+
+	select {
+	case <-ctx.Done():
+		return nil, nil
+	default:
+	}
 
 	// First bind with a admin
 	err = l.Bind(config.AdminUsername, config.AdminPassword)
 	if err != nil {
-		return nil, fmt.Errorf("cannot verify admin: %v", err)
+		return nil, fmt.Errorf("cannot verify admin: %w", err)
+	}
+
+	select {
+	case <-ctx.Done():
+		return nil, nil
+	default:
 	}
 
 	// Search for the given username
 	searchRequest := genSearchRequest(config, username)
 	sr, err := l.Search(searchRequest)
 	if err != nil {
-		return nil, fmt.Errorf("cannot search user: %v", err)
+		return nil, fmt.Errorf("cannot search user: %w", err)
 	}
 
 	if len(sr.Entries) == 0 {
@@ -101,6 +115,12 @@ func (p *ldapProvider) validateUser(
 
 	if len(sr.Entries) > 1 {
 		return nil, errors.New("too many entries returned")
+	}
+
+	select {
+	case <-ctx.Done():
+		return nil, nil
+	default:
 	}
 
 	entry := sr.Entries[0]
@@ -115,7 +135,7 @@ func (p *ldapProvider) validateUser(
 			}
 		}
 
-		return nil, fmt.Errorf("cannot verify password: %v", err)
+		return nil, fmt.Errorf("cannot verify password: %w", err)
 	}
 
 	return entry, nil
@@ -155,6 +175,7 @@ func genSearchRequest(config *security.LdapConfig, username string) *ldap.Search
 
 // saveUser creates or updates user data in storage.
 func (p *ldapProvider) saveUser(
+	ctx context.Context,
 	username string,
 	config *security.LdapConfig,
 	entry *ldap.Entry,
@@ -167,9 +188,9 @@ func (p *ldapProvider) saveUser(
 	}
 
 	ldapID := entry.GetAttributeValue("cn")
-	user, err := p.userProvider.FindByExternalSource(ldapID, security.SourceLdap)
+	user, err := p.userProvider.FindByExternalSource(ctx, ldapID, security.SourceLdap)
 	if err != nil {
-		return nil, fmt.Errorf("cannot find user: %v", err)
+		return nil, fmt.Errorf("cannot find user: %w", err)
 	}
 
 	if user == nil {
@@ -196,9 +217,9 @@ func (p *ldapProvider) saveUser(
 		}
 	}
 
-	err = p.userProvider.Save(user)
+	err = p.userProvider.Save(ctx, user)
 	if err != nil {
-		return nil, fmt.Errorf("cannot save user: %v", err)
+		return nil, fmt.Errorf("cannot save user: %w", err)
 	}
 
 	return user, nil

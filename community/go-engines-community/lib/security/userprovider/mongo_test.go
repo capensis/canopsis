@@ -1,6 +1,7 @@
 package userprovider
 
 import (
+	"context"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -15,6 +16,8 @@ import (
 func TestMongoProvider_FindByUsername_GivenID_ShouldReturnUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	username := "testname"
 	m := &model.Rbac{
 		ID:             "testid",
@@ -42,7 +45,7 @@ func TestMongoProvider_FindByUsername_GivenID_ShouldReturnUser(t *testing.T) {
 		Return(mockDbCollection)
 
 	p := NewMongoProvider(mockDbClient)
-	user, err := p.FindByUsername(username)
+	user, err := p.FindByUsername(ctx, username)
 
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -56,6 +59,8 @@ func TestMongoProvider_FindByUsername_GivenID_ShouldReturnUser(t *testing.T) {
 func TestMongoProvider_FindByUsername_GivenID_ShouldReturnNil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	username := "testname"
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	filter := bson.M{
@@ -73,7 +78,7 @@ func TestMongoProvider_FindByUsername_GivenID_ShouldReturnNil(t *testing.T) {
 		Return(mockDbCollection)
 
 	p := NewMongoProvider(mockDbClient)
-	user, err := p.FindByUsername(username)
+	user, err := p.FindByUsername(ctx, username)
 
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -87,6 +92,8 @@ func TestMongoProvider_FindByUsername_GivenID_ShouldReturnNil(t *testing.T) {
 func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	userApiKey := "testkey"
 	m := &model.Rbac{
 		ID:             "testid",
@@ -114,7 +121,7 @@ func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnUser(t *testing.T) {
 		Return(mockDbCollection)
 
 	p := NewMongoProvider(mockDbClient)
-	user, err := p.FindByAuthApiKey(userApiKey)
+	user, err := p.FindByAuthApiKey(ctx, userApiKey)
 
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -128,6 +135,8 @@ func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnUser(t *testing.T) {
 func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnNil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	userApiKey := "testkey"
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	filter := bson.M{
@@ -145,7 +154,7 @@ func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnNil(t *testing.T) {
 		Return(mockDbCollection)
 
 	p := NewMongoProvider(mockDbClient)
-	user, err := p.FindByAuthApiKey(userApiKey)
+	user, err := p.FindByAuthApiKey(ctx, userApiKey)
 
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -159,6 +168,8 @@ func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnNil(t *testing.T) {
 func TestMongoProvider_FindByID_GivenID_ShouldReturnUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	userID := "testid"
 	m := &model.Rbac{
 		ID:             userID,
@@ -186,7 +197,7 @@ func TestMongoProvider_FindByID_GivenID_ShouldReturnUser(t *testing.T) {
 		Return(mockDbCollection)
 
 	p := NewMongoProvider(mockDbClient)
-	user, err := p.FindByID(userID)
+	user, err := p.FindByID(ctx, userID)
 
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -200,6 +211,8 @@ func TestMongoProvider_FindByID_GivenID_ShouldReturnUser(t *testing.T) {
 func TestMongoProvider_FindByID_GivenID_ShouldReturnNil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	userID := "testid"
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	filter := bson.M{
@@ -217,7 +230,7 @@ func TestMongoProvider_FindByID_GivenID_ShouldReturnNil(t *testing.T) {
 		Return(mockDbCollection)
 
 	p := NewMongoProvider(mockDbClient)
-	user, err := p.FindByID(userID)
+	user, err := p.FindByID(ctx, userID)
 
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -231,6 +244,8 @@ func TestMongoProvider_FindByID_GivenID_ShouldReturnNil(t *testing.T) {
 func TestMongoProvider_Save_GivenUser_ShouldUpdateUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	userID := "testid"
 	expectedModel := model.Rbac{
 		ID:             userID,
@@ -266,7 +281,7 @@ func TestMongoProvider_Save_GivenUser_ShouldUpdateUser(t *testing.T) {
 		Return(mockDbCollection)
 
 	p := NewMongoProvider(mockDbClient)
-	err := p.Save(&user)
+	err := p.Save(ctx, &user)
 
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)

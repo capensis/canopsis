@@ -44,7 +44,7 @@ type PaginatedData interface {
 }
 
 func NewPaginatedResponse(q pagination.Query, d PaginatedData) (PaginatedListResponse, error) {
-	if q.Paginate == false {
+	if !q.Paginate {
 		q.Limit = d.GetTotal()
 	}
 
