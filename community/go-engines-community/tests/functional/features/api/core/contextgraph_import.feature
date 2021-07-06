@@ -12,7 +12,7 @@ Feature: Import entities
 
   Scenario: import with action create
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -134,7 +134,7 @@ Feature: Import entities
 
   Scenario: import with action update
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -189,7 +189,7 @@ Feature: Import entities
 
   Scenario: import with action update, when id doesn't exist, status should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -222,7 +222,7 @@ Feature: Import entities
 
   Scenario: import with action set
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -279,7 +279,7 @@ Feature: Import entities
         "impact_level": 1
     }
     """
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -347,7 +347,7 @@ Feature: Import entities
 
   Scenario: import with action set, when id doesn't exist, new entity should be created
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -396,7 +396,7 @@ Feature: Import entities
 
   Scenario: import with action delete
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -445,7 +445,7 @@ Feature: Import entities
         "impact_level": 1
     }
     """
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -495,7 +495,7 @@ Feature: Import entities
 
   Scenario: import with action delete, when id doesn't exist, status should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -528,7 +528,7 @@ Feature: Import entities
 
   Scenario: import with action enable
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -576,7 +576,7 @@ Feature: Import entities
 
   Scenario: import with action enable, when id doesn't exist, status should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -609,7 +609,7 @@ Feature: Import entities
 
   Scenario: import with action disable
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -657,7 +657,7 @@ Feature: Import entities
 
   Scenario: import with action disable, when id doesn't exist, status should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -690,7 +690,7 @@ Feature: Import entities
 
   Scenario: import with create links action
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -791,7 +791,7 @@ Feature: Import entities
 
   Scenario: import with delete links action
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -885,7 +885,7 @@ Feature: Import entities
 
   Scenario: import with action create, without type, should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -912,7 +912,7 @@ Feature: Import entities
 
   Scenario: import with action create, without _id, should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -939,7 +939,7 @@ Feature: Import entities
 
   Scenario: import with action create, patterns should be only in services
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -970,7 +970,7 @@ Feature: Import entities
 
   Scenario: import with wrong cis action
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -1001,7 +1001,7 @@ Feature: Import entities
 
   Scenario: import with wrong links action
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -1033,7 +1033,7 @@ Feature: Import entities
 
   Scenario: import with not implemented links action
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -1062,7 +1062,7 @@ Feature: Import entities
         "status": "failed"
     }
     """
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -1091,7 +1091,7 @@ Feature: Import entities
         "status": "failed"
     }
     """
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -1123,7 +1123,7 @@ Feature: Import entities
 
   Scenario: import with bad cis
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -1143,7 +1143,7 @@ Feature: Import entities
 
   Scenario: import with bad links
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -1163,7 +1163,7 @@ Feature: Import entities
 
   Scenario: import with empty json
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {}
@@ -1181,7 +1181,7 @@ Feature: Import entities
 
   Scenario: import with action create, without name, should have a name the same as _id
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -1224,7 +1224,7 @@ Feature: Import entities
 
   Scenario: import with action create, context graph should be valid for entity service
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {
@@ -1372,7 +1372,7 @@ Feature: Import entities
 
   Scenario: import with action create, same links with different actions
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
     """json
     {
         "json": {

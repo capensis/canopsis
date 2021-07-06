@@ -55,14 +55,22 @@ func NewApi(
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param body body Request true "body"
+// @Param source query string true "source"
+// @Param body body ImportRequest true "body"
 // @Success 200 {object} ImportResponse
 // @Failure 400 {object} common.ErrorResponse
 // @Router /contextgraph/import [put]
 func (a *api) Import(c *gin.Context) {
+	query := ImportQuery{}
+	if err := c.BindQuery(&query); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+		return
+	}
+
 	job := ImportJob{
 		Creation: time.Now(),
 		Status:   statusPending,
+		Source:   query.Source,
 	}
 
 	err := a.reporter.ReportCreate(c.Request.Context(), &job)

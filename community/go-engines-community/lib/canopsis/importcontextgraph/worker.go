@@ -32,13 +32,13 @@ func NewWorker(
 	}
 }
 
-func (w *worker) Work(ctx context.Context, filename string) (stats Stats, resErr error) {
+func (w *worker) Work(ctx context.Context, filename, source string) (stats Stats, resErr error) {
 	startTime := time.Now()
 	defer func() {
 		stats.ExecTime = time.Since(startTime)
 	}()
 
-	writeModels, err := w.parseFile(ctx, filename)
+	writeModels, err := w.parseFile(ctx, filename, source)
 	if err != nil {
 		return stats, err
 	}
@@ -60,7 +60,7 @@ func (w *worker) Work(ctx context.Context, filename string) (stats Stats, resErr
 	return stats, nil
 }
 
-func (w *worker) parseFile(ctx context.Context, filename string) (writeModels []mongo.WriteModel, resErr error) {
+func (w *worker) parseFile(ctx context.Context, filename, source string) (writeModels []mongo.WriteModel, resErr error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func (w *worker) parseFile(ctx context.Context, filename string) (writeModels []
 				return nil, fmt.Errorf("cis should be an array")
 			}
 
-			entityWriteModels, err := w.parseEntities(ctx, decoder)
+			entityWriteModels, err := w.parseEntities(ctx, decoder, source)
 			if err != nil {
 				return nil, err
 			}
@@ -133,8 +133,9 @@ func (w *worker) parseFile(ctx context.Context, filename string) (writeModels []
 	return writeModels, nil
 }
 
-func (w *worker) parseEntities(ctx context.Context, decoder *json.Decoder) ([]mongo.WriteModel, error) {
+func (w *worker) parseEntities(ctx context.Context, decoder *json.Decoder, source string) ([]mongo.WriteModel, error) {
 	writeModels := make([]mongo.WriteModel, 0)
+	now := types.CpsTime{Time: time.Now()}
 
 	for decoder.More() {
 		var ci ConfigurationItem
@@ -148,6 +149,9 @@ func (w *worker) parseEntities(ctx context.Context, decoder *json.Decoder) ([]mo
 		if err != nil {
 			return nil, fmt.Errorf("ci = %s, validation error: %s", ci.ID, err.Error())
 		}
+
+		ci.ImportSource = source
+		ci.Imported = now
 
 		switch ci.Action {
 		case ActionCreate:
@@ -199,7 +203,7 @@ func (w *worker) parseEntities(ctx context.Context, decoder *json.Decoder) ([]mo
 				return nil, err
 			}
 
-			writeModels = append(writeModels, w.changeState(ci.ID, true))
+			writeModels = append(writeModels, w.changeState(ci.ID, true, source, now))
 		case ActionDisable:
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Err()
 			if err != nil {
@@ -210,7 +214,7 @@ func (w *worker) parseEntities(ctx context.Context, decoder *json.Decoder) ([]mo
 				return nil, err
 			}
 
-			writeModels = append(writeModels, w.changeState(ci.ID, false))
+			writeModels = append(writeModels, w.changeState(ci.ID, false, source, now))
 		default:
 			return nil, fmt.Errorf("the action %s is not recognized", ci.Action)
 		}
@@ -403,10 +407,14 @@ func (w *worker) updateEntity(ci ConfigurationItem, oldEntity ConfigurationItem,
 		SetUpsert(true)
 }
 
-func (w *worker) changeState(id string, enabled bool) mongo.WriteModel {
+func (w *worker) changeState(id string, enabled bool, importSource string, imported types.CpsTime) mongo.WriteModel {
 	return mongo.NewUpdateManyModel().
 		SetFilter(bson.M{"_id": id}).
-		SetUpdate(bson.M{"$set": bson.M{"enabled": enabled}})
+		SetUpdate(bson.M{"$set": bson.M{
+			"enabled":       enabled,
+			"import_source": importSource,
+			"imported":      imported,
+		}})
 }
 
 func (w *worker) deleteEntity(ci ConfigurationItem) []mongo.WriteModel {

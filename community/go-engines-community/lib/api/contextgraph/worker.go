@@ -136,5 +136,5 @@ func (w *worker) Run(ctx context.Context) {
 func (w *worker) doJob(ctx context.Context, job ImportJob) (importcontextgraph.Stats, error) {
 	w.logger.Info().Str("job_id", job.ID).Msg("Import-ctx: Processing import")
 	filename := fmt.Sprintf(w.filePattern, job.ID)
-	return w.worker.Work(ctx, filename)
+	return w.worker.Work(ctx, filename, job.Source)
 }

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 const (
@@ -20,7 +21,7 @@ const (
 var ErrNotImplemented = errors.New("import action not implemented")
 
 type Worker interface {
-	Work(ctx context.Context, filename string) (Stats, error)
+	Work(ctx context.Context, filename, source string) (Stats, error)
 }
 
 type Stats struct {
@@ -49,6 +50,8 @@ type ConfigurationItem struct {
 	Enabled          *bool                      `json:"enabled" bson:"enabled,omitempty"`
 	Action           string                     `json:"action" bson:"-"`
 	ActionProperties interface{}                `json:"action_properties" bson:"-"`
+	ImportSource     string                     `json:"-" bson:"import_source"`
+	Imported         types.CpsTime              `json:"-" bson:"imported"`
 }
 
 type Link struct {

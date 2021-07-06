@@ -19,14 +19,19 @@ type ImportJob struct {
 	Info     string                   `bson:"info,omitempty" json:"info"`
 	ExecTime string                   `bson:"exec_time,omitempty" json:"exec_time"`
 	Stats    importcontextgraph.Stats `bson:"stats" json:"stats"`
+	Source   string                   `bson:"source" json:"source"`
 }
 
 type ImportResponse struct {
 	ID string `json:"_id"`
 }
 
-// Request is used only for swagger docs.
-type Request struct {
+type ImportQuery struct {
+	Source string `form:"source" binding:"required"`
+}
+
+// ImportRequest is used only for swagger docs.
+type ImportRequest struct {
 	Json struct {
 		Cis   []importcontextgraph.ConfigurationItem `json:"cis"`
 		Links []importcontextgraph.Link              `json:"links"`
