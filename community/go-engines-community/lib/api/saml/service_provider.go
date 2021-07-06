@@ -293,6 +293,9 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 
 				query := relayUrl.Query()
 				query.Set("errorMessage", "This user is not allowed to log into Canopsis")
+				relayUrl.RawQuery = query.Encode()
+
+				println(relayUrl.String())
 
 				c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
 				return
