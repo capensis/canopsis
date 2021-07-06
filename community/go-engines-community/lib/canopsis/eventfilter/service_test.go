@@ -59,7 +59,7 @@ func testNewService(ctrl *gomock.Controller, data ...bson.M) eventfilter.Service
 		return rules[i].Priority < rules[j].Priority
 	})
 
-	adapter.EXPECT().List().Return(rules, nil)
+	adapter.EXPECT().List(gomock.Any()).Return(rules, nil)
 	return eventfilter.NewService(adapter, log.NewTestLogger())
 }
 
@@ -80,7 +80,7 @@ func TestProcessEvent(t *testing.T) {
 		enrichFields := libcontext.NewEnrichFields("", "")
 
 		So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
-		err := service.LoadRules()
+		err := service.LoadRules(ctx)
 		So(err, ShouldBeNil)
 
 		Convey("An event that is matched only by the first rule (break) is left unchanged", func() {
@@ -126,7 +126,7 @@ func TestEntityEnrichment(t *testing.T) {
 			enrichFields := libcontext.NewEnrichFields("", "")
 
 			So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
-			err := service.LoadRules()
+			err := service.LoadRules(ctx)
 			So(err, ShouldBeNil)
 
 			event := types.Event{
@@ -153,7 +153,7 @@ func TestEntityEnrichment(t *testing.T) {
 			enrichFields := libcontext.NewEnrichFields("", "")
 
 			So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
-			err := service.LoadRules()
+			err := service.LoadRules(ctx)
 			So(err, ShouldBeNil)
 
 			event := types.Event{

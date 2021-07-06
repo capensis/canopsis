@@ -32,7 +32,7 @@ func (s *service) ResolveAlarms(ctx context.Context, alarmConfig config.AlarmCon
 
 	updatedAlarms := make([]types.Alarm, 0)
 
-	unresolvedAlarms, err := s.adapter.GetUnresolved()
+	unresolvedAlarms, err := s.adapter.GetUnresolved(ctx)
 	if err != nil {
 		return updatedAlarms, fmt.Errorf("unresolved alarms error: %v", err)
 	}
@@ -51,7 +51,7 @@ func (s *service) ResolveCancels(ctx context.Context, alarmConfig config.AlarmCo
 
 	canceledAlarms := make([]types.Alarm, 0)
 
-	alarms, err := s.adapter.GetAlarmsWithCancelMark()
+	alarms, err := s.adapter.GetAlarmsWithCancelMark(ctx)
 	if err != nil {
 		return canceledAlarms, fmt.Errorf("cancel alarms error: %v", err)
 	}
@@ -70,7 +70,7 @@ func (s *service) ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmCo
 
 	unsnoozedAlarms := make([]types.Alarm, 0)
 
-	alarms, err := s.adapter.GetAlarmsWithSnoozeMark()
+	alarms, err := s.adapter.GetAlarmsWithSnoozeMark(ctx)
 	if err != nil {
 		return unsnoozedAlarms, fmt.Errorf("snooze alarms error: %v", err)
 	}
@@ -89,7 +89,7 @@ func (s *service) UpdateFlappingAlarms(ctx context.Context, alarmConfig config.A
 
 	updatedAlarms := make([]types.Alarm, 0)
 
-	flappingAlarms, err := s.adapter.GetAlarmsWithFlappingStatus()
+	flappingAlarms, err := s.adapter.GetAlarmsWithFlappingStatus(ctx)
 	if err != nil {
 		return updatedAlarms, fmt.Errorf("unable to get alarms with flapping status: %v", err)
 	}
@@ -111,7 +111,7 @@ func (s *service) ResolveDone(ctx context.Context) ([]types.Alarm, error) {
 
 	doneAlarms := make([]types.Alarm, 0)
 
-	alarms, err := s.adapter.GetAlarmsWithDoneMark()
+	alarms, err := s.adapter.GetAlarmsWithDoneMark(ctx)
 	if err != nil {
 		return doneAlarms, fmt.Errorf("done alarms error: %v", err)
 	}
@@ -127,7 +127,7 @@ func (s *service) ResolveDone(ctx context.Context) ([]types.Alarm, error) {
 }
 
 // UpdateToWorstState updates meta-alarm's state from its worst children, return true when meta-alarm has updated
-func UpdateToWorstState(metaAlarm *types.Alarm, updateChildren []*types.Alarm,
+func UpdateToWorstState(ctx context.Context, metaAlarm *types.Alarm, updateChildren []*types.Alarm,
 	a Adapter, alarmConfig config.AlarmConfig) bool {
 	if !metaAlarm.IsMetaAlarm() {
 		return false
@@ -150,7 +150,7 @@ func UpdateToWorstState(metaAlarm *types.Alarm, updateChildren []*types.Alarm,
 				}
 			}
 		} else {
-			err := a.GetOpenedAlarmsByIDs(metaAlarm.Value.Children, &alarms)
+			err := a.GetOpenedAlarmsByIDs(ctx, metaAlarm.Value.Children, &alarms)
 			if err != nil {
 				return false
 			}

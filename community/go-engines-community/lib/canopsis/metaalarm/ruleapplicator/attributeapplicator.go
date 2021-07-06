@@ -74,7 +74,7 @@ func (a AttributeApplicator) Apply(ctx context.Context, event *types.Event, rule
 
 			for mongoRetries := maxRetries; mongoRetries >= 0 && !updated; mongoRetries-- {
 				// Check if meta-alarm already exists
-				metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, "")
+				metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(ctx, rule.ID, "")
 				switch err.(type) {
 				case errt.NotFound:
 					if mongoRetries == maxRetries {
