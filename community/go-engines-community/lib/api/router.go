@@ -20,7 +20,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/heartbeat"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
@@ -64,7 +63,6 @@ const (
 	authObjPbhType          = "api_pbehaviortype"
 	authObjPbhReason        = "api_pbehaviorreason"
 	authObjPbhException     = "api_pbehaviorexception"
-	authObjHeartbeat        = "api_heartbeat"
 	authObjAction           = "api_action"
 	authObjEntity           = "api_entity"
 	authObjEntityService    = "api_entityservice"
@@ -533,42 +531,6 @@ func RegisterRoutes(
 			)
 		}
 
-		heartbeatAPI := heartbeat.NewApi(
-			heartbeat.NewStore(dbClient),
-			heartbeat.NewModelTransformer(),
-			actionLogger,
-		)
-		heartbeatRouter := protected.Group("/heartbeats")
-		{
-			heartbeatRouter.POST(
-				"",
-				middleware.Authorize(authObjHeartbeat, permCreate, enforcer),
-				middleware.SetAuthor(),
-				heartbeatAPI.Create,
-			)
-			heartbeatRouter.GET(
-				"",
-				middleware.Authorize(authObjHeartbeat, permRead, enforcer),
-				heartbeatAPI.List,
-			)
-			heartbeatRouter.GET(
-				"/:id",
-				middleware.Authorize(authObjHeartbeat, permRead, enforcer),
-				heartbeatAPI.Get,
-			)
-			heartbeatRouter.PUT(
-				"/:id",
-				middleware.Authorize(authObjHeartbeat, permUpdate, enforcer),
-				middleware.SetAuthor(),
-				heartbeatAPI.Update,
-			)
-			heartbeatRouter.DELETE(
-				"/:id",
-				middleware.Authorize(authObjHeartbeat, permDelete, enforcer),
-				heartbeatAPI.Delete,
-			)
-		}
-
 		entityCategoryRouter := protected.Group("/entity-categories")
 		{
 			entityCategoryAPI := entitycategory.NewApi(entitycategory.NewStore(dbClient), actionLogger)
@@ -894,27 +856,6 @@ func RegisterRoutes(
 
 		bulkRouter := protected.Group("/bulk")
 		{
-			heartbeatRouter := bulkRouter.Group("/heartbeats")
-			{
-				heartbeatRouter.POST(
-					"",
-					middleware.Authorize(authObjHeartbeat, permCreate, enforcer),
-					middleware.SetAuthorToBulk(),
-					heartbeatAPI.BulkCreate,
-				)
-				heartbeatRouter.PUT(
-					"",
-					middleware.Authorize(authObjHeartbeat, permUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
-					heartbeatAPI.BulkUpdate,
-				)
-				heartbeatRouter.DELETE(
-					"",
-					middleware.Authorize(authObjHeartbeat, permDelete, enforcer),
-					heartbeatAPI.BulkDelete,
-				)
-			}
-
 			viewRouter := bulkRouter.Group("/views")
 			{
 				viewRouter.POST(

@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 )
@@ -16,13 +17,13 @@ import (
 type ParentChildApplicator struct {
 	alarmAdapter     alarm.Adapter
 	metaAlarmService service.MetaAlarmService
-	redisLockClient  *redislock.Client
+	redisLockClient  redis.LockClient
 	logger           zerolog.Logger
 }
 
 func (a ParentChildApplicator) Apply(ctx context.Context, event *types.Event, rule metaalarm.Rule) ([]types.Event, error) {
 	var metaAlarmEvent types.Event
-	var metaAlarmLock *redislock.Lock
+	var metaAlarmLock redis.Lock
 
 	defer func() {
 		if metaAlarmLock != nil {
@@ -160,7 +161,7 @@ func (a ParentChildApplicator) isNotFound(err error) bool {
 	return ok
 }
 
-func NewParentChildApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, redisLockClient *redislock.Client, logger zerolog.Logger) ParentChildApplicator {
+func NewParentChildApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, redisLockClient redis.LockClient, logger zerolog.Logger) ParentChildApplicator {
 	return ParentChildApplicator{
 		alarmAdapter:     alarmAdapter,
 		metaAlarmService: metaAlarmService,

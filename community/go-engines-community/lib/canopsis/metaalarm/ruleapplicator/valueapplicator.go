@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/tidwall/gjson"
 	"strings"
 	"time"
 
@@ -14,9 +13,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
+	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
+	"github.com/tidwall/gjson"
 )
 
 // ValueApplicator implements RuleApplicator interface
@@ -25,7 +26,7 @@ type ValueApplicator struct {
 	metaAlarmService  service.MetaAlarmService
 	storage           storage.GroupingStorage
 	redisClient       *redis.Client
-	redisLockClient   *redislock.Client
+	redisLockClient   libredis.LockClient
 	ruleEntityCounter metaalarm.ValueGroupEntityCounter
 	logger            zerolog.Logger
 }
@@ -34,7 +35,7 @@ type ValueApplicator struct {
 func (a ValueApplicator) Apply(ctx context.Context, event *types.Event, rule metaalarm.Rule) ([]types.Event, error) {
 	var metaAlarmEvent types.Event
 	var watchErr error
-	var metaAlarmLock *redislock.Lock
+	var metaAlarmLock libredis.Lock
 
 	defer func() {
 		if metaAlarmLock != nil {
@@ -408,7 +409,7 @@ func (a ValueApplicator) isRatioReached(ctx context.Context, tx *redis.Tx, rule 
 		return false, err
 	}
 
-	if total != 0 && float64(groupLen) / float64(total) >= *rule.Config.ThresholdRate {
+	if total != 0 && float64(groupLen)/float64(total) >= *rule.Config.ThresholdRate {
 		err = a.ruleEntityCounter.CountTotalEntitiesAmountForValuePaths(ctx, rule, valuePathsMap)
 		if err != nil {
 			return false, err
@@ -420,7 +421,7 @@ func (a ValueApplicator) isRatioReached(ctx context.Context, tx *redis.Tx, rule 
 		}
 	}
 
-	return total != 0 && float64(groupLen) / float64(total) >= *rule.Config.ThresholdRate, nil
+	return total != 0 && float64(groupLen)/float64(total) >= *rule.Config.ThresholdRate, nil
 }
 
 func (a ValueApplicator) createMetaAlarm(ctx context.Context, tx *redis.Tx, event *types.Event, rule metaalarm.Rule, valuePath string) (types.Event, error) {
@@ -457,7 +458,7 @@ func (a ValueApplicator) getGroupLen(ctx context.Context, tx *redis.Tx, ruleKey 
 }
 
 // NewValueApplicator instantiates ValueApplicator with MetaAlarmService
-func NewValueGroupApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, redisClient *redis.Client, redisLockClient *redislock.Client, ruleEntityCounter metaalarm.ValueGroupEntityCounter, logger zerolog.Logger) ValueApplicator {
+func NewValueGroupApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, redisClient *redis.Client, redisLockClient libredis.LockClient, ruleEntityCounter metaalarm.ValueGroupEntityCounter, logger zerolog.Logger) ValueApplicator {
 	return ValueApplicator{
 		alarmAdapter:      alarmAdapter,
 		metaAlarmService:  metaAlarmService,

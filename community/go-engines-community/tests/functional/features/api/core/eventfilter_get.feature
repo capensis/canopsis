@@ -136,7 +136,7 @@ Feature: Get an eventfilter
 
   Scenario: given get request with not exist id should return not found error
     When I am admin
-    When I do GET /api/v4/heartbeats/test-eventfilter-not-found
+    When I do GET /api/v4/eventfilter/rules/test-eventfilter-not-found
     Then the response code should be 404
     Then the response body should be:
     """

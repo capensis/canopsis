@@ -3,8 +3,9 @@ package utils_test
 import (
 	"regexp"
 	"testing"
+	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/testlib"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -17,7 +18,16 @@ type Station struct {
 
 func TestApplyTranslation(t *testing.T) {
 	Convey("Given an event", t, func() {
-		e := testlib.GetCheckEvent()
+		e := types.Event{
+			Connector:     "rts",
+			ConnectorName: "RA",
+			Component:     "Soviet",
+			Resource:      "Torun",
+			EventType:     types.EventTypeCheck,
+			SourceType:    types.SourceTypeResource,
+			State:         types.AlarmStateMinor,
+			Timestamp:     types.CpsTime{Time: time.Now().Truncate(time.Second)},
+		}
 
 		Convey("Then we should be able to make a translation with it", func() {
 			trad, err := utils.ApplyTranslation(e, "test", "> {{ .State }} : {{ .Resource }}")

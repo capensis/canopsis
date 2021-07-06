@@ -11,6 +11,7 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"reflect"
 	"strconv"
 	"testing"
@@ -50,7 +51,7 @@ func TestStatsListener_Listen(t *testing.T) {
 	mockCursor.EXPECT().Decode(gomock.Any()).Return(nil)
 	mockCursor.EXPECT().Close(gomock.Any()).Return(nil)
 	mockCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(mockCursor, nil)
-	mockCollection.EXPECT().BulkWrite(gomock.Any(), gomock.Any()).Do(func(_ context.Context, writeModels []mongodriver.WriteModel) {
+	mockCollection.EXPECT().BulkWrite(gomock.Any(), gomock.Any()).Do(func(_ context.Context, writeModels []mongodriver.WriteModel, _ ...options.BulkWriteOptions) {
 		if len(writeModels) != expectedModelsCount {
 			t.Errorf("expected %v write models but got %v", expectedModelsCount, writeModels)
 			return
