@@ -8,11 +8,8 @@
 <script>
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
-import ColorIndicatorField from '../partials/color-indicator-field.vue';
-
 export default {
   inject: ['$validator'],
-  components: { ColorIndicatorField },
   mixins: [
     formValidationHeaderMixin,
   ],
