@@ -37,11 +37,6 @@
           field-context-entities-types-filter(v-model="settings.widget.parameters.selectedTypes")
           v-divider
           export-csv-form(v-model="settings.widget.parameters")
-          v-divider
-          field-columns(
-            v-model="settings.widget.parameters.widgetExportColumns",
-            :label="$t('settings.exportColumnNames')"
-          )
       v-divider
     v-btn.primary(data-test="submitContext", @click="submit") {{ $t('common.save') }}
 </template>
