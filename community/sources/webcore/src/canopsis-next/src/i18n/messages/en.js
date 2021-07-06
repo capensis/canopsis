@@ -2378,5 +2378,13 @@ export default {
     noEvents: 'No events received for {duration} by some of dependencies',
   },
 
+  pageHeaders: {
+    helpMessages: {
+      idleRules: '<span>Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.</span>\n' +
+        '<span>Learn more about Idle rules on <a target="_blank" href="https://doc.canopsis.net/guide-utilisation/cas-d-usage/link to the documentation/"><strong>https://doc.canopsis.net/guide-utilisation/cas-d-usage/link to the documentation/</strong></a></span>',
+    },
+    hideHelpMessage: 'Got it! Hide',
+  },
+
   ...featureService.get('i18n.en'),
 };

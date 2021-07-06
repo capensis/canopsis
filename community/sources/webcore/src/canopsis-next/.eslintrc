@@ -12,7 +12,7 @@
   },
   "rules": {
     "default-case": "off",
-    "max-len": ["error", { "code": 120, "ignoreStrings": true }],
+    "max-len": ["error", { "code": 120, "ignoreStrings": true, "ignoreTemplateLiterals": true, "ignoreRegExpLiterals": true }],
     "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state", "config", "acc", "Vue", "browser"] }],
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "no-return-assign": "off",

@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    c-the-page-header {{ $t('common.broadcastMessages') }}
+    c-page-header {{ $t('common.broadcastMessages') }}
     broadcast-messages-list(
       :broadcast-messages="broadcastMessages",
       :pending="broadcastMessagesPending",
