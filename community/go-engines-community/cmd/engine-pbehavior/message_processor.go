@@ -33,7 +33,7 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 	p.Logger.Debug().Msg("Process message")
 
 	msg := d.Body
-	ctx, task := trace.NewTask(context.Background(), "pbehavior.MessageProcessor")
+	ctx, task := trace.NewTask(ctx, "pbehavior.MessageProcessor")
 	defer task.End()
 	trace.Logf(ctx, "event_size", "%d", len(msg))
 	var err error

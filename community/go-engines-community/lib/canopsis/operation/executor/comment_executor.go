@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -17,6 +18,7 @@ type commentExecutor struct {
 }
 
 func (e *commentExecutor) Exec(
+	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,

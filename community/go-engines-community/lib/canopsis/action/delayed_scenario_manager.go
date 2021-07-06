@@ -278,7 +278,7 @@ func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
 		return nil, err
 	}
 
-	alarmsByID, err := m.loadAlarms(alarmIDs)
+	alarmsByID, err := m.loadAlarms(ctx, alarmIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -318,9 +318,9 @@ func (m *delayedScenarioManager) loadScenarios(ctx context.Context, ids []string
 	return scenariosByID, nil
 }
 
-func (m *delayedScenarioManager) loadAlarms(ids []string) (map[string]*types.Alarm, error) {
+func (m *delayedScenarioManager) loadAlarms(ctx context.Context, ids []string) (map[string]*types.Alarm, error) {
 	alarms := make([]types.Alarm, 0)
-	err := m.alarmAdapter.GetOpenedAlarmsByAlarmIDs(ids, &alarms)
+	err := m.alarmAdapter.GetOpenedAlarmsByAlarmIDs(ctx, ids, &alarms)
 	if err != nil {
 		return nil, err
 	}

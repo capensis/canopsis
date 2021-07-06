@@ -8,7 +8,6 @@ import (
 	"regexp"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/heartbeat"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
@@ -31,14 +30,12 @@ const (
 
 //Event types
 const (
-	EventTypeAck           = "ack"
-	EventTypeAckremove     = "ackremove"
-	EventTypeAssocTicket   = "assocticket"
-	EventTypeCalendar      = "calendar"
-	EventTypeCancel        = "cancel"
-	EventTypeCheck         = "check"
-	EventTypeComment       = "comment"
-	EventTypeConsolidation = "consolidation"
+	EventTypeAck         = "ack"
+	EventTypeAckremove   = "ackremove"
+	EventTypeAssocTicket = "assocticket"
+	EventTypeCancel      = "cancel"
+	EventTypeCheck       = "check"
+	EventTypeComment     = "comment"
 	// EventTypeDeclareTicket is used for manual declareticket trigger which is designed
 	// to trigger webhook with declare ticket parameter.
 	EventTypeDeclareTicket = "declareticket"
@@ -46,23 +43,16 @@ const (
 	EventTypeDeclareTicketWebhook = "declareticketwebhook"
 
 	EventTypeDone              = "done"
-	EventTypeDowntime          = "downtime"
-	EventTypeEue               = "eue"
-	EventTypeLog               = "log"
 	EventTypeChangestate       = "changestate"
 	EventTypeKeepstate         = "keepstate"
 	EventTypePBehavior         = "pbehavior"
 	EventTypePerf              = "perf"
-	EventTypeSelector          = "selector"
-	EventTypeSLA               = "sla"
 	EventTypeSnooze            = "snooze"
 	EventTypeUnsnooze          = "unsnooze"
-	EventTypeTrap              = "trap"
 	EventTypeStatCounterInc    = "statcounterinc"
 	EventTypeStatDuration      = "statduration"
 	EventTypeStatStateInterval = "statstateinterval"
 	EventTypeUncancel          = "uncancel"
-	EventTypeUser              = "user"
 
 	EventTypeMetaAlarm          = "metaalarm"
 	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
@@ -386,52 +376,6 @@ type GenericEvent struct {
 // json.Unmarshal(body, &event.Content)
 func (e *GenericEvent) JSONUnmarshal(body []byte) error {
 	return json.Unmarshal(body, &e.Content)
-}
-
-// PartialID builds the event ID, as a string, from the heartBeatItem configuration.
-// Given this event:
-//
-// {
-// 	"connector": "zabbix",
-// 	"connector_name": "instance1",
-// 	"component": "localhost",
-// 	...
-// }
-//
-// And the given heartBeatItem:
-//
-// li := NewHeartBeatItem(time.Minute*5)
-// li.AddMapping("connector", "zabbix")
-// li.AddMapping("connector_name", "instance1")
-//
-// PartialID will return "connector:zabbix.connector_name:instance1" as ID.
-// Keys will alphabetically sorted!
-func (e *GenericEvent) PartialID(heartBeatItem heartbeat.Item) (string, error) {
-
-	if len(heartBeatItem.Mappings) == 0 {
-		return "", errors.New("no mappings")
-	}
-
-	partial := make(map[string]string, 0)
-
-	for field := range heartBeatItem.Mappings {
-		switch event := e.Content.(type) {
-		case map[string]interface{}:
-			fieldValue, fexists := event[field]
-			if !fexists {
-				return "", fmt.Errorf("field %s does not exist", field)
-			}
-			sfieldValue, err := InterfaceToString(fieldValue)
-			if err != nil {
-				return "", fmt.Errorf("event partial id: %v", err)
-			}
-			partial[field] = sfieldValue
-		default:
-			return "", errors.New("cannot fetch data")
-		}
-	}
-
-	return heartbeat.BuildID(partial), nil
 }
 
 // GetCompatRK returns the event routing key. For compatibility only with old engines.

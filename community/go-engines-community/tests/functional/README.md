@@ -126,5 +126,5 @@ To avoid conflicts between test scenarios :
 
 - Use unique names for rules, alarms, entities, etc. which are used in each test scenario.
 - Catch all events which scenario causes.
-- If some rules are used to generate events (heartbeat rules, idle rules, etc.) make sure create
+- If some rules are used to generate events (idle rules, etc.) make sure create
   them with parameters with which events aren't generated during tests. 

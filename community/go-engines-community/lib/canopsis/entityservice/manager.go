@@ -37,7 +37,7 @@ type manager struct {
 }
 
 func (m *manager) LoadServices(ctx context.Context) error {
-	services, err := m.adapter.GetValid()
+	services, err := m.adapter.GetValid(ctx)
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func (m *manager) UpdateServices(ctx context.Context, entities []types.Entity) (
 }
 
 func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []string, error) {
-	service, err := m.adapter.GetByID(serviceID)
+	service, err := m.adapter.GetByID(ctx, serviceID)
 	if err != nil {
 		return false, nil, err
 	}
@@ -114,25 +114,25 @@ func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []
 		return false, nil, err
 	}
 
-	removedIDs, err := m.entityAdapter.RemoveImpactByQuery(service.EntityPatterns.AsNegativeMongoDriverQuery(), service.ID)
+	removedIDs, err := m.entityAdapter.RemoveImpactByQuery(ctx, service.EntityPatterns.AsNegativeMongoDriverQuery(), service.ID)
 	if err != nil {
 		return false, nil, err
 	}
 
-	addedIDs, err := m.entityAdapter.AddImpactByQuery(service.EntityPatterns.AsMongoDriverQuery(), service.ID)
+	addedIDs, err := m.entityAdapter.AddImpactByQuery(ctx, service.EntityPatterns.AsMongoDriverQuery(), service.ID)
 	if err != nil {
 		return false, nil, err
 	}
 
 	if len(removedIDs) > 0 {
-		_, err := m.adapter.RemoveDepends(service.ID, removedIDs)
+		_, err := m.adapter.RemoveDepends(ctx, service.ID, removedIDs)
 		if err != nil {
 			return false, nil, err
 		}
 	}
 
 	if len(addedIDs) > 0 {
-		_, err := m.adapter.AddDepends(service.ID, addedIDs)
+		_, err := m.adapter.AddDepends(ctx, service.ID, addedIDs)
 		if err != nil {
 			return false, nil, err
 		}
@@ -142,7 +142,7 @@ func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []
 }
 
 func (m *manager) ReloadService(ctx context.Context, serviceID string) error {
-	service, err := m.adapter.GetByID(serviceID)
+	service, err := m.adapter.GetByID(ctx, serviceID)
 	if err != nil {
 		return err
 	}
@@ -227,7 +227,7 @@ func (m *manager) runWorkers(
 							return
 						}
 
-						r, err := m.processService(data, entities)
+						r, err := m.processService(ctx, data, entities)
 						if err != nil {
 							errCh <- err
 							return
@@ -255,7 +255,7 @@ func (m *manager) runWorkers(
 
 // processService removes entities from entity service dependencies if they don't match
 // pattern anymore and adds entities to entity service dependencies if they matches pattern.
-func (m *manager) processService(data ServiceData, entities []types.Entity) ([]serviceUpdate, error) {
+func (m *manager) processService(ctx context.Context, data ServiceData, entities []types.Entity) ([]serviceUpdate, error) {
 	added := make([]string, 0)
 	removed := make([]string, 0)
 
@@ -279,13 +279,13 @@ func (m *manager) processService(data ServiceData, entities []types.Entity) ([]s
 
 	res := make([]serviceUpdate, 0)
 	if len(added) > 0 {
-		ok, err := m.adapter.AddDepends(data.ID, added)
+		ok, err := m.adapter.AddDepends(ctx, data.ID, added)
 		if err != nil {
 			return nil, err
 		}
 
 		if ok {
-			err := m.entityAdapter.AddImpacts(added, []string{data.ID})
+			err := m.entityAdapter.AddImpacts(ctx, added, []string{data.ID})
 			if err != nil {
 				return nil, err
 			}
@@ -299,13 +299,13 @@ func (m *manager) processService(data ServiceData, entities []types.Entity) ([]s
 	}
 
 	if len(removed) > 0 {
-		ok, err := m.adapter.RemoveDepends(data.ID, removed)
+		ok, err := m.adapter.RemoveDepends(ctx, data.ID, removed)
 		if err != nil {
 			return nil, err
 		}
 
 		if ok {
-			err := m.entityAdapter.RemoveImpacts(removed, []string{data.ID})
+			err := m.entityAdapter.RemoveImpacts(ctx, removed, []string{data.ID})
 			if err != nil {
 				return nil, err
 			}
@@ -328,12 +328,12 @@ func (m *manager) removeService(ctx context.Context, serviceID string) ([]string
 		return nil, err
 	}
 
-	_, err = m.entityAdapter.RemoveImpactByQuery(bson.M{"impact": serviceID}, serviceID)
+	_, err = m.entityAdapter.RemoveImpactByQuery(ctx, bson.M{"impact": serviceID}, serviceID)
 	if err != nil {
 		return nil, err
 	}
 
-	ids, err := m.adapter.RemoveDependByQuery(bson.M{"depends": serviceID}, serviceID)
+	ids, err := m.adapter.RemoveDependByQuery(ctx, bson.M{"depends": serviceID}, serviceID)
 	if err != nil {
 		return nil, err
 	}

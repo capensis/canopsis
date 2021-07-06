@@ -20,16 +20,11 @@ func NewMongoProvider(dbClient libmongo.DbClient) security.ConfigProvider {
 	return &mongoProvider{dbClient: dbClient}
 }
 
-const ObjectCollection = "object"
-const ldapConfigID = "cservice.ldapconfig"
-const casConfigID = "cservice.casconfig"
 const defaultLdapPort = 389
 
-func (p *mongoProvider) LoadLdapConfig() (*security.LdapConfig, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	col := p.dbClient.Collection(ObjectCollection)
-	res := col.FindOne(ctx, bson.M{"_id": ldapConfigID})
+func (p *mongoProvider) LoadLdapConfig(ctx context.Context) (*security.LdapConfig, error) {
+	col := p.dbClient.Collection(libmongo.ObjectMongoCollection)
+	res := col.FindOne(ctx, bson.M{"_id": security.LdapConfigID})
 	if err := res.Err(); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil
@@ -59,11 +54,9 @@ func (p *mongoProvider) LoadLdapConfig() (*security.LdapConfig, error) {
 	return &config, nil
 }
 
-func (p *mongoProvider) LoadCasConfig() (*security.CasConfig, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	col := p.dbClient.Collection(ObjectCollection)
-	res := col.FindOne(ctx, bson.M{"_id": casConfigID})
+func (p *mongoProvider) LoadCasConfig(ctx context.Context) (*security.CasConfig, error) {
+	col := p.dbClient.Collection(libmongo.ObjectMongoCollection)
+	res := col.FindOne(ctx, bson.M{"_id": security.CasConfigID})
 	if err := res.Err(); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil

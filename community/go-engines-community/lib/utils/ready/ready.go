@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/influx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -69,11 +68,5 @@ func CheckMongo() error {
 // CheckAMQP ...
 func CheckAMQP() error {
 	_, err := amqp.NewConnection(log.NewLogger(false), 0, 0)
-	return err
-}
-
-// CheckInflux ...
-func CheckInflux() error {
-	_, err := influx.NewSession()
 	return err
 }

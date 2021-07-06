@@ -302,18 +302,26 @@ func (s *scheduler) publishToNext(eventByte []byte) error {
 }
 
 func (s *scheduler) listen(ctx context.Context) {
-	for msg := range s.ch {
-		if msg.Payload == "expired" {
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case msg, ok := <-s.ch:
+			if !ok {
+				return
+			}
 
-			parsedStr := strings.SplitN(msg.Channel, ":", 2)
-			lockID := parsedStr[1]
+			if msg.Payload == "expired" {
+				parsedStr := strings.SplitN(msg.Channel, ":", 2)
+				lockID := parsedStr[1]
 
-			s.logger.
-				Info().
-				Str("lockID", lockID).
-				Msg("alarm lock has been expired, processing next event")
+				s.logger.
+					Info().
+					Str("lockID", lockID).
+					Msg("alarm lock has been expired, processing next event")
 
-			s.processExpiredLock(ctx, lockID)
+				s.processExpiredLock(ctx, lockID)
+			}
 		}
 	}
 }
