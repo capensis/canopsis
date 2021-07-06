@@ -33,7 +33,7 @@ export const sideBarSettingsWidgetAlarmMixin = {
     /**
      * widgetColumns preparation
      */
-    widgetColumnsPreparation(widgetColumns, isInitialization) {
+    widgetColumnsPreparation(widgetColumns = [], isInitialization) {
       return widgetColumns.map(v => ({
         ...v,
         value: this.prefixFormatter(v.value, isInitialization),
