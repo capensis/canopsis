@@ -109,6 +109,11 @@
           )
           v-divider
           export-csv-form(v-model="settings.widget.parameters", datetime-format)
+          v-divider
+          field-columns(
+            v-model="settings.widget.parameters.widgetExportColumns",
+            :label="$t('settings.exportColumnNames')"
+          )
       v-divider
     v-btn.primary(data-test="submitAlarms", @click="submit") {{ $t('common.save') }}
 </template>

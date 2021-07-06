@@ -4,6 +4,7 @@ import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, DEFAULT_PERIODIC_REFRESH } from '@
 const WIDGET_PARAMETERS_FIELDS = {
   widgetColumns: 'widgetColumns',
   widgetGroupColumns: 'widgetGroupColumns',
+  widgetExportColumns: 'widgetExportColumns',
   periodicRefresh: 'periodic_refresh',
   infoPopups: 'infoPopups',
   sort: 'sort',
@@ -21,6 +22,7 @@ export const sideBarSettingsWidgetAlarmMixin = {
     getAlarmWidgetPreparationMap() {
       return {
         [WIDGET_PARAMETERS_FIELDS.widgetColumns]: this.widgetColumnsPreparation,
+        [WIDGET_PARAMETERS_FIELDS.widgetExportColumns]: this.widgetColumnsPreparation,
         [WIDGET_PARAMETERS_FIELDS.widgetGroupColumns]: this.widgetGroupColumnsPreparation,
         [WIDGET_PARAMETERS_FIELDS.periodicRefresh]: this.periodicRefreshPreparation,
         [WIDGET_PARAMETERS_FIELDS.infoPopups]: this.infoPopupsPreparation,
@@ -31,7 +33,7 @@ export const sideBarSettingsWidgetAlarmMixin = {
     /**
      * widgetColumns preparation
      */
-    widgetColumnsPreparation(widgetColumns, isInitialization) {
+    widgetColumnsPreparation(widgetColumns = [], isInitialization) {
       return widgetColumns.map(v => ({
         ...v,
         value: this.prefixFormatter(v.value, isInitialization),
@@ -141,6 +143,7 @@ export const sideBarSettingsWidgetAlarmMixin = {
           [
             WIDGET_PARAMETERS_FIELDS.widgetColumns,
             WIDGET_PARAMETERS_FIELDS.widgetGroupColumns,
+            WIDGET_PARAMETERS_FIELDS.widgetExportColumns,
             WIDGET_PARAMETERS_FIELDS.periodicRefresh,
             WIDGET_PARAMETERS_FIELDS.infoPopups,
             WIDGET_PARAMETERS_FIELDS.sort,

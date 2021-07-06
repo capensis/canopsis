@@ -450,6 +450,7 @@ export default {
     defaultSortColumn: 'Default sort column',
     sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
     columnNames: 'Column names',
+    exportColumnNames: 'Export column names',
     groupColumnNames: 'Column names for meta alarms',
     trackColumnNames: 'Track alarm source columns',
     treeOfDependenciesColumnNames: 'Column names for tree of dependencies',
