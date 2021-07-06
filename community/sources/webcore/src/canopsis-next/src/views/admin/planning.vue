@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    c-the-page-header {{ $t('common.planning') }}
+    c-page-header {{ $t('common.planning') }}
     v-layout(row, wrap)
       v-flex(xs12)
         v-card.ma-2

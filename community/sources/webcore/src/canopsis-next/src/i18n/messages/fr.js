@@ -2318,6 +2318,7 @@ export default {
       title: 'Instructions de stockage des données',
       accumulateAfter: 'Accumuler les statistiques des instructions après',
       deleteAfter: 'Supprimer les données des instructions après',
+      deleteAfterHelpText: 'Lorsqu\'il est activé, les données statistiques des instructions seront supprimées après la période de temps définie.',
     },
     history: {
       junit: 'Script lancé à {launchedAt}',
@@ -2383,6 +2384,14 @@ export default {
     [ENTITIES_STATUSES.stealthy]: 'Furtive',
     [ENTITIES_STATUSES.cancelled]: 'Annulée',
     [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
+  },
+
+  pageHeaders: {
+    helpMessages: {
+      idleRules: '<span>Les règles d\'inactivité pour les entités et les alarmes peuvent être utilisées afin de surveiller les événements et les états d\'alarme afin d\'être averti lorsque les événements ne sont pas reçus ou que l\'état de l\'alarme n\'est pas modifié pendant une longue période en raison d\'erreurs ou d\'une configuration invalide.</span>\n' +
+        '<span>En savoir plus sur les règles d\'inactivité sur <a target="_blank" href="https://doc.canopsis.net/guide-utilisation/cas-d-usage/link to the documentation/"><strong>https://doc.canopsis.net/guide-utilisation/cas-d-usage/link to the documentation/</strong></a></span>',
+    },
+    hideHelpMessage: 'J\'ai compris! Cacher',
   },
 
   ...featureService.get('i18n.fr'),
