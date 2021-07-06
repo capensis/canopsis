@@ -29,6 +29,7 @@ import Playlist from '@/views/playlist.vue';
 import ExploitationMetaAlarmRules from '@/views/exploitation/meta-alarm-rules.vue';
 import ExploitationScenarios from '@/views/exploitation/scenarios.vue';
 import NotificationInstructionStats from '@/views/notification/instruction-stats.vue';
+import IdleRules from '@/views/exploitation/idle-rules.vue';
 
 Vue.use(Router);
 
@@ -69,7 +70,7 @@ const routes = [
     component: Alarm,
     meta: {
       requiresLogin: true,
-      requiresPermission: {
+      requiresRight: {
         id: USERS_PERMISSIONS.technical.view,
       },
     },
@@ -273,6 +274,17 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USERS_PERMISSIONS.technical.notification.instructionStats,
+      },
+    },
+  },
+  {
+    path: '/exploitation/idle-rules',
+    name: 'idle-rules',
+    component: IdleRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.idleRules,
       },
     },
   },

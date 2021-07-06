@@ -19,6 +19,7 @@ import {
   STATE_SETTING_METHODS,
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   REMEDIATION_INSTRUCTION_TYPES,
+  IDLE_RULE_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -128,6 +129,7 @@ export default {
     metaAlarmRule: 'Meta alarm rule',
     dynamicInfo: 'Informations dynamiques',
     instructionRating: 'Évaluation de l\'instruction',
+    idleRules: 'Règles d\'inactivité',
     icon: 'Icône',
     fullscreen: 'Plein écran',
     interval: 'Période',
@@ -197,6 +199,7 @@ export default {
     approve: 'Approuver',
     summary: 'Résumé',
     statistics: 'Statistiques',
+    action: 'Action',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1493,6 +1496,16 @@ export default {
         original: 'Original',
       },
     },
+    createAlarmIdleRule: {
+      create: {
+        title: 'Créer une règle d\'alarme',
+      },
+    },
+    createEntityIdleRule: {
+      create: {
+        title: 'Créer une règle d\'entité',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -2337,6 +2350,14 @@ export default {
       [QUICK_RANGES.last6Hour.value]: '6 dernières heures',
       [QUICK_RANGES.last12Hour.value]: '12 dernières heures',
       [QUICK_RANGES.last24Hour.value]: '24 dernières heures',
+    },
+  },
+
+  idleRules: {
+    timeAwaiting: 'Temps d\'attente',
+    types: {
+      [IDLE_RULE_TYPES.alarm]: 'Règle d\'alarme',
+      [IDLE_RULE_TYPES.entity]: 'Règle d\'entité',
     },
   },
 

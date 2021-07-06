@@ -45,6 +45,7 @@ export const ENTITIES_TYPES = {
   testSuite: 'testSuite',
   testSuiteHistory: 'testSuiteHistory',
   stateSetting: 'stateSetting',
+  idleRules: 'idleRules',
 };
 
 export const MODALS = {
@@ -855,6 +856,8 @@ export const USERS_PERMISSIONS = {
       dynamicInfo: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_dynamicInfo`,
       metaAlarmRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_metaAlarmRule`,
       scenario: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_scenario`,
+      // idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
+      idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_scenario`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
@@ -1887,3 +1890,8 @@ export const DAYS_IN_MONTH = 30;
 export const MONTHS_IN_YEAR = 12;
 
 export const DAYS_IN_WEEK = 7;
+
+export const IDLE_RULE_TYPES = {
+  alarm: 'alarm',
+  entity: 'entity',
+};
