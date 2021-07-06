@@ -497,6 +497,14 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_exploitation_idleRules",
+        "loader_id": "models_exploitation_idleRules",
+        "crecord_name": "models_exploitation_idleRules",
+        "crecord_type": "action",
+        "desc": "Exploitation: Idle rules",
+        "type": "CRUD"
+    },
+    {
         "_id": "listalarm_ack",
         "loader_id": "listalarm_ack",
         "crecord_name": "listalarm_ack",
