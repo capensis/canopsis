@@ -102,6 +102,8 @@ Env var `CPS_AMQP_URL` is used to connect to RMQ.
 Argument `--eventlogs events.log` logs all events which were catched by `When I wait the end of event processing`
 and `When I wait the end of N events processing` for each test scenario.
 
+Argument `--checkUncaughtEvents` enables catching event after each scenario. Functional tests stop by panic if event is caught. Please note, it adds extra timeout for each scenario.
+
 ### Periodical process
 
 Run all engines with shorter periodical wait time. Use argument `-periodicalWaitTime 2s`.
