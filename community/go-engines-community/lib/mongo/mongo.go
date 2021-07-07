@@ -380,7 +380,7 @@ func (c *dbCollection) retry(f func() error) {
 
 // NewClient creates a new connection to the MongoDB database.
 // It uses EnvURL as configuration source.
-func NewClient(retryCount int, minRetryTimeout time.Duration) (DbClient, error) {
+func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (DbClient, error) {
 	mongoURL, dbName, err := getURL()
 	if err != nil {
 		return nil, err
@@ -390,10 +390,6 @@ func NewClient(retryCount int, minRetryTimeout time.Duration) (DbClient, error) 
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err

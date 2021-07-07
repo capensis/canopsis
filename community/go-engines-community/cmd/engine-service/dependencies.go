@@ -36,14 +36,16 @@ type DependencyMaker struct {
 // NewEngine returns the default Service engine with default connections.
 func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
-	cfg := m.DepConfig()
+	mongoClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, mongoClient)
+	mongoClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
+	mongoClient.SetRetryCount(cfg.Global.ReconnectRetries)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel, err := amqpConnection.Channel()
 	if err != nil {
 		panic(err)
 	}
 
-	mongoClient := m.DepMongoClient(cfg)
 	redisSession := m.DepRedisSession(ctx, redis.CacheService, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
@@ -128,8 +130,8 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 
 			return nil
 		},
-		func() {
-			err := mongoClient.Disconnect(context.Background())
+		func(ctx context.Context) {
+			err := mongoClient.Disconnect(ctx)
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}

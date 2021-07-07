@@ -43,9 +43,11 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	cfg := m.DepConfig()
+	mongoClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, mongoClient)
+	mongoClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
+	mongoClient.SetRetryCount(cfg.Global.ReconnectRetries)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
-	mongoClient := m.DepMongoClient(cfg)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	entityAdapter := entity.NewAdapter(mongoClient)
 	eventFilterAdapter := eventfilter.NewAdapter(mongoClient)
@@ -114,8 +116,8 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 			}
 			return nil
 		},
-		func() {
-			err := mongoClient.Disconnect(context.Background())
+		func(ctx context.Context) {
+			err := mongoClient.Disconnect(ctx)
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}

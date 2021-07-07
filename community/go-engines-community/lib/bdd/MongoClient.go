@@ -16,12 +16,7 @@ type MongoClient struct {
 }
 
 // NewMongoClient creates new mongo client.
-func NewMongoClient() (*MongoClient, error) {
-	db, err := libmongo.NewClient(0, 0)
-	if err != nil {
-		return nil, err
-	}
-
+func NewMongoClient(db libmongo.DbClient) (*MongoClient, error) {
 	var mongoClient MongoClient
 	// TODO: change database to test
 	mongoClient.client = db

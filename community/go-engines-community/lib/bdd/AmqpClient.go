@@ -10,7 +10,6 @@ import (
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/cucumber/messages-go/v10"
 	"github.com/rs/zerolog"
@@ -39,21 +38,13 @@ type AmqpClient struct {
 
 // NewAmqpClient creates new AMQP client.
 func NewAmqpClient(
+	dbClient mongo.DbClient,
+	amqpConnection libamqp.Connection,
 	exchange, key string,
 	encoder encoding.Encoder,
 	decoder encoding.Decoder,
 	eventLogger zerolog.Logger,
 ) (*AmqpClient, error) {
-	mongoClient, err := mongo.NewClient(0, 0)
-	if err != nil {
-		return nil, err
-	}
-
-	amqpConnection, err := libamqp.NewConnection(liblog.NewLogger(false), 0, 0)
-	if err != nil {
-		return nil, err
-	}
-
 	ch, err := amqpConnection.Channel()
 	if err != nil {
 		return nil, err
@@ -103,7 +94,7 @@ func NewAmqpClient(
 
 	return &AmqpClient{
 		amqpConnection:    amqpConnection,
-		mongoClient:       mongoClient,
+		mongoClient:       dbClient,
 		mainStreamAckMsgs: msgs,
 		encoder:           encoder,
 		decoder:           decoder,

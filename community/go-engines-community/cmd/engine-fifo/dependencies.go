@@ -34,8 +34,10 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	cfg := m.DepConfig()
-	mongoClient := m.DepMongoClient(cfg)
+	mongoClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, mongoClient)
+	mongoClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
+	mongoClient.SetRetryCount(cfg.Global.ReconnectRetries)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
 	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
@@ -73,14 +75,11 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 
 			return nil
 		},
-		func() {
+		func(ctx context.Context) {
 			close(statsCh)
 
-			deferCtx, cancel := context.WithCancel(context.Background())
-			defer cancel()
-			scheduler.Stop(deferCtx)
-
-			err := mongoClient.Disconnect(context.Background())
+			scheduler.Stop(ctx)
+			err := mongoClient.Disconnect(ctx)
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}

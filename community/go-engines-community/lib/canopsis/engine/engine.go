@@ -9,9 +9,11 @@ import (
 	"time"
 )
 
+const shutdownTimout = 5 * time.Second
+
 func New(
 	init func(ctx context.Context) error,
-	deferFunc func(),
+	deferFunc func(ctx context.Context),
 	logger zerolog.Logger,
 ) Engine {
 	return &engine{
@@ -23,7 +25,7 @@ func New(
 
 type engine struct {
 	init              func(ctx context.Context) error
-	deferFunc         func()
+	deferFunc         func(ctx context.Context)
 	consumers         []Consumer
 	periodicalWorkers []PeriodicalWorker
 	logger            zerolog.Logger
@@ -42,7 +44,9 @@ func (e *engine) Run(parentCtx context.Context) error {
 	defer e.logger.Info().Msg("engine stopped")
 	defer func() {
 		if e.deferFunc != nil {
-			e.deferFunc()
+			deferCtx, deferCancel := context.WithTimeout(context.Background(), shutdownTimout)
+			defer deferCancel()
+			e.deferFunc(deferCtx)
 		}
 	}()
 

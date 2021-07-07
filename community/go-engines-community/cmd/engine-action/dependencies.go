@@ -33,13 +33,15 @@ type DependencyMaker struct {
 func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
 
-	cfg := m.DepConfig()
+	mongoClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, mongoClient)
+	mongoClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
+	mongoClient.SetRetryCount(cfg.Global.ReconnectRetries)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel, err := amqpConnection.Channel()
 	if err != nil {
 		panic(err)
 	}
-	mongoClient := m.DepMongoClient(cfg)
 	actionAdapter := action.NewAdapter(mongoClient)
 	alarmAdapter := alarm.NewAdapter(mongoClient)
 	actionRedisSession := m.DepRedisSession(ctx, redis.ActionScenarioStorage, logger, cfg)
@@ -131,11 +133,11 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 
 			return nil
 		},
-		func() {
+		func(ctx context.Context) {
 			close(scenarioExecChan)
 			close(rpcResultChannel)
 
-			err := mongoClient.Disconnect(context.Background())
+			err := mongoClient.Disconnect(ctx)
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}

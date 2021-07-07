@@ -58,13 +58,8 @@ type basicAuth struct {
 }
 
 // NewApiClient creates new API client.
-func NewApiClient() (*ApiClient, error) {
+func NewApiClient(db mongo.DbClient) (*ApiClient, error) {
 	apiUrl, err := GetApiURL()
-	if err != nil {
-		return nil, err
-	}
-
-	db, err := mongo.NewClient(0, 0)
 	if err != nil {
 		return nil, err
 	}
