@@ -290,6 +290,7 @@ router.beforeEach((to, from, next) => {
       name: 'login',
       query: {
         redirect: to.fullPath,
+        errorMessage: to.query.errorMessage,
       },
     });
   } else if (isLoggedIn && isDontRequiresAuth) {
