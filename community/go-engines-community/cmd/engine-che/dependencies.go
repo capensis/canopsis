@@ -73,7 +73,7 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 
 	engine := libengine.New(
 		func(ctx context.Context) error {
-			_, err := periodicalLockClient.Obtain(ctx, impactedServicesWorkerLock,
+			_, err := periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
@@ -171,7 +171,7 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker(&periodicalWorker{
+	engine.AddPeriodicalWorker(&reloadLocalCachePeriodicalWorker{
 		EventFilterService: eventFilterService,
 		EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
@@ -193,12 +193,16 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 		alarmConfigProvider,
 		logger,
 	))
-	engine.AddPeriodicalWorker(&impactedServicesPeriodicalWorker{
-		LockClient:         periodicalLockClient,
-		EnrichmentCenter:   enrichmentCenter,
-		PeriodicalInterval: options.PeriodicalWaitTime,
-		Logger:             logger,
-	})
+	engine.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.ChePeriodicalLockKey,
+		&impactedServicesPeriodicalWorker{
+			EnrichmentCenter:   enrichmentCenter,
+			PeriodicalInterval: options.PeriodicalWaitTime,
+			Logger:             logger,
+		},
+		logger,
+	))
 
 	return engine
 }

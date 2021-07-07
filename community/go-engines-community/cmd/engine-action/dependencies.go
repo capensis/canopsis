@@ -44,13 +44,14 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	}
 	actionAdapter := action.NewAdapter(mongoClient)
 	alarmAdapter := alarm.NewAdapter(mongoClient)
-	actionRedisSession := m.DepRedisSession(ctx, redis.ActionScenarioStorage, logger, cfg)
+	actionRedisClient := m.DepRedisSession(ctx, redis.ActionScenarioStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
+	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	delayedScenarioManager := action.NewDelayedScenarioManager(actionAdapter, alarmAdapter,
-		action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, actionRedisSession, json.NewEncoder(), json.NewDecoder()),
+		action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, actionRedisClient, json.NewEncoder(), json.NewDecoder()),
 		options.PeriodicalWaitTime, logger)
 	scenarioExecChan := make(chan action.ExecuteScenariosTask)
-	storage := action.NewRedisScenarioExecutionStorage(redis.ScenarioExecutionKey, actionRedisSession, json.NewEncoder(), json.NewDecoder(), logger)
+	storage := action.NewRedisScenarioExecutionStorage(redis.ScenarioExecutionKey, actionRedisClient, json.NewEncoder(), json.NewDecoder(), logger)
 	actionScenarioStorage := action.NewScenarioStorage(actionAdapter, delayedScenarioManager, logger)
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
 		delayedScenarioManager, storage, json.NewEncoder(), amqpChannel,
@@ -147,7 +148,12 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
 
-			err = actionRedisSession.Close()
+			err = actionRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = lockRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
@@ -191,13 +197,21 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		},
 		logger,
 	))
-	engineAction.AddPeriodicalWorker(&periodicalWorker{
+	engineAction.AddPeriodicalWorker(&reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:    options.PeriodicalWaitTime,
-		LockerClient:          redis.NewLockClient(actionRedisSession),
-		ActionService:         actionService,
 		ActionScenarioStorage: actionScenarioStorage,
 		Logger:                logger,
 	})
+	engineAction.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisClient),
+		redis.ActionPeriodicalLockKey,
+		&scenarioPeriodicalWorker{
+			PeriodicalInterval: options.PeriodicalWaitTime,
+			ActionService:      actionService,
+			Logger:             logger,
+		},
+		logger,
+	))
 
 	return engineAction
 }

@@ -8,18 +8,18 @@ import (
 	"time"
 )
 
-type periodicalWorker struct {
+type reloadLocalCachePeriodicalWorker struct {
 	EventFilterService eventfilter.Service
 	EnrichmentCenter   libcontext.EnrichmentCenter
 	PeriodicalInterval time.Duration
 	Logger             zerolog.Logger
 }
 
-func (w *periodicalWorker) GetInterval() time.Duration {
+func (w *reloadLocalCachePeriodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *periodicalWorker) Work(ctx context.Context) error {
+func (w *reloadLocalCachePeriodicalWorker) Work(ctx context.Context) error {
 	w.Logger.Debug().Msg("Loading event filter rules")
 	err := w.EventFilterService.LoadRules(ctx)
 	if err != nil {
