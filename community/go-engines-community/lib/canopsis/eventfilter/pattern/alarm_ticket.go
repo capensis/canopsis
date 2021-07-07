@@ -48,7 +48,8 @@ func (f AlarmTicketFields) IsSet() bool {
 		f.Timestamp.IsSet() ||
 		f.Author.IsSet() ||
 		f.Message.IsSet() ||
-		f.Value.IsSet()
+		f.Value.IsSet() ||
+		len(f.Data) > 0
 }
 
 // AlarmTicketRefPattern is a type representing a pattern that can be applied
@@ -199,6 +200,15 @@ func (p AlarmTicketRefPattern) MarshalBSONValue() (bsontype.Type, []byte, error)
 		}
 
 		resultBson[bsonFieldName] = p.Value
+	}
+
+	if len(p.Data) > 0 {
+		bsonFieldName, err := GetFieldBsonName(p, "Data", "data")
+		if err != nil {
+			return bsontype.Undefined, nil, err
+		}
+
+		resultBson[bsonFieldName] = p.Data
 	}
 
 	if len(resultBson) > 0 {
