@@ -865,6 +865,8 @@ Feature: send an event
           "component": "test_component",
           "event_type": "check",
           "source_type": "resource",
+          "ma_children": [],
+          "ma_parents": [],
           "state": 1,
           "resource": "test_resource"
         }
@@ -933,6 +935,8 @@ Feature: send an event
           "component": "test_component",
           "event_type": "check",
           "source_type": "resource",
+          "ma_children": [],
+          "ma_parents": [],
           "state": 1,
           "resource": "test_resource"
         }
