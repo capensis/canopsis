@@ -246,9 +246,9 @@ Feature: correlation feature - valuegroup rule with threshold count
       "actions" : [
         {
           "type" : "set_entity_info_from_template",
-          "name" : "infoenrich",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich}}` }}",
-          "description" : "infoenrich"
+          "name" : "infoenrich2",
+          "value" : "{{ `{{.Event.ExtraInfos.infoenrich2}}` }}",
+          "description" : "infoenrich2"
         }
       ],
       "priority" : 10001,
@@ -271,9 +271,9 @@ Feature: correlation feature - valuegroup rule with threshold count
       "actions" : [
         {
           "type" : "set_entity_info_from_template",
-          "name" : "infoenrich2",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich2}}` }}",
-          "description" : "infoenrich2"
+          "name" : "infoenrich3",
+          "value" : "{{ `{{.Event.ExtraInfos.infoenrich3}}` }}",
+          "description" : "infoenrich3"
         }
       ],
       "priority" : 10001,
@@ -292,8 +292,8 @@ Feature: correlation feature - valuegroup rule with threshold count
         "time_interval": 10,
         "threshold_count": 2,
         "value_paths": [
-          "entity.infos.infoenrich.value",
-          "entity.infos.infoenrich2.value"
+          "entity.infos.infoenrich2.value",
+          "entity.infos.infoenrich3.value"
         ]
       }
     }
@@ -310,8 +310,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-2",
       "resource": "test-valuegroup-correlation-2-resource-1",
-      "infoenrich": "1",
       "infoenrich2": "1",
+      "infoenrich3": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -328,8 +328,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-2",
       "resource": "test-valuegroup-correlation-2-resource-2",
-      "infoenrich": "1",
-      "infoenrich2": "2",
+      "infoenrich2": "1",
+      "infoenrich3": "2",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -346,8 +346,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-2",
       "resource": "test-valuegroup-correlation-2-resource-3",
-      "infoenrich": "2",
-      "infoenrich2": "1",
+      "infoenrich2": "2",
+      "infoenrich3": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -364,8 +364,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-2",
       "resource": "test-valuegroup-correlation-2-resource-4",
-      "infoenrich": "2",
       "infoenrich2": "2",
+      "infoenrich3": "2",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -396,8 +396,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-2",
       "resource": "test-valuegroup-correlation-2-resource-5",
-      "infoenrich": "1",
       "infoenrich2": "1",
+      "infoenrich3": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -414,8 +414,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-2",
       "resource": "test-valuegroup-correlation-2-resource-6",
-      "infoenrich": "1",
-      "infoenrich2": "2",
+      "infoenrich2": "1",
+      "infoenrich3": "2",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -432,8 +432,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-2",
       "resource": "test-valuegroup-correlation-2-resource-7",
-      "infoenrich": "2",
-      "infoenrich2": "1",
+      "infoenrich2": "2",
+      "infoenrich3": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -450,8 +450,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-2",
       "resource": "test-valuegroup-correlation-2-resource-8",
-      "infoenrich": "2",
       "infoenrich2": "2",
+      "infoenrich3": "2",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -518,8 +518,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-2",
       "resource": "test-valuegroup-correlation-2-resource-9",
-      "infoenrich": "1",
       "infoenrich2": "1",
+      "infoenrich3": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -536,8 +536,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-2",
       "resource": "test-valuegroup-correlation-2-resource-10",
-      "infoenrich": "1",
-      "infoenrich2": "2",
+      "infoenrich2": "1",
+      "infoenrich3": "2",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -554,8 +554,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-2",
       "resource": "test-valuegroup-correlation-2-resource-11",
-      "infoenrich": "2",
-      "infoenrich2": "1",
+      "infoenrich2": "2",
+      "infoenrich3": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -572,8 +572,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-2",
       "resource": "test-valuegroup-correlation-2-resource-12",
-      "infoenrich": "2",
       "infoenrich2": "2",
+      "infoenrich3": "2",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -674,9 +674,9 @@ Feature: correlation feature - valuegroup rule with threshold count
       "actions" : [
         {
           "type" : "set_entity_info_from_template",
-          "name" : "infoenrich",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich}}` }}",
-          "description" : "infoenrich"
+          "name" : "infoenrich4",
+          "value" : "{{ `{{.Event.ExtraInfos.infoenrich4}}` }}",
+          "description" : "infoenrich4"
         }
       ],
       "priority" : 10001,
@@ -695,7 +695,7 @@ Feature: correlation feature - valuegroup rule with threshold count
         "time_interval": 3,
         "threshold_count": 2,
         "value_paths": [
-          "entity.infos.infoenrich.value"
+          "entity.infos.infoenrich4.value"
         ]
       }
     }
@@ -712,7 +712,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-3",
       "resource": "test-valuegroup-correlation-3-resource-1",
-      "infoenrich": "1",
+      "infoenrich4": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -729,7 +729,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-3",
       "resource": "test-valuegroup-correlation-3-resource-2",
-      "infoenrich": "1",
+      "infoenrich4": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -747,7 +747,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-3",
       "resource": "test-valuegroup-correlation-3-resource-3",
-      "infoenrich": "1",
+      "infoenrich4": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -764,7 +764,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-3",
       "resource": "test-valuegroup-correlation-3-resource-4",
-      "infoenrich": "1",
+      "infoenrich4": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -783,7 +783,7 @@ Feature: correlation feature - valuegroup rule with threshold count
           },
           "metaalarm": true,
           "rule": {
-            "name": "test-valuegroup-correlation-2"
+            "name": "test-valuegroup-correlation-3"
           }
         },
         {
@@ -792,7 +792,7 @@ Feature: correlation feature - valuegroup rule with threshold count
           },
           "metaalarm": true,
           "rule": {
-            "name": "test-valuegroup-correlation-2"
+            "name": "test-valuegroup-correlation-3"
           }
         }
       ],
@@ -804,8 +804,8 @@ Feature: correlation feature - valuegroup rule with threshold count
       }
     }
     """
-    
-  Scenario: given meta alarm rule with threshold count and events should create one single meta alarms because first group didn't reached threshold    
+
+  Scenario: given meta alarm rule with threshold count and events should create one single meta alarms because first group didn't reached threshold
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
     """
@@ -847,9 +847,9 @@ Feature: correlation feature - valuegroup rule with threshold count
       "actions" : [
         {
           "type" : "set_entity_info_from_template",
-          "name" : "infoenrich",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich}}` }}",
-          "description" : "infoenrich"
+          "name" : "infoenrich5",
+          "value" : "{{ `{{.Event.ExtraInfos.infoenrich5}}` }}",
+          "description" : "infoenrich5"
         }
       ],
       "priority" : 10001,
@@ -868,7 +868,7 @@ Feature: correlation feature - valuegroup rule with threshold count
         "time_interval": 3,
         "threshold_count": 2,
         "value_paths": [
-          "entity.infos.infoenrich.value"
+          "entity.infos.infoenrich5.value"
         ]
       }
     }
@@ -885,7 +885,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-4",
       "resource": "test-valuegroup-correlation-4-resource-1",
-      "infoenrich": "1",
+      "infoenrich5": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -903,7 +903,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-4",
       "resource": "test-valuegroup-correlation-4-resource-2",
-      "infoenrich": "1",
+      "infoenrich5": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -920,7 +920,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-4",
       "resource": "test-valuegroup-correlation-4-resource-3",
-      "infoenrich": "1",
+      "infoenrich5": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -994,9 +994,9 @@ Feature: correlation feature - valuegroup rule with threshold count
       "actions" : [
         {
           "type" : "set_entity_info_from_template",
-          "name" : "infoenrich",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich}}` }}",
-          "description" : "infoenrich"
+          "name" : "infoenrich6",
+          "value" : "{{ `{{.Event.ExtraInfos.infoenrich6}}` }}",
+          "description" : "infoenrich6"
         }
       ],
       "priority" : 10001,
@@ -1015,7 +1015,7 @@ Feature: correlation feature - valuegroup rule with threshold count
         "time_interval": 5,
         "threshold_count": 2,
         "value_paths": [
-          "entity.infos.infoenrich.value"
+          "entity.infos.infoenrich6.value"
         ]
       }
     }
@@ -1032,7 +1032,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-5",
       "resource": "test-valuegroup-correlation-5-resource-1",
-      "infoenrich": "1",
+      "infoenrich6": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -1050,7 +1050,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-5",
       "resource": "test-valuegroup-correlation-5-resource-2",
-      "infoenrich": "1",
+      "infoenrich6": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -1068,7 +1068,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-5",
       "resource": "test-valuegroup-correlation-5-resource-3",
-      "infoenrich": "1",
+      "infoenrich6": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -1085,7 +1085,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-5",
       "resource": "test-valuegroup-correlation-5-resource-4",
-      "infoenrich": "1",
+      "infoenrich6": "1",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -1116,7 +1116,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       }
     }
     """
-    
+
   Scenario: given meta alarm rule and events shouldn't create metaalarm if empty valuepath
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -1159,9 +1159,9 @@ Feature: correlation feature - valuegroup rule with threshold count
       "actions" : [
         {
           "type" : "set_entity_info_from_template",
-          "name" : "infoenrich",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich}}` }}",
-          "description" : "infoenrich"
+          "name" : "infoenrich7",
+          "value" : "{{ `{{.Event.ExtraInfos.infoenrich7}}` }}",
+          "description" : "infoenrich7"
         }
       ],
       "priority" : 10001,
@@ -1180,7 +1180,7 @@ Feature: correlation feature - valuegroup rule with threshold count
         "time_interval": 10,
         "threshold_count": 2,
         "value_paths": [
-          "entity.infos.infoenrich.value"
+          "entity.infos.infoenrich7.value"
         ]
       }
     }
@@ -1243,7 +1243,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-6",
       "resource": "test-valuegroup-correlation-6-resource-3",
-      "infoenrich": "",
+      "infoenrich7": "",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -1260,7 +1260,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "event_type": "check",
       "component":  "test-valuegroup-correlation-6",
       "resource": "test-valuegroup-correlation-6-resource-4",
-      "infoenrich": "",
+      "infoenrich7": "",
       "state": 2,
       "output": "test",
       "long_output": "test",
