@@ -2,14 +2,14 @@
   div
     h2.text-xs-center.display-1.font-weight-medium.mt-3.mb-2
       slot
-      v-btn(icon, @click="toggleHelpMessage")
+      v-btn(icon, @click="toggleMessageVisibility")
         v-icon(color="info") help_outline
     v-expand-transition
-      div(v-if="shownHelpMessage")
-        v-layout(justify-center)
-          div.subheading.help-message.pre-wrap(v-html="$t('pageHeaders.helpMessages.idleRules')")
+      div(v-if="shownMessage")
         v-layout.pb-2(justify-center)
-          v-btn(color="primary", @click="hideHelpMessage") {{ $t('pageHeaders.hideHelpMessage') }}
+          div.subheading.page-header__message.pre-wrap(v-html="$t('pageHeaders.helpMessages.idleRules')")
+        v-layout.pb-2(v-show="!messageWasHidden", justify-center)
+          v-btn(color="primary", @click="hideMessage") {{ $t('pageHeaders.hideHelpMessage') }}
 </template>
 
 <script>
@@ -20,47 +20,47 @@ import { tourBaseMixin } from '@/mixins/tour/base';
 export default {
   mixins: [tourBaseMixin],
   props: {
-    helpMessageName: {
+    messageName: {
       type: String,
-      default: 'dsa',
+      default: 'fsad',
     },
   },
   data() {
     return {
-      shownHelpMessage: false,
+      shownMessage: false,
     };
   },
   computed: {
-    helpMessageWasHidden() {
-      return !!get(this.currentUser, ['ui_tours', this.helpMessageName]);
+    messageWasHidden() {
+      return !!get(this.currentUser, ['ui_tours', this.messageName]);
     },
   },
   created() {
-    if (!this.helpMessageWasHidden) {
-      this.shownHelpMessage = true;
+    if (!this.messageWasHidden) {
+      this.shownMessage = true;
     }
   },
   methods: {
-    toggleHelpMessage() {
-      this.shownHelpMessage = !this.shownHelpMessage;
+    toggleMessageVisibility() {
+      this.shownMessage = !this.shownMessage;
     },
 
-    async hideHelpMessage() {
-      if (!this.helpMessageWasHidden) {
-        await this.finishTourByName(this.helpMessageName);
+    async hideMessage() {
+      if (!this.messageWasHidden) {
+        await this.finishTourByName(this.messageName);
       }
 
-      this.shownHelpMessage = false;
+      this.shownMessage = false;
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-$helpMessageMaxWidth: 1050px;
+$messageMaxWidth: 1050px;
 
-.help-message {
-  max-width: $helpMessageMaxWidth;
+.page-header__message {
+  max-width: $messageMaxWidth;
   text-align: center;
 }
 </style>
