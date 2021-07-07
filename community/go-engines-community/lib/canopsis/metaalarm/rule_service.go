@@ -61,7 +61,7 @@ func (s *ruleService) LoadRules(ctx context.Context) error {
 	return nil
 }
 
-func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) ([]types.Event, error) {
+func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) ([]types.Event, error) {
 	var metaAlarmEvents []types.Event
 
 	s.rulesMutex.RLock()
@@ -93,7 +93,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) ([]t
 	for _, rule := range s.rules {
 		s.logger.Debug().Msgf("Meta-alarm rule service: check rule %s", rule.ID)
 
-		isMatched := rule.Patterns.IsMatched(*event)
+		isMatched := rule.Patterns.IsMatched(event)
 		s.logger.Debug().Msgf("Meta-alarm rule service: check rule %t", isMatched)
 
 		if isMatched {

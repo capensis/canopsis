@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
 	"testing"
 	"time"
 
@@ -21,7 +22,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/bsm/redislock"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -40,8 +40,6 @@ func testNewComplexApplicator() (*ruleapplicator.ComplexApplicator, alarm.Adapte
 		panic(err)
 	}
 	redisClient2.FlushDB(ctx)
-
-	redisLockClient := redislock.New(redisClient2)
 
 	dbClient, err := libmongo.NewClient(0, 0)
 	if err != nil {
@@ -75,7 +73,7 @@ func testNewComplexApplicator() (*ruleapplicator.ComplexApplicator, alarm.Adapte
 
 	ruleEntityCounter := metaalarm.NewRuleEntityCounter(entityAdapter, redisClient3, logger)
 
-	applicator := ruleapplicator.NewComplexApplicator(alarmAdapter, metaAlarmService, redisClient, redisLockClient, ruleEntityCounter, logger)
+	applicator := ruleapplicator.NewComplexApplicator(alarmAdapter, metaAlarmService, storage.NewRedisGroupingStorage(), redisClient, ruleEntityCounter, logger)
 	return &applicator, alarmAdapter, entityAdapter, nil
 }
 
@@ -108,7 +106,7 @@ func TestRuleMatch(t *testing.T) {
 		rule := metaalarm.Rule{}
 
 		Convey("empty event and rule", func() {
-			metaAlarmEvents, _ := applicator.Apply(ctx, &testEvent, rule)
+			metaAlarmEvents, _ := applicator.Apply(ctx, testEvent, rule)
 			So(len(metaAlarmEvents), ShouldEqual, 0)
 		})
 
@@ -178,7 +176,7 @@ func TestRuleMatch(t *testing.T) {
 					testEvent.Entity = &types.Entity{ID: testEvent.GetEID()}
 
 					Convey("Test RuleMatched", func() {
-						metaAlarmEvents, _ := applicator.Apply(ctx, &testEvent, rule)
+						metaAlarmEvents, _ := applicator.Apply(ctx, testEvent, rule)
 						So(len(metaAlarmEvents), ShouldEqual, 1)
 						So(metaAlarmEvents[0].EventType, ShouldEqual, "metaalarm")
 					})
@@ -234,7 +232,7 @@ func TestRuleMatch(t *testing.T) {
 
 					Convey("Test RuleMatched", func() {
 						So(testEvent.Alarm, ShouldNotBeNil)
-						metaAlarmEvents, _ := applicator.Apply(ctx, &testEvent, rule)
+						metaAlarmEvents, _ := applicator.Apply(ctx, testEvent, rule)
 						So(len(metaAlarmEvents), ShouldEqual, 0)
 					})
 				})
@@ -303,9 +301,9 @@ func TestRuleMatch(t *testing.T) {
 				testEvent4.Alarm = &alarm4
 				testEvent4.Entity = &types.Entity{ID: testEvent4.GetEID()}
 
-				metaAlarmEvents, _ := applicator.Apply(ctx, &testEvent1, rule)
+				metaAlarmEvents, _ := applicator.Apply(ctx, testEvent1, rule)
 				So(len(metaAlarmEvents), ShouldEqual, 0)
-				metaAlarmEvents, _ = applicator.Apply(ctx, &testEvent4, rule)
+				metaAlarmEvents, _ = applicator.Apply(ctx, testEvent4, rule)
 				So(len(metaAlarmEvents), ShouldEqual, 1)
 				So(metaAlarmEvents[0].MetaAlarmRuleID, ShouldEqual, rule.ID)
 
@@ -326,10 +324,10 @@ func TestRuleMatch(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				testEvent1.Alarm.Value.LastUpdateDate = types.CpsTime{Time: time.Now()}
-				metaAlarmEvents, _ = applicator.Apply(ctx, &testEvent1, rule)
+				metaAlarmEvents, _ = applicator.Apply(ctx, testEvent1, rule)
 				So(len(metaAlarmEvents), ShouldEqual, 0)
 				testEvent4.Alarm.Value.LastUpdateDate = types.CpsTime{Time: time.Now()}
-				metaAlarmEvents, _ = applicator.Apply(ctx, &testEvent4, rule)
+				metaAlarmEvents, _ = applicator.Apply(ctx, testEvent4, rule)
 				So(len(metaAlarmEvents), ShouldEqual, 0) //New metaalarm shouldn't be created, since there is an existing one
 
 				time.Sleep(time.Second * 3)
@@ -385,10 +383,10 @@ func TestRuleMatch(t *testing.T) {
 				testEvent6.Entity = &types.Entity{ID: testEvent6.GetEID()}
 
 				testEvent5.Alarm.Value.LastUpdateDate = types.CpsTime{Time: time.Now()}
-				metaAlarmEvents, _ = applicator.Apply(ctx, &testEvent5, rule)
+				metaAlarmEvents, _ = applicator.Apply(ctx, testEvent5, rule)
 				So(len(metaAlarmEvents), ShouldEqual, 0)
 				testEvent6.Alarm.Value.LastUpdateDate = types.CpsTime{Time: time.Now()}
-				metaAlarmEvents, _ = applicator.Apply(ctx, &testEvent6, rule)
+				metaAlarmEvents, _ = applicator.Apply(ctx, testEvent6, rule)
 				So(len(metaAlarmEvents), ShouldEqual, 1)
 				So(metaAlarmEvents[0].MetaAlarmRuleID, ShouldEqual, rule.ID)
 			})

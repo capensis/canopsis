@@ -14,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
-	"github.com/bsm/redislock"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 )
@@ -25,28 +24,14 @@ type ValueApplicator struct {
 	metaAlarmService  service.MetaAlarmService
 	storage           storage.GroupingStorage
 	redisClient       *redis.Client
-	redisLockClient   *redislock.Client
 	ruleEntityCounter metaalarm.ValueGroupEntityCounter
 	logger            zerolog.Logger
 }
 
 // Apply called by RulesService.ProcessEvent
-func (a ValueApplicator) Apply(ctx context.Context, event *types.Event, rule metaalarm.Rule) ([]types.Event, error) {
+func (a ValueApplicator) Apply(ctx context.Context, event types.Event, rule metaalarm.Rule) ([]types.Event, error) {
 	var metaAlarmEvent types.Event
 	var watchErr error
-	var metaAlarmLock *redislock.Lock
-
-	defer func() {
-		if metaAlarmLock != nil {
-			err := metaAlarmLock.Release(ctx)
-			if err != nil && err != redislock.ErrLockNotHeld {
-				a.logger.Warn().
-					Str("rule_id", rule.ID).
-					Str("alarm_id", event.Alarm.ID).
-					Msg("Update meta-alarm: failed to manually release redlock, the lock will be released by ttl")
-			}
-		}
-	}()
 
 	if len(rule.Config.ValuePaths) == 0 || rule.Config.TimeInterval == 0 {
 		return nil, nil
@@ -62,9 +47,14 @@ func (a ValueApplicator) Apply(ctx context.Context, event *types.Event, rule met
 
 	if (!rule.Config.AlarmPatterns.Matches(event.Alarm)) ||
 		(!rule.Config.EntityPatterns.Matches(event.Entity)) ||
-		(!rule.Config.EventPatterns.Matches(*event)) {
+		(!rule.Config.EventPatterns.Matches(event)) {
 
 		return nil, nil
+	}
+
+	timeInterval := int64(rule.Config.TimeInterval)
+	if rule.Config.TimeInterval == 0 {
+		timeInterval = DefaultConfigTimeInterval
 	}
 
 	valuePath, valuePathMap := a.extractValue(event, &rule)
@@ -85,119 +75,80 @@ func (a ValueApplicator) Apply(ctx context.Context, event *types.Event, rule met
 	if rule.Config.ThresholdCount != nil {
 		for redisRetries := MaxRedisRetries; redisRetries >= 0; redisRetries-- {
 			watchErr = a.redisClient.Watch(ctx, func(tx *redis.Tx) error {
-				groupLen, err := a.getGroupLen(ctx, tx, ruleKey)
+				alarmGroup, openedAlarms, err := a.getGroupWithOpenedAlarmsWithEntity(ctx, tx, ruleKey, timeInterval)
 				if err != nil {
 					return err
 				}
 
-				if groupLen >= *rule.Config.ThresholdCount {
-					alarmGroup, err := a.storage.Get(ctx, tx, ruleKey)
-					if err != nil {
-						return err
+				if alarmGroup.GetGroupLength() >= *rule.Config.ThresholdCount {
+					if event.Alarm.Value.LastUpdateDate.Unix() > alarmGroup.GetOpenTime() + timeInterval {
+						return a.storage.Set(ctx, tx, storage.NewAlarmGroup(ruleKey), DefaultConfigTimeInterval)
 					}
 
-					if event.Alarm.Value.LastUpdateDate.After(alarmGroup.OpenTime.Add(time.Duration(rule.Config.TimeInterval) * time.Second)) {
-						err := a.storage.CleanPush(ctx, tx, rule, *event.Alarm, ruleKey)
-						if err != nil {
+					maxRetries := 0
+					if watchErr == redis.TxFailedErr {
+						maxRetries = MaxMongoRetries
+					}
+
+					for mongoRetries := maxRetries; mongoRetries >= 0; mongoRetries-- {
+						metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, valuePath)
+						switch err.(type) {
+						case errt.NotFound:
+							a.logger.Warn().
+								Str("rule_id", rule.ID).
+								Str("alarm_id", event.Alarm.ID).
+								Msgf("Another instance has created meta-alarm, but couldn't find an opened meta-alarm. Retry mongo query. Remaining retries: %d", mongoRetries)
+
+							time.Sleep(10 * time.Millisecond)
+
+							continue
+						case nil:
+							metaAlarmEvent, err = a.metaAlarmService.AddChildToMetaAlarm(
+								ctx,
+								event,
+								metaAlarm,
+								types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity},
+								rule,
+							)
+
+							return err
+						default:
 							return err
 						}
-					} else {
-						maxRetries := 0
-
-						if watchErr == redis.TxFailedErr {
-							maxRetries = MaxMongoRetries
-						}
-
-						updated := false
-
-						for mongoRetries := maxRetries; mongoRetries >= 0 && !updated; mongoRetries-- {
-							metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, valuePath)
-							switch err.(type) {
-							case errt.NotFound:
-								if mongoRetries == maxRetries {
-									metaAlarmEvent, err = a.createMetaAlarm(ctx, tx, event, rule, valuePath)
-									if err != nil {
-										return err
-									}
-
-									updated = true
-
-									break
-								}
-
-								a.logger.Warn().
-									Str("rule_id", rule.ID).
-									Str("alarm_id", event.Alarm.ID).
-									Msgf("Another instance has created meta-alarm, but couldn't find an opened meta-alarm. Retry mongo query. Remaining retries: %d", mongoRetries)
-
-								time.Sleep(10 * time.Millisecond)
-
-								continue
-							case nil:
-								metaAlarmLock, err = a.redisLockClient.Obtain(ctx, metaAlarm.ID, 100*time.Millisecond, &redislock.Options{
-									RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(11*time.Millisecond), MaxRedisLockRetries),
-								})
-
-								if err != nil {
-									a.logger.Err(err).
-										Str("rule_id", rule.ID).
-										Str("alarm_id", event.Alarm.ID).
-										Msg("Update meta-alarm: obtain redlock failed, alarm will be skipped")
-
-									return err
-								}
-
-								metaAlarmEvent, err = a.metaAlarmService.AddChildToMetaAlarm(
-									ctx,
-									*event,
-									metaAlarm,
-									types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity},
-									rule,
-								)
-								if err != nil {
-									return err
-								}
-
-								err = metaAlarmLock.Release(ctx)
-								if err != nil {
-									if err == redislock.ErrLockNotHeld {
-										a.logger.Err(err).
-											Str("rule_id", rule.ID).
-											Str("alarm_id", event.Alarm.ID).
-											Msg("Update meta-alarm: the update process took more time than redlock ttl, data might be inconsistent")
-									} else {
-										a.logger.Warn().
-											Str("rule_id", rule.ID).
-											Str("alarm_id", event.Alarm.ID).
-											Msg("Update meta-alarm: failed to manually release redlock, the lock will be released by ttl")
-									}
-								}
-
-								metaAlarmLock = nil
-
-								updated = true
-							default:
-								return err
-							}
-						}
 					}
-				} else {
-					err = a.storage.Push(ctx, tx, rule, *event.Alarm, ruleKey)
+
+					metaAlarmEvent, err = a.metaAlarmService.CreateMetaAlarm(event, append(openedAlarms, types.AlarmWithEntity{
+						Alarm:  *event.Alarm,
+						Entity: *event.Entity,
+					}), rule)
 					if err != nil {
 						return err
 					}
 
-					groupLen, err = a.getGroupLen(ctx, tx, ruleKey)
-					if err != nil {
-						return err
-					}
-
-					if groupLen >= *rule.Config.ThresholdCount {
-						metaAlarmEvent, err = a.createMetaAlarm(ctx, tx, event, rule, valuePath)
-					}
+					metaAlarmEvent.MetaAlarmValuePath = valuePath
+					return nil
 				}
 
-				return err
+				alarmGroup.Push(*event.Alarm, timeInterval)
+				err = a.storage.Set(ctx, tx, alarmGroup, timeInterval)
+				if err != nil {
+					return err
+				}
+
+				if alarmGroup.GetGroupLength() < *rule.Config.ThresholdCount {
+					return nil
+				}
+
+				metaAlarmEvent, err = a.metaAlarmService.CreateMetaAlarm(event, append(openedAlarms, types.AlarmWithEntity{
+					Alarm:  *event.Alarm,
+					Entity: *event.Entity,
+				}), rule)
+				if err != nil {
+					return err
+				}
+
+				metaAlarmEvent.MetaAlarmValuePath = valuePath
+				return nil
 			}, ruleKey)
 
 			if watchErr == redis.TxFailedErr {
@@ -223,7 +174,12 @@ func (a ValueApplicator) Apply(ctx context.Context, event *types.Event, rule met
 	if rule.Config.ThresholdRate != nil {
 		for redisRetries := MaxRedisRetries; redisRetries >= 0; redisRetries-- {
 			watchErr = a.redisClient.Watch(ctx, func(tx *redis.Tx) error {
-				ratioReached, err := a.isRatioReached(ctx, tx, rule, valuePath, valuePathMap, true)
+				alarmGroup, openedAlarms, err := a.getGroupWithOpenedAlarmsWithEntity(ctx, tx, ruleKey, timeInterval)
+				if err != nil {
+					return err
+				}
+
+				ratioReached, err := a.isRatioReached(ctx, alarmGroup, rule, valuePath, valuePathMap)
 				if err != nil {
 					return err
 				}
@@ -234,113 +190,80 @@ func (a ValueApplicator) Apply(ctx context.Context, event *types.Event, rule met
 						return err
 					}
 
-					if event.Alarm.Value.LastUpdateDate.After(alarmGroup.OpenTime.Add(time.Duration(rule.Config.TimeInterval) * time.Second)) {
-						err := a.storage.CleanPush(ctx, tx, rule, *event.Alarm, ruleKey)
-						if err != nil {
-							return err
-						}
-					} else {
-						maxRetries := 0
+					if event.Alarm.Value.LastUpdateDate.Unix() > alarmGroup.GetOpenTime() + timeInterval {
+						return a.storage.Set(ctx, tx, storage.NewAlarmGroup(ruleKey), DefaultConfigTimeInterval)
+					}
 
-						if watchErr == redis.TxFailedErr {
-							maxRetries = MaxMongoRetries
-						}
+					maxRetries := 0
+					if watchErr == redis.TxFailedErr {
+						maxRetries = MaxMongoRetries
+					}
 
-						updated := false
+					for mongoRetries := maxRetries; mongoRetries >= 0; mongoRetries-- {
+						metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, valuePath)
+						switch err.(type) {
+						case errt.NotFound:
+							a.logger.Warn().
+								Str("rule_id", rule.ID).
+								Str("alarm_id", event.Alarm.ID).
+								Msgf("Another instance has created meta-alarm, but couldn't find an opened meta-alarm. Retry mongo query. Remaining retries: %d", mongoRetries)
 
-						for mongoRetries := maxRetries; mongoRetries >= 0 && !updated; mongoRetries-- {
-							metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, valuePath)
-							switch err.(type) {
-							case errt.NotFound:
-								if mongoRetries == maxRetries {
-									metaAlarmEvent, err = a.createMetaAlarm(ctx, tx, event, rule, valuePath)
-									if err != nil {
-										return err
-									}
+							time.Sleep(10 * time.Millisecond)
 
-									updated = true
-
-									break
-								}
-
-								a.logger.Warn().
-									Str("rule_id", rule.ID).
-									Str("alarm_id", event.Alarm.ID).
-									Msgf("Another instance has created meta-alarm, but couldn't find an opened meta-alarm. Retry mongo query. Remaining retries: %d", mongoRetries)
-
-								time.Sleep(10 * time.Millisecond)
-
-								continue
-							case nil:
-								metaAlarmLock, err = a.redisLockClient.Obtain(ctx, metaAlarm.ID, 100*time.Millisecond, &redislock.Options{
-									RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(11*time.Millisecond), MaxRedisLockRetries),
-								})
-
-								if err != nil {
-									a.logger.Err(err).
-										Str("rule_id", rule.ID).
-										Str("alarm_id", event.Alarm.ID).
-										Msg("Update meta-alarm: obtain redlock failed, alarm will be skipped")
-
-									return err
-								}
-
-								err = a.storage.Push(ctx, tx, rule, *event.Alarm, ruleKey)
-								if err != nil {
-									return err
-								}
-
-								metaAlarmEvent, err = a.metaAlarmService.AddChildToMetaAlarm(
-									ctx,
-									*event,
-									metaAlarm,
-									types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity},
-									rule,
-								)
-								if err != nil {
-									return err
-								}
-
-								err = metaAlarmLock.Release(ctx)
-								if err != nil {
-									if err == redislock.ErrLockNotHeld {
-										a.logger.Err(err).
-											Str("rule_id", rule.ID).
-											Str("alarm_id", event.Alarm.ID).
-											Msg("Update meta-alarm: the update process took more time than redlock ttl, data might be inconsistent")
-									} else {
-										a.logger.Warn().
-											Str("rule_id", rule.ID).
-											Str("alarm_id", event.Alarm.ID).
-											Msg("Update meta-alarm: failed to manually release redlock, the lock will be released by ttl")
-									}
-								}
-
-								metaAlarmLock = nil
-
-								updated = true
-							default:
+							continue
+						case nil:
+							metaAlarmEvent, err = a.metaAlarmService.AddChildToMetaAlarm(
+								ctx,
+								event,
+								metaAlarm,
+								types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity},
+								rule,
+							)
+							if err != nil {
 								return err
 							}
+						default:
+							return err
 						}
 					}
-				} else {
-					err = a.storage.Push(ctx, tx, rule, *event.Alarm, ruleKey)
+
+					metaAlarmEvent, err = a.metaAlarmService.CreateMetaAlarm(event, append(openedAlarms, types.AlarmWithEntity{
+						Alarm:  *event.Alarm,
+						Entity: *event.Entity,
+					}), rule)
 					if err != nil {
 						return err
 					}
 
-					ratioReached, err = a.isRatioReached(ctx, tx, rule, valuePath, valuePathMap, false)
-					if err != nil {
-						return err
-					}
-
-					if ratioReached {
-						metaAlarmEvent, err = a.createMetaAlarm(ctx, tx, event, rule, valuePath)
-					}
+					metaAlarmEvent.MetaAlarmValuePath = valuePath
+					return nil
 				}
 
-				return err
+				alarmGroup.Push(*event.Alarm, timeInterval)
+				err = a.storage.Set(ctx, tx, alarmGroup, timeInterval)
+				if err != nil {
+					return err
+				}
+
+				ratioReached, err = a.isRatioReached(ctx, alarmGroup, rule, valuePath, valuePathMap)
+				if err != nil {
+					return err
+				}
+
+				if !ratioReached {
+					return nil
+				}
+
+				metaAlarmEvent, err = a.metaAlarmService.CreateMetaAlarm(event, append(openedAlarms, types.AlarmWithEntity{
+					Alarm:  *event.Alarm,
+					Entity: *event.Entity,
+				}), rule)
+				if err != nil {
+					return err
+				}
+
+				metaAlarmEvent.MetaAlarmValuePath = valuePath
+				return nil
 			}, ruleKey)
 
 			if watchErr == redis.TxFailedErr {
@@ -374,7 +297,28 @@ func (a ValueApplicator) Apply(ctx context.Context, event *types.Event, rule met
 	return nil, nil
 }
 
-func (a ValueApplicator) extractValue(event *types.Event, rule *metaalarm.Rule) (string, map[string]string) {
+func (a ValueApplicator) getGroupWithOpenedAlarmsWithEntity(ctx context.Context, tx *redis.Tx, key string, timeInterval int64) (storage.TimeBasedAlarmGroup, []types.AlarmWithEntity, error) {
+	var alarms []types.AlarmWithEntity
+
+	alarmGroup, err := a.storage.Get(ctx, tx, key)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(alarmGroup.GetAlarmIds(), &alarms)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	alarmGroup = storage.NewAlarmGroup(key)
+	for _, v := range alarms {
+		alarmGroup.Push(v.Alarm, timeInterval)
+	}
+
+	return alarmGroup, alarms, err
+}
+
+func (a ValueApplicator) extractValue(event types.Event, rule *metaalarm.Rule) (string, map[string]string) {
 	bytes, err := json.Marshal(types.AlarmWithEntity{
 		Alarm:  *event.Alarm,
 		Entity: *event.Entity,
@@ -399,11 +343,8 @@ func (a ValueApplicator) extractValue(event *types.Event, rule *metaalarm.Rule) 
 	return strings.Join(paths, "."), valuePathsMap
 }
 
-func (a ValueApplicator) isRatioReached(ctx context.Context, tx *redis.Tx, rule metaalarm.Rule, valuePath string, valuePathsMap map[string]string, includeNewAlarmOnRecompute bool) (bool, error) {
-	groupLen, err := a.getGroupLen(ctx, tx, fmt.Sprintf("%s&&%s", rule.ID, valuePath))
-	if err != nil {
-		return false, err
-	}
+func (a ValueApplicator) isRatioReached(ctx context.Context, alarmGroup storage.TimeBasedAlarmGroup, rule metaalarm.Rule, valuePath string, valuePathsMap map[string]string) (bool, error) {
+	groupLen := alarmGroup.GetGroupLength()
 
 	total, err := a.ruleEntityCounter.GetTotalEntitiesAmount(ctx, rule.ID, valuePath)
 	if err != nil {
@@ -425,47 +366,13 @@ func (a ValueApplicator) isRatioReached(ctx context.Context, tx *redis.Tx, rule 
 	return total != 0 && float64(groupLen) / float64(total) >= *rule.Config.ThresholdRate, nil
 }
 
-func (a ValueApplicator) createMetaAlarm(ctx context.Context, tx *redis.Tx, event *types.Event, rule metaalarm.Rule, valuePath string) (types.Event, error) {
-	var children []types.AlarmWithEntity
-
-	alarmGroup, _ := a.storage.Get(ctx, tx, fmt.Sprintf("%s&&%s", rule.ID, valuePath))
-	err := a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(alarmGroup.GetAlarmIds(), &children)
-	if err != nil {
-		return types.Event{}, err
-	}
-
-	metaAlarmEvent, err := a.metaAlarmService.CreateMetaAlarm(*event, children, rule)
-	if err != nil {
-		return metaAlarmEvent, err
-	}
-
-	metaAlarmEvent.MetaAlarmValuePath = valuePath
-
-	return metaAlarmEvent, nil
-}
-
-func (a ValueApplicator) getGroupLen(ctx context.Context, tx *redis.Tx, ruleKey string) (int64, error) {
-	var children []types.AlarmWithEntity
-
-	alarmGroup, err := a.storage.Get(ctx, tx, ruleKey)
-	if err != nil {
-		return 0, err
-	}
-
-	// We need to check for resolved alarms here
-	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(alarmGroup.GetAlarmIds(), &children)
-
-	return int64(len(children)), err
-}
-
 // NewValueApplicator instantiates ValueApplicator with MetaAlarmService
-func NewValueGroupApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, redisClient *redis.Client, redisLockClient *redislock.Client, ruleEntityCounter metaalarm.ValueGroupEntityCounter, logger zerolog.Logger) ValueApplicator {
+func NewValueGroupApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, storage storage.GroupingStorage, redisClient *redis.Client, ruleEntityCounter metaalarm.ValueGroupEntityCounter, logger zerolog.Logger) ValueApplicator {
 	return ValueApplicator{
 		alarmAdapter:      alarmAdapter,
 		metaAlarmService:  metaAlarmService,
-		storage:           storage.NewRedisGroupingStorage(),
+		storage:           storage,
 		redisClient:       redisClient,
-		redisLockClient:   redisLockClient,
 		ruleEntityCounter: ruleEntityCounter,
 		logger:            logger,
 	}

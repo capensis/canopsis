@@ -31,11 +31,11 @@ type RulesService interface {
 	// LoadRules loads the meta-alarm rules from the database, and adds them to the ruleService.
 	LoadRules(ctx context.Context) error
 
-	ProcessEvent(context.Context, *types.Event) ([]types.Event, error)
+	ProcessEvent(context.Context, types.Event) ([]types.Event, error)
 }
 
 type RuleApplicator interface {
-	Apply(context.Context, *types.Event, Rule) ([]types.Event, error)
+	Apply(context.Context, types.Event, Rule) ([]types.Event, error)
 }
 
 type RuleApplicatorContainer interface {
@@ -44,8 +44,8 @@ type RuleApplicatorContainer interface {
 }
 
 type RuleEntityCounter interface {
-	CountTotalEntitiesAmount(context.Context, Rule) error
-	GetTotalEntitiesAmount(context.Context, Rule) (int, error)
+	CountTotalEntitiesAmount(ctx context.Context, rule Rule) error
+	GetTotalEntitiesAmount(ctx context.Context, rule Rule) (int, error)
 }
 
 type ValueGroupEntityCounter interface {

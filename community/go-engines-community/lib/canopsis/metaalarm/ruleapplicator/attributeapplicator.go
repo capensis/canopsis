@@ -10,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
-	"github.com/bsm/redislock"
 	"github.com/go-redis/redis/v8"
 
 	"github.com/rs/zerolog"
@@ -22,30 +21,16 @@ type AttributeApplicator struct {
 	service         service.MetaAlarmService
 	storage         storage.GroupingStorage
 	redisClient     *redis.Client
-	redisLockClient *redislock.Client
 	logger          zerolog.Logger
 }
 
 // Apply called by RulesService.ProcessEvent
-func (a AttributeApplicator) Apply(ctx context.Context, event *types.Event, rule metaalarm.Rule) ([]types.Event, error) {
+func (a AttributeApplicator) Apply(ctx context.Context, event types.Event, rule metaalarm.Rule) ([]types.Event, error) {
 	var metaAlarmEvent types.Event
 	var watchErr error
-	var metaAlarmLock *redislock.Lock
-
-	defer func() {
-		if metaAlarmLock != nil {
-			err := metaAlarmLock.Release(ctx)
-			if err != nil && err != redislock.ErrLockNotHeld {
-				a.logger.Warn().
-					Str("rule_id", rule.ID).
-					Str("alarm_id", event.Alarm.ID).
-					Msg("Update meta-alarm: failed to manually release redlock, the lock will be released by ttl")
-			}
-		}
-	}()
 
 	// Check alarm attributes matched with rule
-	if !a.AlarmMatched(*event, rule) || !a.EntityMatched(*event, rule) || !a.EventMatched(*event, rule) {
+	if !a.AlarmMatched(event, rule) || !a.EntityMatched(event, rule) || !a.EventMatched(event, rule) {
 		return nil, nil
 	}
 
@@ -60,95 +45,51 @@ func (a AttributeApplicator) Apply(ctx context.Context, event *types.Event, rule
 	for redisRetries := MaxRedisRetries; redisRetries >= 0; redisRetries-- {
 		watchErr = a.redisClient.Watch(ctx, func(tx *redis.Tx) error {
 			maxRetries := 0
-
-			group, err := a.storage.Get(ctx, tx, rule.ID)
-			if err != nil {
-				return err
-			}
-
-			if group.OpenTime.Add(100*time.Millisecond).After(time.Now()) || watchErr == redis.TxFailedErr {
+			if watchErr == redis.TxFailedErr {
 				maxRetries = MaxMongoRetries
 			}
 
-			updated := false
-
-			for mongoRetries := maxRetries; mongoRetries >= 0 && !updated; mongoRetries-- {
+			for mongoRetries := maxRetries; maxRetries >= 0; maxRetries-- {
 				// Check if meta-alarm already exists
 				metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, "")
 				switch err.(type) {
 				case errt.NotFound:
-					if mongoRetries == maxRetries {
-						err = a.storage.CleanPush(ctx, tx, rule, *event.Alarm, "")
-						if err == nil {
-							children := []types.AlarmWithEntity{{
-								Alarm:  *event.Alarm,
-								Entity: *event.Entity,
-							}}
-							metaAlarmEvent, err = a.service.CreateMetaAlarm(*event, children, rule)
-							if err != nil {
-								return err
-							}
-						}
-
-						updated = true
-
-						break
-					}
-
 					a.logger.Warn().
 						Str("rule_id", rule.ID).
 						Str("alarm_id", event.Alarm.ID).
 						Msgf("Another instance has created meta-alarm, but couldn't find an opened meta-alarm. Retry mongo query. Remaining retries: %d", mongoRetries)
 
-					time.Sleep(10 * time.Millisecond)
+					time.Sleep(50 * time.Millisecond)
 
 					continue
 				case nil:
-					metaAlarmLock, err = a.redisLockClient.Obtain(ctx, metaAlarm.ID, 100*time.Millisecond, &redislock.Options{
-						RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(11*time.Millisecond), MaxRedisLockRetries),
-					})
-
-					if err != nil {
-						a.logger.Err(err).
-							Str("rule_id", rule.ID).
-							Str("alarm_id", event.Alarm.ID).
-							Msg("Update meta-alarm: obtain redlock failed, alarm will be skipped")
-
-						return err
-					}
-
 					metaAlarmEvent, err = a.service.AddChildToMetaAlarm(
 						ctx,
-						*event,
+						event,
 						metaAlarm,
 						types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity},
 						rule,
 					)
-					if err != nil {
-						return err
-					}
 
-					err = metaAlarmLock.Release(ctx)
-					if err != nil {
-						if err == redislock.ErrLockNotHeld {
-							a.logger.Err(err).
-								Str("rule_id", rule.ID).
-								Str("alarm_id", event.Alarm.ID).
-								Msg("Update meta-alarm: the update process took more time than redlock ttl, data might be inconsistent")
-						} else {
-							a.logger.Warn().
-								Str("rule_id", rule.ID).
-								Str("alarm_id", event.Alarm.ID).
-								Msg("Update meta-alarm: failed to manually release redlock, the lock will be released by ttl")
-						}
-
-					}
-
-					metaAlarmLock = nil
-
-					updated = true
+					return err
+				default:
+					return err
 				}
 			}
+
+			err = a.storage.Set(ctx, tx, storage.NewAlarmGroup(rule.ID), DefaultConfigTimeInterval)
+			if err != nil {
+				return err
+			}
+
+			metaAlarmEvent, err = a.service.CreateMetaAlarm(
+				event,
+				[]types.AlarmWithEntity{{
+					Alarm:  *event.Alarm,
+					Entity: *event.Entity,
+				}},
+				rule,
+			)
 
 			return err
 		}, rule.ID)
@@ -198,12 +139,11 @@ func (a AttributeApplicator) EventMatched(event types.Event, rule metaalarm.Rule
 }
 
 // NewAttributeApplicator instantiates AttributeApplicator with MetaAlarmService
-func NewAttributeApplicator(alarmAdapter alarm.Adapter, logger zerolog.Logger, metaAlarmService service.MetaAlarmService, redisClient *redis.Client, redisLockClient *redislock.Client) AttributeApplicator {
+func NewAttributeApplicator(alarmAdapter alarm.Adapter, logger zerolog.Logger, metaAlarmService service.MetaAlarmService, redisClient *redis.Client) AttributeApplicator {
 	return AttributeApplicator{
 		alarmAdapter:    alarmAdapter,
 		service:         metaAlarmService,
 		storage:         storage.NewRedisGroupingStorage(),
-		redisLockClient: redisLockClient,
 		redisClient:     redisClient,
 		logger:          logger,
 	}

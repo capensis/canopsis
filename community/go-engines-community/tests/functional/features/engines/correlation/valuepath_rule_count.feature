@@ -509,6 +509,128 @@ Feature: correlation feature - valuegroup rule with threshold count
       }
     }
     """
+    When I send an event:
+    """
+    {
+      "connector": "test-valuegroup-2",
+      "connector_name": "test-valuegroup-2-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-valuegroup-correlation-2",
+      "resource": "test-valuegroup-correlation-2-resource-9",
+      "infoenrich": "1",
+      "infoenrich2": "1",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-valuegroup-2",
+      "connector_name": "test-valuegroup-2-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-valuegroup-correlation-2",
+      "resource": "test-valuegroup-correlation-2-resource-10",
+      "infoenrich": "1",
+      "infoenrich2": "2",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-valuegroup-2",
+      "connector_name": "test-valuegroup-2-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-valuegroup-correlation-2",
+      "resource": "test-valuegroup-correlation-2-resource-11",
+      "infoenrich": "2",
+      "infoenrich2": "1",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-valuegroup-2",
+      "connector_name": "test-valuegroup-2-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-valuegroup-correlation-2",
+      "resource": "test-valuegroup-correlation-2-resource-12",
+      "infoenrich": "2",
+      "infoenrich2": "2",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=asc
+    Then the response code should be 200
+    """
+    {
+      "data": [
+        {
+          "consequences": {
+            "total": 3
+          },
+          "metaalarm": true,
+          "rule": {
+            "name": "test-valuegroup-correlation-2"
+          }
+        },
+        {
+          "consequences": {
+            "total": 3
+          },
+          "metaalarm": true,
+          "rule": {
+            "name": "test-valuegroup-correlation-2"
+          }
+        },
+        {
+          "consequences": {
+            "total": 3
+          },
+          "metaalarm": true,
+          "rule": {
+            "name": "test-valuegroup-correlation-2"
+          }
+        },
+        {
+          "consequences": {
+            "total": 3
+          },
+          "metaalarm": true,
+          "rule": {
+            "name": "test-valuegroup-correlation-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
 
   Scenario: given meta alarm rule with threshold count and events should create 2 meta alarms because of 2 separate time intervals
     Given I am admin

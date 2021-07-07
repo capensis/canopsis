@@ -66,7 +66,7 @@ func (a ManualGroupApplicator) getOrCreateRule() (metaalarm.Rule, error) {
 
 }
 
-func (a ManualGroupApplicator) retrieveListAssociatedAlarms(event *types.Event) ([]types.AlarmWithEntity, *[]types.Alarm, error) {
+func (a ManualGroupApplicator) retrieveListAssociatedAlarms(event types.Event) ([]types.AlarmWithEntity, *[]types.Alarm, error) {
 	if event.MetaAlarmParents == nil || event.MetaAlarmChildren == nil {
 		return nil, nil, missingRequiredFields{[]string{"ma_children", "ma_parents"}}
 	}
@@ -94,14 +94,14 @@ func (a ManualGroupApplicator) retrieveListAssociatedAlarms(event *types.Event) 
 
 func (a ManualGroupApplicator) addAlarmsToGroups(
 	ctx context.Context,
-	event *types.Event,
+	event types.Event,
 	children []types.AlarmWithEntity,
 	metaalarms *[]types.Alarm,
 	rule metaalarm.Rule,
 ) ([]types.Event, error) {
 	metaAlarmEvents := make([]types.Event, 0)
 	for _, ma := range *metaalarms {
-		metaAlarmEvent, err := a.metaAlarmService.AddMultipleChildsToMetaAlarm(ctx, *event, ma, children, rule)
+		metaAlarmEvent, err := a.metaAlarmService.AddMultipleChildsToMetaAlarm(ctx, event, ma, children, rule)
 		if err != nil {
 			return nil, err
 		}
@@ -113,14 +113,14 @@ func (a ManualGroupApplicator) addAlarmsToGroups(
 
 func (a ManualGroupApplicator) removeAlarmsToGroups(
 	ctx context.Context,
-	event *types.Event,
+	event types.Event,
 	children []types.AlarmWithEntity,
 	metaalarms *[]types.Alarm,
 	rule metaalarm.Rule,
 ) ([]types.Event, error) {
 	metaAlarmEvents := make([]types.Event, 0)
 	for _, ma := range *metaalarms {
-		metaAlarmEvent, err := a.metaAlarmService.RemoveMultipleChildToMetaAlarm(ctx, *event, ma, children, rule)
+		metaAlarmEvent, err := a.metaAlarmService.RemoveMultipleChildToMetaAlarm(ctx, event, ma, children, rule)
 		if err != nil {
 			return nil, err
 		}
@@ -131,7 +131,7 @@ func (a ManualGroupApplicator) removeAlarmsToGroups(
 	return metaAlarmEvents, nil
 }
 
-func (a ManualGroupApplicator) groupAlarms(event *types.Event) (types.Event, error) {
+func (a ManualGroupApplicator) groupAlarms(event types.Event) (types.Event, error) {
 	var metaAlarmEvent types.Event
 	var err error
 
@@ -150,7 +150,7 @@ func (a ManualGroupApplicator) groupAlarms(event *types.Event) (types.Event, err
 		return metaAlarmEvent, err
 	}
 
-	metaAlarmEvent, err = a.metaAlarmService.CreateMetaAlarm(*event, children, rule)
+	metaAlarmEvent, err = a.metaAlarmService.CreateMetaAlarm(event, children, rule)
 	if err != nil {
 		return metaAlarmEvent, err
 	}
@@ -158,7 +158,7 @@ func (a ManualGroupApplicator) groupAlarms(event *types.Event) (types.Event, err
 	return metaAlarmEvent, nil
 }
 
-func (a ManualGroupApplicator) Apply(ctx context.Context, event *types.Event, r metaalarm.Rule) ([]types.Event, error) {
+func (a ManualGroupApplicator) Apply(ctx context.Context, event types.Event, r metaalarm.Rule) ([]types.Event, error) {
 
 	if event.EventType == types.EventManualMetaAlarmGroup {
 		metaAlarmEvent, err := a.groupAlarms(event)

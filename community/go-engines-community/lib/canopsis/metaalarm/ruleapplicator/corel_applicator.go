@@ -8,12 +8,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"github.com/bsm/redislock"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 	"html/template"
 	"strings"
-	"time"
 )
 
 const (
@@ -27,34 +25,20 @@ const DefaultConfigTimeInterval = 86400
 type CorelApplicator struct {
 	alarmAdapter      alarm.Adapter
 	metaAlarmService  service.MetaAlarmService
-	storage           storage.GroupingStorageNew
+	storage           storage.GroupingStorage
 	redisClient       *redis.Client
-	redisLockClient   *redislock.Client
 	ruleEntityCounter metaalarm.RuleEntityCounter
 	logger            zerolog.Logger
 }
 
 // Apply called by RulesService.ProcessEvent
-func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule metaalarm.Rule) ([]types.Event, error) {
+func (a CorelApplicator) Apply(ctx context.Context, event types.Event, rule metaalarm.Rule) ([]types.Event, error) {
 	var metaAlarmEvents []types.Event
 	var watchErr error
-	var metaAlarmLock *redislock.Lock
-
-	defer func() {
-		if metaAlarmLock != nil {
-			err := metaAlarmLock.Release(ctx)
-			if err != nil && err != redislock.ErrLockNotHeld {
-				a.logger.Warn().
-					Str("rule_id", rule.ID).
-					Str("alarm_id", event.Alarm.ID).
-					Msg("Update meta-alarm: failed to manually release redlock, the lock will be released by ttl")
-			}
-		}
-	}()
 
 	if (!rule.Config.AlarmPatterns.Matches(event.Alarm)) ||
 		(!rule.Config.EntityPatterns.Matches(event.Entity)) ||
-		(!rule.Config.EventPatterns.Matches(*event)) {
+		(!rule.Config.EventPatterns.Matches(event)) {
 		return nil, nil
 	}
 
@@ -119,7 +103,7 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 	parentGroupId := fmt.Sprintf("%s$$parent", childGroupID)
 
 	//we take threshold - 1, because 1 place is resolved by the parent.
-	childrenThreshold := int(*rule.Config.ThresholdCount - 1)
+	childrenThreshold := *rule.Config.ThresholdCount - 1
 	timeInterval := int64(rule.Config.TimeInterval)
 	if rule.Config.TimeInterval == 0 {
 		timeInterval = DefaultConfigTimeInterval
@@ -176,19 +160,6 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 				parentGroup.RemoveBefore(event.Alarm.Value.LastUpdateDate.Unix() - timeInterval)
 			}
 
-			metaAlarmLock, err = a.redisLockClient.Obtain(ctx, childGroupID, 100*time.Millisecond, &redislock.Options{
-				RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(11*time.Millisecond), MaxRedisLockRetries),
-			})
-
-			if err != nil {
-				a.logger.Err(err).
-					Str("rule_id", rule.ID).
-					Str("alarm_id", event.Alarm.ID).
-					Msg("Update meta-alarm: obtain redlock failed, alarm will be skipped")
-
-				return err
-			}
-
 			// get updated alarms for alarm groups
 			err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(childrenGroup.GetAlarmIds(), &childrenOpenedAlarms)
 			if err != nil {
@@ -210,69 +181,54 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 			// update groups
 			err = a.storage.SetMany(ctx, tx, timeInterval, parentGroup, childrenGroup)
 
-			if childrenGroup.GetGroupLength() >= childrenThreshold {
-				if corelType == CorelTypeParent {
-					//parent should be the first one
-					if len(parentOpenedAlarms) != 0 && parentOpenedAlarms[0].Alarm.ID != event.Alarm.ID {
-						return nil
-					}
+			if childrenGroup.GetGroupLength() < childrenThreshold {
+				return nil
+			}
 
-					event.Alarm.SetMeta(rule.ID)
-					event.Alarm.SetMetaValuePath(childGroupID)
-
-					metaAlarmEvent, err := a.metaAlarmService.AddMultipleChildsToMetaAlarm(
-						ctx,
-						*event,
-						*event.Alarm,
-						childrenOpenedAlarms,
-						rule,
-					)
-					if err != nil {
-						return err
-					}
-
-					metaAlarmEvents = append(metaAlarmEvents, metaAlarmEvent)
+			if corelType == CorelTypeParent {
+				//parent should be the first one
+				if len(parentOpenedAlarms) != 0 && parentOpenedAlarms[0].Alarm.ID != event.Alarm.ID {
 					return nil
 				}
 
-				if len(parentOpenedAlarms) != 0 {
-					parentOpenedAlarms[0].Alarm.SetMeta(rule.ID)
-					parentOpenedAlarms[0].Alarm.SetMetaValuePath(childGroupID)
+				event.Alarm.SetMeta(rule.ID)
+				event.Alarm.SetMetaValuePath(childGroupID)
 
-					metaAlarmEvent, err := a.metaAlarmService.AddChildToMetaAlarm(
-						ctx,
-						*event,
-						parentOpenedAlarms[0].Alarm,
-						types.AlarmWithEntity{
-							Alarm:  *event.Alarm,
-							Entity: *event.Entity,
-						},
-						rule,
-					)
-					if err != nil {
-						return err
-					}
-
-					metaAlarmEvents = append(metaAlarmEvents, metaAlarmEvent)
+				metaAlarmEvent, err := a.metaAlarmService.AddMultipleChildsToMetaAlarm(
+					ctx,
+					event,
+					*event.Alarm,
+					childrenOpenedAlarms,
+					rule,
+				)
+				if err != nil {
+					return err
 				}
+
+				metaAlarmEvents = append(metaAlarmEvents, metaAlarmEvent)
+				return nil
 			}
 
-			err = metaAlarmLock.Release(ctx)
-			if err != nil {
-				if err == redislock.ErrLockNotHeld {
-					a.logger.Err(err).
-						Str("rule_id", rule.ID).
-						Str("alarm_id", event.Alarm.ID).
-						Msg("Update meta-alarm: the update process took more time than redlock ttl, data might be inconsistent")
-				} else {
-					a.logger.Warn().
-						Str("rule_id", rule.ID).
-						Str("alarm_id", event.Alarm.ID).
-						Msg("Update meta-alarm: failed to manually release redlock, the lock will be released by ttl")
-				}
-			}
+			if len(parentOpenedAlarms) != 0 {
+				parentOpenedAlarms[0].Alarm.SetMeta(rule.ID)
+				parentOpenedAlarms[0].Alarm.SetMetaValuePath(childGroupID)
 
-			metaAlarmLock = nil
+				metaAlarmEvent, err := a.metaAlarmService.AddChildToMetaAlarm(
+					ctx,
+					event,
+					parentOpenedAlarms[0].Alarm,
+					types.AlarmWithEntity{
+						Alarm:  *event.Alarm,
+						Entity: *event.Entity,
+					},
+					rule,
+				)
+				if err != nil {
+					return err
+				}
+
+				metaAlarmEvents = append(metaAlarmEvents, metaAlarmEvent)
+			}
 
 			return err
 		}, childGroupID, parentGroupId)
@@ -339,13 +295,12 @@ func (a CorelApplicator) renderTemplate(templateStr string, data interface{}, f 
 }
 
 // NewCorelApplicator instantiates CorelApplicator with MetaAlarmService
-func NewCorelApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, storage storage.GroupingStorageNew, redisClient *redis.Client, redisLockClient *redislock.Client, logger zerolog.Logger) CorelApplicator {
+func NewCorelApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, storage storage.GroupingStorage, redisClient *redis.Client, logger zerolog.Logger) CorelApplicator {
 	return CorelApplicator{
 		alarmAdapter:     alarmAdapter,
 		metaAlarmService: metaAlarmService,
 		storage:          storage,
 		redisClient:      redisClient,
-		redisLockClient:  redisLockClient,
 		logger:           logger,
 	}
 }

@@ -2,6 +2,7 @@ package ruleapplicator
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
 	"testing"
 	"time"
 
@@ -14,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/bsm/redislock"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -27,13 +27,6 @@ func testNewValueApplicator() (*ValueApplicator, alarm.Adapter, entity.Adapter, 
 	if err != nil {
 		panic(err)
 	}
-
-	redisClient2, err := redis.NewSession(ctx, redis.CorrelationLockStorage, logger, 0, 0)
-	if err != nil {
-		panic(err)
-	}
-
-	redisLockClient := redislock.New(redisClient2)
 
 	dbClient, err := mongo.NewClient(0, 0)
 	if err != nil {
@@ -53,7 +46,7 @@ func testNewValueApplicator() (*ValueApplicator, alarm.Adapter, entity.Adapter, 
 
 	valueGroupEntityCounter := metaalarm.NewValueGroupEntityCounter(dbClient, redisClient3, logger)
 
-	applicator := NewValueGroupApplicator(alarmAdapter, metaAlarmService, redisClient, redisLockClient, valueGroupEntityCounter, logger)
+	applicator := NewValueGroupApplicator(alarmAdapter, metaAlarmService, storage.NewRedisGroupingStorage(), redisClient, valueGroupEntityCounter, logger)
 	return &applicator, alarmAdapter, entityAdapter, nil
 }
 
@@ -315,33 +308,33 @@ func TestApply(t *testing.T) {
 			testEvent8.Entity.Infos["customer"] = types.NewInfo("customer", "customer", "customer-2")
 			testEvent8.Entity.Infos["location"] = types.NewInfo("location", "location", "location-2")
 
-			metaAlarmEventArray, _ := applicator.Apply(ctx, &testEvent1, rule)
+			metaAlarmEventArray, _ := applicator.Apply(ctx, testEvent1, rule)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent2, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent2, rule)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent3, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent3, rule)
 			So(metaAlarmEventArray, ShouldNotBeNil)
 			So(len(metaAlarmEventArray), ShouldEqual, 1)
 			metaAlarmEvent := metaAlarmEventArray[0]
 			So(metaAlarmEvent.MetaAlarmRuleID, ShouldEqual, "valuegroup-test")
 			So(metaAlarmEvent.MetaAlarmValuePath, ShouldEqual, "customer-1.location-1")
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent4, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent4, rule)
 			So(metaAlarmEventArray, ShouldNotBeNil)
 			So(len(metaAlarmEventArray), ShouldEqual, 1)
 			metaAlarmEvent = metaAlarmEventArray[0]
 			So(metaAlarmEvent.MetaAlarmRuleID, ShouldEqual, "valuegroup-test")
 			So(metaAlarmEvent.MetaAlarmValuePath, ShouldEqual, "customer-1.location-2")
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent5, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent5, rule)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent6, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent6, rule)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent7, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent7, rule)
 			So(metaAlarmEventArray, ShouldNotBeNil)
 			So(len(metaAlarmEventArray), ShouldEqual, 1)
 			metaAlarmEvent = metaAlarmEventArray[0]
 			So(metaAlarmEvent.MetaAlarmRuleID, ShouldEqual, "valuegroup-test")
 			So(metaAlarmEvent.MetaAlarmValuePath, ShouldEqual, "customer-2.location-1")
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent8, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent8, rule)
 			So(metaAlarmEventArray, ShouldNotBeNil)
 			So(len(metaAlarmEventArray), ShouldEqual, 1)
 			metaAlarmEvent = metaAlarmEventArray[0]
@@ -469,13 +462,13 @@ func TestApply(t *testing.T) {
 				testEvent4.Entity.Infos = make(map[string]types.Info)
 				testEvent4.Entity.Infos["location"] = types.NewInfo("location", "location", "location-1")
 
-				metaAlarmEventArray, _ := applicator.Apply(ctx, &testEvent1, rule)
+				metaAlarmEventArray, _ := applicator.Apply(ctx, testEvent1, rule)
 				So(metaAlarmEventArray, ShouldBeNil)
-				metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent2, rule)
+				metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent2, rule)
 				So(metaAlarmEventArray, ShouldBeNil)
-				metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent3, rule)
+				metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent3, rule)
 				So(metaAlarmEventArray, ShouldBeNil)
-				metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent4, rule)
+				metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent4, rule)
 				So(metaAlarmEventArray, ShouldBeNil)
 			})
 		})
@@ -604,17 +597,17 @@ func TestApply(t *testing.T) {
 			testEvent4.Entity.Infos["customer"] = types.NewInfo("customer", "customer", "customer-2")
 			testEvent4.Entity.Infos["location"] = types.NewInfo("location", "location", "location-2")
 
-			metaAlarmEventArray, _ := applicator.Apply(ctx, &testEvent1, rule)
+			metaAlarmEventArray, _ := applicator.Apply(ctx, testEvent1, rule)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent2, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent2, rule)
 			So(metaAlarmEventArray, ShouldNotBeNil)
 			So(len(metaAlarmEventArray), ShouldEqual, 1)
 			metaAlarmEvent := metaAlarmEventArray[0]
 			So(metaAlarmEvent.MetaAlarmRuleID, ShouldEqual, "valuegroup-test-3")
 			So(metaAlarmEvent.MetaAlarmValuePath, ShouldEqual, "customer-1")
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent3, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent3, rule)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent4, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent4, rule)
 			So(metaAlarmEventArray, ShouldNotBeNil)
 			So(len(metaAlarmEventArray), ShouldEqual, 1)
 			metaAlarmEvent = metaAlarmEventArray[0]
@@ -743,13 +736,13 @@ func TestApply(t *testing.T) {
 			testEvent4.Entity.Infos["customer"] = types.NewInfo("customer", "customer", "customer-1")
 			testEvent4.Entity.Infos["location"] = types.NewInfo("location", "location", "location-2")
 
-			metaAlarmEventArray, _ := applicator.Apply(ctx, &testEvent1, rule)
+			metaAlarmEventArray, _ := applicator.Apply(ctx, testEvent1, rule)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent2, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent2, rule)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent3, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent3, rule)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent4, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent4, rule)
 			So(metaAlarmEventArray, ShouldBeNil)
 		})
 
@@ -858,11 +851,11 @@ func TestApply(t *testing.T) {
 			testEvent3.Entity.Infos["customer"] = types.NewInfo("customer", "customer", "customer-3")
 			testEvent3.Entity.Infos["location"] = types.NewInfo("location", "location", "location-3")
 
-			metaAlarmEventArray, _ := applicator.Apply(ctx, &testEvent1, rule)
+			metaAlarmEventArray, _ := applicator.Apply(ctx, testEvent1, rule)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent2, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent2, rule)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent3, rule)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent3, rule)
 			So(metaAlarmEventArray, ShouldNotBeNil)
 			So(len(metaAlarmEventArray), ShouldEqual, 1)
 			metaAlarmEvent := metaAlarmEventArray[0]
@@ -1161,21 +1154,21 @@ func TestApplyWithRate(t *testing.T) {
 			testEvent8.Alarm = &alarm8
 			testEvent8.Entity = &entity8
 
-			metaAlarmEventArray, _ := applicator.Apply(ctx, &testEvent1, rule1)
+			metaAlarmEventArray, _ := applicator.Apply(ctx, testEvent1, rule1)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent2, rule1)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent2, rule1)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent3, rule1)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent3, rule1)
 			So(metaAlarmEventArray, ShouldNotBeNil)
 			So(len(metaAlarmEventArray), ShouldEqual, 1)
 			metaAlarmEvent := metaAlarmEventArray[0]
 			So(metaAlarmEvent.MetaAlarmRuleID, ShouldEqual, "valuegroup-test-rate-1")
 			So(metaAlarmEvent.MetaAlarmValuePath, ShouldEqual, "customer-1.location-1")
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent5, rule1)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent5, rule1)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent6, rule1)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent6, rule1)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent7, rule1)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent7, rule1)
 			So(len(metaAlarmEventArray), ShouldEqual, 1)
 			metaAlarmEvent = metaAlarmEventArray[0]
 			So(metaAlarmEvent.MetaAlarmRuleID, ShouldEqual, "valuegroup-test-rate-1")
@@ -1346,28 +1339,18 @@ func TestApplyWithRate(t *testing.T) {
 			testEvent8.Alarm = &alarm8
 			testEvent8.Entity = &entity8
 
-			metaAlarmEventArray, _ := applicator.Apply(ctx, &testEvent1, rule2)
+			metaAlarmEventArray, _ := applicator.Apply(ctx, testEvent1, rule2)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent2, rule2)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent2, rule2)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent3, rule2)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent3, rule2)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent5, rule2)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent5, rule2)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent6, rule2)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent6, rule2)
 			So(metaAlarmEventArray, ShouldBeNil)
-			metaAlarmEventArray, _ = applicator.Apply(ctx, &testEvent7, rule2)
+			metaAlarmEventArray, _ = applicator.Apply(ctx, testEvent7, rule2)
 			So(metaAlarmEventArray, ShouldBeNil)
 		})
 	})
-}
-
-func getRuleAdapter() (metaalarm.RulesAdapter, error) {
-	dbClient, err := mongo.NewClient(0, 0)
-	if err != nil {
-		panic(err)
-	}
-
-	rulesAdapter := metaalarm.NewRuleAdapter(dbClient)
-	return rulesAdapter, nil
 }
