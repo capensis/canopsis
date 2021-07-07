@@ -62,12 +62,6 @@ export default {
   async mounted() {
     await this.fetchCurrentUser();
 
-    const { errorMessage } = this.$route.query;
-
-    if (errorMessage) {
-      this.$popups.error({ text: errorMessage, autoClose: 7000 });
-    }
-
     this.pending = false;
   },
   beforeDestroy() {
