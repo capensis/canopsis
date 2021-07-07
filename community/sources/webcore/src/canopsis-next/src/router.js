@@ -327,6 +327,14 @@ router.afterEach((to, from) => {
   }
 });
 
+router.onReady((route) => {
+  const { errorMessage } = route.query;
+
+  if (errorMessage) {
+    store.dispatch('popups/error', { text: errorMessage, autoClose: false });
+  }
+});
+
 /**
  * Promisified router replace method
  *
