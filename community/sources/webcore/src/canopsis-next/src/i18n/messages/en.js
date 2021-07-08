@@ -1500,10 +1500,22 @@ export default {
       create: {
         title: 'Create alarm rule',
       },
+      edit: {
+        title: 'Edit alarm rule',
+      },
+      duplicate: {
+        title: 'Duplicate alarm rule',
+      },
     },
     createEntityIdleRule: {
       create: {
         title: 'Create entity rule',
+      },
+      edit: {
+        title: 'Edit entity rule',
+      },
+      duplicate: {
+        title: 'Duplicate entity rule',
       },
     },
   },

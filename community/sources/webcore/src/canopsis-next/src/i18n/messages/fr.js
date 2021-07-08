@@ -1500,10 +1500,22 @@ export default {
       create: {
         title: 'Créer une règle d\'alarme',
       },
+      edit: {
+        title: 'Modifier la règle d\'alarme',
+      },
+      duplicate: {
+        title: 'Règle d\'alarme en double',
+      },
     },
     createEntityIdleRule: {
       create: {
         title: 'Créer une règle d\'entité',
+      },
+      edit: {
+        title: 'Modifier la règle d\'entité',
+      },
+      duplicate: {
+        title: 'Règle d\'entité en double',
       },
     },
   },

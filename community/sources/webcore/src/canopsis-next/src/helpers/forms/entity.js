@@ -1,7 +1,8 @@
-import { isUndefined, cloneDeep, omit } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
-import { infosToArray } from '@/helpers/forms/shared/common';
+
+import { enabledToForm, infosToArray } from './shared/common';
 
 /**
  * @typedef {Object} Entity
@@ -40,7 +41,7 @@ export const entityToForm = (entity = {}) => {
     name: entity.name || '',
     description: entity.description || '',
     type: entity.type || BASIC_ENTITY_TYPES.connector,
-    enabled: !isUndefined(entity.enabled) ? entity.enabled : true,
+    enabled: enabledToForm(entity.enabled),
     disabled_impact: impact.filter(id => !changeableImpact.includes(id)),
     disabled_depends: depends.filter(id => !changeableDepends.includes(id)),
     infos: infosToArray(entity.infos),
