@@ -11,6 +11,8 @@ import uuid from '@/helpers/uuid';
 import { durationToForm, formToDuration } from '@/helpers/date/duration';
 import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
 
+import { enabledToForm } from './shared/common';
+
 /**
  * @typedef {Object} RemediationInstructionStepOperation
  * @property {string} name
@@ -189,7 +191,7 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   name: remediationInstruction.name || '',
   priority: remediationInstruction.priority || 0,
   type: !isUndefined(remediationInstruction.type) ? remediationInstruction.type : REMEDIATION_INSTRUCTION_TYPES.manual,
-  enabled: !isUndefined(remediationInstruction.enabled) ? remediationInstruction.enabled : true,
+  enabled: enabledToForm(remediationInstruction.enabled),
   timeout_after_execution: durationToForm(remediationInstruction.timeout_after_execution),
   active_on_pbh: remediationInstruction.active_on_pbh
     ? cloneDeep(remediationInstruction.active_on_pbh)

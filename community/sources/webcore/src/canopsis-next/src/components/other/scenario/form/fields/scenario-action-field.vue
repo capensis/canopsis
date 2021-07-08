@@ -25,7 +25,7 @@
             )
           v-tabs(v-model="activeTab", centered, slider-color="primary", color="transparent", fixed-tabs)
             v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
-            v-tab(:class="{ 'error--text': hasPatternsError }") {{ $t('scenario.tabs.pattern') }}
+            v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern') }}
           v-divider
           v-tabs-items.pt-2(v-model="activeTab")
             v-tab-item

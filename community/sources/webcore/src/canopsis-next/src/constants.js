@@ -127,6 +127,7 @@ export const MODALS = {
   createScenario: 'create-scenario',
   stateSetting: 'state-setting',
   testSuite: 'test-suite',
+  createIdleRule: 'create-idle-rule',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -1893,4 +1894,9 @@ export const DAYS_IN_WEEK = 7;
 export const IDLE_RULE_TYPES = {
   alarm: 'alarm',
   entity: 'entity',
+};
+
+export const IDLE_RULE_ALARM_CONDITION = {
+  lastEvent: 'last_event',
+  lastUpdate: 'last_update',
 };
