@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.white--text.cursor-pointer.weather--item.ma-1(
+  v-card.white--text.cursor-pointer.weather-item.ma-1(
     :style="{ backgroundColor: color }",
     :class="{ 'v-card__with-see-alarms-btn': hasAlarmsListAccess }",
     tile,
