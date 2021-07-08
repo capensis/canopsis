@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -29,11 +29,11 @@ func TestStorageSetGet(t *testing.T) {
 	}
 
 	Convey("Test basic manipulations with storage", t, func() {
-		testRule := metaalarm.Rule{
+		testRule := correlation.Rule{
 			ID: "test_rule",
 		}
 
-		testRule2 := metaalarm.Rule{
+		testRule2 := correlation.Rule{
 			ID: "test_rule_2",
 		}
 
@@ -133,9 +133,9 @@ func TestStorageSetGet(t *testing.T) {
 
 func TestStorageShiftTimeInterval(t *testing.T) {
 	Convey("Test time-interval shifting: basic grouping logic", t, func() {
-		minuteRule := metaalarm.Rule{
+		minuteRule := correlation.Rule{
 			ID: "minute_rule",
-			Config: metaalarm.RuleConfig{
+			Config: correlation.RuleConfig{
 				TimeInterval: 60,
 			},
 		}
@@ -221,9 +221,9 @@ func TestStorageShiftTimeInterval(t *testing.T) {
 	})
 
 	Convey("Test time-interval shifting: check that open time is changed if the next event is older than previous", t, func() {
-		minuteRule := metaalarm.Rule{
+		minuteRule := correlation.Rule{
 			ID: "minute_rule",
-			Config: metaalarm.RuleConfig{
+			Config: correlation.RuleConfig{
 				TimeInterval: 60,
 			},
 		}
@@ -249,9 +249,9 @@ func TestStorageShiftTimeInterval(t *testing.T) {
 	})
 
 	Convey("Test time-interval shifting: check that time-interval is shifted properly, if the new alarm is late and no alarm should be missed", t, func() {
-		minuteRule := metaalarm.Rule{
+		minuteRule := correlation.Rule{
 			ID: "minute_rule",
-			Config: metaalarm.RuleConfig{
+			Config: correlation.RuleConfig{
 				TimeInterval: 60,
 			},
 		}
@@ -311,9 +311,9 @@ func TestStorageShiftTimeInterval(t *testing.T) {
 	})
 
 	Convey("Test time-interval shifting: check that grouping is calculated properly with alarm updates", t, func() {
-		minuteRule := metaalarm.Rule{
+		minuteRule := correlation.Rule{
 			ID: "minute_rule",
-			Config: metaalarm.RuleConfig{
+			Config: correlation.RuleConfig{
 				TimeInterval: 60,
 			},
 		}
@@ -416,9 +416,9 @@ func TestStorageShiftTimeInterval(t *testing.T) {
 	})
 
 	Convey("Test remove before: should be able to remove outdated group elements", t, func() {
-		minuteRule := metaalarm.Rule{
+		minuteRule := correlation.Rule{
 			ID: "minute_rule",
-			Config: metaalarm.RuleConfig{
+			Config: correlation.RuleConfig{
 				TimeInterval: 60,
 			},
 		}

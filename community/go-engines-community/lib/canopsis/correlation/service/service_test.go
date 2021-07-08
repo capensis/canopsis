@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/service"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
@@ -54,7 +54,7 @@ func TestCreateMetaAlarm(t *testing.T) {
 		},
 	}
 
-	rule := metaalarm.Rule{ID: "rule-1", OutputTemplate: "Number of children: {{ .Count }}"}
+	rule := correlation.Rule{ID: "rule-1", OutputTemplate: "Number of children: {{ .Count }}"}
 
 	metaAlarmEvent, err := maService.CreateMetaAlarm(event, children, rule)
 	if err != nil {
@@ -73,20 +73,20 @@ func TestCreateMetaAlarm(t *testing.T) {
 		t.Errorf("expected %v, but got %v", event.State, metaAlarmEvent.State)
 	}
 
-	if metaAlarmEvent.Component != metaalarm.DefaultMetaAlarmComponent {
-		t.Errorf("expected %v, but got %v", metaalarm.DefaultMetaAlarmComponent, metaAlarmEvent.Component)
+	if metaAlarmEvent.Component != correlation.DefaultMetaAlarmComponent {
+		t.Errorf("expected %v, but got %v", correlation.DefaultMetaAlarmComponent, metaAlarmEvent.Component)
 	}
 
-	if metaAlarmEvent.Connector != metaalarm.DefaultMetaAlarmConnector {
-		t.Errorf("expected %v, but got %v", metaalarm.DefaultMetaAlarmConnector, metaAlarmEvent.Connector)
+	if metaAlarmEvent.Connector != correlation.DefaultMetaAlarmConnector {
+		t.Errorf("expected %v, but got %v", correlation.DefaultMetaAlarmConnector, metaAlarmEvent.Connector)
 	}
 
-	if metaAlarmEvent.ConnectorName != metaalarm.DefaultMetaAlarmConnectorName {
-		t.Errorf("expected %v, but got %v", metaalarm.DefaultMetaAlarmConnectorName, metaAlarmEvent.ConnectorName)
+	if metaAlarmEvent.ConnectorName != correlation.DefaultMetaAlarmConnectorName {
+		t.Errorf("expected %v, but got %v", correlation.DefaultMetaAlarmConnectorName, metaAlarmEvent.ConnectorName)
 	}
 
-	if !strings.HasPrefix(metaAlarmEvent.Resource, metaalarm.DefaultMetaAlarmEntityPrefix) {
-		t.Errorf("%v should have prefix %v", metaAlarmEvent.Resource, metaalarm.DefaultMetaAlarmEntityPrefix)
+	if !strings.HasPrefix(metaAlarmEvent.Resource, correlation.DefaultMetaAlarmEntityPrefix) {
+		t.Errorf("%v should have prefix %v", metaAlarmEvent.Resource, correlation.DefaultMetaAlarmEntityPrefix)
 	}
 
 	if metaAlarmEvent.SourceType != types.SourceTypeResource {
@@ -138,8 +138,8 @@ func TestCreateMetaAlarm(t *testing.T) {
 	}
 
 	_, err = maService.CreateMetaAlarm(event, []types.AlarmWithEntity{}, rule)
-	if !errors.Is(err, metaalarm.ErrNoChildren) {
-		t.Fatalf("expected err %v but got %v", metaalarm.ErrNoChildren, err)
+	if !errors.Is(err, correlation.ErrNoChildren) {
+		t.Fatalf("expected err %v but got %v", correlation.ErrNoChildren, err)
 	}
 }
 
@@ -151,7 +151,7 @@ func TestAddChildToMetaAlarm(t *testing.T) {
 
 	s := service.NewMetaAlarmService(alarmAdapterMock, alarmConfigProviderMock, log.NewTestLogger())
 
-	rule := metaalarm.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
+	rule := correlation.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
 	event := types.Event{
 		Timestamp: types.NewCpsTime(time.Now().Unix()),
 		Author:    "test",
@@ -291,7 +291,7 @@ func TestAddChildToMetaAlarmComponent(t *testing.T) {
 
 	s := service.NewMetaAlarmService(alarmAdapterMock, alarmConfigProviderMock, log.NewTestLogger())
 
-	rule := metaalarm.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
+	rule := correlation.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
 	event := types.Event{
 		Timestamp: types.NewCpsTime(time.Now().Unix()),
 		Author:    "test",
@@ -351,7 +351,7 @@ func TestAddMultipleChildrenToMetaAlarm(t *testing.T) {
 
 	s := service.NewMetaAlarmService(alarmAdapterMock, alarmConfigProviderMock, log.NewTestLogger())
 
-	rule := metaalarm.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
+	rule := correlation.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
 	event := types.Event{
 		Timestamp: types.NewCpsTime(time.Now().Unix()),
 		Author:    "test",
@@ -502,7 +502,7 @@ func TestAddMultipleChildrenToMetaAlarmComponent(t *testing.T) {
 
 	s := service.NewMetaAlarmService(alarmAdapterMock, alarmConfigProviderMock, log.NewTestLogger())
 
-	rule := metaalarm.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
+	rule := correlation.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
 	event := types.Event{
 		Timestamp: types.NewCpsTime(time.Now().Unix()),
 		Author:    "test",
@@ -569,7 +569,7 @@ func TestRemoveMultipleChildToMetaAlarm(t *testing.T) {
 
 	s := service.NewMetaAlarmService(alarmAdapterMock, alarmConfigProviderMock, log.NewTestLogger())
 
-	rule := metaalarm.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
+	rule := correlation.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
 	event := types.Event{
 		Timestamp: types.NewCpsTime(time.Now().Unix()),
 		Author:    "test",
@@ -724,7 +724,7 @@ func TestRemoveMultipleChildToMetaAlarmComponent(t *testing.T) {
 
 	s := service.NewMetaAlarmService(alarmAdapterMock, alarmConfigProviderMock, log.NewTestLogger())
 
-	rule := metaalarm.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
+	rule := correlation.Rule{ID: "test-rule", OutputTemplate: "Number of children: {{ .Count }}"}
 	event := types.Event{
 		Timestamp: types.NewCpsTime(time.Now().Unix()),
 		Author:    "test",
@@ -934,7 +934,7 @@ func TestAddChildToMetaAlarmWorstState(t *testing.T) {
 		t.Fatalf("Child Alarm unmarshal error %s", err)
 	}
 
-	rule := metaalarm.Rule{}
+	rule := correlation.Rule{}
 	event := types.Event{}
 
 	var updatedAlarms *[]types.Alarm
@@ -1151,7 +1151,7 @@ func TestAddMultipleChildrenToMetaAlarmWorstState(t *testing.T) {
 	}
 
 	children = append(children, child)
-	rule := metaalarm.Rule{}
+	rule := correlation.Rule{}
 	event := types.Event{}
 
 	var updatedAlarms *[]types.Alarm
@@ -1482,7 +1482,7 @@ func TestChildInheritMetaAlarmActions(t *testing.T) {
 			alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(int64(1), nil)
 
 			event := types.Event{}
-			rule := metaalarm.Rule{}
+			rule := correlation.Rule{}
 			updateEvent, err := s.AddMultipleChildsToMetaAlarm(context.Background(), event, metaAlarm, children, rule)
 			if err != nil {
 				t.Fatalf("AddMultipleChildsToMetaAlarm error %s", err)

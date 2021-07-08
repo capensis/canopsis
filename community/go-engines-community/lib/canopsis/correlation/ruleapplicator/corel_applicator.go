@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/service"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/storage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
@@ -27,12 +27,12 @@ type CorelApplicator struct {
 	metaAlarmService  service.MetaAlarmService
 	storage           storage.GroupingStorage
 	redisClient       *redis.Client
-	ruleEntityCounter metaalarm.RuleEntityCounter
+	ruleEntityCounter correlation.RuleEntityCounter
 	logger            zerolog.Logger
 }
 
 // Apply called by RulesService.ProcessEvent
-func (a CorelApplicator) Apply(ctx context.Context, event types.Event, rule metaalarm.Rule) ([]types.Event, error) {
+func (a CorelApplicator) Apply(ctx context.Context, event types.Event, rule correlation.Rule) ([]types.Event, error) {
 	var metaAlarmEvents []types.Event
 	var watchErr error
 

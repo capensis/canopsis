@@ -1,6 +1,6 @@
-package metaalarm
+package correlation
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/metaalarm/metaalarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm RulesAdapter
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/correlation/metaalarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation RulesAdapter
 
 import (
 	"context"

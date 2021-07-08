@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/storage"
 	"testing"
 	"time"
 
@@ -13,11 +13,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/ruleapplicator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/service"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/ruleapplicator"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -71,7 +71,7 @@ func testNewComplexApplicator() (*ruleapplicator.ComplexApplicator, alarm.Adapte
 		return nil, nil, nil, err
 	}
 
-	ruleEntityCounter := metaalarm.NewRuleEntityCounter(entityAdapter, redisClient3, logger)
+	ruleEntityCounter := correlation.NewRuleEntityCounter(entityAdapter, redisClient3, logger)
 
 	applicator := ruleapplicator.NewComplexApplicator(alarmAdapter, metaAlarmService, storage.NewRedisGroupingStorage(), redisClient, ruleEntityCounter, logger)
 	return &applicator, alarmAdapter, entityAdapter, nil
@@ -103,7 +103,7 @@ func TestRuleMatch(t *testing.T) {
 		So(err, ShouldBeNil)
 
 		testEvent := types.Event{}
-		rule := metaalarm.Rule{}
+		rule := correlation.Rule{}
 
 		Convey("empty event and rule", func() {
 			metaAlarmEvents, _ := applicator.Apply(ctx, testEvent, rule)
@@ -243,10 +243,10 @@ func TestRuleMatch(t *testing.T) {
 
 		Convey("timebased rule match", func() {
 			Convey("mismatch event complex rule", func() {
-				rule := metaalarm.Rule{
+				rule := correlation.Rule{
 					ID:   "timebased-test",
 					Type: "timebased",
-					Config: metaalarm.RuleConfig{
+					Config: correlation.RuleConfig{
 						TimeInterval: 3,
 					},
 				}

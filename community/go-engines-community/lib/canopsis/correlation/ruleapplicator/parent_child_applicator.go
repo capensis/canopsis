@@ -3,8 +3,8 @@ package ruleapplicator
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/service"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"github.com/rs/zerolog"
@@ -16,7 +16,7 @@ type ParentChildApplicator struct {
 	logger           zerolog.Logger
 }
 
-func (a ParentChildApplicator) Apply(ctx context.Context, event types.Event, rule metaalarm.Rule) ([]types.Event, error) {
+func (a ParentChildApplicator) Apply(ctx context.Context, event types.Event, rule correlation.Rule) ([]types.Event, error) {
 	var metaAlarmEvent types.Event
 
 	if event.SourceType == types.SourceTypeComponent {

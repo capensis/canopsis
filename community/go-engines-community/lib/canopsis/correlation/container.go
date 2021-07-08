@@ -1,4 +1,4 @@
-package metaalarm
+package correlation
 
 type Container struct {
 	applicators map[RuleType]RuleApplicator

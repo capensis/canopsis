@@ -1,4 +1,4 @@
-package metaalarm
+package correlation
 
 import (
 	"context"

@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/service"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,17 +14,17 @@ import (
 
 const ManualRule = "Manual alarm"
 
-var manualRule *metaalarm.Rule
+var manualRule *correlation.Rule
 
 type ManualGroupApplicator struct {
 	alarmAdapter     alarm.Adapter
-	ruleAdapter      metaalarm.RulesAdapter
+	ruleAdapter      correlation.RulesAdapter
 	metaAlarmService service.MetaAlarmService
 	logger           zerolog.Logger
 }
 
 func NewManualGroupApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService,
-	ruleAdapter metaalarm.RulesAdapter, logger zerolog.Logger) ManualGroupApplicator {
+	ruleAdapter correlation.RulesAdapter, logger zerolog.Logger) ManualGroupApplicator {
 	return ManualGroupApplicator{
 		alarmAdapter:     alarmAdapter,
 		ruleAdapter:      ruleAdapter,
@@ -41,7 +41,7 @@ func (m missingRequiredFields) Error() string {
 	return fmt.Sprintf("missing require fields %s", m.fields)
 }
 
-func (a ManualGroupApplicator) getOrCreateRule() (metaalarm.Rule, error) {
+func (a ManualGroupApplicator) getOrCreateRule() (correlation.Rule, error) {
 	if manualRule != nil {
 		return *manualRule, nil
 	}
@@ -50,11 +50,11 @@ func (a ManualGroupApplicator) getOrCreateRule() (metaalarm.Rule, error) {
 		manualRule = &rule
 		return rule, nil
 	}
-	rule = metaalarm.Rule{
+	rule = correlation.Rule{
 		ID:       fmt.Sprintf("zgrp-%s", primitive.NewObjectID().Hex()),
-		Type:     metaalarm.RuleManualGroup,
-		Patterns: metaalarm.RulePatterns{},
-		Config:   metaalarm.RuleConfig{},
+		Type:     correlation.RuleManualGroup,
+		Patterns: correlation.RulePatterns{},
+		Config:   correlation.RuleConfig{},
 		Name:     ManualRule,
 	}
 	err = a.ruleAdapter.Save(rule)
@@ -97,7 +97,7 @@ func (a ManualGroupApplicator) addAlarmsToGroups(
 	event types.Event,
 	children []types.AlarmWithEntity,
 	metaalarms *[]types.Alarm,
-	rule metaalarm.Rule,
+	rule correlation.Rule,
 ) ([]types.Event, error) {
 	metaAlarmEvents := make([]types.Event, 0)
 	for _, ma := range *metaalarms {
@@ -116,7 +116,7 @@ func (a ManualGroupApplicator) removeAlarmsToGroups(
 	event types.Event,
 	children []types.AlarmWithEntity,
 	metaalarms *[]types.Alarm,
-	rule metaalarm.Rule,
+	rule correlation.Rule,
 ) ([]types.Event, error) {
 	metaAlarmEvents := make([]types.Event, 0)
 	for _, ma := range *metaalarms {
@@ -158,7 +158,7 @@ func (a ManualGroupApplicator) groupAlarms(event types.Event) (types.Event, erro
 	return metaAlarmEvent, nil
 }
 
-func (a ManualGroupApplicator) Apply(ctx context.Context, event types.Event, r metaalarm.Rule) ([]types.Event, error) {
+func (a ManualGroupApplicator) Apply(ctx context.Context, event types.Event, r correlation.Rule) ([]types.Event, error) {
 
 	if event.EventType == types.EventManualMetaAlarmGroup {
 		metaAlarmEvent, err := a.groupAlarms(event)

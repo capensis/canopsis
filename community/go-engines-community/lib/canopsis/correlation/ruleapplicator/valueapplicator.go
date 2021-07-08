@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/service"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/storage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"github.com/go-redis/redis/v8"
@@ -24,12 +24,12 @@ type ValueApplicator struct {
 	metaAlarmService  service.MetaAlarmService
 	storage           storage.GroupingStorage
 	redisClient       *redis.Client
-	ruleEntityCounter metaalarm.ValueGroupEntityCounter
+	ruleEntityCounter correlation.ValueGroupEntityCounter
 	logger            zerolog.Logger
 }
 
 // Apply called by RulesService.ProcessEvent
-func (a ValueApplicator) Apply(ctx context.Context, event types.Event, rule metaalarm.Rule) ([]types.Event, error) {
+func (a ValueApplicator) Apply(ctx context.Context, event types.Event, rule correlation.Rule) ([]types.Event, error) {
 	var metaAlarmEvent types.Event
 	var watchErr error
 
@@ -318,7 +318,7 @@ func (a ValueApplicator) getGroupWithOpenedAlarmsWithEntity(ctx context.Context,
 	return alarmGroup, alarms, err
 }
 
-func (a ValueApplicator) extractValue(event types.Event, rule *metaalarm.Rule) (string, map[string]string) {
+func (a ValueApplicator) extractValue(event types.Event, rule *correlation.Rule) (string, map[string]string) {
 	bytes, err := json.Marshal(types.AlarmWithEntity{
 		Alarm:  *event.Alarm,
 		Entity: *event.Entity,
@@ -343,7 +343,7 @@ func (a ValueApplicator) extractValue(event types.Event, rule *metaalarm.Rule) (
 	return strings.Join(paths, "."), valuePathsMap
 }
 
-func (a ValueApplicator) isRatioReached(ctx context.Context, alarmGroup storage.TimeBasedAlarmGroup, rule metaalarm.Rule, valuePath string, valuePathsMap map[string]string) (bool, error) {
+func (a ValueApplicator) isRatioReached(ctx context.Context, alarmGroup storage.TimeBasedAlarmGroup, rule correlation.Rule, valuePath string, valuePathsMap map[string]string) (bool, error) {
 	groupLen := alarmGroup.GetGroupLength()
 
 	total, err := a.ruleEntityCounter.GetTotalEntitiesAmount(ctx, rule.ID, valuePath)
@@ -367,7 +367,7 @@ func (a ValueApplicator) isRatioReached(ctx context.Context, alarmGroup storage.
 }
 
 // NewValueApplicator instantiates ValueApplicator with MetaAlarmService
-func NewValueGroupApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, storage storage.GroupingStorage, redisClient *redis.Client, ruleEntityCounter metaalarm.ValueGroupEntityCounter, logger zerolog.Logger) ValueApplicator {
+func NewValueGroupApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, storage storage.GroupingStorage, redisClient *redis.Client, ruleEntityCounter correlation.ValueGroupEntityCounter, logger zerolog.Logger) ValueApplicator {
 	return ValueApplicator{
 		alarmAdapter:      alarmAdapter,
 		metaAlarmService:  metaAlarmService,

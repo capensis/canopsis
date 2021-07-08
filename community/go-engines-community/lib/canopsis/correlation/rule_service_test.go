@@ -1,4 +1,4 @@
-package metaalarm_test
+package correlation_test
 
 import (
 	"context"
@@ -9,10 +9,10 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/ruleapplicator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/service"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/ruleapplicator"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -23,7 +23,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.Adapter, metaalarm.RulesAdapter, *redisV8.Client, *redislock.Client, mongo.DbClient, error) {
+func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.Adapter, correlation.RulesAdapter, *redisV8.Client, *redislock.Client, mongo.DbClient, error) {
 	logger := log.NewLogger(true)
 	ctx := context.Background()
 
@@ -66,7 +66,7 @@ func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.
 		return nil, nil, nil, nil, nil, nil, nil, err
 	}
 
-	rulesAdapter := metaalarm.NewRuleAdapter(dbClient)
+	rulesAdapter := correlation.NewRuleAdapter(dbClient)
 
 	s := service.NewMetaAlarmService(alarmAdapter, rulesAdapter,
 		config.NewAlarmConfigProvider(config.CanopsisConf{}, logger), log.NewTestLogger())
@@ -146,7 +146,7 @@ func TestProcessAttributes(t *testing.T) {
 
 		testEvent.Alarm = &alarm
 
-		rule := metaalarm.Rule{}
+		rule := correlation.Rule{}
 		err = json.Unmarshal([]byte(`{
 			"_id": "testRule",
 			"name": "Test",
@@ -162,19 +162,19 @@ func TestProcessAttributes(t *testing.T) {
 
 		fmt.Printf("%v\n", ev)
 
-		container := metaalarm.NewRuleApplicatorContainer()
+		container := correlation.NewRuleApplicatorContainer()
 		attributeApplicator := ruleapplicator.NewAttributeApplicator(alarmAdapter, log.NewTestLogger(), s, redisClient, redlockClient)
-		container.Set(metaalarm.RuleTypeAttribute, attributeApplicator)
+		container.Set(correlation.RuleTypeAttribute, attributeApplicator)
 
 		logger := log.NewLogger(true)
 
 		redisClient, err := redis.NewSession(ctx, redis.RuleTotalEntitiesStorage, logger, 0, 0)
 		So(err, ShouldBeNil)
 
-		ruleEntityCounter := metaalarm.NewRuleEntityCounter(entityAdapter, redisClient, logger)
-		valueGroupEntityCounter := metaalarm.NewValueGroupEntityCounter(mongoSession, redisClient, logger)
+		ruleEntityCounter := correlation.NewRuleEntityCounter(entityAdapter, redisClient, logger)
+		valueGroupEntityCounter := correlation.NewValueGroupEntityCounter(mongoSession, redisClient, logger)
 
-		rs := metaalarm.NewRulesService(rulesAdapter, ruleEntityCounter, valueGroupEntityCounter, container, log.NewTestLogger())
+		rs := correlation.NewRulesService(rulesAdapter, ruleEntityCounter, valueGroupEntityCounter, container, log.NewTestLogger())
 		err = rs.LoadRules(ctx)
 		So(err, ShouldBeNil)
 

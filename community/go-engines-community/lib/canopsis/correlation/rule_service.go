@@ -1,4 +1,4 @@
-package metaalarm
+package correlation
 
 import (
 	"context"
@@ -10,8 +10,8 @@ import (
 
 type ruleService struct {
 	// rulesAdapter is an rulesAdapter to the rules collection.
-	rulesAdapter      RulesAdapter
-	ruleEntityCounter RuleEntityCounter
+	rulesAdapter            RulesAdapter
+	ruleEntityCounter       RuleEntityCounter
 	valueGroupEntityCounter ValueGroupEntityCounter
 
 	ruleApplicatorContainer *Container

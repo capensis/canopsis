@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/service"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/storage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"github.com/go-redis/redis/v8"
@@ -24,16 +24,16 @@ type ComplexApplicator struct {
 	metaAlarmService  service.MetaAlarmService
 	storage           storage.GroupingStorage
 	redisClient       *redis.Client
-	ruleEntityCounter metaalarm.RuleEntityCounter
+	ruleEntityCounter correlation.RuleEntityCounter
 	logger            zerolog.Logger
 }
 
 // Apply called by RulesService.ProcessEvent
-func (a ComplexApplicator) Apply(ctx context.Context, event types.Event, rule metaalarm.Rule) ([]types.Event, error) {
+func (a ComplexApplicator) Apply(ctx context.Context, event types.Event, rule correlation.Rule) ([]types.Event, error) {
 	var metaAlarmEvent types.Event
 	var watchErr error
 
-	if rule.Type == metaalarm.RuleTypeTimeBased {
+	if rule.Type == correlation.RuleTypeTimeBased {
 		rule.Config.ThresholdCount = new(int64)
 		*rule.Config.ThresholdCount = 2
 	}
@@ -268,7 +268,7 @@ func (a ComplexApplicator) Apply(ctx context.Context, event types.Event, rule me
 	return nil, nil
 }
 
-func (a ComplexApplicator) isRatioReached(ctx context.Context, alarmGroup storage.TimeBasedAlarmGroup, rule metaalarm.Rule, includeNewAlarmOnRecompute bool) (bool, error) {
+func (a ComplexApplicator) isRatioReached(ctx context.Context, alarmGroup storage.TimeBasedAlarmGroup, rule correlation.Rule, includeNewAlarmOnRecompute bool) (bool, error) {
 	groupLen := alarmGroup.GetGroupLength()
 
 	total, err := a.ruleEntityCounter.GetTotalEntitiesAmount(ctx, rule)
@@ -290,7 +290,7 @@ func (a ComplexApplicator) isRatioReached(ctx context.Context, alarmGroup storag
 	return total != 0 && float64(groupLen)/float64(total) >= *rule.Config.ThresholdRate, nil
 }
 
-func (a ComplexApplicator) recomputeTotal(ctx context.Context, rule metaalarm.Rule) (int, error) {
+func (a ComplexApplicator) recomputeTotal(ctx context.Context, rule correlation.Rule) (int, error) {
 	err := a.ruleEntityCounter.CountTotalEntitiesAmount(ctx, rule)
 	if err != nil {
 		return 0, err
@@ -326,7 +326,7 @@ func (a ComplexApplicator) getGroupWithOpenedAlarmsWithEntity(ctx context.Contex
 }
 
 // NewComplexApplicator instantiates ComplexApplicator with MetaAlarmService
-func NewComplexApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, storage storage.GroupingStorage, redisClient *redis.Client, ruleEntityCounter metaalarm.RuleEntityCounter, logger zerolog.Logger) ComplexApplicator {
+func NewComplexApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, storage storage.GroupingStorage, redisClient *redis.Client, ruleEntityCounter correlation.RuleEntityCounter, logger zerolog.Logger) ComplexApplicator {
 	return ComplexApplicator{
 		alarmAdapter:      alarmAdapter,
 		metaAlarmService:  metaAlarmService,

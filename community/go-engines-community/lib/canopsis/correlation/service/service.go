@@ -1,6 +1,6 @@
 package service
 
-//go:generate mockgen -destination=../../../../mocks/lib/canopsis/metaalarm/service/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service MetaAlarmService
+//go:generate mockgen -destination=../../../../mocks/lib/canopsis/correlation/service/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/service MetaAlarmService
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
@@ -21,28 +21,28 @@ type MetaAlarmService interface {
 	CreateMetaAlarm(
 		event types.Event,
 		children []types.AlarmWithEntity,
-		rule metaalarm.Rule,
+		rule correlation.Rule,
 	) (types.Event, error)
 	AddChildToMetaAlarm(
 		ctx context.Context,
 		event types.Event,
 		metaAlarm types.Alarm,
 		childAlarm types.AlarmWithEntity,
-		rule metaalarm.Rule,
+		rule correlation.Rule,
 	) (types.Event, error)
 	AddMultipleChildsToMetaAlarm(
 		ctx context.Context,
 		event types.Event,
 		metaAlarm types.Alarm,
 		children []types.AlarmWithEntity,
-		rule metaalarm.Rule,
+		rule correlation.Rule,
 	) (types.Event, error)
 	RemoveMultipleChildToMetaAlarm(
 		ctx context.Context,
 		event types.Event,
 		metaAlarm types.Alarm,
 		children []types.AlarmWithEntity,
-		rule metaalarm.Rule,
+		rule correlation.Rule,
 	) (types.Event, error)
 }
 
@@ -53,7 +53,7 @@ type service struct {
 }
 
 type EventExtraInfosMeta struct {
-	Rule     metaalarm.Rule
+	Rule     correlation.Rule
 	Count    int64
 	Children types.AlarmWithEntity
 }
@@ -70,10 +70,10 @@ func NewMetaAlarmService(alarmAdapter alarm.Adapter, alarmConfigProvider config.
 func (s *service) CreateMetaAlarm(
 	event types.Event,
 	children []types.AlarmWithEntity,
-	rule metaalarm.Rule,
+	rule correlation.Rule,
 ) (types.Event, error) {
 	if len(children) == 0 {
-		return types.Event{}, metaalarm.ErrNoChildren
+		return types.Event{}, correlation.ErrNoChildren
 	}
 
 	infos := EventExtraInfosMeta{
@@ -98,7 +98,7 @@ func (s *service) CreateMetaAlarm(
 		Component:         "metaalarm",
 		Connector:         "engine",
 		ConnectorName:     "correlation",
-		Resource:          metaalarm.DefaultMetaAlarmEntityPrefix + utils.NewID(),
+		Resource:          correlation.DefaultMetaAlarmEntityPrefix + utils.NewID(),
 		SourceType:        types.SourceTypeResource,
 		EventType:         types.EventTypeMetaAlarm,
 		MetaAlarmChildren: &eventChildren,
@@ -117,10 +117,10 @@ func (s *service) AddChildToMetaAlarm(
 	event types.Event,
 	metaAlarm types.Alarm,
 	child types.AlarmWithEntity,
-	rule metaalarm.Rule,
+	rule correlation.Rule,
 ) (types.Event, error) {
 	if metaAlarm.HasChildByEID(child.Entity.ID) {
-		return types.Event{}, metaalarm.ErrChildAlreadyExist
+		return types.Event{}, correlation.ErrChildAlreadyExist
 	}
 
 	childAlarm := child.Alarm
@@ -181,7 +181,7 @@ func (s *service) AddMultipleChildsToMetaAlarm(
 	event types.Event,
 	metaAlarm types.Alarm,
 	children []types.AlarmWithEntity,
-	rule metaalarm.Rule,
+	rule correlation.Rule,
 ) (types.Event, error) {
 	worstState, worstStateDate := types.CpsNumber(types.AlarmStateOK), metaAlarm.Value.LastUpdateDate
 	maActions, ticket := metaAlarm.GetAppliedActions()
@@ -190,7 +190,7 @@ func (s *service) AddMultipleChildsToMetaAlarm(
 		childAlarm := children[i].Alarm
 
 		if metaAlarm.HasChildByEID(children[i].Entity.ID) {
-			return types.Event{}, metaalarm.ErrChildAlreadyExist
+			return types.Event{}, correlation.ErrChildAlreadyExist
 		}
 
 		metaAlarm.AddChild(childAlarm.EntityID)
@@ -257,7 +257,7 @@ func (s *service) RemoveMultipleChildToMetaAlarm(
 	event types.Event,
 	metaAlarm types.Alarm,
 	children []types.AlarmWithEntity,
-	rule metaalarm.Rule,
+	rule correlation.Rule,
 ) (types.Event, error) {
 	for _, child := range children {
 		metaAlarm.RemoveChild(child.Alarm.EntityID)

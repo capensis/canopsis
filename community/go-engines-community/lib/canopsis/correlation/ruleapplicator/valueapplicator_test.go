@@ -2,15 +2,15 @@ package ruleapplicator
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/storage"
 	"testing"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/service"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -44,7 +44,7 @@ func testNewValueApplicator() (*ValueApplicator, alarm.Adapter, entity.Adapter, 
 		return nil, nil, nil, err
 	}
 
-	valueGroupEntityCounter := metaalarm.NewValueGroupEntityCounter(dbClient, redisClient3, logger)
+	valueGroupEntityCounter := correlation.NewValueGroupEntityCounter(dbClient, redisClient3, logger)
 
 	applicator := NewValueGroupApplicator(alarmAdapter, metaAlarmService, storage.NewRedisGroupingStorage(), redisClient, valueGroupEntityCounter, logger)
 	return &applicator, alarmAdapter, entityAdapter, nil
@@ -74,10 +74,10 @@ func TestApply(t *testing.T) {
 
 		Convey("check simple valuegroup rule", func() {
 			threshold := int64(2)
-			rule := metaalarm.Rule{
+			rule := correlation.Rule{
 				ID:   "valuegroup-test",
 				Type: "valuegroup",
-				Config: metaalarm.RuleConfig{
+				Config: correlation.RuleConfig{
 					TimeInterval: 300,
 					ValuePaths: []string{
 						"entity.infos.customer.value",
@@ -343,10 +343,10 @@ func TestApply(t *testing.T) {
 
 			Convey("it shouldn't add to a metaalarm if some valuepath is empty", func() {
 				threshold := int64(2)
-				rule := metaalarm.Rule{
+				rule := correlation.Rule{
 					ID:   "valuegroup-test-2",
 					Type: "valuegroup",
-					Config: metaalarm.RuleConfig{
+					Config: correlation.RuleConfig{
 						TimeInterval: 300,
 						ValuePaths: []string{
 							"entity.infos.customer.value",
@@ -475,10 +475,10 @@ func TestApply(t *testing.T) {
 
 		Convey("check valuegroup rule with single item in paths", func() {
 			threshold := int64(2)
-			rule := metaalarm.Rule{
+			rule := correlation.Rule{
 				ID:   "valuegroup-test-3",
 				Type: "valuegroup",
-				Config: metaalarm.RuleConfig{
+				Config: correlation.RuleConfig{
 					TimeInterval: 300,
 					ValuePaths: []string{
 						"entity.infos.customer.value",
@@ -617,10 +617,10 @@ func TestApply(t *testing.T) {
 
 		Convey("shouldn't work without valuegroups", func() {
 			threshold := int64(2)
-			rule := metaalarm.Rule{
+			rule := correlation.Rule{
 				ID:   "valuegroup-test-empty",
 				Type: "valuegroup",
-				Config: metaalarm.RuleConfig{
+				Config: correlation.RuleConfig{
 					TimeInterval:   300,
 					ThresholdCount: &threshold,
 				},
@@ -748,10 +748,10 @@ func TestApply(t *testing.T) {
 
 		Convey("should calculate group length properly if the group contains resolved alarms", func() {
 			threshold := int64(2)
-			rule := metaalarm.Rule{
+			rule := correlation.Rule{
 				ID:   "valuegroup-test",
 				Type: "valuegroup",
-				Config: metaalarm.RuleConfig{
+				Config: correlation.RuleConfig{
 					TimeInterval: 300,
 					ValuePaths: []string{
 						"entity.infos.customer.value",
@@ -936,10 +936,10 @@ func TestApplyWithRate(t *testing.T) {
 		So(err, ShouldBeNil)
 
 		thresholdRate1 := 0.7
-		rule1 := metaalarm.Rule{
+		rule1 := correlation.Rule{
 			ID:   "valuegroup-test-rate-1",
 			Type: "valuegroup",
-			Config: metaalarm.RuleConfig{
+			Config: correlation.RuleConfig{
 				TimeInterval: 300,
 				ValuePaths: []string{
 					"entity.infos.customer.value",
@@ -950,10 +950,10 @@ func TestApplyWithRate(t *testing.T) {
 		}
 
 		thresholdRate2 := 0.8
-		rule2 := metaalarm.Rule{
+		rule2 := correlation.Rule{
 			ID:   "valuegroup-test-rate-2",
 			Type: "valuegroup",
-			Config: metaalarm.RuleConfig{
+			Config: correlation.RuleConfig{
 				TimeInterval: 300,
 				ValuePaths: []string{
 					"entity.infos.customer.value",
@@ -971,7 +971,7 @@ func TestApplyWithRate(t *testing.T) {
 
 		redisClient.FlushAll(ctx)
 
-		valueGroupEntityCounter := metaalarm.NewValueGroupEntityCounter(dbClient, redisClient, logger)
+		valueGroupEntityCounter := correlation.NewValueGroupEntityCounter(dbClient, redisClient, logger)
 		err = valueGroupEntityCounter.CountTotalEntitiesAmount(ctx, rule1)
 		So(err, ShouldBeNil)
 		total, err := valueGroupEntityCounter.GetTotalEntitiesAmount(ctx, rule1.ID, "customer-1.location-1")

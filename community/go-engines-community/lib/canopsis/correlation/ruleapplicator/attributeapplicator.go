@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/service"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation/storage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"github.com/go-redis/redis/v8"
@@ -17,15 +17,15 @@ import (
 
 // AttributeApplicator implements RuleApplicator interface
 type AttributeApplicator struct {
-	alarmAdapter    alarm.Adapter
-	service         service.MetaAlarmService
-	storage         storage.GroupingStorage
-	redisClient     *redis.Client
-	logger          zerolog.Logger
+	alarmAdapter alarm.Adapter
+	service      service.MetaAlarmService
+	storage      storage.GroupingStorage
+	redisClient  *redis.Client
+	logger       zerolog.Logger
 }
 
 // Apply called by RulesService.ProcessEvent
-func (a AttributeApplicator) Apply(ctx context.Context, event types.Event, rule metaalarm.Rule) ([]types.Event, error) {
+func (a AttributeApplicator) Apply(ctx context.Context, event types.Event, rule correlation.Rule) ([]types.Event, error) {
 	var metaAlarmEvent types.Event
 	var watchErr error
 
@@ -118,21 +118,21 @@ func (a AttributeApplicator) Apply(ctx context.Context, event types.Event, rule 
 }
 
 // AlarmMatched checks alarm attributes agiainst the AttributePatterns in rule configuration
-func (a AttributeApplicator) AlarmMatched(event types.Event, rule metaalarm.Rule) bool {
+func (a AttributeApplicator) AlarmMatched(event types.Event, rule correlation.Rule) bool {
 	patternsMatch := rule.Config.AlarmPatterns.Matches(event.Alarm)
 	a.logger.Debug().Msgf("Alarm matched event %+v with rule %v %t", event, rule.Config.AlarmPatterns.AsMongoDriverQuery(), patternsMatch)
 	return patternsMatch
 }
 
 // EntityMatched checks entity attributes agiainst the EntityPatterns in rule configuration
-func (a AttributeApplicator) EntityMatched(event types.Event, rule metaalarm.Rule) bool {
+func (a AttributeApplicator) EntityMatched(event types.Event, rule correlation.Rule) bool {
 	patternsMatch := rule.Config.EntityPatterns.Matches(event.Entity)
 	a.logger.Debug().Msgf("Entity matched event %+v with rule %v %t", event, rule.Config.EntityPatterns.AsMongoDriverQuery(), patternsMatch)
 	return patternsMatch
 }
 
 // EventMatched checks event attributes agiainst the EventPatterns in rule configuration
-func (a AttributeApplicator) EventMatched(event types.Event, rule metaalarm.Rule) bool {
+func (a AttributeApplicator) EventMatched(event types.Event, rule correlation.Rule) bool {
 	patternsMatch := rule.Config.EventPatterns.Matches(event)
 	a.logger.Debug().Msgf("Event matched event %+v with rule %v", event, rule.Config.EventPatterns)
 	return patternsMatch
@@ -141,10 +141,10 @@ func (a AttributeApplicator) EventMatched(event types.Event, rule metaalarm.Rule
 // NewAttributeApplicator instantiates AttributeApplicator with MetaAlarmService
 func NewAttributeApplicator(alarmAdapter alarm.Adapter, logger zerolog.Logger, metaAlarmService service.MetaAlarmService, redisClient *redis.Client) AttributeApplicator {
 	return AttributeApplicator{
-		alarmAdapter:    alarmAdapter,
-		service:         metaAlarmService,
-		storage:         storage.NewRedisGroupingStorage(),
-		redisClient:     redisClient,
-		logger:          logger,
+		alarmAdapter: alarmAdapter,
+		service:      metaAlarmService,
+		storage:      storage.NewRedisGroupingStorage(),
+		redisClient:  redisClient,
+		logger:       logger,
 	}
 }

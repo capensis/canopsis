@@ -13,7 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -848,7 +848,7 @@ func (s *store) addSearchFilter(r FilterRequest, pipeline *[]bson.M,
 
 func (s *store) addOnlyManualFilter(r FilterRequest, match *[]bson.M) error {
 	if r.OnlyManual {
-		*match = append(*match, bson.M{"$expr": bson.M{"$eq": bson.A{"$meta_alarm_rule.type", metaalarm.RuleManualGroup}}})
+		*match = append(*match, bson.M{"$expr": bson.M{"$eq": bson.A{"$meta_alarm_rule.type", correlation.RuleManualGroup}}})
 	}
 
 	return nil
@@ -902,7 +902,7 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 	if r.OnlyParents {
 		*pipeline = append(*pipeline,
 			bson.M{"$lookup": bson.M{
-				"from":         metaalarm.RulesCollectionName,
+				"from":         correlation.RulesCollectionName,
 				"localField":   "v.meta",
 				"foreignField": "_id",
 				"as":           "meta_alarm_rule",
@@ -1054,7 +1054,7 @@ func (s *store) getCausesPipeline() []bson.M {
 			"as":               "parents",
 		}},
 		{"$lookup": bson.M{
-			"from":         metaalarm.RulesCollectionName,
+			"from":         correlation.RulesCollectionName,
 			"localField":   "parents.v.meta",
 			"foreignField": "_id",
 			"as":           "causes_rules",
