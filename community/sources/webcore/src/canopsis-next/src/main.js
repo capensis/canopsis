@@ -62,6 +62,7 @@ import CAlertOverlay from '@/components/common/overlay/c-alert-overlay.vue';
 import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
 import CDraggableStepNumber from '@/components/common/drag-drop/c-draggable-step-number.vue';
 import CHelpIcon from '@/components/common/icons/c-help-icon.vue';
+import CNoEventsIcon from '@/components/common/icons/c-no-events-icon.vue';
 
 /**
  * Fields
@@ -259,6 +260,7 @@ Vue.component('c-mini-bar-chart', CMiniBarChart);
 Vue.component('c-images-viewer', CImagesViewer);
 Vue.component('c-clickable-tooltip', CClickableTooltip);
 Vue.component('c-help-icon', CHelpIcon);
+Vue.component('c-no-events-icon', CNoEventsIcon);
 Vue.component('c-role-picker-field', CRolePickerField);
 Vue.component('c-user-picker-field', CUserPickerField);
 Vue.component('c-instruction-type-field', CInstructionTypeField);
