@@ -2363,5 +2363,9 @@ export default {
     },
   },
 
+  icons: {
+    noEvents: 'Aucun événement reçu pendant {duration} par certaines dépendances',
+  },
+
   ...featureService.get('i18n.fr'),
 };

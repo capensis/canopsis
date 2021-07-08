@@ -2362,5 +2362,9 @@ export default {
     },
   },
 
+  icons: {
+    noEvents: 'No events received for {duration} by some of dependencies',
+  },
+
   ...featureService.get('i18n.en'),
 };
