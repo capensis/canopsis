@@ -60,6 +60,7 @@ const (
 	FIFOAckExchangeName             = ""
 	FIFOAckQueueName                = "FIFO_ack"
 	FIFOConsumerName                = "fifo"
+	CorrelationEngineName           = "engine-correlation"
 	CorrelationQueueName            = "Engine_correlation"
 	CorrelationConsumerName         = "correlation"
 	PeriodicalWaitTime              = time.Minute
