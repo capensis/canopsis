@@ -4,23 +4,23 @@
     v-tabs(centered, slider-color="primary", color="transparent", fixed-tabs)
       v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
       v-tab-item
-        idle-rule-general-field(ref="general", v-field="form")
+        idle-rule-general-form(ref="general", v-field="form")
       v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern') }}
       v-tab-item
-        idle-rule-patterns-field(ref="patterns", v-field="form", :is-entity-type="isEntityType")
+        idle-rule-patterns-form(ref="patterns", v-field="form", :is-entity-type="isEntityType")
 </template>
 
 <script>
 import { IDLE_RULE_TYPES } from '@/constants';
 
-import IdleRuleGeneralField from './partials/idle-rule-general-field.vue';
-import IdleRulePatternsField from './partials/idle-rule-patterns-field.vue';
+import IdleRuleGeneralForm from './partials/idle-rule-general-form.vue';
+import IdleRulePatternsForm from './partials/idle-rule-patterns-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    IdleRuleGeneralField,
-    IdleRulePatternsField,
+    IdleRuleGeneralForm,
+    IdleRulePatternsForm,
   },
   model: {
     prop: 'form',
