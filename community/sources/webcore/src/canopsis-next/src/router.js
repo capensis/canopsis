@@ -267,17 +267,6 @@ const routes = [
     },
   },
   {
-    path: '/notification/instruction-stats',
-    name: 'notification-instruction-stats',
-    component: NotificationInstructionStats,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: USERS_PERMISSIONS.technical.notification.instructionStats,
-      },
-    },
-  },
-  {
     path: '/exploitation/idle-rules',
     name: 'idle-rules',
     component: IdleRules,
@@ -285,6 +274,17 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.idleRules,
+      },
+    },
+  },
+  {
+    path: '/notification/instruction-stats',
+    name: 'notification-instruction-stats',
+    component: NotificationInstructionStats,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.notification.instructionStats,
       },
     },
   },
