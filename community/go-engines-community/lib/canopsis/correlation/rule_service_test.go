@@ -17,31 +17,23 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/bsm/redislock"
 	redisV8 "github.com/go-redis/redis/v8"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.Adapter, correlation.RulesAdapter, *redisV8.Client, *redislock.Client, mongo.DbClient, error) {
+func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.Adapter, correlation.RulesAdapter, *redisV8.Client, mongo.DbClient, error) {
 	logger := log.NewLogger(true)
 	ctx := context.Background()
 
 	redisClient, err := redis.NewSession(ctx, redis.AlarmGroupStorage, logger, 0, 0)
 	if err != nil {
-		return nil, nil, nil, nil, nil, nil, nil, err
+		return nil, nil, nil, nil, nil, nil, err
 	}
-
-	redisClient2, err := redis.NewSession(ctx, redis.CorrelationLockStorage, logger, 0, 0)
-	if err != nil {
-		return nil, nil, nil, nil, nil, nil, nil, err
-	}
-
-	redisLockClient := redislock.New(redisClient2)
 
 	client, err := mongo.NewClient(0, 0)
 	if err != nil {
-		return nil, nil, nil, nil, nil, nil, nil, err
+		return nil, nil, nil, nil, nil, nil, err
 	}
 
 	alarmAdapter := alarm.NewAdapter(client)
@@ -58,20 +50,19 @@ func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.
 	rulesCollection := dbClient.Collection(mongo.MetaAlarmRulesMongoCollection)
 	_, err = rulesCollection.DeleteMany(ctx, bson.M{})
 	if err != nil {
-		return nil, nil, nil, nil, nil, nil, nil, err
+		return nil, nil, nil, nil, nil, nil, err
 	}
 
 	err = testFillRulesCollection(rulesCollection)
 	if err != nil {
-		return nil, nil, nil, nil, nil, nil, nil, err
+		return nil, nil, nil, nil, nil, nil, err
 	}
 
 	rulesAdapter := correlation.NewRuleAdapter(dbClient)
 
-	s := service.NewMetaAlarmService(alarmAdapter, rulesAdapter,
-		config.NewAlarmConfigProvider(config.CanopsisConf{}, logger), log.NewTestLogger())
+	s := service.NewMetaAlarmService(alarmAdapter, config.NewAlarmConfigProvider(config.CanopsisConf{}, logger), log.NewTestLogger())
 
-	return s, entityAdapter, alarmAdapter, rulesAdapter, redisClient, redisLockClient, dbClient, nil
+	return s, entityAdapter, alarmAdapter, rulesAdapter, redisClient, dbClient, nil
 }
 
 func testFillRulesCollection(rulesCollection mongo.DbCollection) error {
@@ -101,7 +92,7 @@ func testFillRulesCollection(rulesCollection mongo.DbCollection) error {
 func TestProcessAttributes(t *testing.T) {
 	ctx := context.Background()
 
-	s, entityAdapter, alarmAdapter, rulesAdapter, redisClient, redlockClient, mongoSession, err := testNewMetaAlarmService()
+	s, entityAdapter, alarmAdapter, rulesAdapter, redisClient, mongoSession, err := testNewMetaAlarmService()
 	if err != nil {
 		panic(err)
 	}
@@ -154,7 +145,7 @@ func TestProcessAttributes(t *testing.T) {
 		}`), &rule)
 		So(err, ShouldBeNil)
 
-		ev, err := s.CreateMetaAlarm(&testEvent, []types.AlarmWithEntity{{
+		ev, err := s.CreateMetaAlarm(testEvent, []types.AlarmWithEntity{{
 			Alarm:  alarm,
 			Entity: entity,
 		}}, rule)
@@ -163,7 +154,7 @@ func TestProcessAttributes(t *testing.T) {
 		fmt.Printf("%v\n", ev)
 
 		container := correlation.NewRuleApplicatorContainer()
-		attributeApplicator := ruleapplicator.NewAttributeApplicator(alarmAdapter, log.NewTestLogger(), s, redisClient, redlockClient)
+		attributeApplicator := ruleapplicator.NewAttributeApplicator(alarmAdapter, log.NewTestLogger(), s, redisClient)
 		container.Set(correlation.RuleTypeAttribute, attributeApplicator)
 
 		logger := log.NewLogger(true)
@@ -178,7 +169,7 @@ func TestProcessAttributes(t *testing.T) {
 		err = rs.LoadRules(ctx)
 		So(err, ShouldBeNil)
 
-		metaAlarms, err := rs.ProcessEvent(ctx, &testEvent)
+		metaAlarms, err := rs.ProcessEvent(ctx, testEvent)
 		So(err, ShouldBeNil)
 		So(len(metaAlarms), ShouldEqual, 0)
 
@@ -203,7 +194,7 @@ func TestProcessAttributes(t *testing.T) {
 		testEvent.Alarm = &alarm
 		testEvent.Entity = &types.Entity{ID: testEvent.GetEID()}
 
-		metaAlarms, err = rs.ProcessEvent(ctx, &testEvent)
+		metaAlarms, err = rs.ProcessEvent(ctx, testEvent)
 		So(err, ShouldBeNil)
 		So(len(metaAlarms), ShouldEqual, 1)
 	})
