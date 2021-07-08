@@ -134,7 +134,7 @@ export const API_ROUTES = {
   dataStorage: '/api/v4/data-storage',
   notification: '/api/v4/notification/',
   logout: '/logout',
-  idleRules: '/api/v4//idle-rules',
+  idleRules: '/api/v4/idle-rules',
 
   /**
    * Cat routes
