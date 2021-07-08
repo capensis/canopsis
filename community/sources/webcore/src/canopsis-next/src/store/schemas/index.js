@@ -126,6 +126,8 @@ export const testSuiteHistorySchema = new schema.Entity(ENTITIES_TYPES.testSuite
 
 export const stateSettingSchema = new schema.Entity(ENTITIES_TYPES.stateSetting, {}, { idAttribute: '_id' });
 
+export const idleRulesSchema = new schema.Entity(ENTITIES_TYPES.idleRules, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -158,4 +160,5 @@ export default {
   [ENTITIES_TYPES.testSuiteHistory]: testSuiteHistorySchema,
   [ENTITIES_TYPES.stateSetting]: stateSettingSchema,
   [ENTITIES_TYPES.remediationInstructionStats]: remediationInstructionStatsSchema,
+  [ENTITIES_TYPES.idleRules]: idleRulesSchema,
 };

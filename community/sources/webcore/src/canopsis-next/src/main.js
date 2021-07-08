@@ -104,6 +104,7 @@ import SettingsSyncIcon from '@/components/icons/settings_sync.vue';
 import EngineeringIcon from '@/components/icons/engineering.vue';
 import InsightsIcon from '@/components/icons/insights.vue';
 import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services.vue';
+import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
 
 import * as modalsComponents from '@/components/modals';
 
@@ -137,6 +138,9 @@ Vue.use(Vuetify, {
     },
     miscellaneous_services: {
       component: MiscellaneousServicesIcon,
+    },
+    published_with_changes: {
+      component: PublishedWithChangesIcon,
     },
   },
 });

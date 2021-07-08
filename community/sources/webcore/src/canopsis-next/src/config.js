@@ -130,18 +130,11 @@ export const API_ROUTES = {
   },
   scenarios: '/api/v4/scenarios',
   entityCategories: '/api/v4/entity-categories',
-  junit: {
-    directory: '/api/v4/cat/junit/directory',
-    testSuites: '/api/v4/cat/junit/test-suites',
-    entityGantt: '/api/v4/cat/junit/test-suites-entity-gantt',
-    history: '/api/v4/cat/junit/test-suites-history',
-    widget: '/api/v4/cat/junit/test-suites-widget',
-    file: '/api/v4/cat/junit/test-cases-file',
-  },
   stateSetting: '/api/v4/state-settings/',
   dataStorage: '/api/v4/data-storage',
   notification: '/api/v4/notification/',
   logout: '/logout',
+  idleRules: '/api/v4/idle-rules',
 
   /**
    * Cat routes
@@ -158,6 +151,14 @@ export const API_ROUTES = {
     jobExecutions: '/api/v4/cat/job-executions',
     pausedExecutions: '/api/v4/cat/account/paused-executions',
     instructionComments: '/api/v4/cat/instruction-comments',
+  },
+  junit: {
+    directory: '/api/v4/cat/junit/directory',
+    testSuites: '/api/v4/cat/junit/test-suites',
+    entityGantt: '/api/v4/cat/junit/test-suites-entity-gantt',
+    history: '/api/v4/cat/junit/test-suites-history',
+    widget: '/api/v4/cat/junit/test-suites-widget',
+    file: '/api/v4/cat/junit/test-cases-file',
   },
 };
 

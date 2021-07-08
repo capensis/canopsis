@@ -19,6 +19,7 @@ import {
   STATE_SETTING_METHODS,
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   REMEDIATION_INSTRUCTION_TYPES,
+  IDLE_RULE_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -128,6 +129,7 @@ export default {
     metaAlarmRule: 'Meta alarm rule',
     dynamicInfo: 'Dynamic informations',
     instructionRating: 'Instruction rating',
+    idleRules: 'Idle rules',
     icon: 'Icon',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
@@ -197,6 +199,7 @@ export default {
     approve: 'Approve',
     summary: 'Summary',
     statistics: 'Statistics',
+    action: 'Action',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1493,6 +1496,16 @@ export default {
         original: 'Original',
       },
     },
+    createAlarmIdleRule: {
+      create: {
+        title: 'Create alarm rule',
+      },
+    },
+    createEntityIdleRule: {
+      create: {
+        title: 'Create entity rule',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -2338,6 +2351,14 @@ export default {
       [QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
       [QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
       [QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
+    },
+  },
+
+  idleRules: {
+    timeAwaiting: 'Time awaiting',
+    types: {
+      [IDLE_RULE_TYPES.alarm]: 'Alarm rule',
+      [IDLE_RULE_TYPES.entity]: 'Entity rule',
     },
   },
 
