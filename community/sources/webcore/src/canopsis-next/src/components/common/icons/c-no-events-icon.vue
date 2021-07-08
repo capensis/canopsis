@@ -1,6 +1,6 @@
 <template lang="pug">
   v-tooltip(v-if="value", :max-width="maxWidth", :top="top", :right="right", :bottom="bottom", :left="left")
-    v-icon(slot="activator", :color="color") sync_problem
+    v-icon(slot="activator", :color="color", :size="size") sync_problem
     span {{ message }}
 </template>
 
