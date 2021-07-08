@@ -18,7 +18,7 @@
       v-flex(xs7)
         c-duration-field(v-field="form.duration", required)
       v-flex(xs3)
-        c-priority-field(v-model="form.priority")
+        c-priority-field(v-field="form.priority", required)
 </template>
 
 <script>
