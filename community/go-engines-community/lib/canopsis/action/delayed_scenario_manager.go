@@ -71,7 +71,7 @@ func (m *delayedScenarioManager) AddDelayedScenario(ctx context.Context, alarm t
 	m.logger.Debug().Str("scenario", scenario.ID).Str("alarm", alarm.ID).Time("timeout_expiration", delayedScenario.ExecutionTime.Time).Msg("start timeout of delayed scenario")
 
 	if m.canStartWaitGoroutine(delayedScenario.ExecutionTime.Time) {
-		go m.waitAlmostExpiredTimeoutScenario(context.Background(), delayedScenario)
+		go m.waitAlmostExpiredTimeoutScenario(ctx, delayedScenario)
 	}
 
 	return nil

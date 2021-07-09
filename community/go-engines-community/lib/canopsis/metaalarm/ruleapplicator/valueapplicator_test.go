@@ -34,7 +34,7 @@ func testNewValueApplicator() (*ValueApplicator, alarm.Adapter, entity.Adapter, 
 
 	redisLockClient := redis.NewLockClient(redisClient2)
 
-	dbClient, err := mongo.NewClient(0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		panic(err)
 	}
@@ -43,7 +43,7 @@ func testNewValueApplicator() (*ValueApplicator, alarm.Adapter, entity.Adapter, 
 
 	entityAdapter := entity.NewAdapter(dbClient)
 
-	rulesAdapter, er := getRuleAdapter()
+	rulesAdapter, er := getRuleAdapter(ctx)
 	if er != nil {
 		return nil, nil, nil, err
 	}
@@ -911,7 +911,7 @@ func TestApplyWithRate(t *testing.T) {
 		applicator, alarmAdapter, _, err := testNewValueApplicator()
 		So(err, ShouldBeNil)
 
-		dbClient, err := mongo.NewClient(0, 0)
+		dbClient, err := mongo.NewClient(ctx, 0, 0)
 		if err != nil {
 			panic(err)
 		}
@@ -1367,8 +1367,8 @@ func TestApplyWithRate(t *testing.T) {
 	})
 }
 
-func getRuleAdapter() (metaalarm.RulesAdapter, error) {
-	dbClient, err := mongo.NewClient(0, 0)
+func getRuleAdapter(ctx context.Context) (metaalarm.RulesAdapter, error) {
+	dbClient, err := mongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		panic(err)
 	}

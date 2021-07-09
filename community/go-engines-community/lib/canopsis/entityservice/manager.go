@@ -72,7 +72,7 @@ func (m *manager) UpdateServices(ctx context.Context, entities []types.Entity) (
 	}()
 
 	workerCount := int(math.Min(float64(maxWorkersCount), float64(len(services))))
-	outCh, err := m.runWorkers(context.Background(), workerCount, workerCh, entities)
+	outCh, err := m.runWorkers(ctx, workerCount, workerCh, entities)
 	if err != nil {
 		return nil, nil, err
 	}

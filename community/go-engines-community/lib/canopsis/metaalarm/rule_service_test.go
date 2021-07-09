@@ -37,7 +37,7 @@ func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.
 
 	redisLockClient := redis.NewLockClient(redisClient2)
 
-	client, err := mongo.NewClient(0, 0)
+	client, err := mongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		return nil, nil, nil, nil, nil, nil, nil, err
 	}
@@ -45,7 +45,7 @@ func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.
 	alarmAdapter := alarm.NewAdapter(client)
 	entityAdapter := entity.NewAdapter(client)
 
-	dbClient, err := mongo.NewClient(0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		panic(err)
 	}

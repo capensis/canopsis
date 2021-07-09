@@ -47,13 +47,13 @@ func Default(
 	deferFunc DeferFunc,
 ) (API, error) {
 	// Retrieve config.
-	dbClient, err := mongo.NewClient(0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		logger.Err(err).Msg("cannot connect to mongodb")
 		return nil, err
 	}
 	configAdapter := config.NewAdapter(dbClient)
-	cfg, err := configAdapter.GetConfig()
+	cfg, err := configAdapter.GetConfig(ctx)
 	if err != nil {
 		logger.Err(err).Msg("cannot load config")
 		return nil, err
@@ -62,8 +62,7 @@ func Default(
 		timezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
 	}
 	// Set mongodb setting.
-	dbClient.SetRetryCount(cfg.Global.ReconnectRetries)
-	dbClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
+	config.SetDbClientRetry(dbClient, cfg)
 	// Connect to rmq.
 	amqpConn, err := amqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
 	if err != nil {
@@ -138,7 +137,7 @@ func Default(
 	)
 
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
-	userInterfaceConfig, err := userInterfaceAdapter.GetConfig()
+	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 	if err != nil && err != mongodriver.ErrNoDocuments {
 		return nil, err
 	}
@@ -263,7 +262,7 @@ func Default(
 		for {
 			select {
 			case <-ticker.C:
-				cfg, err := configAdapter.GetConfig()
+				cfg, err := configAdapter.GetConfig(ctx)
 				if err != nil {
 					logger.Err(err).Msg("fail to load config")
 					continue
@@ -275,7 +274,7 @@ func Default(
 					continue
 				}
 
-				userInterfaceConfig, err = userInterfaceAdapter.GetConfig()
+				userInterfaceConfig, err = userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {
 					logger.Err(err).Msg("fail to load user interface config")
 					continue

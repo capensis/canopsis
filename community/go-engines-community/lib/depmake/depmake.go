@@ -28,28 +28,15 @@ type DependencyMaker struct {
 }
 
 // DepMongoClient opens a mongo session.
-func (m DependencyMaker) DepMongoClient(cfg config.CanopsisConf) mongo.DbClient {
-	c, err := mongo.NewClient(
-		cfg.Global.ReconnectRetries,
-		cfg.Global.GetReconnectTimeout(),
-	)
+func (m DependencyMaker) DepMongoClient(ctx context.Context) mongo.DbClient {
+	c, err := mongo.NewClient(ctx, 0, 0)
 	Panic("mongo session", err)
 	return c
 }
 
 // DepConfig gets a config from mongodb
-func (m DependencyMaker) DepConfig() config.CanopsisConf {
-	dbClient, err := mongo.NewClient(0, 0)
-	if err != nil {
-		Panic("mongo session", err)
-	}
-
-	defer func() {
-		err := dbClient.Disconnect(context.Background())
-		Panic("mongo session disconnect", err)
-	}()
-
-	cfg, err := config.NewAdapter(dbClient).GetConfig()
+func (m DependencyMaker) DepConfig(ctx context.Context, dbClient mongo.DbClient) config.CanopsisConf {
+	cfg, err := config.NewAdapter(dbClient).GetConfig(ctx)
 	if err != nil {
 		panic(fmt.Errorf("dependency error: %s: %v", "can't get the config", err))
 	}

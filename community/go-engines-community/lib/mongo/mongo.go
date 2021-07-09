@@ -110,8 +110,7 @@ type DbCollection interface {
 type DbClient interface {
 	Collection(string) DbCollection
 	Disconnect(ctx context.Context) error
-	SetRetryCount(int)
-	SetMinRetryTimeout(time.Duration)
+	SetRetry(count int, timeout time.Duration)
 }
 
 type dbClient struct {
@@ -385,7 +384,7 @@ func (c *dbCollection) retry(f func() error) {
 
 // NewClient creates a new connection to the MongoDB database.
 // It uses EnvURL as configuration source.
-func NewClient(retryCount int, minRetryTimeout time.Duration) (DbClient, error) {
+func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (DbClient, error) {
 	mongoURL, dbName, err := getURL()
 	if err != nil {
 		return nil, err
@@ -395,10 +394,6 @@ func NewClient(retryCount int, minRetryTimeout time.Duration) (DbClient, error) 
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err
@@ -431,12 +426,9 @@ func (c *dbClient) Disconnect(ctx context.Context) error {
 	return c.Client.Disconnect(ctx)
 }
 
-func (c *dbClient) SetRetryCount(v int) {
-	c.RetryCount = v
-}
-
-func (c *dbClient) SetMinRetryTimeout(v time.Duration) {
-	c.MinRetryTimeout = v
+func (c *dbClient) SetRetry(count int, timeout time.Duration) {
+	c.RetryCount = count
+	c.MinRetryTimeout = timeout
 }
 
 // getURL parses URL value in EnvURL environment variable

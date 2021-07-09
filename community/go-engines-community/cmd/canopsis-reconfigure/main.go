@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -33,6 +34,9 @@ type Conf struct {
 }
 
 func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	var confFile string
 	var mongoConfPath string
 	var migrationDirectory string
@@ -67,7 +71,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	err = GracefullStart(logger)
+	err = GracefullStart(ctx, logger)
 	utils.FailOnError(err, "Failed to open one of required sessions")
 
 	if modeMigrate || modeMigrateOnly {
@@ -92,6 +96,12 @@ func main() {
 
 	amqpConn, err := amqp.NewConnection(logger, 0, 0)
 	utils.FailOnError(err, "Failed to open amqp")
+	defer func() {
+		err = amqpConn.Close()
+		if err != nil {
+			logger.Err(err).Msg("cannot close rmq session")
+		}
+	}()
 
 	ch, err := amqpConn.Channel()
 	utils.FailOnError(err, "Failed to open amqp channel")
@@ -150,37 +160,32 @@ func main() {
 
 	}
 
-	client, err := mongo.NewClient(0, 0)
+	client, err := mongo.NewClient(ctx, 0, 0)
 	utils.FailOnError(err, "Failed to create mongo session")
+	defer func() {
+		err = client.Disconnect(context.Background())
+		if err != nil {
+			logger.Err(err).Msg("cannot close mongo session")
+		}
+	}()
 
 	configAdapter := config.NewAdapter(client)
-	err = configAdapter.UpsertConfig(conf.Canopsis)
+	err = configAdapter.UpsertConfig(ctx, conf.Canopsis)
 	utils.FailOnError(err, "Failed to save config into mongo")
 
 	logger.Info().Msg("Initialising Mongo indexes")
-	err = createMongoIndexes(mongoConfPath, logger)
+	err = createMongoIndexes(ctx, client, mongoConfPath, logger)
 	utils.FailOnError(err, "Failed to create Mongo indexes")
 }
 
-func createMongoIndexes(mongoConfPath string, logger zerolog.Logger) error {
-	client, err := mongo.NewClient(0, 0)
-
-	if err != nil {
-		logger.
-			Error().
-			Err(err).
-			Msg("failed to open MongoDB session")
-
-		return err
-	}
-
+func createMongoIndexes(ctx context.Context, client mongo.DbClient, mongoConfPath string, logger zerolog.Logger) error {
 	service := mongo.NewIndexService(
 		client,
 		mongoConfPath,
 		&logger,
 	)
 
-	return service.Create()
+	return service.Create(ctx)
 }
 
 func executeMigrations(logger zerolog.Logger, migrationDirectory, mongoURL, mongoContainer string) error {
