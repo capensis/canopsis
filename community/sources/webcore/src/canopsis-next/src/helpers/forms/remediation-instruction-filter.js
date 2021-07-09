@@ -1,6 +1,6 @@
-import { isUndefined } from 'lodash';
-
 import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
+
+import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {Object} RemediationInstructionFilterInstruction
@@ -32,7 +32,7 @@ import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
  * @return {RemediationInstructionFilterForm}
  */
 export const remediationInstructionFilterToForm = (filter = {}) => ({
-  with: isUndefined(filter.with) ? true : filter.with,
+  with: enabledToForm(filter.with),
   all: !!filter.all,
   auto: !!filter.auto,
   manual: !!filter.manual,

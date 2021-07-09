@@ -1,5 +1,5 @@
 import moment from 'moment-timezone';
-import { isUndefined, cloneDeep, omit, isNumber } from 'lodash';
+import { cloneDeep, omit, isNumber } from 'lodash';
 
 import { ENTITIES_STATES, SCENARIO_ACTION_TYPES, TIME_UNITS } from '@/constants';
 
@@ -8,8 +8,9 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 
 import uid from '../uid';
 import { durationToForm, formToDuration } from '../date/duration';
-import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning-pbehavior';
 
+import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning-pbehavior';
+import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {DurationForm} RetryDurationForm
@@ -321,7 +322,7 @@ export const scenarioActionToForm = (scenarioAction = {}, timezone = moment.tz.g
 export const scenarioToForm = (scenario = {}, timezone = moment.tz.guess()) => ({
   name: scenario.name || '',
   priority: scenario.priority || 1,
-  enabled: !isUndefined(scenario.enabled) ? scenario.enabled : true,
+  enabled: enabledToForm(scenario.enabled),
   delay: scenario.delay
     ? durationToForm(scenario.delay)
     : { value: undefined, unit: undefined },
