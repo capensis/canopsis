@@ -2369,6 +2369,7 @@ export default {
 
   idleRules: {
     timeAwaiting: 'Time awaiting',
+    timeRangeAwaiting: 'Time range awaiting',
     types: {
       [IDLE_RULE_TYPES.alarm]: 'Alarm rule',
       [IDLE_RULE_TYPES.entity]: 'Entity rule',

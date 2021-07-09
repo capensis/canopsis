@@ -18,7 +18,11 @@
     )
     v-layout(row, justify-space-between)
       v-flex(xs7)
-        c-duration-field(v-field="form.duration", required)
+        c-duration-field(
+          v-field="form.duration",
+          :label="$t('idleRules.timeRangeAwaiting')",
+          required
+        )
       v-flex(xs3)
         c-priority-field(v-field="form.priority", required)
     c-disable-during-periods-field(v-field="form.disable_during_periods")
