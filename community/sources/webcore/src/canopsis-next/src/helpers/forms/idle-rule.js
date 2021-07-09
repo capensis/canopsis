@@ -36,6 +36,7 @@ import { formToAction, actionToForm } from '@/helpers/forms/action';
  */
 
 /**
+ * Convert idle rule object to form compatible object
  *
  * @param {IdleRule} [idleRule = {}]
  * @return {IdleRuleForm}
@@ -57,6 +58,7 @@ export const idleRuleToForm = (idleRule = {}) => ({
 });
 
 /**
+ * Convert form object to idle API compatible object
  *
  * @param {IdleRuleForm} form
  * @return {IdleRule}
