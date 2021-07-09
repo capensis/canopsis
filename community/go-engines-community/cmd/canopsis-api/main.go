@@ -33,8 +33,9 @@ func main() {
 	var flags Flags
 	flags.ParseArgs()
 	logger := liblog.NewLogger(flags.Debug)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	// Graceful shutdown.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 
 	if flags.Debug {
 		gin.SetMode(gin.DebugMode)
@@ -87,15 +88,6 @@ func main() {
 			router.GET("/swagger/*any", ginswagger.WrapHandler(swaggerfiles.Handler))
 		})
 	}
-
-	// Graceful shutdown.
-	go func() {
-		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, os.Interrupt)
-		<-sigint
-
-		cancel()
-	}()
 
 	err = api.Run(ctx)
 	if err != nil {

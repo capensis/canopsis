@@ -63,7 +63,6 @@ const (
 	AlarmStepDeclareTicket   = "declareticket"
 	AlarmStepAssocTicket     = "assocticket"
 	AlarmStepSnooze          = "snooze"
-	AlarmStepPbehavior       = "pbehavior"
 	AlarmStepStateCounter    = "statecounter"
 	AlarmStepChangeState     = "changestate"
 	AlarmStepPbhEnter        = "pbhenter"

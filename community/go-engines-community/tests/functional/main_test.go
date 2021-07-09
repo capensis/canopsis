@@ -3,6 +3,7 @@ package functional
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -26,13 +27,14 @@ import (
 )
 
 type Flags struct {
-	paths              arrayFlag
-	fixtures           arrayFlag
-	periodicalWaitTime time.Duration
-	dummyHttpPort      int64
-	eventWaitKey       string
-	eventWaitExchange  string
-	eventLogs          string
+	paths               arrayFlag
+	fixtures            arrayFlag
+	periodicalWaitTime  time.Duration
+	dummyHttpPort       int64
+	eventWaitKey        string
+	eventWaitExchange   string
+	eventLogs           string
+	checkUncaughtEvents bool
 }
 
 type arrayFlag []string
@@ -63,6 +65,7 @@ func TestMain(m *testing.M) {
 	flag.StringVar(&flags.eventWaitKey, "ewk", canopsis.FIFOAckQueueName, "Consume by routing key to detect the end of event processing.")
 	flag.StringVar(&flags.eventLogs, "eventlogs", "", "Log all received events.")
 	flag.Int64Var(&flags.dummyHttpPort, "dummyHttpPort", 3000, "Port for dummy http server.")
+	flag.BoolVar(&flags.checkUncaughtEvents, "checkUncaughtEvents", false, "Enable catching event after each scenario.")
 	flag.Parse()
 
 	if len(flags.paths) == 0 {
@@ -162,6 +165,16 @@ func InitializeScenario(flags Flags, eventLogger zerolog.Logger) (func(*godog.Sc
 		ctx.BeforeScenario(func(sc *godog.Scenario) {
 			eventLogger.Info().Str("file", sc.Uri).Msgf("%s", sc.Name)
 		})
+		if flags.checkUncaughtEvents {
+			ctx.AfterScenario(func(sc *godog.Scenario, scErr error) {
+				if scErr == nil {
+					err := amqpClient.IWaitTheEndOfEventProcessing()
+					if err == nil {
+						panic(errors.New("caught event"))
+					}
+				}
+			})
+		}
 
 		ctx.Step(`^I am ([\w-]+)$`, apiClient.IAm)
 		ctx.Step(`^I am authenticated with username "([^"]+)" and password "([^"]+)"$`, apiClient.IAmAuthenticatedByBasicAuth)

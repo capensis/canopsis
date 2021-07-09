@@ -24,7 +24,6 @@ func main() {
 	ready.Abort(ready.Check(ready.CheckRedis, "redis", time.Second, flagRetries))
 	ready.Abort(ready.Check(ready.CheckMongo, "mongo", time.Second, flagRetries))
 	ready.Abort(ready.Check(ready.CheckAMQP, "amqp", time.Second, flagRetries))
-	ready.Abort(ready.Check(ready.CheckInflux, "influx", time.Second, flagRetries))
 
 	log.Println("ready!")
 }

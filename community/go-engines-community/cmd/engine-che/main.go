@@ -5,7 +5,6 @@ import (
 	"flag"
 	"os"
 	"os/signal"
-	"syscall"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/debug"
@@ -59,18 +58,10 @@ func main() {
 		logger.Info().Msg("Context enrichment DISABLED")
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	// Graceful shutdown.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 	engine := NewEngineCHE(ctx, opts, logger)
-
-	go func() {
-		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, os.Interrupt, syscall.SIGTERM)
-		<-sigint
-
-		logger.Info().Msg("engine is stopping")
-		cancel()
-	}()
-
 	err := engine.Run(ctx)
 	exitStatus := 0
 	if err != nil {

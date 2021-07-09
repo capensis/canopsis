@@ -17,6 +17,6 @@ type Store interface {
 	// StartAutoClean starts a go routine that will every specified duration clean expired sessions.
 	StartAutoClean(ctx context.Context, timeout time.Duration)
 	// GetActiveSessionsCount returns count of active sessions.
-	GetActiveSessionsCount() (int64, error)
-	ExpireSessions(user string, provider string) error
+	GetActiveSessionsCount(ctx context.Context) (int64, error)
+	ExpireSessions(ctx context.Context, user string, provider string) error
 }

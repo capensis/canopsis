@@ -10,9 +10,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
+	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/go-redis/redis/v8"
-
 	"github.com/rs/zerolog"
 )
 
@@ -22,7 +22,7 @@ type AttributeApplicator struct {
 	service         service.MetaAlarmService
 	storage         storage.GroupingStorage
 	redisClient     *redis.Client
-	redisLockClient *redislock.Client
+	redisLockClient libredis.LockClient
 	logger          zerolog.Logger
 }
 
@@ -30,7 +30,7 @@ type AttributeApplicator struct {
 func (a AttributeApplicator) Apply(ctx context.Context, event *types.Event, rule metaalarm.Rule) ([]types.Event, error) {
 	var metaAlarmEvent types.Event
 	var watchErr error
-	var metaAlarmLock *redislock.Lock
+	var metaAlarmLock libredis.Lock
 
 	defer func() {
 		if metaAlarmLock != nil {
@@ -74,7 +74,7 @@ func (a AttributeApplicator) Apply(ctx context.Context, event *types.Event, rule
 
 			for mongoRetries := maxRetries; mongoRetries >= 0 && !updated; mongoRetries-- {
 				// Check if meta-alarm already exists
-				metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, "")
+				metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(ctx, rule.ID, "")
 				switch err.(type) {
 				case errt.NotFound:
 					if mongoRetries == maxRetries {
@@ -197,7 +197,7 @@ func (a AttributeApplicator) EventMatched(event types.Event, rule metaalarm.Rule
 }
 
 // NewAttributeApplicator instantiates AttributeApplicator with MetaAlarmService
-func NewAttributeApplicator(alarmAdapter alarm.Adapter, logger zerolog.Logger, metaAlarmService service.MetaAlarmService, redisClient *redis.Client, redisLockClient *redislock.Client) AttributeApplicator {
+func NewAttributeApplicator(alarmAdapter alarm.Adapter, logger zerolog.Logger, metaAlarmService service.MetaAlarmService, redisClient *redis.Client, redisLockClient libredis.LockClient) AttributeApplicator {
 	return AttributeApplicator{
 		alarmAdapter:    alarmAdapter,
 		service:         metaAlarmService,

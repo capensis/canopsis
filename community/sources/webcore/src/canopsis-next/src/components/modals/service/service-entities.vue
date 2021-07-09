@@ -43,6 +43,7 @@
 import moment from 'moment-timezone';
 
 import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES, SORT_ORDERS } from '@/constants';
+import { PAGINATION_LIMIT } from '@/config';
 
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { addKeyInEntities } from '@/helpers/entities';
@@ -82,7 +83,7 @@ export default {
       },
       pending: true,
       query: {
-        rowsPerPage: this.modal.config.itemsPerPage,
+        rowsPerPage: this.modal.config.widgetParameters.modalItemsPerPage || PAGINATION_LIMIT,
         sortKey: 'state',
         sortDir: SORT_ORDERS.desc,
       },

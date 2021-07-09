@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
@@ -25,20 +26,19 @@ const DefaultConfigTimeInterval = 86400
 
 // CorelApplicator implements RuleApplicator interface
 type CorelApplicator struct {
-	alarmAdapter      alarm.Adapter
-	metaAlarmService  service.MetaAlarmService
-	storage           storage.GroupingStorageNew
-	redisClient       *redis.Client
-	redisLockClient   *redislock.Client
-	ruleEntityCounter metaalarm.RuleEntityCounter
-	logger            zerolog.Logger
+	alarmAdapter     alarm.Adapter
+	metaAlarmService service.MetaAlarmService
+	storage          storage.GroupingStorageNew
+	redisClient      *redis.Client
+	redisLockClient  libredis.LockClient
+	logger           zerolog.Logger
 }
 
 // Apply called by RulesService.ProcessEvent
 func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule metaalarm.Rule) ([]types.Event, error) {
 	var metaAlarmEvents []types.Event
 	var watchErr error
-	var metaAlarmLock *redislock.Lock
+	var metaAlarmLock libredis.Lock
 
 	defer func() {
 		if metaAlarmLock != nil {
@@ -190,7 +190,7 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 			}
 
 			// get updated alarms for alarm groups
-			err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(childrenGroup.GetAlarmIds(), &childrenOpenedAlarms)
+			err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, childrenGroup.GetAlarmIds(), &childrenOpenedAlarms)
 			if err != nil {
 				return err
 			}
@@ -202,13 +202,16 @@ func (a CorelApplicator) Apply(ctx context.Context, event *types.Event, rule met
 				parentId = parentIds[0]
 			}
 
-			err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs([]string{parentId}, &parentOpenedAlarms)
+			err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, []string{parentId}, &parentOpenedAlarms)
 			if err != nil {
 				return err
 			}
 
 			// update groups
 			err = a.storage.SetMany(ctx, tx, timeInterval, parentGroup, childrenGroup)
+			if err != nil {
+				return err
+			}
 
 			if childrenGroup.GetGroupLength() >= childrenThreshold {
 				if corelType == CorelTypeParent {
@@ -309,7 +312,7 @@ func (a CorelApplicator) getGroupWithOpenedAlarmsWithEntity(ctx context.Context,
 		return nil, nil, err
 	}
 
-	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(alarmGroup.GetAlarmIds(), &alarms)
+	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, alarmGroup.GetAlarmIds(), &alarms)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -337,7 +340,7 @@ func (a CorelApplicator) renderTemplate(templateStr string, data interface{}, f 
 }
 
 // NewCorelApplicator instantiates CorelApplicator with MetaAlarmService
-func NewCorelApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, storage storage.GroupingStorageNew, redisClient *redis.Client, redisLockClient *redislock.Client, logger zerolog.Logger) CorelApplicator {
+func NewCorelApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, storage storage.GroupingStorageNew, redisClient *redis.Client, redisLockClient libredis.LockClient, logger zerolog.Logger) CorelApplicator {
 	return CorelApplicator{
 		alarmAdapter:     alarmAdapter,
 		metaAlarmService: metaAlarmService,

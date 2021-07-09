@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/storage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
+	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
@@ -25,7 +26,7 @@ type ComplexApplicator struct {
 	metaAlarmService  service.MetaAlarmService
 	storage           storage.GroupingStorage
 	redisClient       *redis.Client
-	redisLockClient   *redislock.Client
+	redisLockClient   libredis.LockClient
 	ruleEntityCounter metaalarm.RuleEntityCounter
 	logger            zerolog.Logger
 }
@@ -34,7 +35,7 @@ type ComplexApplicator struct {
 func (a ComplexApplicator) Apply(ctx context.Context, event *types.Event, rule metaalarm.Rule) ([]types.Event, error) {
 	var metaAlarmEvent types.Event
 	var watchErr error
-	var metaAlarmLock *redislock.Lock
+	var metaAlarmLock libredis.Lock
 
 	defer func() {
 		if metaAlarmLock != nil {
@@ -104,7 +105,7 @@ func (a ComplexApplicator) Apply(ctx context.Context, event *types.Event, rule m
 						updated := false
 
 						for mongoRetries := maxRetries; mongoRetries >= 0 && !updated; mongoRetries-- {
-							metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, "")
+							metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(ctx, rule.ID, "")
 							switch err.(type) {
 							case errt.NotFound:
 								if mongoRetries == maxRetries {
@@ -241,7 +242,7 @@ func (a ComplexApplicator) Apply(ctx context.Context, event *types.Event, rule m
 						updated := false
 
 						for mongoRetries := maxRetries; mongoRetries >= 0 && !updated; mongoRetries-- {
-							metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, "")
+							metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(ctx, rule.ID, "")
 							switch err.(type) {
 							case errt.NotFound:
 								if mongoRetries == maxRetries {
@@ -412,7 +413,7 @@ func (a ComplexApplicator) createMetaAlarm(ctx context.Context, tx *redis.Tx, ev
 		return types.Event{}, err
 	}
 
-	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(alarmGroup.GetAlarmIds(), &children)
+	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, alarmGroup.GetAlarmIds(), &children)
 	if err != nil {
 		return types.Event{}, err
 	}
@@ -429,13 +430,13 @@ func (a ComplexApplicator) getGroupLen(ctx context.Context, tx *redis.Tx, ruleId
 	}
 
 	// We need to check for resolved alarms here
-	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(alarmGroup.GetAlarmIds(), &children)
+	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, alarmGroup.GetAlarmIds(), &children)
 
 	return int64(len(children)), err
 }
 
 // NewComplexApplicator instantiates ComplexApplicator with MetaAlarmService
-func NewComplexApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, redisClient *redis.Client, redisLockClient *redislock.Client, ruleEntityCounter metaalarm.RuleEntityCounter, logger zerolog.Logger) ComplexApplicator {
+func NewComplexApplicator(alarmAdapter alarm.Adapter, metaAlarmService service.MetaAlarmService, redisClient *redis.Client, redisLockClient libredis.LockClient, ruleEntityCounter metaalarm.RuleEntityCounter, logger zerolog.Logger) ComplexApplicator {
 	return ComplexApplicator{
 		alarmAdapter:      alarmAdapter,
 		metaAlarmService:  metaAlarmService,

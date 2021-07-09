@@ -150,19 +150,6 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_heartbeat"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-  [RabbitMQ.queues.bind]
-  key = "#"
-  exchange = "canopsis.events"
-  noWait = false
-  # args =
-
-[[RabbitMQ.queues]]
 name = "Engine_service"
 durable = true
 autoDelete = false

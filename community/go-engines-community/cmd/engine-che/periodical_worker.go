@@ -21,7 +21,7 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 
 func (w *periodicalWorker) Work(ctx context.Context) error {
 	w.Logger.Debug().Msg("Loading event filter rules")
-	err := w.EventFilterService.LoadRules()
+	err := w.EventFilterService.LoadRules(ctx)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("unable to load rules")
 	}

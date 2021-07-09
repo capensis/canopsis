@@ -28,8 +28,6 @@ func NewValueGroupEntityCounter(client mongo.DbClient, redisClient *redis.Client
 }
 
 func (c *valueGroupEntityCounter) CountTotalEntitiesAmount(ctx context.Context, rule Rule) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	if rule.Type == RuleValueGroup && rule.Config.ThresholdRate != nil && len(rule.Config.ValuePaths) != 0 {
 		var concatValues []string
 		var andConditions []bson.M
@@ -121,8 +119,6 @@ func (c *valueGroupEntityCounter) CountTotalEntitiesAmount(ctx context.Context, 
 }
 
 func (c *valueGroupEntityCounter) CountTotalEntitiesAmountForValuePaths(ctx context.Context, rule Rule, valuePathsMap map[string]string) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	if len(valuePathsMap) == 0 {
 		return c.logAndReturn(errors.New("ValueGroupEntityCounter: valueMap is empty"), "")
 	}

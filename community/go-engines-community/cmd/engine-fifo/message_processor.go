@@ -2,9 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
@@ -13,30 +16,27 @@ import (
 
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
-	EntityServiceService     entityservice.Service
-	Encoder                  encoding.Encoder
+	Scheduler                scheduler.Scheduler
+	StatsSender              ratelimit.StatsSender
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
 }
 
-func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
-	ctx, task := trace.NewTask(ctx, "service.MessageProcessor")
+func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
+	ctx, task := trace.NewTask(parentCtx, "fifo.WorkerProcess")
 	defer task.End()
 
 	msg := d.Body
-
 	trace.Logf(ctx, "event_size", "%d", len(msg))
-	var err error
+
 	var event types.Event
-	trace.WithRegion(ctx, "decode-event", func() {
-		err = p.Decoder.Decode(msg, &event)
-	})
+	err := p.Decoder.Decode(msg, &event)
 	if err != nil {
 		p.logError(err, "cannot decode event", msg)
 		return nil, nil
 	}
 
-	p.Logger.Debug().Msgf("unmarshaled: %+v", event)
+	p.Logger.Debug().Msgf("valid input event: %v", string(msg))
 	trace.Log(ctx, "event.event_type", event.EventType)
 	trace.Log(ctx, "event.timestamp", event.Timestamp.String())
 	trace.Log(ctx, "event.source_type", event.SourceType)
@@ -45,14 +45,23 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 	trace.Log(ctx, "event.component", event.Component)
 	trace.Log(ctx, "event.resource", event.Resource)
 
-	if event.EventType == types.EventTypeUpdateEntityService {
-		err = p.EntityServiceService.ReloadService(ctx, event.GetEID())
-	} else if event.EventType == types.EventTypeRecomputeEntityService {
-		err = p.EntityServiceService.UpdateService(ctx, event)
-	} else {
-		err = p.EntityServiceService.Process(ctx, event)
+	err = event.IsValid()
+	if err != nil {
+		p.logError(err, "invalid event", msg)
+		return nil, nil
 	}
 
+	event.Format()
+	p.StatsSender.Add(event.Timestamp.Unix(), true)
+
+	err = event.InjectExtraInfos(msg)
+	if err != nil {
+		p.logError(err, "cannot inject extra infos", msg)
+		return nil, nil
+	}
+
+	p.Logger.Debug().Str("event", fmt.Sprintf("%+v", event)).Msg("sent to scheduler")
+	err = p.Scheduler.ProcessEvent(ctx, event)
 	if err != nil {
 		if engine.IsConnectionError(err) {
 			return nil, err
@@ -62,17 +71,7 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 		return nil, nil
 	}
 
-	// Encode and publish the event to the next engine
-	var bevent []byte
-	trace.WithRegion(ctx, "encode-event", func() {
-		bevent, err = p.Encoder.Encode(event)
-	})
-	if err != nil {
-		p.logError(err, "cannot encode event", msg)
-		return nil, nil
-	}
-
-	return bevent, nil
+	return nil, nil
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {

@@ -3,6 +3,7 @@ package service
 //go:generate mockgen -destination=../../../../mocks/lib/canopsis/metaalarm/service/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm/service MetaAlarmService
 
 import (
+	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"strings"
@@ -169,13 +170,15 @@ func (s *service) AddChildToMetaAlarm(
 	child types.AlarmWithEntity,
 	rule metaalarm.Rule,
 ) (types.Event, error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	childAlarm := child.Alarm
 	isExistedAlarm := s.isExisted(metaAlarm, childAlarm)
 	if !isExistedAlarm {
 		metaAlarm.Value.Children = append(metaAlarm.Value.Children, childAlarm.EntityID)
 		childAlarm.Value.Parents = append(childAlarm.Value.Parents, metaAlarm.EntityID)
 	}
-	childrenCount, err := s.alarmAdapter.GetCountOpenedAlarmsByIDs(metaAlarm.Value.Children)
+	childrenCount, err := s.alarmAdapter.GetCountOpenedAlarmsByIDs(ctx, metaAlarm.Value.Children)
 	if err != nil {
 		return types.Event{}, err
 	}
@@ -195,7 +198,7 @@ func (s *service) AddChildToMetaAlarm(
 		if childAlarm.Value.State.Value > maCurrentState {
 			metaAlarm.UpdateState(childAlarm.Value.State.Value, childAlarm.Value.LastUpdateDate)
 		} else if isExistedAlarm && childAlarm.Value.State.Value < maCurrentState {
-			alarm.UpdateToWorstState(&metaAlarm, []*types.Alarm{&childAlarm}, s.alarmAdapter, s.alarmConfigProvider.Get())
+			alarm.UpdateToWorstState(ctx, &metaAlarm, []*types.Alarm{&childAlarm}, s.alarmAdapter, s.alarmConfigProvider.Get())
 		}
 	}
 	maActions, ticket := metaAlarm.GetAppliedActions()
@@ -211,7 +214,7 @@ func (s *service) AddChildToMetaAlarm(
 	}
 
 	updatedAlarms := []types.Alarm{metaAlarm, childAlarm}
-	err = s.alarmAdapter.MassUpdate(updatedAlarms, true)
+	err = s.alarmAdapter.MassUpdate(ctx, updatedAlarms, true)
 	if err != nil {
 		return types.Event{}, err
 	}
@@ -228,6 +231,8 @@ func (s *service) AddMultipleChildsToMetaAlarm(
 	children []types.AlarmWithEntity,
 	rule metaalarm.Rule,
 ) (types.Event, error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	worstState, worstStateDate := types.CpsNumber(types.AlarmStateOK), metaAlarm.Value.LastUpdateDate
 	updateChildren := make([]*types.Alarm, 0, len(children))
 	maActions, ticket := metaAlarm.GetAppliedActions()
@@ -257,7 +262,7 @@ func (s *service) AddMultipleChildsToMetaAlarm(
 		}
 	}
 
-	childrenCount, err := s.alarmAdapter.GetCountOpenedAlarmsByIDs(metaAlarm.Value.Children)
+	childrenCount, err := s.alarmAdapter.GetCountOpenedAlarmsByIDs(ctx, metaAlarm.Value.Children)
 	if err != nil {
 		return types.Event{}, err
 	}
@@ -276,7 +281,7 @@ func (s *service) AddMultipleChildsToMetaAlarm(
 	if worstState > maCurrentState {
 		metaAlarm.UpdateState(worstState, worstStateDate)
 	} else if worstState < maCurrentState && len(updateChildren) > 0 {
-		alarm.UpdateToWorstState(&metaAlarm, updateChildren, s.alarmAdapter, s.alarmConfigProvider.Get())
+		alarm.UpdateToWorstState(ctx, &metaAlarm, updateChildren, s.alarmAdapter, s.alarmConfigProvider.Get())
 	}
 
 	updated := make([]types.Alarm, len(children))
@@ -285,7 +290,7 @@ func (s *service) AddMultipleChildsToMetaAlarm(
 	}
 
 	updated = append(updated, metaAlarm)
-	err = s.alarmAdapter.MassUpdate(updated, true)
+	err = s.alarmAdapter.MassUpdate(ctx, updated, true)
 	if err != nil {
 		return types.Event{}, err
 	}
@@ -302,6 +307,9 @@ func (s *service) RemoveMultipleChildToMetaAlarm(
 	children []types.AlarmWithEntity,
 	rule metaalarm.Rule,
 ) (types.Event, error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	for i := 0; i < len(children); i++ {
 		if childrenIndex := s.indexOfChildren(metaAlarm, children[i].Alarm); childrenIndex != -1 {
 			metaAlarm.Value.Children = s.removeIndex(metaAlarm.Value.Children, childrenIndex)
@@ -313,7 +321,7 @@ func (s *service) RemoveMultipleChildToMetaAlarm(
 	}
 
 	metaAlarmChildren := make([]types.AlarmWithEntity, 0)
-	err := s.alarmAdapter.GetOpenedAlarmsWithEntityByIDs(metaAlarm.Value.Children, &metaAlarmChildren)
+	err := s.alarmAdapter.GetOpenedAlarmsWithEntityByIDs(ctx, metaAlarm.Value.Children, &metaAlarmChildren)
 	if err != nil {
 		return types.Event{}, err
 	}
@@ -334,7 +342,7 @@ func (s *service) RemoveMultipleChildToMetaAlarm(
 	}
 
 	updated = append(updated, metaAlarm)
-	err = s.alarmAdapter.MassUpdate(updated, true)
+	err = s.alarmAdapter.MassUpdate(ctx, updated, true)
 	if err != nil {
 		return types.Event{}, err
 	}
