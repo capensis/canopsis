@@ -43,9 +43,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	}
 
 	redisSession := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
-	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
-	lockerClient := redis.NewLockClient(lockRedisSession)
+	lockerClient := redis.NewLockClient(redisSession)
 	store := redis.NewStore(redisSession, "pbehaviors", 0)
 	dbClient := m.DepMongoClient(cfg)
 
@@ -126,11 +125,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			}
 
 			err = redisSession.Close()
-			if err != nil {
-				logger.Error().Err(err).Msg("failed to close redis connection")
-			}
-
-			err = lockRedisSession.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
