@@ -2370,6 +2370,7 @@ export default {
 
   idleRules: {
     timeAwaiting: 'Temps d\'attente',
+    timeRangeAwaiting: 'Plage de temps en attente',
     types: {
       [IDLE_RULE_TYPES.alarm]: 'Règle d\'alarme',
       [IDLE_RULE_TYPES.entity]: 'Règle d\'entité',
