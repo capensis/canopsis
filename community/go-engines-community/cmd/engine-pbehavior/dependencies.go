@@ -34,8 +34,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	m := DependencyMaker{}
 	dbClient := m.DepMongoClient(ctx)
 	cfg := m.DepConfig(ctx, dbClient)
-	dbClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
-	dbClient.SetRetryCount(cfg.Global.ReconnectRetries)
+	config.SetDbClientRetry(dbClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel, err := amqpConnection.Channel()

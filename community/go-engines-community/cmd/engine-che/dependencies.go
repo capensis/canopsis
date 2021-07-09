@@ -45,8 +45,7 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 	m := DependencyMaker{}
 	mongoClient := m.DepMongoClient(ctx)
 	cfg := m.DepConfig(ctx, mongoClient)
-	mongoClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
-	mongoClient.SetRetryCount(cfg.Global.ReconnectRetries)
+	config.SetDbClientRetry(mongoClient, cfg)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	entityAdapter := entity.NewAdapter(mongoClient)

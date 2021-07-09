@@ -45,8 +45,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 	m := DependencyMaker{}
 	dbClient := m.DepMongoClient(ctx)
 	cfg := m.DepConfig(ctx, dbClient)
-	dbClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
-	dbClient.SetRetryCount(cfg.Global.ReconnectRetries)
+	config.SetDbClientRetry(dbClient, cfg)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)

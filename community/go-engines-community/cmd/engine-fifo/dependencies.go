@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
@@ -36,8 +37,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	m := DependencyMaker{}
 	mongoClient := m.DepMongoClient(ctx)
 	cfg := m.DepConfig(ctx, mongoClient)
-	mongoClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
-	mongoClient.SetRetryCount(cfg.Global.ReconnectRetries)
+	config.SetDbClientRetry(mongoClient, cfg)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
 	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)

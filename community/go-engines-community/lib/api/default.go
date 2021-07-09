@@ -60,8 +60,7 @@ func Default(
 		timezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
 	}
 	// Set mongodb setting.
-	dbClient.SetRetryCount(cfg.Global.ReconnectRetries)
-	dbClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
+	config.SetDbClientRetry(dbClient, cfg)
 	// Connect to rmq.
 	amqpConn, err := amqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
 	if err != nil {
