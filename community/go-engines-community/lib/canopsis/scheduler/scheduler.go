@@ -3,6 +3,8 @@ package scheduler
 import (
 	"context"
 	"fmt"
+	"github.com/valyala/fastjson"
+	"strconv"
 	"strings"
 	"time"
 
@@ -241,30 +243,32 @@ func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, event types.Even
 			Msg("unable to unlock alarm")
 	}
 
-	if nextMetaAlarmEvent == nil {
-		// todo if one the child has another parent then events of another parent are not processed
-		// possible solution 1 : find another parents from mongo and checks them, can be filtered
-		// by ids from redis queue.
-		// possible solution 2 : check if meta alarm locks are required at all.
-
-		return nil
+	if nextMetaAlarmEvent != nil {
+		return s.publishToNext(nextMetaAlarmEvent)
 	}
 
-	return s.publishToNext(nextMetaAlarmEvent)
+	for _, relatedParentId := range event.MetaAlarmRelatedParents {
+		nextMetaAlarmEvent, err = s.queueLock.ExpireAndPopMultiple(ctx, relatedParentId, getChildren, true)
+		if err != nil {
+			s.logger.Err(err).
+				Str(relatedParentId, "lockID").
+				Msg("unable to unlock alarm")
+
+			continue
+		}
+
+		if nextMetaAlarmEvent != nil {
+			return s.publishToNext(nextMetaAlarmEvent)
+		}
+	}
+
+	return nil
 }
 
 func (s *scheduler) processMetaAlarmChildUnlock(ctx context.Context, event types.Event) {
 	if metaAlarmParents := event.MetaAlarmParents; metaAlarmParents != nil && len(*metaAlarmParents) > 0 {
 		for _, metaAlarmLock := range *metaAlarmParents {
-			nextEvent, err := s.queueLock.LockAndPopMultiple(ctx, metaAlarmLock, func(b []byte) ([]string, error) {
-				metaAlarmEvent := types.Event{}
-				err := s.decoder.Decode(b, &metaAlarmEvent)
-				if err != nil || metaAlarmEvent.MetaAlarmChildren == nil {
-					return nil, err
-				}
-
-				return *metaAlarmEvent.MetaAlarmChildren, nil
-			}, true)
+			nextEvent, err := s.queueLock.ExpireAndPopMultiple(ctx, metaAlarmLock, getChildren, true)
 			if err != nil {
 				s.logger.Err(err).
 					Str(metaAlarmLock, "meta-alarm-lockID").
@@ -339,4 +343,22 @@ func (s *scheduler) processExpiredLock(ctx context.Context, lockID string) {
 			Str("lockID", lockID).
 			Msg("error on publishsing event to queue")
 	}
+}
+
+func getChildren(b []byte) ([]string, error) {
+	jsonEvent, err := fastjson.ParseBytes(b)
+	if err != nil {
+		return nil, err
+	}
+
+	jsonChildren := jsonEvent.GetArray("ma_children")
+	children := make([]string, len(jsonChildren))
+	for idx, child := range jsonChildren {
+		children[idx], err = strconv.Unquote(child.String())
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return children, nil
 }

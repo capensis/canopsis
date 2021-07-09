@@ -108,6 +108,9 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		return alarmChange, nil
 	}
 
+	// need it for fifo metaalarm lock
+	event.Alarm.Value.RelatedParents = event.MetaAlarmRelatedParents
+
 	operation := s.createOperationFromEvent(event)
 	changeType, err := s.executor.Exec(operation, event.Alarm, event.Timestamp, event.Role, event.Initiator)
 	if err != nil {

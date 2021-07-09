@@ -21,10 +21,10 @@ type QueueLock interface {
 	// LockMultipleOrPush tries to lock all lockIDList and lockID
 	// and pushes item to the end of queue by lockID if fails.
 	LockMultipleOrPush(ctx context.Context, lockIDList []string, lockID string, item []byte) (bool, error)
-	// LockAndPopMultiple tries to lock lockID and pops item from lockID queue.
+	// ExpireAndPopMultiple tries to expire lockID and pops item from lockID queue.
 	// If next item exists it tries to lock lockIDList.
 	// Arg getLockIDList retrieves lockIDList from next item.
-	LockAndPopMultiple(ctx context.Context, lockID string, getLockIDList func([]byte) ([]string, error), asyncUnlock bool) ([]byte, error)
+	ExpireAndPopMultiple(ctx context.Context, lockID string, getLockIDList func([]byte) ([]string, error), asyncUnlock bool) ([]byte, error)
 	// PopOrUnlock tries to extend lock lockID and pops item from queue by lockID.
 	// It unlocks lockID if either fails.
 	PopOrUnlock(ctx context.Context, lockID string, asyncUnlock bool) ([]byte, error)
@@ -113,7 +113,27 @@ func (s *baseQueueLock) LockMultipleOrPush(
 		}
 	}()
 
-	locked, err := s.lockMultiple(ctx, allLockIDList)
+	/**
+	The LockMultipleOrPush function is typically used in the metaalarm context,
+	if we try to lock by all keys(metaalarm + children) and fail, then we place metaalarm event in the queue,
+	but in that case we don't have metaalarm key in the lock storage, so event won't be released by ttl expiration.
+
+	So we need to lock by metaalarm id first and then try to lock by children. With that way we'll have metaalarm key in the lock storage,
+	so an event will be released from the queue by the ttl expiration if something goes wrong.
+	*/
+	locked, err := s.lock(ctx, lockID)
+	if err != nil {
+		return false, err
+	}
+	if !locked {
+		return false, s.push(ctx, lockID, item)
+	}
+
+	if len(lockIDList) == 0 {
+		return true, nil
+	}
+
+	locked, err = s.lockMultiple(ctx, lockIDList)
 	if err != nil {
 		return false, err
 	}
@@ -125,14 +145,14 @@ func (s *baseQueueLock) LockMultipleOrPush(
 	return true, nil
 }
 
-func (s *baseQueueLock) LockAndPopMultiple(
+func (s *baseQueueLock) ExpireAndPopMultiple(
 	ctx context.Context,
 	lockID string,
 	f func([]byte) ([]string, error),
 	asyncUnlock bool,
 ) (res []byte, resErr error) {
 	s.mutex.Lock(lockID)
-	var locked bool
+	var extended bool
 	var err error
 
 	defer func() {
@@ -153,30 +173,22 @@ func (s *baseQueueLock) LockAndPopMultiple(
 						s.logger.Err(err).Msg("cannot unlock mutex")
 					}
 				}()
-				if locked {
-					err := s.Unlock(ctx, lockID)
-					if err != nil {
-						s.logger.Err(err).Str(lockID, "lockID").Msg("error on unlocking queue lock")
-					}
-				}
 			}()
 		} else {
 			err := s.mutex.Unlock(lockID)
 			if err != nil {
 				s.logger.Err(err).Msg("cannot unlock mutex")
 			}
-
-			if locked {
-				err := s.Unlock(ctx, lockID)
-				if err != nil {
-					s.logger.Err(err).Str(lockID, "lockID").Msg("error on unlocking queue lock")
-				}
-			}
 		}
 	}()
 
-	locked, err = s.lock(ctx, lockID)
-	if !locked || err != nil {
+	/**
+	The ExpireAndPopMultiple function is typically used in the metaalarm context,
+	since metaalarm leaves a lock after itself, we should try to extend it.
+	If success, then there is an event in the queue. We can try to pop it and lock children.
+	*/
+	extended, err = s.extendLock(ctx, lockID)
+	if !extended || err != nil {
 		return nil, err
 	}
 
