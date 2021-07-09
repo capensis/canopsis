@@ -1,9 +1,10 @@
-import { omit } from 'lodash';
+import { omit, pick } from 'lodash';
 
-import { IDLE_RULE_ALARM_CONDITION, IDLE_RULE_TYPES, TIME_UNITS } from '@/constants';
+import { IDLE_RULE_ALARM_CONDITIONS, IDLE_RULE_TYPES, TIME_UNITS } from '@/constants';
 
 import { enabledToForm } from '@/helpers/forms/shared/common';
 import { durationToForm, formToDuration } from '@/helpers/date/duration';
+import { formToScenarioAction, scenarioActionToForm } from '@/helpers/forms/scenario';
 
 /**
  * @typedef { 'alarm' | 'entity' } IdleRuleType
@@ -25,11 +26,13 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  * @property {Object[]} entity_patterns
  * @property {Object[]} alarm_patterns
  * @property {IdleRuleAlarmCondition} alarm_condition
+ * @property {ScenarioAction} operation
  */
 
 /**
  * @typedef {IdleRule} IdleRuleForm
  * @property {DurationForm} duration
+ * @property {ScenarioActionForm} operation
  */
 
 /**
@@ -49,7 +52,8 @@ export const idleRuleToForm = (idleRule = {}) => ({
   disable_during_periods: idleRule.disable_during_periods || [],
   alarm_patterns: idleRule.alarm_patterns || [],
   entity_patterns: idleRule.entity_patterns || [],
-  alarm_condition: idleRule.alarm_condition || IDLE_RULE_ALARM_CONDITION.lastEvent,
+  alarm_condition: idleRule.alarm_condition || IDLE_RULE_ALARM_CONDITIONS.lastEvent,
+  operation: pick(scenarioActionToForm(idleRule.operation), ['type', 'parameters']),
 });
 
 /**
@@ -57,7 +61,15 @@ export const idleRuleToForm = (idleRule = {}) => ({
  * @param {IdleRuleForm} form
  * @return {IdleRule}
  */
-export const formToIdleRule = form => ({
-  ...omit(form, form.type === IDLE_RULE_TYPES.entity ? ['alarm_condition', 'alarm_patterns', 'operation'] : []),
-  duration: formToDuration(form.duration),
-});
+export const formToIdleRule = (form) => {
+  const isEntityType = form.type === IDLE_RULE_TYPES.entity;
+  const idleRule = omit(form, isEntityType ? ['alarm_condition', 'alarm_patterns', 'operation'] : []);
+
+  if (!isEntityType) {
+    idleRule.operation = pick(formToScenarioAction(form.operation), ['type', 'parameters']);
+  }
+
+  idleRule.duration = formToDuration(form.duration);
+
+  return idleRule;
+};

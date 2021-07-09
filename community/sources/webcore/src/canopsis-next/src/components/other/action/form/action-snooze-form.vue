@@ -1,14 +1,14 @@
 <template lang="pug">
   div
-    scenario-action-note-field(v-field="value")
+    action-note-form(v-field="value")
     c-duration-field(v-field="value.duration", :name="`${name}.duration`", required)
 </template>
 
 <script>
-import ScenarioActionNoteField from './scenario-action-note-field.vue';
+import ActionNoteForm from './action-note-form.vue';
 
 export default {
-  components: { ScenarioActionNoteField },
+  components: { ActionNoteForm },
   model: {
     prop: 'value',
     event: 'input',
