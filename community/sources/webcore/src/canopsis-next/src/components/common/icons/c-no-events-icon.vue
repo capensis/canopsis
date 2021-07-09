@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-tooltip(v-if="value")
-    v-icon(slot="activator", :color="color") sync_problem
+  v-tooltip(v-if="value", :max-width="maxWidth", :top="top", :right="right", :bottom="bottom", :left="left")
+    v-icon(slot="activator", :color="color", :size="size") sync_problem
     span {{ message }}
 </template>
 
@@ -20,6 +20,30 @@ export default {
     color: {
       type: String,
       default: 'error',
+    },
+    maxWidth: {
+      type: [String, Number],
+      required: false,
+    },
+    top: {
+      type: Boolean,
+      required: false,
+    },
+    right: {
+      type: Boolean,
+      required: false,
+    },
+    bottom: {
+      type: Boolean,
+      required: false,
+    },
+    left: {
+      type: Boolean,
+      required: false,
+    },
+    size: {
+      type: String,
+      required: false,
     },
   },
   computed: {
