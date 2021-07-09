@@ -4,7 +4,7 @@
     v-tabs(centered, slider-color="primary", color="transparent", fixed-tabs)
       v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
       v-tab-item
-        idle-rule-general-form(ref="general", v-field="form")
+        idle-rule-general-form(ref="general", v-field="form", :is-entity-type="isEntityType")
       v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern') }}
       v-tab-item
         idle-rule-patterns-form(ref="patterns", v-field="form", :is-entity-type="isEntityType")

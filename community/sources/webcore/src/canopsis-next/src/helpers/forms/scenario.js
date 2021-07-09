@@ -1,7 +1,7 @@
 import moment from 'moment-timezone';
 import { cloneDeep, omit, isNumber } from 'lodash';
 
-import { ENTITIES_STATES, SCENARIO_ACTION_TYPES, TIME_UNITS } from '@/constants';
+import { ENTITIES_STATES, ACTION_TYPES, TIME_UNITS } from '@/constants';
 
 import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
@@ -181,7 +181,7 @@ const scenarioWebhookActionRequestParametersToForm = (request = {}) => ({
 const scenarioWebhookActionParametersToForm = (parameters = {}) => {
   const { empty_response: emptyResponse, is_regexp: isRegexp, ...variables } = parameters.declare_ticket || {};
 
-  return ({
+  return {
     declare_ticket: objectToTextPairs(variables),
     empty_response: !!emptyResponse,
     is_regexp: !!isRegexp,
@@ -189,7 +189,7 @@ const scenarioWebhookActionParametersToForm = (parameters = {}) => {
       ? { count: parameters.retry_count, ...durationToForm(parameters.retry_delay) }
       : { count: '', unit: '', value: '' },
     request: scenarioWebhookActionRequestParametersToForm(parameters.request),
-  });
+  };
 };
 
 /**
@@ -250,14 +250,14 @@ const scenarioPbehaviorActionParametersToForm = (parameters = {}, timezone = mom
  * @returns {Object.<ScenarioActionType, ScenarioActionFormParameters>}
  */
 const prepareDefaultScenarioActionParameters = () => ({
-  [SCENARIO_ACTION_TYPES.snooze]: scenarioSnoozeActionParametersToForm(),
-  [SCENARIO_ACTION_TYPES.pbehavior]: scenarioPbehaviorActionParametersToForm(),
-  [SCENARIO_ACTION_TYPES.changeState]: scenarioChangeStateActionParametersToForm(),
-  [SCENARIO_ACTION_TYPES.ack]: scenarioDefaultActionParametersToForm(),
-  [SCENARIO_ACTION_TYPES.ackremove]: scenarioDefaultActionParametersToForm(),
-  [SCENARIO_ACTION_TYPES.assocticket]: scenarioAssocTicketActionParametersToForm(),
-  [SCENARIO_ACTION_TYPES.cancel]: scenarioDefaultActionParametersToForm(),
-  [SCENARIO_ACTION_TYPES.webhook]: scenarioWebhookActionParametersToForm(),
+  [ACTION_TYPES.snooze]: scenarioSnoozeActionParametersToForm(),
+  [ACTION_TYPES.pbehavior]: scenarioPbehaviorActionParametersToForm(),
+  [ACTION_TYPES.changeState]: scenarioChangeStateActionParametersToForm(),
+  [ACTION_TYPES.ack]: scenarioDefaultActionParametersToForm(),
+  [ACTION_TYPES.ackremove]: scenarioDefaultActionParametersToForm(),
+  [ACTION_TYPES.assocticket]: scenarioAssocTicketActionParametersToForm(),
+  [ACTION_TYPES.cancel]: scenarioDefaultActionParametersToForm(),
+  [ACTION_TYPES.webhook]: scenarioWebhookActionParametersToForm(),
 });
 
 /**
@@ -275,9 +275,9 @@ export const scenarioActionParametersToForm = (action, timezone) => {
   }
 
   const parametersPreparers = {
-    [SCENARIO_ACTION_TYPES.snooze]: scenarioSnoozeActionParametersToForm,
-    [SCENARIO_ACTION_TYPES.webhook]: scenarioWebhookActionParametersToForm,
-    [SCENARIO_ACTION_TYPES.pbehavior]: scenarioPbehaviorActionParametersToForm,
+    [ACTION_TYPES.snooze]: scenarioSnoozeActionParametersToForm,
+    [ACTION_TYPES.webhook]: scenarioWebhookActionParametersToForm,
+    [ACTION_TYPES.pbehavior]: scenarioPbehaviorActionParametersToForm,
   };
 
   const prepareParametersToFormFunction = parametersPreparers[action.type];
@@ -297,7 +297,7 @@ export const scenarioActionParametersToForm = (action, timezone) => {
  * @returns {ScenarioActionForm}
  */
 export const scenarioActionToForm = (scenarioAction = {}, timezone = moment.tz.guess()) => {
-  const type = scenarioAction.type || SCENARIO_ACTION_TYPES.snooze;
+  const type = scenarioAction.type || ACTION_TYPES.snooze;
 
   return {
     type,
@@ -402,9 +402,9 @@ export const formToScenarioAction = (form, timezone) => {
   const parametersByCurrentType = form.parameters[form.type];
 
   const parametersPreparers = {
-    [SCENARIO_ACTION_TYPES.snooze]: formToScenarioSnoozeActionParameters,
-    [SCENARIO_ACTION_TYPES.webhook]: formToScenarioWebhookActionParameters,
-    [SCENARIO_ACTION_TYPES.pbehavior]: formToScenarioPbehaviorActionParameters,
+    [ACTION_TYPES.snooze]: formToScenarioSnoozeActionParameters,
+    [ACTION_TYPES.webhook]: formToScenarioWebhookActionParameters,
+    [ACTION_TYPES.pbehavior]: formToScenarioPbehaviorActionParameters,
   };
 
   const prepareParametersToAction = parametersPreparers[form.type];
