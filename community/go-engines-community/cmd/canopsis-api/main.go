@@ -44,17 +44,16 @@ func main() {
 	}
 
 	// Retrieve config.
-	dbClient, err := mongo.NewClient(0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("cannot connect to mongodb")
 	}
-	cfg, err := config.NewAdapter(dbClient).GetConfig()
+	cfg, err := config.NewAdapter(dbClient).GetConfig(ctx)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("cannot load config")
 	}
 	// Set mongodb setting.
-	dbClient.SetRetryCount(cfg.Global.ReconnectRetries)
-	dbClient.SetMinRetryTimeout(cfg.Global.GetReconnectTimeout())
+	config.SetDbClientRetry(dbClient, cfg)
 	// Init security ACL enforcer.
 	enforcer, err := libsecurity.NewEnforcer(flags.ConfigDir, dbClient)
 	if err != nil {

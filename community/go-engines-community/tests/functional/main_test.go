@@ -17,12 +17,15 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/fixtures"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/bdd"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libjson "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/cucumber/godog"
+	redismod "github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 )
 
@@ -99,13 +102,45 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 
+	dbClient, err := mongo.NewClient(ctx, 0, 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		err = dbClient.Disconnect(context.Background())
+		if err != nil {
+			log.Print(err)
+		}
+	}()
+
+	amqpConnection, err := amqp.NewConnection(liblog.NewLogger(false), 0, 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		err = amqpConnection.Close()
+		if err != nil {
+			log.Print(err)
+		}
+	}()
+	redisClient, err := redis.NewSession(ctx, 0, liblog.NewLogger(false), 0, 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		err = redisClient.Close()
+		if err != nil {
+			log.Print(err)
+		}
+	}()
+
 	opts := godog.Options{
 		StopOnFailure: true,
 		Format:        "pretty",
 		Paths:         flags.paths,
 	}
-	testSuiteInitializer := InitializeTestSuite(ctx, flags)
-	scenarioInitializer, err := InitializeScenario(flags, eventLogger)
+	testSuiteInitializer := InitializeTestSuite(ctx, flags, dbClient, redisClient)
+	scenarioInitializer, err := InitializeScenario(flags, dbClient, amqpConnection, eventLogger)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -124,17 +159,17 @@ func TestMain(m *testing.M) {
 	os.Exit(status)
 }
 
-func InitializeTestSuite(ctx context.Context, flags Flags) func(*godog.TestSuiteContext) {
+func InitializeTestSuite(ctx context.Context, flags Flags, dbClient mongo.DbClient, redisClient redismod.Cmdable) func(*godog.TestSuiteContext) {
 	return func(godogCtx *godog.TestSuiteContext) {
 		godogCtx.BeforeSuite(func() {
-			err := clearStores(ctx, flags)
+			err := clearStores(ctx, flags, dbClient, redisClient)
 			if err != nil {
 				panic(err)
 			}
 			time.Sleep(flags.periodicalWaitTime)
 		})
 		godogCtx.AfterSuite(func() {
-			err := clearStores(ctx, flags)
+			err := clearStores(ctx, flags, dbClient, redisClient)
 			if err != nil {
 				panic(err)
 			}
@@ -142,18 +177,20 @@ func InitializeTestSuite(ctx context.Context, flags Flags) func(*godog.TestSuite
 	}
 }
 
-func InitializeScenario(flags Flags, eventLogger zerolog.Logger) (func(*godog.ScenarioContext), error) {
-	apiClient, err := bdd.NewApiClient()
+func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amqp.Connection,
+	eventLogger zerolog.Logger) (func(*godog.ScenarioContext), error) {
+	apiClient, err := bdd.NewApiClient(dbClient)
 	if err != nil {
 		return nil, err
 	}
 
-	mongoClient, err := bdd.NewMongoClient()
+	mongoClient, err := bdd.NewMongoClient(dbClient)
 	if err != nil {
 		return nil, err
 	}
 
-	amqpClient, err := bdd.NewAmqpClient(flags.eventWaitExchange, flags.eventWaitKey,
+	amqpClient, err := bdd.NewAmqpClient(dbClient, amqpConnection,
+		flags.eventWaitExchange, flags.eventWaitKey,
 		libjson.NewEncoder(), libjson.NewDecoder(), eventLogger)
 	if err != nil {
 		return nil, err
@@ -211,23 +248,18 @@ func InitializeScenario(flags Flags, eventLogger zerolog.Logger) (func(*godog.Sc
 	}, nil
 }
 
-func clearStores(ctx context.Context, flags Flags) error {
+func clearStores(ctx context.Context, flags Flags, dbClient mongo.DbClient, redisClient redismod.Cmdable) error {
 	configs, err := getFixtureConfigs(flags.fixtures)
 	if err != nil {
 		return err
 	}
 
-	err = fixtures.LoadFixtures(configs...)
+	err = fixtures.LoadFixtures(ctx, dbClient, configs...)
 	if err != nil {
 		return err
 	}
 
-	client, err := redis.NewSession(ctx, 0, liblog.NewLogger(false), 0, 0)
-	if err != nil {
-		return err
-	}
-
-	err = client.FlushAll(ctx).Err()
+	err = redisClient.FlushAll(ctx).Err()
 	if err != nil {
 		return err
 	}

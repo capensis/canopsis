@@ -2,17 +2,18 @@ package main
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	"github.com/bsm/redislock"
 	"runtime/trace"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 )
 
@@ -36,14 +37,15 @@ type DependencyMaker struct {
 // NewEngine returns the default Service engine with default connections.
 func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
-	cfg := m.DepConfig()
+	mongoClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, mongoClient)
+	config.SetDbClientRetry(mongoClient, cfg)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel, err := amqpConnection.Channel()
 	if err != nil {
 		panic(err)
 	}
 
-	mongoClient := m.DepMongoClient(cfg)
 	redisSession := m.DepRedisSession(ctx, redis.CacheService, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
@@ -128,8 +130,8 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 
 			return nil
 		},
-		func() {
-			err := mongoClient.Disconnect(context.Background())
+		func(ctx context.Context) {
+			err := mongoClient.Disconnect(ctx)
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}

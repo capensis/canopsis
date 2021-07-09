@@ -32,7 +32,9 @@ type DependencyMaker struct {
 
 func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
-	cfg := m.DepConfig()
+	dbClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, dbClient)
+	config.SetDbClientRetry(dbClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel, err := amqpConnection.Channel()
@@ -44,7 +46,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	lockerClient := redis.NewLockClient(lockRedisSession)
 	store := redis.NewStore(lockRedisSession, "pbehaviors", 0)
-	dbClient := m.DepMongoClient(cfg)
 
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
 	eventManager := pbehavior.NewEventManager()
@@ -111,8 +112,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 
 			return nil
 		},
-		func() {
-			err := dbClient.Disconnect(context.Background())
+		func(ctx context.Context) {
+			err := dbClient.Disconnect(ctx)
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}

@@ -43,7 +43,9 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	cfg := m.DepConfig()
+	dbClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, dbClient)
+	config.SetDbClientRetry(dbClient, cfg)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
@@ -57,7 +59,6 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		panic(fmt.Errorf("dependency error: amqp publish channel: %v", err))
 	}
 
-	dbClient := m.DepMongoClient(cfg)
 	lockRedisClient := m.DepRedisSession(ctx, redis.AxePeriodicalLockStorage, logger, cfg)
 	corrRedisClient := m.DepRedisSession(ctx, redis.CorrelationLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
@@ -120,8 +121,8 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 
 	engineAxe := engine.New(
 		nil,
-		func() {
-			err := dbClient.Disconnect(context.Background())
+		func(ctx context.Context) {
+			err := dbClient.Disconnect(ctx)
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}

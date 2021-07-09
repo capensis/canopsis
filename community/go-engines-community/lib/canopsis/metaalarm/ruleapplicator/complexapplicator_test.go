@@ -42,7 +42,7 @@ func testNewComplexApplicator() (*ruleapplicator.ComplexApplicator, alarm.Adapte
 
 	redisLockClient := redis.NewLockClient(redisClient2)
 
-	dbClient, err := libmongo.NewClient(0, 0)
+	dbClient, err := libmongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		panic(err)
 	}

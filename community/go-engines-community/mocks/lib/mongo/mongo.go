@@ -433,28 +433,16 @@ func (mr *MockDbClientMockRecorder) Disconnect(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Disconnect", reflect.TypeOf((*MockDbClient)(nil).Disconnect), arg0)
 }
 
-// SetMinRetryTimeout mocks base method
-func (m *MockDbClient) SetMinRetryTimeout(arg0 time.Duration) {
+// SetRetry mocks base method
+func (m *MockDbClient) SetRetry(arg0 int, arg1 time.Duration) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SetMinRetryTimeout", arg0)
+	m.ctrl.Call(m, "SetRetry", arg0, arg1)
 }
 
-// SetMinRetryTimeout indicates an expected call of SetMinRetryTimeout
-func (mr *MockDbClientMockRecorder) SetMinRetryTimeout(arg0 interface{}) *gomock.Call {
+// SetRetry indicates an expected call of SetRetry
+func (mr *MockDbClientMockRecorder) SetRetry(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetMinRetryTimeout", reflect.TypeOf((*MockDbClient)(nil).SetMinRetryTimeout), arg0)
-}
-
-// SetRetryCount mocks base method
-func (m *MockDbClient) SetRetryCount(arg0 int) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SetRetryCount", arg0)
-}
-
-// SetRetryCount indicates an expected call of SetRetryCount
-func (mr *MockDbClientMockRecorder) SetRetryCount(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetRetryCount", reflect.TypeOf((*MockDbClient)(nil).SetRetryCount), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetRetry", reflect.TypeOf((*MockDbClient)(nil).SetRetry), arg0, arg1)
 }
 
 // MockSingleResultHelper is a mock of SingleResultHelper interface

@@ -24,7 +24,7 @@ func Timeout(t time.Duration) {
 // name is a dispaly string
 // retryDelay is the time to sleep before doing another attempt
 // retries is the max number of tries to attempt
-func Check(checker func() error, name string, retryDelay time.Duration, retries int) error {
+func Check(ctx context.Context, checker func(ctx context.Context) error, name string, retryDelay time.Duration, retries int) error {
 	infinite := false
 
 	if retries == 0 {
@@ -32,7 +32,7 @@ func Check(checker func() error, name string, retryDelay time.Duration, retries 
 	}
 
 	for retry := 0; retry < retries || infinite; retry++ {
-		err := checker()
+		err := checker(ctx)
 		if err != nil {
 			logger.Info().Err(err).Msgf("%v: %v/%v", name, retry+1, retries)
 			time.Sleep(retryDelay)
@@ -52,21 +52,19 @@ func Abort(err error) {
 }
 
 // CheckRedis ...
-func CheckRedis() error {
-	ctx := context.Background()
-
+func CheckRedis(ctx context.Context) error {
 	_, err := redis.NewSession(ctx, 0, logger, 0, 0)
 	return err
 }
 
 // CheckMongo connects to mongo with mongo.Timeout
-func CheckMongo() error {
-	_, err := mongo.NewClient(0, 0)
+func CheckMongo(ctx context.Context) error {
+	_, err := mongo.NewClient(ctx, 0, 0)
 	return err
 }
 
 // CheckAMQP ...
-func CheckAMQP() error {
+func CheckAMQP(_ context.Context) error {
 	_, err := amqp.NewConnection(log.NewLogger(false), 0, 0)
 	return err
 }

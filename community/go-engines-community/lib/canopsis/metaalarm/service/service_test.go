@@ -1471,13 +1471,13 @@ func getMetaalarm() []byte {
 }
 
 func getRuleAdapter() (metaalarm.RulesAdapter, error) {
-	dbClient, err := mongo.NewClient(0, 0)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	dbClient, err := mongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		panic(err)
 	}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	rulesCollection := dbClient.Collection(mongo.MetaAlarmRulesMongoCollection)
 	_, err = rulesCollection.DeleteMany(ctx, bson.M{})
