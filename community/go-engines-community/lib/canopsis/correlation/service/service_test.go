@@ -143,6 +143,77 @@ func TestCreateMetaAlarm(t *testing.T) {
 	}
 }
 
+func TestCreateMetaAlarmRelatedParents(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	maService := service.NewMetaAlarmService(
+		mock_alarm.NewMockAdapter(ctrl),
+		mock_config.NewMockAlarmConfigProvider(ctrl),
+		log.NewTestLogger(),
+	)
+
+	event := types.Event{
+		Timestamp: types.NewCpsTime(time.Now().Unix()),
+		Author:    "test",
+		State:     types.CpsNumber(1),
+	}
+
+	children := []types.AlarmWithEntity{
+		{
+			Alarm: types.Alarm{
+				ID: "alarm-1",
+				Value: types.AlarmValue{
+					Parents: []string{"parent-1", "parent-2"},
+				},
+			},
+			Entity: types.Entity{
+				ID: "entity-1",
+			},
+		},
+		{
+			Alarm: types.Alarm{
+				ID: "alarm-2",
+				Value: types.AlarmValue{
+					Parents: []string{"parent-2", "parent-3"},
+				},
+			},
+			Entity: types.Entity{
+				ID: "entity-2",
+			},
+		},
+		{
+			Alarm: types.Alarm{
+				ID: "alarm-3",
+				Value: types.AlarmValue{
+					Parents: []string{"parent-3", "parent-4"},
+				},
+			},
+			Entity: types.Entity{
+				ID: "entity-3",
+			},
+		},
+	}
+
+	expectedRelatedParents := []string{"parent-1", "parent-2", "parent-3", "parent-4"}
+	rule := correlation.Rule{ID: "rule-1", OutputTemplate: "Number of children: {{ .Count }}"}
+
+	metaAlarmEvent, err := maService.CreateMetaAlarm(event, children, rule)
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	if len(metaAlarmEvent.MetaAlarmRelatedParents) == 0 {
+		t.Fatalf("related parents array is empty")
+	}
+
+	for idx, relatedParent := range metaAlarmEvent.MetaAlarmRelatedParents {
+		if relatedParent != expectedRelatedParents[idx] {
+			t.Errorf("expected %v, but got %v", expectedRelatedParents[idx], relatedParent)
+		}
+	}
+}
+
 func TestAddChildToMetaAlarm(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

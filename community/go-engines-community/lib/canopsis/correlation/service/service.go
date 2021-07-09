@@ -91,19 +91,32 @@ func (s *service) CreateMetaAlarm(
 		eventChildren = append(eventChildren, children[i].Entity.ID)
 	}
 
+	relatedParentsMap := make(map[string]bool, 0)
+	relatedParents := make([]string, 0)
+	for _, child := range children {
+		for _, parent := range child.Alarm.Value.Parents {
+			_, ok := relatedParentsMap[parent]
+			if !ok {
+				relatedParentsMap[parent] = true
+				relatedParents = append(relatedParents, parent)
+			}
+		}
+	}
+
 	return types.Event{
-		Timestamp:         event.Timestamp,
-		Author:            event.Author,
-		State:             event.State,
-		Component:         "metaalarm",
-		Connector:         "engine",
-		ConnectorName:     "correlation",
-		Resource:          correlation.DefaultMetaAlarmEntityPrefix + utils.NewID(),
-		SourceType:        types.SourceTypeResource,
-		EventType:         types.EventTypeMetaAlarm,
-		MetaAlarmChildren: &eventChildren,
-		MetaAlarmRuleID:   rule.ID,
-		Output:            output,
+		Timestamp:               event.Timestamp,
+		Author:                  event.Author,
+		State:                   event.State,
+		Component:               "metaalarm",
+		Connector:               "engine",
+		ConnectorName:           "correlation",
+		Resource:                correlation.DefaultMetaAlarmEntityPrefix + utils.NewID(),
+		SourceType:              types.SourceTypeResource,
+		EventType:               types.EventTypeMetaAlarm,
+		MetaAlarmChildren:       &eventChildren,
+		MetaAlarmRelatedParents: relatedParents,
+		MetaAlarmRuleID:         rule.ID,
+		Output:                  output,
 		ExtraInfos: map[string]interface{}{
 			"Meta": infos,
 		},
