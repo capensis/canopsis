@@ -4,7 +4,7 @@ import { IDLE_RULE_ALARM_CONDITIONS, IDLE_RULE_TYPES, TIME_UNITS } from '@/const
 
 import { enabledToForm } from '@/helpers/forms/shared/common';
 import { durationToForm, formToDuration } from '@/helpers/date/duration';
-import { formToScenarioAction, scenarioActionToForm } from '@/helpers/forms/scenario';
+import { formToAction, actionToForm } from '@/helpers/forms/action';
 
 /**
  * @typedef { 'alarm' | 'entity' } IdleRuleType
@@ -26,13 +26,13 @@ import { formToScenarioAction, scenarioActionToForm } from '@/helpers/forms/scen
  * @property {Object[]} entity_patterns
  * @property {Object[]} alarm_patterns
  * @property {IdleRuleAlarmCondition} alarm_condition
- * @property {ScenarioAction} operation
+ * @property {Action} operation
  */
 
 /**
  * @typedef {IdleRule} IdleRuleForm
  * @property {DurationForm} duration
- * @property {ScenarioActionForm} operation
+ * @property {ActionForm} operation
  */
 
 /**
@@ -53,7 +53,7 @@ export const idleRuleToForm = (idleRule = {}) => ({
   alarm_patterns: idleRule.alarm_patterns || [],
   entity_patterns: idleRule.entity_patterns || [],
   alarm_condition: idleRule.alarm_condition || IDLE_RULE_ALARM_CONDITIONS.lastEvent,
-  operation: pick(scenarioActionToForm(idleRule.operation), ['type', 'parameters']),
+  operation: pick(actionToForm(idleRule.operation), ['type', 'parameters']),
 });
 
 /**
@@ -66,7 +66,7 @@ export const formToIdleRule = (form) => {
   const idleRule = omit(form, isEntityType ? ['alarm_condition', 'alarm_patterns', 'operation'] : []);
 
   if (!isEntityType) {
-    idleRule.operation = pick(formToScenarioAction(form.operation), ['type', 'parameters']);
+    idleRule.operation = pick(formToAction(form.operation), ['type', 'parameters']);
   }
 
   idleRule.duration = formToDuration(form.duration);

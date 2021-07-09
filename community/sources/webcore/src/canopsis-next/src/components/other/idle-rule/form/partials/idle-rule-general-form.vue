@@ -1,8 +1,8 @@
 <template lang="pug">
   v-layout(column)
     template(v-if="!isEntityType")
-      idle-rule-alarm-type-field(v-field="form.alarm_condition", :label="$t('common.type')")
-    v-text-field.mt-2(
+      idle-rule-alarm-type-field.mb-2(v-field="form.alarm_condition", :label="$t('common.type')")
+    v-text-field(
       v-field="form.name",
       v-validate="'required'",
       :label="$t('common.name')",
@@ -28,9 +28,9 @@
 </template>
 
 <script>
-import { formValidationHeaderMixin } from '@/mixins/form';
-
 import { ACTION_TYPES } from '@/constants';
+
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
 
