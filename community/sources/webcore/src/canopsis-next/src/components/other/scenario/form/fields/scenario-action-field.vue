@@ -29,7 +29,7 @@
           v-divider
           v-tabs-items.pt-2(v-model="activeTab")
             v-tab-item
-              scenario-action-general-form(
+              action-parameters-form.mt-4(
                 ref="general",
                 v-field="action",
                 :name="`${name}.parameters`"
@@ -46,14 +46,15 @@
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 import confirmableFormMixin from '@/mixins/confirmable-form';
 
-import ScenarioActionGeneralForm from './scenario-action-general-form.vue';
+import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
+
 import ScenarioActionPatternsForm from './scenario-action-patterns-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    ActionParametersForm,
     ScenarioActionPatternsForm,
-    ScenarioActionGeneralForm,
   },
   mixins: [
     formMixin,

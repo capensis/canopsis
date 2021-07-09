@@ -9,6 +9,7 @@
     c-patterns-field(
       v-else,
       v-field="form",
+      some-required,
       alarm,
       entity
     )

@@ -1735,7 +1735,7 @@ export const REQUEST_METHODS = {
 
 export const PAYLOAD_VARIABLE_REGEXP = /[^"]({{\s?(\w|\s|\.){2,}\s?}})[^"]/g;
 
-export const SCENARIO_ACTION_TYPES = {
+export const ACTION_TYPES = {
   ack: 'ack',
   ackremove: 'ackremove',
   assocticket: 'assocticket',
@@ -1746,7 +1746,7 @@ export const SCENARIO_ACTION_TYPES = {
   webhook: 'webhook',
 };
 
-export const CAT_SCENARIO_ACTION_TYPES = [SCENARIO_ACTION_TYPES.webhook];
+export const CAT_ACTION_TYPES = [ACTION_TYPES.webhook];
 
 export const SCENARIO_TRIGGERS = {
   create: 'create',
@@ -1896,7 +1896,7 @@ export const IDLE_RULE_TYPES = {
   entity: 'entity',
 };
 
-export const IDLE_RULE_ALARM_CONDITION = {
+export const IDLE_RULE_ALARM_CONDITIONS = {
   lastEvent: 'last_event',
   lastUpdate: 'last_update',
 };

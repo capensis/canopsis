@@ -1,5 +1,7 @@
 <template lang="pug">
   v-layout(column)
+    template(v-if="!isEntityType")
+      idle-rule-alarm-type-field.mb-2(v-field="form.alarm_condition", :label="$t('common.type')")
     v-text-field(
       v-field="form.name",
       v-validate="'required'",
@@ -16,16 +18,31 @@
     )
     v-layout(row, justify-space-between)
       v-flex(xs7)
-        c-duration-field(v-field="form.duration", required)
+        c-duration-field(
+          v-field="form.duration",
+          :label="$t('idleRules.timeRangeAwaiting')",
+          required
+        )
       v-flex(xs3)
         c-priority-field(v-field="form.priority", required)
+    c-disable-during-periods-field(v-field="form.disable_during_periods")
+    template(v-if="!isEntityType")
+      c-action-type-field(v-field="form.operation.type", :types="actionTypes", name="operation.type")
+      action-parameters-form(v-field="form.operation", name="operation.parameters")
 </template>
 
 <script>
+import { ACTION_TYPES } from '@/constants';
+
 import { formValidationHeaderMixin } from '@/mixins/form';
+
+import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
+
+import IdleRuleAlarmTypeField from './idle-rule-alarm-type-field.vue';
 
 export default {
   inject: ['$validator'],
+  components: { IdleRuleAlarmTypeField, ActionParametersForm },
   mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
@@ -35,6 +52,23 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    isEntityType: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    actionTypes() {
+      return [
+        ACTION_TYPES.snooze,
+        ACTION_TYPES.ack,
+        ACTION_TYPES.ackremove,
+        ACTION_TYPES.cancel,
+        ACTION_TYPES.assocticket,
+        ACTION_TYPES.changeState,
+        ACTION_TYPES.pbehavior,
+      ];
     },
   },
 };

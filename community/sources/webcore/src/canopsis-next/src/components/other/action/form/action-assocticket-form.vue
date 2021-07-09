@@ -8,15 +8,15 @@
         :name="ticketFieldName",
         :label="$t('common.ticket')"
       )
-    scenario-action-note-field(v-field="value")
+    action-note-form(v-field="value")
 </template>
 
 <script>
-import ScenarioActionNoteField from './scenario-action-note-field.vue';
+import ActionNoteForm from './action-note-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ScenarioActionNoteField },
+  components: { ActionNoteForm },
   model: {
     prop: 'value',
     event: 'input',
