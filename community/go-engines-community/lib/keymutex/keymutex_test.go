@@ -3,10 +3,11 @@ package keymutex_test
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/keymutex"
 	"sync"
 	"testing"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/keymutex"
 )
 
 const waitTimeout = time.Second
@@ -79,35 +80,51 @@ func TestKeyMutex_Lock_GivenMultipleLocks_ShouldWaitUnlockBeforeNextLock(t *test
 	}
 }
 
+func assert(key, val, expect string) error {
+	if val != expect {
+		return fmt.Errorf("%s isn't %q, but %q", key, expect, val)
+	}
+	return nil
+}
+
 func TestKeyMutex_LockMultiple_GivenMultipleLocks_ShouldWaitUnlockBeforeNextLock(t *testing.T) {
+	const (
+		multiple = "multiple"
+		single   = "single"
+	)
 	done := make(chan bool)
 	defer close(done)
+	m1 := map[string]string{}
+	m2 := map[string]string{}
 
 	keys := []string{"test1", "test2"}
+	maps := []map[string]string{m1, m2}
 	mx := keymutex.New()
-	var err error
-	var unlockTime, lockTime1, lockTime2 time.Time
+	var err, testError error
 
 	go func() {
 		mx.LockMultiple(keys...)
 		wg := sync.WaitGroup{}
 		wg.Add(2)
 
-		go func() {
-			defer wg.Done()
-			mx.Lock(keys[0])
-			lockTime1 = time.Now()
-		}()
+		for i := 0; i < 2; i++ {
+			go func(i int) {
+				defer wg.Done()
+				mx.Lock(keys[i])
+				if err := assert(keys[i], maps[i][keys[i]], multiple); err != nil {
+					testError = err
+				}
+				maps[i][keys[i]] = single
+			}(i)
+		}
 
-		go func() {
-			defer wg.Done()
-			mx.Lock(keys[1])
-			lockTime2 = time.Now()
-		}()
-
-		time.Sleep(time.Millisecond * 100)
+		for i := 0; i < 2 && testError == nil; i++ {
+			if err := assert(keys[i], maps[i][keys[i]], ""); err != nil {
+				testError = err
+			}
+			maps[i][keys[i]] = multiple
+		}
 		err = mx.UnlockMultiple(keys...)
-		unlockTime = time.Now()
 
 		wg.Wait()
 
@@ -120,12 +137,12 @@ func TestKeyMutex_LockMultiple_GivenMultipleLocks_ShouldWaitUnlockBeforeNextLock
 		t.Errorf("expected no error but got %v", err)
 	}
 
-	if unlockTime.After(lockTime1) {
-		t.Errorf("expected lock after unlock")
+	if testError != nil {
+		t.Errorf("test fails %s", testError)
 	}
 
-	if unlockTime.After(lockTime2) {
-		t.Errorf("expected lock after unlock")
+	if m1[keys[0]] != single || m2[keys[1]] != single {
+		t.Errorf("unexpected values %+v %+v", m1, m2)
 	}
 }
 
