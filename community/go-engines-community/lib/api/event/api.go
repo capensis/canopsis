@@ -317,7 +317,7 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		processArray(value, "ma_parents", alarm.Value.Parents)
 		processArray(value, "ma_children", alarm.Value.Children)
 
-		if alarm.IsMetaAlarm() {
+		if alarm.IsMetaAlarm() && len(alarm.Value.Children) > 0 {
 			cursor, err := api.alarmCollection.Aggregate(
 				c.Request.Context(),
 				[]bson.M{

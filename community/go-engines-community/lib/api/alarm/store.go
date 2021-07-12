@@ -973,7 +973,7 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 	if r.OnlyParents {
 		*pipeline = append(*pipeline,
 			bson.M{"$lookup": bson.M{
-				"from":         correlation.RulesCollectionName,
+				"from":         mongo.MetaAlarmRulesMongoCollection,
 				"localField":   "v.meta",
 				"foreignField": "_id",
 				"as":           "meta_alarm_rule",
@@ -1125,7 +1125,7 @@ func (s *store) getCausesPipeline() []bson.M {
 			"as":               "parents",
 		}},
 		{"$lookup": bson.M{
-			"from":         correlation.RulesCollectionName,
+			"from":         mongo.MetaAlarmRulesMongoCollection,
 			"localField":   "parents.v.meta",
 			"foreignField": "_id",
 			"as":           "causes_rules",

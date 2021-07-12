@@ -91,7 +91,7 @@ func (s *service) CreateMetaAlarm(
 		eventChildren = append(eventChildren, children[i].Entity.ID)
 	}
 
-	relatedParentsMap := make(map[string]bool, 0)
+	relatedParentsMap := make(map[string]bool)
 	relatedParents := make([]string, 0)
 	for _, child := range children {
 		for _, parent := range child.Alarm.Value.Parents {

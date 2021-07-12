@@ -27,7 +27,6 @@ type CorelApplicator struct {
 	metaAlarmService  service.MetaAlarmService
 	storage           storage.GroupingStorage
 	redisClient       *redis.Client
-	ruleEntityCounter correlation.RuleEntityCounter
 	logger            zerolog.Logger
 }
 

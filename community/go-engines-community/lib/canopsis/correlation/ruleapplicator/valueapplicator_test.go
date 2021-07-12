@@ -28,7 +28,7 @@ func testNewValueApplicator() (*ValueApplicator, alarm.Adapter, entity.Adapter, 
 		panic(err)
 	}
 
-	dbClient, err := mongo.NewClient(0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		panic(err)
 	}

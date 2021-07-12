@@ -76,8 +76,6 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 	if !alarmNotFound {
 		event.Alarm = &alarm
-		// need it for fifo metaalarm lock
-		event.Alarm.Value.RelatedParents = event.MetaAlarmRelatedParents
 	}
 
 	if err := s.fillAlarmChange(ctx, event, &alarmChange); err != nil {
@@ -471,8 +469,6 @@ func (s *eventProcessor) processMetaAlarmCreateEvent(ctx context.Context, event 
 	metaAlarm.Value.RuleVersion = map[string]string{}
 	metaAlarm.Value.Parents = []string{}
 	metaAlarm.Value.Children = []string{}
-	// need it for fifo metaalarm lock
-	metaAlarm.Value.RelatedParents = event.MetaAlarmRelatedParents
 
 	if event.MetaAlarmChildren != nil {
 		for i := 0; i < len(childAlarms); i++ {

@@ -9,10 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const (
-	RulesCollectionName = "meta_alarm_rules"
-)
-
 // RulesAdapter is a type that provides access to the MongoDB collection containing
 // the meta-alarm rules
 type mongoAdapter struct {

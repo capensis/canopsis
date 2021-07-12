@@ -41,7 +41,7 @@ func testNewComplexApplicator() (*ruleapplicator.ComplexApplicator, alarm.Adapte
 	}
 	redisClient2.FlushDB(ctx)
 
-	dbClient, err := libmongo.NewClient(0, 0)
+	dbClient, err := libmongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		panic(err)
 	}

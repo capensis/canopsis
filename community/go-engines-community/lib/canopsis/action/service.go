@@ -114,6 +114,9 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 }
 
 func (s *service) Process(ctx context.Context, event *types.Event) error {
+	// need it for fifo metaalarm lock
+	event.Alarm.Value.RelatedParents = event.MetaAlarmRelatedParents
+
 	if event.Alarm == nil || event.Entity == nil || event.Alarm.IsResolved() {
 		s.sendEventToFifoAck(event)
 

@@ -21,10 +21,10 @@ type QueueLock interface {
 	// LockMultipleOrPush tries to lock all lockIDList and lockID
 	// and pushes item to the end of queue by lockID if fails.
 	LockMultipleOrPush(ctx context.Context, lockIDList []string, lockID string, item []byte) (bool, error)
-	// ExpireAndPopMultiple tries to expire lockID and pops item from lockID queue.
+	// ExtendAndPopMultiple tries to expire lockID and pops item from lockID queue.
 	// If next item exists it tries to lock lockIDList.
 	// Arg getLockIDList retrieves lockIDList from next item.
-	ExpireAndPopMultiple(ctx context.Context, lockID string, getLockIDList func([]byte) ([]string, error), asyncUnlock bool) ([]byte, error)
+	ExtendAndPopMultiple(ctx context.Context, lockID string, getLockIDList func([]byte) ([]string, error), asyncUnlock bool) ([]byte, error)
 	// PopOrUnlock tries to extend lock lockID and pops item from queue by lockID.
 	// It unlocks lockID if either fails.
 	PopOrUnlock(ctx context.Context, lockID string, asyncUnlock bool) ([]byte, error)
@@ -145,7 +145,7 @@ func (s *baseQueueLock) LockMultipleOrPush(
 	return true, nil
 }
 
-func (s *baseQueueLock) ExpireAndPopMultiple(
+func (s *baseQueueLock) ExtendAndPopMultiple(
 	ctx context.Context,
 	lockID string,
 	f func([]byte) ([]string, error),
@@ -183,7 +183,7 @@ func (s *baseQueueLock) ExpireAndPopMultiple(
 	}()
 
 	/**
-	The ExpireAndPopMultiple function is typically used in the metaalarm context,
+	The ExtendAndPopMultiple function is typically used in the metaalarm context,
 	since metaalarm leaves a lock after itself, we should try to extend it.
 	If success, then there is an event in the queue. We can try to pop it and lock children.
 	*/

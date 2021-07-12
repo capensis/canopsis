@@ -248,7 +248,7 @@ func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, event types.Even
 	}
 
 	for _, relatedParentId := range event.MetaAlarmRelatedParents {
-		nextMetaAlarmEvent, err = s.queueLock.ExpireAndPopMultiple(ctx, relatedParentId, getChildren, true)
+		nextMetaAlarmEvent, err = s.queueLock.ExtendAndPopMultiple(ctx, relatedParentId, getChildren, true)
 		if err != nil {
 			s.logger.Err(err).
 				Str(relatedParentId, "lockID").
@@ -268,7 +268,7 @@ func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, event types.Even
 func (s *scheduler) processMetaAlarmChildUnlock(ctx context.Context, event types.Event) {
 	if metaAlarmParents := event.MetaAlarmParents; metaAlarmParents != nil && len(*metaAlarmParents) > 0 {
 		for _, metaAlarmLock := range *metaAlarmParents {
-			nextEvent, err := s.queueLock.ExpireAndPopMultiple(ctx, metaAlarmLock, getChildren, true)
+			nextEvent, err := s.queueLock.ExtendAndPopMultiple(ctx, metaAlarmLock, getChildren, true)
 			if err != nil {
 				s.logger.Err(err).
 					Str(metaAlarmLock, "meta-alarm-lockID").

@@ -3,6 +3,7 @@ package alarm
 import (
 	"context"
 	"errors"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
@@ -15,8 +16,6 @@ import (
 const (
 	AlarmCollectionName = libmongo.AlarmMongoCollection
 )
-
-const bulkMaxSize = 10000
 
 type mongoAdapter struct {
 	dbCollection libmongo.DbCollection
@@ -76,9 +75,9 @@ func (a mongoAdapter) PartialUpdateOpen(ctx context.Context, alarm *types.Alarm)
 
 func (a mongoAdapter) PartialMassUpdateOpen(ctx context.Context, alarms []types.Alarm) error {
 	var err error
-	writeModels := make([]mongo.WriteModel, 0, bulkMaxSize)
+	writeModels := make([]mongo.WriteModel, 0, canopsis.DefaultBulkSize)
 
-	for _, alarm := range alarms {
+	for idx, alarm := range alarms {
 		update := alarm.GetUpdate()
 		if len(update) == 0 {
 			continue
@@ -98,8 +97,9 @@ func (a mongoAdapter) PartialMassUpdateOpen(ctx context.Context, alarms []types.
 		)
 
 		alarm.CleanUpdate()
+		alarms[idx] = alarm
 
-		if len(writeModels) == bulkMaxSize {
+		if len(writeModels) == canopsis.DefaultBulkSize {
 			_, err = a.dbCollection.BulkWrite(ctx, writeModels)
 			if err != nil {
 				return err
