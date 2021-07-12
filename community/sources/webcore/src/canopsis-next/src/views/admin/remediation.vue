@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    c-page-header {{ $t('common.instructions') }}
+    c-page-header
     v-layout(row, wrap)
       v-flex(xs12)
         v-card.ma-2
