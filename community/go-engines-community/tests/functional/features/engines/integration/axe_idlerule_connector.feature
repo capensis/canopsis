@@ -7,7 +7,6 @@ Feature: update connector alarm
     """
     {
       "name": "test-idlerule-axe-idlerule-connector-1-name",
-      "author": "test-idlerule-axe-idlerule-connector-1-author",
       "type": "entity",
       "enabled": true,
       "priority": 60,
@@ -48,7 +47,6 @@ Feature: update connector alarm
       "on_failure": "pass",
       "priority": 1,
       "enabled": true,
-      "author": "test-eventfilter-axe-idlerule-connector-1-author",
       "description": "test-eventfilter-axe-idlerule-connector-1-description"
     }
     """
@@ -73,7 +71,6 @@ Feature: update connector alarm
       "on_success": "pass",
       "on_failure": "pass",
       "enabled": true,
-      "author": "test-eventfilter-axe-idlerule-connector-1-author",
       "description": "test-eventfilter-axe-idlerule-connector-1-description"
     }
     """
@@ -130,7 +127,6 @@ Feature: update connector alarm
     """
     {
       "name": "test-idlerule-axe-idlerule-connector-2-name",
-      "author": "test-idlerule-axe-idlerule-connector-2-author",
       "type": "entity",
       "enabled": true,
       "priority": 60,
@@ -151,7 +147,6 @@ Feature: update connector alarm
     """
     {
       "enabled": true,
-      "author": "root",
       "name": "test-pbehavior-axe-idlerule-connector-2",
       "tstart": {{ now.Unix }},
       "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
@@ -177,9 +172,7 @@ Feature: update connector alarm
       "source_type": "component",
       "component":  "test-component-axe-idlerule-connector-2",
       "state": 1,
-      "output": "test-output-axe-idlerule-connector-2",
-      "long_output": "test-long-output-axe-idlerule-connector-2",
-      "author": "test-author-axe-idlerule-connector-2"
+      "output": "test-output-axe-idlerule-connector-2"
     }
     """
     When I wait the end of 3 events processing
@@ -233,7 +226,6 @@ Feature: update connector alarm
     """
     {
       "name": "test-idlerule-axe-idlerule-connector-3-name",
-      "author": "test-idlerule-axe-idlerule-connector-3-author",
       "type": "entity",
       "enabled": true,
       "priority": 60,
@@ -277,9 +269,7 @@ Feature: update connector alarm
       "source_type": "component",
       "component":  "test-component-axe-idlerule-connector-3",
       "state": 1,
-      "output": "test-output-axe-idlerule-connector-3",
-      "long_output": "test-long-output-axe-idlerule-connector-3",
-      "author": "test-author-axe-idlerule-connector-3"
+      "output": "test-output-axe-idlerule-connector-3"
     }
     """
     When I wait the end of 3 events processing
@@ -359,7 +349,6 @@ Feature: update connector alarm
     """
     {
       "name": "test-idlerule-axe-idlerule-connector-4-name",
-      "author": "test-idlerule-axe-idlerule-connector-4-author",
       "type": "entity",
       "enabled": true,
       "priority": 60,
@@ -380,7 +369,6 @@ Feature: update connector alarm
     """
     {
       "name": "test-scenario-axe-idlerule-connector-4-name",
-      "author": "test-scenario-axe-idlerule-connector-4-author",
       "enabled": true,
       "priority": 60,
       "triggers": ["create"],
@@ -393,7 +381,6 @@ Feature: update connector alarm
           ],
           "type": "assocticket",
           "parameters": {
-            "author": "test-author-axe-idlerule-connector-4",
             "output": "test-output-axe-idlerule-connector-4",
             "ticket": "test-ticket-axe-idlerule-connector-4"
           },
@@ -408,7 +395,6 @@ Feature: update connector alarm
           ],
           "type": "ack",
           "parameters": {
-            "author": "test-author-axe-idlerule-connector-4",
             "output": "test-output-axe-idlerule-connector-4"
           },
           "drop_scenario_if_not_matched": false,
@@ -428,9 +414,7 @@ Feature: update connector alarm
       "source_type": "component",
       "component":  "test-component-axe-idlerule-connector-4",
       "state": 1,
-      "output": "test-output-axe-idlerule-connector-4",
-      "long_output": "test-long-output-axe-idlerule-connector-4",
-      "author": "test-author-axe-idlerule-connector-4"
+      "output": "test-output-axe-idlerule-connector-4"
     }
     """
     When I wait the end of 2 events processing
@@ -453,12 +437,12 @@ Feature: update connector alarm
               },
               {
                 "_t": "assocticket",
-                "a": "test-author-axe-idlerule-connector-4",
+                "a": "root",
                 "m": "test-ticket-axe-idlerule-connector-4"
               },
               {
                 "_t": "ack",
-                "a": "test-author-axe-idlerule-connector-4",
+                "a": "root",
                 "m": "test-output-axe-idlerule-connector-4"
               }
             ]
@@ -480,7 +464,6 @@ Feature: update connector alarm
     """
     {
       "name": "test-idlerule-axe-idlerule-connector-5-name",
-      "author": "test-idlerule-axe-idlerule-connector-5-author",
       "type": "entity",
       "enabled": true,
       "priority": 60,
@@ -502,7 +485,6 @@ Feature: update connector alarm
     {
       "name": "test-dynamicinfos-axe-idlerule-connector-5-name",
       "description": "test-dynamicinfos-axe-idlerule-connector-5-description",
-      "author": "test-dynamicinfos-axe-idlerule-connector-5-author",
       "disable_during_periods": [],
       "entity_patterns": [
         {
@@ -526,9 +508,7 @@ Feature: update connector alarm
       "source_type": "component",
       "component":  "test-component-axe-idlerule-connector-5",
       "state": 2,
-      "output": "test-output-axe-idlerule-connector-5",
-      "long_output": "test-long-output-axe-idlerule-connector-5",
-      "author": "test-author-axe-idlerule-connector-5"
+      "output": "test-output-axe-idlerule-connector-5"
     }
     """
     When I wait the end of 2 events processing
@@ -565,7 +545,6 @@ Feature: update connector alarm
     """
     {
       "name": "test-idlerule-axe-idlerule-connector-6-name",
-      "author": "test-idlerule-axe-idlerule-connector-6-author",
       "type": "entity",
       "enabled": true,
       "priority": 44,
@@ -610,9 +589,7 @@ Feature: update connector alarm
       "source_type": "component",
       "component":  "test-component-axe-idlerule-connector-6",
       "state": 1,
-      "output": "test-output-axe-idlerule-connector-6",
-      "long_output": "test-long-output-axe-idlerule-connector-6",
-      "author": "test-author-axe-idlerule-connector-6"
+      "output": "test-output-axe-idlerule-connector-6"
     }
     """
     When I wait the end of 3 events processing
@@ -673,7 +650,6 @@ Feature: update connector alarm
     """
     {
       "name": "test-idlerule-axe-idlerule-connector-7-name",
-      "author": "test-idlerule-axe-idlerule-connector-7-author",
       "type": "entity",
       "enabled": true,
       "priority": 44,
@@ -700,9 +676,7 @@ Feature: update connector alarm
       "source_type": "component",
       "component":  "test-component-axe-idlerule-connector-7",
       "state": 1,
-      "output": "test-output-axe-idlerule-connector-7",
-      "long_output": "test-long-output-axe-idlerule-connector-7",
-      "author": "test-author-axe-idlerule-connector-7"
+      "output": "test-output-axe-idlerule-connector-7"
     }
     """
     When I wait the end of 2 events processing
@@ -713,8 +687,7 @@ Feature: update connector alarm
       "connector": "test-connector-axe-idlerule-connector-7",
       "connector_name": "test-connector-name-axe-idlerule-connector-7",
       "source_type": "connector",
-      "output": "test-output-axe-idlerule-connector-7",
-      "author": "test-author-axe-idlerule-connector-7"
+      "output": "test-output-axe-idlerule-connector-7"
     }
     """
     When I wait the end of event processing

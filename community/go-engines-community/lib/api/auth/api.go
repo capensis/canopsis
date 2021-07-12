@@ -46,7 +46,7 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 		var user *security.User
 		var err error
 		for _, p := range a.providers {
-			user, err = p.Auth(request.Username, request.Password)
+			user, err = p.Auth(c.Request.Context(), request.Username, request.Password)
 			if err != nil {
 				panic(err)
 			}
@@ -108,7 +108,7 @@ func (a *api) LogoutHandler() gin.HandlerFunc {
 // @Router /sessions-count [get]
 func (a *api) GetSessionsCount() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		count, err := a.sessionStore.GetActiveSessionsCount()
+		count, err := a.sessionStore.GetActiveSessionsCount(c.Request.Context())
 		if err != nil {
 			panic(err)
 		}

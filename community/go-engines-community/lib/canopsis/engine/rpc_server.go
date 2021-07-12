@@ -95,7 +95,7 @@ func (c *rpcServer) processMessage(ctx context.Context, d amqp.Delivery, consume
 		c.logger.Err(err).Msg("cannot ack amqp delivery")
 	}
 
-	if body != nil {
+	if body != nil && d.ReplyTo != "" {
 		err = publishCh.Publish(
 			"",        // exchange
 			d.ReplyTo, // routing key

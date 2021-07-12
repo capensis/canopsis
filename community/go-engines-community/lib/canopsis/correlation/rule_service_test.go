@@ -31,7 +31,7 @@ func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.
 		return nil, nil, nil, nil, nil, nil, err
 	}
 
-	client, err := mongo.NewClient(0, 0)
+	client, err := mongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		return nil, nil, nil, nil, nil, nil, err
 	}
@@ -39,7 +39,7 @@ func testNewMetaAlarmService() (service.MetaAlarmService, entity.Adapter, alarm.
 	alarmAdapter := alarm.NewAdapter(client)
 	entityAdapter := entity.NewAdapter(client)
 
-	dbClient, err := mongo.NewClient(0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		panic(err)
 	}
@@ -132,7 +132,7 @@ func TestProcessAttributes(t *testing.T) {
 		entity := types.Entity{ID: testEvent.GetEID()}
 		So(err, ShouldBeNil)
 
-		err = alarmAdapter.Insert(alarm)
+		err = alarmAdapter.Insert(ctx, alarm)
 		So(err, ShouldBeNil)
 
 		testEvent.Alarm = &alarm
@@ -188,7 +188,7 @@ func TestProcessAttributes(t *testing.T) {
 		alarm, err = types.NewAlarm(testEvent, c)
 		So(err, ShouldBeNil)
 
-		err = alarmAdapter.Insert(alarm)
+		err = alarmAdapter.Insert(ctx, alarm)
 		So(err, ShouldBeNil)
 
 		testEvent.Alarm = &alarm

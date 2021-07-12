@@ -43,14 +43,17 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	cfg := m.DepConfig()
+	mongoClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, mongoClient)
+	config.SetDbClientRetry(mongoClient, cfg)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
-	mongoClient := m.DepMongoClient(cfg)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	entityAdapter := entity.NewAdapter(mongoClient)
 	eventFilterAdapter := eventfilter.NewAdapter(mongoClient)
 	entityServiceAdapter := entityservice.NewAdapter(mongoClient)
 	redisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
+	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
+	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
 
 	eventFilterService := eventfilter.NewService(eventFilterAdapter, logger)
@@ -60,58 +63,86 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 		entityservice.NewManager(
 			entityServiceAdapter,
 			entityAdapter,
-			entityservice.NewStorage(m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg),
-				json.NewEncoder(), json.NewDecoder(), logger),
+			entityservice.NewStorage(serviceRedisSession, json.NewEncoder(), json.NewDecoder(), logger),
 			logger,
 		),
 		logger,
 	)
 	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
 
-	engine := libengine.New(func(ctx context.Context) error {
-		_, err := periodicalLockClient.Obtain(ctx, impactedServicesWorkerLock,
-			options.PeriodicalWaitTime, &redislock.Options{
-				RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
-			})
-		if err != nil {
-			if err == redislock.ErrNotObtained {
-				return nil
+	engine := libengine.New(
+		func(ctx context.Context) error {
+			_, err := periodicalLockClient.Obtain(ctx, impactedServicesWorkerLock,
+				options.PeriodicalWaitTime, &redislock.Options{
+					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
+				})
+			if err != nil {
+				if err == redislock.ErrNotObtained {
+					return nil
+				}
+
+				logger.Error().Err(err).Msg("cannot obtain lock")
+				return err
 			}
 
-			logger.Error().Err(err).Msg("cannot obtain lock")
-			return err
-		}
+			logger.Debug().Msg("Recompute impacted services for connectors")
+			err = enrichmentCenter.UpdateImpactedServices(ctx)
+			if err != nil {
+				logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
+			}
+			logger.Debug().Msg("Recompute impacted services for connectors finished")
 
-		logger.Debug().Msg("Recompute impacted services for connectors")
-		err = enrichmentCenter.UpdateImpactedServices(ctx)
-		if err != nil {
-			logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
-		}
-		logger.Debug().Msg("Recompute impacted services for connectors finished")
+			logger.Debug().Msg("Loading event filter data sources")
+			err = eventFilterService.LoadDataSourceFactories(
+				enrichmentCenter,
+				enrichFields,
+				options.DataSourceDirectory,
+			)
+			if err != nil {
+				return fmt.Errorf("unable to load data sources: %v", err)
+			}
 
-		logger.Debug().Msg("Loading event filter data sources")
-		err = eventFilterService.LoadDataSourceFactories(
-			enrichmentCenter,
-			enrichFields,
-			options.DataSourceDirectory,
-		)
-		if err != nil {
-			return fmt.Errorf("unable to load data sources: %v", err)
-		}
+			logger.Debug().Msg("Loading event filter rules")
+			err = eventFilterService.LoadRules(ctx)
+			if err != nil {
+				return fmt.Errorf("unable to load rules: %v", err)
+			}
 
-		logger.Debug().Msg("Loading event filter rules")
-		err = eventFilterService.LoadRules()
-		if err != nil {
-			return fmt.Errorf("unable to load rules: %v", err)
-		}
+			logger.Debug().Msg("Loading services")
+			err = enrichmentCenter.LoadServices(ctx)
+			if err != nil {
+				logger.Error().Err(err).Msg("unable to load services")
+			}
+			return nil
+		},
+		func(ctx context.Context) {
+			err := mongoClient.Disconnect(ctx)
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close mongo connection")
+			}
 
-		logger.Debug().Msg("Loading services")
-		err = enrichmentCenter.LoadServices(ctx)
-		if err != nil {
-			logger.Error().Err(err).Msg("unable to load services")
-		}
-		return nil
-	}, nil, logger)
+			err = amqpConnection.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = redisSession.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = serviceRedisSession.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = runInfoRedisSession.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+		},
+		logger,
+	)
 	engine.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.CheConsumerName,
 		options.ConsumeFromQueue,
@@ -147,7 +178,7 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 	})
 	engine.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
-		libengine.NewRunInfoManager(m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)),
+		libengine.NewRunInfoManager(runInfoRedisSession),
 		libengine.RunInfo{
 			Name:         canopsis.CheEngineName,
 			ConsumeQueue: options.ConsumeFromQueue,

@@ -20,19 +20,19 @@ Feature: get PBehavior eids
     {
       "data": [
         {
-          "id": "test-alarm-get-pbehavior-eids-1/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-1/test-alarm-pbehavior-eids-get-component"
         },
         {
-          "id": "test-alarm-get-pbehavior-eids-2/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-2/test-alarm-pbehavior-eids-get-component"
         },
         {
-          "id": "test-alarm-get-pbehavior-eids-3/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-3/test-alarm-pbehavior-eids-get-component"
         },
         {
-          "id": "test-alarm-get-pbehavior-eids-4/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-4/test-alarm-pbehavior-eids-get-component"
         },
         {
-          "id": "test-alarm-get-pbehavior-eids-5/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-5/test-alarm-pbehavior-eids-get-component"
         }
       ],
       "meta": {
@@ -52,19 +52,19 @@ Feature: get PBehavior eids
     {
       "data": [
         {
-          "id": "test-alarm-get-pbehavior-eids-1/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-1/test-alarm-pbehavior-eids-get-component"
         },
         {
-          "id": "test-alarm-get-pbehavior-eids-2/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-2/test-alarm-pbehavior-eids-get-component"
         },
         {
-          "id": "test-alarm-get-pbehavior-eids-3/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-3/test-alarm-pbehavior-eids-get-component"
         },
         {
-          "id": "test-alarm-get-pbehavior-eids-4/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-4/test-alarm-pbehavior-eids-get-component"
         },
         {
-          "id": "test-alarm-get-pbehavior-eids-5/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-5/test-alarm-pbehavior-eids-get-component"
         }
       ],
       "meta": {
@@ -84,10 +84,10 @@ Feature: get PBehavior eids
     {
       "data": [
         {
-          "id": "test-alarm-get-pbehavior-eids-1/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-1/test-alarm-pbehavior-eids-get-component"
         },
         {
-          "id": "test-alarm-get-pbehavior-eids-2/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-2/test-alarm-pbehavior-eids-get-component"
         }
       ],
       "meta": {
@@ -105,7 +105,7 @@ Feature: get PBehavior eids
     {
       "data": [
         {
-          "id": "test-alarm-get-pbehavior-eids-5/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-5/test-alarm-pbehavior-eids-get-component"
         }
       ],
       "meta": {
@@ -125,10 +125,10 @@ Feature: get PBehavior eids
     {
       "data": [
         {
-          "id": "test-alarm-get-pbehavior-eids-5/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-5/test-alarm-pbehavior-eids-get-component"
         },
         {
-          "id": "test-alarm-get-pbehavior-eids-4/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-4/test-alarm-pbehavior-eids-get-component"
         }
       ],
       "meta": {
@@ -146,10 +146,10 @@ Feature: get PBehavior eids
     {
       "data": [
         {
-          "id": "test-alarm-get-pbehavior-eids-1/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-1/test-alarm-pbehavior-eids-get-component"
         },
         {
-          "id": "test-alarm-get-pbehavior-eids-2/test-alarm-get-pbehavior-eids-component"
+          "id": "test-alarm-pbehavior-eids-get-2/test-alarm-pbehavior-eids-get-component"
         }
       ],
       "meta": {

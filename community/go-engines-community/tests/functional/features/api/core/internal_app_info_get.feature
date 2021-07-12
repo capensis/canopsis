@@ -16,8 +16,7 @@ Feature: Get application information
       "language": "en",
       "login_page_description": "Test login",
       "stack": "go",
-      "version": "3.42.0",
-      "jobexecutorfetchtimeoutseconds": 5
+      "version": "3.42.0"
     }
     """
 

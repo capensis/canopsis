@@ -1,6 +1,7 @@
 package stats
 
 import (
+	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
@@ -15,6 +16,8 @@ import (
 func TestManager_Ping(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	for name, data := range getPingDataSets() {
 		mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
@@ -30,7 +33,7 @@ func TestManager_Ping(t *testing.T) {
 		mockDbClient.EXPECT().Collection(libmongo.SessionStatsMongoCollection).Return(mockDbCollection)
 		m := NewManager(mockDbClient, time.Minute)
 
-		s, err := m.Ping(data.session, data.path)
+		s, err := m.Ping(ctx, data.session, data.path)
 
 		if err != nil {
 			t.Errorf("%s: expected no error but got %v", name, err)

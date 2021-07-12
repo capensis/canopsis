@@ -32,15 +32,10 @@ type TimezoneConf struct {
 	Timezone string `json:"timezone,omitempty" bson:"timezone"`
 }
 
-type RemediationConf struct {
-	JobExecutorFetchTimeoutSeconds int64 `json:"jobexecutorfetchtimeoutseconds,omitempty" bson:"jobexecutorfetchtimeoutseconds"`
-}
-
 type AppInfoResponse struct {
 	UserInterfaceConf
 	TimezoneConf
 	VersionConf
-	RemediationConf
 }
 
 type LoginConfig struct {

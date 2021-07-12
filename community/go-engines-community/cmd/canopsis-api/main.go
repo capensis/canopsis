@@ -33,8 +33,9 @@ func main() {
 	var flags Flags
 	flags.ParseArgs()
 	logger := liblog.NewLogger(flags.Debug)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	// Graceful shutdown.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 
 	if flags.Debug {
 		gin.SetMode(gin.DebugMode)
@@ -43,19 +44,17 @@ func main() {
 	}
 
 	// Retrieve config.
-	dbClient, err := mongo.NewClient(0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("cannot connect to mongodb")
 	}
-	cfg, err := config.NewAdapter(dbClient).GetConfig()
+	cfg, err := config.NewAdapter(dbClient).GetConfig(ctx)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("cannot load config")
 	}
+	// Set mongodb setting.
+	config.SetDbClientRetry(dbClient, cfg)
 	// Init security ACL enforcer.
-	dbClient, err = mongo.NewClient(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-	if err != nil {
-		logger.Fatal().Err(err).Msg("cannot connect to mongodb")
-	}
 	enforcer, err := libsecurity.NewEnforcer(flags.ConfigDir, dbClient)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("cannot create security enforce")
@@ -70,6 +69,14 @@ func main() {
 		enforcer,
 		nil,
 		logger,
+		func(ctx context.Context) error {
+			err := dbClient.Disconnect(ctx)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		},
 	)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("fail create api")
@@ -80,15 +87,6 @@ func main() {
 			router.GET("/swagger/*any", ginswagger.WrapHandler(swaggerfiles.Handler))
 		})
 	}
-
-	// Graceful shutdown.
-	go func() {
-		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, os.Interrupt)
-		<-sigint
-
-		cancel()
-	}()
 
 	err = api.Run(ctx)
 	if err != nil {

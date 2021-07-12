@@ -84,7 +84,7 @@ func (a ComplexApplicator) Apply(ctx context.Context, event types.Event, rule co
 					}
 
 					for mongoRetries := maxRetries; mongoRetries >= 0; mongoRetries-- {
-						metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, "")
+						metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(ctx, rule.ID, "")
 						switch err.(type) {
 						case errt.NotFound:
 							a.logger.Warn().
@@ -180,7 +180,7 @@ func (a ComplexApplicator) Apply(ctx context.Context, event types.Event, rule co
 					}
 
 					for mongoRetries := maxRetries; mongoRetries >= 0; mongoRetries-- {
-						metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, "")
+						metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(ctx, rule.ID, "")
 						switch err.(type) {
 						case errt.NotFound:
 							a.logger.Warn().
@@ -312,7 +312,7 @@ func (a ComplexApplicator) getGroupWithOpenedAlarmsWithEntity(ctx context.Contex
 		return nil, nil, err
 	}
 
-	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(alarmGroup.GetAlarmIds(), &alarms)
+	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, alarmGroup.GetAlarmIds(), &alarms)
 	if err != nil {
 		return nil, nil, err
 	}

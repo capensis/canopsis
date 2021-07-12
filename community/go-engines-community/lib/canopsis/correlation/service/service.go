@@ -141,7 +141,7 @@ func (s *service) AddChildToMetaAlarm(
 	metaAlarm.AddChild(childAlarm.EntityID)
 	childAlarm.AddParent(metaAlarm.EntityID)
 
-	childrenCount, err := s.alarmAdapter.GetCountOpenedAlarmsByIDs(metaAlarm.Value.Children)
+	childrenCount, err := s.alarmAdapter.GetCountOpenedAlarmsByIDs(ctx, metaAlarm.Value.Children)
 	if err != nil {
 		return types.Event{}, err
 	}
@@ -228,7 +228,7 @@ func (s *service) AddMultipleChildsToMetaAlarm(
 		children[i].Alarm = childAlarm
 	}
 
-	childrenCount, err := s.alarmAdapter.GetCountOpenedAlarmsByIDs(metaAlarm.Value.Children)
+	childrenCount, err := s.alarmAdapter.GetCountOpenedAlarmsByIDs(ctx, metaAlarm.Value.Children)
 	if err != nil {
 		return types.Event{}, err
 	}
@@ -278,7 +278,7 @@ func (s *service) RemoveMultipleChildToMetaAlarm(
 	}
 
 	metaAlarmChildren := make([]types.AlarmWithEntity, 0)
-	err := s.alarmAdapter.GetOpenedAlarmsWithEntityByIDs(metaAlarm.Value.Children, &metaAlarmChildren)
+	err := s.alarmAdapter.GetOpenedAlarmsWithEntityByIDs(ctx, metaAlarm.Value.Children, &metaAlarmChildren)
 	if err != nil {
 		return types.Event{}, err
 	}

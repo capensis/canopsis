@@ -2,13 +2,14 @@ package role
 
 import (
 	"context"
+	"sort"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"sort"
 )
 
 type Store interface {
@@ -53,6 +54,9 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
+	if r.Permission != "" {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
+	}
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,

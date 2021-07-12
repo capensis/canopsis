@@ -161,7 +161,7 @@ func (a CorelApplicator) Apply(ctx context.Context, event types.Event, rule corr
 			}
 
 			// get updated alarms for alarm groups
-			err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(childrenGroup.GetAlarmIds(), &childrenOpenedAlarms)
+			err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, childrenGroup.GetAlarmIds(), &childrenOpenedAlarms)
 			if err != nil {
 				return err
 			}
@@ -173,13 +173,16 @@ func (a CorelApplicator) Apply(ctx context.Context, event types.Event, rule corr
 				parentId = parentIds[0]
 			}
 
-			err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs([]string{parentId}, &parentOpenedAlarms)
+			err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, []string{parentId}, &parentOpenedAlarms)
 			if err != nil {
 				return err
 			}
 
 			// update groups
 			err = a.storage.SetMany(ctx, tx, timeInterval, parentGroup, childrenGroup)
+			if err != nil {
+				return err
+			}
 
 			if childrenGroup.GetGroupLength() < childrenThreshold {
 				return nil
@@ -267,7 +270,7 @@ func (a CorelApplicator) getGroupWithOpenedAlarmsWithEntity(ctx context.Context,
 		return nil, nil, err
 	}
 
-	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(alarmGroup.GetAlarmIds(), &alarms)
+	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, alarmGroup.GetAlarmIds(), &alarms)
 	if err != nil {
 		return nil, nil, err
 	}

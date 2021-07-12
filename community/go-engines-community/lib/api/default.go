@@ -42,15 +42,16 @@ func Default(
 	enforcer libsecurity.Enforcer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	logger zerolog.Logger,
+	deferFunc DeferFunc,
 ) (API, error) {
 	// Retrieve config.
-	dbClient, err := mongo.NewClient(0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0)
 	if err != nil {
 		logger.Err(err).Msg("cannot connect to mongodb")
 		return nil, err
 	}
 	configAdapter := config.NewAdapter(dbClient)
-	cfg, err := configAdapter.GetConfig()
+	cfg, err := configAdapter.GetConfig(ctx)
 	if err != nil {
 		logger.Err(err).Msg("cannot load config")
 		return nil, err
@@ -58,15 +59,8 @@ func Default(
 	if timezoneConfigProvider == nil {
 		timezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
 	}
-	// Connect to mongodb.
-	dbClient, err = mongo.NewClient(
-		cfg.Global.ReconnectRetries,
-		cfg.Global.GetReconnectTimeout(),
-	)
-	if err != nil {
-		logger.Err(err).Msg("cannot connect to mongodb")
-		return nil, err
-	}
+	// Set mongodb setting.
+	config.SetDbClientRetry(dbClient, cfg)
 	// Connect to rmq.
 	amqpConn, err := amqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
 	if err != nil {
@@ -134,7 +128,7 @@ func Default(
 	)
 
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
-	userInterfaceConfig, err := userInterfaceAdapter.GetConfig()
+	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 	if err != nil && err != mongodriver.ErrNoDocuments {
 		return nil, err
 	}
@@ -144,7 +138,43 @@ func Default(
 	exportExecutor := export.NewTaskExecutor(dbClient, logger)
 
 	// Create api.
-	api := New(addr, logger)
+	api := New(
+		addr,
+		func(ctx context.Context) error {
+			close(pbhComputeChan)
+			close(entityPublChan)
+
+			var resErr error
+			err := dbClient.Disconnect(ctx)
+			if err != nil && resErr == nil {
+				resErr = err
+			}
+			err = amqpConn.Close()
+			if err != nil && resErr == nil {
+				resErr = err
+			}
+
+			err = pbhRedisSession.Close()
+			if err != nil && resErr == nil {
+				resErr = err
+			}
+
+			err = engineRedisSession.Close()
+			if err != nil && resErr == nil {
+				resErr = err
+			}
+
+			if deferFunc != nil {
+				err := deferFunc(ctx)
+				if err != nil && resErr == nil {
+					resErr = err
+				}
+			}
+
+			return resErr
+		},
+		logger,
+	)
 	api.AddRouter(func(router gin.IRouter) {
 		corsConfig := cors.DefaultConfig()
 		corsConfig.AllowAllOrigins = true
@@ -218,7 +248,7 @@ func Default(
 		for {
 			select {
 			case <-ticker.C:
-				cfg, err := configAdapter.GetConfig()
+				cfg, err := configAdapter.GetConfig(ctx)
 				if err != nil {
 					logger.Err(err).Msg("fail to load config")
 					continue
@@ -230,7 +260,7 @@ func Default(
 					continue
 				}
 
-				userInterfaceConfig, err = userInterfaceAdapter.GetConfig()
+				userInterfaceConfig, err = userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {
 					logger.Err(err).Msg("fail to load user interface config")
 					continue

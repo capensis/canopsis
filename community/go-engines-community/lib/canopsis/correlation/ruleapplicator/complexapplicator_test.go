@@ -163,13 +163,13 @@ func TestRuleMatch(t *testing.T) {
 					}
 
 					entity1 := types.NewEntity("testResource1/testComponent", "testResource", "resource", nil, nil, nil)
-					err = entityAdapter.Insert(entity1)
+					err = entityAdapter.Insert(ctx, entity1)
 					So(err, ShouldBeNil)
 
 					alarm1, err := types.NewAlarm(testEvent, c)
 					So(err, ShouldBeNil)
 
-					err = alarmAdapter.Insert(alarm1)
+					err = alarmAdapter.Insert(ctx, alarm1)
 					So(err, ShouldBeNil)
 
 					testEvent.Alarm = &alarm1
@@ -218,13 +218,13 @@ func TestRuleMatch(t *testing.T) {
 					}
 
 					entity2 := types.NewEntity("testResource2/testComponent", "testResource", "resource", nil, nil, nil)
-					err = entityAdapter.Insert(entity2)
+					err = entityAdapter.Insert(ctx, entity2)
 					So(err, ShouldBeNil)
 
 					alarm2, err := types.NewAlarm(testEvent, c)
 					So(err, ShouldBeNil)
 
-					err = alarmAdapter.Insert(alarm2)
+					err = alarmAdapter.Insert(ctx, alarm2)
 					So(err, ShouldBeNil)
 
 					testEvent.Alarm = &alarm2
@@ -264,13 +264,13 @@ func TestRuleMatch(t *testing.T) {
 				}
 
 				entity3 := types.NewEntity("testResource3/testComponent", "testResource", "resource", nil, nil, nil)
-				err = entityAdapter.Insert(entity3)
+				err = entityAdapter.Insert(ctx, entity3)
 				So(err, ShouldBeNil)
 
 				alarm3, err := types.NewAlarm(testEvent1, c)
 				So(err, ShouldBeNil)
 
-				err = alarmAdapter.Insert(alarm3)
+				err = alarmAdapter.Insert(ctx, alarm3)
 				So(err, ShouldBeNil)
 
 				testEvent1.Alarm = &alarm3
@@ -289,13 +289,13 @@ func TestRuleMatch(t *testing.T) {
 				}
 
 				entity4 := types.NewEntity("testResource4/testComponent", "testResource", "resource", nil, nil, nil)
-				err = entityAdapter.Insert(entity4)
+				err = entityAdapter.Insert(ctx, entity4)
 				So(err, ShouldBeNil)
 
 				alarm4, err := types.NewAlarm(testEvent4, c)
 				So(err, ShouldBeNil)
 
-				err = alarmAdapter.Insert(alarm4)
+				err = alarmAdapter.Insert(ctx, alarm4)
 				So(err, ShouldBeNil)
 
 				testEvent4.Alarm = &alarm4
@@ -309,7 +309,7 @@ func TestRuleMatch(t *testing.T) {
 
 				time.Sleep(time.Second * 3)
 
-				err = alarmAdapter.Insert(types.Alarm{
+				err = alarmAdapter.Insert(ctx, types.Alarm{
 					ID:       "",
 					Time:     types.CpsTime{},
 					EntityID: "",
@@ -345,13 +345,13 @@ func TestRuleMatch(t *testing.T) {
 				}
 
 				entity5 := types.NewEntity("testResource5/testComponent", "testResource", "resource", nil, nil, nil)
-				err = entityAdapter.Insert(entity5)
+				err = entityAdapter.Insert(ctx, entity5)
 				So(err, ShouldBeNil)
 
 				alarm5, err := types.NewAlarm(testEvent5, c)
 				So(err, ShouldBeNil)
 
-				err = alarmAdapter.Insert(alarm5)
+				err = alarmAdapter.Insert(ctx, alarm5)
 				So(err, ShouldBeNil)
 
 				testEvent5.Alarm = &alarm5
@@ -370,13 +370,13 @@ func TestRuleMatch(t *testing.T) {
 				}
 
 				entity6 := types.NewEntity("testResource6/testComponent", "testResource", "resource", nil, nil, nil)
-				err = entityAdapter.Insert(entity6)
+				err = entityAdapter.Insert(ctx, entity6)
 				So(err, ShouldBeNil)
 
 				alarm6, err := types.NewAlarm(testEvent6, c)
 				So(err, ShouldBeNil)
 
-				err = alarmAdapter.Insert(alarm6)
+				err = alarmAdapter.Insert(ctx, alarm6)
 				So(err, ShouldBeNil)
 
 				testEvent6.Alarm = &alarm6

@@ -4,7 +4,7 @@ Feature: create a job's config
 
   Scenario: POST a valid job's config but unauthorized
     When I do POST /api/v4/cat/job-configs:
-    """
+    """json
     {
       "name": "test-job-config-name",
       "host": "http://example.com",
@@ -17,7 +17,7 @@ Feature: create a job's config
   Scenario: POST a valid job's config but without permissions
     When I am noperms
     When I do POST /api/v4/cat/job-configs:
-    """
+    """json
     {
       "name": "test-job-config-name",
       "host": "http://example.com",
@@ -30,7 +30,7 @@ Feature: create a job's config
   Scenario: POST a valid job's config
     When I am admin
     When I do POST /api/v4/cat/job-configs:
-    """
+    """json
     {
       "name": "test-job-config-name",
       "host": "http://example.com",
@@ -40,12 +40,15 @@ Feature: create a job's config
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "name": "test-job-config-name",
       "host": "http://example.com",
       "type": "rundeck",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "auth_token": "test-auth-token"
     }
     """
@@ -53,7 +56,7 @@ Feature: create a job's config
   Scenario: POST a valid job's config
     When I am admin
     When I do POST /api/v4/cat/job-configs:
-    """
+    """json
     {
       "name": "test-job-config-name-2",
       "host": "http://example.com",
@@ -68,7 +71,7 @@ Feature: create a job's config
   Scenario: POST a valid job's config with custom id
     When I am admin
     When I do POST /api/v4/cat/job-configs:
-    """
+    """json
     {
       "_id": "custom-id",
       "name": "test-job-config-name-2-custom-id-1",
@@ -84,7 +87,7 @@ Feature: create a job's config
   Scenario: POST a valid job's config with custom id that already exist should cause dup error
     When I am admin
     When I do POST /api/v4/cat/job-configs:
-    """
+    """json
     {
       "_id": "test-job-config-to-update",
       "name": "test-job-config-name-2-custom-id-2",
@@ -95,7 +98,7 @@ Feature: create a job's config
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "_id": "ID already exists."
@@ -106,13 +109,13 @@ Feature: create a job's config
   Scenario: POST an invalid job's config, where required fields are empty
     When I am admin
     When I do POST /api/v4/cat/job-configs:
-    """
+    """json
     {
     }
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "auth_token": "AuthToken is missing.",
@@ -126,7 +129,7 @@ Feature: create a job's config
   Scenario: POST an invalid job's config, where host is not an url
     When I am admin
     When I do POST /api/v4/cat/job-configs:
-    """
+    """json
     {
       "name": "test-job-config-name-3",
       "host": "abc",
@@ -136,7 +139,7 @@ Feature: create a job's config
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "host": "abc is not an url."
@@ -147,7 +150,7 @@ Feature: create a job's config
   Scenario: POST an invalid job's config, where type is not valid
     When I am admin
     When I do POST /api/v4/cat/job-configs:
-    """
+    """json
     {
       "name": "test-job-config-name-3",
       "host": "http://example.com",
@@ -157,7 +160,7 @@ Feature: create a job's config
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "type": "Type must be one of [awx, rundeck]."

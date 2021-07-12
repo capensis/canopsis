@@ -21,8 +21,8 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *periodicalWorker) Work(ctx context.Context) error {
-	ctx, task := trace.NewTask(ctx, "service.PeriodicalWorker")
+func (w *periodicalWorker) Work(parentCtx context.Context) error {
+	ctx, task := trace.NewTask(parentCtx, "service.PeriodicalWorker")
 	defer task.End()
 
 	// Lock periodical, do not release lock to not allow another instance start periodical.

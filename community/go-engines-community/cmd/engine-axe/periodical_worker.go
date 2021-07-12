@@ -37,7 +37,10 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *periodicalWorker) Work(ctx context.Context) error {
+func (w *periodicalWorker) Work(parentCtx context.Context) error {
+	ctx, task := trace.NewTask(parentCtx, "axe.PeriodicalProcess")
+	defer task.End()
+
 	_, err := w.LockerClient.Obtain(ctx, PeriodicalLockKey, w.GetInterval(), nil)
 	if err == redislock.ErrNotObtained {
 		w.Logger.Debug().Msg("Could not obtain lock! Skip periodical process")
@@ -48,9 +51,6 @@ func (w *periodicalWorker) Work(ctx context.Context) error {
 
 		return nil
 	}
-
-	ctx, task := trace.NewTask(context.Background(), "axe.PeriodicalProcess")
-	defer task.End()
 
 	idleCtx, cancel := context.WithTimeout(ctx, w.GetInterval())
 	defer cancel()

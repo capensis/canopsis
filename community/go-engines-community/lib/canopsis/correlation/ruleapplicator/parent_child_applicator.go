@@ -25,7 +25,7 @@ func (a ParentChildApplicator) Apply(ctx context.Context, event types.Event, rul
 			return nil, nil
 		}
 
-		resourceAlarms, err := a.alarmAdapter.GetAllOpenedResourceAlarmsByComponent(event.Component)
+		resourceAlarms, err := a.alarmAdapter.GetAllOpenedResourceAlarmsByComponent(ctx, event.Component)
 		if err != nil {
 			return nil, err
 		}
@@ -45,7 +45,7 @@ func (a ParentChildApplicator) Apply(ctx context.Context, event types.Event, rul
 
 	if event.SourceType == types.SourceTypeResource {
 		// Check if component alarm exists and if it's already a meta-alarm
-		componentAlarm, err := a.alarmAdapter.GetLastAlarm(event.Connector, event.ConnectorName, event.Component)
+		componentAlarm, err := a.alarmAdapter.GetLastAlarm(ctx, event.Connector, event.ConnectorName, event.Component)
 		if err != nil {
 			if _, ok := err.(errt.NotFound); !ok {
 				return nil, err

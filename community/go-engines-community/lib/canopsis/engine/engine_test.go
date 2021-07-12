@@ -25,7 +25,7 @@ func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 	defer close(done)
 
 	mockPeriodicalWorker := mock_engine.NewMockPeriodicalWorker(ctrl)
-	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval)
+	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval).AnyTimes()
 	workTimes := make([]time.Time, 0)
 	mockPeriodicalWorker.EXPECT().Work(gomock.Any()).
 		Do(func(_ context.Context) {

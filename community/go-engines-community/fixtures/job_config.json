@@ -3,7 +3,7 @@
     "_id": "test-job-config-to-get",
     "name": "test-job-config-name-to-get",
     "type": "rundeck",
-    "author": "test-author",
+    "author": "test-user-author-1-id",
     "host": "http://example.com",
     "auth_token": "test-auth-token",
     "created": 1596550518
@@ -12,7 +12,7 @@
     "_id": "test-job-config-to-update",
     "name": "test-job-config-name-to-update",
     "type": "rundeck",
-    "author": "test-author",
+    "author": "test-user-author-1-id",
     "host": "http://example.com",
     "auth_token": "test-auth-token",
     "created": 1596550518
@@ -21,27 +21,63 @@
     "_id": "test-job-config-to-delete",
     "name": "test-job-config-name-to-delete",
     "type": "rundeck",
-    "author": "test-author",
+    "author": "test-user-author-1-id",
     "host": "http://example.com",
     "auth_token": "test-auth-token",
     "created": 1596550518
   },
   {
-    "_id": "test-job-config-to-link",
-    "name": "test-job-config-name-to-link",
+    "_id": "test-job-config-to-check-linked",
+    "name": "test-job-config-to-check-linked-name",
     "type": "rundeck",
-    "author": "test-author",
+    "author": "test-user-author-1-id",
     "host": "http://example.com",
     "auth_token": "test-auth-token",
     "created": 1596550518
   },
   {
-    "_id": "test-job-config-running",
-    "name": "test-job-config-running",
+    "_id": "test-job-config-to-edit-job",
+    "name": "test-job-config-to-edit-job-name",
     "type": "rundeck",
-    "author": "test-author",
+    "author": "test-user-author-1-id",
     "host": "http://example.com",
     "auth_token": "test-auth-token",
+    "created": 1596550518
+  },
+  {
+    "_id": "test-job-config-to-edit-instruction",
+    "name": "test-job-config-to-edit-instruction-name",
+    "type": "rundeck",
+    "author": "test-user-author-1-id",
+    "host": "http://example.com",
+    "auth_token": "test-auth-token",
+    "created": 1596550518
+  },
+  {
+    "_id": "test-jobconfig-to-execution-get",
+    "name": "test-jobconfig-to-execution-get-name",
+    "type": "rundeck",
+    "author": "test-user-author-1-id",
+    "host": "http://example.com",
+    "auth_token": "test-auth-token",
+    "created": 1596550518
+  },
+  {
+    "_id": "test-job-config-to-run-auto-instruction",
+    "name": "test-job-config-to-run-auto-instruction-name",
+    "type": "rundeck",
+    "author": "test-user-author-1-id",
+    "host": "http://localhost:3000",
+    "auth_token": "test-job-config-to-run-auto-instruction-token",
+    "created": 1596550518
+  },
+  {
+    "_id": "test-job-config-to-run-manual-job",
+    "name": "test-job-config-to-run-manual-job-name",
+    "type": "rundeck",
+    "author": "test-user-author-1-id",
+    "host": "http://localhost:3000",
+    "auth_token": "test-job-config-to-run-manual-job-token",
     "created": 1596550518
   }
 ]

@@ -91,7 +91,7 @@ func (a ValueApplicator) Apply(ctx context.Context, event types.Event, rule corr
 					}
 
 					for mongoRetries := maxRetries; mongoRetries >= 0; mongoRetries-- {
-						metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, valuePath)
+						metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(ctx, rule.ID, valuePath)
 						switch err.(type) {
 						case errt.NotFound:
 							a.logger.Warn().
@@ -200,7 +200,7 @@ func (a ValueApplicator) Apply(ctx context.Context, event types.Event, rule corr
 					}
 
 					for mongoRetries := maxRetries; mongoRetries >= 0; mongoRetries-- {
-						metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, valuePath)
+						metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(ctx, rule.ID, valuePath)
 						switch err.(type) {
 						case errt.NotFound:
 							a.logger.Warn().
@@ -305,7 +305,7 @@ func (a ValueApplicator) getGroupWithOpenedAlarmsWithEntity(ctx context.Context,
 		return nil, nil, err
 	}
 
-	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(alarmGroup.GetAlarmIds(), &alarms)
+	err = a.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, alarmGroup.GetAlarmIds(), &alarms)
 	if err != nil {
 		return nil, nil, err
 	}

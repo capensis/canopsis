@@ -16,6 +16,9 @@ import (
 func TestPeriodicalWorker_Work_GivenObtainedLock_ShouldDoWork(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	mockLockClient := mock_redis.NewMockLockClient(ctrl)
 	mockAlarmService := mock_alarm.NewMockService(ctrl)
 	mockIdleAlarmService := mock_idlealarm.NewMockService(ctrl)
@@ -49,12 +52,15 @@ func TestPeriodicalWorker_Work_GivenObtainedLock_ShouldDoWork(t *testing.T) {
 	mockAlarmService.EXPECT().UpdateFlappingAlarms(gomock.Any(), gomock.Eq(alarmConfig))
 	mockIdleAlarmService.EXPECT().Process(gomock.Any())
 
-	_ = worker.Work(context.Background())
+	_ = worker.Work(ctx)
 }
 
 func TestPeriodicalWorker_Work_GivenNotObtainedLock_ShouldDoNotAnything(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	mockLockClient := mock_redis.NewMockLockClient(ctrl)
 	mockService := mock_alarm.NewMockService(ctrl)
 	interval := time.Minute
@@ -70,5 +76,5 @@ func TestPeriodicalWorker_Work_GivenNotObtainedLock_ShouldDoNotAnything(t *testi
 
 	mockService.EXPECT().ResolveAlarms(gomock.Any(), gomock.Any()).Times(0)
 
-	_ = worker.Work(context.Background())
+	_ = worker.Work(ctx)
 }

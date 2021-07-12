@@ -1,70 +1,113 @@
 [
   {
-    "_id": "test-instruction-to-get",
-    "name": "test-instruction-to-get-name",
+    "_id": "test-instruction-to-get-1",
+    "type": 0,
+    "name": "test-instruction-to-get-1-name",
     "entity_patterns": [
       {
         "name": "test filter"
       }
     ],
-    "description": "test-instruction-to-get-description",
-    "author": "test-instruction-to-get-author",
+    "description": "test-instruction-to-get-1-description",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
     "steps": [
       {
-        "_id": "test-instruction-to-get-step-1",
-        "name": "test-instruction-to-get-step-1-name",
+        "_id": "test-instruction-to-get-1-step-1",
+        "name": "test-instruction-to-get-1-step-1-name",
         "operations": [
           {
-            "_id": "test-instruction-to-get-step-1-operation-1",
-            "name": "test-instruction-to-get-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-1-description",
+            "_id": "test-instruction-to-get-1-step-1-operation-1",
+            "name": "test-instruction-to-get-1-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-get-1-step-1-operation-1-description",
             "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-1-operation-1-2"
+              "test-job-to-instruction-edit-1",
+              "test-job-to-instruction-edit-2"
             ]
           },
           {
-            "_id": "test-instruction-to-get-step-1-operation-2",
-            "name": "test-instruction-to-get-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-2-description",
+            "_id": "test-instruction-to-get-1-step-1-operation-2",
+            "name": "test-instruction-to-get-1-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-get-1-step-1-operation-2-description",
             "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-2-1"
+              "test-job-to-instruction-edit-2"
             ]
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-1-endpoint"
+        "endpoint": "test-instruction-to-get-1-step-1-endpoint"
       },
       {
-        "_id": "test-instruction-to-get-step-2",
-        "name": "test-instruction-to-get-step-2-name",
+        "_id": "test-instruction-to-get-1-step-2",
+        "name": "test-instruction-to-get-1-step-2-name",
         "operations": [
           {
-            "_id": "test-instruction-to-get-step-2-operation-1",
-            "name": "test-instruction-to-get-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-to-get-step-2-operation-1-description",
+            "_id": "test-instruction-to-get-1-step-2-operation-1",
+            "name": "test-instruction-to-get-1-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-get-1-step-2-operation-1-description",
             "jobs": [
-              "test-job-to-test-instruction-to-get-step-2-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-2-operation-1-2"
+              "test-job-to-instruction-edit-2",
+              "test-job-to-instruction-edit-1"
             ]
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-2-endpoint"
+        "endpoint": "test-instruction-to-get-1-step-2-endpoint"
       }
     ],
-    "last_executed_by": "root",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
-    "created": 1000000000
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-get-2",
+    "type": 1,
+    "name": "test-instruction-to-get-2-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-get-2-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "jobs": [
+      {
+        "job": "test-job-to-instruction-edit-1",
+        "stop_on_fail": true
+      },
+      {
+        "job": "test-job-to-instruction-edit-2"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 0,
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1596712203
   },
   {
     "_id": "test-instruction-to-delete",
+    "type": 0,
     "name": "test-instruction-to-delete-name",
     "entity_patterns": [
       {
@@ -72,9 +115,8 @@
       }
     ],
     "description": "test-instruction-to-delete-description",
-    "author": "test-instruction-to-delete-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
     "steps": [
       {
         "_id": "test-instruction-to-delete-step-1",
@@ -83,7 +125,10 @@
           {
             "_id": "test-instruction-to-delete-step-1-operation-1",
             "name": "test-instruction-to-delete-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
             "description": "test-instruction-to-delete-step-1-operation-1-description",
             "jobs": []
           }
@@ -92,13 +137,17 @@
         "endpoint": "test-instruction-to-delete-step-1-endpoint"
       }
     ],
-    "last_executed_by": "root",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000001
   },
   {
     "_id": "test-instruction-to-update",
+    "type": 0,
     "name": "test-instruction-to-update-name",
     "entity_patterns": [
       {
@@ -106,9 +155,8 @@
       }
     ],
     "description": "test-instruction-to-update-description",
-    "author": "test-instruction-to-update-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
     "steps": [
       {
         "_id": "test-instruction-to-update-step-1",
@@ -117,7 +165,10 @@
           {
             "_id": "test-instruction-to-update-step-1-operation-1",
             "name": "test-instruction-to-update-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
             "description": "test-instruction-to-update-step-1-operation-1-description",
             "jobs": []
           }
@@ -126,13 +177,590 @@
         "endpoint": "test-instruction-to-update-step-1-endpoint"
       }
     ],
+    "timeout_after_execution": {
+      "seconds": 10,
+      "unit": "m"
+    },
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000002
+  },
+  {
+    "_id": "test-instruction-to-update-with-approval",
+    "type": 0,
+    "name": "test-instruction-to-update-with-approval-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-update-with-approval-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "avg_complete_time": 10,
+    "steps": [
+      {
+        "_id": "test-instruction-to-update-with-approval-step-1",
+        "name": "test-instruction-to-update-with-approval-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-update-with-approval-step-1-operation-1",
+            "name": "test-instruction-to-update-with-approval-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-update-with-approval-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-update-with-approval-step-1-endpoint"
+      }
+    ],
     "last_executed_by": "root",
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000002
   },
   {
+    "_id": "test-instruction-to-update-with-approval-2",
+    "type": 0,
+    "name": "test-instruction-to-update-with-approval-2-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-update-with-approval-2-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "avg_complete_time": 10,
+    "steps": [
+      {
+        "_id": "test-instruction-to-update-with-approval-2-step-1",
+        "name": "test-instruction-to-update-with-approval-2-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-update-with-approval-2-step-1-operation-1",
+            "name": "test-instruction-to-update-with-approval-2-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-update-with-approval-2-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-update-with-approval-2-step-1-endpoint"
+      }
+    ],
+    "last_executed_by": "root",
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000002
+  },
+  {
+    "_id": "test-instruction-to-update-with-approval-3",
+    "type": 0,
+    "name": "test-instruction-to-update-with-approval-3-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-update-with-approval-3-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "avg_complete_time": 10,
+    "steps": [
+      {
+        "_id": "test-instruction-to-update-with-approval-3-step-1",
+        "name": "test-instruction-to-update-with-approval-3-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-update-with-approval-3-step-1-operation-1",
+            "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-update-with-approval-3-step-1-endpoint"
+      }
+    ],
+    "last_executed_by": "root",
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000002
+  },
+  {
+    "_id": "test-instruction-to-update-with-approval-4",
+    "type": 0,
+    "name": "test-instruction-to-update-with-approval-4-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-update-with-approval-4-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "avg_complete_time": 10,
+    "steps": [
+      {
+        "_id": "test-instruction-to-update-with-approval-4-step-1",
+        "name": "test-instruction-to-update-with-approval-4-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-update-with-approval-4-step-1-operation-1",
+            "name": "test-instruction-to-update-with-approval-4-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-update-with-approval-4-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-update-with-approval-4-step-1-endpoint"
+      }
+    ],
+    "last_executed_by": "root",
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000002
+  },
+  {
+    "_id": "test-instruction-to-update-with-approval-5",
+    "type": 0,
+    "name": "test-instruction-to-update-with-approval-5-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-update-with-approval-5-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "avg_complete_time": 10,
+    "steps": [
+      {
+        "_id": "test-instruction-to-update-with-approval-5-step-1",
+        "name": "test-instruction-to-update-with-approval-5-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-update-with-approval-5-step-1-operation-1",
+            "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-update-with-approval-5-step-1-endpoint"
+      }
+    ],
+    "last_executed_by": "root",
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000002
+  },
+  {
+    "_id": "test-instruction-to-update-with-approval-6",
+    "type": 0,
+    "name": "test-instruction-to-update-with-approval-6-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-update-with-approval-6-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "avg_complete_time": 10,
+    "steps": [
+      {
+        "_id": "test-instruction-to-update-with-approval-6-step-1",
+        "name": "test-instruction-to-update-with-approval-6-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-update-with-approval-6-step-1-operation-1",
+            "name": "test-instruction-to-update-with-approval-6-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-update-with-approval-6-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-update-with-approval-6-step-1-endpoint"
+      }
+    ],
+    "last_executed_by": "root",
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000002
+  },
+  {
+    "_id": "test-instruction-to-update-with-approval-7",
+    "type": 0,
+    "name": "test-instruction-to-update-with-approval-7-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-update-with-approval-7-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "avg_complete_time": 10,
+    "steps": [
+      {
+        "_id": "test-instruction-to-update-with-approval-7-step-1",
+        "name": "test-instruction-to-update-with-approval-7-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-update-with-approval-7-step-1-operation-1",
+            "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-update-with-approval-7-step-1-endpoint"
+      }
+    ],
+    "last_executed_by": "root",
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000002
+  },
+  {
+    "_id": "test-instruction-to-update-with-approval-8",
+    "type": 0,
+    "name": "test-instruction-to-update-with-approval-8-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-update-with-approval-8-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "avg_complete_time": 10,
+    "steps": [
+      {
+        "_id": "test-instruction-to-update-with-approval-8-step-1",
+        "name": "test-instruction-to-update-with-approval-8-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-update-with-approval-8-step-1-operation-1",
+            "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-update-with-approval-8-step-1-endpoint"
+      }
+    ],
+    "last_executed_by": "root",
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000002
+  },
+  {
+    "_id": "test-instruction-to-update-with-approval-9",
+    "type": 0,
+    "name": "test-instruction-to-update-with-approval-9-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-update-with-approval-9-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "avg_complete_time": 10,
+    "steps": [
+      {
+        "_id": "test-instruction-to-update-with-approval-9-step-1",
+        "name": "test-instruction-to-update-with-approval-9-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-update-with-approval-9-step-1-operation-1",
+            "name": "test-instruction-to-update-with-approval-9-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-update-with-approval-9-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-update-with-approval-9-step-1-endpoint"
+      }
+    ],
+    "last_executed_by": "root",
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000002
+  },
+  {
+    "_id": "test-instruction-to-update-w-approval-should-cancel-execution",
+    "type": 0,
+    "name": "test-instruction-to-update-w-approval-should-cancel-execution-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-update-w-approval-should-cancel-execution-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "avg_complete_time": 10,
+    "steps": [
+      {
+        "_id": "test-instruction-to-update-w-approval-should-cancel-execution-step-1",
+        "name": "test-instruction-to-update-w-approval-should-cancel-execution-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1",
+            "name": "test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-update-w-approval-should-cancel-execution-step-1-endpoint"
+      }
+    ],
+    "last_executed_by": "root",
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000002
+  },
+  {
+    "_id": "test-instruction-to-update-w-approval-should-cancel-execution-updated",
+    "original_id": "test-instruction-to-update-w-approval-should-cancel-execution",
+    "type": 0,
+    "name": "test-instruction-to-update-w-approval-should-cancel-execution-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-update-w-approval-should-cancel-execution-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "status": 2,
+    "avg_complete_time": 10,
+    "steps": [
+      {
+        "_id": "test-instruction-to-update-w-approval-should-cancel-execution-step-1",
+        "name": "test-instruction-to-update-w-approval-should-cancel-execution-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1",
+            "name": "test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "new endpoint"
+      }
+    ],
+    "approval": {
+      "requested_by": "root",
+      "user": "approveruser",
+      "comment": "test"
+    },
+    "last_executed_by": "root",
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000002
+  },
+  {
+    "_id": "test-instruction-to-check-unique-id",
+    "type": 0,
+    "name": "test-instruction-to-check-unique-id-name",
+    "entity_patterns": [
+      {
+        "name": "test-instruction-to-check-unique-id-pattern"
+      }
+    ],
+    "description": "test-instruction-to-check-unique-id-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-check-unique-id-step-1",
+        "name": "test-instruction-to-check-unique-id-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-check-unique-id-step-1-operation-1",
+            "name": "test-instruction-to-check-unique-id-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-check-unique-id-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-check-unique-id-step-1-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000001
+  },
+  {
+    "_id": "test-instruction-to-check-unique-name",
+    "type": 0,
+    "name": "test-instruction-to-check-unique-name-name",
+    "entity_patterns": [
+      {
+        "name": "test-instruction-to-check-unique-name-pattern"
+      }
+    ],
+    "description": "test-instruction-to-check-unique-name-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-check-unique-name-step-1",
+        "name": "test-instruction-to-check-unique-name-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-check-unique-name-step-1-operation-1",
+            "name": "test-instruction-to-check-unique-name-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-check-unique-name-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-check-unique-name-step-1-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000001
+  },
+  {
+    "_id": "test-instruction-to-job-check-linked-1",
+    "type": 0,
+    "name": "test-instruction-to-job-check-linked-1-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-job-check-linked-1-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-job-check-linked-1-step-1",
+        "name": "test-instruction-to-job-check-linked-1-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-job-check-linked-1-step-1-operation-1",
+            "name": "test-instruction-to-job-check-linked-1-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-job-check-linked-1-step-1-operation-1-description",
+            "jobs": [
+              "test-job-to-check-linked-to-manual-instruction"
+            ]
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-job-check-linked-1-step-1-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000000
+  },
+  {
+    "_id": "test-instruction-to-job-check-linked-2",
+    "type": 1,
+    "name": "test-instruction-to-job-check-linked-2-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-job-check-linked-2-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "jobs": [
+      {
+        "job": "test-job-to-check-linked-to-auto-instruction"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 1,
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000000
+  },
+  {
     "_id": "test-instruction-execution-to-start-multiple-times",
+    "type": 0,
     "name": "test-instruction-execution-to-start-multiple-times-name",
     "alarm_patterns": [
       {
@@ -140,9 +768,8 @@
       }
     ],
     "description": "test-instruction-execution-to-start-multiple-times-description",
-    "author": "test-instruction-execution-to-start-multiple-times-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
     "steps": [
       {
         "_id": "test-instruction-execution-to-start-multiple-times-step-1",
@@ -151,14 +778,20 @@
           {
             "_id": "test-instruction-execution-to-start-multiple-times-step-1-operation-1",
             "name": "test-instruction-execution-to-start-multiple-times-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
             "description": "test-instruction-execution-to-start-multiple-times-step-1-operation-1-description",
             "jobs": []
           },
           {
             "_id": "test-instruction-execution-to-start-multiple-times-step-1-operation-2",
             "name": "test-instruction-execution-to-start-multiple-times-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
             "description": "test-instruction-execution-to-start-multiple-times-step-1-operation-2-description",
             "jobs": []
           }
@@ -173,7 +806,10 @@
           {
             "_id": "test-instruction-execution-to-start-multiple-times-step-2-operation-1",
             "name": "test-instruction-execution-to-start-multiple-times-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
             "description": "test-instruction-execution-to-start-multiple-times-step-2-operation-1-description",
             "jobs": []
           }
@@ -182,13 +818,17 @@
         "endpoint": "test-instruction-execution-to-start-multiple-times-step-2-endpoint"
       }
     ],
-    "last_executed_by": "root",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000003
   },
   {
     "_id": "test-instruction-execution-running",
+    "type": 0,
     "name": "test-instruction-execution-running-name",
     "entity_patterns": [
       {
@@ -196,9 +836,8 @@
       }
     ],
     "description": "test-instruction-execution-running-description",
-    "author": "test-instruction-execution-running-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
     "steps": [
       {
         "_id": "test-instruction-execution-running-step-1",
@@ -207,14 +846,22 @@
           {
             "_id": "test-instruction-execution-running-step-1-operation-1",
             "name": "test-instruction-execution-running-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
             "description": "test-instruction-execution-running-step-1-operation-1-description",
-            "jobs": ["test-job-execution-to-get"]
+            "jobs": [
+              "test-job-execution-to-get"
+            ]
           },
           {
             "_id": "test-instruction-execution-running-step-1-operation-2",
             "name": "test-instruction-execution-running-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
             "description": "test-instruction-execution-running-step-1-operation-2-description",
             "jobs": []
           }
@@ -229,7 +876,10 @@
           {
             "_id": "test-instruction-execution-running-step-2-operation-1",
             "name": "test-instruction-execution-running-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
             "description": "test-instruction-execution-running-step-2-operation-1-description",
             "jobs": []
           }
@@ -238,115 +888,17 @@
         "endpoint": "test-instruction-execution-running-step-2-endpoint"
       }
     ],
-    "last_executed_by": "root",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000004
   },
   {
-    "_id": "test-job-execution-to-start-multiple-times-1",
-    "name": "test-job-execution-to-start-multiple-times-1-name",
-    "entity_patterns": [
-      {
-        "name": "test filter"
-      }
-    ],
-    "description": "test-job-execution-to-start-multiple-times-1-description",
-    "author": "test-job-execution-to-start-multiple-times-1-author",
-    "enabled": true,
-    "avg_complete_time": 10,
-    "steps": [
-      {
-        "_id": "test-job-execution-to-start-multiple-times-1-step-1",
-        "name": "test-job-execution-to-start-multiple-times-1-step-1-name",
-        "operations": [
-          {
-            "_id": "test-job-execution-to-start-multiple-times-1-step-1-operation-1",
-            "name": "test-job-execution-to-start-multiple-times-1-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-job-execution-to-start-multiple-times-1-step-1-operation-1-description",
-            "jobs": ["test-job-execution-multiple-times-1"]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-job-execution-to-start-multiple-times-1-step-1-endpoint"
-      }
-    ],
-    "last_executed_by": "root",
-    "last_executed_on": 1596712203,
-    "last_modified": 1596712203,
-    "created": 1000000005
-  },
-  {
-    "_id": "test-job-execution-to-start-multiple-times-2",
-    "name": "test-job-execution-to-start-multiple-times-2-name",
-    "entity_patterns": [
-      {
-        "name": "test filter"
-      }
-    ],
-    "description": "test-job-execution-to-start-multiple-times-2-description",
-    "author": "test-job-execution-to-start-multiple-times-2-author",
-    "enabled": true,
-    "avg_complete_time": 10,
-    "steps": [
-      {
-        "_id": "test-job-execution-to-start-multiple-times-2-step-1",
-        "name": "test-job-execution-to-start-multiple-times-2-step-1-name",
-        "operations": [
-          {
-            "_id": "test-job-execution-to-start-multiple-times-2-step-1-operation-1",
-            "name": "test-job-execution-to-start-multiple-times-2-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-job-execution-to-start-multiple-times-2-step-1-operation-1-description",
-            "jobs": ["test-job-execution-multiple-times-2"]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-job-execution-to-start-multiple-times-2-step-1-endpoint"
-      }
-    ],
-    "last_executed_by": "root",
-    "last_executed_on": 1596712203,
-    "last_modified": 1596712203,
-    "created": 1000000006
-  },
-  {
-    "_id": "test-job-execution-to-start-multiple-times-3",
-    "name": "test-job-execution-to-start-multiple-times-3-name",
-    "entity_patterns": [
-      {
-        "name": "test filter"
-      }
-    ],
-    "description": "test-job-execution-to-start-multiple-times-3-description",
-    "author": "test-job-execution-to-start-multiple-times-3-author",
-    "enabled": true,
-    "avg_complete_time": 10,
-    "steps": [
-      {
-        "_id": "test-job-execution-to-start-multiple-times-3-step-1",
-        "name": "test-job-execution-to-start-multiple-times-3-step-1-name",
-        "operations": [
-          {
-            "_id": "test-job-execution-to-start-multiple-times-3-step-1-operation-1",
-            "name": "test-job-execution-to-start-multiple-times-3-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-job-execution-to-start-multiple-times-3-step-1-operation-1-description",
-            "jobs": ["test-job-execution-multiple-times-2"]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-job-execution-to-start-multiple-times-3-step-1-endpoint"
-      }
-    ],
-    "last_executed_by": "root",
-    "last_executed_on": 1596712203,
-    "last_modified": 1596712203,
-    "created": 1000000007
-  },
-  {
     "_id": "test-instruction-cancel-execution-running-1",
+    "type": 0,
     "name": "test-instruction-cancel-execution-running-1-name",
     "entity_patterns": [
       {
@@ -354,9 +906,8 @@
       }
     ],
     "description": "test-instruction-cancel-execution-running-1-description",
-    "author": "test-instruction-cancel-execution-running-1-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
     "steps": [
       {
         "_id": "test-instruction-cancel-execution-running-1-step-1",
@@ -365,14 +916,20 @@
           {
             "_id": "test-instruction-cancel-execution-running-1-step-1-operation-1",
             "name": "test-instruction-cancel-execution-running-1-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
             "description": "test-instruction-cancel-execution-running-1-step-1-operation-1-description",
             "jobs": []
           },
           {
             "_id": "test-instruction-cancel-execution-running-1-step-1-operation-2",
             "name": "test-instruction-cancel-execution-running-1-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
             "description": "test-instruction-cancel-execution-running-1-step-1-operation-2-description",
             "jobs": []
           }
@@ -387,7 +944,10 @@
           {
             "_id": "test-instruction-cancel-execution-running-1-step-2-operation-1",
             "name": "test-instruction-cancel-execution-running-1-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
             "description": "test-instruction-cancel-execution-running-1-step-2-operation-1-description",
             "jobs": []
           }
@@ -396,125 +956,17 @@
         "endpoint": "test-instruction-cancel-execution-running-1-step-2-endpoint"
       }
     ],
-    "last_executed_by": "root",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000008
   },
   {
-    "_id": "test-instruction-cancel-execution-running-2",
-    "name": "test-instruction-cancel-execution-running-2-name",
-    "entity_patterns": [
-      {
-        "name": "test filter"
-      }
-    ],
-    "description": "test-instruction-cancel-execution-running-2-description",
-    "author": "test-instruction-cancel-execution-running-2-author",
-    "enabled": true,
-    "avg_complete_time": 10,
-    "steps": [
-      {
-        "_id": "test-instruction-cancel-execution-running-2-step-1",
-        "name": "test-instruction-cancel-execution-running-2-step-1-name",
-        "operations": [
-          {
-            "_id": "test-instruction-cancel-execution-running-2-step-1-operation-1",
-            "name": "test-instruction-cancel-execution-running-2-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-instruction-cancel-execution-running-2-step-1-operation-1-description",
-            "jobs": []
-          },
-          {
-            "_id": "test-instruction-cancel-execution-running-2-step-1-operation-2",
-            "name": "test-instruction-cancel-execution-running-2-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-cancel-execution-running-2-step-1-operation-2-description",
-            "jobs": ["test-job-instruction-cancel-execution-running-2"]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-cancel-execution-running-2-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-cancel-execution-running-2-step-2",
-        "name": "test-instruction-cancel-execution-running-2-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-cancel-execution-running-2-step-2-operation-1",
-            "name": "test-instruction-cancel-execution-running-2-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-cancel-execution-running-2-step-2-operation-1-description",
-            "jobs": []
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-cancel-execution-running-2-step-2-endpoint"
-      }
-    ],
-    "last_executed_by": "root",
-    "last_executed_on": 1596712203,
-    "last_modified": 1596712203,
-    "created": 1000000009
-  },
-  {
-    "_id": "test-instruction-cancel-job-execution-running",
-    "name": "test-instruction-cancel-job-execution-running-name",
-    "entity_patterns": [
-      {
-        "name": "test filter"
-      }
-    ],
-    "description": "test-instruction-cancel-job-execution-running-description",
-    "author": "test-instruction-cancel-job-execution-running-author",
-    "enabled": true,
-    "avg_complete_time": 10,
-    "steps": [
-      {
-        "_id": "test-instruction-cancel-job-execution-running-step-1",
-        "name": "test-instruction-cancel-job-execution-running-step-1-name",
-        "operations": [
-          {
-            "_id": "test-instruction-cancel-job-execution-running-step-1-operation-1",
-            "name": "test-instruction-cancel-job-execution-running-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-instruction-cancel-job-execution-running-step-1-operation-1-description",
-            "jobs": []
-          },
-          {
-            "_id": "test-instruction-cancel-job-execution-running-step-1-operation-2",
-            "name": "test-instruction-cancel-job-execution-running-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-cancel-job-execution-running-step-1-operation-2-description",
-            "jobs": ["test-job-instruction-cancel-job-execution-running"]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-cancel-job-execution-running-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-cancel-job-execution-running-step-2",
-        "name": "test-instruction-cancel-job-execution-running-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-cancel-job-execution-running-step-2-operation-1",
-            "name": "test-instruction-cancel-job-execution-running-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-cancel-job-execution-running-step-2-operation-1-description",
-            "jobs": []
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-cancel-job-execution-running-step-2-endpoint"
-      }
-    ],
-    "last_executed_by": "root",
-    "last_executed_on": 1596712203,
-    "last_modified": 1596712203,
-    "created": 1000000010
-  },
-  {
     "_id": "test-instruction-delete-execution-running",
+    "type": 0,
     "name": "test-instruction-delete-execution-running-name",
     "entity_patterns": [
       {
@@ -522,9 +974,8 @@
       }
     ],
     "description": "test-instruction-delete-execution-running-description",
-    "author": "test-instruction-delete-execution-running-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
     "steps": [
       {
         "_id": "test-instruction-delete-execution-running-step-1",
@@ -533,14 +984,20 @@
           {
             "_id": "test-instruction-delete-execution-running-step-1-operation-1",
             "name": "test-instruction-delete-execution-running-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
             "description": "test-instruction-delete-execution-running-step-1-operation-1-description",
             "jobs": []
           },
           {
             "_id": "test-instruction-delete-execution-running-step-1-operation-2",
             "name": "test-instruction-delete-execution-running-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
             "description": "test-instruction-delete-execution-running-step-1-operation-2-description",
             "jobs": []
           }
@@ -555,7 +1012,10 @@
           {
             "_id": "test-instruction-delete-execution-running-step-2-operation-1",
             "name": "test-instruction-delete-execution-running-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
             "description": "test-instruction-delete-execution-running-step-2-operation-1-description",
             "jobs": []
           }
@@ -564,12 +1024,17 @@
         "endpoint": "test-instruction-delete-execution-running-step-2-endpoint"
       }
     ],
-    "last_executed_by": "root",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
-    "last_modified": 1596712203
+    "last_modified": 1596712203,
+    "created": 1596712203
   },
   {
     "_id": "test-instruction-execution-resume-1",
+    "type": 0,
     "name": "test-instruction-execution-resume-1-name",
     "entity_patterns": [
       {
@@ -577,9 +1042,8 @@
       }
     ],
     "description": "test-instruction-execution-resume-1-description",
-    "author": "test-instruction-execution-resume-1-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
     "steps": [
       {
         "_id": "test-instruction-execution-resume-1-step-1",
@@ -588,16 +1052,22 @@
           {
             "_id": "test-instruction-execution-resume-1-step-1-operation-1",
             "name": "test-instruction-execution-resume-1-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
             "description": "test-instruction-execution-resume-1-step-1-operation-1-description",
             "jobs": []
           },
           {
             "_id": "test-instruction-execution-resume-1-step-1-operation-2",
             "name": "test-instruction-execution-resume-1-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
             "description": "test-instruction-execution-resume-1-step-1-operation-2-description",
-            "jobs": ["test-job-execution-resume-1"]
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
@@ -610,7 +1080,10 @@
           {
             "_id": "test-instruction-execution-resume-1-step-2-operation-1",
             "name": "test-instruction-execution-resume-1-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
             "description": "test-instruction-execution-resume-1-step-2-operation-1-description",
             "jobs": []
           }
@@ -619,13 +1092,17 @@
         "endpoint": "test-instruction-execution-resume-1-step-2-endpoint"
       }
     ],
-    "last_executed_by": "root",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000011
   },
   {
     "_id": "test-instruction-to-assign",
+    "type": 0,
     "name": "test-instruction-to-assign-name",
     "alarm_patterns": [
       {
@@ -633,55 +1110,69 @@
       }
     ],
     "description": "test-instruction-to-assign-description",
-    "author": "test-instruction-to-get-author",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-assign-step-1",
+        "name": "test-instruction-to-assign-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-assign-step-1-operation-1",
+            "name": "test-instruction-to-assign-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-assign-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-assign-step-1-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000012
+  },
+  {
+    "_id": "test-instruction-should-not-be-assigned",
+    "status": 1,
+    "type": 0,
+    "name": "test-instruction-to-assign-name",
+    "alarm_patterns": [
+      {
+        "_id": "test-alarm-with-instruction-1"
+      }
+    ],
+    "description": "test-instruction-to-assign-description",
+    "author": "test-user-author-1-id",
     "enabled": true,
     "avg_complete_time": 10,
     "month_executions": 5,
     "steps": [
       {
-        "_id": "test-instruction-to-get-step-1",
-        "name": "test-instruction-to-get-step-1-name",
+        "_id": "test-instruction-to-assign-step-1",
+        "name": "test-instruction-to-assign-step-1-name",
         "operations": [
           {
-            "_id": "test-instruction-to-get-step-1-operation-1",
-            "name": "test-instruction-to-get-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-1-operation-1-2"
-            ]
-          },
-          {
-            "_id": "test-instruction-to-get-step-1-operation-2",
-            "name": "test-instruction-to-get-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-2-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-2-1"
-            ]
+            "_id": "test-instruction-to-assign-step-1-operation-1",
+            "name": "test-instruction-to-assign-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-assign-step-1-operation-1-description",
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-to-get-step-2",
-        "name": "test-instruction-to-get-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-to-get-step-2-operation-1",
-            "name": "test-instruction-to-get-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-to-get-step-2-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-2-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-2-operation-1-2"
-            ]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-2-endpoint"
+        "endpoint": "test-instruction-to-assign-step-1-endpoint"
       }
     ],
     "last_executed_by": "test_author",
@@ -691,6 +1182,7 @@
   },
   {
     "_id": "test-instruction-to-assign-with-execution",
+    "type": 0,
     "name": "test-instruction-to-assign-with-execution-name",
     "alarm_patterns": [
       {
@@ -698,64 +1190,39 @@
       }
     ],
     "description": "test-instruction-to-assign-with-execution-description",
-    "author": "test-instruction-to-get-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
-    "month_executions": 5,
     "steps": [
       {
-        "_id": "test-instruction-to-get-step-1",
-        "name": "test-instruction-to-get-step-1-name",
+        "_id": "test-instruction-to-assign-with-execution-step-1",
+        "name": "test-instruction-to-assign-with-execution-step-1-name",
         "operations": [
           {
-            "_id": "test-instruction-to-get-step-1-operation-1",
-            "name": "test-instruction-to-get-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-1-operation-1-2"
-            ]
-          },
-          {
-            "_id": "test-instruction-to-get-step-1-operation-2",
-            "name": "test-instruction-to-get-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-2-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-2-1"
-            ]
+            "_id": "test-instruction-to-assign-with-execution-step-1-operation-1",
+            "name": "test-instruction-to-assign-with-execution-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-assign-with-execution-step-1-operation-1-description",
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-to-get-step-2",
-        "name": "test-instruction-to-get-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-to-get-step-2-operation-1",
-            "name": "test-instruction-to-get-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-to-get-step-2-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-2-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-2-operation-1-2"
-            ]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-2-endpoint"
+        "endpoint": "test-instruction-to-assign-with-execution-step-1-endpoint"
       }
     ],
-    "last_executed_by": "test_author",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000013
   },
   {
     "_id": "test-instruction-to-assign-with-execution-2",
+    "type": 0,
     "name": "test-instruction-to-assign-with-execution-2-name",
     "alarm_patterns": [
       {
@@ -763,64 +1230,39 @@
       }
     ],
     "description": "test-instruction-to-assign-with-execution-2-description",
-    "author": "test-instruction-to-get-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
-    "month_executions": 5,
     "steps": [
       {
-        "_id": "test-instruction-to-get-step-1",
-        "name": "test-instruction-to-get-step-1-name",
+        "_id": "test-instruction-to-assign-with-execution-2-step-1",
+        "name": "test-instruction-to-assign-with-execution-2-step-1-name",
         "operations": [
           {
-            "_id": "test-instruction-to-get-step-1-operation-1",
-            "name": "test-instruction-to-get-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-1-operation-1-2"
-            ]
-          },
-          {
-            "_id": "test-instruction-to-get-step-1-operation-2",
-            "name": "test-instruction-to-get-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-2-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-2-1"
-            ]
+            "_id": "test-instruction-to-assign-with-execution-2-step-1-operation-1",
+            "name": "test-instruction-to-assign-with-execution-2-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-assign-with-execution-2-step-1-operation-1-description",
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-to-get-step-2",
-        "name": "test-instruction-to-get-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-to-get-step-2-operation-1",
-            "name": "test-instruction-to-get-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-to-get-step-2-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-2-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-2-operation-1-2"
-            ]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-2-endpoint"
+        "endpoint": "test-instruction-to-assign-with-execution-2-step-1-endpoint"
       }
     ],
-    "last_executed_by": "test_author",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000014
   },
   {
     "_id": "test-instruction-to-assign-without-execution",
+    "type": 0,
     "name": "test-instruction-to-assign-without-execution-name",
     "alarm_patterns": [
       {
@@ -828,64 +1270,64 @@
       }
     ],
     "description": "test-instruction-to-assign-without-execution-description",
-    "author": "test-instruction-to-get-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
-    "month_executions": 5,
     "steps": [
       {
-        "_id": "test-instruction-to-get-step-1",
-        "name": "test-instruction-to-get-step-1-name",
+        "_id": "test-instruction-to-assign-without-execution-step-1",
+        "name": "test-instruction-to-assign-without-execution-step-1-name",
         "operations": [
           {
-            "_id": "test-instruction-to-get-step-1-operation-1",
-            "name": "test-instruction-to-get-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-1-operation-1-2"
-            ]
-          },
-          {
-            "_id": "test-instruction-to-get-step-1-operation-2",
-            "name": "test-instruction-to-get-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-2-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-2-1"
-            ]
+            "_id": "test-instruction-to-assign-without-execution-step-1-operation-1",
+            "name": "test-instruction-to-assign-without-execution-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-assign-without-execution-step-1-operation-1-description",
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-to-get-step-2",
-        "name": "test-instruction-to-get-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-to-get-step-2-operation-1",
-            "name": "test-instruction-to-get-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-to-get-step-2-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-2-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-2-operation-1-2"
-            ]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-2-endpoint"
+        "endpoint": "test-instruction-to-assign-without-execution-step-1-endpoint"
       }
     ],
-    "last_executed_by": "test_author",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000015
+  },
+  {
+    "_id": "test-instruction-to-auto-instruction-filter",
+    "type": 1,
+    "name": "test-instruction-to-auto-instruction-filter-name",
+    "alarm_patterns": [
+      {
+        "_id": "test-alarm-with-instruction-4"
+      }
+    ],
+    "description": "test-instruction-to-auto-instruction-filter-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "jobs": [
+      {
+        "job": "test-job-to-instruction-edit-1"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000015
   },
   {
     "_id": "test-instruction-to-rate-1",
+    "type": 0,
     "name": "test-instruction-to-rate-1-name",
     "alarm_patterns": [
       {
@@ -893,64 +1335,39 @@
       }
     ],
     "description": "test-instruction-to-rate-1-description",
-    "author": "test-instruction-to-get-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
-    "month_executions": 5,
     "steps": [
       {
-        "_id": "test-instruction-to-get-step-1",
-        "name": "test-instruction-to-get-step-1-name",
+        "_id": "test-instruction-to-rate-1-step-1",
+        "name": "test-instruction-to-rate-1-step-1-name",
         "operations": [
           {
-            "_id": "test-instruction-to-get-step-1-operation-1",
-            "name": "test-instruction-to-get-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-1-operation-1-2"
-            ]
-          },
-          {
-            "_id": "test-instruction-to-get-step-1-operation-2",
-            "name": "test-instruction-to-get-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-2-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-2-1"
-            ]
+            "_id": "test-instruction-to-rate-1-step-1-operation-1",
+            "name": "test-instruction-to-rate-1-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-rate-1-step-1-operation-1-description",
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-to-get-step-2",
-        "name": "test-instruction-to-get-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-to-get-step-2-operation-1",
-            "name": "test-instruction-to-get-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-to-get-step-2-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-2-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-2-operation-1-2"
-            ]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-2-endpoint"
+        "endpoint": "test-instruction-to-rate-1-step-1-endpoint"
       }
     ],
-    "last_executed_by": "test_author",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000016
   },
   {
     "_id": "test-instruction-to-rate-2",
+    "type": 0,
     "name": "test-instruction-to-rate-2-name",
     "alarm_patterns": [
       {
@@ -958,64 +1375,40 @@
       }
     ],
     "description": "test-instruction-to-rate-2-description",
-    "author": "test-instruction-to-get-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
-    "month_executions": 5,
     "steps": [
       {
-        "_id": "test-instruction-to-get-step-1",
-        "name": "test-instruction-to-get-step-1-name",
+        "_id": "test-instruction-to-rate-2-step-1",
+        "name": "test-instruction-to-rate-2-step-1-name",
         "operations": [
           {
-            "_id": "test-instruction-to-get-step-1-operation-1",
-            "name": "test-instruction-to-get-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-1-operation-1-2"
-            ]
-          },
-          {
-            "_id": "test-instruction-to-get-step-1-operation-2",
-            "name": "test-instruction-to-get-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-2-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-2-1"
-            ]
+            "_id": "test-instruction-to-rate-2-step-1-operation-1",
+            "name": "test-instruction-to-rate-2-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-rate-2-step-1-operation-1-description",
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-to-get-step-2",
-        "name": "test-instruction-to-get-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-to-get-step-2-operation-1",
-            "name": "test-instruction-to-get-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-to-get-step-2-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-2-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-2-operation-1-2"
-            ]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-2-endpoint"
+        "endpoint": "test-instruction-to-rate-2-step-1-endpoint"
       }
     ],
-    "last_executed_by": "test_author",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
-    "created": 1000000017
+    "created": 1000000017,
+    "users": ["test-user-to-rate-instruction"]
   },
   {
     "_id": "test-instruction-to-rate-3",
+    "type": 0,
     "name": "test-instruction-to-rate-3-name",
     "alarm_patterns": [
       {
@@ -1023,64 +1416,40 @@
       }
     ],
     "description": "test-instruction-to-rate-3-description",
-    "author": "test-instruction-to-get-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
-    "month_executions": 5,
     "steps": [
       {
-        "_id": "test-instruction-to-get-step-1",
-        "name": "test-instruction-to-get-step-1-name",
+        "_id": "test-instruction-to-rate-3-step-1",
+        "name": "test-instruction-to-rate-3-step-1-name",
         "operations": [
           {
-            "_id": "test-instruction-to-get-step-1-operation-1",
-            "name": "test-instruction-to-get-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-1-operation-1-2"
-            ]
-          },
-          {
-            "_id": "test-instruction-to-get-step-1-operation-2",
-            "name": "test-instruction-to-get-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-2-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-2-1"
-            ]
+            "_id": "test-instruction-to-rate-3-step-1-operation-1",
+            "name": "test-instruction-to-rate-3-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-rate-3-step-1-operation-1-description",
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-to-get-step-2",
-        "name": "test-instruction-to-get-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-to-get-step-2-operation-1",
-            "name": "test-instruction-to-get-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-to-get-step-2-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-2-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-2-operation-1-2"
-            ]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-2-endpoint"
+        "endpoint": "test-instruction-to-rate-3-step-1-endpoint"
       }
     ],
-    "last_executed_by": "test_author",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
-    "created": 1000000018
+    "created": 1000000018,
+    "users": ["test-user-to-rate-instruction"]
   },
   {
     "_id": "test-instruction-to-rate-4",
+    "type": 0,
     "name": "test-instruction-to-rate-4-name",
     "alarm_patterns": [
       {
@@ -1088,64 +1457,38 @@
       }
     ],
     "description": "test-instruction-to-rate-4-description",
-    "author": "test-instruction-to-get-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
-    "month_executions": 5,
     "steps": [
       {
-        "_id": "test-instruction-to-get-step-1",
-        "name": "test-instruction-to-get-step-1-name",
+        "_id": "test-instruction-to-rate-4-step-1",
+        "name": "test-instruction-to-rate-4-step-1-name",
         "operations": [
           {
-            "_id": "test-instruction-to-get-step-1-operation-1",
-            "name": "test-instruction-to-get-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-1-operation-1-2"
-            ]
-          },
-          {
-            "_id": "test-instruction-to-get-step-1-operation-2",
-            "name": "test-instruction-to-get-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-2-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-2-1"
-            ]
+            "_id": "test-instruction-to-rate-4-step-1-operation-1",
+            "name": "test-instruction-to-rate-4-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-rate-4-step-1-operation-1-description",
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-to-get-step-2",
-        "name": "test-instruction-to-get-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-to-get-step-2-operation-1",
-            "name": "test-instruction-to-get-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-to-get-step-2-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-2-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-2-operation-1-2"
-            ]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-2-endpoint"
+        "endpoint": "test-instruction-to-rate-4-step-1-endpoint"
       }
     ],
-    "last_executed_by": "test_author",
-    "last_executed_on": 1596712203,
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_modified": 1596712203,
     "created": 1000000019
   },
   {
     "_id": "test-instruction-to-rate-5",
+    "type": 0,
     "name": "test-instruction-to-rate-5-name",
     "alarm_patterns": [
       {
@@ -1153,64 +1496,80 @@
       }
     ],
     "description": "test-instruction-to-rate-5-description",
-    "author": "test-instruction-to-get-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
-    "month_executions": 5,
     "steps": [
       {
-        "_id": "test-instruction-to-get-step-1",
-        "name": "test-instruction-to-get-step-1-name",
+        "_id": "test-instruction-to-rate-5-step-1",
+        "name": "test-instruction-to-rate-5-step-1-name",
         "operations": [
           {
-            "_id": "test-instruction-to-get-step-1-operation-1",
-            "name": "test-instruction-to-get-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-1-operation-1-2"
-            ]
-          },
-          {
-            "_id": "test-instruction-to-get-step-1-operation-2",
-            "name": "test-instruction-to-get-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-to-get-step-1-operation-2-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-1-operation-2-1"
-            ]
+            "_id": "test-instruction-to-rate-5-step-1-operation-1",
+            "name": "test-instruction-to-rate-5-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-rate-5-step-1-operation-1-description",
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-to-get-step-2",
-        "name": "test-instruction-to-get-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-to-get-step-2-operation-1",
-            "name": "test-instruction-to-get-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-to-get-step-2-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-to-get-step-2-operation-1-1",
-              "test-job-to-test-instruction-to-get-step-2-operation-1-2"
-            ]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-to-get-step-2-endpoint"
+        "endpoint": "test-instruction-to-rate-5-step-1-endpoint"
       }
     ],
-    "last_executed_by": "test_author",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000019
   },
   {
+    "_id": "test-instruction-to-check-rate-notify",
+    "type": 0,
+    "name": "test-instruction-to-check-rate-notify-name",
+    "alarm_patterns": [
+      {
+        "_id": "test-alarm-it-does-not-matter"
+      }
+    ],
+    "description": "test-instruction-to-check-rate-notify-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-check-rate-notify-step-1",
+        "name": "test-instruction-to-check-rate-notify-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-check-rate-notify-step-1-operation-1",
+            "name": "test-instruction-to-check-rate-notify-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-check-rate-notify-step-1-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-check-rate-notify-step-1-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000019,
+    "rating": 5.0
+  },
+  {
     "_id": "test-instruction-with-entity-pattern-1",
+    "type": 0,
     "name": "test-instruction-with-entity-pattern-1-name",
     "entity_patterns": [
       {
@@ -1220,10 +1579,8 @@
       }
     ],
     "description": "test-instruction-with-entity-pattern-1-description",
-    "author": "test-instruction-with-entity-pattern-1-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
-    "month_executions": 5,
     "steps": [
       {
         "_id": "test-instruction-with-entity-pattern-1-step-1",
@@ -1232,52 +1589,29 @@
           {
             "_id": "test-instruction-with-entity-pattern-1-step-1-operation-1",
             "name": "test-instruction-with-entity-pattern-1-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
             "description": "test-instruction-with-entity-pattern-1-step-1-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-with-entity-pattern-1-step-1-operation-1-1",
-              "test-job-to-test-instruction-with-entity-pattern-1-step-1-operation-1-2"
-            ]
-          },
-          {
-            "_id": "test-instruction-with-entity-pattern-1-step-1-operation-2",
-            "name": "test-instruction-with-entity-pattern-1-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-with-entity-pattern-1-step-1-operation-2-description",
-            "jobs": [
-              "test-job-to-test-instruction-with-entity-pattern-1-step-1-operation-2-1"
-            ]
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
         "endpoint": "test-instruction-with-entity-pattern-1-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-with-entity-pattern-1-step-2",
-        "name": "test-instruction-with-entity-pattern-1-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-with-entity-pattern-1-step-2-operation-1",
-            "name": "test-instruction-with-entity-pattern-1-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-with-entity-pattern-1-step-2-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-with-entity-pattern-1-step-2-operation-1-1",
-              "test-job-to-test-instruction-with-entity-pattern-1-step-2-operation-1-2"
-            ]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-with-entity-pattern-1-step-2-endpoint"
       }
     ],
-    "last_executed_by": "test_author",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000019
   },
   {
     "_id": "test-instruction-with-entity-pattern-2",
+    "type": 0,
     "name": "test-instruction-with-entity-pattern-2-name",
     "entity_patterns": [
       {
@@ -1287,10 +1621,8 @@
       }
     ],
     "description": "test-instruction-with-entity-pattern-2-description",
-    "author": "test-instruction-with-entity-pattern-2-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
-    "month_executions": 5,
     "steps": [
       {
         "_id": "test-instruction-with-entity-pattern-2-step-1",
@@ -1299,52 +1631,29 @@
           {
             "_id": "test-instruction-with-entity-pattern-2-step-1-operation-1",
             "name": "test-instruction-with-entity-pattern-2-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
             "description": "test-instruction-with-entity-pattern-2-step-1-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-with-entity-pattern-2-step-1-operation-1-1",
-              "test-job-to-test-instruction-with-entity-pattern-2-step-1-operation-1-2"
-            ]
-          },
-          {
-            "_id": "test-instruction-with-entity-pattern-2-step-1-operation-2",
-            "name": "test-instruction-with-entity-pattern-2-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-with-entity-pattern-2-step-1-operation-2-description",
-            "jobs": [
-              "test-job-to-test-instruction-with-entity-pattern-2-step-1-operation-2-1"
-            ]
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
         "endpoint": "test-instruction-with-entity-pattern-2-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-with-entity-pattern-2-step-2",
-        "name": "test-instruction-with-entity-pattern-2-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-with-entity-pattern-2-step-2-operation-1",
-            "name": "test-instruction-with-entity-pattern-2-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-with-entity-pattern-2-step-2-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-with-entity-pattern-2-step-2-operation-1-1",
-              "test-job-to-test-instruction-with-entity-pattern-2-step-2-operation-1-2"
-            ]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-with-entity-pattern-2-step-2-endpoint"
       }
     ],
-    "last_executed_by": "test_author",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000019
   },
   {
     "_id": "test-instruction-with-patterns-combined",
+    "type": 0,
     "name": "test-instruction-with-patterns-combined-name",
     "entity_patterns": [
       {
@@ -1361,10 +1670,8 @@
       }
     ],
     "description": "test-instruction-with-patterns-combined-description",
-    "author": "test-instruction-with-patterns-combined-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
-    "avg_complete_time": 10,
-    "month_executions": 5,
     "steps": [
       {
         "_id": "test-instruction-with-patterns-combined-step-1",
@@ -1373,55 +1680,32 @@
           {
             "_id": "test-instruction-with-patterns-combined-step-1-operation-1",
             "name": "test-instruction-with-patterns-combined-step-1-operation-1-name",
-            "time_to_complete": {"seconds": 1, "unit":"s"},
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
             "description": "test-instruction-with-patterns-combined-step-1-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-with-patterns-combined-step-1-operation-1-1",
-              "test-job-to-test-instruction-with-patterns-combined-step-1-operation-1-2"
-            ]
-          },
-          {
-            "_id": "test-instruction-with-patterns-combined-step-1-operation-2",
-            "name": "test-instruction-with-patterns-combined-step-1-operation-2-name",
-            "time_to_complete": {"seconds": 3, "unit":"s"},
-            "description": "test-instruction-with-patterns-combined-step-1-operation-2-description",
-            "jobs": [
-              "test-job-to-test-instruction-with-patterns-combined-step-1-operation-2-1"
-            ]
+            "jobs": []
           }
         ],
         "stop_on_fail": true,
         "endpoint": "test-instruction-with-patterns-combined-step-1-endpoint"
-      },
-      {
-        "_id": "test-instruction-with-patterns-combined-step-2",
-        "name": "test-instruction-with-patterns-combined-step-2-name",
-        "operations": [
-          {
-            "_id": "test-instruction-with-patterns-combined-step-2-operation-1",
-            "name": "test-instruction-with-patterns-combined-step-2-operation-1-name",
-            "time_to_complete": {"seconds": 6, "unit":"s"},
-            "description": "test-instruction-with-patterns-combined-step-2-operation-1-description",
-            "jobs": [
-              "test-job-to-test-instruction-with-patterns-combined-step-2-operation-1-1",
-              "test-job-to-test-instruction-with-patterns-combined-step-2-operation-1-2"
-            ]
-          }
-        ],
-        "stop_on_fail": true,
-        "endpoint": "test-instruction-with-patterns-combined-step-2-endpoint"
       }
     ],
-    "last_executed_by": "test_author",
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000019
   },
   {
     "_id": "test-instruction-with-pbh-with-some-active",
+    "type": 0,
     "name": "test-alarm-with-pbh-with-some-active-name",
     "description": "test-alarm-with-pbh-with-some-active-description",
-    "author": "test-alarm-with-pbh-with-some-active-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
     "alarm_patterns": [
       {
@@ -1431,31 +1715,23 @@
       }
     ],
     "steps": [],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "active_on_pbh": [
       "pbh-type-for-instruction-with-pbehavior-1",
       "pbh-type-for-instruction-with-pbehavior-2"
-    ]
+    ],
+    "last_modified": 1596712203,
+    "created": 1596712203
   },
   {
     "_id": "test-instruction-with-pbh-all-active",
+    "type": 0,
     "name": "test-alarm-with-pbh-all-active-name",
     "description": "test-alarm-with-pbh-all-active-description",
-    "author": "test-alarm-with-pbh-all-active-author",
-    "enabled": true,
-    "alarm_patterns": [
-      {
-        "v": {
-          "component": "test-alarm-instruction-with-pbehavior-component"
-        }
-      }
-    ],
-    "steps": []
-  },
-  {
-    "_id": "test-instruction-with-pbh-with-some-disabled",
-    "name": "test-alarm-with-pbh-with-some-disabled-name",
-    "description": "test-alarm-with-pbh-with-some-disabled-description",
-    "author": "test-alarm-with-pbh-with-some-disabled-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
     "alarm_patterns": [
       {
@@ -1465,16 +1741,45 @@
       }
     ],
     "steps": [],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-with-pbh-with-some-disabled",
+    "type": 0,
+    "name": "test-alarm-with-pbh-with-some-disabled-name",
+    "description": "test-alarm-with-pbh-with-some-disabled-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "alarm_patterns": [
+      {
+        "v": {
+          "component": "test-alarm-instruction-with-pbehavior-component"
+        }
+      }
+    ],
+    "steps": [],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "disabled_on_pbh": [
       "pbh-type-for-instruction-with-pbehavior-1",
       "pbh-type-for-instruction-with-pbehavior-2"
-    ]
+    ],
+    "last_modified": 1596712203,
+    "created": 1596712203
   },
   {
     "_id": "test-instruction-with-pbh-to-edit",
+    "type": 0,
     "name": "test-instruction-with-pbh-to-edit-name",
     "description": "test-instruction-with-pbh-to-edit-description",
-    "author": "test-instruction-with-pbh-to-edit-author",
+    "author": "test-user-author-1-id",
     "enabled": true,
     "alarm_patterns": [
       {
@@ -1484,9 +1789,1693 @@
       }
     ],
     "steps": [],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
     "active_on_pbh": [
       "test1",
       "test2"
-    ]
+    ],
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-1-1",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-1-1-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-1"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-1-1-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-1",
+        "stop_on_fail": false
+      },
+      {
+        "job": "test-job-to-run-auto-instruction-2",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 2,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-1-2",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-1-2-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-1"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-1-2-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-1",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 3,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-2-1",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-2-1-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-2"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-2-1-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-1",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 3,
+      "unit": "s"
+    },
+    "priority": 4,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-2-2",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-2-2-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-2"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-2-2-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-2",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 5,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-3-1",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-3-1-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-3"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-3-1-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-3",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 10,
+      "unit": "s"
+    },
+    "priority": 6,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-3-2",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-3-2-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-3"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-3-2-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-1",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 7,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-4-1",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-4-1-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-4-1"
+      },
+      {
+        "name": "test-resource-to-run-auto-instruction-4-2"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-4-1-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-1",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 8,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-4-2",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-4-2-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-4-1"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-4-2-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-2",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 9,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-4-3",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-4-3-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-4-2"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-4-3-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-2",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 10,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-5",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-5-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-5"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-5-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-4",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 11,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-to-approve-update",
+    "type": 1,
+    "name": "est-instruction-to-run-auto-instruction-to-approve-update-name",
+    "entity_patterns": [
+      {
+        "name": "test-instruction-to-run-auto-instruction-to-approve-update-pattern"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-to-approve-update-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-to-approve-update",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 1000,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-get-1",
+    "type": 0,
+    "name": "test-instruction-to-stats-get-1-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-get-1-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "rating": 3.2,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-get-1-step-1",
+        "name": "test-instruction-to-stats-get-1-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-get-1-step-1-operation-1",
+            "name": "test-instruction-to-stats-get-1-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-get-1-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-get-1-step-1-operation-2",
+            "name": "test-instruction-to-stats-get-1-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-get-1-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-get-1-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-get-1-step-2",
+        "name": "test-instruction-to-stats-get-1-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-get-1-step-2-operation-1",
+            "name": "test-instruction-to-stats-get-1-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-get-1-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-get-1-step-2-operation-2",
+            "name": "test-instruction-to-stats-get-1-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-get-1-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-get-1-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618394399,
+    "avg_complete_time": 316,
+    "last_modified": 1617555600,
+    "created": 1617555600,
+    "users": ["test-user-to-stats-instruction-get"]
+  },
+  {
+    "_id": "test-instruction-to-stats-get-2",
+    "type": 1,
+    "name": "test-instruction-to-stats-get-2-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-get-2-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "jobs": [
+      {
+        "job": "test-job-to-instruction-edit-1",
+        "stop_on_fail": true
+      },
+      {
+        "job": "test-job-to-instruction-edit-2"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 12,
+    "last_executed_on": 1618394399,
+    "avg_complete_time": 316,
+    "last_modified": 1617555600,
+    "created": 1617555600
+  },
+  {
+    "_id": "test-instruction-to-stats-get-3",
+    "type": 1,
+    "name": "test-instruction-to-stats-get-3-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-get-3-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "jobs": [
+      {
+        "job": "test-job-to-instruction-edit-1",
+        "stop_on_fail": true
+      },
+      {
+        "job": "test-job-to-instruction-edit-2"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 12,
+    "last_modified": 1617555600,
+    "created": 1617555600
+  },
+  {
+    "_id": "test-instruction-to-stats-summary-get-1",
+    "type": 0,
+    "name": "test-instruction-to-stats-summary-get-1-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-summary-get-1-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-summary-get-1-step-1",
+        "name": "test-instruction-to-stats-summary-get-1-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-summary-get-1-step-1-operation-1",
+            "name": "test-instruction-to-stats-summary-get-1-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-summary-get-1-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-summary-get-1-step-1-operation-2",
+            "name": "test-instruction-to-stats-summary-get-1-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-summary-get-1-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-summary-get-1-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-summary-get-1-step-2",
+        "name": "test-instruction-to-stats-summary-get-1-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-summary-get-1-step-2-operation-1",
+            "name": "test-instruction-to-stats-summary-get-1-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-summary-get-1-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-summary-get-1-step-2-operation-2",
+            "name": "test-instruction-to-stats-summary-get-1-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-summary-get-1-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-summary-get-1-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "avg_complete_time": 316,
+    "last_modified": 1596712303,
+    "created": 1596712203,
+    "users": ["test-user-to-stats-instruction-get"]
+  },
+  {
+    "_id": "test-instruction-to-stats-summary-get-2",
+    "type": 1,
+    "name": "test-instruction-to-stats-summary-get-2-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-summary-get-2-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "jobs": [
+      {
+        "job": "test-job-to-instruction-edit-1",
+        "stop_on_fail": true
+      },
+      {
+        "job": "test-job-to-instruction-edit-2"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 12,
+    "last_executed_on": 1618280210,
+    "avg_complete_time": 316,
+    "last_modified": 1596712303,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-summary-get-3",
+    "type": 1,
+    "name": "test-instruction-to-stats-summary-get-3-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-summary-get-3-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "jobs": [
+      {
+        "job": "test-job-to-instruction-edit-1",
+        "stop_on_fail": true
+      },
+      {
+        "job": "test-job-to-instruction-edit-2"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 13,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-changes-get-1",
+    "type": 0,
+    "name": "test-instruction-to-stats-changes-get-1-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-changes-get-1-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-changes-get-1-step-1",
+        "name": "test-instruction-to-stats-changes-get-1-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-changes-get-1-step-1-operation-1",
+            "name": "test-instruction-to-stats-changes-get-1-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-changes-get-1-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-changes-get-1-step-1-operation-2",
+            "name": "test-instruction-to-stats-changes-get-1-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-changes-get-1-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-changes-get-1-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-changes-get-1-step-2",
+        "name": "test-instruction-to-stats-changes-get-1-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-changes-get-1-step-2-operation-1",
+            "name": "test-instruction-to-stats-changes-get-1-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-changes-get-1-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-changes-get-1-step-2-operation-2",
+            "name": "test-instruction-to-stats-changes-get-1-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-changes-get-1-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-changes-get-1-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203,
+    "users": ["test-user-to-stats-instruction-get"]
+  },
+  {
+    "_id": "test-instruction-to-stats-changes-get-2",
+    "type": 1,
+    "name": "test-instruction-to-stats-changes-get-2-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-changes-get-2-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "jobs": [
+      {
+        "job": "test-job-to-instruction-edit-1",
+        "stop_on_fail": true
+      },
+      {
+        "job": "test-job-to-instruction-edit-2"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 12,
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-changes-get-3",
+    "type": 1,
+    "name": "test-instruction-to-stats-changes-get-3-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-changes-get-3-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "jobs": [
+      {
+        "job": "test-job-to-instruction-edit-1",
+        "stop_on_fail": true
+      },
+      {
+        "job": "test-job-to-instruction-edit-2"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 13,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-comments-get-1",
+    "type": 0,
+    "name": "test-instruction-to-comments-get-1-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-comments-get-1-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-comments-get-1-step-1",
+        "name": "test-instruction-to-comments-get-1-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-comments-get-1-step-1-operation-1",
+            "name": "test-instruction-to-comments-get-1-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-comments-get-1-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-comments-get-1-step-1-operation-2",
+            "name": "test-instruction-to-comments-get-1-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-comments-get-1-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-comments-get-1-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-comments-get-1-step-2",
+        "name": "test-instruction-to-comments-get-1-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-comments-get-1-step-2-operation-1",
+            "name": "test-instruction-to-comments-get-1-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-comments-get-1-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-comments-get-1-step-2-operation-2",
+            "name": "test-instruction-to-comments-get-1-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-comments-get-1-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-comments-get-1-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-comments-get-2",
+    "type": 0,
+    "name": "test-instruction-to-comments-get-2-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-comments-get-2-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-comments-get-2-step-1",
+        "name": "test-instruction-to-comments-get-2-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-comments-get-2-step-1-operation-1",
+            "name": "test-instruction-to-comments-get-2-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-comments-get-2-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-comments-get-2-step-1-operation-2",
+            "name": "test-instruction-to-comments-get-2-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-comments-get-2-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-comments-get-2-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-comments-get-2-step-2",
+        "name": "test-instruction-to-comments-get-2-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-comments-get-2-step-2-operation-1",
+            "name": "test-instruction-to-comments-get-2-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-comments-get-2-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-comments-get-2-step-2-operation-2",
+            "name": "test-instruction-to-comments-get-2-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-comments-get-2-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-comments-get-2-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-not-run-auto-instruction-manually",
+    "type": 1,
+    "name": "test-instruction-to-not-run-auto-instruction-manually-name",
+    "alarm_patterns": [
+      {
+        "_id": "test-alarm-to-not-run-auto-instruction-manually"
+      }
+    ],
+    "description": "test-instruction-to-not-run-auto-instruction-manually-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-1",
+        "stop_on_fail": false
+      },
+      {
+        "job": "test-job-to-run-auto-instruction-2",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 2,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-executions-get-1",
+    "type": 0,
+    "name": "test-instruction-to-stats-executions-get-1-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-executions-get-1-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-executions-get-1-step-1",
+        "name": "test-instruction-to-stats-executions-get-1-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-1-step-1-operation-1",
+            "name": "test-instruction-to-stats-executions-get-1-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-1-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-1-step-1-operation-2",
+            "name": "test-instruction-to-stats-executions-get-1-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-1-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-1-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-executions-get-1-step-2",
+        "name": "test-instruction-to-stats-executions-get-1-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-1-step-2-operation-1",
+            "name": "test-instruction-to-stats-executions-get-1-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-1-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-1-step-2-operation-2",
+            "name": "test-instruction-to-stats-executions-get-1-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-1-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-1-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203,
+    "users": ["test-user-to-stats-instruction-get"]
+  },
+  {
+    "_id": "test-instruction-to-stats-executions-get-2",
+    "type": 0,
+    "name": "test-instruction-to-stats-executions-get-2-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-executions-get-2-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-executions-get-2-step-1",
+        "name": "test-instruction-to-stats-executions-get-2-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-2-step-1-operation-1",
+            "name": "test-instruction-to-stats-executions-get-2-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-2-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-2-step-1-operation-2",
+            "name": "test-instruction-to-stats-executions-get-2-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-2-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-2-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-executions-get-2-step-2",
+        "name": "test-instruction-to-stats-executions-get-2-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-2-step-2-operation-1",
+            "name": "test-instruction-to-stats-executions-get-2-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-2-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-2-step-2-operation-2",
+            "name": "test-instruction-to-stats-executions-get-2-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-2-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-2-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-executions-get-3",
+    "type": 0,
+    "name": "test-instruction-to-stats-executions-get-3-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-executions-get-3-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-executions-get-3-step-1",
+        "name": "test-instruction-to-stats-executions-get-3-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-3-step-1-operation-1",
+            "name": "test-instruction-to-stats-executions-get-3-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-3-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-3-step-1-operation-2",
+            "name": "test-instruction-to-stats-executions-get-3-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-3-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-3-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-executions-get-3-step-2",
+        "name": "test-instruction-to-stats-executions-get-3-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-3-step-2-operation-1",
+            "name": "test-instruction-to-stats-executions-get-3-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-3-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-3-step-2-operation-2",
+            "name": "test-instruction-to-stats-executions-get-3-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-3-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-3-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-executions-get-4",
+    "type": 0,
+    "name": "test-instruction-to-stats-executions-get-4-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-executions-get-4-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-executions-get-4-step-1",
+        "name": "test-instruction-to-stats-executions-get-4-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-4-step-1-operation-1",
+            "name": "test-instruction-to-stats-executions-get-4-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-4-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-4-step-1-operation-2",
+            "name": "test-instruction-to-stats-executions-get-4-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-4-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-4-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-executions-get-4-step-2",
+        "name": "test-instruction-to-stats-executions-get-4-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-4-step-2-operation-1",
+            "name": "test-instruction-to-stats-executions-get-4-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-4-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-4-step-2-operation-2",
+            "name": "test-instruction-to-stats-executions-get-4-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-4-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-4-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-executions-get-5",
+    "type": 0,
+    "name": "test-instruction-to-stats-executions-get-5-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-executions-get-5-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-executions-get-5-step-1",
+        "name": "test-instruction-to-stats-executions-get-5-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-5-step-1-operation-1",
+            "name": "test-instruction-to-stats-executions-get-5-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-5-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-5-step-1-operation-2",
+            "name": "test-instruction-to-stats-executions-get-5-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-5-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-5-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-executions-get-5-step-2",
+        "name": "test-instruction-to-stats-executions-get-5-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-5-step-2-operation-1",
+            "name": "test-instruction-to-stats-executions-get-5-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-5-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-5-step-2-operation-2",
+            "name": "test-instruction-to-stats-executions-get-5-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-5-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-5-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-executions-get-6",
+    "type": 0,
+    "name": "test-instruction-to-stats-executions-get-6-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-executions-get-6-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-executions-get-6-step-1",
+        "name": "test-instruction-to-stats-executions-get-6-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-6-step-1-operation-1",
+            "name": "test-instruction-to-stats-executions-get-6-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-6-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-6-step-1-operation-2",
+            "name": "test-instruction-to-stats-executions-get-6-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-6-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-6-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-executions-get-6-step-2",
+        "name": "test-instruction-to-stats-executions-get-6-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-6-step-2-operation-1",
+            "name": "test-instruction-to-stats-executions-get-6-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-6-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-6-step-2-operation-2",
+            "name": "test-instruction-to-stats-executions-get-6-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-6-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-6-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-executions-get-7",
+    "type": 0,
+    "name": "test-instruction-to-stats-executions-get-7-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-executions-get-7-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-executions-get-7-step-1",
+        "name": "test-instruction-to-stats-executions-get-7-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-7-step-1-operation-1",
+            "name": "test-instruction-to-stats-executions-get-7-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-7-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-7-step-1-operation-2",
+            "name": "test-instruction-to-stats-executions-get-7-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-7-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-7-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-executions-get-7-step-2",
+        "name": "test-instruction-to-stats-executions-get-7-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-7-step-2-operation-1",
+            "name": "test-instruction-to-stats-executions-get-7-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-7-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-7-step-2-operation-2",
+            "name": "test-instruction-to-stats-executions-get-7-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-7-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-7-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-executions-get-8",
+    "type": 0,
+    "name": "test-instruction-to-stats-executions-get-8-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-executions-get-8-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-executions-get-8-step-1",
+        "name": "test-instruction-to-stats-executions-get-8-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-8-step-1-operation-1",
+            "name": "test-instruction-to-stats-executions-get-8-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-8-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-8-step-1-operation-2",
+            "name": "test-instruction-to-stats-executions-get-8-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-8-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-8-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-executions-get-8-step-2",
+        "name": "test-instruction-to-stats-executions-get-8-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-8-step-2-operation-1",
+            "name": "test-instruction-to-stats-executions-get-8-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-8-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-8-step-2-operation-2",
+            "name": "test-instruction-to-stats-executions-get-8-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-8-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-8-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-executions-get-9",
+    "type": 0,
+    "name": "test-instruction-to-stats-executions-get-9-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-executions-get-9-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-executions-get-9-step-1",
+        "name": "test-instruction-to-stats-executions-get-9-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-9-step-1-operation-1",
+            "name": "test-instruction-to-stats-executions-get-9-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-9-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-9-step-1-operation-2",
+            "name": "test-instruction-to-stats-executions-get-9-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-9-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-9-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-executions-get-9-step-2",
+        "name": "test-instruction-to-stats-executions-get-9-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-9-step-2-operation-1",
+            "name": "test-instruction-to-stats-executions-get-9-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-9-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-9-step-2-operation-2",
+            "name": "test-instruction-to-stats-executions-get-9-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-9-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-9-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-executions-get-10",
+    "type": 0,
+    "name": "test-instruction-to-stats-executions-get-10-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-executions-get-10-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-executions-get-10-step-1",
+        "name": "test-instruction-to-stats-executions-get-10-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-10-step-1-operation-1",
+            "name": "test-instruction-to-stats-executions-get-10-step-1-operation-1-name",
+            "time_to_complete": {
+              "seconds": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-10-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-10-step-1-operation-2",
+            "name": "test-instruction-to-stats-executions-get-10-step-1-operation-2-name",
+            "time_to_complete": {
+              "seconds": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-10-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-10-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-executions-get-10-step-2",
+        "name": "test-instruction-to-stats-executions-get-10-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-10-step-2-operation-1",
+            "name": "test-instruction-to-stats-executions-get-10-step-2-operation-1-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-10-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-10-step-2-operation-2",
+            "name": "test-instruction-to-stats-executions-get-10-step-2-operation-2-name",
+            "time_to_complete": {
+              "seconds": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-10-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-10-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203
   }
 ]
