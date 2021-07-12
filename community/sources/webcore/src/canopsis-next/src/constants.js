@@ -1900,3 +1900,30 @@ export const IDLE_RULE_ALARM_CONDITION = {
   lastEvent: 'last_event',
   lastUpdate: 'last_update',
 };
+
+export const DOCUMENTATION_LINKS = {
+  /**
+   * Exploitation
+   */
+  [USERS_PERMISSIONS.technical.exploitation.eventFilter]: 'guide-administration/moteurs/moteur-che-event_filter/',
+  [USERS_PERMISSIONS.technical.exploitation.pbehavior]: 'guide-utilisation/cas-d-usage/comportements_periodiques/',
+  [USERS_PERMISSIONS.technical.exploitation.snmpRule]: 'interconnexions/Supervision/SNMPtrap/',
+  // [USERS_PERMISSIONS.technical.exploitation.idleRules]: '', // TODO: TBD
+  [USERS_PERMISSIONS.technical.exploitation.heartbeat]: 'guide-administration/moteurs/moteur-heartbeat/',
+  [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: 'guide-administration/moteurs/moteur-dynamic-infos/',
+  [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'guide-administration/moteurs/moteur-correlation/',
+  [USERS_PERMISSIONS.technical.exploitation.scenario]: 'guide-administration/moteurs/moteur-action/',
+
+  /**
+   * Admin
+   */
+  [USERS_PERMISSIONS.technical.broadcastMessage]: 'guide-utilisation/interface/broadcast-messages/',
+  [USERS_PERMISSIONS.technical.playlist]: 'guide-utilisation/interface/playlists/',
+  [USERS_PERMISSIONS.technical.planning]: 'guide-administration/moteurs/moteur-pbehavior/#administration-de-la-planification',
+  [USERS_PERMISSIONS.technical.remediation]: 'guide-utilisation/remediation/',
+
+  /**
+   * Notifications
+   */
+  // [USERS_PERMISSIONS.technical.notification.instructionStats]: '', // TODO: TBD
+};

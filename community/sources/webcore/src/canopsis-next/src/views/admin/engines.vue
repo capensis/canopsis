@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    c-page-header {{ $t('common.engines') }}
+    c-page-header
     engines-list(:loading="pending", :engines="engines")
     c-fab-btn(@refresh="fetchList")
 </template>

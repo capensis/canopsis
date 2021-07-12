@@ -1,28 +1,32 @@
 <template lang="pug">
   div
-    h2.text-xs-center.display-1.font-weight-medium.mt-3.mb-2
-      slot
-      v-btn(icon, @click="toggleMessageVisibility")
+    h2.text-xs-center.display-1.font-weight-medium.mt-3.mb-2 {{ $t(`pageHeaders.${name}.title`) }}
+      v-btn(v-if="hasMessage", icon, @click="toggleMessageVisibility")
         v-icon(color="info") help_outline
     v-expand-transition
-      div(v-if="shownMessage")
+      div(v-if="hasMessage && shownMessage")
         v-layout.pb-2(justify-center)
-          div.subheading.page-header__message.pre-wrap(v-html="$t('pageHeaders.helpMessages.idleRules')")
+          div.subheading.page-header__message.pre-wrap(v-html="message")
         v-layout.pb-2(v-show="!messageWasHidden", justify-center)
-          v-btn(color="primary", @click="hideMessage") {{ $t('pageHeaders.hideHelpMessage') }}
+          v-btn(color="primary", @click="hideMessage") {{ $t('pageHeaders.hideMessage') }}
 </template>
 
 <script>
 import { get } from 'lodash';
+
+import { DOCUMENTATION_BASE_URL } from '@/config';
+import { DOCUMENTATION_LINKS } from '@/constants';
 
 import { tourBaseMixin } from '@/mixins/tour/base';
 
 export default {
   mixins: [tourBaseMixin],
   props: {
-    messageName: {
+    name: {
       type: String,
-      default: 'fsad',
+      default() {
+        return get(this.$route, 'meta.requiresPermission.id');
+      },
     },
   },
   data() {
@@ -31,8 +35,29 @@ export default {
     };
   },
   computed: {
+    hasMessage() {
+      return this.$te(`pageHeaders.${this.name}.message`);
+    },
+
     messageWasHidden() {
-      return !!get(this.currentUser, ['ui_tours', this.messageName]);
+      return !!get(this.currentUser, ['ui_tours', this.name]);
+    },
+
+    learMoreMessage() {
+      if (!DOCUMENTATION_LINKS[this.name]) {
+        return '';
+      }
+
+      const link = `${DOCUMENTATION_BASE_URL}${DOCUMENTATION_LINKS[this.name]}`.replace(/\/+/g, '/');
+      const linkMessage = `<a href="${link}" target="_blank"><strong>${link}</strong></a>`;
+
+      return this.$t('pageHeaders.learnMore', { link: linkMessage });
+    },
+
+    message() {
+      const message = this.$t(`pageHeaders.${this.name}.message`);
+
+      return this.learMoreMessage ? `${message}\n${this.learMoreMessage}` : message;
     },
   },
   created() {
@@ -47,7 +72,7 @@ export default {
 
     async hideMessage() {
       if (!this.messageWasHidden) {
-        await this.finishTourByName(this.messageName);
+        await this.finishTourByName(this.name);
       }
 
       this.shownMessage = false;
