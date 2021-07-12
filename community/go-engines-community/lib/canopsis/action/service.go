@@ -114,9 +114,6 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 }
 
 func (s *service) Process(ctx context.Context, event *types.Event) error {
-	// need it for fifo metaalarm lock
-	event.Alarm.Value.RelatedParents = event.MetaAlarmRelatedParents
-
 	if event.Alarm == nil || event.Entity == nil || event.Alarm.IsResolved() {
 		s.sendEventToFifoAck(event)
 
@@ -125,6 +122,9 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 
 	alarm := *event.Alarm
 	entity := *event.Entity
+
+	// need it for fifo metaalarm lock
+	alarm.Value.RelatedParents = event.MetaAlarmRelatedParents
 
 	switch event.AlarmChange.Type {
 	case types.AlarmChangeTypePbhEnter, types.AlarmChangeTypePbhLeave,
