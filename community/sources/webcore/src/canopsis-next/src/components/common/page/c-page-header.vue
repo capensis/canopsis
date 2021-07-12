@@ -17,6 +17,8 @@ import { get } from 'lodash';
 import { DOCUMENTATION_BASE_URL } from '@/config';
 import { DOCUMENTATION_LINKS } from '@/constants';
 
+import { removeTrailingSlashes } from '@/helpers/url';
+
 import { tourBaseMixin } from '@/mixins/tour/base';
 
 export default {
@@ -48,7 +50,7 @@ export default {
         return '';
       }
 
-      const link = `${DOCUMENTATION_BASE_URL}${DOCUMENTATION_LINKS[this.name]}`.replace(/\/+/g, '/');
+      const link = removeTrailingSlashes(`${DOCUMENTATION_BASE_URL}${DOCUMENTATION_LINKS[this.name]}`);
       const linkMessage = `<a href="${link}" target="_blank"><strong>${link}</strong></a>`;
 
       return this.$t('pageHeaders.learnMore', { link: linkMessage });
