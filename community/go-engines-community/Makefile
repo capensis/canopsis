@@ -40,6 +40,9 @@ export GOARCH:=amd64
 export CGO_ENABLED:=1
 export GO111MODULE:=on
 
+#Docker configuration
+export DOCKER_BUILDKIT = 1
+
 #Docker variables
 DOCKER_NO_CACHE = # If set to 1 previous build caches will be ignored
 DOCKER_TAG = $(VERSION)
@@ -62,18 +65,18 @@ $(PLUGINS):
 
 
 # Plugin build job template
-$(OUTPUT_DIR)/plugins/%.so: plugins/%
+$(OUTPUT_DIR)/plugins/%.so: plugins/% plugins/%/*
 	@echo "Building $@"
 	@go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
 		-buildmode=plugin \
-		-o "$@" "$(abspath $^)"
+		-o "$@" "$(abspath $<)"
 
 
 # Build job template
-$(OUTPUT_DIR)/cmd/%: cmd/%
+$(OUTPUT_DIR)/cmd/%: cmd/% cmd/%/*
 	@echo "Building $@"
 	@go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
-		-o "$@" "$(abspath $^)"
+		-o "$@" "$(abspath $<)"
 
 # To add a custom project-specific build flag
 #engine-action: GO_BUILD_CUSTOM_FLAGS=--your-custom-flag
