@@ -21,6 +21,7 @@ import {
   REMEDIATION_INSTRUCTION_TYPES,
   IDLE_RULE_TYPES,
   IDLE_RULE_ALARM_CONDITIONS,
+  USERS_PERMISSIONS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -31,7 +32,6 @@ export default {
     undefined: 'Non défini',
     entity: 'Entité',
     service: 'Service',
-    pbehaviors: 'Comportements périodiques',
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
     addTab: 'Ajouter un onglet',
@@ -76,7 +76,6 @@ export default {
     role: 'Rôle | Rôles',
     import: 'Importation',
     export: 'Exportation',
-    rights: 'Droits',
     profile: 'Profil',
     username: 'Identifiant utilisateur',
     password: 'Mot de passe',
@@ -122,15 +121,6 @@ export default {
     links: 'Liens',
     stack: 'Pile',
     edition: 'Édition',
-    broadcastMessages: 'Diffuser des messages',
-    playlists: 'Playlists',
-    planning: 'Planification',
-    remediation: 'Remédiation',
-    instructions: 'Consignes',
-    metaAlarmRule: 'Meta alarm rule',
-    dynamicInfo: 'Informations dynamiques',
-    instructionRating: 'Évaluation de l\'instruction',
-    idleRules: 'Règles d\'inactivité',
     icon: 'Icône',
     fullscreen: 'Plein écran',
     interval: 'Période',
@@ -154,7 +144,6 @@ export default {
     periods: 'Périodes',
     range: 'Gamme',
     duration: 'Durée',
-    engines: 'Engines',
     previous: 'Précédent',
     next: 'Suivant',
     eventPatterns: 'Patterns des événements',
@@ -1708,7 +1697,6 @@ export default {
     },
   },
   eventFilter: {
-    title: 'Filtre d\'événements',
     externalDatas: 'Données externes',
     actionsRequired: 'Veuillez ajouter au moins une action',
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
@@ -1735,7 +1723,6 @@ export default {
     },
   },
   snmpRules: {
-    title: 'Règles SNMP',
     uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
   },
@@ -1869,7 +1856,6 @@ export default {
     seeAlarms: 'Voir les alarmes',
   },
   heartbeat: {
-    title: 'Heartbeats',
     table: {
       fields: {
         id: 'ID',
@@ -2154,7 +2140,6 @@ export default {
   },
 
   scenario: {
-    title: 'Scénarios',
     headers: 'En-têtes',
     declareTicket: 'Déclarer un ticket',
     workflow: 'Workflow si cette action ne correspond pas :',
@@ -2327,6 +2312,7 @@ export default {
       title: 'Instructions de stockage des données',
       accumulateAfter: 'Accumuler les statistiques des instructions après',
       deleteAfter: 'Supprimer les données des instructions après',
+      deleteAfterHelpText: 'Lorsqu\'il est activé, les données statistiques des instructions seront supprimées après la période de temps définie.',
     },
     history: {
       junit: 'Script lancé à {launchedAt}',
@@ -2383,6 +2369,106 @@ export default {
 
   icons: {
     noEvents: 'Aucun événement reçu pendant {duration} par certaines dépendances',
+  },
+
+  pageHeaders: {
+    hideMessage: 'J\'ai compris! Cacher',
+    learnMore: 'En savoir plus sur {link}',
+
+    /**
+     * Exploitation
+     */
+    [USERS_PERMISSIONS.technical.exploitation.eventFilter]: {
+      title: 'Filtre d\'événements',
+      message: 'The event-filter is a feature of the engine engine-cheallowing to define rules handling events.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: {
+      title: 'Informations dynamiques',
+      message: 'The Canopsis Dynamic infos are used to add information to the alarms. This information is defined with rules indicating under which conditions information must be presented on an alarm.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.heartbeat]: {
+      title: 'Heartbeats',
+      message: 'Canopsis heartbeats can be used to define rules for inbound event patterns and time intervals.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
+      metaAlarmRule: 'Meta alarm rule',
+      message: 'Meta alarm rules can be used for grouping alarms by types and criteria (parent-child relationship, time interval, etc).',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
+      title: 'Règles d\'inactivité',
+      message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
+      title: 'Comportements périodiques',
+      message: 'Canopsis periodical behaviors can be used in order to define a periods when the behavior has to be changed, e.g. for  maintenance or service range.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.scenario]: {
+      title: 'Scénarios',
+      message: 'The Canopsis scenarios can be used to conditionally trigger various types of actions on alarms.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.snmpRule]: {
+      title: 'Règles SNMP',
+      message: 'The SNMP engine allows the processing of SNMP traps retrieved by the connector snmp2canopsis.',
+    },
+
+    /**
+     * Admin access
+     */
+    [USERS_PERMISSIONS.technical.exploitation.action]: {
+      title: 'Droits',
+    },
+    [USERS_PERMISSIONS.technical.role]: {
+      title: 'Rôles',
+    },
+    [USERS_PERMISSIONS.technical.user]: {
+      title: 'Utilisateurs',
+    },
+
+    /**
+     * Admin communications
+     */
+    [USERS_PERMISSIONS.technical.broadcastMessage]: {
+      title: 'Diffuser des messages',
+      message: 'The Canopsis broadcasting messages can be used for displaying banners and information messages that will appear in the Canopsis interface.',
+    },
+    [USERS_PERMISSIONS.technical.playlist]: {
+      title: 'Playlists',
+      message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
+    },
+
+    /**
+     * Admin general
+     */
+    [USERS_PERMISSIONS.technical.engine]: {
+      title: 'Engines',
+      message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
+    },
+    [USERS_PERMISSIONS.technical.parameters]: {
+      title: 'Paramètres',
+    },
+    [USERS_PERMISSIONS.technical.planning]: {
+      title: 'Planification',
+      message: 'The Canopsis Planning Administration functionality can be used for the periodic behavior types customization.',
+    },
+    [USERS_PERMISSIONS.technical.remediation]: {
+      title: 'Consignes',
+      message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
+    },
+
+    /**
+     * Notifications
+     */
+    [USERS_PERMISSIONS.technical.notification.instructionStats]: {
+      title: 'Évaluation de l\'instruction',
+      message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
+    },
   },
 
   ...featureService.get('i18n.fr'),

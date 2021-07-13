@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    c-the-page-header {{ $t('common.instructionRating') }}
+    c-page-header
     remediation-instruction-stats-list(
       :remediation-instruction-stats="remediationInstructionStats",
       :pending="remediationInstructionStatsPending",
