@@ -41,7 +41,7 @@
   {
     "_id": "test-metaalarm-to-update-1",
     "auto_resolve": false,
-    "name": "Test alarm get",
+    "name": "test-metaalarm-to-update-1",
     "patterns": null,
     "type": "complex",
     "author": "test-metaalarm-to-update-1-author"
