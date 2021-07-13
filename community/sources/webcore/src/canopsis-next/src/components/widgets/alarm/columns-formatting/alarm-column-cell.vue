@@ -35,6 +35,7 @@ import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wra
 
 import AlarmColumnCellPopupBody from './alarm-column-cell-popup-body.vue';
 import AlarmColumnValueState from './alarm-column-value-state.vue';
+import AlarmColumnValueStatus from './alarm-column-value-status.vue';
 import AlarmColumnValueCategories from './alarm-column-value-categories.vue';
 import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue';
 import AlarmColumnValueLinks from './alarm-column-value-links.vue';
@@ -52,6 +53,7 @@ export default {
   components: {
     AlarmColumnCellPopupBody,
     AlarmColumnValueState,
+    AlarmColumnValueStatus,
     AlarmColumnValueCategories,
     AlarmColumnValueExtraDetails,
     AlarmColumnValueLinks,
@@ -114,7 +116,6 @@ export default {
 
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {
-        'v.status.val': value => this.$t(`tables.alarmStatus.${value}`),
         'v.last_update_date': value => this.$options.filters.date(value, 'long'),
         'v.creation_date': value => this.$options.filters.date(value, 'long'),
         'v.last_event_date': value => this.$options.filters.date(value, 'long'),
@@ -137,6 +138,12 @@ export default {
         [ALARM_ENTITY_FIELDS.state]: {
           bind: {
             is: 'alarm-column-value-state',
+            alarm: this.alarm,
+          },
+        },
+        [ALARM_ENTITY_FIELDS.status]: {
+          bind: {
+            is: 'alarm-column-value-status',
             alarm: this.alarm,
           },
         },

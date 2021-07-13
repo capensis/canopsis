@@ -2,6 +2,7 @@
  * Mixin creator for polling
  *
  * @param {string} method
+ * @param {boolean} [startOnMount = false]
  * @param {number} delay
  * @returns {{
  *   data(): { timeout: null },
@@ -13,14 +14,16 @@
  *   mounted(): void
  * }}
  */
-export default ({ method, delay }) => ({
+export const createPollingMixin = ({ method, startOnMount = false, delay }) => ({
   data() {
     return {
       timeout: null,
     };
   },
   mounted() {
-    this.startPolling();
+    if (startOnMount) {
+      this.startPolling();
+    }
   },
   beforeDestroy() {
     this.stopPolling();

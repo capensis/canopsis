@@ -18,7 +18,7 @@ import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants'
 
 import { authMixin } from '@/mixins/auth';
 import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
-import pollingMixin from '@/mixins/polling';
+import { createPollingMixin } from '@/mixins/polling';
 
 import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
 
@@ -33,9 +33,10 @@ export default {
   mixins: [
     authMixin,
     entitiesRemediationInstructionExecutionMixin,
-    pollingMixin({
+    createPollingMixin({
       method: 'pingInstructionExecution',
       delay: INSTRUCTION_EXECUTE_FETCHING_INTERVAL,
+      startOnMount: true,
     }),
   ],
   data() {
