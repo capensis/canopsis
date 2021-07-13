@@ -121,7 +121,6 @@ export default {
     links: 'Liens',
     stack: 'Pile',
     edition: 'Édition',
-    remediation: 'Remédiation',
     icon: 'Icône',
     fullscreen: 'Plein écran',
     interval: 'Période',
