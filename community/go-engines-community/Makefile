@@ -1,6 +1,7 @@
 MAIN_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
 CURRENT_MAKEFILE := $(abspath $(lastword $(MAKEFILE_LIST)))
 MONOREPO_ROOT := $(abspath $(dir $(CURRENT_MAKEFILE))/../..)
+MONOREPO_ROOT := $(shell realpath --relative-to=. $(patsubst %/,%,$(dir $(CURRENT_MAKEFILE))/../..))
 ROOT_DIR = $(shell realpath --relative-to=. $(patsubst %/,%,$(dir $(MAIN_MAKEFILE))))
 VPATH = $(dir $(MAIN_MAKEFILE))
 OUTPUT_DIR = $(ROOT_DIR)/build
@@ -80,12 +81,22 @@ $(OUTPUT_DIR)/cmd/%: cmd/%
 #
 # DOCKER IMAGES TARGETS
 #
+
+$(MONOREPO_ROOT)/.dockerignore:
+	cd $(MONOREPO_ROOT);\
+	echo > $(MONOREPO_ROOT)/.dockerignore;\
+	set -x;\
+	for file in $$(find -name .dockerignore);\
+	do \
+		sed -E 's;^(!?)(.*)$$;\1'$$(dirname "$$file")'/\2;' "$$file" >> .dockerignore;\
+	done
+
 canopsis.toml:
 	mkdir -p $(OUTPUT_DIR)
 	$(dir $(CURRENT_MAKEFILE))/config/canopsis.toml.template ${CANOPSIS_EDITION} > $(OUTPUT_DIR)/canopsis.toml
 
 .PHONY: docker_alpine_updated docker_builder $(DOCKER_TARGETS)
-docker_alpine_updated:
+docker_alpine_updated: $(MONOREPO_ROOT)/.dockerignore
 	docker build \
 		$(if $(DOCKER_NO_CACHE),--no-cache,--cache-from alpine_updated:latest) \
 		-t alpine_updated:latest \
@@ -96,7 +107,7 @@ docker_alpine_updated:
 		--file "$(DOCKERFILE_PATH)" \
 		"$(MONOREPO_ROOT)"
 
-docker_builder: docker_alpine_updated
+docker_builder: $(MONOREPO_ROOT)/.dockerignore docker_alpine_updated
 	docker build \
 		-t canopsis_go_bin:latest \
 		--target builder \
@@ -109,7 +120,7 @@ docker_builder: docker_alpine_updated
 		"$(MONOREPO_ROOT)"
 
 $(DOCKER_TARGETS): TARGET=final_container
-$(DOCKER_TARGETS): docker_alpine_updated docker_builder
+$(DOCKER_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker_alpine_updated docker_builder
 	docker build -t "$(subst docker_,,$@):$(DOCKER_TAG)" \
 		--build-arg CMD="$(subst docker_,,$@)" \
 		--target $(TARGET) \
@@ -145,3 +156,4 @@ install_plugin_%: $(OUTPUT_DIR)/plugins/%
 .PHONY: clean
 clean:
 	rm -rf $(OUTPUT_DIR)
+	rm $(MONOREPO_ROOT)/.dockerignore
