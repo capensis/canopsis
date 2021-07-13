@@ -48,7 +48,6 @@ DOCKERFILE_PATH = $(dir $(CURRENT_MAKEFILE))/Dockerfile
 
 .PHONY: build docker_images
 build: $(CMDS) $(PLUGINS)
-	echo $(ROOT_DIR)
 docker_images: $(DOCKER_TARGETS)
 
 #
@@ -82,7 +81,8 @@ $(OUTPUT_DIR)/cmd/%: cmd/%
 # DOCKER IMAGES TARGETS
 #
 canopsis.toml:
-	$(dir $(CURRENT_MAKEFILE))/config/canopsis.toml.template core > $(ROOT_DIR)/canopsis.toml
+	mkdir -p $(OUTPUT_DIR)
+	$(dir $(CURRENT_MAKEFILE))/config/canopsis.toml.template ${CANOPSIS_EDITION} > $(OUTPUT_DIR)/canopsis.toml
 
 .PHONY: docker_alpine_updated docker_builder $(DOCKER_TARGETS)
 docker_alpine_updated:
@@ -130,7 +130,7 @@ docker_canopsis-api: TARGET=canopsis-api
 .PHONY: install
 install: $(INSTALL_TARGETS) canopsis.toml
 	install -d $(DESTDIR)$(PREFIX)/opt/canopsis/etc
-	install -m 644 $(ROOT_DIR)/canopsis.toml $(DESTDIR)$(PREFIX)/opt/canopsis/etc/
+	install -m 644 $(OUTPUT_DIR)/canopsis.toml $(DESTDIR)$(PREFIX)/opt/canopsis/etc/
 
 # Do not make the install_* targets .PHONY as make
 # does not consider implicit rule patterns for .PHONY targets
@@ -145,4 +145,3 @@ install_plugin_%: $(OUTPUT_DIR)/plugins/%
 .PHONY: clean
 clean:
 	rm -rf $(OUTPUT_DIR)
-	rm -f $(ROOT_DIR)/canopsis.toml

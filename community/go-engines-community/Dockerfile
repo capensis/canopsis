@@ -31,7 +31,7 @@ USER canopsis:canopsis
 ENTRYPOINT /engine
 
 ARG CANOPSIS_EDITION
-COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/canopsis.toml /
+COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/canopsis.toml /
 ARG CMD
 COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /engine
 
