@@ -511,7 +511,7 @@ Feature: create and update meta alarm
     }
     """
 
-  Scenario: given meta alarm and ack event should ack children
+  Scenario: given meta alarm and change state event should update children
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
     """
