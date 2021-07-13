@@ -231,6 +231,7 @@ export default {
   context: {
     impacts: 'Impacts',
     dependencies: 'Dépendances',
+    noEventsFilter: 'Aucun filtre d\'événements',
     expandPanel: {
       infos: 'Les informations',
       type: 'Type',
