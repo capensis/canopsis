@@ -12,53 +12,42 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Store is an interface for heartbeats storage
 type Store interface {
-	Insert(model []*Heartbeat) error
-	Find(r FilteredQuery) (*AggregationResult, error)
-	GetOneBy(id string) (*Heartbeat, error)
-	Update(model []*Heartbeat) error
-	Delete(ids []string) error
+	Insert(ctx context.Context, model []*Response) error
+	Find(ctx context.Context, r FilteredQuery) (*AggregationResult, error)
+	GetOneBy(ctx context.Context, id string) (*Response, error)
+	Update(ctx context.Context, model []*Response) error
+	Delete(ctx context.Context, ids []string) error
 }
 
 type store struct {
-	db            mongo.DbClient
-	collection    mongo.DbCollection
-	defaultSortBy string
+	db                    mongo.DbClient
+	collection            mongo.DbCollection
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
 // NewStore instantiates heartbeat store.
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		db:            db,
-		collection:    db.Collection(mongo.HeartbeatMongoCollection),
-		defaultSortBy: "created",
+		db:                    db,
+		collection:            db.Collection(mongo.HeartbeatMongoCollection),
+		defaultSearchByFields: []string{"_id", "name", "description", "author"},
+		defaultSortBy:         "created",
 	}
 }
 
 // Find heartbeats according to query.
-func (s *store) Find(r FilteredQuery) (*AggregationResult, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	filter := bson.M{}
-
-	if r.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", r.Search),
-			Options: "i",
-		}
-
-		filter["$or"] = []bson.M{
-			{"name": searchRegexp},
-			{"description": searchRegexp},
-			{"author": searchRegexp},
-		}
+func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, error) {
+	pipeline := make([]bson.M, 0)
+	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
 	sortBy := r.SortBy
@@ -68,7 +57,7 @@ func (s *store) Find(r FilteredQuery) (*AggregationResult, error) {
 
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
-		[]bson.M{{"$match": filter}},
+		pipeline,
 		common.GetSortQuery(sortBy, r.Sort),
 	))
 
@@ -90,11 +79,8 @@ func (s *store) Find(r FilteredQuery) (*AggregationResult, error) {
 }
 
 // GetOneBy heartbeat by id.
-func (s *store) GetOneBy(id string) (*Heartbeat, error) {
-	res := &Heartbeat{}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
+	res := &Response{}
 	if err := s.collection.FindOne(ctx, bson.M{"_id": id}).Decode(res); err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, nil
@@ -106,10 +92,7 @@ func (s *store) GetOneBy(id string) (*Heartbeat, error) {
 }
 
 // Create new heartbeats.
-func (s *store) Insert(heartbeats []*Heartbeat) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Insert(ctx context.Context, heartbeats []*Response) error {
 	now := types.CpsTime{Time: time.Now()}
 
 	for i := range heartbeats {
@@ -135,10 +118,7 @@ func (s *store) Insert(heartbeats []*Heartbeat) error {
 }
 
 // Update heartbeats.
-func (s *store) Update(heartbeats []*Heartbeat) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Update(ctx context.Context, heartbeats []*Response) error {
 	ids := make([]string, len(heartbeats))
 	for i := range heartbeats {
 		ids[i] = heartbeats[i].ID
@@ -152,9 +132,9 @@ func (s *store) Update(heartbeats []*Heartbeat) error {
 
 	defer cursor.Close(ctx)
 
-	findHeartbeats := make(map[string]*Heartbeat)
+	findHeartbeats := make(map[string]*Response)
 	for cursor.Next(ctx) {
-		h := Heartbeat{}
+		h := Response{}
 		err := cursor.Decode(&h)
 		if err != nil {
 			return err
@@ -196,10 +176,7 @@ func (s *store) Update(heartbeats []*Heartbeat) error {
 }
 
 // Delete heartbeats by id
-func (s *store) Delete(ids []string) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Delete(ctx context.Context, ids []string) error {
 	cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}},
 		options.Find().SetProjection(bson.M{"_id": 1}))
 	if err != nil {

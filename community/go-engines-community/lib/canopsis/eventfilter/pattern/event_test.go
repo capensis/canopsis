@@ -163,11 +163,11 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 			Pattern: pattern.EventPattern{
 				State: pattern.IntegerPattern{
 					IntegerConditions: pattern.IntegerConditions{
-						Gt: utils.OptionalInt64{
+						Gt: types.OptionalInt64{
 							Set:   true,
 							Value: 0,
 						},
-						Lt: utils.OptionalInt64{
+						Lt: types.OptionalInt64{
 							Set:   true,
 							Value: 3,
 						},
@@ -175,7 +175,7 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 				},
 				Component: pattern.StringPattern{
 					StringConditions: pattern.StringConditions{
-						Equal: utils.OptionalString{
+						Equal: types.OptionalString{
 							Set:   true,
 							Value: "component",
 						},
@@ -183,7 +183,7 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 				},
 				Resource: pattern.StringPattern{
 					StringConditions: pattern.StringConditions{
-						RegexMatch: utils.OptionalRegexp{
+						RegexMatch: types.OptionalRegexp{
 							Set:   true,
 							Value: testRegexp,
 						},
@@ -196,7 +196,7 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 								InfoFields: pattern.InfoFields{
 									Value: pattern.StringPattern{
 										StringConditions: pattern.StringConditions{
-											Equal: utils.OptionalString{
+											Equal: types.OptionalString{
 												Set:   true,
 												Value: "info_value",
 											},
@@ -210,11 +210,11 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 				ExtraInfos: map[string]pattern.InterfacePattern{
 					"extra_info": {
 						StringArrayConditions: pattern.StringArrayConditions{
-							HasEvery: utils.OptionalStringArray{
+							HasEvery: types.OptionalStringArray{
 								Set:   true,
 								Value: []string{"test1", "test2"},
 							},
-							HasNot: utils.OptionalStringArray{
+							HasNot: types.OptionalStringArray{
 								Set:   true,
 								Value: []string{"test3"},
 							},
@@ -429,11 +429,11 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 					{
 						State: pattern.IntegerPattern{
 							IntegerConditions: pattern.IntegerConditions{
-								Gt: utils.OptionalInt64{
+								Gt: types.OptionalInt64{
 									Set:   true,
 									Value: 0,
 								},
-								Lt: utils.OptionalInt64{
+								Lt: types.OptionalInt64{
 									Set:   true,
 									Value: 3,
 								},
@@ -441,7 +441,7 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 						},
 						Component: pattern.StringPattern{
 							StringConditions: pattern.StringConditions{
-								Equal: utils.OptionalString{
+								Equal: types.OptionalString{
 									Set:   true,
 									Value: "component",
 								},
@@ -449,7 +449,7 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 						},
 						Resource: pattern.StringPattern{
 							StringConditions: pattern.StringConditions{
-								RegexMatch: utils.OptionalRegexp{
+								RegexMatch: types.OptionalRegexp{
 									Set:   true,
 									Value: testRegexp,
 								},
@@ -462,7 +462,7 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 										InfoFields: pattern.InfoFields{
 											Value: pattern.StringPattern{
 												StringConditions: pattern.StringConditions{
-													Equal: utils.OptionalString{
+													Equal: types.OptionalString{
 														Set:   true,
 														Value: "info_value",
 													},
@@ -476,11 +476,11 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 						ExtraInfos: map[string]pattern.InterfacePattern{
 							"extra_info": {
 								StringArrayConditions: pattern.StringArrayConditions{
-									HasEvery: utils.OptionalStringArray{
+									HasEvery: types.OptionalStringArray{
 										Set:   true,
 										Value: []string{"test1", "test2"},
 									},
-									HasNot: utils.OptionalStringArray{
+									HasNot: types.OptionalStringArray{
 										Set:   true,
 										Value: []string{"test3"},
 									},
@@ -491,11 +491,11 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 					{
 						State: pattern.IntegerPattern{
 							IntegerConditions: pattern.IntegerConditions{
-								Gt: utils.OptionalInt64{
+								Gt: types.OptionalInt64{
 									Set:   true,
 									Value: 0,
 								},
-								Lt: utils.OptionalInt64{
+								Lt: types.OptionalInt64{
 									Set:   true,
 									Value: 3,
 								},
@@ -503,7 +503,7 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 						},
 						Component: pattern.StringPattern{
 							StringConditions: pattern.StringConditions{
-								Equal: utils.OptionalString{
+								Equal: types.OptionalString{
 									Set:   true,
 									Value: "component",
 								},
@@ -511,7 +511,7 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 						},
 						Resource: pattern.StringPattern{
 							StringConditions: pattern.StringConditions{
-								RegexMatch: utils.OptionalRegexp{
+								RegexMatch: types.OptionalRegexp{
 									Set:   true,
 									Value: testRegexp,
 								},
@@ -524,7 +524,7 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 										InfoFields: pattern.InfoFields{
 											Value: pattern.StringPattern{
 												StringConditions: pattern.StringConditions{
-													Equal: utils.OptionalString{
+													Equal: types.OptionalString{
 														Set:   true,
 														Value: "info_value",
 													},
@@ -538,11 +538,11 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 						ExtraInfos: map[string]pattern.InterfacePattern{
 							"extra_info": {
 								StringArrayConditions: pattern.StringArrayConditions{
-									HasEvery: utils.OptionalStringArray{
+									HasEvery: types.OptionalStringArray{
 										Set:   true,
 										Value: []string{"test1", "test2"},
 									},
-									HasNot: utils.OptionalStringArray{
+									HasNot: types.OptionalStringArray{
 										Set:   true,
 										Value: []string{"test3"},
 									},
@@ -550,7 +550,7 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 							},
 							"extra_info_2": {
 								StringConditions: pattern.StringConditions{
-									Equal: utils.OptionalString{
+									Equal: types.OptionalString{
 										Set:   true,
 										Value: "test_info",
 									},

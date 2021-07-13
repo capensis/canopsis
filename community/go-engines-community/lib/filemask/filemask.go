@@ -1,4 +1,4 @@
-package junit
+package filemask
 
 import (
 	"errors"

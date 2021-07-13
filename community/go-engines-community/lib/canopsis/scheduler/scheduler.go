@@ -23,16 +23,17 @@ var (
 type Scheduler interface {
 	Start(ctx context.Context)
 	Stop(ctx context.Context)
-	ProcessEvent(context.Context, libamqp.Channel, string, []byte) error
-	AckEvent(context.Context, libamqp.Channel, types.Event) error
+	ProcessEvent(context.Context, types.Event) error
+	AckEvent(context.Context, types.Event) error
 }
 
 type scheduler struct {
-	redisConn      *redismod.Client
+	redisConn      redismod.UniversalClient
 	channelPub     libamqp.Channel
 	publishToQueue string
 
-	jsonDecoder               encoding.Decoder
+	decoder                   encoding.Decoder
+	encoder                   encoding.Encoder
 	enableMetaAlarmProcessing bool
 
 	queueLock QueueLock
@@ -45,13 +46,14 @@ type scheduler struct {
 
 // NewSchedulerService ...
 func NewSchedulerService(
-	redisLockStorage *redismod.Client,
-	redisQueueStorage *redismod.Client,
+	redisLockStorage redismod.UniversalClient,
+	redisQueueStorage redismod.UniversalClient,
 	channelPub libamqp.Channel,
 	publishToQueue string,
 	logger zerolog.Logger,
 	lockTtl int,
-	jsonDecoder encoding.Decoder,
+	decoder encoding.Decoder,
+	encoder encoding.Encoder,
 	enableMetaAlarmProcessing bool,
 ) Scheduler {
 
@@ -61,14 +63,15 @@ func NewSchedulerService(
 		publishToQueue: publishToQueue,
 		logger:         logger,
 
-		jsonDecoder:               jsonDecoder,
+		decoder: decoder,
+		encoder: encoder,
+
 		enableMetaAlarmProcessing: enableMetaAlarmProcessing,
 
 		queueLock: NewQueueLock(
 			redisLockStorage,
 			time.Second*time.Duration(lockTtl),
 			redisQueueStorage,
-			true,
 			logger,
 		),
 	}
@@ -107,15 +110,15 @@ func (s *scheduler) Stop(ctx context.Context) {
 	}
 }
 
-func (s *scheduler) ProcessEvent(ctx context.Context, channelPub libamqp.Channel, lockID string, bevent []byte) error {
-	var eventDecoded types.Event
-	err := s.jsonDecoder.Decode(bevent, &eventDecoded)
+func (s *scheduler) ProcessEvent(ctx context.Context, event types.Event) error {
+	lockID := event.GetLockID()
+	bevent, err := s.encoder.Encode(event)
 	if err != nil {
 		return err
 	}
 
-	if s.IsMetaAlarm(eventDecoded) && s.enableMetaAlarmProcessing {
-		return s.ProcessMetaAlarm(ctx, channelPub, lockID, bevent)
+	if s.IsMetaAlarm(event) && s.enableMetaAlarmProcessing {
+		return s.ProcessMetaAlarm(ctx, lockID, bevent)
 	}
 
 	locked, err := s.queueLock.LockOrPush(ctx, lockID, bevent)
@@ -124,7 +127,7 @@ func (s *scheduler) ProcessEvent(ctx context.Context, channelPub libamqp.Channel
 		return err
 	}
 
-	return s.publishToNext(channelPub, bevent)
+	return s.publishToNext(bevent)
 }
 
 func (s *scheduler) IsMetaAlarm(event types.Event) bool {
@@ -133,11 +136,11 @@ func (s *scheduler) IsMetaAlarm(event types.Event) bool {
 		strings.HasPrefix(event.Resource, "meta-alarm-entity-")
 }
 
-func (s *scheduler) ProcessMetaAlarm(ctx context.Context, channelPub libamqp.Channel, lockID string, bevent []byte) error {
+func (s *scheduler) ProcessMetaAlarm(ctx context.Context, lockID string, bevent []byte) error {
 	s.logger.Debug().Msg("Processing meta-alarm event")
 
 	var event types.Event
-	err := s.jsonDecoder.Decode(bevent, &event)
+	err := s.decoder.Decode(bevent, &event)
 	if err != nil {
 		return err
 	}
@@ -147,7 +150,6 @@ func (s *scheduler) ProcessMetaAlarm(ctx context.Context, channelPub libamqp.Cha
 		lockIDList = append(lockIDList, *event.MetaAlarmChildren...)
 	}
 
-	lockIDList = append(lockIDList, lockID)
 	locked, err := s.queueLock.LockMultipleOrPush(ctx, lockIDList, lockID, bevent)
 
 	if err != nil {
@@ -162,18 +164,20 @@ func (s *scheduler) ProcessMetaAlarm(ctx context.Context, channelPub libamqp.Cha
 
 	s.logger.Debug().Msg("sending meta-alarm event")
 
-	return s.publishToNext(channelPub, bevent)
+	return s.publishToNext(bevent)
 }
 
-func (s *scheduler) AckEvent(ctx context.Context, channelPub libamqp.Channel, event types.Event) error {
+func (s *scheduler) AckEvent(ctx context.Context, event types.Event) error {
 	lockID := event.GetLockID()
 	s.logger.Debug().Str("lockID", lockID).Msg("AckEvent")
 
 	if s.IsMetaAlarm(event) && s.enableMetaAlarmProcessing {
-		return s.processMetaAlarmUnlock(ctx, channelPub, event)
+		return s.processMetaAlarmUnlock(ctx, event)
 	}
 
-	nextEvent, err := s.queueLock.PopOrUnlock(ctx, lockID)
+	asyncUnlock := !s.enableMetaAlarmProcessing || event.MetaAlarmParents == nil ||
+		len(*event.MetaAlarmParents) == 0
+	nextEvent, err := s.queueLock.PopOrUnlock(ctx, lockID, asyncUnlock)
 
 	if err != nil {
 		return err
@@ -182,24 +186,25 @@ func (s *scheduler) AckEvent(ctx context.Context, channelPub libamqp.Channel, ev
 	if nextEvent == nil {
 		go func() {
 			if s.enableMetaAlarmProcessing {
-				s.processMetaAlarmChildUnlock(ctx, channelPub, event)
+				s.processMetaAlarmChildUnlock(ctx, event)
 			}
 		}()
 
 		return nil
 	}
 
-	return s.publishToNext(channelPub, nextEvent)
+	return s.publishToNext(nextEvent)
 }
 
-func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, channelPub libamqp.Channel, event types.Event) error {
+func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, event types.Event) error {
 	lockID := event.GetEID()
 
 	// process children
+	childHasEvent := false
 	if metaAlarmChildren := event.MetaAlarmChildren; metaAlarmChildren != nil && len(*metaAlarmChildren) > 0 {
 
 		for _, lockID := range *metaAlarmChildren {
-			nextEvent, err := s.queueLock.PopOrUnlock(ctx, lockID)
+			nextEvent, err := s.queueLock.PopOrUnlock(ctx, lockID, true)
 			if err != nil {
 				s.logger.Err(err).
 					Str(lockID, "lockID").
@@ -210,14 +215,26 @@ func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, channelPub libam
 				continue
 			}
 
-			err = s.publishToNext(channelPub, nextEvent)
+			childHasEvent = true
+			err = s.publishToNext(nextEvent)
 			if err != nil {
 				return err
 			}
 		}
 	}
 
-	nextMetaAlarmEvent, err := s.queueLock.PopOrUnlock(ctx, lockID)
+	if childHasEvent {
+		err := s.queueLock.Unlock(ctx, lockID)
+		if err != nil {
+			s.logger.Err(err).
+				Str(lockID, "lockID").
+				Msg("unable to unlock alarm")
+		}
+
+		return nil
+	}
+
+	nextMetaAlarmEvent, err := s.queueLock.PopOrUnlock(ctx, lockID, true)
 	if err != nil {
 		s.logger.Err(err).
 			Str(lockID, "lockID").
@@ -225,16 +242,29 @@ func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, channelPub libam
 	}
 
 	if nextMetaAlarmEvent == nil {
+		// todo if one the child has another parent then events of another parent are not processed
+		// possible solution 1 : find another parents from mongo and checks them, can be filtered
+		// by ids from redis queue.
+		// possible solution 2 : check if meta alarm locks are required at all.
+
 		return nil
 	}
 
-	return s.publishToNext(channelPub, nextMetaAlarmEvent)
+	return s.publishToNext(nextMetaAlarmEvent)
 }
 
-func (s *scheduler) processMetaAlarmChildUnlock(ctx context.Context, channelPub libamqp.Channel, event types.Event) {
+func (s *scheduler) processMetaAlarmChildUnlock(ctx context.Context, event types.Event) {
 	if metaAlarmParents := event.MetaAlarmParents; metaAlarmParents != nil && len(*metaAlarmParents) > 0 {
 		for _, metaAlarmLock := range *metaAlarmParents {
-			nextEvent, err := s.queueLock.PopOrUnlock(ctx, metaAlarmLock)
+			nextEvent, err := s.queueLock.LockAndPopMultiple(ctx, metaAlarmLock, func(b []byte) ([]string, error) {
+				metaAlarmEvent := types.Event{}
+				err := s.decoder.Decode(b, &metaAlarmEvent)
+				if err != nil || metaAlarmEvent.MetaAlarmChildren == nil {
+					return nil, err
+				}
+
+				return *metaAlarmEvent.MetaAlarmChildren, nil
+			}, true)
 			if err != nil {
 				s.logger.Err(err).
 					Str(metaAlarmLock, "meta-alarm-lockID").
@@ -245,18 +275,20 @@ func (s *scheduler) processMetaAlarmChildUnlock(ctx context.Context, channelPub 
 				continue
 			}
 
-			err = s.ProcessMetaAlarm(ctx, channelPub, metaAlarmLock, nextEvent)
+			err = s.publishToNext(nextEvent)
 			if err != nil {
 				s.logger.Err(err).
 					Str(metaAlarmLock, "meta-alarm-lockID").
 					Msg("unable to process meta-alarm")
 			}
+
+			break
 		}
 	}
 }
 
-func (s *scheduler) publishToNext(channelPub libamqp.Channel, eventByte []byte) error {
-	return channelPub.Publish(
+func (s *scheduler) publishToNext(eventByte []byte) error {
+	return s.channelPub.Publish(
 		"",
 		s.publishToQueue,
 		false,
@@ -288,7 +320,7 @@ func (s *scheduler) listen(ctx context.Context) {
 
 func (s *scheduler) processExpiredLock(ctx context.Context, lockID string) {
 	s.logger.Debug().Str("lockID", lockID).Msg("processExpireLock")
-	nextEvent, err := s.queueLock.LockAndPop(ctx, lockID)
+	nextEvent, err := s.queueLock.LockAndPop(ctx, lockID, true)
 	if err != nil {
 		s.logger.
 			Err(err).
@@ -300,7 +332,7 @@ func (s *scheduler) processExpiredLock(ctx context.Context, lockID string) {
 		return
 	}
 
-	err = s.publishToNext(s.channelPub, nextEvent)
+	err = s.publishToNext(nextEvent)
 	if err != nil {
 		s.logger.
 			Err(err).

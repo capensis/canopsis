@@ -43,7 +43,7 @@ func NewApi(
 // @Param search query string false "search query"
 // @Param sort query string false "sort query"
 // @Param sort_by query string false "sort query"
-// @Success 200 {object} common.PaginatedListResponse{data=[]Heartbeat}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /heartbeats [get]
 func (a *api) List(c *gin.Context) {
@@ -55,7 +55,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	heartbeats, err := a.store.Find(query)
+	heartbeats, err := a.store.Find(c.Request.Context(), query)
 	if err != nil {
 		panic(err)
 	}
@@ -78,11 +78,11 @@ func (a *api) List(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param id path string true "heartbeat id"
-// @Success 200 {object} Heartbeat
+// @Success 200 {object} Response
 // @Failure 404 {object} common.ErrorResponse
 // @Router /heartbeats/{id} [get]
 func (a *api) Get(c *gin.Context) {
-	heartbeat, err := a.store.GetOneBy(c.Param("id"))
+	heartbeat, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -104,7 +104,7 @@ func (a *api) Get(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param body body CreateRequest true "body"
-// @Success 201 {object} Heartbeat
+// @Success 201 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /heartbeats [post]
 func (a *api) Create(c *gin.Context) {
@@ -116,7 +116,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	heartbeat := a.transformer.TransformCreateRequestToModel(request)
-	err := a.store.Insert([]*Heartbeat{heartbeat})
+	err := a.store.Insert(c.Request.Context(), []*Response{heartbeat})
 	if err != nil {
 		panic(err)
 	}
@@ -144,7 +144,7 @@ func (a *api) Create(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "heartbeat id"
 // @Param body body UpdateRequest true "body"
-// @Success 200 {object} Heartbeat
+// @Success 200 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /heartbeats/{id} [put]
@@ -159,7 +159,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	heartbeat := a.transformer.TransformUpdateRequestToModel(request)
-	err := a.store.Update([]*Heartbeat{heartbeat})
+	err := a.store.Update(c.Request.Context(), []*Response{heartbeat})
 	if err != nil {
 		var notFoundErr NotFoundError
 		if errors.As(err, &notFoundErr) {
@@ -195,7 +195,7 @@ func (a *api) Update(c *gin.Context) {
 // @Router /heartbeats/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	err := a.store.Delete([]string{id})
+	err := a.store.Delete(c.Request.Context(), []string{id})
 
 	if err != nil {
 		var notFoundErr NotFoundError
@@ -229,7 +229,7 @@ func (a *api) Delete(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param body body []CreateRequest true "body"
-// @Success 201 {array} Heartbeat
+// @Success 201 {array} []Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /bulk/heartbeats [post]
 func (a *api) BulkCreate(c *gin.Context) {
@@ -241,7 +241,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 	}
 
 	heartbeats := a.transformer.TransformBulkCreateRequestToModels(request)
-	err := a.store.Insert(heartbeats)
+	err := a.store.Insert(c.Request.Context(), heartbeats)
 	if err != nil {
 		panic(err)
 	}
@@ -270,7 +270,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param body body []BulkUpdateRequestItem true "body"
-// @Success 200 {array} Heartbeat
+// @Success 200 {array} []Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /bulk/heartbeats [put]
@@ -283,7 +283,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	}
 
 	heartbeats := a.transformer.TransformBulkUpdateRequestToModels(request)
-	err := a.store.Update(heartbeats)
+	err := a.store.Update(c.Request.Context(), heartbeats)
 	if err != nil {
 		var notFoundErr NotFoundError
 		if errors.As(err, &notFoundErr) {
@@ -327,7 +327,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		return
 	}
 
-	err := a.store.Delete(request.IDs)
+	err := a.store.Delete(c.Request.Context(), request.IDs)
 	if err != nil {
 		var notFoundErr NotFoundError
 		if errors.As(err, &notFoundErr) {

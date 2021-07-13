@@ -1555,7 +1555,7 @@ export const WIDGET_GRID_ROW_HEIGHT = 20;
 
 export const WIDGET_GRID_COLUMNS_COUNT = 12;
 
-export const META_ALARM_EVENT_DEFAULT_FIELDS = {
+export const MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS = {
   component: 'metaalarm',
   connector: 'engine',
   connector_name: 'correlation',

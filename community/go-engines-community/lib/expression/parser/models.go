@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"reflect"
 )
@@ -49,7 +50,7 @@ func (c *Condition) Query() bson.M {
 		return c.Operand.Query()
 	}
 	if c.Not != nil {
-		return bson.M{"$not": c.Not.Query()}
+		return c.Not.Operand.NotQuery()
 	}
 
 	return nil
@@ -68,6 +69,19 @@ func (o *ConditionOperand) Query() bson.M {
 	}
 	if o.ConditionRHS != nil {
 		right = o.ConditionRHS.Query()
+	}
+
+	return bson.M{left: right}
+}
+
+func (o *ConditionOperand) NotQuery() bson.M {
+	left := ""
+	var right interface{}
+	if o.Operand != nil {
+		left, _ = o.Operand.Val().(string)
+	}
+	if o.ConditionRHS != nil {
+		right = o.ConditionRHS.NotQuery()
 	}
 
 	return bson.M{left: right}
@@ -99,6 +113,15 @@ func (r *ConditionRHS) Query() bson.M {
 	}
 
 	return nil
+}
+
+func (r *ConditionRHS) NotQuery() bson.M {
+	q := r.Query()
+	if len(q) == 0 {
+		return q
+	}
+
+	return bson.M{"$not": q}
 }
 
 type Compare struct {
@@ -138,7 +161,7 @@ func (l *Like) Query() bson.M {
 		operand = l.Operand.Val()
 	}
 
-	return bson.M{"$regex": operand}
+	return bson.M{"$regex": fmt.Sprintf("%v", operand)}
 }
 
 type NotLike struct {
@@ -151,7 +174,7 @@ func (l *NotLike) Query() bson.M {
 		operand = l.Operand.Val()
 	}
 
-	return bson.M{"$not": bson.M{"$regex": operand}}
+	return bson.M{"$not": bson.M{"$regex": fmt.Sprintf("%v", operand)}}
 }
 
 type Contains struct {

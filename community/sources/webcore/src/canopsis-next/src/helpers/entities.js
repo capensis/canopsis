@@ -113,6 +113,7 @@ export function generateWidgetByType(type) {
         expandGridRangeSize: [GRID_SIZES.min, GRID_SIZES.max],
         exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
         exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds,
+        widgetExportColumns: defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
       };
       break;
 
@@ -148,6 +149,7 @@ export function generateWidgetByType(type) {
         },
         exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
         exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds,
+        widgetExportColumns: defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
       };
       break;
 

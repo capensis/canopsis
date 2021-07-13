@@ -2,7 +2,6 @@ package scenario
 
 import (
 	"context"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"time"
 
@@ -11,58 +10,49 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Store is an interface for scenarios storage
 type Store interface {
-	Insert(EditRequest) (*Scenario, error)
-	Find(FilteredQuery) (*AggregationResult, error)
-	GetOneBy(id string) (*Scenario, error)
-	Update(EditRequest) (*Scenario, error)
-	Delete(id string) (bool, error)
+	Insert(ctx context.Context, r CreateRequest) (*Scenario, error)
+	Find(ctx context.Context, q FilteredQuery) (*AggregationResult, error)
+	GetOneBy(ctx context.Context, id string) (*Scenario, error)
+	Update(ctx context.Context, r UpdateRequest) (*Scenario, error)
+	Delete(ctx context.Context, id string) (bool, error)
 }
 
 type store struct {
-	db          mongo.DbClient
-	collection  mongo.DbCollection
-	transformer ModelTransformer
+	db                    mongo.DbClient
+	collection            mongo.DbCollection
+	transformer           ModelTransformer
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
 // NewStore instantiates scenario store.
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		db:          db,
-		collection:  db.Collection(mongo.ScenarioMongoCollection),
-		transformer: NewModelTransformer(),
+		db:                    db,
+		collection:            db.Collection(mongo.ScenarioMongoCollection),
+		transformer:           NewModelTransformer(),
+		defaultSearchByFields: []string{"_id", "name", "author"},
+		defaultSortBy:         "created",
 	}
 }
 
 // Find scenarios according to query.
-func (s *store) Find(r FilteredQuery) (*AggregationResult, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	filter := bson.M{}
-
-	if r.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", r.Search),
-			Options: "i",
-		}
-
-		filter["$or"] = []bson.M{
-			{"name": searchRegexp},
-			{"author": searchRegexp},
-		}
+func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, error) {
+	pipeline := make([]bson.M, 0)
+	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	pipeline := []bson.M{{"$match": filter}}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		getSort(r),
+		s.getSort(r),
 	))
 
 	if err != nil {
@@ -83,10 +73,7 @@ func (s *store) Find(r FilteredQuery) (*AggregationResult, error) {
 }
 
 // GetOneBy scenario by id.
-func (s *store) GetOneBy(id string) (*Scenario, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) GetOneBy(ctx context.Context, id string) (*Scenario, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 
@@ -109,13 +96,16 @@ func (s *store) GetOneBy(id string) (*Scenario, error) {
 }
 
 // Create new scenario.
-func (s *store) Insert(r EditRequest) (*Scenario, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) {
 	now := types.CpsTime{Time: time.Now()}
-	model := s.transformer.TransformEditRequestToModel(r)
-	model.ID = utils.NewID()
+	model := s.transformer.TransformEditRequestToModel(r.EditRequest)
+
+	if r.ID == "" {
+		r.ID = utils.NewID()
+	}
+
+	model.ID = r.ID
+
 	model.Created = now
 	model.Updated = now
 
@@ -124,16 +114,13 @@ func (s *store) Insert(r EditRequest) (*Scenario, error) {
 		return nil, err
 	}
 
-	return s.GetOneBy(model.ID)
+	return s.GetOneBy(ctx, model.ID)
 }
 
 // Update scenario.
-func (s *store) Update(r EditRequest) (*Scenario, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) {
 	now := types.CpsTime{Time: time.Now()}
-	model := s.transformer.TransformEditRequestToModel(r)
+	model := s.transformer.TransformEditRequestToModel(r.EditRequest)
 	model.Updated = now
 
 	res, err := s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
@@ -145,14 +132,11 @@ func (s *store) Update(r EditRequest) (*Scenario, error) {
 		return nil, nil
 	}
 
-	return s.GetOneBy(r.ID)
+	return s.GetOneBy(ctx, r.ID)
 }
 
 // Delete scenario by id
-func (s *store) Delete(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	deleted, err := s.collection.DeleteMany(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err
@@ -200,8 +184,8 @@ func getNestedObjectsPipeline() []bson.M {
 	}
 }
 
-func getSort(r FilteredQuery) bson.M {
-	sortBy := "created"
+func (s *store) getSort(r FilteredQuery) bson.M {
+	sortBy := s.defaultSortBy
 	if r.SortBy != "" {
 		sortBy = r.SortBy
 	}

@@ -151,7 +151,7 @@ func TestAlarmTicketRefPatternMarshalBSON(t *testing.T) {
 				AlarmTicketFields: pattern.AlarmTicketFields{
 					Type: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							Equal: utils.OptionalString{
+							Equal: types.OptionalString{
 								Set:   true,
 								Value: "test1",
 							},
@@ -160,7 +160,7 @@ func TestAlarmTicketRefPatternMarshalBSON(t *testing.T) {
 					Timestamp: pattern.TimePattern{
 						IntegerPattern: pattern.IntegerPattern{
 							IntegerConditions: pattern.IntegerConditions{
-								Gt: utils.OptionalInt64{
+								Gt: types.OptionalInt64{
 									Set:   true,
 									Value: 10,
 								},
@@ -169,7 +169,7 @@ func TestAlarmTicketRefPatternMarshalBSON(t *testing.T) {
 					},
 					Author: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							Equal: utils.OptionalString{
+							Equal: types.OptionalString{
 								Set:   true,
 								Value: "test2",
 							},
@@ -177,7 +177,7 @@ func TestAlarmTicketRefPatternMarshalBSON(t *testing.T) {
 					},
 					Message: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							RegexMatch: utils.OptionalRegexp{
+							RegexMatch: types.OptionalRegexp{
 								Set:   true,
 								Value: testRegexp,
 							},
@@ -185,7 +185,7 @@ func TestAlarmTicketRefPatternMarshalBSON(t *testing.T) {
 					},
 					Value: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							Equal: utils.OptionalString{
+							Equal: types.OptionalString{
 								Set:   true,
 								Value: "a12",
 							},
@@ -207,7 +207,7 @@ func TestAlarmTicketRefPatternMarshalBSON(t *testing.T) {
 				AlarmTicketFields: pattern.AlarmTicketFields{
 					Type: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							Equal: utils.OptionalString{
+							Equal: types.OptionalString{
 								Set:   true,
 								Value: "test1",
 							},
@@ -215,7 +215,7 @@ func TestAlarmTicketRefPatternMarshalBSON(t *testing.T) {
 					},
 					Message: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							RegexMatch: utils.OptionalRegexp{
+							RegexMatch: types.OptionalRegexp{
 								Set:   true,
 								Value: testRegexp,
 							},
@@ -223,7 +223,7 @@ func TestAlarmTicketRefPatternMarshalBSON(t *testing.T) {
 					},
 					Value: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							Equal: utils.OptionalString{
+							Equal: types.OptionalString{
 								Set:   true,
 								Value: "a12",
 							},

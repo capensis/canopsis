@@ -13,7 +13,6 @@ import (
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
@@ -22,53 +21,46 @@ import (
 const permissionPrefix = "Rights on view :"
 
 type Store interface {
-	Find(r ListRequest) (*AggregationResult, error)
-	GetOneBy(r string) (*viewgroup.View, error)
-	Insert(userID string, r []EditRequest) ([]viewgroup.View, error)
-	Update([]BulkUpdateRequestItem) ([]viewgroup.View, error)
+	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
+	GetOneBy(ctx context.Context, r string) (*viewgroup.View, error)
+	Insert(ctx context.Context, userID string, r []EditRequest) ([]viewgroup.View, error)
+	Update(ctx context.Context, r []BulkUpdateRequestItem) ([]viewgroup.View, error)
 	// UpdatePositions receives some groups and views with updated positions and updates
 	// positions for all groups and views in db and moves views to another groups if necessary.
-	UpdatePositions(r EditPositionRequest) (bool, error)
-	Delete(id []string) (bool, error)
+	UpdatePositions(ctx context.Context, r EditPositionRequest) (bool, error)
+	Delete(ctx context.Context, id []string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
-		dbCollection:      dbClient.Collection(mongo.ViewMongoCollection),
-		dbGroupCollection: dbClient.Collection(mongo.ViewGroupMongoCollection),
-		aclDbCollection:   dbClient.Collection(mongo.RightsMongoCollection),
+		dbCollection:          dbClient.Collection(mongo.ViewMongoCollection),
+		dbGroupCollection:     dbClient.Collection(mongo.ViewGroupMongoCollection),
+		aclDbCollection:       dbClient.Collection(mongo.RightsMongoCollection),
+		defaultSearchByFields: []string{"_id", "title", "description", "author"},
+		defaultSortBy:         "position",
 	}
 }
 
 type store struct {
-	dbCollection      mongo.DbCollection
-	dbGroupCollection mongo.DbCollection
-	aclDbCollection   mongo.DbCollection
+	dbCollection          mongo.DbCollection
+	dbGroupCollection     mongo.DbCollection
+	aclDbCollection       mongo.DbCollection
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
-func (s *store) Find(r ListRequest) (*AggregationResult, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	filter := bson.M{}
+func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
+	pipeline := make([]bson.M, 0)
 
 	if len(r.Ids) > 0 {
-		filter["_id"] = bson.M{"$in": r.Ids}
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"_id": bson.M{"$in": r.Ids}}})
 	}
 
-	if r.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", r.Search),
-			Options: "i",
-		}
-
-		filter["$or"] = []bson.M{
-			{"title": searchRegexp},
-			{"description": searchRegexp},
-		}
+	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	pipeline := []bson.M{{"$match": filter}}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
@@ -94,10 +86,7 @@ func (s *store) Find(r ListRequest) (*AggregationResult, error) {
 	return &res, nil
 }
 
-func (s *store) GetOneBy(id string) (*viewgroup.View, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) GetOneBy(ctx context.Context, id string) (*viewgroup.View, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
@@ -120,10 +109,7 @@ func (s *store) GetOneBy(id string) (*viewgroup.View, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(userID string, r []EditRequest) ([]viewgroup.View, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Insert(ctx context.Context, userID string, r []EditRequest) ([]viewgroup.View, error) {
 	count, err := s.dbCollection.CountDocuments(ctx, bson.M{})
 	if err != nil {
 		return nil, err
@@ -165,7 +151,7 @@ func (s *store) Insert(userID string, r []EditRequest) ([]viewgroup.View, error)
 		return nil, err
 	}
 
-	err = s.createPermissions(userID, views)
+	err = s.createPermissions(ctx, userID, views)
 	if err != nil {
 		return nil, err
 	}
@@ -173,10 +159,7 @@ func (s *store) Insert(userID string, r []EditRequest) ([]viewgroup.View, error)
 	return views, nil
 }
 
-func (s *store) Update(r []BulkUpdateRequestItem) ([]viewgroup.View, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Update(ctx context.Context, r []BulkUpdateRequestItem) ([]viewgroup.View, error) {
 	ids := make([]string, len(r))
 	rByID := make(map[string]BulkUpdateRequestItem, len(r))
 	for i, item := range r {
@@ -245,7 +228,7 @@ func (s *store) Update(r []BulkUpdateRequestItem) ([]viewgroup.View, error) {
 		return nil, err
 	}
 
-	err = s.updatePermissions(newViews)
+	err = s.updatePermissions(ctx, newViews)
 	if err != nil {
 		return nil, err
 	}
@@ -258,10 +241,7 @@ func (s *store) Update(r []BulkUpdateRequestItem) ([]viewgroup.View, error) {
 	return newViews, nil
 }
 
-func (s *store) Delete(ids []string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Delete(ctx context.Context, ids []string) (bool, error) {
 	if len(ids) > 0 {
 		count, err := s.dbCollection.CountDocuments(ctx, bson.M{"_id": bson.M{"$in": ids}})
 		if err != nil {
@@ -282,7 +262,7 @@ func (s *store) Delete(ids []string) (bool, error) {
 		return false, nil
 	}
 
-	err = s.deletePermissions(ids)
+	err = s.deletePermissions(ctx, ids)
 	if err != nil {
 		return false, err
 	}
@@ -290,10 +270,7 @@ func (s *store) Delete(ids []string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) UpdatePositions(r EditPositionRequest) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) UpdatePositions(ctx context.Context, r EditPositionRequest) (bool, error) {
 	groupPositions, viewPositionsByGroup, err := s.findViewPositions(ctx)
 	if err != nil || len(groupPositions) == 0 {
 		return false, err
@@ -331,9 +308,7 @@ func (s *store) findByIDs(ctx context.Context, ids []string) ([]viewgroup.View, 
 	return views, nil
 }
 
-func (s *store) createPermissions(userID string, views []viewgroup.View) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) createPermissions(ctx context.Context, userID string, views []viewgroup.View) error {
 
 	docs := make([]interface{}, len(views))
 	set := bson.M{}
@@ -388,9 +363,7 @@ func (s *store) createPermissions(userID string, views []viewgroup.View) error {
 	return err
 }
 
-func (s *store) updatePermissions(views []viewgroup.View) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) updatePermissions(ctx context.Context, views []viewgroup.View) error {
 
 	models := make([]mongodriver.WriteModel, len(views))
 	for i, v := range views {
@@ -409,9 +382,7 @@ func (s *store) updatePermissions(views []viewgroup.View) error {
 	return err
 }
 
-func (s *store) deletePermissions(viewIDs []string) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *store) deletePermissions(ctx context.Context, viewIDs []string) error {
 
 	unset := bson.M{}
 	for _, viewID := range viewIDs {

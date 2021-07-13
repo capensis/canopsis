@@ -9,11 +9,11 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
-type broadcastMessageValidator struct {
+type baseValidator struct {
 	dbClient mongo.DbClient
 }
 
-func (v *broadcastMessageValidator) Validate(ctx context.Context, sl validator.StructLevel) {
+func (v *baseValidator) Validate(ctx context.Context, sl validator.StructLevel) {
 	r := sl.Current().Interface().(BroadcastMessage)
 
 	if r.ID != "" {
@@ -27,6 +27,6 @@ func (v *broadcastMessageValidator) Validate(ctx context.Context, sl validator.S
 
 }
 
-func NewValidator(dbClient mongo.DbClient) *broadcastMessageValidator {
-	return &broadcastMessageValidator{dbClient: dbClient}
+func NewValidator(dbClient mongo.DbClient) *baseValidator {
+	return &baseValidator{dbClient: dbClient}
 }

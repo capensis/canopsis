@@ -11,7 +11,7 @@ import (
 type Config struct {
 	Security struct {
 		AuthProviders []string `yaml:"auth_providers"`
-		Saml struct {
+		Saml          struct {
 			X509Cert                string            `yaml:"x509_cert"`
 			X509Key                 string            `yaml:"x509_key"`
 			IdpMetadataUrl          string            `yaml:"idp_metadata_url"`
@@ -34,11 +34,19 @@ type Config struct {
 	} `yaml:"session"`
 }
 
-const AuthMethodBasic = "basic"
-const AuthMethodApiKey = "apikey"
-const AuthMethodCas = "cas"
-const AuthMethodSaml = "saml"
-const AuthMethodLdap = "ldap"
+const (
+	AuthMethodBasic  = "basic"
+	AuthMethodApiKey = "apikey"
+	AuthMethodCas    = "cas"
+	AuthMethodSaml   = "saml"
+	AuthMethodLdap   = "ldap"
+)
+
+const (
+	LdapConfigID = "cservice.ldapconfig"
+	CasConfigID  = "cservice.casconfig"
+	SamlConfigID = "cservice.saml2config"
+)
 
 const configPath = "/api/security/config.yml"
 

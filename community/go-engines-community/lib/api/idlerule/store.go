@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
@@ -13,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"sync"
 	"time"
@@ -29,10 +27,11 @@ type Store interface {
 }
 
 type store struct {
-	db               mongo.DbClient
-	collection       mongo.DbCollection
-	entityCollection mongo.DbCollection
-	alarmCollection  mongo.DbCollection
+	collection            mongo.DbCollection
+	entityCollection      mongo.DbCollection
+	alarmCollection       mongo.DbCollection
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
 type countResult struct {
@@ -44,33 +43,25 @@ type countResult struct {
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		db:               db,
-		collection:       db.Collection(mongo.IdleRuleMongoCollection),
-		entityCollection: db.Collection(mongo.EntityMongoCollection),
-		alarmCollection:  db.Collection(mongo.AlarmMongoCollection),
+		collection:            db.Collection(mongo.IdleRuleMongoCollection),
+		entityCollection:      db.Collection(mongo.EntityMongoCollection),
+		alarmCollection:       db.Collection(mongo.AlarmMongoCollection),
+		defaultSearchByFields: []string{"_id", "name", "description", "author"},
+		defaultSortBy:         "created",
 	}
 }
 
 func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, error) {
-	filter := bson.M{}
-
-	if r.Search != "" {
-		searchRegexp := primitive.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", r.Search),
-			Options: "i",
-		}
-
-		filter["$or"] = []bson.M{
-			{"name": searchRegexp},
-			{"author": searchRegexp},
-		}
+	pipeline := make([]bson.M, 0)
+	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	pipeline := []bson.M{{"$match": filter}}
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		getSort(r),
+		s.getSort(r),
 	))
 
 	if err != nil {
@@ -305,8 +296,8 @@ func (s *store) updateFollowingPriorities(ctx context.Context, id string, priori
 	return err
 }
 
-func getSort(r FilteredQuery) bson.M {
-	sortBy := "created"
+func (s *store) getSort(r FilteredQuery) bson.M {
+	sortBy := s.defaultSortBy
 	if r.SortBy != "" {
 		sortBy = r.SortBy
 	}

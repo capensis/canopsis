@@ -181,7 +181,7 @@ func (s *service) AddChildToMetaAlarm(
 	}
 	infos := eventExtraInfosMeta{
 		Rule:     rule,
-		Count:    childrenCount,
+		Count:    int(childrenCount),
 		Children: child,
 	}
 	output, err := s.executeOutputTpl(infos)
@@ -263,7 +263,7 @@ func (s *service) AddMultipleChildsToMetaAlarm(
 	}
 	infos := eventExtraInfosMeta{
 		Rule:     rule,
-		Count:    childrenCount,
+		Count:    int(childrenCount),
 		Children: children[len(children)-1],
 	}
 	output, err := s.executeOutputTpl(infos)
@@ -388,7 +388,7 @@ func (s *service) executeOutputTpl(
 		return "", nil
 	}
 
-	tpl, err := template.New("template").Parse(rule.OutputTemplate)
+	tpl, err := template.New("template").Funcs(types.GetTemplateFunc()).Parse(rule.OutputTemplate)
 	if err != nil {
 		return "", fmt.Errorf("unable to parse output template for metaalarm rule %s: %+v", rule.ID, err)
 	}

@@ -256,15 +256,25 @@ export default {
 
     exportContextList() {
       const query = this.getQuery();
+      const {
+        widgetExportColumns,
+        widgetColumns,
+        exportCsvSeparator,
+        exportCsvDatetimeFormat,
+      } = this.widget.parameters;
+      const columns = widgetExportColumns && widgetExportColumns.length
+        ? widgetExportColumns
+        : widgetColumns;
 
       this.exportWidgetAsCsv({
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
-        params: {
-          filter: query._filter,
+        data: {
+          fields: columns.map(({ label, value }) => ({ label, name: value })),
           search: query.search,
-          active_columns: query.active_columns,
-          separator: this.widget.parameters.exportCsvSeparator,
-          time_format: this.widget.parameters.exportCsvDatetimeFormat,
+          category: query.category,
+          filter: JSON.stringify(query.filter),
+          separator: exportCsvSeparator,
+          time_format: exportCsvDatetimeFormat,
         },
       });
     },
