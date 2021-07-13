@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(align-center)
-    c-alarm-chip(:value="stateId")
+    c-alarm-chip(:value="stateId", :badge-value="alarm | get('v.events_count')")
     v-icon(v-if="showIcon", color="purple") account_circle
 </template>
 
@@ -28,6 +28,7 @@ export default {
     stateId() {
       return get(this.alarm, this.propertyKey);
     },
+
     showIcon() {
       return get(this.alarm, 'v.state._t') === this.$constants.EVENT_ENTITY_TYPES.changeState;
     },
