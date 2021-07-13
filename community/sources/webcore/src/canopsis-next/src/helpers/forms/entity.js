@@ -16,6 +16,7 @@ import { enabledToForm, infosToArray } from './shared/common';
  * @property {Array} changeable_depends
  * @property {Array} changeable_impact
  * @property {Object} infos
+ * @property {number} [idle_since]
  */
 
 /**
@@ -35,7 +36,7 @@ export const entityToForm = (entity = {}) => {
   const changeableImpact = entity.changeable_impact || [];
   const changeableDepends = entity.changeable_depends || [];
 
-  return ({
+  return {
     impact,
     depends,
     name: entity.name || '',
@@ -46,7 +47,7 @@ export const entityToForm = (entity = {}) => {
     disabled_depends: depends.filter(id => !changeableDepends.includes(id)),
     infos: infosToArray(entity.infos),
     impact_level: entity.impact_level,
-  });
+  };
 };
 
 /**

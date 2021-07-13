@@ -431,7 +431,7 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
  * @returns {boolean}
  */
 export function isResolvedAlarm(alarm) {
-  return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
+  return [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
 }
 
 /**
