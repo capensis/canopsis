@@ -1,6 +1,8 @@
 <template lang="pug">
-  div.badge-container
-    span.badge(:style="{ backgroundColor: style.color }") {{ style.text }}
+  div.chip-container
+    v-badge(:value="!!badgeValue", color="secondary", overlap)
+      span.caption(slot="badge") {{ badgeValue }}
+      span.chip(:style="{ backgroundColor: style.color }") {{ style.text }}
 </template>
 
 <script>
@@ -26,6 +28,10 @@ export default {
       type: String,
       default: ENTITY_INFOS_TYPE.state,
     },
+    badgeValue: {
+      type: [Number, String],
+      default: 0,
+    },
   },
   computed: {
     style() {
@@ -38,15 +44,21 @@ export default {
   },
 };
 </script>
-<style scoped>
-  .badge-container {
+<style lang="scss" scoped>
+  .chip-container {
     display: inline-block;
-  }
-  .badge {
-    padding: 3px 7px;
-    font-size: 14px;
-    color: #fff;
-    white-space: nowrap;
-    border-radius: 10px;
+
+    .chip {
+      padding: 3px 7px;
+      font-size: 14px;
+      color: #fff;
+      white-space: nowrap;
+      border-radius: 10px;
+    }
+
+    & /deep/ .v-badge--overlap .v-badge__badge {
+      top: -13px;
+      right: -13px;
+    }
   }
 </style>
