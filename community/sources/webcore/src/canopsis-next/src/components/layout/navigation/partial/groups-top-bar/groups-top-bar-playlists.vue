@@ -9,7 +9,7 @@
     dark
   )
     div.v-btn.v-btn--flat.theme--dark.secondary.lighten-1(slot="activator")
-      span {{ $t('common.playlists') }}
+      span {{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}
       v-icon(dark) arrow_drop_down
     v-list
       v-list-tile(

@@ -236,6 +236,8 @@ export const COLORS = {
 
 export const FILE_BASE_URL = `${API_BASE_URL}${API_ROUTES.file}`;
 
+export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
+
 export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
 
 export const EXPORT_FETCHING_INTERVAL = 2000;
