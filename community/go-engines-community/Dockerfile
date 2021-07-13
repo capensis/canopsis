@@ -11,14 +11,16 @@ RUN apk upgrade --no-cache
 FROM golang:${GOLANG_VERSION}-alpine${ALPINE_VERSION} AS builder
 RUN apk add --no-cache make git gcc build-base g++ coreutils php
 
-WORKDIR /go-engines
+ARG CANOPSIS_EDITION
+WORKDIR /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/
 
-COPY go.mod /go-engines/go.mod
-COPY go.sum /go-engines/go.sum
+COPY community/go-engines-community/go.mod /monorepo/community/go-engines-community/go.mod
+COPY community/go-engines-community/go.sum /monorepo/community/go-engines-community/go.sum
+COPY ${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.mod /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.mod
+COPY ${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.sum /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.sum
 RUN go mod download
 
-COPY . /go-engines
-
+COPY . /monorepo
 RUN make canopsis.toml
 RUN make build
 
@@ -27,10 +29,11 @@ FROM alpine_updated AS final_container
 RUN adduser -D canopsis
 USER canopsis:canopsis
 ENTRYPOINT /engine
-COPY --from=builder /go-engines/canopsis.toml /
-ARG CMD
-COPY --from=builder /go-engines/build/cmd/${CMD} /engine
 
+ARG CANOPSIS_EDITION
+COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/canopsis.toml /
+ARG CMD
+COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /engine
 
 FROM final_container AS canopsis-api
 EXPOSE 8082

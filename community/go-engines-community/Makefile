@@ -1,12 +1,17 @@
-ROOT_DIR := $(shell realpath --relative-to=. $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST))))))
-VPATH := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-OUTPUT_DIR=$(ROOT_DIR)/build
+MAIN_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
+CURRENT_MAKEFILE := $(abspath $(lastword $(MAKEFILE_LIST)))
+MONOREPO_ROOT := $(abspath $(dir $(CURRENT_MAKEFILE))/../..)
+ROOT_DIR = $(shell realpath --relative-to=. $(patsubst %/,%,$(dir $(MAIN_MAKEFILE))))
+VPATH = $(dir $(MAIN_MAKEFILE))
+OUTPUT_DIR = $(ROOT_DIR)/build
+
+CANOPSIS_EDITION = "community"
 
 #List of cmds/engines names to build
-CMDS := $(patsubst $(ROOT_DIR)/%,$(OUTPUT_DIR)/%,$(wildcard $(ROOT_DIR)/cmd/*))
-PLUGINS := $(addsuffix .so,$(patsubst $(ROOT_DIR)/%,$(OUTPUT_DIR)/%,$(wildcard $(ROOT_DIR)/plugins/*/*)))
-DOCKER_TARGETS := $(addprefix docker_,$(notdir $(wildcard $(ROOT_DIR)/cmd/*)))
-INSTALL_TARGETS := $(addprefix install_cmd_,$(notdir $(wildcard $(ROOT_DIR)/cmd/*))) $(addprefix install_plugin_,$(notdir $(wildcard $(ROOT_DIR)/plugins/*/*)))
+CMDS = $(patsubst $(ROOT_DIR)/%,$(OUTPUT_DIR)/%,$(wildcard $(ROOT_DIR)/cmd/*))
+PLUGINS = $(addsuffix .so,$(patsubst $(ROOT_DIR)/%,$(OUTPUT_DIR)/%,$(wildcard $(ROOT_DIR)/plugins/*/*)))
+DOCKER_TARGETS = $(addprefix docker_,$(notdir $(wildcard $(ROOT_DIR)/cmd/*)))
+INSTALL_TARGETS = $(addprefix install_cmd_,$(notdir $(wildcard $(ROOT_DIR)/cmd/*))) $(addprefix install_plugin_,$(notdir $(wildcard $(ROOT_DIR)/plugins/*/*)))
 
 
 # BUILD FLAGS
@@ -35,13 +40,15 @@ export CGO_ENABLED:=1
 export GO111MODULE:=on
 
 #Docker variables
-DOCKER_NO_CACHE:= # If set to 1 previous build caches will be ignored
-DOCKER_TAG:=$(VERSION)
-DOCKER_ALPINE_VERSION:=3.13
-DOCKER_GOLANG_VERSION:=1.16.4
+DOCKER_NO_CACHE = # If set to 1 previous build caches will be ignored
+DOCKER_TAG = $(VERSION)
+DOCKER_ALPINE_VERSION = 3.13
+DOCKER_GOLANG_VERSION = 1.16.4
+DOCKERFILE_PATH = $(dir $(CURRENT_MAKEFILE))/Dockerfile
 
 .PHONY: build docker_images
 build: $(CMDS) $(PLUGINS)
+	echo $(ROOT_DIR)
 docker_images: $(DOCKER_TARGETS)
 
 #
@@ -75,7 +82,7 @@ $(OUTPUT_DIR)/cmd/%: cmd/%
 # DOCKER IMAGES TARGETS
 #
 canopsis.toml:
-	$(ROOT_DIR)/config/canopsis.toml.template core > $(ROOT_DIR)/canopsis.toml
+	$(dir $(CURRENT_MAKEFILE))/config/canopsis.toml.template core > $(ROOT_DIR)/canopsis.toml
 
 .PHONY: docker_alpine_updated docker_builder $(DOCKER_TARGETS)
 docker_alpine_updated:
@@ -84,8 +91,10 @@ docker_alpine_updated:
 		-t alpine_updated:latest \
 		--target alpine_updated \
 		--build-arg "ALPINE_VERSION=${DOCKER_ALPINE_VERSION}" \
+		--build-arg "CANOPSIS_EDITION=${CANOPSIS_EDITION}" \
 		--build-arg "GOLANG_VERSION=${DOCKER_GOLANG_VERSION}" \
-		--file "$(ROOT_DIR)/Dockerfile" \
+		--file "$(DOCKERFILE_PATH)" \
+		"$(MONOREPO_ROOT)"
 
 docker_builder: docker_alpine_updated
 	docker build \
@@ -94,9 +103,10 @@ docker_builder: docker_alpine_updated
 		--cache-from alpine_updated:latest \
 		$(if $(DOCKER_NO_CACHE),,--cache-from canopsis_go_bin:latest) \
 		--build-arg "ALPINE_VERSION=${DOCKER_ALPINE_VERSION}" \
+		--build-arg "CANOPSIS_EDITION=${CANOPSIS_EDITION}" \
 		--build-arg "GOLANG_VERSION=${DOCKER_GOLANG_VERSION}" \
-		--file "$(ROOT_DIR)/Dockerfile" \
-		"$(ROOT_DIR)"
+		--file "$(DOCKERFILE_PATH)" \
+		"$(MONOREPO_ROOT)"
 
 $(DOCKER_TARGETS): TARGET=final_container
 $(DOCKER_TARGETS): docker_alpine_updated docker_builder
@@ -107,9 +117,10 @@ $(DOCKER_TARGETS): docker_alpine_updated docker_builder
 		--cache-from canopsis_go_bin:latest \
 		$(if $(DOCKER_NO_CACHE),,--cache-from "$(subst docker_,,$@):$(DOCKER_TAG)") \
 		--build-arg "ALPINE_VERSION=${DOCKER_ALPINE_VERSION}" \
+		--build-arg "CANOPSIS_EDITION=${CANOPSIS_EDITION}" \
 		--build-arg "GOLANG_VERSION=${DOCKER_GOLANG_VERSION}" \
-		--file "$(ROOT_DIR)/Dockerfile" \
-		"$(ROOT_DIR)"
+		--file "$(DOCKERFILE_PATH)" \
+		"$(MONOREPO_ROOT)"
 
 docker_canopsis-api: TARGET=canopsis-api
 
