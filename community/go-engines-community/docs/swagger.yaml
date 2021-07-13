@@ -852,7 +852,7 @@ definitions:
     additionalProperties:
       $ref: '#/definitions/entity.Info'
     type: object
-  entity.ListRequest:
+  entity.ListRequestWithPagination:
     properties:
       active_columns[]:
         items:
@@ -862,12 +862,22 @@ definitions:
         type: string
       filter:
         type: string
+      limit:
+        type: integer
+      no_events:
+        type: boolean
+      page:
+        type: integer
+      paginate:
+        type: boolean
       search:
         type: string
       sort:
         type: string
       sort_by:
         type: string
+      with_flags:
+        type: boolean
     type: object
   entitybasic.EditRequest:
     properties:
@@ -4231,6 +4241,18 @@ paths:
         name: filter
         type: string
       - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: no_events
+        type: boolean
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
         name: search
         type: string
       - in: query
@@ -4239,6 +4261,9 @@ paths:
       - in: query
         name: sort_by
         type: string
+      - in: query
+        name: with_flags
+        type: boolean
       produces:
       - application/json
       responses:

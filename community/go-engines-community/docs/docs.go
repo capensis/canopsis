@@ -1440,6 +1440,26 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "no_events",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "paginate",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "search",
                         "in": "query"
@@ -1452,6 +1472,11 @@ var doc = `{
                     {
                         "type": "string",
                         "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "with_flags",
                         "in": "query"
                     }
                 ],
@@ -8286,7 +8311,7 @@ var doc = `{
                 "$ref": "#/definitions/entity.Info"
             }
         },
-        "entity.ListRequest": {
+        "entity.ListRequestWithPagination": {
             "type": "object",
             "properties": {
                 "active_columns[]": {
@@ -8301,6 +8326,18 @@ var doc = `{
                 "filter": {
                     "type": "string"
                 },
+                "limit": {
+                    "type": "integer"
+                },
+                "no_events": {
+                    "type": "boolean"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginate": {
+                    "type": "boolean"
+                },
                 "search": {
                     "type": "string"
                 },
@@ -8309,6 +8346,9 @@ var doc = `{
                 },
                 "sort_by": {
                     "type": "string"
+                },
+                "with_flags": {
+                    "type": "boolean"
                 }
             }
         },
