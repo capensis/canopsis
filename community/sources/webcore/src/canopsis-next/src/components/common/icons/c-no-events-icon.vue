@@ -47,9 +47,12 @@ export default {
     },
   },
   computed: {
+    durationDiff() {
+      return moment().diff(convertTimestampToMoment(this.value), TIME_UNITS.second);
+    },
+
     message() {
-      const diff = moment().diff(convertTimestampToMoment(this.value), TIME_UNITS.second);
-      const duration = this.$options.filters.duration(diff);
+      const duration = this.$options.filters.duration(this.durationDiff);
 
       return this.$t('icons.noEvents', { duration });
     },

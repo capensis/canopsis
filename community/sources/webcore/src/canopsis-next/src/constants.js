@@ -201,11 +201,12 @@ export const ENTITIES_STATES = {
 };
 
 export const ENTITIES_STATUSES = {
-  off: 0,
+  closed: 0,
   ongoing: 1,
   stealthy: 2,
   flapping: 3,
   cancelled: 4,
+  noEvents: 5,
 };
 
 export const ENTITIES_STATES_STYLES = {
@@ -271,30 +272,35 @@ export const WEATHER_ICONS = {
 };
 
 export const ENTITY_STATUS_STYLES = {
-  [ENTITIES_STATUSES.off]: {
-    color: COLORS.status.off,
+  [ENTITIES_STATUSES.closed]: {
+    color: COLORS.status.closed,
     text: 'off',
-    icon: 'keyboard_arrow_up',
+    icon: 'check_circle_outline',
   },
   [ENTITIES_STATUSES.ongoing]: {
     color: COLORS.status.ongoing,
     text: 'ongoing',
-    icon: 'keyboard_arrow_up',
+    icon: 'warning',
   },
   [ENTITIES_STATUSES.stealthy]: {
     color: COLORS.status.stealthy,
     text: 'stealthy',
-    icon: 'keyboard_arrow_up',
+    icon: 'swap_vert',
   },
   [ENTITIES_STATUSES.flapping]: {
     color: COLORS.status.flapping,
     text: 'flapping',
-    icon: 'keyboard_arrow_up',
+    icon: 'swap_vert',
   },
   [ENTITIES_STATUSES.cancelled]: {
     color: COLORS.status.cancelled,
     text: 'cancelled',
-    icon: 'keyboard_arrow_up',
+    icon: 'highlight_off',
+  },
+  [ENTITIES_STATUSES.noEvents]: {
+    color: COLORS.status.noEvents,
+    text: 'no events',
+    icon: 'sync_problem',
   },
 };
 

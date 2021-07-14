@@ -1526,13 +1526,6 @@ export default {
       status: 'Status',
       extraDetails: 'Extra details',
     },
-    alarmStatus: {
-      [ENTITIES_STATUSES.off]: 'Off',
-      [ENTITIES_STATUSES.ongoing]: 'Ongoing',
-      [ENTITIES_STATUSES.flapping]: 'Flapping',
-      [ENTITIES_STATUSES.stealthy]: 'Stealth',
-      [ENTITIES_STATUSES.cancelled]: 'Canceled',
-    },
     alarmStates: {
       [ENTITIES_STATES.ok]: 'Info',
       [ENTITIES_STATES.minor]: 'Minor',
@@ -2473,6 +2466,15 @@ export default {
       title: 'Instruction rating',
       message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
     },
+  },
+
+  alarmStatuses: {
+    [ENTITIES_STATUSES.closed]: 'Closed',
+    [ENTITIES_STATUSES.ongoing]: 'Ongoing',
+    [ENTITIES_STATUSES.flapping]: 'Flapping',
+    [ENTITIES_STATUSES.stealthy]: 'Stealth',
+    [ENTITIES_STATUSES.cancelled]: 'Canceled',
+    [ENTITIES_STATUSES.noEvents]: 'No events',
   },
 
   ...featureService.get('i18n.en'),

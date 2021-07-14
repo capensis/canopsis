@@ -173,11 +173,12 @@ export const COLORS = {
     pause: '#808080',
   },
   status: {
-    off: 'black',
-    ongoing: 'grey',
-    stealthy: 'gold',
-    flapping: 'orange',
-    cancelled: 'red',
+    closed: '#2fab63',
+    stealthy: '#757575',
+    flapping: '#2b3E4F',
+    ongoing: '#f9A825',
+    cancelled: '#757575',
+    noEvents: '#979797',
     unknown: 'black',
   },
   entitiesEvents: {

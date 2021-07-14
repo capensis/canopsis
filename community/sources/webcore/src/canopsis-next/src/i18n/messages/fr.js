@@ -1526,13 +1526,6 @@ export default {
       status: 'Statut',
       extraDetails: 'Détails supplémentaires',
     },
-    alarmStatus: {
-      [ENTITIES_STATUSES.off]: 'Fermée',
-      [ENTITIES_STATUSES.ongoing]: 'En cours',
-      [ENTITIES_STATUSES.flapping]: 'Bagot',
-      [ENTITIES_STATUSES.stealthy]: 'Furtive',
-      [ENTITIES_STATUSES.cancelled]: 'Annulée',
-    },
     alarmStates: {
       [ENTITIES_STATES.ok]: 'Info',
       [ENTITIES_STATES.minor]: 'Mineur',
@@ -2470,6 +2463,15 @@ export default {
       title: 'Évaluation de l\'instruction',
       message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
     },
+  },
+
+  alarmStatuses: {
+    [ENTITIES_STATUSES.closed]: 'Fermée',
+    [ENTITIES_STATUSES.ongoing]: 'En cours',
+    [ENTITIES_STATUSES.flapping]: 'Bagot',
+    [ENTITIES_STATUSES.stealthy]: 'Furtive',
+    [ENTITIES_STATUSES.cancelled]: 'Annulée',
+    [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
   },
 
   ...featureService.get('i18n.fr'),
