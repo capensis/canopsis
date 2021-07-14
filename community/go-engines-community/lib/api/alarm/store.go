@@ -316,7 +316,7 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 
 	childrenByEntityID := make(map[string][]Alarm)
 
-	childrenAlarmIds := make([]string, len(childrenIds))
+	childrenAlarmIds := make([]string, len(children))
 	for idx, ch := range children {
 		childrenAlarmIds[idx] = ch.ID
 	}
