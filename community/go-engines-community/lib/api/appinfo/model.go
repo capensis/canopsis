@@ -32,10 +32,20 @@ type TimezoneConf struct {
 	Timezone string `json:"timezone,omitempty" bson:"timezone"`
 }
 
+type RemediationConf struct {
+	JobConfigTypes []JobConfigType `json:"job_config_types"`
+}
+
+type JobConfigType struct {
+	Name     string `json:"name"`
+	AuthType string `json:"auth_type"`
+}
+
 type AppInfoResponse struct {
 	UserInterfaceConf
 	TimezoneConf
 	VersionConf
+	Remediation RemediationConf `json:"remediation"`
 }
 
 type LoginConfig struct {

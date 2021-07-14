@@ -5,6 +5,7 @@ package config
 import (
 	"fmt"
 	"html/template"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -69,6 +70,7 @@ type RemediationConfig struct {
 	LaunchJobRetriesInterval       time.Duration
 	WaitJobCompleteRetriesAmount   int
 	WaitJobCompleteRetriesInterval time.Duration
+	ExternalAPI                    map[string]ExternalApiConfig
 }
 
 type DataStorageConfig struct {
@@ -240,16 +242,24 @@ func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
 	return p.conf
 }
 
-func NewRemediationConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseRemediationConfigProvider {
-	sectionName := "remediation"
+func NewRemediationConfigProvider(cfg RemediationConf, logger zerolog.Logger) *BaseRemediationConfigProvider {
+	sectionName := "Remediation"
+
+	apiKeys := make([]string, 0)
+	for key := range cfg.ExternalAPI {
+		apiKeys = append(apiKeys, key)
+	}
+	logger.Info().
+		Msgf("%+v is loaded %s of %s config section", apiKeys, "external_api", sectionName)
 
 	return &BaseRemediationConfigProvider{
 		conf: RemediationConfig{
-			HttpTimeout:                    parseTimeDurationByStr(cfg.Remediation.HttpTimeout, RemediationHttpTimeout, "HttpTimeout", sectionName, logger),
-			LaunchJobRetriesAmount:         parseInt(cfg.Remediation.LaunchJobRetriesAmount, RemediationLaunchJobRetriesAmount, "LaunchJobRetriesAmount", sectionName, logger),
-			LaunchJobRetriesInterval:       parseTimeDurationByStr(cfg.Remediation.LaunchJobRetriesInterval, RemediationLaunchJobRetriesInterval, "LaunchJobRetriesInterval", sectionName, logger),
-			WaitJobCompleteRetriesAmount:   parseInt(cfg.Remediation.WaitJobCompleteRetriesAmount, RemediationWaitJobCompleteRetriesAmount, "WaitJobCompleteRetriesAmount", sectionName, logger),
-			WaitJobCompleteRetriesInterval: parseTimeDurationByStr(cfg.Remediation.WaitJobCompleteRetriesInterval, RemediationWaitJobCompleteRetriesInterval, "WaitJobCompleteRetriesInterval", sectionName, logger),
+			HttpTimeout:                    parseTimeDurationByStr(cfg.HttpTimeout, RemediationHttpTimeout, "http_timeout", sectionName, logger),
+			LaunchJobRetriesAmount:         parseInt(cfg.LaunchJobRetriesAmount, RemediationLaunchJobRetriesAmount, "launch_job_retries_amount", sectionName, logger),
+			LaunchJobRetriesInterval:       parseTimeDurationByStr(cfg.LaunchJobRetriesInterval, RemediationLaunchJobRetriesInterval, "launch_job_retries_interval", sectionName, logger),
+			WaitJobCompleteRetriesAmount:   parseInt(cfg.WaitJobCompleteRetriesAmount, RemediationWaitJobCompleteRetriesAmount, "wait_job_complete_retries_amount", sectionName, logger),
+			WaitJobCompleteRetriesInterval: parseTimeDurationByStr(cfg.WaitJobCompleteRetriesInterval, RemediationWaitJobCompleteRetriesInterval, "wait_job_complete_retries_interval", sectionName, logger),
+			ExternalAPI:                    cfg.ExternalAPI,
 		},
 		logger: logger,
 	}
@@ -261,36 +271,49 @@ type BaseRemediationConfigProvider struct {
 	logger zerolog.Logger
 }
 
-func (p *BaseRemediationConfigProvider) Update(cfg CanopsisConf) error {
+func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) error {
 	sectionName := "remediation"
-	d, ok := parseUpdatedTimeDurationByStr(cfg.Remediation.HttpTimeout, p.conf.HttpTimeout, "HttpTimeout", sectionName, p.logger)
+	d, ok := parseUpdatedTimeDurationByStr(cfg.HttpTimeout, p.conf.HttpTimeout, "http_timeout", sectionName, p.logger)
 	if ok {
 		p.mx.Lock()
 		p.conf.HttpTimeout = d
 		p.mx.Unlock()
 	}
-	i, ok := parseUpdatedInt(cfg.Remediation.LaunchJobRetriesAmount, p.conf.LaunchJobRetriesAmount, "LaunchJobRetriesAmount", sectionName, p.logger)
+	i, ok := parseUpdatedInt(cfg.LaunchJobRetriesAmount, p.conf.LaunchJobRetriesAmount, "launch_job_retries_amount", sectionName, p.logger)
 	if ok {
 		p.mx.Lock()
 		p.conf.LaunchJobRetriesAmount = i
 		p.mx.Unlock()
 	}
-	d, ok = parseUpdatedTimeDurationByStr(cfg.Remediation.LaunchJobRetriesInterval, p.conf.LaunchJobRetriesInterval, "LaunchJobRetriesInterval", sectionName, p.logger)
+	d, ok = parseUpdatedTimeDurationByStr(cfg.LaunchJobRetriesInterval, p.conf.LaunchJobRetriesInterval, "launch_job_retries_interval", sectionName, p.logger)
 	if ok {
 		p.mx.Lock()
 		p.conf.LaunchJobRetriesInterval = d
 		p.mx.Unlock()
 	}
-	i, ok = parseUpdatedInt(cfg.Remediation.WaitJobCompleteRetriesAmount, p.conf.WaitJobCompleteRetriesAmount, "WaitJobCompleteRetriesAmount", sectionName, p.logger)
+	i, ok = parseUpdatedInt(cfg.WaitJobCompleteRetriesAmount, p.conf.WaitJobCompleteRetriesAmount, "wait_job_complete_retries_amount", sectionName, p.logger)
 	if ok {
 		p.mx.Lock()
 		p.conf.WaitJobCompleteRetriesAmount = i
 		p.mx.Unlock()
 	}
-	d, ok = parseUpdatedTimeDurationByStr(cfg.Remediation.WaitJobCompleteRetriesInterval, p.conf.WaitJobCompleteRetriesInterval, "WaitJobCompleteRetriesInterval", sectionName, p.logger)
+	d, ok = parseUpdatedTimeDurationByStr(cfg.WaitJobCompleteRetriesInterval, p.conf.WaitJobCompleteRetriesInterval, "wait_job_complete_retries_interval", sectionName, p.logger)
 	if ok {
 		p.mx.Lock()
 		p.conf.WaitJobCompleteRetriesInterval = d
+		p.mx.Unlock()
+	}
+
+	if !reflect.DeepEqual(cfg.ExternalAPI, p.conf.ExternalAPI) {
+		apiKeys := make([]string, 0)
+		for key := range cfg.ExternalAPI {
+			apiKeys = append(apiKeys, key)
+		}
+		p.logger.Info().
+			Msgf("%+v is updated %s of %s config section", apiKeys, "external_api", sectionName)
+
+		p.mx.Lock()
+		p.conf.ExternalAPI = cfg.ExternalAPI
 		p.mx.Unlock()
 	}
 
