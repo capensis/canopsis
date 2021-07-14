@@ -352,13 +352,14 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 					}
 				}
 
-				result.Data[i].Children.Data = append(result.Data[i].Children.Data, children...)
-				for _, child := range result.Data[i].Children.Data {
+				for _, child := range children {
 					if len(child.AssignedInstructions) != 0 {
 						result.Data[i].ChildrenInstructions = true
 						break
 					}
 				}
+
+				result.Data[i].Children.Data = append(result.Data[i].Children.Data, children...)
 			}
 		}
 	}
