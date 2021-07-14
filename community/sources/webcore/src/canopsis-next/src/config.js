@@ -178,7 +178,7 @@ export const COLORS = {
     flapping: '#2b3E4F',
     ongoing: '#f9A825',
     cancelled: '#757575',
-    noEvents: '#979797',
+    noEvents: '#ff5252',
     unknown: 'black',
   },
   entitiesEvents: {
