@@ -12,6 +12,7 @@ type RemediationConf struct {
 	LaunchJobRetriesInterval       string                       `toml:"launch_job_retries_interval" bson:"launch_job_retries_interval"`
 	WaitJobCompleteRetriesAmount   int                          `toml:"wait_job_complete_retries_amount" bson:"wait_job_complete_retries_amount"`
 	WaitJobCompleteRetriesInterval string                       `toml:"wait_job_complete_retries_interval" bson:"wait_job_complete_retries_interval"`
+	PauseManualInstructionInterval string                       `toml:"pause_manual_instruction_interval" bson:"pause_manual_instruction_interval"`
 	ExternalAPI                    map[string]ExternalApiConfig `toml:"external_api" bson:"external_api"`
 }
 

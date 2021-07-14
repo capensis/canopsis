@@ -70,6 +70,7 @@ type RemediationConfig struct {
 	LaunchJobRetriesInterval       time.Duration
 	WaitJobCompleteRetriesAmount   int
 	WaitJobCompleteRetriesInterval time.Duration
+	PauseManualInstructionInterval time.Duration
 	ExternalAPI                    map[string]ExternalApiConfig
 }
 
@@ -259,6 +260,7 @@ func NewRemediationConfigProvider(cfg RemediationConf, logger zerolog.Logger) *B
 			LaunchJobRetriesInterval:       parseTimeDurationByStr(cfg.LaunchJobRetriesInterval, RemediationLaunchJobRetriesInterval, "launch_job_retries_interval", sectionName, logger),
 			WaitJobCompleteRetriesAmount:   parseInt(cfg.WaitJobCompleteRetriesAmount, RemediationWaitJobCompleteRetriesAmount, "wait_job_complete_retries_amount", sectionName, logger),
 			WaitJobCompleteRetriesInterval: parseTimeDurationByStr(cfg.WaitJobCompleteRetriesInterval, RemediationWaitJobCompleteRetriesInterval, "wait_job_complete_retries_interval", sectionName, logger),
+			PauseManualInstructionInterval: parseTimeDurationByStr(cfg.PauseManualInstructionInterval, RemediationPauseManualInstructionInterval, "pause_manual_instruction_interval", sectionName, logger),
 			ExternalAPI:                    cfg.ExternalAPI,
 		},
 		logger: logger,
@@ -298,6 +300,12 @@ func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) error {
 		p.mx.Unlock()
 	}
 	d, ok = parseUpdatedTimeDurationByStr(cfg.WaitJobCompleteRetriesInterval, p.conf.WaitJobCompleteRetriesInterval, "wait_job_complete_retries_interval", sectionName, p.logger)
+	if ok {
+		p.mx.Lock()
+		p.conf.WaitJobCompleteRetriesInterval = d
+		p.mx.Unlock()
+	}
+	d, ok = parseUpdatedTimeDurationByStr(cfg.PauseManualInstructionInterval, p.conf.PauseManualInstructionInterval, "pause_manual_instruction_interval", sectionName, p.logger)
 	if ok {
 		p.mx.Lock()
 		p.conf.WaitJobCompleteRetriesInterval = d

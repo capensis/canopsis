@@ -1,5 +1,7 @@
 package appinfo
 
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+
 type VersionConf struct {
 	Edition string `json:"edition" bson:"edition"`
 	Stack   string `json:"stack" bson:"stack"`
@@ -33,7 +35,8 @@ type TimezoneConf struct {
 }
 
 type RemediationConf struct {
-	JobConfigTypes []JobConfigType `json:"job_config_types"`
+	PauseManualInstructionInterval types.DurationWithUnit `json:"pause_manual_instruction_interval"`
+	JobConfigTypes                 []JobConfigType        `json:"job_config_types"`
 }
 
 type JobConfigType struct {

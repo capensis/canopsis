@@ -167,6 +167,7 @@
     "launch_job_retries_amount": 1,
     "launch_job_retries_interval": "1s",
     "wait_job_complete_retries_amount": 1,
-    "wait_job_complete_retries_interval": "1s"
+    "wait_job_complete_retries_interval": "1s",
+    "pause_manual_instruction_interval": "4s"
   }
 ]

@@ -3,6 +3,7 @@ package appinfo
 import (
 	"context"
 	"sort"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -131,6 +132,11 @@ func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf,
 	sort.Slice(result.JobConfigTypes, func(i, j int) bool {
 		return result.JobConfigTypes[i].Name < result.JobConfigTypes[j].Name
 	})
+
+	d, err := time.ParseDuration(conf.PauseManualInstructionInterval)
+	if err == nil {
+		result.PauseManualInstructionInterval.Seconds = int64(d.Seconds())
+	}
 
 	return result, nil
 }

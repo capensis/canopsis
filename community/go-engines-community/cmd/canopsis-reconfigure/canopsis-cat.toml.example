@@ -304,6 +304,7 @@ ThdWarnMinPerImport = "30m"
 ThdCritMinPerImport = "60m"
 FilePattern = "/tmp/import_%s.json"
 
+# Remediation parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Remediation]
 
 http_timeout = "1m"
@@ -315,6 +316,8 @@ launch_job_retries_interval = "5s"
 wait_job_complete_retries_interval = "5s"
 # wait_job_complete_retries_amount is used for polling execution status.
 wait_job_complete_retries_amount = 12
+# pause_manual_instruction_interval is used to pause instruction if user lost connection.
+pause_manual_instruction_interval = "15s"
 
 [Remediation.external_api.rundeck]
 # Field from error API response to resolve error message.

@@ -16,6 +16,9 @@ Feature: Get application information
       "language": "en",
       "login_page_description": "Test login",
       "remediation": {
+        "pause_manual_instruction_interval": {
+          "seconds": 4
+        },
         "job_config_types": [
           {
             "auth_type": "bearer-token",
