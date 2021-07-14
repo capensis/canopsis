@@ -36,6 +36,18 @@
           v-icon(slot="activator") help
           div(v-html="$t('parameters.userInterfaceForm.tooltips.maxMatchedItems')")
     v-layout(row)
+      v-text-field(
+        v-model.number="form.check_count_request_timeout",
+        v-validate="'numeric|min_value:1'",
+        :label="$t('parameters.userInterfaceForm.fields.checkCountRequestTimeout')",
+        :error-messages="errors.collect('check_count_request_timeout')",
+        type="number",
+        name="check_count_request_timeout"
+      )
+        v-tooltip(slot="append", left)
+          v-icon(slot="activator") help
+          div(v-html="$t('parameters.userInterfaceForm.tooltips.checkCountRequestTimeout')")
+    v-layout(row)
       timezone-field(v-model="form.timezone", disabled)
     v-layout(row)
       v-switch(

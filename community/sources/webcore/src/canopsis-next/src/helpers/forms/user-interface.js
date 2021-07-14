@@ -28,6 +28,7 @@ import { DEFAULT_APP_TITLE, DEFAULT_LOCALE } from '@/config';
  * @property {string} version
  * @property {boolean} allow_change_severity_to_info
  * @property {number} max_matched_items
+ * @property {number} check_count_request_timeout
  * @property {PopupTimeout} popup_timeout
  */
 
@@ -38,6 +39,7 @@ export const userInterfaceToForm = (userInterface = {}) => ({
   login_page_description: userInterface.login_page_description || '',
   allow_change_severity_to_info: userInterface.allow_change_severity_to_info || false,
   timezone: userInterface.timezone || '',
-  max_matched_items: userInterface.max_matched_items || '',
+  max_matched_items: userInterface.max_matched_items || 10000,
+  check_count_request_timeout: userInterface.check_count_request_timeout || 30,
   popup_timeout: userInterface.popup_timeout ? cloneDeep(userInterface.popup_timeout) : {},
 });

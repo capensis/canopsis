@@ -135,6 +135,7 @@ export const API_ROUTES = {
   notification: '/api/v4/notification/',
   logout: '/logout',
   idleRules: '/api/v4/idle-rules',
+  idleRulesCount: '/api/v4/idle-rules/count',
 
   /**
    * Cat routes
