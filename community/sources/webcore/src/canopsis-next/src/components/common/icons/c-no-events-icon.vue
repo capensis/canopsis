@@ -1,13 +1,5 @@
 <template lang="pug">
-  v-tooltip(
-    v-if="value",
-    :max-width="maxWidth",
-    :top="top",
-    :right="right",
-    :bottom="bottom",
-    :left="left",
-    @input="showTooltipHandler"
-  )
+  v-tooltip(v-if="value", :max-width="maxWidth", :top="top", :right="right", :bottom="bottom", :left="left")
     v-icon(slot="activator", :color="color", :size="size") sync_problem
     span {{ message }}
 </template>
@@ -19,15 +11,7 @@ import { TIME_UNITS } from '@/constants';
 
 import { convertTimestampToMoment } from '@/helpers/date/date';
 
-import { createPollingMixin } from '@/mixins/polling';
-
 export default {
-  mixins: [
-    createPollingMixin({
-      method: 'setMomentNow',
-      delay: 1000,
-    }),
-  ],
   props: {
     value: {
       type: Number,
@@ -62,35 +46,15 @@ export default {
       required: false,
     },
   },
-  data() {
-    return {
-      momentNow: moment(),
-    };
-  },
   computed: {
     durationDiff() {
-      return this.momentNow.diff(convertTimestampToMoment(this.value), TIME_UNITS.second);
+      return moment().diff(convertTimestampToMoment(this.value), TIME_UNITS.second);
     },
 
     message() {
       const duration = this.$options.filters.duration(this.durationDiff);
 
       return this.$t('icons.noEvents', { duration });
-    },
-  },
-  methods: {
-    showTooltipHandler(value) {
-      this.setMomentNow();
-
-      if (value) {
-        this.startPolling();
-      } else {
-        this.startPolling();
-      }
-    },
-
-    setMomentNow() {
-      this.momentNow = moment();
     },
   },
 };
