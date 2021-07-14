@@ -274,7 +274,7 @@ export const WEATHER_ICONS = {
 export const ENTITY_STATUS_STYLES = {
   [ENTITIES_STATUSES.closed]: {
     color: COLORS.status.closed,
-    text: 'off',
+    text: 'closed',
     icon: 'check_circle_outline',
   },
   [ENTITIES_STATUSES.ongoing]: {
