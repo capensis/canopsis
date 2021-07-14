@@ -17,9 +17,6 @@ import (
 	"github.com/rs/zerolog"
 )
 
-const periodicalLock = "service-periodical-lock"
-const periodicalIdleSinceLock = "service-periodical-idle-since-lock"
-
 type Options struct {
 	FeaturePrintEventOnError bool
 	ModeDebug                bool
@@ -48,7 +45,8 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 
 	redisSession := m.DepRedisSession(ctx, redis.CacheService, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
-	periodicalLockClient := redis.NewLockClient(redisSession)
+	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
+	periodicalLockClient := redis.NewLockClient(lockRedisSession)
 	var serviceLockClient redis.LockClient
 	if !options.AutoRecomputeAll {
 		serviceLockClient = redis.NewLockClient(redisSession)
@@ -73,7 +71,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 			defer task.End()
 
 			// Lock periodical, do not release lock to not allow another instance start periodical.
-			_, err = periodicalLockClient.Obtain(ctx, periodicalIdleSinceLock,
+			_, err = periodicalLockClient.Obtain(ctx, redis.ServiceIdleSincePeriodicalLockKey,
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
@@ -100,7 +98,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 			}
 
 			// Lock periodical, do not release lock to not allow another instance start periodical.
-			_, err := periodicalLockClient.Obtain(ctx, periodicalLock,
+			_, err := periodicalLockClient.Obtain(ctx, redis.ServicePeriodicalLockKey,
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
@@ -199,19 +197,27 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		logger,
 	))
 	if options.AutoRecomputeAll {
-		engineService.AddPeriodicalWorker(&periodicalWorker{
-			LockClient:           periodicalLockClient,
+		engineService.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+			periodicalLockClient,
+			redis.ServicePeriodicalLockKey,
+			&recomputeAllPeriodicalWorker{
+				EntityServiceService: entityServicesService,
+				PeriodicalInterval:   options.PeriodicalWaitTime,
+				Logger:               logger,
+			},
+			logger,
+		))
+	}
+	engineService.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.ServiceIdleSincePeriodicalLockKey,
+		&idleSincePeriodicalWorker{
 			EntityServiceService: entityServicesService,
 			PeriodicalInterval:   options.PeriodicalWaitTime,
 			Logger:               logger,
-		})
-	}
-	engineService.AddPeriodicalWorker(&idleSincePeriodicalWorker{
-		LockClient:           periodicalLockClient,
-		EntityServiceService: entityServicesService,
-		PeriodicalInterval:   options.PeriodicalWaitTime,
-		Logger:               logger,
-	})
+		},
+		logger,
+	))
 
 	return engineService
 }
