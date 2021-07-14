@@ -315,7 +315,6 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	pipeline := make([]bson.M, 0)
 	pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": []bson.M{
 		{"d": bson.M{"$in": childrenIds}},
-		{"v.resolved": bson.M{"$exists": false}},
 	}}})
 	s.addNestedObjects(r.FilterRequest, &pipeline)
 	pipeline = append(pipeline, s.getSort(r))

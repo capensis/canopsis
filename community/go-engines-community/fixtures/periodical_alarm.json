@@ -190,7 +190,8 @@
       "parents": [],
       "children": [
         "test-alarm-get-resource-2/test-alarm-get-component",
-        "test-alarm-get-resource-3/test-alarm-get-component"
+        "test-alarm-get-resource-3/test-alarm-get-component",
+        "test-alarm-get-resource-4/test-alarm-get-component"
       ],
       "total_state_changes": 1,
       "extra": {
@@ -553,7 +554,9 @@
       "resource": "test-alarm-get-resource-4",
       "resolved": 1597034023,
       "tags": [],
-      "parents": [],
+      "parents": [
+        "test-alarm-get-entity-meta-1/metaalarm"
+      ],
       "children": [],
       "total_state_changes": 1,
       "extra": {

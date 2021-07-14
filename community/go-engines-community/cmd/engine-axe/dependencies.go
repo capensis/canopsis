@@ -60,7 +60,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		panic(fmt.Errorf("dependency error: amqp publish channel: %v", err))
 	}
 
-	lockRedisClient := m.DepRedisSession(ctx, redis.AxePeriodicalLockStorage, logger, cfg)
+	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	corrRedisClient := m.DepRedisSession(ctx, redis.CorrelationLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
@@ -217,25 +217,28 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker(&periodicalWorker{
-		PeriodicalInterval: options.PeriodicalWaitTime,
-		LockerClient:       redis.NewLockClient(lockRedisClient),
-		ChannelPub:         channelPub,
-		AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), logger),
-		Encoder:            json.NewEncoder(),
-		IdleAlarmService: idlealarm.NewService(
-			idlerule.NewRuleAdapter(dbClient),
-			alarm.NewAdapter(dbClient),
-			entity.NewAdapter(dbClient),
-			redis.NewStore(pbhRedisClient, "pbehaviors", 0),
-			pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger),
-			json.NewEncoder(),
-			logger,
-		),
-		AlarmConfigProvider: alarmConfigProvider,
-		AlarmAdapter:        alarm.NewAdapter(dbClient),
-		Logger:              logger,
-	})
+	engineAxe.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisClient),
+		redis.AxePeriodicalLockKey,
+		&periodicalWorker{
+			PeriodicalInterval: options.PeriodicalWaitTime,
+			ChannelPub:         channelPub,
+			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), logger),
+			Encoder:            json.NewEncoder(),
+			IdleAlarmService: idlealarm.NewService(
+				idlerule.NewRuleAdapter(dbClient),
+				alarm.NewAdapter(dbClient),
+				entity.NewAdapter(dbClient),
+				redis.NewStore(pbhRedisClient, "pbehaviors", 0),
+				pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger),
+				json.NewEncoder(),
+				logger,
+			),
+			AlarmConfigProvider: alarmConfigProvider,
+			Logger:              logger,
+		},
+		logger,
+	))
 	engineAxe.AddPeriodicalWorker(&resolvedArchiverWorker{
 		PeriodicalInterval:        time.Hour,
 		TimezoneConfigProvider:    timezoneConfigProvider,

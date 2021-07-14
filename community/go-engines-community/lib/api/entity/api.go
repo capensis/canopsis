@@ -63,7 +63,7 @@ func NewApi(
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param request query ListRequest true "request"
+// @Param request query ListRequestWithPagination true "request"
 // @Success 200 {object} common.PaginatedListResponse{data=[]Entity}
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /entities [get]

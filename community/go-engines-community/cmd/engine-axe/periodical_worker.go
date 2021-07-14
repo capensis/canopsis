@@ -14,17 +14,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 )
 
-const PeriodicalLockKey = "axe-periodical-lock-key"
-
 type periodicalWorker struct {
 	PeriodicalInterval  time.Duration
-	LockerClient        redis.LockClient
 	ChannelPub          libamqp.Channel
 	AlarmService        libalarm.Service
 	AlarmAdapter        libalarm.Adapter
@@ -41,17 +36,6 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 func (w *periodicalWorker) Work(parentCtx context.Context) error {
 	ctx, task := trace.NewTask(parentCtx, "axe.PeriodicalProcess")
 	defer task.End()
-
-	_, err := w.LockerClient.Obtain(ctx, PeriodicalLockKey, w.GetInterval(), nil)
-	if err == redislock.ErrNotObtained {
-		w.Logger.Debug().Msg("Could not obtain lock! Skip periodical process")
-
-		return nil
-	} else if err != nil {
-		w.Logger.Error().Err(err).Msg("Obtain redis lock: unexpected error")
-
-		return nil
-	}
 
 	idleCtx, cancel := context.WithTimeout(ctx, w.GetInterval())
 	defer cancel()
