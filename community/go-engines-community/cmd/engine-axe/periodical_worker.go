@@ -44,7 +44,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) error {
 	if alarmConfig.TimeToKeepResolvedAlarms > 0 {
 		w.Logger.Debug().Msg("Delete outdated resolved alarms")
 
-		err = w.AlarmAdapter.DeleteResolvedAlarms(ctx, alarmConfig.TimeToKeepResolvedAlarms)
+		err := w.AlarmAdapter.DeleteResolvedAlarms(ctx, alarmConfig.TimeToKeepResolvedAlarms)
 		if err != nil {
 			return err
 		}

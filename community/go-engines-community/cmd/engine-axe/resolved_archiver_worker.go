@@ -6,13 +6,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 	"time"
 )
-
-const axeResolvedArchiverPeriodicalLockKey = "axe-resolved-archiver-periodical-lock-key"
 
 type resolvedArchiverWorker struct {
 	PeriodicalInterval        time.Duration
@@ -20,7 +16,6 @@ type resolvedArchiverWorker struct {
 	DataStorageConfigProvider config.DataStorageConfigProvider
 	LimitConfigAdapter        datastorage.Adapter
 	AlarmAdapter              alarm.Adapter
-	LockerClient              redis.LockClient
 	Logger                    zerolog.Logger
 }
 
@@ -38,16 +33,6 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) error {
 	location := w.TimezoneConfigProvider.Get().Location
 	now := time.Now().In(location)
 	if now.Weekday() != schedule.Weekday || now.Hour() != schedule.Hour {
-		return nil
-	}
-
-	// Do actions under lock.
-	_, err := w.LockerClient.Obtain(ctx, axeResolvedArchiverPeriodicalLockKey, w.GetInterval(), nil)
-	if err == redislock.ErrNotObtained {
-		w.Logger.Debug().Msg("skip periodical process")
-		return nil
-	} else if err != nil {
-		w.Logger.Error().Err(err).Msg("skip periodical process")
 		return nil
 	}
 

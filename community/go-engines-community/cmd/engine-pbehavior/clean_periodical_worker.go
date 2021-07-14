@@ -6,20 +6,15 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 	"time"
 )
-
-const cleanPeriodicalLockKey = "pbehavior-clean-periodical-lock-key"
 
 type cleanPeriodicalWorker struct {
 	PeriodicalInterval        time.Duration
 	TimezoneConfigProvider    config.TimezoneConfigProvider
 	DataStorageConfigProvider config.DataStorageConfigProvider
 	LimitConfigAdapter        datastorage.Adapter
-	LockerClient              redis.LockClient
 	PbehaviorCleaner          libpbehavior.Cleaner
 	Logger                    zerolog.Logger
 }
@@ -38,16 +33,6 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) error {
 	location := w.TimezoneConfigProvider.Get().Location
 	now := time.Now().In(location)
 	if now.Weekday() != schedule.Weekday || now.Hour() != schedule.Hour {
-		return nil
-	}
-
-	// Do actions under lock.
-	_, err := w.LockerClient.Obtain(ctx, cleanPeriodicalLockKey, w.GetInterval(), nil)
-	if err == redislock.ErrNotObtained {
-		w.Logger.Debug().Msg("skip periodical process")
-		return nil
-	} else if err != nil {
-		w.Logger.Error().Err(err).Msg("skip periodical process")
 		return nil
 	}
 

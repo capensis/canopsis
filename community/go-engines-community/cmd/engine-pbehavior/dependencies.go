@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -14,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type Options struct {
@@ -230,15 +231,19 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(&cleanPeriodicalWorker{
-		PeriodicalInterval:        time.Hour,
-		TimezoneConfigProvider:    timezoneConfigProvider,
-		DataStorageConfigProvider: dataStorageConfigProvider,
-		LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
-		LockerClient:              lockerClient,
-		PbehaviorCleaner:          pbehavior.NewCleaner(dbClient, logger),
-		Logger:                    logger,
-	})
+	enginePbehavior.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisSession),
+		redis.PbehaviorCleanPeriodicalLockKey,
+		&cleanPeriodicalWorker{
+			PeriodicalInterval:        time.Hour,
+			TimezoneConfigProvider:    timezoneConfigProvider,
+			DataStorageConfigProvider: dataStorageConfigProvider,
+			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
+			PbehaviorCleaner:          pbehavior.NewCleaner(dbClient, logger),
+			Logger:                    logger,
+		},
+		logger,
+	))
 	enginePbehavior.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),

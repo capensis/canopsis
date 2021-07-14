@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -239,15 +239,19 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker(&resolvedArchiverWorker{
-		PeriodicalInterval:        time.Hour,
-		TimezoneConfigProvider:    timezoneConfigProvider,
-		DataStorageConfigProvider: config.NewDataStorageConfigProvider(cfg, logger),
-		LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
-		AlarmAdapter:              alarm.NewAdapter(dbClient),
-		LockerClient:              redis.NewLockClient(m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)),
-		Logger:                    logger,
-	})
+	engineAxe.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisClient),
+		redis.AxeResolvedArchiverPeriodicalLockKey,
+		&resolvedArchiverWorker{
+			PeriodicalInterval:        time.Hour,
+			TimezoneConfigProvider:    timezoneConfigProvider,
+			DataStorageConfigProvider: config.NewDataStorageConfigProvider(cfg, logger),
+			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
+			AlarmAdapter:              alarm.NewAdapter(dbClient),
+			Logger:                    logger,
+		},
+		logger,
+	))
 	engineAxe.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
