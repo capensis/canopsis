@@ -4610,5 +4610,329 @@
       "creation_date": 1618279310,
       "resource": "test-resource-to-stats-executions-get-8"
     }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-1",
+    "d": "test-alarm-meta-children-with-instructions-1/metaalarm",
+    "t": 1597030219,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        },
+        {
+          "_t": "statusinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        }
+      ],
+      "component": "metaalarm",
+      "connector": "engine",
+      "connector_name": "correlation",
+      "creation_date": 1597030219,
+      "display_name": "IK-JK-QB",
+      "initial_output": "test-alarm-get alarm",
+      "output": "test-alarm-get alarm",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1597030219,
+      "last_event_date": 1597030219,
+      "resource": "test-alarm-meta-children-with-instructions-1",
+      "tags": [],
+      "meta": "test-alarm-metaalarm-children-instructions-rule-1",
+      "parents": [],
+      "children": [
+        "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-1"
+      ],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-2",
+    "d": "test-alarm-meta-children-with-instructions-2/metaalarm",
+    "t": 1597030219,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        },
+        {
+          "_t": "statusinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        }
+      ],
+      "component": "metaalarm",
+      "connector": "engine",
+      "connector_name": "correlation",
+      "creation_date": 1597030219,
+      "display_name": "IK-JK-QB",
+      "initial_output": "test-alarm-get alarm",
+      "output": "test-alarm-get alarm",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1597030219,
+      "last_event_date": 1597030219,
+      "resource": "test-alarm-meta-children-with-instructions-2",
+      "tags": [],
+      "meta": "test-alarm-metaalarm-children-instructions-rule-1",
+      "parents": [],
+      "children": [
+        "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-2"
+      ],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-3",
+    "d": "test-alarm-meta-children-with-instructions-3/metaalarm",
+    "t": 1597030219,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        },
+        {
+          "_t": "statusinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        }
+      ],
+      "component": "metaalarm",
+      "connector": "engine",
+      "connector_name": "correlation",
+      "creation_date": 1597030219,
+      "display_name": "IK-JK-QB",
+      "initial_output": "test-alarm-get alarm",
+      "output": "test-alarm-get alarm",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1597030219,
+      "last_event_date": 1597030219,
+      "resource": "test-alarm-meta-children-with-instructions-3",
+      "tags": [],
+      "meta": "test-alarm-metaalarm-children-instructions-rule-1",
+      "parents": [],
+      "children": [
+        "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-1",
+        "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-2"
+      ],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-alarm-1-1",
+    "d": "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-1",
+    "t": 1596942720,
+    "v": {
+      "component": "test-alarm-meta-children-with-instructions-component-1",
+      "connector": "test-alarm-meta-children-with-instructions-connector",
+      "connector_name": "test-alarm-meta-children-with-instructions-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-meta-children-with-instructions-output",
+      "output": "test-alarm-meta-children-with-instructions-output",
+      "initial_long_output": "",
+      "long_output": "test-alarm-meta-children-with-instructions-output",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-alarm-meta-children-with-instructions-resource-1",
+      "tags": [],
+      "parents": [
+        "test-alarm-meta-children-with-instructions-1"
+      ],
+      "children": [],
+      "total_state_changes": 1,
+      "pbehavior_info": null,
+      "extra": {},
+      "infos": {},
+      "infos_rule_version": {}
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-alarm-2-1",
+    "d": "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-2",
+    "t": 1596942720,
+    "v": {
+      "component": "test-alarm-meta-children-with-instructions-component-2",
+      "connector": "test-alarm-meta-children-with-instructions-connector",
+      "connector_name": "test-alarm-meta-children-with-instructions-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-meta-children-with-instructions-output",
+      "output": "test-alarm-meta-children-with-instructions-output",
+      "initial_long_output": "",
+      "long_output": "test-alarm-meta-children-with-instructions-output",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-alarm-meta-children-with-instructions-resource-1",
+      "tags": [],
+      "parents": [
+        "test-alarm-meta-children-with-instructions-2"
+      ],
+      "children": [],
+      "total_state_changes": 1,
+      "pbehavior_info": null,
+      "extra": {},
+      "infos": {},
+      "infos_rule_version": {}
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-alarm-1-2",
+    "d": "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-1",
+    "t": 1596942720,
+    "v": {
+      "component": "test-alarm-meta-children-with-instructions-component-1",
+      "connector": "test-alarm-meta-children-with-instructions-connector",
+      "connector_name": "test-alarm-meta-children-with-instructions-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-meta-children-with-instructions-output",
+      "output": "test-alarm-meta-children-with-instructions-output",
+      "initial_long_output": "",
+      "long_output": "test-alarm-meta-children-with-instructions-output",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-alarm-meta-children-with-instructions-resource-2",
+      "tags": [],
+      "parents": [
+        "test-alarm-meta-children-with-instructions-3"
+      ],
+      "children": [],
+      "total_state_changes": 1,
+      "pbehavior_info": null,
+      "extra": {},
+      "infos": {},
+      "infos_rule_version": {}
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-alarm-2-2",
+    "d": "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-2",
+    "t": 1596942720,
+    "v": {
+      "component": "test-alarm-meta-children-with-instructions-component-2",
+      "connector": "test-alarm-meta-children-with-instructions-connector",
+      "connector_name": "test-alarm-meta-children-with-instructions-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-meta-children-with-instructions-output",
+      "output": "test-alarm-meta-children-with-instructions-output",
+      "initial_long_output": "",
+      "long_output": "test-alarm-meta-children-with-instructions-output",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-alarm-meta-children-with-instructions-resource-2",
+      "tags": [],
+      "parents": [
+        "test-alarm-meta-children-with-instructions-3"
+      ],
+      "children": [],
+      "total_state_changes": 1,
+      "pbehavior_info": null,
+      "extra": {},
+      "infos": {},
+      "infos_rule_version": {}
+    }
   }
 ]

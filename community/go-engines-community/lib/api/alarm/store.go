@@ -315,11 +315,27 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	}
 
 	childrenByEntityID := make(map[string][]Alarm)
+
+	childrenAlarmIds := make([]string, len(childrenIds))
+	for idx, ch := range children {
+		childrenAlarmIds[idx] = ch.ID
+	}
+
+	assignedInstructionMap, err := s.getAssignedInstructionsMap(ctx, childrenAlarmIds)
+	if err != nil {
+		return err
+	}
+
 	for _, ch := range children {
 		if _, ok := childrenByEntityID[ch.Entity.ID]; !ok {
 			childrenByEntityID[ch.Entity.ID] = make([]Alarm, 0)
 		}
 
+		sort.Slice(assignedInstructionMap[ch.ID], func(i, j int) bool {
+			return assignedInstructionMap[ch.ID][i].Name < assignedInstructionMap[ch.ID][j].Name
+		})
+
+		ch.AssignedInstructions = assignedInstructionMap[ch.ID]
 		childrenByEntityID[ch.Entity.ID] = append(childrenByEntityID[ch.Entity.ID], ch)
 	}
 
@@ -337,6 +353,12 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 				}
 
 				result.Data[i].Children.Data = append(result.Data[i].Children.Data, children...)
+				for _, child := range result.Data[i].Children.Data {
+					if len(child.AssignedInstructions) != 0 {
+						result.Data[i].ChildrenInstructions = true
+						break
+					}
+				}
 			}
 		}
 	}
