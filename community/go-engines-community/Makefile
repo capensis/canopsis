@@ -11,8 +11,10 @@ CANOPSIS_EDITION = "community"
 CMDS = $(patsubst $(ROOT_DIR)/%,$(OUTPUT_DIR)/%,$(wildcard $(ROOT_DIR)/cmd/*))
 PLUGINS = $(addsuffix .so,$(patsubst $(ROOT_DIR)/%,$(OUTPUT_DIR)/%,$(wildcard $(ROOT_DIR)/plugins/*/*)))
 DOCKER_TARGETS = $(addprefix docker_,$(notdir $(wildcard $(ROOT_DIR)/cmd/*)))
-INSTALL_TARGETS = $(addprefix install_cmd_,$(notdir $(wildcard $(ROOT_DIR)/cmd/*))) $(addprefix install_plugin_,$(notdir $(wildcard $(ROOT_DIR)/plugins/*/*)))
 
+# List of cmds and plugins to install
+CMDS_TO_INSTALL := $(patsubst $(OUTPUT_DIR)/cmd/%,%,$(CMDS))
+PLUGINS_TO_INSTALL := $(patsubst $(OUTPUT_DIR)/plugins/%,%,$(PLUGINS))
 
 # BUILD FLAGS
 BUILDDATE:=$(shell date "+%Y-%m-%dT%H:%M:%S%z")
@@ -142,20 +144,21 @@ docker_canopsis-api: TARGET=canopsis-api
 #
 # Install targets
 #
+
 .PHONY: install
-install: $(INSTALL_TARGETS) canopsis.toml
+
+# You can modify the content of the CMDS and PLUGINS variables to change what will be installed
+# Example : make install DESTDIR=/tmp/installroot PLUGINS=datasource/mongo.so CMDS="canopsis-api connector-junit"
+# will only install the mongo datasource plugin, canopsis-api and connector-junit
+install: canopsis.toml $(addprefix $(OUTPUT_DIR)/cmd/,$(CMDS_TO_INSTALL)) $(addprefix $(OUTPUT_DIR)/plugins/,$(PLUGINS_TO_INSTALL))
+	# Install cmds
+	install -d $(DESTDIR)$(PREFIX)/opt/canopsis/bin
+	$(foreach cmd,$(CMDS_TO_INSTALL),install -m 755 $(OUTPUT_DIR)/cmd/$(cmd) $(DESTDIR)$(PREFIX)/opt/canopsis/bin/;)
+	# Install plugins
+	$(foreach plugin,$(PLUGINS_TO_INSTALL),install -D -m 755 $(OUTPUT_DIR)/plugins/$(plugin) $(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(plugin);)
+	# Install configuration file
 	install -d $(DESTDIR)$(PREFIX)/opt/canopsis/etc
 	install -m 644 $(OUTPUT_DIR)/canopsis.toml $(DESTDIR)$(PREFIX)/opt/canopsis/etc/
-
-# Do not make the install_* targets .PHONY as make
-# does not consider implicit rule patterns for .PHONY targets
-install_cmd_%: $(OUTPUT_DIR)/cmd/%
-	install -d $(DESTDIR)$(PREFIX)/opt/canopsis/bin/
-	install -m 755 $< $(DESTDIR)$(PREFIX)/opt/canopsis/bin/
-
-install_plugin_%: $(OUTPUT_DIR)/plugins/%
-	install -d $(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(dir $<)
-	install -m 644 $< $(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(dir $<)/$(notdir $<)
 
 .PHONY: clean
 clean:
