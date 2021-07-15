@@ -316,26 +316,11 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 
 	childrenByEntityID := make(map[string][]Alarm)
 
-	childrenAlarmIds := make([]string, len(children))
-	for idx, ch := range children {
-		childrenAlarmIds[idx] = ch.ID
-	}
-
-	assignedInstructionMap, err := s.getAssignedInstructionsMap(ctx, childrenAlarmIds)
-	if err != nil {
-		return err
-	}
-
 	for _, ch := range children {
 		if _, ok := childrenByEntityID[ch.Entity.ID]; !ok {
 			childrenByEntityID[ch.Entity.ID] = make([]Alarm, 0)
 		}
 
-		sort.Slice(assignedInstructionMap[ch.ID], func(i, j int) bool {
-			return assignedInstructionMap[ch.ID][i].Name < assignedInstructionMap[ch.ID][j].Name
-		})
-
-		ch.AssignedInstructions = assignedInstructionMap[ch.ID]
 		childrenByEntityID[ch.Entity.ID] = append(childrenByEntityID[ch.Entity.ID], ch)
 	}
 
@@ -352,14 +337,47 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 					}
 				}
 
-				for _, child := range children {
-					if len(child.AssignedInstructions) != 0 {
-						result.Data[i].ChildrenInstructions = true
-						break
+				if r.WithInstructions {
+					for _, child := range children {
+						if len(child.AssignedInstructions) != 0 {
+							result.Data[i].ChildrenInstructions = true
+							break
+						}
 					}
 				}
 
 				result.Data[i].Children.Data = append(result.Data[i].Children.Data, children...)
+			}
+		}
+	}
+
+	if r.WithInstructions {
+		childrenAlarmIds := make([]string, len(children))
+		for idx, ch := range children {
+			childrenAlarmIds[idx] = ch.ID
+		}
+
+		assignedInstructionMap, err := s.getAssignedInstructionsMap(ctx, childrenAlarmIds)
+		if err != nil {
+			return err
+		}
+
+		for i := range result.Data {
+			if result.Data[i].Children == nil {
+				continue
+			}
+
+			for chIdx, ch := range result.Data[i].Children.Data {
+				sort.Slice(assignedInstructionMap[ch.ID], func(i, j int) bool {
+					return assignedInstructionMap[ch.ID][i].Name < assignedInstructionMap[ch.ID][j].Name
+				})
+
+				ch.AssignedInstructions = assignedInstructionMap[ch.ID]
+				if len(ch.AssignedInstructions) != 0 {
+					result.Data[i].ChildrenInstructions = true
+				}
+
+				result.Data[i].Children.Data[chIdx] = ch
 			}
 		}
 	}
@@ -1055,7 +1073,7 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 
 	if r.OnlyParents {
 		childrenPipeline := bson.M{"total": bson.M{"$size": "$v.children"}}
-		if r.WithChildren {
+		if r.WithChildren || r.WithInstructions {
 			childrenPipeline["data"] = "$v.children"
 		}
 
