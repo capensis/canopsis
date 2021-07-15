@@ -315,7 +315,6 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	}
 
 	childrenByEntityID := make(map[string][]Alarm)
-
 	for _, ch := range children {
 		if _, ok := childrenByEntityID[ch.Entity.ID]; !ok {
 			childrenByEntityID[ch.Entity.ID] = make([]Alarm, 0)
@@ -334,15 +333,6 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 					result.Data[i].Children = &Children{
 						Data:  make([]Alarm, 0),
 						Total: result.Data[i].ChildrenIDs.Total,
-					}
-				}
-
-				if r.WithInstructions {
-					for _, child := range children {
-						if len(child.AssignedInstructions) != 0 {
-							result.Data[i].ChildrenInstructions = true
-							break
-						}
 					}
 				}
 
