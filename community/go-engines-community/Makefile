@@ -1,6 +1,5 @@
 MAIN_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
 CURRENT_MAKEFILE := $(abspath $(lastword $(MAKEFILE_LIST)))
-MONOREPO_ROOT := $(abspath $(dir $(CURRENT_MAKEFILE))/../..)
 MONOREPO_ROOT := $(shell realpath --relative-to=. $(patsubst %/,%,$(dir $(CURRENT_MAKEFILE))/../..))
 ROOT_DIR = $(shell realpath --relative-to=. $(patsubst %/,%,$(dir $(MAIN_MAKEFILE))))
 VPATH = $(dir $(MAIN_MAKEFILE))
@@ -48,7 +47,7 @@ DOCKER_NO_CACHE = # If set to 1 previous build caches will be ignored
 DOCKER_TAG = $(VERSION)
 DOCKER_ALPINE_VERSION = 3.13
 DOCKER_GOLANG_VERSION = 1.16.4
-DOCKERFILE_PATH = $(dir $(CURRENT_MAKEFILE))/Dockerfile
+DOCKERFILE_PATH = $(dir $(CURRENT_MAKEFILE))Dockerfile
 
 .PHONY: build docker_images
 build: $(CMDS) $(PLUGINS)
@@ -65,18 +64,20 @@ $(PLUGINS):
 
 
 # Plugin build job template
-$(OUTPUT_DIR)/plugins/%.so: plugins/% plugins/%/*
+$(OUTPUT_DIR)/plugins/%.so: $(ROOT_DIR)/plugins/% $(ROOT_DIR)/plugins/%/*
 	@echo "Building $@"
-	@go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
+	@cd $(ROOT_DIR);\
+	go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
 		-buildmode=plugin \
-		-o "$@" "$(abspath $<)"
+		-o "$(abspath $@)" "$(abspath $<)"
 
 
 # Build job template
-$(OUTPUT_DIR)/cmd/%: cmd/% cmd/%/*
+$(OUTPUT_DIR)/cmd/%: $(ROOT_DIR)/cmd/% $(ROOT_DIR)/cmd/%/*
 	@echo "Building $@"
-	@go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
-		-o "$@" "$(abspath $<)"
+	@cd $(ROOT_DIR);\
+	go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
+		-o "$(abspath $@)" "$(abspath $<)"
 
 # To add a custom project-specific build flag
 #engine-action: GO_BUILD_CUSTOM_FLAGS=--your-custom-flag
@@ -159,4 +160,4 @@ install_plugin_%: $(OUTPUT_DIR)/plugins/%
 .PHONY: clean
 clean:
 	rm -rf $(OUTPUT_DIR)
-	rm $(MONOREPO_ROOT)/.dockerignore
+	rm -f $(MONOREPO_ROOT)/.dockerignore
