@@ -1913,10 +1913,6 @@ export default {
       addRRule: 'Ajouter une règle de récurrence',
       editRrule: 'Modifier la règle de récurrence',
     },
-    alerts: {
-      countOverLimit: 'Le filtre que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr?',
-      countRequestError: 'Le calcul du nombre d\'entités ciblées par le filtre s\'est terminée avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr?',
-    },
   },
 
   pbehaviorExceptions: {
@@ -2472,6 +2468,17 @@ export default {
     [ENTITIES_STATUSES.stealthy]: 'Furtive',
     [ENTITIES_STATUSES.cancelled]: 'Annulée',
     [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
+  },
+
+  entitiesCountAlerts: {
+    filter: {
+      countOverLimit: 'Le filtre que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr?',
+      countRequestError: 'Le calcul du nombre d\'entités ciblées par le filtre s\'est terminée avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr?',
+    },
+    patterns: {
+      countOverLimit: 'Le patterns que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr?',
+      countRequestError: 'Le calcul du nombre d\'entités ciblées par le patterns s\'est terminée avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr?',
+    },
   },
 
   ...featureService.get('i18n.fr'),

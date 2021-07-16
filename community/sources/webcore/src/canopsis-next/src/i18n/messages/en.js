@@ -1914,10 +1914,6 @@ export default {
       addRRule: 'Add recurrence rule',
       editRrule: 'Edit recurrence rule',
     },
-    alerts: {
-      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
-    },
   },
 
   pbehaviorExceptions: {
@@ -2359,6 +2355,10 @@ export default {
       [IDLE_RULE_ALARM_CONDITIONS.lastEvent]: 'No events received',
       [IDLE_RULE_ALARM_CONDITIONS.lastUpdate]: 'No state changes',
     },
+    alerts: {
+      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
+      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
+    },
   },
 
   icons: {
@@ -2390,11 +2390,6 @@ export default {
     [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
       title: 'Meta alarm rule',
       message: 'Meta alarm rules can be used for grouping alarms by types and criteria (parent-child relationship, time interval, etc).',
-    },
-
-    [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
-      title: 'Idle rules',
-      message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
@@ -2477,6 +2472,17 @@ export default {
     [ENTITIES_STATUSES.stealthy]: 'Stealth',
     [ENTITIES_STATUSES.cancelled]: 'Canceled',
     [ENTITIES_STATUSES.noEvents]: 'No events',
+  },
+
+  entitiesCountAlerts: {
+    filter: {
+      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
+      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
+    },
+    patterns: {
+      countOverLimit: 'The patterns you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
+      countRequestError: 'The request to entities count by the patterns was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
+    },
   },
 
   ...featureService.get('i18n.en'),
