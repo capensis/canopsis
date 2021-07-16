@@ -17,6 +17,7 @@ export default {
       appTitle: 'appTitle',
       popupTimeout: 'popupTimeout',
       maxMatchedItems: 'maxMatchedItems',
+      checkCountRequestTimeout: 'checkCountRequestTimeout',
       footer: 'footer',
       edition: 'edition',
       stack: 'stack',

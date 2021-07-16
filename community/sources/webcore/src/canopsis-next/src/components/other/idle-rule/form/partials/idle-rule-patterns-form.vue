@@ -24,7 +24,6 @@ import { PATTERNS_TYPES } from '@/constants';
 import { formValidationHeaderMixin, validationErrorsMixin } from '@/mixins/form';
 
 import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
-import { get, has } from 'lodash';
 
 const { mapActions } = createNamespacedHelpers('idleRules');
 
@@ -60,11 +59,10 @@ export default {
     }),
 
     setFormErrors(err) {
-      const existFieldErrors = Object.entries(err)
-        .filter(([field]) => this.fieldsByName[field] || has(get(this, 'form'), field));
+      const existFieldErrors = this.getExistsFieldsErrors(err);
 
       if (existFieldErrors.length) {
-        this.errors.add(existFieldErrors.map(([field, msg]) => ({ field, msg })));
+        this.addExistsFieldsErrors(existFieldErrors);
 
         return {
           over_limit: false,
