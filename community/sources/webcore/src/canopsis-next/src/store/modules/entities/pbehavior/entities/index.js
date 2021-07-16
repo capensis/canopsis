@@ -5,7 +5,7 @@ export default {
   namespaced: true,
   actions: {
     fetchListWithoutStore(context, { id, params }) {
-      return request.get(`${API_ROUTES.pbehavior.pbehaviors}/${id}/eids`, { params });
+      return request.get(`${API_ROUTES.pbehavior.pbehaviors}/${id}/entities`, { params });
     },
   },
 };
