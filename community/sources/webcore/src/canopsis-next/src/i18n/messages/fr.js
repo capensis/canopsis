@@ -1767,9 +1767,11 @@ export default {
         popupTimeoutUnit: 'Unité',
         allowChangeSeverityToInfo: 'Allow change severity to info',
         maxMatchedItems: 'Articles correspondants au maximum',
+        checkCountRequestTimeout: 'Vérifier le délai d\'expiration maximal de la demande d\'éléments correspondants (secondes)',
       },
       tooltips: {
         maxMatchedItems: 'il doit avertir l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
+        checkCountRequestTimeout: 'il doit définir la valeur du délai d\'attente de la demande pour la vérification du nombre maximal d\'éléments correspondants',
       },
     },
   },
