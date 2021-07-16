@@ -423,6 +423,7 @@ export default {
     status: 'Statut',
     created: 'Date de création',
     updated: 'Date de dernière modification',
+    lastAlarmDate: 'Date de la dernière alarme',
     tabs: {
       filter: 'Filtre',
       comments: 'Commentaires',
