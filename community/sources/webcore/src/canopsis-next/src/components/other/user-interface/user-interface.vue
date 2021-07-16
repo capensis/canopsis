@@ -99,7 +99,7 @@
 
 <script>
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
-import { userInterfaceToForm } from '@/helpers/forms/user-interface';
+import { formToUserInterface, userInterfaceToForm } from '@/helpers/forms/user-interface';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -160,6 +160,7 @@ export default {
         allow_change_severity_to_info: this.allowChangeSeverityToInfo,
         timezone: this.timezone,
         max_matched_items: this.maxMatchedItems,
+        check_count_request_timeout: this.checkCountRequestTimeout,
       };
 
       this.form = userInterfaceToForm(userInterface);
@@ -178,7 +179,7 @@ export default {
         const isValid = await this.$validator.validateAll();
 
         if (isValid) {
-          const data = { ...this.form };
+          const data = formToUserInterface(this.form);
 
           if (this.logoFile) {
             data.logo = await getFileDataUrlContent(this.logoFile);
