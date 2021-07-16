@@ -59,15 +59,16 @@ type ExportResponse struct {
 }
 
 type Alarm struct {
-	ID            string                            `bson:"_id" json:"_id"`
-	Time          types.CpsTime                     `bson:"t" json:"t" swaggertype:"integer"`
-	Entity        entity.Entity                     `bson:"entity" json:"entity"`
-	Value         AlarmValue                        `bson:"v" json:"v"`
-	Infos         map[string]map[string]interface{} `bson:"infos" json:"infos"`
-	Pbehavior     *Pbehavior                        `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
-	MetaAlarmRule *MetaAlarmRule                    `bson:"meta_alarm_rule,omitempty" json:"rule,omitempty"`
-	IsMetaAlarm   *bool                             `bson:"is_meta_alarm,omitempty" json:"metaalarm,omitempty"`
-	ChildrenIDs   *struct {
+	ID                   string                            `bson:"_id" json:"_id"`
+	Time                 types.CpsTime                     `bson:"t" json:"t" swaggertype:"integer"`
+	Entity               entity.Entity                     `bson:"entity" json:"entity"`
+	Value                AlarmValue                        `bson:"v" json:"v"`
+	Infos                map[string]map[string]interface{} `bson:"infos" json:"infos"`
+	Pbehavior            *Pbehavior                        `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
+	MetaAlarmRule        *MetaAlarmRule                    `bson:"meta_alarm_rule,omitempty" json:"rule,omitempty"`
+	IsMetaAlarm          *bool                             `bson:"is_meta_alarm,omitempty" json:"metaalarm,omitempty"`
+	ChildrenInstructions bool                              `bson:"children_instructions" json:"children_instructions"`
+	ChildrenIDs          *struct {
 		Data  []string `bson:"data"`
 		Total int      `bson:"total"`
 	} `bson:"children_ids,omitempty" json:"-"`

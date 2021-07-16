@@ -7,6 +7,13 @@
     "type": "complex"
   },
   {
+    "_id": "test-alarm-get-metaalarm-children-instructions-rule-1",
+    "auto_resolve": false,
+    "name": "Test alarm get",
+    "patterns": null,
+    "type": "complex"
+  },
+  {
     "_id": "test-alarm-get-metaalarm-rule-2",
     "auto_resolve": false,
     "config": {
