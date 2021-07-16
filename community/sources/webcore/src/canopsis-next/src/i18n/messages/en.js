@@ -426,7 +426,7 @@ export default {
     tabs: {
       filter: 'Filter',
       comments: 'Comments',
-      eids: 'EIDS',
+      entities: 'Entities',
     },
   },
   settings: {
