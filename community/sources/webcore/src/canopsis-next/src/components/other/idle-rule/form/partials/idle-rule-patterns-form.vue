@@ -77,16 +77,16 @@ export default {
 
     async checkEntitiesCountForPatternsByType(type, patterns) {
       const requestKey = `${type}_patterns`;
-      const responseKey = PATTERNS_TYPES.alarm ? 'total_count_alarms' : 'total_count_entities';
+      const responseKey = type === PATTERNS_TYPES.alarm ? 'total_count_alarms' : 'total_count_entities';
 
       try {
-        const result = await this.fetchIdleRuleEntitiesCountWithoutStore({
+        const response = await this.fetchIdleRuleEntitiesCountWithoutStore({
           data: { [requestKey]: patterns },
         });
 
         return {
-          over_limit: result.over_limit,
-          total_count: result[responseKey],
+          over_limit: response.over_limit,
+          total_count: response[responseKey],
         };
       } catch (err) {
         return this.setFormErrors(err);
