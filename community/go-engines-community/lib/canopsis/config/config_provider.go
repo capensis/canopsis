@@ -122,42 +122,35 @@ type BaseAlarmConfigProvider struct {
 }
 
 func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
 	sectionName := "alarm"
 	d, ok := parseUpdatedTimeDurationByStr(cfg.Alarm.BaggotTime, p.conf.BaggotTime, "BaggotTime", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.BaggotTime = d
-		p.mx.Unlock()
 	}
 
 	d, ok = parseUpdatedTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, p.conf.CancelAutosolveDelay, "CancelAutosolveDelay", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.CancelAutosolveDelay = d
-		p.mx.Unlock()
 	}
 
 	t, s, ok := parseUpdatedTemplate(cfg.Alarm.DisplayNameScheme, p.conf.displayNameSchemeText, "DisplayNameScheme", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.DisplayNameScheme = t
 		p.conf.displayNameSchemeText = s
-		p.mx.Unlock()
 	}
 
 	if cfg.Alarm.OutputLength != p.conf.OutputLength {
 		if cfg.Alarm.OutputLength <= 0 {
-			p.mx.Lock()
 			p.conf.OutputLength = 0
-			p.mx.Unlock()
 			p.logger.Warn().
 				Int("previous", p.conf.OutputLength).
 				Int("new", cfg.Alarm.OutputLength).
 				Msg("OutputLength of alarm config section is loaded, value is not set or less than 1: the event's output and long_output won't be truncated")
 		} else {
-			p.mx.Lock()
 			p.conf.OutputLength = cfg.Alarm.OutputLength
-			p.mx.Unlock()
 			p.logger.Info().
 				Int("previous", p.conf.OutputLength).
 				Int("new", cfg.Alarm.OutputLength).
@@ -167,37 +160,27 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
 
 	i, ok := parseUpdatedInt(cfg.Alarm.FlappingFreqLimit, p.conf.FlappingFreqLimit, "FlappingFreqLimit", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.FlappingFreqLimit = i
-		p.mx.Unlock()
 	}
 
 	d, ok = parseUpdatedTimeDurationBySeconds(cfg.Alarm.FlappingInterval, p.conf.FlappingInterval, "FlappingInterval", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.FlappingInterval = d
-		p.mx.Unlock()
 	}
 
 	d, ok = parseUpdatedTimeDurationBySeconds(cfg.Alarm.StealthyInterval, p.conf.StealthyInterval, "StealthyInterval", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.StealthyInterval = d
-		p.mx.Unlock()
 	}
 
 	b, ok := parseUpdatedBool(cfg.Alarm.EnableLastEventDate, p.conf.EnableLastEventDate, "EnableLastEventDate", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.EnableLastEventDate = b
-		p.mx.Unlock()
 	}
 
 	b, ok = parseUpdatedBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, p.conf.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.DisableActionSnoozeDelayOnPbh = b
-		p.mx.Unlock()
 	}
 
 	return nil
@@ -226,10 +209,11 @@ type BaseTimezoneConfigProvider struct {
 }
 
 func (p *BaseTimezoneConfigProvider) Update(cfg CanopsisConf) error {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
 	l, ok := parseUpdatedLocation(cfg.Timezone.Timezone, p.conf.Location, "Timezone", "timezone", p.logger)
 	if ok {
-		p.mx.Lock()
-		defer p.mx.Unlock()
 		p.conf.Location = l
 	}
 
@@ -276,42 +260,33 @@ type BaseRemediationConfigProvider struct {
 }
 
 func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) error {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
 	sectionName := "remediation"
 	d, ok := parseUpdatedTimeDurationByStr(cfg.HttpTimeout, p.conf.HttpTimeout, "http_timeout", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.HttpTimeout = d
-		p.mx.Unlock()
 	}
 	i, ok := parseUpdatedInt(cfg.LaunchJobRetriesAmount, p.conf.LaunchJobRetriesAmount, "launch_job_retries_amount", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.LaunchJobRetriesAmount = i
-		p.mx.Unlock()
 	}
 	d, ok = parseUpdatedTimeDurationByStr(cfg.LaunchJobRetriesInterval, p.conf.LaunchJobRetriesInterval, "launch_job_retries_interval", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.LaunchJobRetriesInterval = d
-		p.mx.Unlock()
 	}
 	i, ok = parseUpdatedInt(cfg.WaitJobCompleteRetriesAmount, p.conf.WaitJobCompleteRetriesAmount, "wait_job_complete_retries_amount", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.WaitJobCompleteRetriesAmount = i
-		p.mx.Unlock()
 	}
 	d, ok = parseUpdatedTimeDurationByStr(cfg.WaitJobCompleteRetriesInterval, p.conf.WaitJobCompleteRetriesInterval, "wait_job_complete_retries_interval", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.WaitJobCompleteRetriesInterval = d
-		p.mx.Unlock()
 	}
 	d, ok = parseUpdatedTimeDurationByStr(cfg.PauseManualInstructionInterval, p.conf.PauseManualInstructionInterval, "pause_manual_instruction_interval", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
-		p.conf.WaitJobCompleteRetriesInterval = d
-		p.mx.Unlock()
+		p.conf.PauseManualInstructionInterval = d
 	}
 
 	if !reflect.DeepEqual(cfg.ExternalAPI, p.conf.ExternalAPI) {
@@ -324,9 +299,7 @@ func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) error {
 		p.logger.Info().
 			Msgf("%+v is updated %s of %s config section", apiKeys, "external_api", sectionName)
 
-		p.mx.Lock()
 		p.conf.ExternalAPI = cfg.ExternalAPI
-		p.mx.Unlock()
 	}
 
 	return nil
@@ -457,11 +430,12 @@ type BaseDataStorageConfigProvider struct {
 }
 
 func (p *BaseDataStorageConfigProvider) Update(cfg CanopsisConf) error {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
 	t, ok := parseUpdatedScheduledTime(cfg.DataStorage.TimeToExecute, p.conf.TimeToExecute,
 		"TimeToExecute", "data_storage", p.logger)
 	if ok {
-		p.mx.Lock()
-		defer p.mx.Unlock()
 		p.conf.TimeToExecute = t
 	}
 
