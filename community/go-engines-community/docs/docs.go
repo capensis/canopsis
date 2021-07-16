@@ -4840,7 +4840,7 @@ var doc = `{
                 }
             }
         },
-        "/pbehaviors/{id}/eids": {
+        "/pbehaviors/{id}/entities": {
             "get": {
                 "security": [
                     {
@@ -4850,15 +4850,15 @@ var doc = `{
                         "BasicAuth": []
                     }
                 ],
-                "description": "Get pbehavior eids list",
+                "description": "Find entities by pbehavior id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "pbehaviors"
                 ],
-                "summary": "Get pbehavior eids list",
-                "operationId": "pbehaviors-get-eids",
+                "summary": "Find entities by pbehavior id",
+                "operationId": "pbehaviors-find-entities",
                 "parameters": [
                     {
                         "type": "string",
@@ -4914,7 +4914,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/pbehavior.EID"
+                                                "$ref": "#/definitions/entity.Entity"
                                             }
                                         }
                                     }
@@ -9903,14 +9903,6 @@ var doc = `{
                 },
                 "total_count": {
                     "type": "integer"
-                }
-            }
-        },
-        "pbehavior.EID": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
                 }
             }
         },
