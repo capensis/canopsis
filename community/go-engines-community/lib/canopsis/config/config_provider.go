@@ -246,9 +246,11 @@ func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
 func NewRemediationConfigProvider(cfg RemediationConf, logger zerolog.Logger) *BaseRemediationConfigProvider {
 	sectionName := "Remediation"
 
-	apiKeys := make([]string, 0)
+	apiKeys := make([]string, len(cfg.ExternalAPI))
+	i := 0
 	for key := range cfg.ExternalAPI {
-		apiKeys = append(apiKeys, key)
+		apiKeys[i] = key
+		i++
 	}
 	logger.Info().
 		Msgf("%+v is loaded %s of %s config section", apiKeys, "external_api", sectionName)
@@ -313,9 +315,11 @@ func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) error {
 	}
 
 	if !reflect.DeepEqual(cfg.ExternalAPI, p.conf.ExternalAPI) {
-		apiKeys := make([]string, 0)
+		apiKeys := make([]string, len(cfg.ExternalAPI))
+		i := 0
 		for key := range cfg.ExternalAPI {
-			apiKeys = append(apiKeys, key)
+			apiKeys[i] = key
+			i++
 		}
 		p.logger.Info().
 			Msgf("%+v is updated %s of %s config section", apiKeys, "external_api", sectionName)

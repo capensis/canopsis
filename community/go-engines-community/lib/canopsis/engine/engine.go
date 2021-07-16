@@ -70,7 +70,6 @@ func (e *engine) Run(parentCtx context.Context) error {
 	for _, c := range e.consumers {
 		wg.Add(1)
 		go func(consumer Consumer) {
-			defer wg.Done()
 			defer func() {
 				if r := recover(); r != nil {
 					var err error
@@ -82,6 +81,8 @@ func (e *engine) Run(parentCtx context.Context) error {
 					e.logger.Err(err).Msgf("consumer recovered from panic\n%s\n", debug.Stack())
 					exitCh <- fmt.Errorf("consumer recovered from panic: %w", err)
 				}
+
+				wg.Done()
 			}()
 
 			err := consumer.Consume(ctx)

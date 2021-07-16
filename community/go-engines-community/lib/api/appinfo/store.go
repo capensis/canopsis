@@ -122,11 +122,14 @@ func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf,
 		return result, err
 	}
 
+	result.JobConfigTypes = make([]JobConfigType, len(conf.ExternalAPI))
+	i := 0
 	for name, apiConfig := range conf.ExternalAPI {
-		result.JobConfigTypes = append(result.JobConfigTypes, JobConfigType{
+		result.JobConfigTypes[i] = JobConfigType{
 			Name:     name,
 			AuthType: apiConfig.Auth.Type,
-		})
+		}
+		i++
 	}
 
 	sort.Slice(result.JobConfigTypes, func(i, j int) bool {
