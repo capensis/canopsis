@@ -2065,11 +2065,6 @@ definitions:
       total_count:
         type: integer
     type: object
-  pbehavior.EID:
-    properties:
-      id:
-        type: string
-    type: object
   pbehavior.EditRequest:
     properties:
       enabled:
@@ -6283,10 +6278,10 @@ paths:
       summary: Update behavior by id
       tags:
       - pbehaviors
-  /pbehaviors/{id}/eids:
+  /pbehaviors/{id}/entities:
     get:
-      description: Get pbehavior eids list
-      operationId: pbehaviors-get-eids
+      description: Find entities by pbehavior id
+      operationId: pbehaviors-find-entities
       parameters:
       - description: pbehavior id
         in: path
@@ -6326,7 +6321,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/pbehavior.EID'
+                    $ref: '#/definitions/entity.Entity'
                   type: array
               type: object
         "400":
@@ -6340,7 +6335,7 @@ paths:
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
-      summary: Get pbehavior eids list
+      summary: Find entities by pbehavior id
       tags:
       - pbehaviors
   /pbehaviors/count:
