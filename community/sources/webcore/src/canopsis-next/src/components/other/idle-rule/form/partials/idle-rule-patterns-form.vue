@@ -4,6 +4,7 @@
       v-if="isEntityType",
       v-field="form.entity_patterns",
       v-validate="'required'",
+      :type="$constants.PATTERNS_TYPES.entity",
       name="entity_patterns"
     )
     c-patterns-field(
@@ -20,21 +21,25 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { PATTERNS_TYPES } from '@/constants';
 
-import { formValidationHeaderMixin } from '@/mixins/form';
+import { formValidationHeaderMixin, validationErrorsMixin } from '@/mixins/form';
 
 import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
+import { get, has } from 'lodash';
 
 const { mapActions } = createNamespacedHelpers('idleRules');
 
 export default {
   provide() {
     return {
-      $checkEntitiesCountByType: this.checkEntitiesCountByType,
+      $checkEntitiesCountForPatternsByType: this.checkEntitiesCountForPatternsByType,
     };
   },
   inject: ['$validator'],
   components: { PatternsList },
-  mixins: [formValidationHeaderMixin],
+  mixins: [
+    formValidationHeaderMixin,
+    validationErrorsMixin(),
+  ],
   model: {
     prop: 'form',
     event: 'input',
@@ -54,17 +59,38 @@ export default {
       fetchIdleRuleEntitiesCountWithoutStore: 'fetchEntitiesCountWithoutStore',
     }),
 
-    async checkEntitiesCountByType(type, patterns) {
+    setFormErrors(err) {
+      const existFieldErrors = Object.entries(err)
+        .filter(([field]) => this.fieldsByName[field] || has(get(this, 'form'), field));
+
+      if (existFieldErrors.length) {
+        this.errors.add(existFieldErrors.map(([field, msg]) => ({ field, msg })));
+
+        return {
+          over_limit: false,
+          total_count: 0,
+        };
+      }
+
+      throw err;
+    },
+
+    async checkEntitiesCountForPatternsByType(type, patterns) {
+      const requestKey = `${type}_patterns`;
       const responseKey = PATTERNS_TYPES.alarm ? 'total_count_alarms' : 'total_count_entities';
 
-      const result = await this.fetchIdleRuleEntitiesCountWithoutStore({
-        data: { [`${type}_patterns`]: patterns },
-      });
+      try {
+        const result = await this.fetchIdleRuleEntitiesCountWithoutStore({
+          data: { [requestKey]: patterns },
+        });
 
-      return {
-        over_limit: result.over_limit,
-        total_count: result[responseKey],
-      };
+        return {
+          over_limit: result.over_limit,
+          total_count: result[responseKey],
+        };
+      } catch (err) {
+        return this.setFormErrors(err);
+      }
     },
   },
 };

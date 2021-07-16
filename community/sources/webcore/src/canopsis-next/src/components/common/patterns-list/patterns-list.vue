@@ -65,7 +65,7 @@ export default {
       return this.name;
     },
   },
-  inject: ['$validator', '$checkEntitiesCountByType'],
+  inject: ['$validator', '$checkEntitiesCountForPatternsByType'],
   components: {
     PatternInformation,
   },
@@ -151,7 +151,7 @@ export default {
     },
 
     async checkEntitiesCount(patterns = []) {
-      if (!this.$checkEntitiesCountByType || !this.type || !patterns.length) {
+      if (!this.$checkEntitiesCountForPatternsByType || !this.type || !patterns.length) {
         this.countAlertShown = false;
 
         return;
@@ -161,7 +161,7 @@ export default {
         const {
           over_limit: overLimit,
           total_count: totalCount,
-        } = await this.$checkEntitiesCountByType(this.type, patterns);
+        } = await this.$checkEntitiesCountForPatternsByType(this.type, patterns);
 
         if (overLimit) {
           this.countAlertMessage = this.$t('entitiesCountAlerts.patterns.countOverLimit', { count: totalCount });
