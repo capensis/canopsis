@@ -13,13 +13,8 @@
         template(slot="items", slot-scope="props")
           remediation-instruction-assigned-job(
             :job="props.item",
-            :key="`job_${props.item.job_id}`",
+            :key="props.item.job_id",
             @execute-job="executeJob"
-          )
-          remediation-instruction-assigned-job-alert-row(
-            :job="props.item",
-            :key="`key_${props.item.job_id}`",
-            @skip="cancelExecuteJob"
           )
 </template>
 
@@ -28,11 +23,9 @@ import entitiesRemediationJobsExecutionsMixin from '@/mixins/entities/remediatio
 import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 import RemediationInstructionAssignedJob from './partials/remediation-instruction-assigned-job.vue';
-import RemediationInstructionAssignedJobAlertRow from './partials/remediation-instruction-assigned-job-alert-row.vue';
 
 export default {
   components: {
-    RemediationInstructionAssignedJobAlertRow,
     RemediationInstructionAssignedJob,
   },
   mixins: [
@@ -67,11 +60,6 @@ export default {
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
-    },
-
-    async cancelExecuteJob(job) {
-      await this.cancelRemediationJobExecution({ id: job._id });
-      await this.pingRemediationInstructionExecution({ id: this.executionId });
     },
   },
 };

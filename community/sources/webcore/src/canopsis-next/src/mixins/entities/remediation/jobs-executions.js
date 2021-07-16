@@ -17,7 +17,6 @@ export default {
     ...mapActions({
       fetchRemediationJobExecution: 'fetchItem',
       createRemediationJobExecution: 'create',
-      cancelRemediationJobExecution: 'cancel',
     }),
   },
 };
