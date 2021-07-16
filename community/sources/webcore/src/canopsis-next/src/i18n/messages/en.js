@@ -2355,10 +2355,6 @@ export default {
       [IDLE_RULE_ALARM_CONDITIONS.lastEvent]: 'No events received',
       [IDLE_RULE_ALARM_CONDITIONS.lastUpdate]: 'No state changes',
     },
-    alerts: {
-      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
-    },
   },
 
   icons: {
