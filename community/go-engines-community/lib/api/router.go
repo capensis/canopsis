@@ -320,9 +320,9 @@ func RegisterRoutes(
 				middleware.Authorize(authObjPbh, permRead, enforcer),
 				pbehaviorApi.Get)
 			pbehaviorRouter.GET(
-				"/:id/eids",
+				"/:id/entities",
 				middleware.Authorize(authObjPbh, permRead, enforcer),
-				pbehaviorApi.GetEIDs)
+				pbehaviorApi.ListEntities)
 			pbehaviorRouter.PUT(
 				"/:id",
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
