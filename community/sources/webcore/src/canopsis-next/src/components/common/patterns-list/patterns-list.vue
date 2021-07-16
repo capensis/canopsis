@@ -33,9 +33,19 @@
           v-btn(color="error", icon, @click="showRemovePatternModal(index)")
             v-icon delete
     v-btn.mx-0(v-if="!disabled", color="primary", @click="showCreatePatternModal") {{ $t('common.add') }}
-    v-layout(v-if="errors", row)
-      v-alert(:value="errors.has(name)", type="error")
-        span(v-for="error in errors.collect(name)", :key="error") {{ error }}
+    v-alert(
+      :value="errors.has(name)",
+      type="error",
+      transition="fade-transition"
+    )
+      span(v-for="error in errors.collect(name)", :key="error") {{ error }}
+    v-alert(
+      v-model="countAlertShown",
+      type="warning",
+      transition="fade-transition",
+      dismissible
+    )
+      span {{ countAlertMessage }}
 </template>
 
 <script>
@@ -55,7 +65,7 @@ export default {
       return this.name;
     },
   },
-  inject: ['$validator'],
+  inject: ['$validator', '$checkEntitiesCountByType'],
   components: {
     PatternInformation,
   },
@@ -81,6 +91,16 @@ export default {
       type: String,
       default: 'patterns',
     },
+    type: {
+      type: String,
+      required: false,
+    },
+  },
+  data() {
+    return {
+      countAlertShown: false,
+      countAlertMessage: '',
+    };
   },
   computed: {
     isPatternsEmpty() {
@@ -93,7 +113,11 @@ export default {
         name: MODALS.createPattern,
         config: {
           operators: this.operators,
-          action: pattern => this.addItemIntoArray(pattern),
+          action: async (pattern) => {
+            const patterns = this.addItemIntoArray(pattern);
+
+            await this.checkEntitiesCount(patterns);
+          },
         },
       });
     },
@@ -104,7 +128,11 @@ export default {
         config: {
           pattern: this.patterns[index],
           operators: this.operators,
-          action: pattern => this.updateItemInArray(index, pattern),
+          action: async (pattern) => {
+            const patterns = this.updateItemInArray(index, pattern);
+
+            await this.checkEntitiesCount(patterns);
+          },
         },
       });
     },
@@ -113,9 +141,40 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.removeItemFromArray(index),
+          action: async () => {
+            const patterns = this.removeItemFromArray(index);
+
+            await this.checkEntitiesCount(patterns);
+          },
         },
       });
+    },
+
+    async checkEntitiesCount(patterns = []) {
+      if (!this.$checkEntitiesCountByType || !this.type || !patterns.length) {
+        this.countAlertShown = false;
+
+        return;
+      }
+
+      try {
+        const {
+          over_limit: overLimit,
+          total_count: totalCount,
+        } = await this.$checkEntitiesCountByType(this.type, patterns);
+
+        if (overLimit) {
+          this.countAlertMessage = this.$t('entitiesCountAlerts.patterns.countOverLimit', { count: totalCount });
+          this.countAlertShown = true;
+
+          return;
+        }
+
+        this.countAlertShown = false;
+      } catch (err) {
+        this.countAlertMessage = this.$t('entitiesCountAlerts.patterns.countRequestError');
+        this.countAlertShown = true;
+      }
     },
   },
 };

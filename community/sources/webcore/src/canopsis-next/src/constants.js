@@ -1907,6 +1907,13 @@ export const IDLE_RULE_ALARM_CONDITIONS = {
   lastUpdate: 'last_update',
 };
 
+export const PATTERNS_TYPES = {
+  alarm: 'alarm',
+  event: 'event',
+  entity: 'entity',
+  totalEntity: 'totalEntity',
+};
+
 export const DOCUMENTATION_LINKS = {
   /**
    * Exploitation
