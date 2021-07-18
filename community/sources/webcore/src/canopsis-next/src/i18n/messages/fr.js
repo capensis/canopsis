@@ -2025,9 +2025,7 @@ export default {
     table: {
       rating: 'Évaluation',
       lastModifiedOn: 'Dernière modification le',
-      averageTimeCompletion: 'Temps moyen\nd\'exécution',
       monthExecutions: '№ d\'exécutions\nce mois-ci',
-      lastExecutedBy: 'Dernière exécution par',
       lastExecutedOn: 'Dernière exécution le',
     },
     errors: {
