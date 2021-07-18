@@ -1767,9 +1767,11 @@ export default {
         popupTimeoutUnit: 'Unit',
         allowChangeSeverityToInfo: 'Allow change severity to info',
         maxMatchedItems: 'Max matched items',
+        checkCountRequestTimeout: 'Check max matched items request timeout (seconds)',
       },
       tooltips: {
         maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
+        checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',
       },
     },
   },
@@ -1911,10 +1913,6 @@ export default {
       editFilter: 'Edit filter',
       addRRule: 'Add recurrence rule',
       editRrule: 'Edit recurrence rule',
-    },
-    alerts: {
-      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
     },
   },
 
@@ -2395,11 +2393,6 @@ export default {
       message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
     },
 
-    [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
-      title: 'Idle rules',
-      message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
-    },
-
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
       title: 'PBehaviors',
       message: 'Canopsis periodical behaviors can be used in order to define a periods when the behavior has to be changed, e.g. for  maintenance or service range.',
@@ -2475,6 +2468,17 @@ export default {
     [ENTITIES_STATUSES.stealthy]: 'Stealth',
     [ENTITIES_STATUSES.cancelled]: 'Canceled',
     [ENTITIES_STATUSES.noEvents]: 'No events',
+  },
+
+  entitiesCountAlerts: {
+    filter: {
+      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
+      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
+    },
+    patterns: {
+      countOverLimit: 'The patterns you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
+      countRequestError: 'The request to entities count by the patterns was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
+    },
   },
 
   ...featureService.get('i18n.en'),

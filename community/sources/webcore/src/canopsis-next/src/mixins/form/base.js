@@ -10,9 +10,12 @@ export const formBaseMixin = {
      * Update full model
      *
      * @param {*} model
+     * @return {Array|Object}
      */
     updateModel(model) {
       this.$emit(this[modelEventKeyComputed], model);
+
+      return model;
     },
   },
 };

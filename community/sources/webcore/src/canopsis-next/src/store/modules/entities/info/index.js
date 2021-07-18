@@ -27,6 +27,7 @@ export default {
     samlConfig: {},
     popupTimeout: undefined,
     maxMatchedItems: '',
+    checkCountRequestTimeout: '',
     timezone: undefined,
     jobExecutorFetchTimeoutSeconds: undefined,
   },
@@ -36,6 +37,7 @@ export default {
     appTitle: state => state.appTitle,
     popupTimeout: state => state.popupTimeout,
     maxMatchedItems: state => state.maxMatchedItems,
+    checkCountRequestTimeout: state => state.checkCountRequestTimeout,
     allowChangeSeverityToInfo: state => state.allowChangeSeverityToInfo,
     footer: state => state.footer,
     edition: state => state.edition,
@@ -77,6 +79,7 @@ export default {
       appTitle,
       popupTimeout,
       maxMatchedItems,
+      checkCountRequestTimeout,
       allowChangeSeverityToInfo,
       edition,
       stack,
@@ -89,6 +92,7 @@ export default {
       state.appTitle = appTitle;
       state.popupTimeout = popupTimeout || {};
       state.maxMatchedItems = maxMatchedItems;
+      state.checkCountRequestTimeout = checkCountRequestTimeout;
       state.allowChangeSeverityToInfo = allowChangeSeverityToInfo;
       state.edition = edition;
       state.stack = stack;
@@ -134,6 +138,7 @@ export default {
           app_title: appTitle,
           popup_timeout: popupTimeout,
           max_matched_items: maxMatchedItems,
+          check_count_request_timeout: checkCountRequestTimeout,
           allow_change_severity_to_info: allowChangeSeverityToInfo,
           jobexecutorfetchtimeoutseconds: jobExecutorFetchTimeoutSeconds,
           edition,
@@ -151,6 +156,7 @@ export default {
             edition,
             popupTimeout,
             maxMatchedItems,
+            checkCountRequestTimeout,
             allowChangeSeverityToInfo,
             stack,
             language,
