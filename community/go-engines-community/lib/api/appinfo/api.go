@@ -1,6 +1,7 @@
 package appinfo
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -100,7 +101,11 @@ func (a *api) LoginInfo(c *gin.Context) {
 // @Router /internal/user_interface [post]
 // @Router /internal/user_interface [put]
 func (a *api) UpdateUserInterface(c *gin.Context) {
-	var request UserInterfaceConf
+	request := UserInterfaceConf{
+		MaxMatchedItems:           config.DefaultMaxMatchedItems,
+		CheckCountRequestTimeout:  config.DefaultCheckCountRequestTimeout,
+	}
+
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return

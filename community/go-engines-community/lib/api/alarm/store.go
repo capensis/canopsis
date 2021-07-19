@@ -341,6 +341,37 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 		}
 	}
 
+	if r.WithInstructions {
+		childrenAlarmIds := make([]string, len(children))
+		for idx, ch := range children {
+			childrenAlarmIds[idx] = ch.ID
+		}
+
+		assignedInstructionMap, err := s.getAssignedInstructionsMap(ctx, childrenAlarmIds)
+		if err != nil {
+			return err
+		}
+
+		for i := range result.Data {
+			if result.Data[i].Children == nil {
+				continue
+			}
+
+			for chIdx, ch := range result.Data[i].Children.Data {
+				sort.Slice(assignedInstructionMap[ch.ID], func(i, j int) bool {
+					return assignedInstructionMap[ch.ID][i].Name < assignedInstructionMap[ch.ID][j].Name
+				})
+
+				ch.AssignedInstructions = assignedInstructionMap[ch.ID]
+				if len(ch.AssignedInstructions) != 0 {
+					result.Data[i].ChildrenInstructions = true
+				}
+
+				result.Data[i].Children.Data[chIdx] = ch
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -1032,7 +1063,7 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 
 	if r.OnlyParents {
 		childrenPipeline := bson.M{"total": bson.M{"$size": "$v.children"}}
-		if r.WithChildren {
+		if r.WithChildren || r.WithInstructions {
 			childrenPipeline["data"] = "$v.children"
 		}
 
