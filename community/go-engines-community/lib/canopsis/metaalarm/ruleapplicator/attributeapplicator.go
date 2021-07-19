@@ -58,17 +58,7 @@ func (a AttributeApplicator) Apply(event *types.Event, rule metaalarm.Rule) ([]t
 
 	for redisRetries := MaxRedisRetries; redisRetries >= 0; redisRetries-- {
 		watchErr = a.redisClient.Watch(func(tx *redis.Tx) error {
-			maxRetries := 0
-
-			group, err := a.storage.Get(tx, rule.ID)
-			if err != nil {
-				return err
-			}
-
-			if group.OpenTime.Add(100*time.Millisecond).After(time.Now()) || watchErr == redis.TxFailedErr {
-				maxRetries = MaxMongoRetries
-			}
-
+			maxRetries := MaxMongoRetries
 			updated := false
 
 			for mongoRetries := maxRetries; mongoRetries >= 0 && !updated; mongoRetries-- {
@@ -76,7 +66,7 @@ func (a AttributeApplicator) Apply(event *types.Event, rule metaalarm.Rule) ([]t
 				metaAlarm, err := a.alarmAdapter.GetOpenedMetaAlarm(rule.ID, "")
 				switch err.(type) {
 				case errt.NotFound:
-					if mongoRetries == maxRetries {
+					if mongoRetries == 0 {
 						err = a.storage.CleanPush(tx, rule, *event.Alarm, "")
 						if err == nil {
 							children := []types.AlarmWithEntity{{
@@ -99,7 +89,7 @@ func (a AttributeApplicator) Apply(event *types.Event, rule metaalarm.Rule) ([]t
 						Str("alarm_id", event.Alarm.ID).
 						Msgf("Another instance has created meta-alarm, but couldn't find an opened meta-alarm. Retry mongo query. Remaining retries: %d", mongoRetries)
 
-					time.Sleep(10 * time.Millisecond)
+					time.Sleep(50 * time.Millisecond)
 
 					continue
 				case nil:
