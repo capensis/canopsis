@@ -42,7 +42,11 @@ type SectionTimezone struct {
 }
 
 type SectionRemediation struct {
-	JobExecutorFetchTimeoutSeconds int64 `toml:"JobExecutorFetchTimeoutSeconds"`
+	HttpTimeout                    string `toml:"HttpTimeout"`
+	LaunchJobRetriesAmount         int    `toml:"LaunchJobRetriesAmount"`
+	LaunchJobRetriesInterval       string `toml:"LaunchJobRetriesInterval"`
+	WaitJobCompleteRetriesAmount   int    `toml:"WaitJobCompleteRetriesAmount"`
+	WaitJobCompleteRetriesInterval string `toml:"WaitJobCompleteInterval"`
 }
 
 type SectionImportCtx struct {

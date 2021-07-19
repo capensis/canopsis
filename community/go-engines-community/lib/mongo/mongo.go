@@ -16,41 +16,28 @@ import (
 )
 
 const (
-	DB                                  = "canopsis"
-	ConfigurationMongoCollection        = "configuration"
-	ObjectMongoCollection               = "object"
-	RightsMongoCollection               = "default_rights"
-	SessionMongoCollection              = "session"
-	SessionStatsMongoCollection         = "default_session"
-	AlarmMongoCollection                = "periodical_alarm"
-	EntityMongoCollection               = "default_entities"
-	PbehaviorMongoCollection            = "pbehavior"
-	PbehaviorTypeMongoCollection        = "pbehavior_type"
-	PbehaviorReasonMongoCollection      = "pbehavior_reason"
-	PbehaviorExceptionMongoCollection   = "pbehavior_exception"
-	ScenarioMongoCollection             = "action_scenario"
-	FileMongoCollection                 = "files"
-	InstructionMongoCollection          = "instruction"
-	InstructionExecutionMongoCollection = "instruction_execution"
-	InstructionRatingMongoCollection    = "instruction_rating"
-	JobConfigMongoCollection            = "job_config"
-	JobMongoCollection                  = "job"
-	JobHistoryMongoCollection           = "job_history"
-	MetaAlarmRulesMongoCollection       = "meta_alarm_rules"
-	HeartbeatMongoCollection            = "heartbeat"
-	IdleRuleMongoCollection             = "idle_rule"
-	ExportTaskMongoCollection           = "export_task"
-	ActionLogMongoCollection            = "action_log"
-	EventFilterRulesMongoCollection     = "eventfilter"
-	DynamicInfosRulesMongoCollection    = "dynamic_infos"
-	WebhookMongoCollection              = "webhooks"
-	EntityCategoryMongoCollection       = "entity_category"
-	ImportJobMongoCollection            = "default_importgraph"
-
-	// Following collections are used for event statistics.
-	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
-	MessageRateStatsHourCollectionName   = "message_rate_statistic_hour"
-
+	DB                                = "canopsis"
+	ConfigurationMongoCollection      = "configuration"
+	ObjectMongoCollection             = "object"
+	RightsMongoCollection             = "default_rights"
+	SessionMongoCollection            = "session"
+	SessionStatsMongoCollection       = "default_session"
+	AlarmMongoCollection              = "periodical_alarm"
+	EntityMongoCollection             = "default_entities"
+	PbehaviorMongoCollection          = "pbehavior"
+	PbehaviorTypeMongoCollection      = "pbehavior_type"
+	PbehaviorReasonMongoCollection    = "pbehavior_reason"
+	PbehaviorExceptionMongoCollection = "pbehavior_exception"
+	ScenarioMongoCollection           = "action_scenario"
+	FileMongoCollection               = "files"
+	MetaAlarmRulesMongoCollection     = "meta_alarm_rules"
+	IdleRuleMongoCollection           = "idle_rule"
+	ExportTaskMongoCollection         = "export_task"
+	ActionLogMongoCollection          = "action_log"
+	EventFilterRulesMongoCollection   = "eventfilter"
+	DynamicInfosRulesMongoCollection  = "dynamic_infos"
+	EntityCategoryMongoCollection     = "entity_category"
+	ImportJobMongoCollection          = "default_importgraph"
 	JunitTestSuiteMongoCollection     = "junit_test_suite"
 	JunitTestCaseMediaMongoCollection = "junit_test_case_media"
 	ViewMongoCollection               = "views"
@@ -59,6 +46,22 @@ const (
 	StateSettingsMongoCollection      = "state_settings"
 	BroadcastMessageMongoCollection   = "broadcast_message"
 	AssociativeTableCollection        = "default_associativetable"
+	NotificationMongoCollection       = "notification"
+
+	// Following collections are used for event statistics.
+	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
+	MessageRateStatsHourCollectionName   = "message_rate_statistic_hour"
+
+	// Remediation collections
+	InstructionMongoCollection          = "instruction"
+	InstructionExecutionMongoCollection = "instruction_execution"
+	InstructionRatingMongoCollection    = "instruction_rating"
+	JobConfigMongoCollection            = "job_config"
+	JobMongoCollection                  = "job"
+	JobHistoryMongoCollection           = "job_history"
+	// Instruction statistics collections
+	InstructionWeekStatsMongoCollection = "instruction_week_stats"
+	InstructionModStatsMongoCollection  = "instruction_mod_stats"
 )
 
 type SingleResultHelper interface {
@@ -101,6 +104,8 @@ type DbCollection interface {
 // DbClient connected MongoDB client settings
 type DbClient interface {
 	Collection(string) DbCollection
+	Disconnect(ctx context.Context) error
+	SetRetry(count int, timeout time.Duration)
 }
 
 type dbClient struct {
@@ -286,6 +291,7 @@ func (c *dbCollection) InsertOne(ctx context.Context, document interface{},
 	if err != nil {
 		return nil, err
 	}
+
 	return res.InsertedID, nil
 }
 
@@ -373,7 +379,7 @@ func (c *dbCollection) retry(f func() error) {
 
 // NewClient creates a new connection to the MongoDB database.
 // It uses EnvURL as configuration source.
-func NewClient(retryCount int, minRetryTimeout time.Duration) (DbClient, error) {
+func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (DbClient, error) {
 	mongoURL, dbName, err := getURL()
 	if err != nil {
 		return nil, err
@@ -383,10 +389,6 @@ func NewClient(retryCount int, minRetryTimeout time.Duration) (DbClient, error) 
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err
@@ -413,6 +415,15 @@ func (c *dbClient) Collection(name string) DbCollection {
 		retryCount:      c.RetryCount,
 		minRetryTimeout: c.MinRetryTimeout,
 	}
+}
+
+func (c *dbClient) Disconnect(ctx context.Context) error {
+	return c.Client.Disconnect(ctx)
+}
+
+func (c *dbClient) SetRetry(count int, timeout time.Duration) {
+	c.RetryCount = count
+	c.MinRetryTimeout = timeout
 }
 
 // getURL parses URL value in EnvURL environment variable

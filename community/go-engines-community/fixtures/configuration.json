@@ -40,7 +40,11 @@
       "junitapi": "/tmp/canopsis/junitapi"
     },
     "remediation": {
-      "jobexecutorfetchtimeoutseconds": 5
+      "HttpTimeout": "1m",
+      "LaunchJobRetriesAmount": 1,
+      "LaunchJobRetriesInterval": "1s",
+      "WaitJobCompleteRetriesInterval": "1s",
+      "WaitJobCompleteRetriesAmount": 1
     }
   }
 ]

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -24,7 +25,7 @@ type rpcPBehaviorClientMessageProcessor struct {
 	Logger                   zerolog.Logger
 }
 
-func (p *rpcPBehaviorClientMessageProcessor) Process(msg engine.RPCMessage) error {
+func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg engine.RPCMessage) error {
 	data := strings.Split(msg.CorrelationID, "**")
 	if len(data) != 2 {
 		return fmt.Errorf("RPC PBehavior Client: bad correlation_id: %s", msg.CorrelationID)
@@ -53,6 +54,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(msg engine.RPCMessage) erro
 			PreviousPbehaviorCannonicalType: event.Alarm.Value.PbehaviorInfo.CanonicalType,
 		}
 		alarmChangeType, err := p.Executor.Exec(
+			ctx,
 			types.Operation{
 				Type: event.PbhEvent.EventType,
 				Parameters: types.OperationPbhParameters{

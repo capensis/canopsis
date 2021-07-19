@@ -11,9 +11,9 @@ import (
 // Adapter to the concrete database
 type Adapter interface {
 	// GetConfig return the whole config document
-	GetConfig() (CanopsisConf, error)
+	GetConfig(ctx context.Context) (CanopsisConf, error)
 	// UpsertConfig upsert a config in mongo.
-	UpsertConfig(conf CanopsisConf) error
+	UpsertConfig(ctx context.Context, conf CanopsisConf) error
 }
 
 type adapter struct {
@@ -26,18 +26,14 @@ func NewAdapter(client mongo.DbClient) Adapter {
 	}
 }
 
-func (c *adapter) GetConfig() (CanopsisConf, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (c *adapter) GetConfig(ctx context.Context) (CanopsisConf, error) {
 	conf := CanopsisConf{}
 	err := c.collection.FindOne(ctx, bson.M{"_id": ConfigKeyName}).Decode(&conf)
 
 	return conf, err
 }
 
-func (c *adapter) UpsertConfig(conf CanopsisConf) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (c *adapter) UpsertConfig(ctx context.Context, conf CanopsisConf) error {
 	conf.ID = ConfigKeyName
 	_, err := c.collection.UpdateOne(ctx, bson.M{"_id": ConfigKeyName},
 		bson.M{"$set": conf}, options.Update().SetUpsert(true))
@@ -46,7 +42,7 @@ func (c *adapter) UpsertConfig(conf CanopsisConf) error {
 }
 
 type UserInterfaceAdapter interface {
-	GetConfig() (UserInterfaceConf, error)
+	GetConfig(ctx context.Context) (UserInterfaceConf, error)
 }
 
 type userInterfaceAdapter struct {
@@ -59,10 +55,7 @@ func NewUserInterfaceAdapter(client mongo.DbClient) UserInterfaceAdapter {
 	}
 }
 
-func (a *userInterfaceAdapter) GetConfig() (UserInterfaceConf, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *userInterfaceAdapter) GetConfig(ctx context.Context) (UserInterfaceConf, error) {
 	conf := UserInterfaceConf{}
 	err := a.collection.FindOne(ctx, bson.M{"_id": UserInterfaceKeyName}).Decode(&conf)
 

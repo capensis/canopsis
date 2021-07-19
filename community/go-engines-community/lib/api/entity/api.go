@@ -2,11 +2,12 @@ package entity
 
 import (
 	"context"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type API interface {
@@ -54,7 +55,7 @@ func NewApi(
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param request query ListRequest true "request"
+// @Param request query ListRequestWithPagination true "request"
 // @Success 200 {object} common.PaginatedListResponse{data=[]Entity}
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /entities [get]

@@ -23,27 +23,32 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const InstructionStatusRunning = 0
-const InstructionStatusPaused = 1
-
-const InstructionsQueryAll = "all"
+const (
+	InstructionExecutionStatusRunning    = 0
+	InstructionExecutionStatusPaused     = 1
+	InstructionExecutionStatusWaitResult = 5
+	InstructionTypeManual                = 0
+	InstructionTypeAuto                  = 1
+	InstructionStatusApproved            = 0
+)
 
 const linkFetchTimeout = 30 * time.Second
 
 type Store interface {
-	Find(context.Context, string, ListRequestWithPagination) (*AggregationResult, error)
-	Count(context.Context, FilterRequest) (*Count, error)
+	Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error)
+	Count(ctx context.Context, r FilterRequest) (*Count, error)
 }
 
 type store struct {
-	dbClient              mongo.DbClient
-	dbCollection          mongo.DbCollection
-	fieldsAliases         map[string]string
-	fieldsAliasesByRegex  map[string]string
-	defaultSearchByFields []string
-	defaultSortBy         string
-	defaultSort           string
-	links                 LinksFetcher
+	dbCollection                     mongo.DbCollection
+	dbInstructionCollection          mongo.DbCollection
+	dbInstructionExecutionCollection mongo.DbCollection
+	fieldsAliases                    map[string]string
+	fieldsAliasesByRegex             map[string]string
+	defaultSearchByFields            []string
+	defaultSortBy                    string
+	defaultSort                      string
+	links                            LinksFetcher
 	// nested objects lookups depend on requested Filter:
 	// these aggregation stages inserted at beginning of pipeline when Filter has some expression
 	// or inserted at beginning of project stage otherwise
@@ -52,8 +57,9 @@ type store struct {
 
 func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
 	s := &store{
-		dbClient:     dbClient,
-		dbCollection: dbClient.Collection(alarm.AlarmCollectionName),
+		dbCollection:                     dbClient.Collection(mongo.AlarmMongoCollection),
+		dbInstructionCollection:          dbClient.Collection(mongo.InstructionMongoCollection),
+		dbInstructionExecutionCollection: dbClient.Collection(mongo.InstructionExecutionMongoCollection),
 		fieldsAliases: map[string]string{
 			"uid":            "_id",
 			"connector":      "v.connector",
@@ -158,9 +164,15 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 		return nil, err
 	}
 
-	err = s.fillAssignedInstructions(ctx, &result)
-	if err != nil {
-		return nil, err
+	if r.WithInstructions {
+		err = s.fillAssignedInstructions(ctx, &result)
+		if err != nil {
+			return nil, err
+		}
+		err = s.fillAutoInstructionFlags(ctx, &result)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	err = s.fillLinks(ctx, apiKey, &result)
@@ -329,28 +341,62 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 		}
 	}
 
+	if r.WithInstructions {
+		childrenAlarmIds := make([]string, len(children))
+		for idx, ch := range children {
+			childrenAlarmIds[idx] = ch.ID
+		}
+
+		assignedInstructionMap, err := s.getAssignedInstructionsMap(ctx, childrenAlarmIds)
+		if err != nil {
+			return err
+		}
+
+		for i := range result.Data {
+			if result.Data[i].Children == nil {
+				continue
+			}
+
+			for chIdx, ch := range result.Data[i].Children.Data {
+				sort.Slice(assignedInstructionMap[ch.ID], func(i, j int) bool {
+					return assignedInstructionMap[ch.ID][i].Name < assignedInstructionMap[ch.ID][j].Name
+				})
+
+				ch.AssignedInstructions = assignedInstructionMap[ch.ID]
+				if len(ch.AssignedInstructions) != 0 {
+					result.Data[i].ChildrenInstructions = true
+				}
+
+				result.Data[i].Children.Data[chIdx] = ch
+			}
+		}
+	}
+
 	return nil
 }
 
 func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]InstructionWithAlarms, error) {
-	instructionCursor, err := s.dbClient.Collection(mongo.InstructionMongoCollection).Aggregate(
+	instructionCursor, err := s.dbInstructionCollection.Aggregate(
 		ctx,
 		[]bson.M{
+			{"$match": bson.M{
+				"type":   InstructionTypeManual,
+				"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
+			}},
 			{"$lookup": bson.M{
-				"from": mongo.InstructionExecutionMongoCollection,
-				"let":  bson.M{"instruction_ids": "$_id"},
-				"pipeline": []bson.M{
-					{"$match": bson.M{
-						"$expr": bson.M{
-							"$and": []bson.M{
-								{"$eq": bson.A{"$instruction", "$$instruction_ids"}},
-								{"$in": bson.A{"$status", []int{InstructionStatusRunning, InstructionStatusPaused}}},
-								{"$in": bson.A{"$alarm", alarmIds}},
-							},
-						},
+				"from":         mongo.InstructionExecutionMongoCollection,
+				"localField":   "_id",
+				"foreignField": "instruction",
+				"as":           "instruction_executions",
+			}},
+			{"$addFields": bson.M{
+				"instruction_executions": bson.M{"$filter": bson.M{
+					"input": "$instruction_executions",
+					"cond": bson.M{"$and": []bson.M{
+						{"$in": bson.A{"$$this.status", []int{InstructionExecutionStatusRunning, InstructionExecutionStatusPaused}}},
+						{"$in": bson.A{"$$this.alarm", alarmIds}},
 					}},
-				},
-				"as": "instruction_executions",
+				}},
 			}},
 			{"$addFields": bson.M{
 				"alarms_with_executions": bson.M{
@@ -454,7 +500,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		{"$replaceRoot": bson.M{"newRoot": "$ids"}},
 	}
 
-	assignedInstructionsCursor, err := s.dbClient.Collection(alarm.AlarmCollectionName).Aggregate(
+	assignedInstructionsCursor, err := s.dbCollection.Aggregate(
 		ctx,
 		pipeline,
 	)
@@ -510,6 +556,66 @@ func (s *store) fillAssignedInstructions(ctx context.Context, result *Aggregatio
 		})
 
 		result.Data[i].AssignedInstructions = assignedInstructionsMap[alarmDocument.ID]
+	}
+
+	return nil
+}
+
+func (s *store) fillAutoInstructionFlags(ctx context.Context, result *AggregationResult) error {
+	alarmIDs := make([]string, len(result.Data))
+	for i, item := range result.Data {
+		alarmIDs[i] = item.ID
+	}
+
+	cursor, err := s.dbInstructionExecutionCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"alarm": bson.M{"$in": alarmIDs},
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.InstructionMongoCollection,
+			"localField":   "instruction",
+			"foreignField": "_id",
+			"as":           "instruction",
+		}},
+		{"$unwind": "$instruction"},
+		{"$match": bson.M{
+			"instruction.type": InstructionTypeAuto,
+		}},
+		{"$group": bson.M{
+			"_id":      "$alarm",
+			"statuses": bson.M{"$addToSet": "$status"},
+		}},
+	})
+	if err != nil {
+		return err
+	}
+	executionStatuses := make([]struct {
+		ID       string `bson:"_id"`
+		Statuses []int  `bson:"statuses"`
+	}, 0)
+	err = cursor.All(ctx, &executionStatuses)
+	if err != nil {
+		return err
+	}
+	runningByAlarm := make(map[string]bool, len(executionStatuses))
+	completedByAlarm := make(map[string]bool, len(executionStatuses))
+	for _, item := range executionStatuses {
+		running := false
+		for _, status := range item.Statuses {
+			if status == InstructionExecutionStatusRunning || status == InstructionExecutionStatusWaitResult {
+				running = true
+				break
+			}
+		}
+		runningByAlarm[item.ID] = running
+		completedByAlarm[item.ID] = !running && len(item.Statuses) > 0
+	}
+
+	for i := range result.Data {
+		isAutoInstructionRunning := runningByAlarm[result.Data[i].ID]
+		isAllAutoInstructionsCompleted := completedByAlarm[result.Data[i].ID]
+		result.Data[i].IsAutoInstructionRunning = &isAutoInstructionRunning
+		result.Data[i].IsAllAutoInstructionsCompleted = &isAllAutoInstructionsCompleted
 	}
 
 	return nil
@@ -586,7 +692,7 @@ func (s *store) addFilter(ctx context.Context, r FilterRequest, pipeline *[]bson
 	s.addOnlyParentsFilter(r, &match)
 	s.addCategoryFilter(r, &match)
 
-	err = s.addOnlyInstructionsFilter(ctx, r, &match)
+	err = s.addInstructionsFilter(ctx, r, &match)
 	if err != nil {
 		return err
 	}
@@ -682,31 +788,37 @@ func (s *store) addOnlyParentsFilter(r FilterRequest, match *[]bson.M) {
 	}
 }
 
-func (s *store) addOnlyInstructionsFilter(ctx context.Context, r FilterRequest, match *[]bson.M) error {
-	var instructionFilters []bson.M
+func (s *store) addInstructionsFilter(ctx context.Context, r FilterRequest, match *[]bson.M) error {
+	var filters []bson.M
 	var err error
 
-	if r.WithoutInstructions != "" {
-		if r.WithoutInstructions == InstructionsQueryAll {
-			instructionFilters, err = s.getInstructionsFilters(ctx, bson.M{})
-		} else {
-			instructionFilters, err = s.getInstructionsFilters(ctx, bson.M{"name": bson.M{"$in": strings.Split(r.WithoutInstructions, ",")}})
-		}
-
-		if instructionFilters != nil {
-			*match = append(*match, bson.M{"$nor": instructionFilters})
+	if len(r.ExcludeInstructions) > 0 {
+		filters, err = s.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": r.ExcludeInstructions}})
+		if len(filters) > 0 {
+			*match = append(*match, bson.M{"$nor": filters})
 		}
 	}
 
-	if r.WithInstructions != "" {
-		if r.WithInstructions == InstructionsQueryAll {
-			instructionFilters, err = s.getInstructionsFilters(ctx, bson.M{})
-		} else {
-			instructionFilters, err = s.getInstructionsFilters(ctx, bson.M{"name": bson.M{"$in": strings.Split(r.WithInstructions, ",")}})
+	if len(r.ExcludeInstructionTypes) > 0 {
+		filters, err = s.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": r.ExcludeInstructionTypes}})
+		if len(filters) > 0 {
+			*match = append(*match, bson.M{"$nor": filters})
 		}
+	}
 
-		if instructionFilters != nil {
-			*match = append(*match, bson.M{"$or": instructionFilters})
+	if len(r.IncludeInstructions) > 0 {
+		filters, err = s.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": r.IncludeInstructions}})
+		if len(filters) > 0 {
+			*match = append(*match, bson.M{"$or": filters})
+		} else {
+			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
+		}
+	}
+
+	if len(r.IncludeInstructionTypes) > 0 {
+		filters, err = s.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": r.IncludeInstructionTypes}})
+		if len(filters) > 0 {
+			*match = append(*match, bson.M{"$or": filters})
 		} else {
 			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
 		}
@@ -716,7 +828,10 @@ func (s *store) addOnlyInstructionsFilter(ctx context.Context, r FilterRequest, 
 }
 
 func (s *store) getInstructionsFilters(ctx context.Context, filter bson.M) ([]bson.M, error) {
-	instructionCursor, _ := s.dbClient.Collection(mongo.InstructionMongoCollection).Find(ctx, filter)
+	//get only approved
+	filter["status"] = bson.M{"$in": bson.A{InstructionStatusApproved, nil}}
+
+	instructionCursor, _ := s.dbInstructionCollection.Find(ctx, filter)
 	defer instructionCursor.Close(ctx)
 
 	var instructionFilters []bson.M
@@ -856,8 +971,8 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 			"foreignField": "_id",
 			"as":           "entity",
 		}},
-		bson.M{"$match": bson.M{"$or": []bson.M{{"entity.enabled": true}, {"entity": bson.M{"$exists": false}}}}},
 		bson.M{"$unwind": bson.M{"path": "$entity", "preserveNullAndEmptyArrays": true}},
+		bson.M{"$match": bson.M{"$or": []bson.M{{"entity.enabled": true}, {"entity": bson.M{"$exists": false}}}}},
 		bson.M{"$addFields": bson.M{
 			"impact_state": bson.M{"$multiply": bson.A{"$v.state.val", "$entity.impact_level"}},
 		}},
@@ -948,7 +1063,7 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 
 	if r.OnlyParents {
 		childrenPipeline := bson.M{"total": bson.M{"$size": "$v.children"}}
-		if r.WithChildren {
+		if r.WithChildren || r.WithInstructions {
 			childrenPipeline["data"] = "$v.children"
 		}
 

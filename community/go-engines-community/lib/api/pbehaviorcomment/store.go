@@ -11,26 +11,21 @@ import (
 )
 
 type Store interface {
-	Insert(pbehaviorID string, model *pbehavior.Comment) (bool, error)
-	Delete(id string) (bool, error)
+	Insert(ctx context.Context, pbehaviorID string, model *pbehavior.Comment) (bool, error)
+	Delete(ctx context.Context, id string) (bool, error)
 }
 
 type store struct {
-	dbClient     mongo.DbClient
 	dbCollection mongo.DbCollection
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
-		dbClient:     dbClient,
 		dbCollection: dbClient.Collection(pbehavior.PBehaviorCollectionName),
 	}
 }
 
-func (s *store) Insert(pbehaviorID string, model *pbehavior.Comment) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Insert(ctx context.Context, pbehaviorID string, model *pbehavior.Comment) (bool, error) {
 	model.ID = utils.NewID()
 	model.Timestamp = &types.CpsTime{Time: time.Now()}
 	res, err := s.dbCollection.UpdateOne(
@@ -47,10 +42,7 @@ func (s *store) Insert(pbehaviorID string, model *pbehavior.Comment) (bool, erro
 	return res.ModifiedCount > 0, nil
 }
 
-func (s *store) Delete(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	res, err := s.dbCollection.UpdateOne(
 		ctx,
 		bson.M{"comments._id": id},

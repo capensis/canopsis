@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -119,6 +120,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
+	setOperationParameterAuthor(&request, request.Author)
 	rule, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
@@ -161,6 +163,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
+	setOperationParameterAuthor(&request, request.Author)
 	rule, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
@@ -254,4 +257,28 @@ func (a *api) CountPatterns(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, data)
+}
+
+func setOperationParameterAuthor(request *EditRequest, value string) {
+	if request.Operation == nil {
+		return
+	}
+
+	switch v := request.Operation.Parameters.(type) {
+	case scenario.SnoozeParametersRequest:
+		v.Author = value
+		request.Operation.Parameters = v
+	case scenario.ChangeStateParametersRequest:
+		v.Author = value
+		request.Operation.Parameters = v
+	case scenario.AssocTicketParametersRequest:
+		v.Author = value
+		request.Operation.Parameters = v
+	case scenario.PbehaviorParametersRequest:
+		v.Author = value
+		request.Operation.Parameters = v
+	case scenario.ParametersRequest:
+		v.Author = value
+		request.Operation.Parameters = v
+	}
 }

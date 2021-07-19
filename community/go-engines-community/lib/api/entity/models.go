@@ -14,8 +14,8 @@ const DefaultCategory = "default"
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
-	WithFlags bool `form:"with_flags"`
-	NoEvents  bool `form:"no_events"`
+	WithFlags bool `form:"with_flags" json:"with_flags"`
+	NoEvents  bool `form:"no_events" json:"no_events"`
 }
 
 type ListRequest struct {

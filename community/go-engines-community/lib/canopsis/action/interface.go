@@ -8,9 +8,9 @@ import (
 )
 
 type Adapter interface {
-	GetEnabled() ([]Scenario, error)
-	GetEnabledById(id string) (Scenario, error)
-	GetEnabledByIDs(ids []string) ([]Scenario, error)
+	GetEnabled(ctx context.Context) ([]Scenario, error)
+	GetEnabledById(ctx context.Context, id string) (Scenario, error)
+	GetEnabledByIDs(ctx context.Context, ids []string) ([]Scenario, error)
 }
 
 // Service allows you to manipulate actions.
@@ -30,7 +30,7 @@ type Service interface {
 // ScenarioStorage is used to provide scenarios.
 type ScenarioStorage interface {
 	// ReloadScenarios trigger a refresh on scenarios cache from DB
-	ReloadScenarios() error
+	ReloadScenarios(ctx context.Context) error
 
 	// GetTriggeredScenarios returns scenarios which are triggered by triggers.
 	GetTriggeredScenarios(

@@ -4,6 +4,7 @@ Package executor contains operation executors.
 package executor
 
 import (
+	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -22,6 +23,7 @@ type ackExecutor struct {
 
 // Exec creates new ack step for alarm.
 func (e *ackExecutor) Exec(
+	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,

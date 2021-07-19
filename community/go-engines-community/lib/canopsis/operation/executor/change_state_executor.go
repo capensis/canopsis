@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -19,6 +20,7 @@ type changeStateExecutor struct {
 
 // Exec emits change state event.
 func (e *changeStateExecutor) Exec(
+	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,

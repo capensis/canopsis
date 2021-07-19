@@ -1,6 +1,7 @@
 package appinfo
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -38,10 +39,6 @@ func (a *api) GetAppInfo(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	remediation, err := a.store.RetrieveRemediationConf(c.Request.Context())
-	if err != nil {
-		panic(err)
-	}
 	version, err := a.store.RetrieveVersionConfig(c.Request.Context())
 	if err != nil {
 		panic(err)
@@ -50,7 +47,6 @@ func (a *api) GetAppInfo(c *gin.Context) {
 		UserInterfaceConf: userInterface,
 		TimezoneConf:      tz,
 		VersionConf:       version,
-		RemediationConf:   remediation,
 	})
 }
 
@@ -100,7 +96,11 @@ func (a *api) LoginInfo(c *gin.Context) {
 // @Router /internal/user_interface [post]
 // @Router /internal/user_interface [put]
 func (a *api) UpdateUserInterface(c *gin.Context) {
-	var request UserInterfaceConf
+	request := UserInterfaceConf{
+		MaxMatchedItems:           config.DefaultMaxMatchedItems,
+		CheckCountRequestTimeout:  config.DefaultCheckCountRequestTimeout,
+	}
+
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return

@@ -20,11 +20,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/heartbeat"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
@@ -63,7 +63,6 @@ const (
 	authObjPbhType          = "api_pbehaviortype"
 	authObjPbhReason        = "api_pbehaviorreason"
 	authObjPbhException     = "api_pbehaviorexception"
-	authObjHeartbeat        = "api_heartbeat"
 	authObjAction           = "api_action"
 	authObjEntity           = "api_entity"
 	authObjEntityService    = "api_entityservice"
@@ -86,6 +85,7 @@ const (
 	authUserInterfaceDelete = "api_user_interface_delete"
 	authEvent               = "api_event"
 	authObjIdleRule         = "api_idlerule"
+	authObjNotification     = "api_notification"
 
 	authMessageRateStatsRead = "api_message_rate_stats_read"
 
@@ -320,9 +320,9 @@ func RegisterRoutes(
 				middleware.Authorize(authObjPbh, permRead, enforcer),
 				pbehaviorApi.Get)
 			pbehaviorRouter.GET(
-				"/:id/eids",
+				"/:id/entities",
 				middleware.Authorize(authObjPbh, permRead, enforcer),
-				pbehaviorApi.GetEIDs)
+				pbehaviorApi.ListEntities)
 			pbehaviorRouter.PUT(
 				"/:id",
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
@@ -528,42 +528,6 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(authObjEntityService, permRead, enforcer),
 				weatherAPI.EntityList,
-			)
-		}
-
-		heartbeatAPI := heartbeat.NewApi(
-			heartbeat.NewStore(dbClient),
-			heartbeat.NewModelTransformer(),
-			actionLogger,
-		)
-		heartbeatRouter := protected.Group("/heartbeats")
-		{
-			heartbeatRouter.POST(
-				"",
-				middleware.Authorize(authObjHeartbeat, permCreate, enforcer),
-				middleware.SetAuthor(),
-				heartbeatAPI.Create,
-			)
-			heartbeatRouter.GET(
-				"",
-				middleware.Authorize(authObjHeartbeat, permRead, enforcer),
-				heartbeatAPI.List,
-			)
-			heartbeatRouter.GET(
-				"/:id",
-				middleware.Authorize(authObjHeartbeat, permRead, enforcer),
-				heartbeatAPI.Get,
-			)
-			heartbeatRouter.PUT(
-				"/:id",
-				middleware.Authorize(authObjHeartbeat, permUpdate, enforcer),
-				middleware.SetAuthor(),
-				heartbeatAPI.Update,
-			)
-			heartbeatRouter.DELETE(
-				"/:id",
-				middleware.Authorize(authObjHeartbeat, permDelete, enforcer),
-				heartbeatAPI.Delete,
 			)
 		}
 
@@ -837,6 +801,21 @@ func RegisterRoutes(
 			)
 		}
 
+		notificationRouter := protected.Group("/notification")
+		{
+			notificationApi := notification.NewApi(notification.NewStore(dbClient), actionLogger)
+			notificationRouter.PUT(
+				"/",
+				middleware.Authorize(authObjNotification, permCan, enforcer),
+				notificationApi.Update,
+			)
+			notificationRouter.GET(
+				"/",
+				middleware.Authorize(authObjNotification, permCan, enforcer),
+				notificationApi.Get,
+			)
+		}
+
 		playlistRouter := protected.Group("/playlists")
 		{
 			playlistApi := playlist.NewApi(playlist.NewStore(dbClient), actionLogger)
@@ -877,27 +856,6 @@ func RegisterRoutes(
 
 		bulkRouter := protected.Group("/bulk")
 		{
-			heartbeatRouter := bulkRouter.Group("/heartbeats")
-			{
-				heartbeatRouter.POST(
-					"",
-					middleware.Authorize(authObjHeartbeat, permCreate, enforcer),
-					middleware.SetAuthorToBulk(),
-					heartbeatAPI.BulkCreate,
-				)
-				heartbeatRouter.PUT(
-					"",
-					middleware.Authorize(authObjHeartbeat, permUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
-					heartbeatAPI.BulkUpdate,
-				)
-				heartbeatRouter.DELETE(
-					"",
-					middleware.Authorize(authObjHeartbeat, permDelete, enforcer),
-					heartbeatAPI.BulkDelete,
-				)
-			}
-
 			viewRouter := bulkRouter.Group("/views")
 			{
 				viewRouter.POST(
@@ -976,6 +934,7 @@ func RegisterRoutes(
 			idleRuleRouter.POST(
 				"",
 				middleware.Authorize(authObjIdleRule, permCreate, enforcer),
+				middleware.SetAuthor(),
 				idleRuleAPI.Create,
 			)
 			idleRuleRouter.GET(
@@ -991,6 +950,7 @@ func RegisterRoutes(
 			idleRuleRouter.PUT(
 				"/:id",
 				middleware.Authorize(authObjIdleRule, permUpdate, enforcer),
+				middleware.SetAuthor(),
 				idleRuleAPI.Update,
 			)
 			idleRuleRouter.DELETE(

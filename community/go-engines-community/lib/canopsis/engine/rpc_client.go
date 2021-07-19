@@ -92,7 +92,7 @@ func (c *rpcClient) Consume(ctx context.Context) error {
 			}
 
 			c.logger.Debug().Str("msg", string(d.Body)).Msgf("received")
-			err := c.processor.Process(RPCMessage{
+			err := c.processor.Process(ctx, RPCMessage{
 				CorrelationID: d.CorrelationId,
 				Body:          d.Body,
 			})

@@ -24,23 +24,18 @@ type UserInterfaceConf struct {
 	Language                  string        `json:"language,omitempty" bson:"language,omitempty" binding:"oneoforempty=fr en"`
 	PopupTimeout              *PopupTimeout `json:"popup_timeout,omitempty" bson:"popup_timeout,omitempty"`
 	AllowChangeSeverityToInfo bool          `json:"allow_change_severity_to_info" bson:"allow_change_severity_to_info"`
-	MaxMatchedItems           int64         `json:"max_matched_items" bson:"max_matched_items"`
-	CheckCountRequestTimeout  int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout"`
+	MaxMatchedItems           int64         `json:"max_matched_items" bson:"max_matched_items" binding:"gt=0"`
+	CheckCountRequestTimeout  int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout" binding:"gt=0"`
 }
 
 type TimezoneConf struct {
 	Timezone string `json:"timezone,omitempty" bson:"timezone"`
 }
 
-type RemediationConf struct {
-	JobExecutorFetchTimeoutSeconds int64 `json:"jobexecutorfetchtimeoutseconds,omitempty" bson:"jobexecutorfetchtimeoutseconds"`
-}
-
 type AppInfoResponse struct {
 	UserInterfaceConf
 	TimezoneConf
 	VersionConf
-	RemediationConf
 }
 
 type LoginConfig struct {

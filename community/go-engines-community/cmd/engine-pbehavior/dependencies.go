@@ -9,7 +9,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/bsm/redislock"
@@ -31,19 +30,11 @@ type DependencyMaker struct {
 	depmake.DependencyMaker
 }
 
-func (m DependencyMaker) getRedisLockerClient(ctx context.Context, logger zerolog.Logger, cfg config.CanopsisConf) redis.LockClient {
-	return redis.NewLockClient(m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg))
-}
-
-func (m DependencyMaker) getRedisStore(ctx context.Context, logger zerolog.Logger, cfg config.CanopsisConf) redis.Store {
-	store := redis.NewStore(m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg), "pbehaviors", 0)
-
-	return store
-}
-
 func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
-	cfg := m.DepConfig()
+	dbClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, dbClient)
+	config.SetDbClientRetry(dbClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel, err := amqpConnection.Channel()
@@ -51,16 +42,11 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		panic(err)
 	}
 
-	lockerClient := m.getRedisLockerClient(ctx, logger, cfg)
-	store := m.getRedisStore(ctx, logger, cfg)
-
-	dbClient, err := mongo.NewClient(
-		cfg.Global.ReconnectRetries,
-		cfg.Global.GetReconnectTimeout(),
-	)
-	if err != nil {
-		panic(err)
-	}
+	pbhRedisSession := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
+	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
+	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
+	pbhLockerClient := redis.NewLockClient(pbhRedisSession)
+	store := redis.NewStore(pbhRedisSession, "pbehaviors", 0)
 
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
 	eventManager := pbehavior.NewEventManager()
@@ -68,7 +54,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		func(ctx context.Context) error {
 			logger.Debug().Msg("Initialize process")
 
-			computeLock, err := lockerClient.Obtain(ctx, redis.RecomputeLockKey, redis.RecomputeLockDuration, &redislock.Options{
+			computeLock, err := pbhLockerClient.Obtain(ctx, redis.RecomputeLockKey, redis.RecomputeLockDuration, &redislock.Options{
 				RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 			})
 
@@ -127,7 +113,32 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 
 			return nil
 		},
-		nil,
+		func(ctx context.Context) {
+			err := dbClient.Disconnect(ctx)
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close mongo connection")
+			}
+
+			err = amqpConnection.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = pbhRedisSession.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = lockRedisSession.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = runInfoRedisSession.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+		},
 		logger,
 	)
 	enginePbehavior.AddConsumer(engine.NewDefaultConsumer(
@@ -151,7 +162,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			CreatePbehaviroProcessor: createPbehaviorMessageProcessor{
 				FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 				DbClient:                 dbClient,
-				LockerClient:             lockerClient,
+				LockerClient:             pbhLockerClient,
 				Store:                    store,
 				PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger),
 				EventManager:             pbehavior.NewEventManager(),
@@ -175,7 +186,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			Processor: createPbehaviorMessageProcessor{
 				FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 				DbClient:                 dbClient,
-				LockerClient:             lockerClient,
+				LockerClient:             pbhLockerClient,
 				Store:                    store,
 				PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger),
 				EventManager:             pbehavior.NewEventManager(),
@@ -191,7 +202,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	))
 	enginePbehavior.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
-		engine.NewRunInfoManager(m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)),
+		engine.NewRunInfoManager(runInfoRedisSession),
 		engine.RunInfo{
 			Name:         canopsis.PBehaviorEngineName,
 			ConsumeQueue: canopsis.PBehaviorQueueName,
@@ -199,19 +210,24 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(&periodicalWorker{
-		ChannelPub:             amqpChannel,
-		PeriodicalInterval:     options.PeriodicalWaitTime,
-		LockerClient:           lockerClient,
-		Store:                  store,
-		PbhService:             pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger),
-		DbClient:               dbClient,
-		EventManager:           eventManager,
-		FrameDuration:          frameDuration,
-		Encoder:                json.NewEncoder(),
-		Logger:                 logger,
-		TimezoneConfigProvider: timezoneConfigProvider,
-	})
+	enginePbehavior.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisSession),
+		redis.PbehaviorPeriodicalLockKey,
+		&periodicalWorker{
+			ChannelPub:             amqpChannel,
+			PeriodicalInterval:     options.PeriodicalWaitTime,
+			LockerClient:           pbhLockerClient,
+			Store:                  store,
+			PbhService:             pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger),
+			DbClient:               dbClient,
+			EventManager:           eventManager,
+			FrameDuration:          frameDuration,
+			Encoder:                json.NewEncoder(),
+			Logger:                 logger,
+			TimezoneConfigProvider: timezoneConfigProvider,
+		},
+		logger,
+	))
 	enginePbehavior.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),

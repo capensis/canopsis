@@ -7,7 +7,7 @@ Feature: get a job's config
     When I do GET /api/v4/cat/job-configs?search=test-job-config-name-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -16,7 +16,10 @@ Feature: get a job's config
           "host": "http://example.com",
           "name": "test-job-config-name-to-get",
           "type": "rundeck",
-          "author": "test-author"
+          "author": {
+            "_id": "test-user-author-1-id",
+            "name": "test-user-author-1-username"
+          }
         }
       ],
       "meta": {
@@ -33,7 +36,7 @@ Feature: get a job's config
     When I do GET /api/v4/cat/job-configs?search=test-job-config-name-to-get&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -65,46 +68,32 @@ Feature: get a job's config
     When I do GET /api/v4/cat/job-configs/test-job-config-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-job-config-to-get",
       "auth_token": "test-auth-token",
       "host": "http://example.com",
       "name": "test-job-config-name-to-get",
       "type": "rundeck",
-      "author": "test-author"
+      "author": {
+        "_id": "test-user-author-1-id",
+        "name": "test-user-author-1-username"
+      }
     }
     """
 
   Scenario: Get a job's config with linked job
     When I am admin
-    When I do GET /api/v4/cat/job-configs?search=test-job-config-name-to-link&with_flags=true
+    When I do GET /api/v4/cat/job-configs?search=test-job-config-to-check-linked&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
-          "_id": "test-job-config-to-link",
+          "_id": "test-job-config-to-check-linked",
           "deletable": false,
           "running": false
-        }
-      ]
-    }
-    """
-
-  Scenario: Get a job's config with linked running job
-    When I am admin
-    When I do GET /api/v4/cat/job-configs?search=test-job-config-running&with_flags=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "_id": "test-job-config-running",
-          "deletable": false,
-          "running": true
         }
       ]
     }
@@ -115,7 +104,7 @@ Feature: get a job's config
     When I do GET /api/v4/cat/job-configs/test-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

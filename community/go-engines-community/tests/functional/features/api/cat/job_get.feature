@@ -7,19 +7,25 @@ Feature: get a job
     When I do GET /api/v4/cat/jobs?search=test-job-name-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
           "_id": "test-job-to-get",
           "name": "test-job-name-to-get",
-          "author": "test-author",
+          "author": {
+            "_id": "test-user-author-1-id",
+            "name": "test-user-author-1-username"
+          },
           "config": {
-            "_id": "test-job-config-to-link",
-            "name": "test-job-config-name-to-link",
+            "_id": "test-job-config-to-edit-job",
+            "name": "test-job-config-to-edit-job-name",
             "type": "rundeck",
             "host": "http://example.com",
-            "author": "test-author",
+            "author": {
+              "_id": "test-user-author-1-id",
+              "name": "test-user-author-1-username"
+            },
             "auth_token": "test-auth-token"
           },
           "job_id": "test-job-id",
@@ -40,7 +46,7 @@ Feature: get a job
     When I do GET /api/v4/cat/jobs?search=test-job-name-to-get&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -72,17 +78,23 @@ Feature: get a job
     When I do GET /api/v4/cat/jobs/test-job-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-job-to-get",
       "name": "test-job-name-to-get",
-      "author": "test-author",
+      "author": {
+        "_id": "test-user-author-1-id",
+        "name": "test-user-author-1-username"
+      },
       "config": {
-        "_id": "test-job-config-to-link",
-        "name": "test-job-config-name-to-link",
+        "_id": "test-job-config-to-edit-job",
+        "name": "test-job-config-to-edit-job-name",
         "type": "rundeck",
         "host": "http://example.com",
-        "author": "test-author",
+        "author": {
+          "_id": "test-user-author-1-id",
+          "name": "test-user-author-1-username"
+        },
         "auth_token": "test-auth-token"
       },
       "job_id": "test-job-id",
@@ -92,33 +104,30 @@ Feature: get a job
 
   Scenario: Get a job with linked instruction
     When I am admin
-    When I do GET /api/v4/cat/jobs?search=test-job-to-test-instruction-to-get-step-2-operation-1-2&with_flags=true
+    When I do GET /api/v4/cat/jobs?search=test-job-to-check-linked-to-manual-instruction&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
-          "_id": "test-job-to-test-instruction-to-get-step-2-operation-1-2",
+          "_id": "test-job-to-check-linked-to-manual-instruction",
           "deletable": false,
           "running": false
         }
       ]
     }
     """
-
-  Scenario: Get a job with running execution
-    When I am admin
-    When I do GET /api/v4/cat/jobs?search=test-job-to-get-running-job&with_flags=true
+    When I do GET /api/v4/cat/jobs?search=test-job-to-check-linked-to-auto-instruction&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
-          "_id": "test-job-to-get-running-job",
+          "_id": "test-job-to-check-linked-to-auto-instruction",
           "deletable": false,
-          "running": true
+          "running": false
         }
       ]
     }
@@ -129,7 +138,7 @@ Feature: get a job
     When I do GET /api/v4/cat/jobs/test-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

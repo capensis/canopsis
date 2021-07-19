@@ -1170,6 +1170,7 @@ export const META_ALARMS_RULE_TYPES = {
   attribute: 'attribute',
   complex: 'complex',
   valuegroup: 'valuegroup',
+  corel: 'corel',
 
   /**
    * Manual group type doesn't using in the form

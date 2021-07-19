@@ -154,6 +154,23 @@
     "impact_level": 1
   },
   {
+    "_id": "test-alarm-with-instruction-resource-4/test-alarm-with-instruction-component",
+    "depends": ["test-alarm-with-instruction-connector/test-alarm-with-instruction-connectorname"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-alarm-with-instruction-component"],
+    "infos": {
+      "customer": {
+        "value": "test-alarm-with-instruction-customer"
+      }
+    },
+    "measurements": null,
+    "name": "test-alarm-with-instruction-resource-4",
+    "type": "resource",
+    "component": "test-alarm-with-instruction-component",
+    "impact_level": 1
+  },
+  {
     "_id": "test-alarm-get-resource-4/test-alarm-get-component",
     "depends": ["test-alarm-get-connector/test-alarm-get-connectorname"],
     "enable_history": [1597030118],
@@ -718,61 +735,6 @@
     "type": "resource",
     "component": "test-instruction-execution-resume-component",
     "impact_level": 1
-  },
-  {
-    "_id": "test-job-execution-start-resource-1/test-job-execution-start-component",
-    "depends": [],
-    "enable_history": [1597030220],
-    "enabled": true,
-    "impact": [],
-    "infos": {
-    },
-    "measurements": null,
-    "name": "test-job-execution-start-resource-1",
-    "type": "resource",
-    "component": "test-job-execution-start-component",
-    "impact_level": 1
-  },
-  {
-    "_id": "test-job-execution-start-resource-2/test-job-execution-start-component",
-    "depends": [],
-    "enable_history": [1597030220],
-    "enabled": true,
-    "impact": [],
-    "infos": {
-    },
-    "measurements": null,
-    "name": "test-job-execution-start-resource-2",
-    "type": "resource",
-    "component": "test-job-execution-start-component",
-    "impact_level": 1
-  },
-  {
-    "_id": "test-job-execution-start-resource-3/test-job-execution-start-component",
-    "depends": [],
-    "enable_history": [1597030220],
-    "enabled": true,
-    "impact": [],
-    "infos": {
-    },
-    "measurements": null,
-    "name": "test-job-execution-start-resource-3",
-    "type": "resource",
-    "component": "test-job-execution-start-component",
-    "impact_level": 1
-  },
-  {
-    "_id": "test-job-execution-start-resource-4/test-job-execution-start-component",
-    "depends": [],
-    "enable_history": [1597030220],
-    "enabled": true,
-    "impact": [],
-    "infos": {
-    },
-    "measurements": null,
-    "name": "test-job-execution-start-resource-4",
-    "type": "resource",
-    "component": "test-job-execution-start-component"
   },
   {
     "_id": "test-instruction-execution-get-resource-1/test-instruction-execution-get-component",
@@ -2187,6 +2149,214 @@
     "name": "test-idle-rule-count-patterns-resource-5",
     "type": "resource",
     "component": "test-idle-rule-count-patterns-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh",
+    "depends": ["test-component-to-entities-get-by-pbh"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": [
+      "test-resource-to-entities-get-by-pbh-1/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-2/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-3/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-4/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-5/test-component-to-entities-get-by-pbh"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-connectorname-to-entities-get-by-pbh",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-component-to-entities-get-by-pbh",
+    "depends": [
+      "test-resource-to-entities-get-by-pbh-1/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-2/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-3/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-4/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-5/test-component-to-entities-get-by-pbh"
+    ],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-component-to-entities-get-by-pbh",
+    "type": "component",
+    "component": "test-component-to-entities-get-by-pbh",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-to-entities-get-by-pbh-1/test-component-to-entities-get-by-pbh",
+    "depends": ["test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-component-to-entities-get-by-pbh"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-resource-to-entities-get-by-pbh-1",
+    "type": "resource",
+    "component": "test-component-to-entities-get-by-pbh",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-to-entities-get-by-pbh-2/test-component-to-entities-get-by-pbh",
+    "depends": ["test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-component-to-entities-get-by-pbh"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-resource-to-entities-get-by-pbh-2",
+    "type": "resource",
+    "component": "test-component-to-entities-get-by-pbh",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-to-entities-get-by-pbh-3/test-component-to-entities-get-by-pbh",
+    "depends": ["test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-component-to-entities-get-by-pbh"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-resource-to-entities-get-by-pbh-3",
+    "type": "resource",
+    "component": "test-component-to-entities-get-by-pbh",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-to-entities-get-by-pbh-4/test-component-to-entities-get-by-pbh",
+    "depends": ["test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-component-to-entities-get-by-pbh"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-resource-to-entities-get-by-pbh-4",
+    "type": "resource",
+    "component": "test-component-to-entities-get-by-pbh",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-to-entities-get-by-pbh-5/test-component-to-entities-get-by-pbh",
+    "depends": ["test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-component-to-entities-get-by-pbh"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-resource-to-entities-get-by-pbh-5",
+    "type": "resource",
+    "component": "test-component-to-entities-get-by-pbh",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-to-not-run-auto-instruction-manually/test-component-to-not-run-auto-instruction-manually",
+    "depends": [],
+    "enabled": true,
+    "impact": [],
+    "infos": {},
+    "name": "test-resource-to-not-run-auto-instruction-manually",
+    "type": "resource",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-1/metaalarm",
+    "depends": [],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": [],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-1",
+    "type": "metaalarm",
+    "component": "metaalarm",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-2/metaalarm",
+    "depends": [],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": [],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-2",
+    "type": "metaalarm",
+    "component": "metaalarm",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-3/metaalarm",
+    "depends": [],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": [],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-3",
+    "type": "metaalarm",
+    "component": "metaalarm",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-1",
+    "depends": ["test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-alarm-meta-children-with-instructions-component-1"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-resource-1",
+    "type": "resource",
+    "component": "test-alarm-meta-children-with-instructions-component-1",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-1",
+    "depends": ["test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-alarm-meta-children-with-instructions-component-1"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-resource-2",
+    "type": "resource",
+    "component": "test-alarm-meta-children-with-instructions-component-1",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-2",
+    "depends": ["test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-alarm-meta-children-with-instructions-component-2"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-resource-1",
+    "type": "resource",
+    "component": "test-alarm-meta-children-with-instructions-component-2",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-2",
+    "depends": ["test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-alarm-meta-children-with-instructions-component-2"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-resource-2",
+    "type": "resource",
+    "component": "test-alarm-meta-children-with-instructions-component-2",
     "impact_level": 1
   }
 ]

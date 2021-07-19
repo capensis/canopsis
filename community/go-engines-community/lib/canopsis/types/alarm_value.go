@@ -22,8 +22,10 @@ type AlarmStep struct {
 	Role                   string      `bson:"role,omitempty" json:"role,omitempty"`
 	Value                  CpsNumber   `bson:"val" json:"val"`
 	StateCounter           CropCounter `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
-	PbehaviorCanonicalType string      `bson:"pbehavior_canonical_type,omitempty"`
-	Initiator              string      `bson:"initiator,omitempty"`
+	PbehaviorCanonicalType string      `bson:"pbehavior_canonical_type,omitempty" json:"pbehavior_canonical_type,omitempty"`
+	Initiator              string      `bson:"initiator,omitempty" json:"initiator,omitempty"`
+	// Execution contains id if instruction execution for instruction steps only.
+	Execution string `bson:"exec,omitempty" json:"exec,omitempty"`
 }
 
 // NewAlarmStep returns an AlarmStep.
