@@ -50,6 +50,8 @@ definitions:
       causes:
         $ref: '#/definitions/alarm.Causes'
         type: object
+      children_instructions:
+        type: boolean
       consequences:
         $ref: '#/definitions/alarm.Children'
         type: object

@@ -7149,6 +7149,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/alarm.Causes"
                 },
+                "children_instructions": {
+                    "type": "boolean"
+                },
                 "consequences": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.Children"

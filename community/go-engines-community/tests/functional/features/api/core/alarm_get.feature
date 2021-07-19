@@ -1715,6 +1715,99 @@ Feature: Get alarms
     }
     """
 
+  Scenario: given get correlation with_instructions request should return
+  meta alarms with children, children should have assigned instruction if they have it, the corresponding
+  metaalarm should have a mark about it.
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-meta-children-with-instructions&correlation=true&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-meta-children-with-instructions-1",
+          "metaalarm": true,
+          "children_instructions": true,
+          "consequences": {
+            "data": [
+              {
+                "_id": "test-alarm-meta-children-with-instructions-alarm-1-1",
+                "assigned_instructions": [
+                  {
+                    "_id": "test-alarm-meta-children-with-instructions"
+                  }
+                ]
+              }
+            ],
+            "total": 1
+          }
+        },
+        {
+          "_id": "test-alarm-meta-children-with-instructions-2",
+          "metaalarm": true,
+          "children_instructions": false,
+          "consequences": {
+            "data": [
+              {
+                "_id": "test-alarm-meta-children-with-instructions-alarm-2-1"
+              }
+            ],
+            "total": 1
+          }
+        },
+        {
+          "_id": "test-alarm-meta-children-with-instructions-3",
+          "metaalarm": true,
+          "children_instructions": true,
+          "consequences": {
+            "total": 2
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
+
+  Scenario: given get correlation without with_instructions request should return
+  meta alarms without mark that children has assigned instructions even if they have it.
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-meta-children-with-instructions&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-meta-children-with-instructions-1",
+          "metaalarm": true,
+          "children_instructions": false
+        },
+        {
+          "_id": "test-alarm-meta-children-with-instructions-2",
+          "metaalarm": true,
+          "children_instructions": false
+        },
+        {
+          "_id": "test-alarm-meta-children-with-instructions-3",
+          "metaalarm": true,
+          "children_instructions": false
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
+
   Scenario: given get unauth request should not allow access
     When I do GET /api/v4/alarms
     Then the response code should be 401

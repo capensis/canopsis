@@ -2266,6 +2266,100 @@
     "impact_level": 1
   },
   {
+    "_id": "test-alarm-meta-children-with-instructions-1/metaalarm",
+    "depends": [],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": [],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-1",
+    "type": "metaalarm",
+    "component": "metaalarm",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-2/metaalarm",
+    "depends": [],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": [],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-2",
+    "type": "metaalarm",
+    "component": "metaalarm",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-3/metaalarm",
+    "depends": [],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": [],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-3",
+    "type": "metaalarm",
+    "component": "metaalarm",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-1",
+    "depends": ["test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-alarm-meta-children-with-instructions-component-1"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-resource-1",
+    "type": "resource",
+    "component": "test-alarm-meta-children-with-instructions-component-1",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-1",
+    "depends": ["test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-alarm-meta-children-with-instructions-component-1"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-resource-2",
+    "type": "resource",
+    "component": "test-alarm-meta-children-with-instructions-component-1",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-2",
+    "depends": ["test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-alarm-meta-children-with-instructions-component-2"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-resource-1",
+    "type": "resource",
+    "component": "test-alarm-meta-children-with-instructions-component-2",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-2",
+    "depends": ["test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-alarm-meta-children-with-instructions-component-2"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-resource-2",
+    "type": "resource",
+    "component": "test-alarm-meta-children-with-instructions-component-2",
+    "impact_level": 1
+  },
+  {
     "_id": "test-alarm-get-resource-resolved-collection/test-alarm-get-resolved-collection-component",
     "depends": ["test-alarm-get-resolved-collection-connector/test-alarm-get-resolved-collection-connectorname"],
     "enable_history": [1597030096],

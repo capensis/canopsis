@@ -3479,6 +3479,22 @@
     "created": 1596712203
   },
   {
+    "_id": "test-alarm-meta-children-with-instructions",
+    "type": 0,
+    "name": "test-alarm-meta-children-with-instructions-name",
+    "description": "test-alarm-meta-children-with-instructions-description",
+    "author": "test-alarm-meta-children-with-instructions-author",
+    "enabled": true,
+    "alarm_patterns": [
+      {
+        "v": {
+          "component": "test-alarm-meta-children-with-instructions-component-1"
+        }
+      }
+    ],
+    "steps": []
+  },
+  {
     "_id": "test-instruction-to-stats-executions-get-with-resolved-alarms-1",
     "type": 0,
     "name": "test-instruction-to-stats-executions-get-with-resolved-alarms-1-name",
