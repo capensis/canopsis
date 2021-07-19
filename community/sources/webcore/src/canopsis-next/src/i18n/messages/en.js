@@ -1891,6 +1891,7 @@ export default {
       },
     },
   },
+
   permissions: {
     technical: {
       admin: 'Admin rights',
