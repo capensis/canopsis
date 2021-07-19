@@ -18,7 +18,7 @@
           )
           remediation-instruction-assigned-job-alert-row(
             :job="props.item",
-            :key="`key_${props.item.job_id}`",
+            :key="`alert_${props.item.job_id}`",
             @skip="cancelExecuteJob"
           )
 </template>
