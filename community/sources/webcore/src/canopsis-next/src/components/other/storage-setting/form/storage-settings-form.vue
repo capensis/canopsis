@@ -97,7 +97,7 @@ export default {
     },
 
     alarmSubTitle() {
-      const { time, deleted, archived } = this.history.alarm || { };
+      const { time, deleted, archived } = this.history.alarm || {};
 
       const result = [
         this.$t('storageSetting.history.alarm.launchedAt', {
