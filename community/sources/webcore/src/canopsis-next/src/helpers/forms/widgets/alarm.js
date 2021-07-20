@@ -62,6 +62,7 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
  * @property {string} moreInfoTemplate
  * @property {WidgetColumn[]} widgetColumns
  * @property {WidgetColumn[]} widgetGroupColumns
+ * @property {WidgetColumn[]} widgetExportColumns
  * @property {WidgetColumn[]} serviceDependenciesColumns
  * @property {boolean} isAckNoteRequired
  * @property {boolean} isSnoozeNoteRequired
@@ -206,6 +207,9 @@ const alarmListWidgetParametersToForm = (parameters = {}) => ({
   expandGridRangeSize: parameters.expandGridRangeSize || [GRID_SIZES.min, GRID_SIZES.max],
   exportCsvSeparator: parameters.exportCsvSeparator || EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat || EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds,
+  widgetExportColumns: parameters.widgetExportColumns
+    ? widgetColumnsToForm(parameters.widgetExportColumns)
+    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS),
 });
 
 /**
@@ -279,6 +283,7 @@ export const formToAlarmListWidget = (form = {}) => {
       ...parameters,
       widgetColumns: formWidgetColumnsToColumns(parameters.widgetColumns),
       widgetGroupColumns: formWidgetColumnsToColumns(parameters.widgetGroupColumns),
+      widgetExportColumns: formWidgetColumnsToColumns(parameters.widgetExportColumns),
       serviceDependenciesColumns: formWidgetColumnsToColumns(parameters.serviceDependenciesColumns),
       infoPopups: formInfoPopupsToInfoPopups(parameters.infoPopups),
       sort: formSortToWidgetSort(parameters.sort),
