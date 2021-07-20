@@ -6,10 +6,22 @@ import {
   WIDGET_TYPES,
 } from '@/constants';
 
-import uuid from '@/helpers/uuid';
+import { generateWidgetId } from '@/helpers/entities';
 
 /**
  * @typedef { 'AlarmsList' | 'Context' | 'ServiceWeather' | 'StatsCalendar' | 'Text' | 'Counter' | 'Junit' } WidgetType
+ */
+
+/**
+ * @typedef { 'comma' | 'semicolon' | 'tab' | 'space' } CsvSeparators
+ */
+
+/**
+ * @typedef {Object} WidgetColumn
+ * @property {string} value
+ * @property {string} label
+ * @property {boolean} isHtml
+ * @property {boolean} colorIndicator
  */
 
 /**
@@ -49,7 +61,7 @@ import uuid from '@/helpers/uuid';
  * @returns {WidgetForm}
  */
 export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
-  _id: widget._id || uuid(`widget_${widget.type}`),
+  _id: widget._id || generateWidgetId(widget.type),
   type: widget.type,
   title: widget.title || '',
   parameters: widget.parameters ? cloneDeep(widget.parameters) : {},
