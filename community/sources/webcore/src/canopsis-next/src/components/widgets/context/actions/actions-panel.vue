@@ -11,7 +11,7 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';
 import entitiesServiceMixin from '@/mixins/entities/service';
-import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import widgetActionsPanelContextMixin from '@/mixins/widget/actions-panel/context';
 

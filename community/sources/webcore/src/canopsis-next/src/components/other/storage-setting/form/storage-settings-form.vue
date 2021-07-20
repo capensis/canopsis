@@ -15,6 +15,27 @@
         :label="$t('storageSetting.alarm.deleteAfter')",
         :name="alarmDeleteAfterFieldName"
       )
+    storage-setting-block(
+      :title="$t('storageSetting.entity.title')",
+      :help-text="$t('storageSetting.entity.titleHelp')"
+    )
+      template(v-if="history.entity", slot="subtitle") {{ entitySubTitle }}
+      v-radio-group(v-field="form.entity.archive", hide-details, mandatory, row)
+        v-radio(:value="true", :label="$t('storageSetting.entity.archiveEntity')", color="primary")
+        v-radio(:value="false", :label="$t('storageSetting.entity.deleteEntity')", color="primary")
+      v-checkbox(
+        v-field="form.entity.archive_dependencies",
+        :label="$t('storageSetting.entity.archiveDependencies')",
+        color="primary"
+      )
+        c-help-icon(
+          slot="append",
+          :text="$t('storageSetting.entity.archiveDependenciesHelp')",
+          max-width="300",
+          top
+        )
+      v-flex
+        v-btn.primary.ma-0.mb-4(@click="$emit('clean-entities')") {{ $t('storageSetting.entity.cleanStorage') }}
     storage-setting-block(:title="$t('storageSetting.junit.title')")
       template(v-if="history.junit", slot="subtitle") {{ junitSubTitle }}
       storage-setting-duration-field(
@@ -97,7 +118,7 @@ export default {
     },
 
     alarmSubTitle() {
-      const { time, deleted, archived } = this.history.alarm || { };
+      const { time, deleted, archived } = this.history.alarm || {};
 
       const result = [
         this.$t('storageSetting.history.alarm.launchedAt', {
@@ -113,6 +134,30 @@ export default {
 
       if (isNumber(archived)) {
         result.push(this.$t('storageSetting.history.alarm.archivedCount', {
+          count: archived,
+        }));
+      }
+
+      return result.join(' ');
+    },
+
+    entitySubTitle() {
+      const { time, deleted, archived } = this.history.entity;
+
+      const result = [
+        this.$t('storageSetting.history.entity.launchedAt', {
+          launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long, true),
+        }),
+      ];
+
+      if (isNumber(deleted)) {
+        result.push(this.$t('storageSetting.history.entity.deletedCount', {
+          count: deleted,
+        }));
+      }
+
+      if (isNumber(archived)) {
+        result.push(this.$t('storageSetting.history.entity.archivedCount', {
           count: archived,
         }));
       }

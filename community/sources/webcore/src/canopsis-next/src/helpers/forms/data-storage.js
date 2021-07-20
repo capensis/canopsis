@@ -19,10 +19,17 @@ import { TIME_UNITS } from '@/constants';
  */
 
 /**
+ * @typedef {Object} DataStorageEntityConfig
+ * @property {boolean} archive
+ * @property {boolean} archive_dependencies
+ */
+
+/**
  * @typedef {Object} DataStorageConfig
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
  * @property {DataStorageAlarmConfig} alarm
+ * @property {DataStorageEntityConfig} entity
  */
 
 /**
@@ -37,6 +44,7 @@ import { TIME_UNITS } from '@/constants';
  * @property {number} junit
  * @property {number} remediation
  * @property {HistoryWithCount} alarm
+ * @property {HistoryWithCount} entity
  */
 
 /**
@@ -63,10 +71,15 @@ import { TIME_UNITS } from '@/constants';
  */
 
 /**
+ * @typedef {DataStorageEntityConfig} DataStorageEntityConfigForm
+ */
+
+/**
  * @typedef {Object} DataStorageConfigForm
  * @property {DataStorageJunitConfigForm} junit
  * @property {DataStorageRemediationConfigForm} remediation
  * @property {DataStorageAlarmConfigForm} alarm
+ * @property {DataStorageAlarmConfigForm} entity
  */
 
 /**
@@ -117,6 +130,17 @@ export const dataStorageAlarmSettingsToForm = (alarmConfig = {}) => ({
 });
 
 /**
+ * Convert data storage entity config to entity form object
+ *
+ * @param {DataStorageEntityConfig} entityConfig
+ * @return {DataStorageEntityConfigForm}
+ */
+export const dataStorageEntitySettingsToForm = (entityConfig = {}) => ({
+  archive: entityConfig.archive || false,
+  archive_dependencies: entityConfig.archive_dependencies || false,
+});
+
+/**
  * Convert data storage object to data storage form
  *
  * @param {DataStorageConfig} dataStorage
@@ -126,6 +150,7 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   junit: dataStorageJunitSettingsToForm(dataStorage.junit),
   remediation: dataStorageRemediationSettingsToForm(dataStorage.remediation),
   alarm: dataStorageAlarmSettingsToForm(dataStorage.alarm),
+  entity: dataStorageEntitySettingsToForm(dataStorage.entity),
 });
 
 /**

@@ -8,7 +8,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { MODALS, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
-import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';

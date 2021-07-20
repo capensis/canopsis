@@ -133,8 +133,8 @@ export default createEntityModule({
       return exportData;
     },
 
-    fetchContextExport({ commit }, { params, widgetId, id }) {
-      const exportData = request.get(`${API_ROUTES.contextExport}/${id}`, { params });
+    async fetchContextExport({ commit }, { params, widgetId, id }) {
+      const exportData = await request.get(`${API_ROUTES.contextExport}/${id}`, { params });
 
       commit(types.EXPORT_LIST_COMPLETED, {
         widgetId,
@@ -150,6 +150,10 @@ export default createEntityModule({
       commit(types.DOWNLOAD_LIST_COMPLETED, { widgetId });
 
       return csvData;
+    },
+
+    cleanEntitiesData(context, { data }) {
+      return request.post(`${API_ROUTES.entity}/clean`, data);
     },
   },
 });
