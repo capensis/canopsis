@@ -208,19 +208,11 @@
     "icon_name": "test-type-to-edit-scenario-icon"
   },
   {
-    "_id": "test-type-to-get-by-eids",
-    "name": "test-type-to-get-by-eids-name",
-    "description": "test-type-to-get-by-eids-description",
-    "type": "maintenance",
-    "priority": 27,
-    "icon_name": "test-type-to-get-by-eids-icon"
-  },
-  {
     "_id": "test-type-to-edit-idle-rule",
     "name": "test-type-to-edit-idle-rule-name",
     "description": "test-type-to-edit-idle-rule-description",
     "type": "maintenance",
-    "priority": 28,
+    "priority": 27,
     "icon_name": "test-type-to-edit-idle-rule-icon"
   }
 ]

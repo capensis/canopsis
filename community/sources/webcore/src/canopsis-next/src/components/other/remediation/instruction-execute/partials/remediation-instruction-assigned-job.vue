@@ -6,10 +6,10 @@
           v-icon.mr-1(slot="activator", :color="isFailedJob ? 'error' : 'success'") {{ statusIcon }}
           div(v-if="job.fail_reason")
             span {{ $t('remediationInstructionExecute.jobs.failedReason') }}:&nbsp;
-            span(v-html="job.fail_reason")
+            span.pre-wrap(v-html="job.fail_reason")
           div(v-if="job.output")
             span {{ $t('remediationInstructionExecute.jobs.output') }}:&nbsp;
-            span(v-html="job.output")
+            span.pre-wrap(v-html="job.output")
         v-btn.primary(
           :disabled="isRunningJob || isFailedJob",
           round,

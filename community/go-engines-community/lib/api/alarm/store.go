@@ -179,99 +179,86 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 		return nil, err
 	}
 
-	totalPipeline := make([]bson.M, len(pipeline))
-	copy(totalPipeline, pipeline)
-	totalPipeline = append(totalPipeline, bson.M{"$count": "count"})
+	totalPipeline := []bson.M{{"$count": "count"}}
 
-	totalActivePipeline := make([]bson.M, len(pipeline))
-	copy(totalActivePipeline, pipeline)
-	totalActivePipeline = append(
-		totalActivePipeline,
-		bson.M{"$match": bson.M{"$and": []bson.M{
+	totalActivePipeline := []bson.M{
+		{"$match": bson.M{"$and": []bson.M{
 			{"v.snooze": bson.M{"$exists": false}},
 			{"$or": []bson.M{
 				{"v.pbehavior_info": bson.M{"$exists": false}},
 				{"v.pbehavior_info.canonical_type": bson.M{"$eq": pbehavior.TypeActive}},
 			}},
 		}}},
-		bson.M{"$count": "count"},
-	)
+		{"$count": "count"},
+	}
 
-	totalSnoozePipeline := make([]bson.M, len(pipeline))
-	copy(totalSnoozePipeline, pipeline)
-	totalSnoozePipeline = append(
-		totalSnoozePipeline,
-		bson.M{"$match": bson.M{"v.snooze": bson.M{"$exists": true}}},
-		bson.M{"$count": "count"},
-	)
+	totalSnoozePipeline := []bson.M{
+		{"$match": bson.M{"v.snooze": bson.M{"$exists": true}}},
+		{"$count": "count"},
+	}
 
-	totalAckPipeline := make([]bson.M, len(pipeline))
-	copy(totalAckPipeline, pipeline)
-	totalAckPipeline = append(
-		totalAckPipeline,
-		bson.M{"$match": bson.M{"v.ack": bson.M{"$exists": true}}},
-		bson.M{"$count": "count"},
-	)
+	totalAckPipeline := []bson.M{
+		{"$match": bson.M{"v.ack": bson.M{"$exists": true}}},
+		{"$count": "count"},
+	}
 
-	totalTicketPipeline := make([]bson.M, len(pipeline))
-	copy(totalTicketPipeline, pipeline)
-	totalTicketPipeline = append(
-		totalTicketPipeline,
-		bson.M{"$match": bson.M{"v.ticket": bson.M{"$exists": true}}},
-		bson.M{"$count": "count"},
-	)
+	totalTicketPipeline := []bson.M{
+		{"$match": bson.M{"v.ticket": bson.M{"$exists": true}}},
+		{"$count": "count"},
+	}
 
-	totalPbehaviorPipeline := make([]bson.M, len(pipeline))
-	copy(totalPbehaviorPipeline, pipeline)
-	totalPbehaviorPipeline = append(
-		totalPbehaviorPipeline,
-		bson.M{"$match": bson.M{"$and": []bson.M{
+	totalPbehaviorPipeline := []bson.M{
+		{"$match": bson.M{"$and": []bson.M{
 			{"v.pbehavior_info": bson.M{"$exists": true}},
 			{"v.pbehavior_info.canonical_type": bson.M{"$ne": pbehavior.TypeActive}},
 		}}},
-		bson.M{"$count": "count"},
-	)
+		{"$count": "count"},
+	}
 
-	cursor, err := s.dbCollection.Aggregate(
-		ctx, []bson.M{
-			{"$facet": bson.M{
-				"total":           totalPipeline,
-				"total_active":    totalActivePipeline,
-				"total_snooze":    totalSnoozePipeline,
-				"total_ack":       totalAckPipeline,
-				"total_ticket":    totalTicketPipeline,
-				"total_pbehavior": totalPbehaviorPipeline,
-			}},
-			{"$addFields": bson.M{
-				"counts": bson.M{
-					"$arrayToObject": bson.M{
-						"$map": bson.M{
-							"input": bson.M{"$objectToArray": "$$ROOT"},
-							"as":    "each",
-							"in": bson.M{
-								"k": "$$each.k",
-								"v": bson.M{"$sum": "$$each.v.count"},
-							},
+	aggregationPipeline := append(pipeline,
+		bson.M{"$facet": bson.M{
+			"total":           totalPipeline,
+			"total_active":    totalActivePipeline,
+			"total_snooze":    totalSnoozePipeline,
+			"total_ack":       totalAckPipeline,
+			"total_ticket":    totalTicketPipeline,
+			"total_pbehavior": totalPbehaviorPipeline,
+		}},
+		bson.M{"$addFields": bson.M{
+			"counts": bson.M{
+				"$arrayToObject": bson.M{
+					"$map": bson.M{
+						"input": bson.M{"$objectToArray": "$$ROOT"},
+						"as":    "each",
+						"in": bson.M{
+							"k": "$$each.k",
+							"v": bson.M{"$sum": "$$each.v.count"},
 						},
 					},
 				},
-			}},
-			{"$replaceRoot": bson.M{"newRoot": "$counts"}},
-		},
+			},
+		}},
+		bson.M{"$replaceRoot": bson.M{"newRoot": "$counts"}},
 	)
 
+	cursor, err := s.dbCollection.Aggregate(ctx, aggregationPipeline)
 	if err != nil {
 		return nil, err
 	}
 
-	defer cursor.Close(ctx)
 	var result Count
 
-	for cursor.Next(ctx) {
+	if cursor.Next(ctx) {
 		err = cursor.Decode(&result)
 		if err != nil {
+			cursor.Close(ctx)
 			return nil, err
 		}
+	}
+
+	err = cursor.Close(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	return &result, nil
@@ -299,7 +286,6 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	pipeline := make([]bson.M, 0)
 	pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": []bson.M{
 		{"d": bson.M{"$in": childrenIds}},
-		{"v.resolved": bson.M{"$exists": false}},
 	}}})
 	s.addNestedObjects(r.FilterRequest, &pipeline)
 	pipeline = append(pipeline, s.getSort(r))

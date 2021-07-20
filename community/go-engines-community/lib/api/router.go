@@ -320,9 +320,9 @@ func RegisterRoutes(
 				middleware.Authorize(authObjPbh, permRead, enforcer),
 				pbehaviorApi.Get)
 			pbehaviorRouter.GET(
-				"/:id/eids",
+				"/:id/entities",
 				middleware.Authorize(authObjPbh, permRead, enforcer),
-				pbehaviorApi.GetEIDs)
+				pbehaviorApi.ListEntities)
 			pbehaviorRouter.PUT(
 				"/:id",
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
@@ -608,7 +608,7 @@ func RegisterRoutes(
 				eventApi.Send)
 		}
 
-		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient), security.GetConfig())
+		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, security.GetConfig().Security.AuthProviders))
 		appInfoRouter := protected.Group("/internal")
 		{
 			appInfoRouter.GET("login_info", appInfoApi.LoginInfo)

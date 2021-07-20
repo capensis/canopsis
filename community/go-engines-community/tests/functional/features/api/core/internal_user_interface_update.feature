@@ -103,3 +103,118 @@ Feature: update user interface
       }
     }
     """
+
+  Scenario: PUT a valid user_interface without max_matched_items or check_count_request_timeout should
+    set those values to default
+    When I am admin
+    When I do PUT /api/v4/internal/user_interface:
+    """
+    {
+      "language": "en",
+      "footer": "Test footer",
+      "app_title": "Canopsis Test",
+      "login_page_description": "Test login",
+      "max_matched_items": 100,
+      "check_count_request_timeout": 100
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "allow_change_severity_to_info": false,
+      "app_title": "Canopsis Test",
+      "footer": "Test footer",
+      "language": "en",
+      "login_page_description": "Test login",
+      "max_matched_items": 100,
+      "check_count_request_timeout": 100,
+      "popup_timeout": {
+        "error": {
+          "interval": 3,
+          "unit": "s"
+        },
+        "info": {
+          "interval": 3,
+          "unit": "s"
+        }
+      }
+    }
+    """
+    When I do PUT /api/v4/internal/user_interface:
+    """
+    {
+      "language": "en",
+      "footer": "Test footer",
+      "app_title": "Canopsis Test",
+      "login_page_description": "Test login"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "allow_change_severity_to_info": false,
+      "app_title": "Canopsis Test",
+      "footer": "Test footer",
+      "language": "en",
+      "login_page_description": "Test login",
+      "max_matched_items": 10000,
+      "check_count_request_timeout": 30,
+      "popup_timeout": {
+        "error": {
+          "interval": 3,
+          "unit": "s"
+        },
+        "info": {
+          "interval": 3,
+          "unit": "s"
+        }
+      }
+    }
+    """
+
+  Scenario: PUT an invalid user_interface, max_matched_items and check_count_request_timeout should be >0
+    When I am admin
+    When I do PUT /api/v4/internal/user_interface:
+    """
+    {
+      "language": "en",
+      "footer": "Test footer",
+      "app_title": "Canopsis Test",
+      "login_page_description": "Test login",
+      "max_matched_items": -1,
+      "check_count_request_timeout": -1
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "check_count_request_timeout": "CheckCountRequestTimeout should be greater than 0.",
+        "max_matched_items": "MaxMatchedItems should be greater than 0."
+      }
+    }
+    """
+    When I do PUT /api/v4/internal/user_interface:
+    """
+    {
+      "language": "en",
+      "footer": "Test footer",
+      "app_title": "Canopsis Test",
+      "login_page_description": "Test login",
+      "max_matched_items": 0,
+      "check_count_request_timeout": 0
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "check_count_request_timeout": "CheckCountRequestTimeout should be greater than 0.",
+        "max_matched_items": "MaxMatchedItems should be greater than 0."
+      }
+    }
+    """

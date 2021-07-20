@@ -29,12 +29,8 @@
 <script>
 import { get, isObject } from 'lodash';
 
-import {
-  MODALS,
-  EVENT_ENTITY_TYPES,
-  META_ALARM_EVENT_DEFAULT_FIELDS,
-  ENTITIES_STATES,
-} from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+
 import { isWarningAlarmState } from '@/helpers/entities';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
@@ -86,33 +82,11 @@ export default {
     },
   },
   methods: {
-    /**
-     * Function for data preparation
-     *
-     * @param {string} type - type of the event
-     * @param {Array} items - item of the entity | Array of items of entity
-     * @param {Object} data - data for the event
-     * @returns {Object[]}
-     */
-    prepareData(type, items, data = {}) {
-      return [{
-        event_type: type,
-        ma_children: items.map(({ entity }) => entity._id),
-
-        ...data,
-      }];
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        const data = {
-          ...META_ALARM_EVENT_DEFAULT_FIELDS,
-
-          output: this.form.output,
-          state: ENTITIES_STATES.minor,
-        };
+        const data = { output: this.form.output };
 
         if (this.eventType === EVENT_ENTITY_TYPES.manualMetaAlarmUpdate) {
           data.ma_parents = [get(this.form.metaAlarm, 'entity._id')];

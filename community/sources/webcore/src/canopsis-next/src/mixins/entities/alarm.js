@@ -57,7 +57,11 @@ export default {
         return;
       }
 
-      const params = { limit: 1, correlation: !!alarm.consequences || !!alarm.causes };
+      const params = {
+        limit: 1,
+        with_instructions: true,
+        correlation: !!alarm.consequences || !!alarm.causes,
+      };
 
       if (alarm.v.steps) {
         params.with_steps = true;

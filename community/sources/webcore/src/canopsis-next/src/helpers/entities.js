@@ -22,6 +22,7 @@ import {
   COLOR_INDICATOR_TYPES,
   EXPORT_CSV_SEPARATORS,
   EXPORT_CSV_DATETIME_FORMATS,
+  DEFAULT_ALARMS_WIDGET_COLUMNS,
 } from '@/constants';
 
 import { widgetToForm } from '@/helpers/forms/widgets/common';
@@ -109,6 +110,7 @@ export function generateWidgetByType(type) {
         },
         exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
         exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds,
+        widgetExportColumns: defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
       };
       break;
 

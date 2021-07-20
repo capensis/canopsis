@@ -87,7 +87,7 @@ Feature: Create an metaalarmrule
     """
     {
       "errors": {
-        "type": "Type must be one of [relation timebased attribute complex valuegroup]."
+        "type": "Type must be one of [relation timebased attribute complex valuegroup corel]."
       }
     }
     """

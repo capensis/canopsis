@@ -33,6 +33,7 @@
       color="primary"
     )
     v-select(v-field="form.type", :items="ruleTypes", :label="$t('common.type')")
+    meta-alarm-rule-corel-form(v-if="isCorelFormShown", v-field="form.config")
     meta-alarm-rule-threshold-form(v-if="isThresholdFormShown", v-field="form.config")
     meta-alarm-rule-time-based-form(v-if="isTimeBasedFormShown", v-field="form.config")
     meta-alarm-rule-value-paths-form(v-if="isValuePathsFormShown", v-field="form.config")
@@ -53,6 +54,7 @@ import { META_ALARMS_RULE_TYPES } from '@/constants';
 import MetaAlarmRuleThresholdForm from './meta-alarm-rule-threshold-form.vue';
 import MetaAlarmRuleTimeBasedForm from './meta-alarm-rule-time-based-form.vue';
 import MetaAlarmRuleValuePathsForm from './meta-alarm-rule-value-paths-form.vue';
+import MetaAlarmRuleCorelForm from './meta-alarm-rule-corel-form.vue';
 
 export default {
   inject: ['$validator'],
@@ -60,6 +62,7 @@ export default {
     MetaAlarmRuleTimeBasedForm,
     MetaAlarmRuleThresholdForm,
     MetaAlarmRuleValuePathsForm,
+    MetaAlarmRuleCorelForm,
   },
   model: {
     prop: 'form',
@@ -96,11 +99,17 @@ export default {
     },
 
     isTimeBasedFormShown() {
-      return this.isComplexType || this.isValueGroupType || this.isTimeBasedType;
+      return this.isComplexType
+        || this.isValueGroupType
+        || this.isTimeBasedType
+        || this.isCorelFormShown;
     },
 
     isPatternsFormShown() {
-      return this.isComplexType || this.isValueGroupType || this.isPatternsType;
+      return this.isComplexType
+        || this.isValueGroupType
+        || this.isPatternsType
+        || this.isCorelFormShown;
     },
 
     withTotalEntityPatterns() {
@@ -124,6 +133,10 @@ export default {
 
     isValueGroupType() {
       return this.form.type === META_ALARMS_RULE_TYPES.valuegroup;
+    },
+
+    isCorelFormShown() {
+      return this.form.type === META_ALARMS_RULE_TYPES.corel;
     },
   },
 };

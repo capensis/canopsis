@@ -122,8 +122,8 @@ export default createEntityModule({
       return request.get(API_ROUTES.entity, { params });
     },
 
-    async createContextExport({ commit }, { widgetId, params }) {
-      const exportData = await request.post(API_ROUTES.contextExport, {}, { params });
+    async createContextExport({ commit }, { widgetId, data = {} }) {
+      const exportData = await request.post(API_ROUTES.contextExport, data);
 
       commit(types.EXPORT_LIST_COMPLETED, {
         widgetId,

@@ -1251,6 +1251,7 @@ func TestChildInheritMetaAlarmActions(t *testing.T) {
 				DoAndReturn(func(alarms []types.Alarm, _ bool) error {
 					updatedAlarms = &alarms
 					return nil
+
 				})
 			alarmAdapterMock.EXPECT().GetCountOpenedAlarmsByIDs(gomock.Any()).Return(int64(1), nil)
 

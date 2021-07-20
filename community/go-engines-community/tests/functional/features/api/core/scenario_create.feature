@@ -985,3 +985,183 @@ Feature: Create a scenario
       }
     }
     """
+
+  Scenario: given create request with custom_id should return ok
+    When I am admin
+    When I do POST /api/v4/scenarios:
+    """
+    {
+      "_id": "my_scenario",
+      "name": "my_scenario-name",
+      "enabled": true,
+      "priority": 987654,
+      "triggers": ["create"],
+      "actions": [
+        {
+          "alarm_patterns": [
+            {
+              "_id": "test-scenario-to-create-1-action-1-alarm"
+            }
+          ],
+          "entity_patterns": [
+            {
+              "name": "test-scenario-to-create-1-action-1-resource"
+            }
+          ],
+          "type": "snooze",
+          "parameters": {
+            "output": "test-scenario-to-create-1-action-1-output",
+            "duration": {
+              "seconds": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """
+    {
+      "_id": "my_scenario"
+    }
+    """
+    When I do GET /api/v4/scenarios/my_scenario
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "_id": "my_scenario"
+    }
+    """
+
+  Scenario: given create request with custom_id should be failed, because of existing id
+    When I am admin
+    When I do POST /api/v4/scenarios:
+    """
+    {
+      "_id": "test-scenario-to-check-id",
+      "name": "my_scenario-name",
+      "enabled": true,
+      "priority": 987653,
+      "triggers": ["create"],
+      "actions": [
+        {
+          "alarm_patterns": [
+            {
+              "_id": "test-scenario-to-create-1-action-1-alarm"
+            }
+          ],
+          "entity_patterns": [
+            {
+              "name": "test-scenario-to-create-1-action-1-resource"
+            }
+          ],
+          "type": "snooze",
+          "parameters": {
+            "output": "test-scenario-to-create-1-action-1-output",
+            "duration": {
+              "seconds": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "_id": "ID already exists."
+      }
+    }
+    """
+
+  Scenario: given create request with single v.ticket.data pattern should return ok
+    When I am admin
+    When I do POST /api/v4/scenarios:
+    """
+    {
+      "_id": "ticket-data-scenario-id",
+      "name": "webhook scenario",
+      "priority": 137,
+      "enabled": true,
+      "triggers": [
+          "create"
+      ],
+      "disable_during_periods": [],
+      "actions": [
+          {
+            "type": "webhook",
+            "parameters": {
+                "declare_ticket": {
+                    "empty_response": false,
+                    "is_regexp": false
+                },
+                "request": {
+                    "method": "POST",
+                    "url": "http://localhost:5000",
+                    "headers": {},
+                    "payload": "{}",
+                    "skip_verify": false
+                }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false,
+            "alarm_patterns": [
+                {
+                    "v": {
+                        "ticket": {
+                            "data": {
+                                "ticket2_id": {
+                                    "regex_match": ".+"
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            "entity_patterns": []
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """
+    {
+      "actions": [
+          {
+              "alarm_patterns": [
+                  {
+                      "v": {
+                          "ticket": {
+                              "data": {
+                                  "ticket2_id": {
+                                      "regex_match": ".+"
+                                  }
+                              }
+                          }
+                      }
+                  }
+              ],
+              "entity_patterns": null
+          }
+      ]
+    }
+    """
+    When I do GET /api/v4/scenarios/ticket-data-scenario-id
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "_id": "ticket-data-scenario-id"
+    }
+    """

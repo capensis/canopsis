@@ -32,9 +32,34 @@ type TaskExecutor interface {
 }
 
 type Task struct {
-	ExportFields []string
+	ExportFields Fields
 	Separator    rune
 	DataFetcher  DataFetcher
+}
+
+type Fields []Field
+
+type Field struct {
+	Name  string `json:"name"`
+	Label string `json:"label"`
+}
+
+func (f *Fields) Fields() []string {
+	fields := make([]string, len(*f))
+	for i, field := range *f {
+		fields[i] = field.Name
+	}
+
+	return fields
+}
+
+func (f *Fields) Labels() []string {
+	labels := make([]string, len(*f))
+	for i, field := range *f {
+		labels[i] = field.Label
+	}
+
+	return labels
 }
 
 type DataFetcher func(ctx context.Context, page, limit int64) ([]map[string]string, int64, error)

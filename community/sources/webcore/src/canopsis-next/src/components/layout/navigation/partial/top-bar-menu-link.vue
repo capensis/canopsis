@@ -1,10 +1,9 @@
 <template lang="pug">
-  v-list-tile.top-bar-menu-link(@click="")
+  v-list-tile.top-bar-menu-link(:to="link.route", active-class="")
     v-list-tile-title
-      router-link(:to="link.route")
-        v-layout(justify-space-between)
-          span {{ link.title }}
-          v-icon.ml-2 {{ link.icon }}
+      v-layout(justify-space-between)
+        span {{ link.title }}
+        v-icon.ml-2 {{ link.icon }}
 </template>
 
 <script>
