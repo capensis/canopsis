@@ -14,6 +14,8 @@
           :items="formats",
           :label="$t('settings.exportCsv.fields.datetimeFormat')"
         )
+    h4.subheading.ml-4 {{ $t('settings.exportColumnNames') }}
+    c-columns-field.subheading(v-field="form.widgetExportColumns")
 </template>
 
 <script>

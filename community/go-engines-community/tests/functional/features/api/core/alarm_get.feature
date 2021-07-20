@@ -66,7 +66,9 @@ Feature: Get alarms
               ""
             ],
             "output": "test-alarm-get criticité",
-            "parents": [],
+            "parents": [
+              "test-alarm-get-entity-meta-1/metaalarm"
+            ],
             "resolved": 1597034023,
             "resource": "test-alarm-get-resource-4",
             "state": {
@@ -682,14 +684,10 @@ Feature: Get alarms
     {
       "data": [
         {
-          "_id": "test-alarm-get-4",
-          "metaalarm": false
-        },
-        {
           "_id": "test-alarm-get-meta-1",
           "metaalarm": true,
           "consequences": {
-              "total": 2
+              "total": 3
           },
           "rule": {
             "id": "test-alarm-get-metaalarm-rule-1",
@@ -738,7 +736,7 @@ Feature: Get alarms
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 6
+        "total_count": 5
       }
     }
     """
@@ -793,10 +791,6 @@ Feature: Get alarms
     {
       "data": [
         {
-          "_id": "test-alarm-get-4",
-          "metaalarm": false
-        },
-        {
           "_id": "test-alarm-get-meta-1",
           "metaalarm": true,
           "consequences": {
@@ -806,9 +800,12 @@ Feature: Get alarms
                 },
                 {
                   "_id": "test-alarm-get-3"
+                },
+                {
+                  "_id": "test-alarm-get-4"
                 }
               ],
-              "total": 2
+              "total": 3
           },
           "rule": {
             "id": "test-alarm-get-metaalarm-rule-1",
@@ -862,7 +859,7 @@ Feature: Get alarms
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 6
+        "total_count": 5
       }
     }
     """
@@ -881,7 +878,7 @@ Feature: Get alarms
           "_id": "test-alarm-get-meta-1",
           "metaalarm": true,
           "consequences": {
-              "total": 2
+              "total": 3
           },
           "filtered_children": [
             "test-alarm-get-2"
@@ -1054,6 +1051,9 @@ Feature: Get alarms
     {
       "data": [
         {
+          "_id": "test-alarm-get-4"
+        },
+        {
           "_id": "test-alarm-get-3"
         },
         {
@@ -1064,7 +1064,7 @@ Feature: Get alarms
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """

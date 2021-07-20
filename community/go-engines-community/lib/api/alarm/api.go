@@ -22,7 +22,7 @@ type API interface {
 type api struct {
 	store                  Store
 	exportExecutor         export.TaskExecutor
-	defaultExportFields    []string
+	defaultExportFields    export.Fields
 	exportSeparators       map[string]rune
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
@@ -32,11 +32,20 @@ func NewApi(
 	executor export.TaskExecutor,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 ) API {
+	fields := []string{"_id", "v.connector", "v.connector_name", "v.component",
+		"v.resource", "v.output", "v.state.val", "v.status.val"}
+	defaultExportFields := make(export.Fields, len(fields))
+	for i, field := range fields {
+		defaultExportFields[i] = export.Field{
+			Name:  field,
+			Label: field,
+		}
+	}
+
 	return &api{
-		store:          store,
-		exportExecutor: executor,
-		defaultExportFields: []string{"_id", "v.connector", "v.connector_name", "v.component",
-			"v.resource", "v.output", "v.state.val", "v.status.val"},
+		store:               store,
+		exportExecutor:      executor,
+		defaultExportFields: defaultExportFields,
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
 		timezoneConfigProvider: timezoneConfigProvider,
@@ -121,19 +130,19 @@ func (a *api) Count(c *gin.Context) {
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param request query ExportRequest true "request"
+// @Param request body ExportRequest true "request"
 // @Success 200 {object} ExportResponse
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /alarm-export [post]
 func (a *api) StartExport(c *gin.Context) {
 	var r ExportRequest
-	if err := c.ShouldBindQuery(&r); err != nil {
+	if err := c.ShouldBind(&r); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 		return
 	}
 
 	separator := a.exportSeparators[r.Separator]
-	exportFields := r.SearchBy
+	exportFields := r.Fields
 	if len(exportFields) == 0 {
 		exportFields = a.defaultExportFields
 	}
@@ -146,7 +155,7 @@ func (a *api) StartExport(c *gin.Context) {
 	taskID, err := a.exportExecutor.StartExecute(c.Request.Context(), export.Task{
 		ExportFields: exportFields,
 		Separator:    separator,
-		DataFetcher: getDataFetcher(a.store, apiKey, r, exportFields,
+		DataFetcher: getDataFetcher(a.store, apiKey, r, exportFields.Fields(),
 			a.timezoneConfigProvider.Get().Location),
 	})
 	if err != nil {
