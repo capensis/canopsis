@@ -2315,9 +2315,9 @@ export default {
       junit: 'Script lancé à {launchedAt}',
       remediation: 'Script lancé à {launchedAt}',
       alarm: {
-        launchedAt: 'Script launched at {launchedAt}.',
-        deletedCount: 'Alarms deleted: {count}.',
-        archivedCount: 'Alarms archived: {count}.',
+        launchedAt: 'Script lancé à {launchedAt}.',
+        deletedCount: 'Alarmes supprimées : {count}.',
+        archivedCount: 'Alarmes archivées : {count}.',
       },
     },
   },
