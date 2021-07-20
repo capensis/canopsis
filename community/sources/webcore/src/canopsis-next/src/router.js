@@ -290,6 +290,7 @@ router.beforeEach((to, from, next) => {
       name: 'login',
       query: {
         redirect: to.fullPath,
+        errorMessage: to.query.errorMessage,
       },
     });
   } else if (isLoggedIn && isDontRequiresAuth) {
@@ -323,6 +324,14 @@ router.afterEach((to, from) => {
 
   if (isLoggedIn) {
     store.dispatch('keepalive/sessionTracePath', { path: getKeepalivePathByRoute(to) });
+  }
+});
+
+router.onReady((route) => {
+  const { errorMessage } = route.query;
+
+  if (errorMessage) {
+    store.dispatch('popups/error', { text: errorMessage, autoClose: false });
   }
 });
 
