@@ -2385,7 +2385,7 @@ export default {
     },
 
     [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
-      metaAlarmRule: 'Meta alarm rule',
+      title: 'Meta alarm rule',
       message: 'Meta alarm rules can be used for grouping alarms by types and criteria (parent-child relationship, time interval, etc).',
     },
 
