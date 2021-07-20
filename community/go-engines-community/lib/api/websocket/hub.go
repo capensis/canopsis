@@ -2,6 +2,7 @@
 package websocket
 
 import (
+	"context"
 	"net/http"
 	"time"
 
@@ -10,14 +11,23 @@ import (
 	"github.com/rs/zerolog"
 )
 
+const (
+	// Time allowed to write a message to the peer.
+	writeWait = 10 * time.Second
+	// Time allowed to read the next pong message from the peer.
+	pongWait = 60 * time.Second
+	// Send pings to peer with this period. Must be less than pongWait.
+	pingPeriod = (pongWait * 9) / 10
+)
+
 // Hub interface is used to implement websocket room.
 type Hub interface {
+	// Start pings connections.
+	Start(ctx context.Context)
 	// Subscribe creates listener connection and adds listener to room.
 	Subscribe(w http.ResponseWriter, r *http.Request, room string) error
 	// Send sends message to all listeners in room.
 	Send(room string, msg interface{})
-	// Stop closes all connections.
-	Stop()
 }
 
 func NewHub(upgrader *websocket.Upgrader, logger zerolog.Logger) Hub {
@@ -36,6 +46,27 @@ type hub struct {
 	logger   zerolog.Logger
 }
 
+func (h *hub) Start(ctx context.Context) {
+	ticker := time.NewTicker(pingPeriod)
+	defer ticker.Stop()
+
+loop:
+	for {
+		select {
+		case <-ctx.Done():
+			break loop
+		case <-ticker.C:
+			for room := range h.rooms {
+				h.pingConnections(room)
+			}
+		}
+	}
+
+	for room := range h.rooms {
+		h.closeConnections(room)
+	}
+}
+
 func (h *hub) Subscribe(w http.ResponseWriter, r *http.Request, room string) error {
 	h.roomsMx.Lock(room)
 	defer h.roomsMx.Unlock(room)
@@ -48,6 +79,25 @@ func (h *hub) Subscribe(w http.ResponseWriter, r *http.Request, room string) err
 	if err != nil {
 		return err
 	}
+
+	err = conn.SetReadDeadline(time.Now().Add(pongWait))
+	if err != nil {
+		h.logger.Err(err).
+			Str("room", room).
+			Str("addr", conn.RemoteAddr().String()).
+			Msg("cannot set read deadline")
+	}
+	conn.SetPongHandler(func(string) error {
+		err := conn.SetReadDeadline(time.Now().Add(pongWait))
+		if err != nil {
+			h.logger.Err(err).
+				Str("room", room).
+				Str("addr", conn.RemoteAddr().String()).
+				Msg("cannot set read deadline")
+		}
+
+		return nil
+	})
 
 	h.rooms[room] = append(h.rooms[room], conn)
 
@@ -96,12 +146,6 @@ func (h *hub) Send(room string, msg interface{}) {
 	}
 }
 
-func (h *hub) Stop() {
-	for room := range h.rooms {
-		h.closeConnections(room)
-	}
-}
-
 func (h *hub) closeConnections(room string) {
 	h.roomsMx.Lock(room)
 	defer h.roomsMx.Unlock(room)
@@ -133,5 +177,29 @@ func (h *hub) removeConnection(room string, conn *websocket.Conn) {
 
 	if index >= 0 {
 		h.rooms[room] = append(h.rooms[room][:index], h.rooms[room][index+1:]...)
+	}
+}
+
+func (h *hub) pingConnections(room string) {
+	h.roomsMx.Lock(room)
+	defer h.roomsMx.Unlock(room)
+
+	for _, conn := range h.rooms[room] {
+		err := conn.SetWriteDeadline(time.Now().Add(writeWait))
+		if err != nil {
+			h.logger.Err(err).
+				Str("room", room).
+				Str("addr", conn.RemoteAddr().String()).
+				Msg("cannot set write deadline")
+			continue
+		}
+
+		err = conn.WriteMessage(websocket.PingMessage, nil)
+		if err != nil {
+			h.logger.Err(err).
+				Str("room", room).
+				Str("addr", conn.RemoteAddr().String()).
+				Msg("cannot ping connection")
+		}
 	}
 }
