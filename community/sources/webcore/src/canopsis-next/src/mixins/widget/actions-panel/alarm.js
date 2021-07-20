@@ -5,13 +5,12 @@ import {
   EVENT_ENTITY_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   CRUD_ACTIONS,
-  WIDGET_TYPES,
   STATS_QUICK_RANGES,
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
 import queryMixin from '@/mixins/query';
@@ -168,7 +167,8 @@ export default {
     },
 
     showHistoryModal() {
-      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const widget = generateDefaultAlarmListWidget();
+
       const filter = { $and: [{ 'entity._id': get(this.item, 'entity._id') }] };
       const entityFilter = {
         title: this.item.entity.name,

@@ -1,13 +1,8 @@
-import { DEFAULT_PERIODIC_REFRESH, TEST_CASE_FILE_MASK } from '@/constants';
+import { DEFAULT_PERIODIC_REFRESH, TEST_CASE_FILE_MASK, WIDGET_TYPES } from '@/constants';
 
 import { addKeyInEntities } from '@/helpers/entities';
 import { widgetToForm } from '@/helpers/forms/widgets/common';
 import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/date/duration';
-
-/**
- * @typedef {Interval} PeriodicRefresh
- * @property {boolean} enabled
- */
 
 /**
  * @typedef {string} Storage
@@ -21,7 +16,7 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
 
 /**
  * @typedef {Object} TestingWeatherWidgetParameters
- * @property {PeriodicRefresh} periodic_refresh
+ * @property {DurationWithEnabled} periodic_refresh
  * @property {string} directory
  * @property {string} screenshot_filemask
  * @property {string} video_filemask
@@ -37,6 +32,7 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
 
 /**
  * @typedef {TestingWeatherWidgetParameters} TestingWeatherWidgetParametersForm
+ * @property {DurationWithEnabledForm} periodic_refresh
  * @property {StorageForm[]} screenshot_directories
  * @property {StorageForm[]} video_directories
  */
@@ -81,6 +77,7 @@ export const testingWeatherWidgetToForm = (testingWeatherWidget = {}) => {
 
   return {
     ...widget,
+    type: WIDGET_TYPES.testingWeather,
     parameters: testingWeatherWidgetParametersToForm(testingWeatherWidget.parameters),
   };
 };

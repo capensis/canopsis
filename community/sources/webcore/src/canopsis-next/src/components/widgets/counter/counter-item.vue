@@ -28,13 +28,12 @@ import VRuntimeTemplate from 'v-runtime-template';
 import {
   MODALS,
   USERS_PERMISSIONS,
-  WIDGET_TYPES,
   ENTITIES_STATES_KEYS,
   COUNTER_STATES_ICONS,
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';
@@ -119,7 +118,7 @@ export default {
   },
   methods: {
     async showAlarmListModal() {
-      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const widget = generateDefaultAlarmListWidget();
 
       widget.parameters = {
         ...widget.parameters,

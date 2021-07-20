@@ -29,11 +29,10 @@ import VRuntimeTemplate from 'v-runtime-template';
 import {
   MODALS,
   USERS_PERMISSIONS,
-  WIDGET_TYPES,
   TEST_SUITE_COLORS,
 } from '@/constants';
 
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -76,7 +75,7 @@ export default {
     },
 
     showAlarmListModal() {
-      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const widget = generateDefaultAlarmListWidget();
 
       const testSuiteFilter = {
         title: this.testSuite.name,
