@@ -24,7 +24,7 @@ type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	FindByEntityID(ctx context.Context, entityID string) ([]Response, error)
 	GetOneBy(ctx context.Context, filter bson.M) (*Response, error)
-	GetEIDs(ctx context.Context, pbhID string, request EIDsListRequest) (AggregationEIDsResult, error)
+	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
 	Update(ctx context.Context, model *Response) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	Count(context.Context, Filter, int) (*CountFilterResult, error)
@@ -40,6 +40,9 @@ type store struct {
 	service                pbehavior.Service
 	timezoneConfigProvider config.TimezoneConfigProvider
 	defaultSortBy          string
+
+	entitiesDefaultSearchByFields []string
+	entitiesDefaultSortBy         string
 }
 
 func NewStore(
@@ -50,14 +53,16 @@ func NewStore(
 	timezoneConfigProvider config.TimezoneConfigProvider,
 ) Store {
 	return &store{
-		dbClient:               dbClient,
-		dbCollection:           dbClient.Collection(mongo.PbehaviorMongoCollection),
-		entitiesCollection:     dbClient.Collection(mongo.EntityMongoCollection),
-		entityMatcher:          entityMatcher,
-		redisStore:             redisStore,
-		service:                service,
-		timezoneConfigProvider: timezoneConfigProvider,
-		defaultSortBy:          "created",
+		dbClient:                      dbClient,
+		dbCollection:                  dbClient.Collection(mongo.PbehaviorMongoCollection),
+		entitiesCollection:            dbClient.Collection(mongo.EntityMongoCollection),
+		entityMatcher:                 entityMatcher,
+		redisStore:                    redisStore,
+		service:                       service,
+		timezoneConfigProvider:        timezoneConfigProvider,
+		defaultSortBy:                 "created",
+		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
+		entitiesDefaultSortBy:         "_id",
 	}
 }
 
@@ -235,54 +240,55 @@ func (s *store) GetOneBy(ctx context.Context, filter bson.M) (*Response, error) 
 	return nil, nil
 }
 
-func (s *store) GetEIDs(ctx context.Context, pbhID string, request EIDsListRequest) (AggregationEIDsResult, error) {
-	result := AggregationEIDsResult{
-		Data:       make([]EID, 0),
-		TotalCount: 0,
+func (s *store) FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error) {
+	pbh, err := s.GetOneBy(ctx, bson.M{"_id": pbhID})
+	if err != nil || pbh == nil {
+		return nil, err
 	}
 
 	pipeline := []bson.M{
-		{"$match": bson.M{"v.pbehavior_info.id": pbhID}},
+		{"$match": pbh.Filter},
 	}
-	filter := common.GetSearchQuery(request.Search, []string{"d"})
+	filter := common.GetSearchQuery(request.Search, s.entitiesDefaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	pipeline = append(pipeline,
-		bson.M{
-			"$project": bson.M{
-				"id": "$d",
-				"t":  1,
-			},
-		},
-	)
-
 	sortBy := request.SortBy
 	if sortBy == "" {
-		sortBy = "t"
+		sortBy = s.entitiesDefaultSortBy
 	}
 
-	collection := s.dbClient.Collection(mongo.AlarmMongoCollection)
-	cursor, err := collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+	project := []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.EntityCategoryMongoCollection,
+			"localField":   "category",
+			"foreignField": "_id",
+			"as":           "category",
+		}},
+		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
+	}
+	cursor, err := s.entitiesCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, request.Sort),
+		project,
 	))
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
 	defer cursor.Close(ctx)
 	cursor.Next(ctx)
 
+	result := AggregationEntitiesResult{}
 	err = cursor.Decode(&result)
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
-	return result, nil
+	return &result, nil
 }
 
 func (s *store) Update(ctx context.Context, model *Response) (bool, error) {

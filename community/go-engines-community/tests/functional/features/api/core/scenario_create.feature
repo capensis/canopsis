@@ -1083,3 +1083,85 @@ Feature: Create a scenario
       }
     }
     """
+
+  Scenario: given create request with single v.ticket.data pattern should return ok
+    When I am admin
+    When I do POST /api/v4/scenarios:
+    """
+    {
+      "_id": "ticket-data-scenario-id",
+      "name": "webhook scenario",
+      "priority": 137,
+      "enabled": true,
+      "triggers": [
+          "create"
+      ],
+      "disable_during_periods": [],
+      "actions": [
+          {
+            "type": "webhook",
+            "parameters": {
+                "declare_ticket": {
+                    "empty_response": false,
+                    "is_regexp": false
+                },
+                "request": {
+                    "method": "POST",
+                    "url": "http://localhost:5000",
+                    "headers": {},
+                    "payload": "{}",
+                    "skip_verify": false
+                }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false,
+            "alarm_patterns": [
+                {
+                    "v": {
+                        "ticket": {
+                            "data": {
+                                "ticket2_id": {
+                                    "regex_match": ".+"
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            "entity_patterns": []
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """
+    {
+      "actions": [
+          {
+              "alarm_patterns": [
+                  {
+                      "v": {
+                          "ticket": {
+                              "data": {
+                                  "ticket2_id": {
+                                      "regex_match": ".+"
+                                  }
+                              }
+                          }
+                      }
+                  }
+              ],
+              "entity_patterns": null
+          }
+      ]
+    }
+    """
+    When I do GET /api/v4/scenarios/ticket-data-scenario-id
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "_id": "ticket-data-scenario-id"
+    }
+    """
