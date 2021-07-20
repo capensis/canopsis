@@ -35,6 +35,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/playlist"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionstats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
@@ -58,35 +59,51 @@ import (
 const baseUrl = "/api/v4"
 
 const (
-	authObjPbh              = "api_pbehavior"
-	authObjPbhType          = "api_pbehaviortype"
-	authObjPbhReason        = "api_pbehaviorreason"
-	authObjPbhException     = "api_pbehaviorexception"
-	authObjAction           = "api_action"
-	authObjEntity           = "api_entity"
-	authObjEntityService    = "api_entityservice"
-	authObjEntityCategory   = "api_entitycategory"
-	authObjView             = "api_view"
-	authObjViewGroup        = "api_viewgroup"
-	authObjPlaylist         = "api_playlist"
-	authPermAlarmRead       = "api_alarm_read"
-	authEngine              = "api_engine"
-	authObjContextGraph     = "api_contextgraph"
-	authAcl                 = "api_acl"
-	authObjStateSettings    = "api_state_settings"
-	authDataStorageRead     = "api_datastorage_read"
-	authDataStorageUpdate   = "api_datastorage_update"
-	authEventFilter         = "api_eventfilter"
-	authBroadcastMessage    = "api_broadcast_message"
-	authAssociativeTable    = "api_associative_table"
-	authAppInfoRead         = "api_app_info_read"
-	authUserInterfaceUpdate = "api_user_interface_update"
-	authUserInterfaceDelete = "api_user_interface_delete"
-	authEvent               = "api_event"
-	authObjIdleRule         = "api_idlerule"
-	authObjNotification     = "api_notification"
+	authObjPbh          = apisecurity.ObjPbehavior
+	authObjPbhType      = apisecurity.ObjPbehaviorType
+	authObjPbhReason    = apisecurity.ObjPbehaviorReason
+	authObjPbhException = apisecurity.ObjPbehaviorException
 
-	authMessageRateStatsRead = "api_message_rate_stats_read"
+	authObjAction = apisecurity.ObjAction
+
+	authObjEntity         = apisecurity.ObjEntity
+	authObjEntityService  = apisecurity.ObjEntityService
+	authObjEntityCategory = apisecurity.ObjEntityCategory
+	authObjContextGraph   = apisecurity.ObjContextGraph
+
+	authObjView      = apisecurity.ObjView
+	authObjViewGroup = apisecurity.ObjViewGroup
+	authObjPlaylist  = apisecurity.ObjPlaylist
+
+	authPermAlarmRead = apisecurity.PermAlarmRead
+
+	authAcl = apisecurity.PermAcl
+
+	authObjStateSettings = apisecurity.PermStateSettings
+
+	authDataStorageRead   = apisecurity.PermDataStorageRead
+	authDataStorageUpdate = apisecurity.PermDataStorageUpdate
+
+	authEventFilter = apisecurity.ObjEventFilter
+
+	authBroadcastMessage = apisecurity.ObjBroadcastMessage
+
+	authAssociativeTable = apisecurity.ObjAssociativeTable
+
+	authAppInfoRead = apisecurity.PermAppInfoRead
+
+	authUserInterfaceUpdate = apisecurity.PermUserInterfaceUpdate
+	authUserInterfaceDelete = apisecurity.PermUserInterfaceDelete
+
+	authEvent = apisecurity.PermEvent
+
+	authObjIdleRule = apisecurity.ObjIdleRule
+
+	authObjNotification = apisecurity.PermNotification
+
+	authMessageRateStatsRead = apisecurity.PermMessageRateStatsRead
+
+	authPermHealthcheck = apisecurity.PermHealthcheck
 
 	permRead   = model.PermissionRead
 	permCreate = model.PermissionCreate
@@ -606,7 +623,7 @@ func RegisterRoutes(
 		}
 		protected.GET(
 			"/engine-runinfo",
-			middleware.Authorize(authEngine, permCan, enforcer),
+			middleware.Authorize(authPermHealthcheck, permCan, enforcer),
 			engineinfo.GetRunInfo(ctx, runInfoManager),
 		)
 
