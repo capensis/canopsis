@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import { formToDataStorageSettings, dataStorageSettingsToForm } from '@/helpers/forms/data-storage';
 
 import { submittableMixin } from '@/mixins/submittable';
@@ -26,7 +28,6 @@ import { entitiesDataStorageSettingsMixin } from '@/mixins/entities/data-storage
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 
 import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form.vue';
-import { MODALS } from '@/constants';
 
 export default {
   $_veeValidate: {

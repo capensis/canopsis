@@ -142,7 +142,7 @@ export default {
     },
 
     entitySubTitle() {
-      const { time, deleted, archived } = this.history.entity;
+      const { time, deleted, archived } = this.history.entity || {};
 
       const result = [
         this.$t('storageSetting.history.entity.launchedAt', {
