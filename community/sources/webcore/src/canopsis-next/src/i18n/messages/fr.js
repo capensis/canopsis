@@ -2294,6 +2294,12 @@ export default {
   },
 
   storageSetting: {
+    alarm: {
+      title: 'Stockage des données d\'alarme',
+      titleHelp: 'Une fois allumé, les données d\'alarmes résolues seront archivées et/ou supprimées après la période de temps définie.',
+      archiveAfter: 'Archiver les données d\'alarmes résolues après',
+      deleteAfter: 'Supprimer les données d\'alarmes résolues après',
+    },
     junit: {
       title: 'Stockage de données JUnit',
       deleteAfter: 'Supprimer les données des suites de tests après',
@@ -2308,6 +2314,11 @@ export default {
     history: {
       junit: 'Script lancé à {launchedAt}',
       remediation: 'Script lancé à {launchedAt}',
+      alarm: {
+        launchedAt: 'Script launched at {launchedAt}.',
+        deletedCount: 'Alarms deleted: {count}.',
+        archivedCount: 'Alarms archived: {count}.',
+      },
     },
   },
 

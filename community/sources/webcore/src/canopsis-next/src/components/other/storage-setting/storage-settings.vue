@@ -41,7 +41,7 @@ export default {
   async mounted() {
     const dataStorageSettings = await this.fetchDataStorageSettingsWithoutStore();
 
-    this.form = dataStorageSettingsToForm(dataStorageSettings.config); // TODO: remove junit
+    this.form = dataStorageSettingsToForm(dataStorageSettings.config);
     this.history = dataStorageSettings.history;
   },
   methods: {

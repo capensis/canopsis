@@ -13,15 +13,30 @@ import { TIME_UNITS } from '@/constants';
  */
 
 /**
+ * @typedef {Object} DataStorageAlarmConfig
+ * @property {DurationWithEnabled} archive_after
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfig
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
+ * @property {DataStorageAlarmConfig} alarm
+ */
+
+/**
+ * @typedef {Object} HistoryWithCount
+ * @property {number} archived
+ * @property {number} deleted
+ * @property {number} time
  */
 
 /**
  * @typedef {Object} DataStorageHistory
  * @property {number} junit
  * @property {number} remediation
+ * @property {HistoryWithCount} alarm
  */
 
 /**
@@ -42,9 +57,16 @@ import { TIME_UNITS } from '@/constants';
  */
 
 /**
+ * @typedef {Object} DataStorageAlarmConfigForm
+ * @property {DurationWithEnabledForm} archive_after
+ * @property {DurationWithEnabledForm} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfigForm
  * @property {DataStorageJunitConfigForm} junit
  * @property {DataStorageRemediationConfigForm} remediation
+ * @property {DataStorageAlarmConfigForm} alarm
  */
 
 /**
@@ -80,6 +102,21 @@ export const dataStorageRemediationSettingsToForm = (remediationConfig = {}) => 
 });
 
 /**
+ * Convert data storage alarm config to alarm form object
+ *
+ * @param {DataStorageAlarmConfig} alarmConfig
+ * @return {DataStorageAlarmConfigForm}
+ */
+export const dataStorageAlarmSettingsToForm = (alarmConfig = {}) => ({
+  archive_after: alarmConfig.archive_after
+    ? durationWithEnabledToForm(alarmConfig.archive_after)
+    : { value: 1, unit: TIME_UNITS.year, disabled: true },
+  delete_after: alarmConfig.delete_after
+    ? durationWithEnabledToForm(alarmConfig.delete_after)
+    : { value: 2, unit: TIME_UNITS.year, disabled: true },
+});
+
+/**
  * Convert data storage object to data storage form
  *
  * @param {DataStorageConfig} dataStorage
@@ -88,6 +125,7 @@ export const dataStorageRemediationSettingsToForm = (remediationConfig = {}) => 
 export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   junit: dataStorageJunitSettingsToForm(dataStorage.junit),
   remediation: dataStorageRemediationSettingsToForm(dataStorage.remediation),
+  alarm: dataStorageAlarmSettingsToForm(dataStorage.alarm),
 });
 
 /**
@@ -112,6 +150,17 @@ export const formToRemediationDataStorageSettings = (form = {}) => ({
 });
 
 /**
+ * Convert alarm data storage form to alarm data storage object
+ *
+ * @param {DataStorageAlarmConfigForm} form
+ * @return {DataStorageAlarmConfig}
+ */
+export const formToAlarmDataStorageSettings = (form = {}) => ({
+  delete_after: formToDurationWithEnabled(form.delete_after),
+  archive_after: formToDurationWithEnabled(form.archive_after),
+});
+
+/**
  * Convert data storage form to data storage object
  *
  * @param {DataStorageConfigForm} form
@@ -120,4 +169,5 @@ export const formToRemediationDataStorageSettings = (form = {}) => ({
 export const formToDataStorageSettings = (form = {}) => ({
   junit: formJunitToDataStorageSettings(form.junit),
   remediation: formToRemediationDataStorageSettings(form.remediation),
+  alarm: formToAlarmDataStorageSettings(form.alarm),
 });
