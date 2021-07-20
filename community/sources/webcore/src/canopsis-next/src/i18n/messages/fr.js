@@ -2412,7 +2412,7 @@ export default {
     /**
      * Admin access
      */
-    [USERS_PERMISSIONS.technical.exploitation.action]: {
+    [USERS_PERMISSIONS.technical.action]: {
       title: 'Droits',
     },
     [USERS_PERMISSIONS.technical.role]: {
