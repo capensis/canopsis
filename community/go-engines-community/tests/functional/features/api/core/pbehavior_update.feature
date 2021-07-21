@@ -132,6 +132,79 @@ Feature: update a PBehavior
       }
     """
 
+  Scenario: PUT a valid PBehavior with tstop:null
+    When I am admin
+    When I do PUT /api/v4/pbehaviors/test-pbehavior-to-update:
+    """
+      {
+        "enabled":true,
+        "name":"test-pbehavior-to-update-name",
+        "tstart":1591172881,
+        "tstop":null,
+        "type":"test-default-pause-type",
+        "reason":"test-reason-1",
+        "filter":{
+          "$and":[
+             {
+                "name": "test filter"
+             }
+          ]
+        },
+        "exdates":[],
+        "exceptions": []
+      }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+      {
+        "_id": "test-pbehavior-to-update",
+        "author":"root",
+        "created": 1592215337,
+        "enabled":true,
+        "exceptions": [],
+        "reason": {
+          "_id": "test-reason-1",
+          "description": "test-reason-1-description",
+          "name": "test-reason-1-name"
+        },
+        "filter":{
+          "$and":[
+             {
+                "name": "test filter"
+             }
+          ]
+        },
+        "exdates":[],
+        "comments": [
+          {
+            "_id": "test-comment-1",
+            "author": "root",
+            "ts": 1592215337,
+            "message": "qwerty"
+          },
+          {
+            "_id": "test-comment-2",
+            "author": "root",
+            "ts": 1592215337,
+            "message": "asdasd"
+          }
+        ],
+        "name":"test-pbehavior-to-update-name",
+        "rrule": "",
+        "tstart":1591172881,
+        "tstop":-62135596800,
+        "type": {
+          "_id": "test-default-pause-type",
+          "name": "Default Type Pause",
+          "description": "Default Type Pause",
+          "type": "pause",
+          "priority": 3,
+          "icon_name": "test-pause-icon"
+        }
+      }
+    """
+
   Scenario: PUT an invalid PBehavior, where tstart > tstop
     When I am admin
     When I do PUT /api/v4/pbehaviors/test-pbehavior-to-update-invalid:

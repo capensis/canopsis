@@ -298,10 +298,31 @@ func (s *store) Update(ctx context.Context, model *Response) (bool, error) {
 	}
 
 	doc.Updated = libtypes.NewCpsTime(time.Now().Unix())
+
+	var update bson.M
+	if model.Stop == nil {
+		m := make(map[string]interface{})
+		p, err := bson.Marshal(doc)
+		if err != nil {
+			return false, err
+		}
+
+		err = bson.Unmarshal(p, &m)
+		if err != nil {
+			return false, err
+		}
+
+		m["tstop"] = model.Stop
+
+		update = bson.M{"$set": m}
+	} else {
+		update = bson.M{"$set": doc}
+	}
+
 	result, err := s.dbCollection.UpdateOne(
 		ctx,
 		bson.M{"_id": model.ID},
-		bson.M{"$set": doc},
+		update,
 	)
 	if err != nil {
 		return false, err
