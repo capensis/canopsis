@@ -538,13 +538,13 @@ type BaseUserInterfaceConfigProvider struct {
 	logger zerolog.Logger
 }
 
-const defaultMaxMatchedItems = 10000
-const defaultCheckCountRequestTimeout = 30
+const DefaultMaxMatchedItems = 10000
+const DefaultCheckCountRequestTimeout = 30
 
 func NewUserInterfaceConfigProvider(cfg UserInterfaceConf, logger zerolog.Logger) *BaseUserInterfaceConfigProvider {
 	maxMatchedItems := 0
 	if cfg.MaxMatchedItems <= 0 {
-		maxMatchedItems = defaultMaxMatchedItems
+		maxMatchedItems = DefaultMaxMatchedItems
 		logger.Error().
 			Int("default", maxMatchedItems).
 			Int("invalid", cfg.MaxMatchedItems).
@@ -558,7 +558,7 @@ func NewUserInterfaceConfigProvider(cfg UserInterfaceConf, logger zerolog.Logger
 
 	checkCountRequestTimeout := 0
 	if cfg.CheckCountRequestTimeout <= 0 {
-		checkCountRequestTimeout = defaultCheckCountRequestTimeout
+		checkCountRequestTimeout = DefaultCheckCountRequestTimeout
 		logger.Error().
 			Int("default", checkCountRequestTimeout).
 			Int("invalid", cfg.CheckCountRequestTimeout).

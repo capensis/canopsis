@@ -435,7 +435,7 @@ export default {
     tabs: {
       filter: 'Filtre',
       comments: 'Commentaires',
-      eids: 'EIDS',
+      entities: 'Entités',
     },
   },
   settings: {
@@ -459,6 +459,7 @@ export default {
     defaultSortColumn: 'Colonne de tri par défaut',
     sortColumnNoData: 'Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
     columnNames: 'Nom des colonnes',
+    exportColumnNames: 'Nom des colonnes des exporter',
     groupColumnNames: 'Nom des colonnes des meta alarmes',
     trackColumnNames: 'Suivre les colonnes de source d\'alarme',
     treeOfDependenciesColumnNames: 'Noms de colonne pour l\'arborescence des dépendances',
@@ -1704,6 +1705,14 @@ export default {
     valuePath: 'Chemin de valeur | Chemins de valeur',
     autoResolve: 'Résolution automatique',
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
+    corelId: 'Corel ID',
+    corelIdHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
+      '<i>Quelques exemples:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+    corelStatus: 'Corel statut',
+    corelStatusHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
+      '<i>Quelques exemples:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+    corelParent: 'Corel parent',
+    corelChild: 'Corel enfant',
     outputTemplateHelp: '<p>Les variables accessibles sont:</p>\n' +
       '<p><strong>.Count</strong>: Le nombre d\'alarmes conséquences attachées à la méta alarme.</p>' +
       '<p><strong>.Children</strong>: L\'ensemble des variables de la dernière alarme conséquence attachée à la méta alarme.</p>' +

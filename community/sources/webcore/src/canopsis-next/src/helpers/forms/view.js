@@ -78,7 +78,7 @@ import { enabledToForm } from './shared/common';
  * @property {string[]} tags
  * @property {ViewGroup} group
  * @property {ViewTab[]} tabs
- * @property {PeriodicRefresh} periodic_refresh
+ * @property {DurationWithEnabled} periodic_refresh
  */
 
 /**
