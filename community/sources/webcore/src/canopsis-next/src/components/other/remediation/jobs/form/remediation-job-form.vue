@@ -28,6 +28,14 @@
         name="payload",
         variables
       )
+    v-layout(row)
+      c-text-pairs-field(
+        v-field="form.query",
+        :title="$t('modals.createRemediationJob.fields.query')",
+        :text-label="$t('common.field')",
+        :value-label="$t('common.value')",
+        name="query"
+      )
 </template>
 
 <script>

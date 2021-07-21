@@ -30,6 +30,8 @@ export default {
       samlConfig: 'samlConfig',
       timezone: 'timezone',
       jobExecutorFetchTimeoutSeconds: 'jobExecutorFetchTimeoutSeconds',
+      remediationJobConfigTypes: 'remediationJobConfigTypes',
+      remediationPauseManualInstructionIntervalSeconds: 'remediationPauseManualInstructionIntervalSeconds',
     }),
 
     isCatVersion() {
