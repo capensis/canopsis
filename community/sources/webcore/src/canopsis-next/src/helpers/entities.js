@@ -2,10 +2,8 @@ import { get, omit, cloneDeep, isObject, groupBy } from 'lodash';
 import moment from 'moment';
 
 import i18n from '@/i18n';
-import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS, DEFAULT_CATEGORIES_LIMIT } from '@/config';
+import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
 import {
-  DEFAULT_ALARMS_WIDGET_COLUMNS,
-  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   WIDGET_TYPES,
   STATS_CALENDAR_COLORS,
@@ -18,15 +16,17 @@ import {
   SORT_ORDERS,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
-  GRID_SIZES, AVAILABLE_COUNTERS,
+  AVAILABLE_COUNTERS,
   DEFAULT_COUNTER_BLOCK_TEMPLATE,
   COLOR_INDICATOR_TYPES,
   DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
   EXPORT_CSV_DATETIME_FORMATS,
+  DEFAULT_ALARMS_WIDGET_COLUMNS,
 } from '@/constants';
 
 import { widgetToForm } from '@/helpers/forms/widgets/common';
+import { alarmListWidgetDefaultParametersToForm } from '@/helpers/forms/widgets/alarm';
 
 import uuid from './uuid';
 import uid from './uid';
@@ -58,6 +58,13 @@ export function defaultColumnsToColumns(columns = []) {
 export const generateViewTabId = () => uuid('view-tab');
 
 /**
+ * Generate id for widget tab
+ *
+ * @returns {string}
+ */
+export const generateWidgetId = type => uuid(`widget_${type}`);
+
+/**
  * Generate widget by type
  *
  * @param {string} type
@@ -66,56 +73,11 @@ export const generateViewTabId = () => uuid('view-tab');
 export function generateWidgetByType(type) {
   const widget = widgetToForm({ type });
 
-  const alarmsListDefaultParameters = {
-    itemsPerPage: PAGINATION_LIMIT,
-    infoPopups: [],
-    moreInfoTemplate: '',
-    isAckNoteRequired: false,
-    isSnoozeNoteRequired: false,
-    isMultiAckEnabled: false,
-    isHtmlEnabledOnTimeLine: false,
-    fastAckOutput: {
-      enabled: false,
-      value: 'auto ack',
-    },
-    widgetColumns: defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
-    widgetGroupColumns: defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS),
-    serviceDependenciesColumns: defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
-    linksCategoriesAsList: {
-      enabled: false,
-      limit: DEFAULT_CATEGORIES_LIMIT,
-    },
-  };
+  const alarmsListDefaultParameters = alarmListWidgetDefaultParametersToForm();
 
   let specialParameters = {};
 
   switch (type) {
-    case WIDGET_TYPES.alarmList:
-      specialParameters = {
-        ...alarmsListDefaultParameters,
-
-        viewFilters: [],
-        mainFilter: null,
-        mainFilterUpdatedAt: 0,
-        infoPopups: [],
-        liveReporting: {},
-        periodic_refresh: {
-          enabled: false,
-          interval: 60,
-          unit: 's',
-        },
-        sort: {
-          order: SORT_ORDERS.asc,
-        },
-        alarmsStateFilter: {
-          opened: true,
-        },
-        expandGridRangeSize: [GRID_SIZES.min, GRID_SIZES.max],
-        exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
-        exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds,
-      };
-      break;
-
     case WIDGET_TYPES.context:
       specialParameters = {
         itemsPerPage: PAGINATION_LIMIT,
@@ -148,6 +110,7 @@ export function generateWidgetByType(type) {
         },
         exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
         exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds,
+        widgetExportColumns: defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
       };
       break;
 
