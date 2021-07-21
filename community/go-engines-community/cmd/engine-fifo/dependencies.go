@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
@@ -14,6 +17,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
+	"io/ioutil"
+	"path/filepath"
+	"plugin"
+	"strings"
 	"time"
 )
 
@@ -25,6 +32,8 @@ type Options struct {
 	LockTtl                   int
 	EnableMetaAlarmProcessing bool
 	EventsStatsFlushInterval  time.Duration
+	PeriodicalWaitTime        time.Duration
+	DataSourceDirectory       string
 }
 
 // DependencyMaker can be created with DependencyMaker{}
@@ -71,9 +80,25 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		logger,
 	)
 
+	logger.Debug().Msg("Loading event filter data sources")
+	factories, err := LoadDataSourceFactories(options.DataSourceDirectory)
+	if err != nil {
+		panic(fmt.Errorf("unable to load data sources: %w", err))
+	}
+
+	ruleAdapter := neweventfilter.NewRuleAdapter(mongoClient)
+	ruleApplicatorContainer := neweventfilter.NewRuleApplicatorContainer()
+	ruleApplicatorContainer.Set(neweventfilter.RuleTypeChangeEntity, neweventfilter.NewChangeEntityApplicator(factories))
+	eventFilterService := neweventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, logger)
+
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			scheduler.Start(ctx)
+
+			err := eventFilterService.LoadRules(ctx)
+			if err != nil {
+				return err
+			}
 
 			go statsListener.Listen(ctx, statsCh)
 
@@ -129,6 +154,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,
+			EventFilterService:       eventFilterService,
 			Scheduler:                scheduler,
 			StatsSender:              statsSender,
 			Decoder:                  json.NewDecoder(),
@@ -155,6 +181,11 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		},
 		logger,
 	))
+	engine.AddPeriodicalWorker(&periodicalWorker{
+		RuleService:        eventFilterService,
+		PeriodicalInterval: options.PeriodicalWaitTime,
+		Logger:             logger,
+	})
 	engine.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
 		canopsis.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
@@ -183,4 +214,39 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	))
 
 	return engine
+}
+
+func LoadDataSourceFactories(dataSourceDirectory string) (map[string]eventfilter.DataSourceFactory, error) {
+	factories := make(map[string]eventfilter.DataSourceFactory)
+
+	files, err := ioutil.ReadDir(dataSourceDirectory)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, file := range files {
+		if strings.HasSuffix(file.Name(), canopsis.PluginExtension) {
+			sourceName := strings.TrimSuffix(file.Name(), canopsis.PluginExtension)
+			fileName := filepath.Join(dataSourceDirectory, file.Name())
+
+			plug, err := plugin.Open(fileName)
+			if err != nil {
+				return nil, fmt.Errorf("unable to open plugin: %v", err)
+			}
+
+			factorySymbol, err := plug.Lookup("DataSourceFactory")
+			if err != nil {
+				return nil, fmt.Errorf("unable to load plugin: %v", err)
+			}
+
+			factory, isFactory := factorySymbol.(eventfilter.DataSourceFactory)
+			if !isFactory {
+				return nil, fmt.Errorf("the plugin does not define a valid data source")
+			}
+
+			factories[sourceName] = factory
+		}
+	}
+
+	return factories, nil
 }

@@ -14,6 +14,8 @@ func (o *Options) ParseArgs() {
 	flag.IntVar(&o.LockTtl, "lockTtl", 10, "Redis lock ttl time in seconds")
 	flag.BoolVar(&o.EnableMetaAlarmProcessing, "enableMetaAlarmProcessing", true, "Enable meta-alarm processing")
 	flag.DurationVar(&o.EventsStatsFlushInterval, "eventsStatsFlushInterval", 60*time.Second, "Interval between saving statistics from redis to mongo")
+	flag.DurationVar(&o.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
+	flag.StringVar(&o.DataSourceDirectory, "dataSourceDirectory", ".", "The path of the directory containing the event filter's data source plugins.")
 
 	flagVersion := flag.Bool("version", false, "version infos")
 
