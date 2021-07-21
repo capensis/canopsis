@@ -21,7 +21,8 @@ import {
   REMEDIATION_INSTRUCTION_TYPES,
   IDLE_RULE_TYPES,
   IDLE_RULE_ALARM_CONDITIONS,
-  USERS_PERMISSIONS, ALARMS_OPENED_VALUES,
+  USERS_PERMISSIONS,
+  ALARMS_OPENED_VALUES,
 } from '@/constants';
 
 import featureService from '@/services/features';
