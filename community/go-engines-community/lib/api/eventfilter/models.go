@@ -7,15 +7,24 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
+type RuleConfig struct {
+	Resource      string `bson:"resource,omitempty" json:"resource,omitempty"`
+	Component     string `bson:"component,omitempty" json:"component,omitempty"`
+	Connector     string `bson:"connector,omitempty" json:"connector,omitempty"`
+	ConnectorName string `bson:"connector_name,omitempty" json:"connector_name,omitempty"`
+}
+
 type EventFilterPayload struct {
 	Author      string `bson:"author" json:"author" swaggerignore:"true"`
 	Description string `bson:"description" json:"description" binding:"required,max=255"`
-	Type        string `bson:"type" json:"type" binding:"required,oneof=break drop enrichment"`
+	Type        string `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
 
 	Patterns *pattern.EventPatternList `bson:"patterns" json:"patterns"`
 
 	Priority int   `bson:"priority" json:"priority"`
 	Enabled  *bool `bson:"enabled" json:"enabled" binding:"required"`
+
+	Config RuleConfig `bson:"config" json:"config"`
 
 	Actions      []eventfilter.Action   `bson:"actions,omitempty" json:"actions,omitempty" binding:"required_if=Type enrichment"`
 	ExternalData map[string]interface{} `bson:"external_data,omitempty" json:"external_data,omitempty"`
