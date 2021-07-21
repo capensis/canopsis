@@ -36,14 +36,6 @@
         )
       v-flex
         v-btn.primary.ma-0.mb-4(@click="$emit('clean-entities')") {{ $t('storageSetting.entity.cleanStorage') }}
-    storage-setting-block(:title="$t('storageSetting.junit.title')")
-      template(v-if="history.junit", slot="subtitle") {{ junitSubTitle }}
-      storage-setting-duration-field(
-        v-field="form.junit.delete_after",
-        :label="$t('storageSetting.junit.deleteAfter')",
-        :help-text="$t('storageSetting.junit.deleteAfterHelpText')",
-        :name="junitDeleteAfterFieldName"
-      )
     storage-setting-block(:title="$t('storageSetting.remediation.title')")
       template(v-if="history.remediation", slot="subtitle") {{ remediationSubTitle }}
       storage-setting-duration-field(
@@ -56,6 +48,22 @@
         :label="$t('storageSetting.remediation.deleteAfter')",
         :help-text="$t('storageSetting.remediation.deleteAfterHelpText')",
         :name="remediationDeleteAfterFieldName"
+      )
+    storage-setting-block(:title="$t('storageSetting.pbehavior.title')")
+      template(v-if="history.pbehavior", slot="subtitle") {{ pbehaviorSubTitle }}
+      storage-setting-duration-field(
+        v-field="form.pbehavior.delete_after",
+        :label="$t('storageSetting.pbehavior.deleteAfter')",
+        :help-text="$t('storageSetting.pbehavior.deleteAfterHelpText')",
+        :name="pbehaviorDeleteAfterFieldName"
+      )
+    storage-setting-block(:title="$t('storageSetting.junit.title')")
+      template(v-if="history.junit", slot="subtitle") {{ junitSubTitle }}
+      storage-setting-duration-field(
+        v-field="form.junit.delete_after",
+        :label="$t('storageSetting.junit.deleteAfter')",
+        :help-text="$t('storageSetting.junit.deleteAfterHelpText')",
+        :name="junitDeleteAfterFieldName"
       )
 </template>
 
@@ -105,15 +113,25 @@ export default {
       return 'remediation.delete_after';
     },
 
+    pbehaviorDeleteAfterFieldName() {
+      return 'pbehavior.delete_after';
+    },
+
     junitSubTitle() {
-      return this.$t('storageSetting.history.junit', {
+      return this.$t('storageSetting.history.scriptLaunched', {
         launchedAt: this.$options.filters.date(this.history.junit, DATETIME_FORMATS.long, true),
       });
     },
 
     remediationSubTitle() {
-      return this.$t('storageSetting.history.remediation', {
+      return this.$t('storageSetting.history.scriptLaunched', {
         launchedAt: this.$options.filters.date(this.history.remediation, DATETIME_FORMATS.long, true),
+      });
+    },
+
+    pbehaviorSubTitle() {
+      return this.$t('storageSetting.history.scriptLaunched', {
+        launchedAt: this.$options.filters.date(this.history.pbehavior, DATETIME_FORMATS.long, true),
       });
     },
 
@@ -121,7 +139,7 @@ export default {
       const { time, deleted, archived } = this.history.alarm || {};
 
       const result = [
-        this.$t('storageSetting.history.alarm.launchedAt', {
+        this.$t('storageSetting.history.alarm.scriptLaunched', {
           launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long, true),
         }),
       ];
