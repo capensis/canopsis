@@ -1941,3 +1941,9 @@ export const DOCUMENTATION_LINKS = {
    */
   // [USERS_PERMISSIONS.technical.notification.instructionStats]: '', // TODO: TBD
 };
+
+export const ALARMS_OPENED_VALUES = {
+  opened: true,
+  resolved: false,
+  all: null,
+};

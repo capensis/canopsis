@@ -21,7 +21,7 @@ import {
   REMEDIATION_INSTRUCTION_TYPES,
   IDLE_RULE_TYPES,
   IDLE_RULE_ALARM_CONDITIONS,
-  USERS_PERMISSIONS,
+  USERS_PERMISSIONS, ALARMS_OPENED_VALUES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -452,6 +452,11 @@ export default {
       [SIDE_BARS.textSettings]: 'Paramètres du widget de texte',
       [SIDE_BARS.counterSettings]: 'Paramètres du widget de compteur',
       [SIDE_BARS.testingWeatherSettings]: 'Tester la météo',
+    },
+    openedTypes: {
+      [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
+      [ALARMS_OPENED_VALUES.resolved]: 'Toutes les alarmes résolues',
+      [ALARMS_OPENED_VALUES.all]: 'Alarmes ouvertes et récemment résolues',
     },
     advancedSettings: 'Paramètres avancés',
     widgetTitle: 'Titre du widget',

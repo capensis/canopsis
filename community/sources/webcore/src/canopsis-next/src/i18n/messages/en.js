@@ -21,7 +21,7 @@ import {
   REMEDIATION_INSTRUCTION_TYPES,
   IDLE_RULE_TYPES,
   IDLE_RULE_ALARM_CONDITIONS,
-  USERS_PERMISSIONS,
+  USERS_PERMISSIONS, ALARMS_OPENED_VALUES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -452,6 +452,11 @@ export default {
       [SIDE_BARS.textSettings]: 'Text settings',
       [SIDE_BARS.counterSettings]: 'Counter settings',
       [SIDE_BARS.testingWeatherSettings]: 'Testing weather',
+    },
+    openedTypes: {
+      [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
+      [ALARMS_OPENED_VALUES.resolved]: 'All resolved alarms',
+      [ALARMS_OPENED_VALUES.all]: 'Opened and recent resolved alarms',
     },
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',

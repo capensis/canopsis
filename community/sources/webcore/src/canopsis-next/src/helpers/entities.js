@@ -197,7 +197,7 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.statsCalendar:
       specialParameters = {
         filters: [],
-        alarmsStateFilter: {},
+        opened: false,
         considerPbehaviors: false,
         criticityLevelsColors: { ...STATS_CALENDAR_COLORS.alarm },
         criticityLevels: {
@@ -272,9 +272,7 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.counter:
       specialParameters = {
         viewFilters: [],
-        alarmsStateFilter: {
-          opened: true,
-        },
+        opened: true,
         blockTemplate: DEFAULT_COUNTER_BLOCK_TEMPLATE,
         columnSM: 6,
         columnMD: 4,
