@@ -19,7 +19,7 @@ import { ALARMS_OPENED_VALUES } from '@/constants';
 export default {
   props: {
     value: {
-      type: [Boolean, null],
+      type: Boolean,
       default: ALARMS_OPENED_VALUES.opened,
     },
   },

@@ -1944,6 +1944,6 @@ export const DOCUMENTATION_LINKS = {
 
 export const ALARMS_OPENED_VALUES = {
   opened: true,
-  resolved: false,
   all: null,
+  resolved: false,
 };
