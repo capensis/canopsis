@@ -932,12 +932,26 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 				"in":           bson.M{"$mergeObjects": bson.A{bson.M{}, "$$this"}},
 			},
 		},
-		"v.duration": bson.M{"$subtract": bson.A{now, bson.M{"$cond": bson.M{
-			"if":   "$v.activation_date",
-			"then": "$v.activation_date",
-			"else": "$v.creation_date",
-		}}}},
-		"v.current_state_duration": bson.M{"$subtract": bson.A{now, "$v.state.t"}},
+		"v.duration": bson.M{"$subtract": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$v.resolved",
+				"then": "$v.resolved",
+				"else": now,
+			}},
+			bson.M{"$cond": bson.M{
+				"if":   "$v.activation_date",
+				"then": "$v.activation_date",
+				"else": "$v.creation_date",
+			}},
+		}},
+		"v.current_state_duration": bson.M{"$subtract": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$v.resolved",
+				"then": "$v.resolved",
+				"else": now,
+			}},
+			"$v.state.t",
+		}},
 	}
 
 	project := bson.M{

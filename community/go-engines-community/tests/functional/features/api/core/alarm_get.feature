@@ -65,6 +65,8 @@ Feature: Get alarms
             "output": "test-alarm-get criticité",
             "parents": [],
             "resolved": 1597034023,
+            "duration": 3801,
+            "current_state_duration": 3801,
             "resource": "test-alarm-get-resource-4",
             "state": {
               "_t": "stateinc",
