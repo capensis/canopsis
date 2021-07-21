@@ -1,16 +1,14 @@
 <template lang="pug">
-  shared-mass-actions-panel(v-show="items.length", :actions="filteredActions")
+  shared-mass-actions-panel(v-show="items.length", :actions="actions")
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { MODALS, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
-import { ENTITY_TYPES, MODALS, WIDGETS_ACTIONS_TYPES } from '@/constants';
+import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
-
-const { mapActions: mapContextEntityActions } = createNamespacedHelpers('entity');
-const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
+import { pickBy } from 'lodash';
 
 /**
  * Panel regrouping mass actions icons
@@ -21,7 +19,7 @@ const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
  */
 export default {
   components: { SharedMassActionsPanel },
-
+  mixins: [widgetActionsPanelContextMixin],
   props: {
     items: {
       type: Array,
@@ -32,7 +30,7 @@ export default {
     const { context: contextActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
     return {
-      actions: {
+      actionsMap: {
         deleteEntity: {
           type: contextActionsTypes.deleteEntity,
           icon: 'delete',
@@ -50,39 +48,29 @@ export default {
     };
   },
   computed: {
-    filteredActions() {
-      const actions = [this.actions.pbehavior];
+    filteredActionsMap() {
+      return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
+    },
+
+    actions() {
+      const { filteredActionsMap } = this;
+      const actions = [filteredActionsMap.pbehavior];
       const everyDeletable = this.items.every(({ deletable }) => deletable);
 
       if (everyDeletable) {
-        actions.unshift(this.actions.deleteEntity);
+        actions.unshift(this.filteredActionsMap.deleteEntity);
       }
 
-      return actions;
+      return actions.filter(action => !!action);
     },
   },
   methods: {
-    ...mapContextEntityActions({
-      removeContextEntity: 'remove',
-      fetchContextEntitiesListWithPreviousParams: 'fetchListWithPreviousParams',
-    }),
-
-    ...mapServiceActions({
-      removeService: 'remove',
-    }),
-
     showDeleteEntitiesModal() {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            const requests = this.items.map((item) => {
-              if (item.type === ENTITY_TYPES.service) {
-                return this.removeService({ id: item._id });
-              }
-
-              return this.removeContextEntity({ id: item._id });
-            });
+            const requests = this.items.map(this.removeContextEntityOrService);
 
             await Promise.all(requests);
 

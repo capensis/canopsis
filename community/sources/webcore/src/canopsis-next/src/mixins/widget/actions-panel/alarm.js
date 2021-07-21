@@ -13,6 +13,7 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
 import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
+import { authMixin } from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
@@ -21,8 +22,9 @@ import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/reme
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
-export default {
+export const widgetActionsPanelAlarmMixin = {
   mixins: [
+    authMixin,
     queryMixin,
     eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
