@@ -45,6 +45,7 @@ func (e *changeStateExecutor) Exec(
 		utils.TruncateString(params.Output, e.cfg.Alarm.OutputLength),
 		role,
 		initiator,
+		e.cfg,
 	)
 	if err != nil {
 		return "", err
