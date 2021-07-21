@@ -3,12 +3,13 @@
 </template>
 
 <script>
+import { pickBy } from 'lodash';
+
 import { MODALS, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
-import { pickBy } from 'lodash';
 
 /**
  * Panel regrouping mass actions icons
