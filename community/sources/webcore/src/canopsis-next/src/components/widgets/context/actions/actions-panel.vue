@@ -9,11 +9,7 @@ import { MODALS, WIDGETS_ACTIONS_TYPES, ENTITY_TYPES } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
-import { authMixin } from '@/mixins/auth';
-import entitiesServiceMixin from '@/mixins/entities/service';
-import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import widgetActionsPanelContextMixin from '@/mixins/widget/actions-panel/context';
+import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
 import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
@@ -28,10 +24,6 @@ import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.
 export default {
   components: { SharedActionsPanel },
   mixins: [
-    authMixin,
-    entitiesServiceMixin,
-    entitiesContextEntityMixin,
-    entitiesPbehaviorMixin,
     widgetActionsPanelContextMixin,
   ],
   props: {
@@ -174,12 +166,7 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            if (this.item.type === ENTITY_TYPES.service) {
-              await this.removeService({ id: this.item._id });
-            } else {
-              await this.removeContextEntity({ id: this.item._id });
-            }
-
+            await this.removeContextEntityOrService(this.item);
             await this.fetchContextEntitiesListWithPreviousParams();
           },
         },

@@ -8,8 +8,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
-import { authMixin } from '@/mixins/auth';
-import widgetActionsPanelAlarmMixin from '@/mixins/widget/actions-panel/alarm';
+import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
@@ -24,7 +23,7 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
  */
 export default {
   components: { SharedMassActionsPanel },
-  mixins: [authMixin, widgetActionsPanelAlarmMixin],
+  mixins: [widgetActionsPanelAlarmMixin],
   props: {
     itemsIds: {
       type: Array,
