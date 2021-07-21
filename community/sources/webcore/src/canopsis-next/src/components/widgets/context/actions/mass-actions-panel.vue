@@ -1,19 +1,16 @@
 <template lang="pug">
-  shared-mass-actions-panel(v-show="itemsIds.length", :actions="actions")
+  shared-mass-actions-panel(v-show="items.length", :actions="filteredActions")
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, WIDGETS_ACTIONS_TYPES } from '@/constants';
-
-import { authMixin } from '@/mixins/auth';
-import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import { ENTITY_TYPES, MODALS, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
-const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
+const { mapActions: mapContextEntityActions } = createNamespacedHelpers('entity');
+const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
 
 /**
  * Panel regrouping mass actions icons
@@ -24,13 +21,9 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
  */
 export default {
   components: { SharedMassActionsPanel },
-  mixins: [
-    authMixin,
-    entitiesContextEntityMixin,
-    entitiesPbehaviorMixin,
-  ],
+
   props: {
-    itemsIds: {
+    items: {
       type: Array,
       default: () => [],
     },
@@ -39,34 +32,62 @@ export default {
     const { context: contextActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
     return {
-      actions: [
-        {
+      actions: {
+        deleteEntity: {
           type: contextActionsTypes.deleteEntity,
           icon: 'delete',
           iconColor: 'error',
           title: this.$t('context.actions.titles.deleteEntity'),
           method: this.showDeleteEntitiesModal,
         },
-        {
+        pbehavior: {
           type: contextActionsTypes.pbehaviorAdd,
           icon: 'pause',
           title: this.$t('context.actions.titles.pbehavior'),
           method: this.showAddPbehaviorsModal,
         },
-      ],
+      },
     };
   },
   computed: {
-    ...entitiesMapGetters({
-      getEntitiesList: 'getList',
-    }),
+    filteredActions() {
+      const actions = [this.actions.pbehavior];
+      const everyDeletable = this.items.every(({ deletable }) => deletable);
+
+      if (everyDeletable) {
+        actions.unshift(this.actions.deleteEntity);
+      }
+
+      return actions;
+    },
   },
   methods: {
+    ...mapContextEntityActions({
+      removeContextEntity: 'remove',
+      fetchContextEntitiesListWithPreviousParams: 'fetchListWithPreviousParams',
+    }),
+
+    ...mapServiceActions({
+      removeService: 'remove',
+    }),
+
     showDeleteEntitiesModal() {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => Promise.all(this.itemsIds.map(id => this.removeContextEntity({ id }))),
+          action: async () => {
+            const requests = this.items.map((item) => {
+              if (item.type === ENTITY_TYPES.service) {
+                return this.removeService({ id: item._id });
+              }
+
+              return this.removeContextEntity({ id: item._id });
+            });
+
+            await Promise.all(requests);
+
+            await this.fetchContextEntitiesListWithPreviousParams();
+          },
         },
       });
     },
@@ -76,7 +97,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           filter: {
-            _id: { $in: this.itemsIds },
+            _id: { $in: this.items.map(({ _id: id }) => id) },
           },
         },
       });
