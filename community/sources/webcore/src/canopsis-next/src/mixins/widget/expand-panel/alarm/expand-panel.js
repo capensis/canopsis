@@ -44,6 +44,7 @@ export default {
         sort_key: 't',
         sort_dir: SORT_ORDERS.desc.toLowerCase(),
         limit: 1,
+        with_instructions: true,
       };
 
       if (alarm.v.resolved) {

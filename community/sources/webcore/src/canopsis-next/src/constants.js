@@ -1640,11 +1640,6 @@ export const REMEDIATION_INSTRUCTION_TYPES = {
   auto: 1,
 };
 
-export const REMEDIATION_CONFIGURATION_TYPES = {
-  rundeck: 'rundeck',
-  awx: 'awx',
-};
-
 export const REMEDIATION_INSTRUCTION_APPROVAL_TYPES = {
   role: 0,
   user: 1,
@@ -1887,3 +1882,5 @@ export const DAYS_IN_MONTH = 30;
 export const MONTHS_IN_YEAR = 12;
 
 export const DAYS_IN_WEEK = 7;
+
+export const REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME = ['basic-auth'];

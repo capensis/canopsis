@@ -1,7 +1,11 @@
-import { API_ROUTES } from '@/config';
-import request from '@/services/request';
-import { toSeconds } from '@/helpers/date/duration';
+import { get } from 'lodash';
+
+import { API_ROUTES, INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS } from '@/config';
 import { POPUP_TYPES } from '@/constants';
+
+import request from '@/services/request';
+
+import { toSeconds } from '@/helpers/date/duration';
 
 const types = {
   FETCH_LOGIN_INFOS: 'FETCH_LOGIN_INFOS',
@@ -28,6 +32,7 @@ export default {
     popupTimeout: undefined,
     maxMatchedItems: '',
     timezone: undefined,
+    remediation: {},
     jobExecutorFetchTimeoutSeconds: undefined,
   },
   getters: {
@@ -48,6 +53,10 @@ export default {
     casConfig: state => state.casConfig,
     samlConfig: state => state.samlConfig,
     timezone: state => state.timezone,
+    remediation: state => state.remediation,
+    remediationJobConfigTypes: state => get(state.remediation, 'job_config_types', []),
+    remediationPauseManualInstructionIntervalSeconds: state =>
+      get(state.remediation, 'pause_manual_instruction_interval.seconds', INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS),
     jobExecutorFetchTimeoutSeconds: state => state.jobExecutorFetchTimeoutSeconds,
   },
   mutations: {
@@ -82,6 +91,7 @@ export default {
       stack,
       language,
       timezone,
+      remediation,
       jobExecutorFetchTimeoutSeconds,
     }) {
       state.version = version;
@@ -94,6 +104,7 @@ export default {
       state.stack = stack;
       state.language = language;
       state.timezone = timezone;
+      state.remediation = remediation;
       state.jobExecutorFetchTimeoutSeconds = jobExecutorFetchTimeoutSeconds;
     },
   },
@@ -135,7 +146,8 @@ export default {
           popup_timeout: popupTimeout,
           max_matched_items: maxMatchedItems,
           allow_change_severity_to_info: allowChangeSeverityToInfo,
-          jobexecutorfetchtimeoutseconds: jobExecutorFetchTimeoutSeconds,
+          jobexecutorfetchtimeoutseconds: jobExecutorFetchTimeoutSeconds, // TODO: remove
+          remediation,
           edition,
           stack,
           language,
@@ -155,6 +167,7 @@ export default {
             stack,
             language,
             timezone,
+            remediation,
             jobExecutorFetchTimeoutSeconds,
           },
         );

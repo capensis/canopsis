@@ -13,12 +13,12 @@
 </template>
 
 <script>
-import { INSTRUCTION_EXECUTE_FETCHING_INTERVAL } from '@/config';
 import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
-import pollingMixin from '@/mixins/polling';
+import entitiesInfoMixin from '@/mixins/entities/info';
+import { pollingMixinCreator } from '@/mixins/polling';
 
 import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
 
@@ -33,10 +33,8 @@ export default {
   mixins: [
     authMixin,
     entitiesRemediationInstructionExecutionMixin,
-    pollingMixin({
-      method: 'pingInstructionExecution',
-      delay: INSTRUCTION_EXECUTE_FETCHING_INTERVAL,
-    }),
+    entitiesInfoMixin,
+    pollingMixinCreator({ method: 'pingInstructionExecution' }),
   ],
   data() {
     const { execution } = this.modal.config.assignedInstruction;
@@ -49,6 +47,10 @@ export default {
   computed: {
     executionInstruction() {
       return this.getRemediationInstructionExecution(this.executionInstructionId);
+    },
+
+    pollingDelay() {
+      return (this.remediationPauseManualInstructionIntervalSeconds - 1) * 1000;
     },
   },
   watch: {
