@@ -73,6 +73,34 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
 	updatedEntityServices := libcontext.UpdatedEntityServices{}
 
+	// Enrich the event with the entity and create the context.
+	if p.FeatureContextCreation && event.IsContextable() {
+		entity, updated, err := p.EnrichmentCenter.Handle(ctx, event, p.EnrichFields)
+		if err != nil {
+			if engine.IsConnectionError(err) {
+				return nil, err
+			}
+
+			p.logError(err, "cannot update context graph", d.Body)
+			return nil, nil
+		}
+		event.Entity = entity
+		updatedEntityServices = updatedEntityServices.Add(updated)
+	}
+
+	// Find entity if still empty.
+	if event.Entity == nil {
+		event.Entity, err = p.EnrichmentCenter.Get(ctx, event)
+		if err != nil {
+			if engine.IsConnectionError(err) {
+				return nil, err
+			}
+
+			p.logError(err, "cannot find entity", d.Body)
+			return nil, nil
+		}
+	}
+
 	// Process event by event filters.
 	if p.FeatureEventProcessing {
 		var report eventfilter.Report
@@ -85,8 +113,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			p.logError(err, "cannot apply event filters on event", d.Body)
 			return nil, nil
 		}
-
-		updatedEntityServices = updatedEntityServices.Add(report.UpdatedEntityServices)
 
 		if report.EntityUpdated && event.Entity != nil {
 			updated, err := p.EnrichmentCenter.UpdateEntityInfos(ctx, event.Entity)
@@ -101,22 +127,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 			updatedEntityServices = updatedEntityServices.Add(updated)
 		}
-	}
-
-	// Enrich the event with the entity and create the context if this has not
-	// been done by the event filter.
-	if event.Entity == nil && p.FeatureContextCreation && event.IsContextable() {
-		entity, updated, err := p.EnrichmentCenter.Handle(ctx, event, p.EnrichFields)
-		if err != nil {
-			if engine.IsConnectionError(err) {
-				return nil, err
-			}
-
-			p.logError(err, "cannot update context graph", d.Body)
-			return nil, nil
-		}
-		event.Entity = entity
-		updatedEntityServices = updatedEntityServices.Add(updated)
 	}
 
 	// Update context graph for entity service.
@@ -154,19 +164,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	event.Format()
-
-	// Find entity if still empty.
-	if event.Entity == nil {
-		event.Entity, err = p.EnrichmentCenter.Get(ctx, event)
-		if err != nil {
-			if engine.IsConnectionError(err) {
-				return nil, err
-			}
-
-			p.logError(err, "cannot find entity", d.Body)
-			return nil, nil
-		}
-	}
 
 	event.AddedToServices = append(event.AddedToServices, updatedEntityServices.AddedTo...)
 	event.RemovedFromServices = append(event.RemovedFromServices, updatedEntityServices.RemovedFrom...)

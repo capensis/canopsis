@@ -27,6 +27,8 @@ func (a *mongoAdapter) List(ctx context.Context) ([]Rule, error) {
 
 	// Get the rules that are enabled, or where enabled is not set.
 	filter := bson.M{
+		//TODO: change_entity type is processed by neweventfilter package
+		"type": bson.M{"$in": bson.A{RuleTypeEnrichment, RuleTypeDrop, RuleTypeBreak}},
 		"$or": []bson.M{
 			{"enabled": true},
 			{"enabled": bson.M{"$exists": false}},
