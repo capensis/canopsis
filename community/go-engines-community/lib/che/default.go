@@ -73,11 +73,7 @@ func NewEngine(
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			logger.Debug().Msg("Loading event filter data sources")
-			err := eventFilterService.LoadDataSourceFactories(
-				enrichmentCenter,
-				enrichFields,
-				options.DataSourceDirectory,
-			)
+			err := eventFilterService.LoadDataSourceFactories(options.DataSourceDirectory)
 			if err != nil {
 				return fmt.Errorf("unable to load data sources: %v", err)
 			}

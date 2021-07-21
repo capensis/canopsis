@@ -11,7 +11,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
@@ -22,8 +21,6 @@ type Report struct {
 	// EntityUpdate is a boolean indicating whether the event's entity was
 	// updated.
 	EntityUpdated bool
-	// UpdatedEntityServices contains context graph update result if entity has been updated.
-	UpdatedEntityServices libcontext.UpdatedEntityServices
 }
 
 // service is the service that manages the event filter.
@@ -52,17 +49,14 @@ func NewService(adapter Adapter, timezoneConfigProvider config.TimezoneConfigPro
 		adapter:                adapter,
 		timezoneConfigProvider: timezoneConfigProvider,
 		logger:                 logger,
+		dataSourceFactories:    make(map[string]DataSourceFactory),
 	}
 	return &s
 }
 
 // LoadDataSourceFactories loads the data source factories and adds them to the
 // service.
-func (s *service) LoadDataSourceFactories(enrichmentCenter libcontext.EnrichmentCenter, enrichFields libcontext.EnrichFields, dataSourceDirectory string) error {
-	s.dataSourceFactories = make(map[string]DataSourceFactory)
-
-	s.dataSourceFactories["entity"] = NewEntityDataSourceFactory(enrichmentCenter, enrichFields)
-
+func (s *service) LoadDataSourceFactories(dataSourceDirectory string) error {
 	files, err := ioutil.ReadDir(dataSourceDirectory)
 	if err != nil {
 		return err
