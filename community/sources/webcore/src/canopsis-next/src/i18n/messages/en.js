@@ -8,7 +8,6 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_PERMISSIONS_PREFIXES,
-  REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
   ENGINES_NAMES,
   WIDGET_TYPES,
@@ -1385,10 +1384,6 @@ export default {
           success: '{configurationName} has been successfully modified',
         },
       },
-      types: {
-        [REMEDIATION_CONFIGURATION_TYPES.rundeck]: 'Rundeck',
-        [REMEDIATION_CONFIGURATION_TYPES.awx]: 'Awx',
-      },
       fields: {
         host: 'Host',
         token: 'Authorization token',
@@ -1410,6 +1405,7 @@ export default {
       fields: {
         configuration: 'Configuration',
         jobId: 'Job ID',
+        query: 'Query',
       },
       errors: {
         invalidJSON: 'Invalid JSON',

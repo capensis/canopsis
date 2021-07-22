@@ -29,7 +29,8 @@ export default {
       casConfig: 'casConfig',
       samlConfig: 'samlConfig',
       timezone: 'timezone',
-      jobExecutorFetchTimeoutSeconds: 'jobExecutorFetchTimeoutSeconds',
+      remediationJobConfigTypes: 'remediationJobConfigTypes',
+      remediationPauseManualInstructionIntervalSeconds: 'remediationPauseManualInstructionIntervalSeconds',
     }),
 
     isCatVersion() {
