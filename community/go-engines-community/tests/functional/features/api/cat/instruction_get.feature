@@ -56,10 +56,12 @@ Feature: get a instruction
                           "_id": "test-user-author-1-id",
                           "name": "test-user-author-1-username"
                         },
+                        "auth_username": "",
                         "auth_token": "test-auth-token"
                       },
                       "job_id": "test-job-to-instruction-edit-1-external-id",
-                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                      "query": null
                     },
                     {
                       "_id": "test-job-to-instruction-edit-2",
@@ -77,10 +79,12 @@ Feature: get a instruction
                           "_id": "test-user-author-1-id",
                           "name": "test-user-author-1-username"
                         },
+                        "auth_username": "",
                         "auth_token": "test-auth-token"
                       },
                       "job_id": "test-job-to-instruction-edit-2-external-id",
-                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                      "query": null
                     }
                   ]
                 },
@@ -105,10 +109,12 @@ Feature: get a instruction
                           "_id": "test-user-author-1-id",
                           "name": "test-user-author-1-username"
                         },
+                        "auth_username": "",
                         "auth_token": "test-auth-token"
                       },
                       "job_id": "test-job-to-instruction-edit-2-external-id",
-                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                      "query": null
                     }
                   ]
                 }
@@ -140,10 +146,12 @@ Feature: get a instruction
                           "_id": "test-user-author-1-id",
                           "name": "test-user-author-1-username"
                         },
+                        "auth_username": "",
                         "auth_token": "test-auth-token"
                       },
                       "job_id": "test-job-to-instruction-edit-2-external-id",
-                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                      "query": null
                     },
                     {
                       "_id": "test-job-to-instruction-edit-1",
@@ -161,10 +169,12 @@ Feature: get a instruction
                           "_id": "test-user-author-1-id",
                           "name": "test-user-author-1-username"
                         },
+                        "auth_username": "",
                         "auth_token": "test-auth-token"
                       },
                       "job_id": "test-job-to-instruction-edit-1-external-id",
-                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                      "query": null
                     }
                   ]
                 }
@@ -212,10 +222,12 @@ Feature: get a instruction
                     "_id": "test-user-author-1-id",
                     "name": "test-user-author-1-username"
                   },
+                  "auth_username": "",
                   "auth_token": "test-auth-token"
                 },
                 "job_id": "test-job-to-instruction-edit-1-external-id",
-                "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                "query": null
               },
               "stop_on_fail": true
             },
@@ -236,10 +248,12 @@ Feature: get a instruction
                     "_id": "test-user-author-1-id",
                     "name": "test-user-author-1-username"
                   },
+                  "auth_username": "",
                   "auth_token": "test-auth-token"
                 },
                 "job_id": "test-job-to-instruction-edit-2-external-id",
-                "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                "query": null
               }
             }
           ],
@@ -411,10 +425,12 @@ Feature: get a instruction
                        "_id": "test-user-author-1-id",
                        "name": "test-user-author-1-username"
                      },
+                     "auth_username": "",
                      "auth_token": "test-auth-token"
                    },
                    "job_id": "test-job-to-instruction-edit-1-external-id",
-                   "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                   "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                   "query": null
                  },
                  {
                    "_id": "test-job-to-instruction-edit-2",
@@ -432,10 +448,12 @@ Feature: get a instruction
                        "_id": "test-user-author-1-id",
                        "name": "test-user-author-1-username"
                      },
+                     "auth_username": "",
                      "auth_token": "test-auth-token"
                    },
                    "job_id": "test-job-to-instruction-edit-2-external-id",
-                   "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                   "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                   "query": null
                  }
                ]
               },
@@ -460,10 +478,12 @@ Feature: get a instruction
                        "_id": "test-user-author-1-id",
                        "name": "test-user-author-1-username"
                      },
+                     "auth_username": "",
                      "auth_token": "test-auth-token"
                    },
                    "job_id": "test-job-to-instruction-edit-2-external-id",
-                   "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                   "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                   "query": null
                  }
                ]
              }
@@ -495,10 +515,12 @@ Feature: get a instruction
                      "_id": "test-user-author-1-id",
                      "name": "test-user-author-1-username"
                    },
+                   "auth_username": "",
                    "auth_token": "test-auth-token"
                  },
                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                 "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                 "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                 "query": null
                },
                {
                  "_id": "test-job-to-instruction-edit-1",
@@ -516,10 +538,12 @@ Feature: get a instruction
                      "_id": "test-user-author-1-id",
                      "name": "test-user-author-1-username"
                    },
+                   "auth_username": "",
                    "auth_token": "test-auth-token"
                  },
                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                 "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                 "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                 "query": null
                }
              ]
            }

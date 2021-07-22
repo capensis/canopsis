@@ -75,7 +75,25 @@
     "_id": "test-job-config-to-run-manual-job",
     "name": "test-job-config-to-run-manual-job-name",
     "type": "rundeck",
-    "author": "test-user-author-1-id",
+    "author": "root",
+    "host": "http://localhost:3000",
+    "auth_token": "test-job-config-to-run-manual-job-token",
+    "created": 1596550518
+  },
+  {
+    "_id": "test-job-config-to-run-manual-jenkins-job",
+    "name": "test-job-config-to-run-manual-job-jenkins-name",
+    "type": "jenkins",
+    "author": "root",
+    "host": "http://localhost:3000",
+    "auth_token": "test-job-config-to-run-manual-job-token",
+    "created": 1596550518
+  },
+  {
+    "_id": "test-job-config-to-run-manual-awx-job",
+    "name": "test-job-config-to-run-manual-job-awx-name",
+    "type": "awx",
+    "author": "root",
     "host": "http://localhost:3000",
     "auth_token": "test-job-config-to-run-manual-job-token",
     "created": 1596550518

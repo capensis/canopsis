@@ -55,10 +55,12 @@ Feature: Job update
           "_id": "test-user-author-1-id",
           "name": "test-user-author-1-username"
         },
+        "auth_username": "",
         "auth_token": "test-auth-token"
       },
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "query": null
     }
     """
 
@@ -92,10 +94,12 @@ Feature: Job update
           "_id": "test-user-author-1-id",
           "name": "test-user-author-1-username"
         },
+        "auth_username": "",
         "auth_token": "test-auth-token"
       },
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "query": null
     }
     """
 

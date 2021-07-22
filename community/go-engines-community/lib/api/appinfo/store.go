@@ -2,6 +2,8 @@ package appinfo
 
 import (
 	"context"
+	"sort"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -18,6 +20,7 @@ type Store interface {
 	RetrieveUserInterfaceConfig(ctx context.Context) (UserInterfaceConf, error)
 	RetrieveVersionConfig(ctx context.Context) (VersionConf, error)
 	RetrieveTimezoneConf(ctx context.Context) (TimezoneConf, error)
+	RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error)
 	UpdateUserInterfaceConfig(ctx context.Context, conf *UserInterfaceConf) error
 	DeleteUserInterfaceConfig(ctx context.Context) error
 }
@@ -105,6 +108,40 @@ func (s *store) RetrieveTimezoneConf(ctx context.Context) (TimezoneConf, error) 
 
 	tz.Timezone = conf.Timezone.Timezone
 	return tz, nil
+}
+
+func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error) {
+	conf := config.RemediationConf{}
+	result := RemediationConf{}
+	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.RemediationKeyName}).Decode(&conf)
+	if err != nil {
+		if err == mongodriver.ErrNoDocuments {
+			return result, nil
+		}
+
+		return result, err
+	}
+
+	result.JobConfigTypes = make([]JobConfigType, len(conf.ExternalAPI))
+	i := 0
+	for name, apiConfig := range conf.ExternalAPI {
+		result.JobConfigTypes[i] = JobConfigType{
+			Name:     name,
+			AuthType: apiConfig.Auth.Type,
+		}
+		i++
+	}
+
+	sort.Slice(result.JobConfigTypes, func(i, j int) bool {
+		return result.JobConfigTypes[i].Name < result.JobConfigTypes[j].Name
+	})
+
+	d, err := time.ParseDuration(conf.PauseManualInstructionInterval)
+	if err == nil {
+		result.PauseManualInstructionInterval.Seconds = int64(d.Seconds())
+	}
+
+	return result, nil
 }
 
 func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterfaceConf) error {

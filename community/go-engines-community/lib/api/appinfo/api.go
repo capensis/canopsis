@@ -43,10 +43,15 @@ func (a *api) GetAppInfo(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
+	remediation, err := a.store.RetrieveRemediationConfig(c.Request.Context())
+	if err != nil {
+		panic(err)
+	}
 	c.JSON(http.StatusOK, AppInfoResponse{
 		UserInterfaceConf: userInterface,
 		TimezoneConf:      tz,
 		VersionConf:       version,
+		Remediation:       remediation,
 	})
 }
 
