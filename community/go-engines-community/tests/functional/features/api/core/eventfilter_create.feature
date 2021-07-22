@@ -188,7 +188,7 @@ Feature: Create an eventfilter
     """
     {
       "errors": {
-        "type": "Type must be one of [break drop enrichment]."
+        "type": "Type must be one of [break drop enrichment change_entity]."
       }
     }
     """

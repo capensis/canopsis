@@ -11,16 +11,18 @@ const (
 )
 
 type Rule struct {
-	ID           string                            `bson:"_id"`
-	Description  string                            `bson:"description"`
-	Type         string                            `bson:"type"`
-	Patterns     pattern.EventPatternList          `bson:"patterns"`
-	Priority     int                               `bson:"priority"`
-	Enabled      bool                              `bson:"enabled"`
-	Config       RuleConfig                        `bson:"config"`
-	Created      *types.CpsTime                    `bson:"created"`
-	Updated      *types.CpsTime                    `bson:"updated"`
-	Author       string                            `bson:"author"`
+	ID          string                   `bson:"_id"`
+	Description string                   `bson:"description"`
+	Type        string                   `bson:"type"`
+	Patterns    pattern.EventPatternList `bson:"patterns"`
+	Priority    int                      `bson:"priority"`
+	Enabled     bool                     `bson:"enabled"`
+	Config      RuleConfig               `bson:"config"`
+	Created     *types.CpsTime           `bson:"created"`
+	Updated     *types.CpsTime           `bson:"updated"`
+	Author      string                   `bson:"author"`
+
+	//TODO: copy from eventfilter package, all mongo plugin feature should be refactored
 	ExternalData map[string]eventfilter.DataSource `bson:"external_data" json:"external_data"`
 }
 
@@ -31,7 +33,7 @@ type RuleConfig struct {
 	ConnectorName string `bson:"connector_name,omitempty" json:"connector_name,omitempty"`
 }
 
-type ApplicatorParameters struct {
+type TemplateParameters struct {
 	Event        types.Event
 	RegexMatch   pattern.EventRegexMatches
 	ExternalData map[string]interface{}

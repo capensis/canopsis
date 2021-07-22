@@ -698,34 +698,6 @@ Feature: create service entity
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "resource": "test-resource-che-service-6"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-che-service-6-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "resource": "test-resource-che-service-6",
         "current_entity": {
           "infos": {
@@ -837,34 +809,6 @@ Feature: create service entity
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "resource": "test-resource-che-service-7"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-che-service-7-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
     """json
     {
@@ -1247,34 +1191,6 @@ Feature: create service entity
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "resource": "test-resource-che-service-10"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-che-service-10-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "resource": "test-resource-che-service-10",
         "current_entity": {
           "infos": {
@@ -1625,34 +1541,6 @@ Feature: create service entity
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "component": "test-component-che-service-13"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-che-service-13-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "source_type": "component",
         "component": "test-component-che-service-13",
         "current_entity": {
@@ -1790,34 +1678,6 @@ Feature: create service entity
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-service-14"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-che-service-14-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
     """json
     {

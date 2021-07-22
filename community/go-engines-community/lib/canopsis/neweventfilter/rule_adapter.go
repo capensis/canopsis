@@ -7,14 +7,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// RulesAdapter is a type that provides access to the MongoDB collection containing
-// the meta-alarm rules
 type mongoAdapter struct {
 	dbCollection mongo.DbCollection
 }
 
-// NewRuleAdapter returns an rulesAdapter to a rules collection.
-func NewRuleAdapter(dbClient mongo.DbClient) RulesAdapter {
+func NewRuleAdapter(dbClient mongo.DbClient) RuleAdapter {
 	return mongoAdapter{
 		dbCollection: dbClient.Collection(mongo.EventFilterRulesMongoCollection),
 	}

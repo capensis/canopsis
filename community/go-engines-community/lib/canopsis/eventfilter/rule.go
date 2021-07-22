@@ -35,6 +35,9 @@ type Rule struct {
 	// Enabled is a boolean indicating whether the rule is enabled or not.
 	Enabled types.OptionalBool `bson:"enabled"`
 
+	// Config is not used, but needed to support rules after api changes for neweventfilter package
+	Config interface{} `bson:"config"`
+
 	// EnrichmentRule contains parameters that are specific to enrichment
 	// rules.
 	EnrichmentRule `bson:",inline"`
