@@ -139,7 +139,7 @@ export default {
       const { time, deleted, archived } = this.history.alarm || {};
 
       const result = [
-        this.$t('storageSetting.history.alarm.scriptLaunched', {
+        this.$t('storageSetting.history.scriptLaunched', {
           launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long, true),
         }),
       ];
@@ -163,7 +163,7 @@ export default {
       const { time, deleted, archived } = this.history.entity || {};
 
       const result = [
-        this.$t('storageSetting.history.entity.launchedAt', {
+        this.$t('storageSetting.history.scriptLaunched', {
           launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long, true),
         }),
       ];

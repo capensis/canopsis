@@ -108,7 +108,7 @@ import { TIME_UNITS } from '@/constants';
 export const dataStorageJunitSettingsToForm = (junitConfig = {}) => ({
   delete_after: junitConfig.delete_after
     ? durationWithEnabledToForm(junitConfig.delete_after)
-    : { value: 1, unit: TIME_UNITS.day, disabled: true },
+    : { value: 1, unit: TIME_UNITS.day, enabled: false },
 });
 
 /**
@@ -120,10 +120,10 @@ export const dataStorageJunitSettingsToForm = (junitConfig = {}) => ({
 export const dataStorageRemediationSettingsToForm = (remediationConfig = {}) => ({
   accumulate_after: remediationConfig.accumulate_after
     ? durationWithEnabledToForm(remediationConfig.accumulate_after)
-    : { value: 1, unit: TIME_UNITS.day, disabled: true },
+    : { value: 1, unit: TIME_UNITS.day, enabled: false },
   delete_after: remediationConfig.delete_after
     ? durationWithEnabledToForm(remediationConfig.delete_after)
-    : { value: 2, unit: TIME_UNITS.day, disabled: true },
+    : { value: 2, unit: TIME_UNITS.day, enabled: false },
 });
 
 /**
@@ -135,10 +135,10 @@ export const dataStorageRemediationSettingsToForm = (remediationConfig = {}) => 
 export const dataStorageAlarmSettingsToForm = (alarmConfig = {}) => ({
   archive_after: alarmConfig.archive_after
     ? durationWithEnabledToForm(alarmConfig.archive_after)
-    : { value: 1, unit: TIME_UNITS.year, disabled: true },
+    : { value: 1, unit: TIME_UNITS.year, enabled: false },
   delete_after: alarmConfig.delete_after
     ? durationWithEnabledToForm(alarmConfig.delete_after)
-    : { value: 2, unit: TIME_UNITS.year, disabled: true },
+    : { value: 2, unit: TIME_UNITS.year, enabled: false },
 });
 
 /**
@@ -150,7 +150,7 @@ export const dataStorageAlarmSettingsToForm = (alarmConfig = {}) => ({
 export const dataStoragePbehaviorSettingsToForm = (pbehaviorConfig = {}) => ({
   delete_after: pbehaviorConfig.delete_after
     ? durationWithEnabledToForm(pbehaviorConfig.delete_after)
-    : { value: 1, unit: TIME_UNITS.year, disabled: true },
+    : { value: 1, unit: TIME_UNITS.year, enabled: false },
 });
 
 /**

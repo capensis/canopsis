@@ -65,6 +65,10 @@ export default {
             await this.cleanEntitiesData({ data: this.form.entity });
 
             this.$popups.success({ text: this.$t('success.default') });
+
+            const { history } = await this.fetchDataStorageSettingsWithoutStore();
+
+            this.history = history;
           },
         },
       });
