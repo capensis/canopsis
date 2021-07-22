@@ -65,13 +65,7 @@ export default {
   },
 
   mounted() {
-    this.fetchAlarmItem({
-      id: this.id,
-      params: {
-        opened: true,
-        resolved: true,
-      },
-    });
+    this.fetchAlarmItem({ id: this.id });
 
     if (this.widgetId && !this.groupsPending) {
       this.fetchAllGroupsListWithViews();

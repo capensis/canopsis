@@ -312,7 +312,7 @@ export default {
       this.exportWidgetAsCsv({
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
         data: {
-          ...pick(query, ['search', 'category', 'correlation', 'opened', 'resolved']),
+          ...pick(query, ['search', 'category', 'correlation', 'opened']),
 
           fields: columns.map(({ label, value }) => ({ label, name: value })),
           filter: JSON.stringify(query.filter),
