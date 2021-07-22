@@ -24,7 +24,6 @@ export default {
         correlation,
 
         with_steps: true,
-        with_instructions: true,
       };
 
       if (!this.hideGroups && correlation) {

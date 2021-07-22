@@ -33,7 +33,6 @@ export default {
     maxMatchedItems: '',
     timezone: undefined,
     remediation: {},
-    jobExecutorFetchTimeoutSeconds: undefined,
   },
   getters: {
     version: state => state.version,
@@ -57,7 +56,6 @@ export default {
     remediationJobConfigTypes: state => get(state.remediation, 'job_config_types', []),
     remediationPauseManualInstructionIntervalSeconds: state =>
       get(state.remediation, 'pause_manual_instruction_interval.seconds', INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS),
-    jobExecutorFetchTimeoutSeconds: state => state.jobExecutorFetchTimeoutSeconds,
   },
   mutations: {
     [types.FETCH_LOGIN_INFOS](state, {
@@ -92,7 +90,6 @@ export default {
       language,
       timezone,
       remediation,
-      jobExecutorFetchTimeoutSeconds,
     }) {
       state.version = version;
       state.logo = logo;
@@ -105,7 +102,6 @@ export default {
       state.language = language;
       state.timezone = timezone;
       state.remediation = remediation;
-      state.jobExecutorFetchTimeoutSeconds = jobExecutorFetchTimeoutSeconds;
     },
   },
   actions: {
@@ -146,7 +142,6 @@ export default {
           popup_timeout: popupTimeout,
           max_matched_items: maxMatchedItems,
           allow_change_severity_to_info: allowChangeSeverityToInfo,
-          jobexecutorfetchtimeoutseconds: jobExecutorFetchTimeoutSeconds, // TODO: remove
           remediation,
           edition,
           stack,
@@ -168,7 +163,6 @@ export default {
             language,
             timezone,
             remediation,
-            jobExecutorFetchTimeoutSeconds,
           },
         );
 
