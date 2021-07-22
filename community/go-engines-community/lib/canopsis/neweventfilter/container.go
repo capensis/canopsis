@@ -5,11 +5,7 @@ type Container struct {
 }
 
 func (c *Container) Get(ruleType string) (RuleApplicator, bool) {
-	if c.Has(ruleType) {
-		return c.applicators[ruleType], true
-	}
-
-	return nil, false
+	return c.applicators[ruleType], c.Has(ruleType)
 }
 
 func (c *Container) Set(ruleType string, service RuleApplicator) {
@@ -25,9 +21,7 @@ func (c *Container) Has(ruleType string) bool {
 }
 
 func NewRuleApplicatorContainer() *Container {
-	var container Container
-
-	container.applicators = make(map[string]RuleApplicator)
-
-	return &container
+	return &Container{
+		applicators: make(map[string]RuleApplicator),
+	}
 }
