@@ -2334,16 +2334,18 @@ export default {
         delete: 'Are you sure you want to delete all disabled entities from the archive forever? This action cannot be canceled.',
       },
     },
+    pbehavior: {
+      title: 'PBehavior data storage',
+      deleteAfter: 'Delete PBehavior data after',
+      deleteAfterHelpText: 'When switched on, inactive PBehaviors will be deleted after the defined time period from the last event.',
+    },
     history: {
-      junit: 'Script launched at {launchedAt}.',
-      remediation: 'Script launched at {launchedAt}.',
+      scriptLaunched: 'Script launched at {launchedAt}.',
       alarm: {
-        launchedAt: 'Script launched at {launchedAt}.',
         deletedCount: 'Alarms deleted: {count}.',
         archivedCount: 'Alarms archived: {count}.',
       },
       entity: {
-        launchedAt: 'Script launched at {launchedAt}.',
         deletedCount: 'Entities deleted: {count}.',
         archivedCount: 'Entities archived: {count}.',
       },

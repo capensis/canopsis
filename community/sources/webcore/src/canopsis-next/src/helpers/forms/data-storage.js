@@ -25,11 +25,17 @@ import { TIME_UNITS } from '@/constants';
  */
 
 /**
+ * @typedef {Object} DataStoragePbehaviorConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfig
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
  * @property {DataStorageAlarmConfig} alarm
- * @property {DataStorageEntityConfig} entity
+ * @property {DataStorageEntityConfig} [entity]
+ * @property {DataStoragePbehaviorConfig} pbehavior
  */
 
 /**
@@ -75,11 +81,17 @@ import { TIME_UNITS } from '@/constants';
  */
 
 /**
+ * @typedef {Object} DataStoragePbehaviorConfigForm
+ * @property {DurationWithEnabledForm} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfigForm
  * @property {DataStorageJunitConfigForm} junit
  * @property {DataStorageRemediationConfigForm} remediation
  * @property {DataStorageAlarmConfigForm} alarm
  * @property {DataStorageAlarmConfigForm} entity
+ * @property {DataStoragePbehaviorConfigForm} pbehavior
  */
 
 /**
@@ -96,7 +108,7 @@ import { TIME_UNITS } from '@/constants';
 export const dataStorageJunitSettingsToForm = (junitConfig = {}) => ({
   delete_after: junitConfig.delete_after
     ? durationWithEnabledToForm(junitConfig.delete_after)
-    : { value: 1, unit: TIME_UNITS.day, disabled: true },
+    : { value: 1, unit: TIME_UNITS.day, enabled: false },
 });
 
 /**
@@ -108,10 +120,10 @@ export const dataStorageJunitSettingsToForm = (junitConfig = {}) => ({
 export const dataStorageRemediationSettingsToForm = (remediationConfig = {}) => ({
   accumulate_after: remediationConfig.accumulate_after
     ? durationWithEnabledToForm(remediationConfig.accumulate_after)
-    : { value: 1, unit: TIME_UNITS.day, disabled: true },
+    : { value: 1, unit: TIME_UNITS.day, enabled: false },
   delete_after: remediationConfig.delete_after
     ? durationWithEnabledToForm(remediationConfig.delete_after)
-    : { value: 2, unit: TIME_UNITS.day, disabled: true },
+    : { value: 2, unit: TIME_UNITS.day, enabled: false },
 });
 
 /**
@@ -123,10 +135,22 @@ export const dataStorageRemediationSettingsToForm = (remediationConfig = {}) => 
 export const dataStorageAlarmSettingsToForm = (alarmConfig = {}) => ({
   archive_after: alarmConfig.archive_after
     ? durationWithEnabledToForm(alarmConfig.archive_after)
-    : { value: 1, unit: TIME_UNITS.year, disabled: true },
+    : { value: 1, unit: TIME_UNITS.year, enabled: false },
   delete_after: alarmConfig.delete_after
     ? durationWithEnabledToForm(alarmConfig.delete_after)
-    : { value: 2, unit: TIME_UNITS.year, disabled: true },
+    : { value: 2, unit: TIME_UNITS.year, enabled: false },
+});
+
+/**
+ * Convert data storage pbehavior config to pbehavior form object
+ *
+ * @param {DataStoragePbehaviorConfig} pbehaviorConfig
+ * @return {DataStoragePbehaviorConfigForm}
+ */
+export const dataStoragePbehaviorSettingsToForm = (pbehaviorConfig = {}) => ({
+  delete_after: pbehaviorConfig.delete_after
+    ? durationWithEnabledToForm(pbehaviorConfig.delete_after)
+    : { value: 1, unit: TIME_UNITS.year, enabled: false },
 });
 
 /**
@@ -151,6 +175,7 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   remediation: dataStorageRemediationSettingsToForm(dataStorage.remediation),
   alarm: dataStorageAlarmSettingsToForm(dataStorage.alarm),
   entity: dataStorageEntitySettingsToForm(dataStorage.entity),
+  pbehavior: dataStoragePbehaviorSettingsToForm(dataStorage.pbehavior),
 });
 
 /**
@@ -186,6 +211,16 @@ export const formToAlarmDataStorageSettings = (form = {}) => ({
 });
 
 /**
+ * Convert pbehavior data storage form to pbehavior data storage object
+ *
+ * @param {DataStoragePbehaviorConfigForm} form
+ * @return {DataStoragePbehaviorConfig}
+ */
+export const formToPbehaviorDataStorageSettings = (form = {}) => ({
+  delete_after: formToDurationWithEnabled(form.delete_after),
+});
+
+/**
  * Convert data storage form to data storage object
  *
  * @param {DataStorageConfigForm} form
@@ -195,4 +230,5 @@ export const formToDataStorageSettings = (form = {}) => ({
   junit: formJunitToDataStorageSettings(form.junit),
   remediation: formToRemediationDataStorageSettings(form.remediation),
   alarm: formToAlarmDataStorageSettings(form.alarm),
+  pbehavior: formToPbehaviorDataStorageSettings(form.pbehavior),
 });

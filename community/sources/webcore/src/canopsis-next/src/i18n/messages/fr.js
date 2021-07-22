@@ -2334,16 +2334,18 @@ export default {
         delete: 'Êtes-vous sûr de vouloir supprimer définitivement toutes les entités désactivées de l\'archive ? Cette action ne peut pas être annulée.',
       },
     },
+    pbehavior: {
+      title: 'Stockage des données de comportement',
+      deleteAfter: 'Supprimer les données PBehavior après',
+      deleteAfterHelpText: 'Lorsqu\'il est activé, les PBehaviors inactifs seront supprimés après la période de temps définie à partir du dernier événement.',
+    },
     history: {
-      junit: 'Script lancé à {launchedAt}.',
-      remediation: 'Script lancé à {launchedAt}.',
+      scriptLaunched: 'Script lancé à {launchedAt}.',
       alarm: {
-        launchedAt: 'Script lancé à {launchedAt}.',
         deletedCount: 'Alarmes supprimées : {count}.',
         archivedCount: 'Alarmes archivées : {count}.',
       },
       entity: {
-        launchedAt: 'Script lancé à {launchedAt}.',
         deletedCount: 'Entités supprimées : {count}.',
         archivedCount: 'Entités archivées : {count}.',
       },
