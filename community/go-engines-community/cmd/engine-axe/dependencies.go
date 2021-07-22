@@ -224,6 +224,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			ChannelPub:         channelPub,
 			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), logger),
+			AlarmAdapter:       alarm.NewAdapter(dbClient),
 			Encoder:            json.NewEncoder(),
 			IdleAlarmService: idlealarm.NewService(
 				idlerule.NewRuleAdapter(dbClient),
