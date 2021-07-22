@@ -1,6 +1,6 @@
 package eventfilter
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/eventfilter/eventfilter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter Service,Adapter
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/eventfilter/eventfilter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter Service,Adapter,DataSourceFactory,DataSourceGetter
 
 import (
 	"context"

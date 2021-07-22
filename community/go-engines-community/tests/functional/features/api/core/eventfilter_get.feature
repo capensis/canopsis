@@ -20,6 +20,7 @@ Feature: Get an eventfilter
       ],
       "priority": 0,
       "enabled": true,
+      "config": {},
       "actions": [
         {
           "type": "set_field",
@@ -57,6 +58,7 @@ Feature: Get an eventfilter
               "resource": "test-eventfilter-to-get-1-pattern"
             }
           ],
+          "config": {},
           "priority": 0,
           "enabled": true,
           "actions": [
@@ -87,6 +89,7 @@ Feature: Get an eventfilter
             }
           ],
           "priority": 1,
+          "config": {},
           "enabled": true,
           "created": 1608635535,
           "updated": 1608635535
@@ -102,6 +105,7 @@ Feature: Get an eventfilter
             }
           ],
           "priority": 2,
+          "config": {},
           "enabled": true,
           "created": 1608635535,
           "updated": 1608635535

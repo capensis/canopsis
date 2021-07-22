@@ -14,18 +14,14 @@ import (
 )
 
 type ruleService struct {
-	// rulesAdapter is an rulesAdapter to the rules collection.
-	rulesAdapter            RulesAdapter
+	rulesAdapter            RuleAdapter
 	ruleApplicatorContainer RuleApplicatorContainer
-
-	// rules is an array of rules.
-	rules               []Rule
-	dataSourceFactories map[string]eventfilter.DataSourceFactory
-
-	logger zerolog.Logger
+	rules                   []Rule
+	dataSourceFactories     map[string]eventfilter.DataSourceFactory
+	logger                  zerolog.Logger
 }
 
-// copy from eventfilter package
+//TODO: copy from eventfilter package, all mongo plugin feature should be refactored
 func (s *ruleService) LoadDataSourceFactories(dataSourceDirectory string) error {
 	files, err := ioutil.ReadDir(dataSourceDirectory)
 	if err != nil {
@@ -74,41 +70,44 @@ func (s *ruleService) LoadRules(ctx context.Context) error {
 }
 
 func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (types.Event, error) {
+	outcome := OutcomePass
+
 	var err error
-	newEvent := event
-
-	s.logger.Debug().Msg("Process event by meta-alarm rule service")
-
 	for _, rule := range s.rules {
-		s.logger.Debug().Msgf("Meta-alarm rule service: check rule %s", rule.ID)
+		if outcome != OutcomePass {
+			break
+		}
+
+		s.logger.Debug().Msgf("Event filter rule service: check rule %s", rule.ID)
 
 		regexMatches, match := rule.Patterns.GetRegexMatches(event)
 		if !match {
-			s.logger.Debug().Msg("Meta-alarm rule service: check rule is not matched")
+			s.logger.Debug().Str("rule_id", rule.ID).Msg("Event filter rule service: rule is not matched")
 			continue
 		}
 
-		s.logger.Debug().Msg("Meta-alarm rule service: check rule is matched")
+		s.logger.Debug().Str("rule_id", rule.ID).Msg("Event filter rule service: rule is matched")
 
 		applicator, found := s.ruleApplicatorContainer.Get(rule.Type)
 		if !found {
-			s.logger.Warn().Msgf("RuleApplicator for %s is not exist", rule.Type)
+			s.logger.Warn().Str("rule_id", rule.ID).Str("rule_type", rule.Type).Msg("Event filter rule service: RuleApplicator doesn't exist")
 			continue
 		}
 
-		newEvent, err = applicator.Apply(ctx, rule, ApplicatorParameters{
-			Event:      event,
-			RegexMatch: regexMatches,
-		})
+		outcome, event, err = applicator.Apply(ctx, rule, event, regexMatches)
 		if err != nil {
 			return event, err
 		}
 	}
 
-	return newEvent, nil
+	if outcome == OutcomeDrop {
+		return event, ErrDropOutcome
+	}
+
+	return event, nil
 }
 
-func NewRuleService(ruleAdapter RulesAdapter, container RuleApplicatorContainer, logger zerolog.Logger) EventFilterService {
+func NewRuleService(ruleAdapter RuleAdapter, container RuleApplicatorContainer, logger zerolog.Logger) EventFilterService {
 	return &ruleService{
 		rulesAdapter:            ruleAdapter,
 		ruleApplicatorContainer: container,

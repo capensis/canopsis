@@ -5,44 +5,17 @@ import (
 	"sort"
 	"testing"
 
-	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
-	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
-	mock_context "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/context"
-	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
+	mockconfig "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
+	mockeventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var entityEnrichmentRule = bson.M{
-	"_id":  "entity_enrichment",
-	"type": "enrichment",
-	"patterns": []bson.M{
-		{"current_entity": nil},
-	},
-	"external_data": bson.M{
-		"entity": bson.M{
-			"type": "entity",
-		},
-	},
-	"actions": []bson.M{
-		bson.M{
-			"type": "copy",
-			"from": "ExternalData.entity",
-			"to":   "Entity",
-		},
-	},
-	"priority":   50,
-	"enabled":    true,
-	"on_success": "pass",
-	"on_failure": "pass",
-}
-
 func testNewService(ctrl *gomock.Controller, data ...bson.M) eventfilter.Service {
-	adapter := mock_eventfilter.NewMockAdapter(ctrl)
+	adapter := mockeventfilter.NewMockAdapter(ctrl)
 
 	rules := make([]eventfilter.Rule, len(data))
 	for i, v := range data {
@@ -61,7 +34,7 @@ func testNewService(ctrl *gomock.Controller, data ...bson.M) eventfilter.Service
 	})
 
 	adapter.EXPECT().List(gomock.Any()).Return(rules, nil)
-	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
+	mockTimezoneConfigProvider := mockconfig.NewMockTimezoneConfigProvider(ctrl)
 	mockTimezoneConfigProvider.EXPECT().Get()
 	return eventfilter.NewService(adapter, mockTimezoneConfigProvider, log.NewTestLogger())
 }
@@ -79,10 +52,7 @@ func TestProcessEvent(t *testing.T) {
 			enrichmentRule,
 		)
 
-		enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
-		enrichFields := libcontext.NewEnrichFields("", "")
-
-		So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
+		So(service.LoadDataSourceFactories("."), ShouldBeNil)
 		err := service.LoadRules(ctx)
 		So(err, ShouldBeNil)
 
@@ -106,74 +76,6 @@ func TestProcessEvent(t *testing.T) {
 
 			_, isDropError := err.(eventfilter.DropError)
 			So(isDropError, ShouldBeTrue)
-		})
-	})
-}
-
-func TestEntityEnrichment(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	ctx := context.Background()
-
-	Convey("Given an event filter service with an entity enrichment rule", t, func() {
-		service := testNewService(
-			ctrl,
-			entityEnrichmentRule,
-		)
-
-		enrichmentCenterEntity := types.NewEntity("component", "name1", types.EntityTypeComponent, nil, nil, nil)
-		eventEntity := types.NewEntity("component", "name2", types.EntityTypeComponent, nil, nil, nil)
-
-		Convey("An event with an entity is not modified", func() {
-			enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
-			enrichFields := libcontext.NewEnrichFields("", "")
-
-			So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
-			err := service.LoadRules(ctx)
-			So(err, ShouldBeNil)
-
-			event := types.Event{
-				EventType:     types.EventTypeCheck,
-				SourceType:    types.SourceTypeComponent,
-				Connector:     "connector",
-				ConnectorName: "connector-name",
-				Component:     "component",
-				State:         3,
-				Debug:         true,
-				Entity:        &eventEntity,
-			}
-			event, report, err := service.ProcessEvent(ctx, event)
-			So(err, ShouldBeNil)
-
-			So(event.Entity, ShouldNotBeNil)
-			So(*event.Entity, ShouldResemble, eventEntity)
-			So(report.EntityUpdated, ShouldBeFalse)
-		})
-
-		Convey("An event without an entity is enriched", func() {
-			enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
-			enrichmentCenter.EXPECT().Handle(gomock.Any(), gomock.Any(), gomock.Any()).Return(&enrichmentCenterEntity, libcontext.UpdatedEntityServices{}, nil)
-			enrichFields := libcontext.NewEnrichFields("", "")
-
-			So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
-			err := service.LoadRules(ctx)
-			So(err, ShouldBeNil)
-
-			event := types.Event{
-				EventType:     types.EventTypeCheck,
-				SourceType:    types.SourceTypeComponent,
-				Connector:     "connector",
-				ConnectorName: "connector-name",
-				Component:     "component",
-				State:         3,
-				Debug:         true,
-			}
-			event, report, err := service.ProcessEvent(ctx, event)
-			So(err, ShouldBeNil)
-
-			So(event.Entity, ShouldNotBeNil)
-			So(*event.Entity, ShouldResemble, enrichmentCenterEntity)
-			So(report.EntityUpdated, ShouldBeFalse)
 		})
 	})
 }

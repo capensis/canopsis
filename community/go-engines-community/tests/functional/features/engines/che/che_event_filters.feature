@@ -32,7 +32,7 @@ Feature: modify event on event filter
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/entities?search=che-event-filters-1
+    When I do GET /api/v4/alarms?search=che-event-filters-1
     Then the response code should be 200
     Then the response body should be:
     """
@@ -171,34 +171,6 @@ Feature: modify event on event filter
   Scenario: given check event and enrichment event filter with set_entity_info_from_template action
     should update event and entity
     Given I am admin
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-3"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "description": "test-event-filter-che-event-filters-3-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
     """
     {
@@ -403,35 +375,6 @@ Feature: modify event on event filter
       "patterns": [{
         "event_type": "check",
         "source_type": "component",
-        "component": "test-component-che-event-filters-4"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "description": "test-event-filter-che-event-filters-4-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
         "component": "test-component-che-event-filters-4",
         "current_entity": {
           "infos": {"customer": null}
@@ -573,35 +516,6 @@ Feature: modify event on event filter
 
   Scenario: given component event should fill component infos of resource entity
     Given I am admin
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-che-event-filters-5"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "description": "test-event-filter-che-event-filters-5-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
     """
     {
@@ -787,34 +701,6 @@ Feature: modify event on event filter
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "component": "test-component-che-event-filters-6"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "description": "test-event-filter-che-event-filters-6-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "component": "test-component-che-event-filters-6",
         "current_entity": {
           "infos": {
@@ -931,34 +817,6 @@ Feature: modify event on event filter
   Scenario: given check event and enrichment event filter with set_entity_info action
   should update event and entity
     Given I am admin
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-7"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "description": "test-event-filter-che-event-filters-7-1-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
     """
     {
@@ -1088,34 +946,6 @@ Feature: modify event on event filter
   Scenario: given check event and enrichment event filter with copy_to_entity_info action
   should update event and entity
     Given I am admin
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-8"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "description": "test-event-filter-che-event-filters-8-1-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
     """
     {

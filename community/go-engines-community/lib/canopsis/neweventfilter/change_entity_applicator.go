@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"text/template"
 )
@@ -17,47 +18,51 @@ func NewChangeEntityApplicator(dataSourceFactories map[string]eventfilter.DataSo
 	return &changeEntityApplicator{dataSourceFactories: dataSourceFactories}
 }
 
-func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, params ApplicatorParameters) (types.Event, error) {
-	var err error
-	event := params.Event
-
-	params.ExternalData, err = a.getExternalData(ctx, rule, params)
+func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches) (int, types.Event, error) {
+	externalData, err := a.getExternalData(ctx, rule, event, regexMatch)
 	if err != nil {
-		return params.Event, err
+		return OutcomeDrop, event, err
+	}
+
+	templateParams := TemplateParameters{
+		Event:        event,
+		RegexMatch:   regexMatch,
+		ExternalData: externalData,
 	}
 
 	if rule.Config.Resource != "" {
-		event.Resource, err = executeTpl(rule.Config.Resource, params)
+		event.Resource, err = executeTpl(rule.Config.Resource, templateParams)
 		if err != nil {
-			return params.Event, err
+			return OutcomeDrop, event, err
 		}
 	}
 
 	if rule.Config.Component != "" {
-		event.Component, err = executeTpl(rule.Config.Component, params)
+		event.Component, err = executeTpl(rule.Config.Component, templateParams)
 		if err != nil {
-			return params.Event, err
+			return OutcomeDrop, event, err
 		}
 	}
 
 	if rule.Config.Connector != "" {
-		event.Connector, err = executeTpl(rule.Config.Connector, params)
+		event.Connector, err = executeTpl(rule.Config.Connector, templateParams)
 		if err != nil {
-			return params.Event, err
+			return OutcomeDrop, event, err
 		}
 	}
 
 	if rule.Config.ConnectorName != "" {
-		event.ConnectorName, err = executeTpl(rule.Config.ConnectorName, params)
+		event.ConnectorName, err = executeTpl(rule.Config.ConnectorName, templateParams)
 		if err != nil {
-			return params.Event, err
+			return OutcomeDrop, event, err
 		}
 	}
 
-	return event, nil
+	return OutcomePass, event, nil
 }
 
-func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule, params ApplicatorParameters) (map[string]interface{}, error) {
+//TODO: copy from eventfilter package, all mongo plugin feature should be refactored
+func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
 	for name, source := range rule.ExternalData {
@@ -71,8 +76,8 @@ func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule,
 		}
 
 		data, err := getter.Get(ctx, eventfilter.DataSourceGetterParameters{
-			Event:      params.Event,
-			RegexMatch: params.RegexMatch,
+			Event:      event,
+			RegexMatch: regexMatch,
 		}, &eventfilter.Report{})
 		if err != nil {
 			return externalData, err
@@ -84,7 +89,7 @@ func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule,
 	return externalData, nil
 }
 
-func executeTpl(tplText string, params ApplicatorParameters) (string, error) {
+func executeTpl(tplText string, params TemplateParameters) (string, error) {
 	tpl, err := template.New("tpl").Funcs(types.GetTemplateFunc()).Parse(tplText)
 	if err != nil {
 		return "", err
