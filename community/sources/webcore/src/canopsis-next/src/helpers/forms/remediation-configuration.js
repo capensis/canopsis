@@ -1,4 +1,4 @@
-import { omit, pick } from 'lodash';
+import { pick } from 'lodash';
 
 import { REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME } from '@/constants';
 
@@ -49,7 +49,7 @@ export const formToRemediationConfiguration = (form) => {
   remediationConfiguration.type = type.name;
 
   if (REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME.includes(type.auth_type)) {
-    return omit(form, ['auth_username']);
+    remediationConfiguration.auth_username = form.auth_username;
   }
 
   return remediationConfiguration;
