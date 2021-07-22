@@ -2,15 +2,9 @@ package neweventfilter
 
 import (
 	"context"
-	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
-	"io/ioutil"
-	"path/filepath"
-	"plugin"
-	"strings"
 )
 
 type ruleService struct {
@@ -19,41 +13,6 @@ type ruleService struct {
 	rules                   []Rule
 	dataSourceFactories     map[string]eventfilter.DataSourceFactory
 	logger                  zerolog.Logger
-}
-
-//TODO: copy from eventfilter package, all mongo plugin feature should be refactored
-func (s *ruleService) LoadDataSourceFactories(dataSourceDirectory string) error {
-	files, err := ioutil.ReadDir(dataSourceDirectory)
-	if err != nil {
-		return err
-	}
-
-	for _, file := range files {
-		if strings.HasSuffix(file.Name(), canopsis.PluginExtension) {
-			sourceName := strings.TrimSuffix(file.Name(), canopsis.PluginExtension)
-			fileName := filepath.Join(dataSourceDirectory, file.Name())
-			s.logger.Info().Msgf("loading data source plugin %s from file %s", sourceName, fileName)
-
-			plug, err := plugin.Open(fileName)
-			if err != nil {
-				return fmt.Errorf("unable to open plugin: %v", err)
-			}
-
-			factorySymbol, err := plug.Lookup("DataSourceFactory")
-			if err != nil {
-				return fmt.Errorf("unable to load plugin: %v", err)
-			}
-
-			factory, isFactory := factorySymbol.(eventfilter.DataSourceFactory)
-			if !isFactory {
-				return fmt.Errorf("the plugin does not define a valid data source")
-			}
-
-			s.dataSourceFactories[sourceName] = factory
-		}
-	}
-
-	return nil
 }
 
 func (s *ruleService) LoadRules(ctx context.Context) error {

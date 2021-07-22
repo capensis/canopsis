@@ -216,6 +216,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	return engine
 }
 
+//TODO: copy from eventfilter package, all mongo plugin feature should be refactored
 func LoadDataSourceFactories(dataSourceDirectory string) (map[string]eventfilter.DataSourceFactory, error) {
 	factories := make(map[string]eventfilter.DataSourceFactory)
 
@@ -231,12 +232,12 @@ func LoadDataSourceFactories(dataSourceDirectory string) (map[string]eventfilter
 
 			plug, err := plugin.Open(fileName)
 			if err != nil {
-				return nil, fmt.Errorf("unable to open plugin: %v", err)
+				return nil, fmt.Errorf("unable to open plugin: %w", err)
 			}
 
 			factorySymbol, err := plug.Lookup("DataSourceFactory")
 			if err != nil {
-				return nil, fmt.Errorf("unable to load plugin: %v", err)
+				return nil, fmt.Errorf("unable to load plugin: %w", err)
 			}
 
 			factory, isFactory := factorySymbol.(eventfilter.DataSourceFactory)
