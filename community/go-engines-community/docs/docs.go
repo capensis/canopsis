@@ -7786,6 +7786,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/appinfo.PopupTimeout"
                 },
+                "remediation": {
+                    "type": "object",
+                    "$ref": "#/definitions/appinfo.RemediationConf"
+                },
                 "stack": {
                     "type": "string"
                 },
@@ -7804,6 +7808,17 @@ var doc = `{
                     "type": "integer"
                 },
                 "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "appinfo.JobConfigType": {
+            "type": "object",
+            "properties": {
+                "auth_type": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }
@@ -7868,6 +7883,21 @@ var doc = `{
                 "info": {
                     "type": "object",
                     "$ref": "#/definitions/appinfo.IntervalUnit"
+                }
+            }
+        },
+        "appinfo.RemediationConf": {
+            "type": "object",
+            "properties": {
+                "job_config_types": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/appinfo.JobConfigType"
+                    }
+                },
+                "pause_manual_instruction_interval": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
                 }
             }
         },

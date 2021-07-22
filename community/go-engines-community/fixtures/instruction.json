@@ -1975,7 +1975,7 @@
     "description": "test-instruction-to-run-auto-instruction-4-1-description",
     "jobs": [
       {
-        "job": "test-job-to-run-auto-instruction-1",
+        "job": "test-job-to-run-auto-instruction-5",
         "stop_on_fail": false
       }
     ],

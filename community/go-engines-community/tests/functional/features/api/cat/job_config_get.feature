@@ -13,6 +13,7 @@ Feature: get a job's config
         {
           "_id": "test-job-config-to-get",
           "auth_token": "test-auth-token",
+          "auth_username": "",
           "host": "http://example.com",
           "name": "test-job-config-name-to-get",
           "type": "rundeck",
@@ -72,6 +73,7 @@ Feature: get a job's config
     {
       "_id": "test-job-config-to-get",
       "auth_token": "test-auth-token",
+      "auth_username": "",
       "host": "http://example.com",
       "name": "test-job-config-name-to-get",
       "type": "rundeck",

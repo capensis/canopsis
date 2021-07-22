@@ -9,6 +9,7 @@ const (
 	ConfigKeyName        = "global_config"
 	UserInterfaceKeyName = "user_interface"
 	VersionKeyName       = "canopsis_version"
+	RemediationKeyName   = "remediation"
 )
 
 // SectionAlarm ...
@@ -43,14 +44,6 @@ type SectionTimezone struct {
 	Timezone string `toml:"Timezone"`
 }
 
-type SectionRemediation struct {
-	HttpTimeout                    string `toml:"HttpTimeout"`
-	LaunchJobRetriesAmount         int    `toml:"LaunchJobRetriesAmount"`
-	LaunchJobRetriesInterval       string `toml:"LaunchJobRetriesInterval"`
-	WaitJobCompleteRetriesAmount   int    `toml:"WaitJobCompleteRetriesAmount"`
-	WaitJobCompleteRetriesInterval string `toml:"WaitJobCompleteInterval"`
-}
-
 type SectionImportCtx struct {
 	ThdWarnMinPerImport string `toml:"ThdWarnMinPerImport"`
 	ThdCritMinPerImport string `toml:"ThdCritMinPerImport"`
@@ -73,7 +66,6 @@ type CanopsisConf struct {
 	Global      SectionGlobal      `bson:"global" toml:"global"`
 	Alarm       SectionAlarm       `bson:"alarm" toml:"alarm"`
 	Timezone    SectionTimezone    `bson:"timezone" toml:"timezone"`
-	Remediation SectionRemediation `bson:"remediation" toml:"remediation"`
 	ImportCtx   SectionImportCtx   `bson:"import_ctx" toml:"import_ctx"`
 	File        SectionFile        `bson:"file" toml:"file"`
 	DataStorage SectionDataStorage `bson:"data_storage" toml:"data_storage"`

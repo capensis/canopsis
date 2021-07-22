@@ -289,7 +289,13 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 
 		if user == nil {
 			if !sp.config.Security.Saml.AutoUserRegistration {
-				c.AbortWithStatusJSON(http.StatusNotFound, common.NewErrorResponse(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)))
+				sp.logger.Err(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)).Msg("AutoUserRegistration is disabled")
+
+				query := relayUrl.Query()
+				query.Set("errorMessage", "This user is not allowed to log into Canopsis")
+				relayUrl.RawQuery = query.Encode()
+
+				c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
 				return
 			}
 
