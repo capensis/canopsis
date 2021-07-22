@@ -2303,6 +2303,12 @@ export default {
   },
 
   storageSetting: {
+    alarm: {
+      title: 'Alarm data storage',
+      titleHelp: 'When switched on, the resolved alarms data will be archived and/or deleted after the defined time period.',
+      archiveAfter: 'Archive resolved alarms data after',
+      deleteAfter: 'Delete resolved alarms data after',
+    },
     junit: {
       title: 'JUnit data storage',
       deleteAfter: 'Delete test suites data after',
@@ -2317,6 +2323,11 @@ export default {
     history: {
       junit: 'Script launched at {launchedAt}',
       remediation: 'Script launched at {launchedAt}',
+      alarm: {
+        launchedAt: 'Script launched at {launchedAt}.',
+        deletedCount: 'Alarms deleted: {count}.',
+        archivedCount: 'Alarms archived: {count}.',
+      },
     },
   },
 

@@ -1,5 +1,20 @@
 <template lang="pug">
   v-layout(column)
+    storage-setting-block(
+      :title="$t('storageSetting.alarm.title')",
+      :help-text="$t('storageSetting.alarm.titleHelp')"
+    )
+      template(v-if="history.alarm", slot="subtitle") {{ alarmSubTitle }}
+      storage-setting-duration-field(
+        v-field="form.alarm.archive_after",
+        :label="$t('storageSetting.alarm.archiveAfter')",
+        :name="alarmArchiveAfterFieldName"
+      )
+      storage-setting-duration-field(
+        v-field="form.alarm.delete_after",
+        :label="$t('storageSetting.alarm.deleteAfter')",
+        :name="alarmDeleteAfterFieldName"
+      )
     storage-setting-block(:title="$t('storageSetting.junit.title')")
       template(v-if="history.junit", slot="subtitle") {{ junitSubTitle }}
       storage-setting-duration-field(
@@ -24,6 +39,8 @@
 </template>
 
 <script>
+import { isNumber } from 'lodash';
+
 import { DATETIME_FORMATS } from '@/constants';
 
 import StorageSettingBlock from './partials/storage-setting-block.vue';
@@ -51,6 +68,14 @@ export default {
       return 'junit.delete_after';
     },
 
+    alarmArchiveAfterFieldName() {
+      return 'alarm.archive_after';
+    },
+
+    alarmDeleteAfterFieldName() {
+      return 'alarm.delete_after';
+    },
+
     remediationAccumulateAfterFieldName() {
       return 'remediation.accumulate_after';
     },
@@ -70,12 +95,42 @@ export default {
         launchedAt: this.$options.filters.date(this.history.remediation, DATETIME_FORMATS.long, true),
       });
     },
+
+    alarmSubTitle() {
+      const { time, deleted, archived } = this.history.alarm || {};
+
+      const result = [
+        this.$t('storageSetting.history.alarm.launchedAt', {
+          launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long, true),
+        }),
+      ];
+
+      if (isNumber(deleted)) {
+        result.push(this.$t('storageSetting.history.alarm.deletedCount', {
+          count: deleted,
+        }));
+      }
+
+      if (isNumber(archived)) {
+        result.push(this.$t('storageSetting.history.alarm.archivedCount', {
+          count: archived,
+        }));
+      }
+
+      return result.join(' ');
+    },
   },
   watch: {
     'form.remediation': function remediationWatcher() {
       this.$validator.validateAll([
         this.remediationAccumulateAfterFieldName,
         this.remediationDeleteAfterFieldName,
+      ]);
+    },
+    'form.alarm': function alarmWatcher() {
+      this.$validator.validateAll([
+        this.alarmArchiveAfterFieldName,
+        this.alarmDeleteAfterFieldName,
       ]);
     },
   },
