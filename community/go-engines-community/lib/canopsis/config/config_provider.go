@@ -467,7 +467,7 @@ type BaseHealthCheckConfigProvider struct {
 
 func NewBaseHealthCheckConfigProvider(cfg HealthCheckConf, logger zerolog.Logger) *BaseHealthCheckConfigProvider {
 	return &BaseHealthCheckConfigProvider{
-		conf:   HealthCheckConf{EnginePairs: parseEnginePairs(cfg.EnginePairs, defaultConfig, logger)},
+		conf:   HealthCheckConf{EngineOrder: parseEngineOrder(cfg.EngineOrder, defaultConfig, logger)},
 		logger: logger,
 	}
 }
@@ -476,7 +476,7 @@ func (p *BaseHealthCheckConfigProvider) Update(cfg HealthCheckConf) error {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
-	p.conf.EnginePairs = parseEnginePairs(cfg.EnginePairs, p.conf.EnginePairs, p.logger)
+	p.conf.EngineOrder = parseEngineOrder(cfg.EngineOrder, p.conf.EngineOrder, p.logger)
 
 	return nil
 }
@@ -488,7 +488,7 @@ func (p *BaseHealthCheckConfigProvider) Get() HealthCheckConf {
 	return p.conf
 }
 
-func parseEnginePairs(value []EnginePair, oldValue []EnginePair, logger zerolog.Logger) []EnginePair {
+func parseEngineOrder(value []EngineOrder, oldValue []EngineOrder, logger zerolog.Logger) []EngineOrder {
 	var possibleEngines = []string{
 		canopsis.FIFOEngineName,
 		canopsis.CheEngineName,

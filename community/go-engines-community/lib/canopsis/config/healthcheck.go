@@ -2,7 +2,7 @@ package config
 
 import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 
-var defaultConfig = []EnginePair{
+var defaultConfig = []EngineOrder{
 	{
 		From: canopsis.FIFOEngineName,
 		To: canopsis.CheEngineName,
@@ -42,10 +42,10 @@ var defaultConfig = []EnginePair{
 }
 
 type HealthCheckConf struct {
-	EnginePairs []EnginePair `toml:"engine_pairs" bson:"engine_pairs"`
+	EngineOrder []EngineOrder `toml:"engine_order" bson:"engine_order"`
 }
 
-type EnginePair struct {
+type EngineOrder struct {
 	From string `toml:"from" bson:"from"`
 	To   string `toml:"to" bson:"to"`
 }
