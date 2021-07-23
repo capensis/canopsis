@@ -59,7 +59,6 @@ export default {
 
       const params = {
         limit: 1,
-        with_instructions: true,
         correlation: !!alarm.consequences || !!alarm.causes,
       };
 
