@@ -12,6 +12,7 @@ const (
 	ActionWebhookRPCClientQueueName = "Engine_action_webhook_rpc_client"
 	ActionConsumerName              = "action"
 	ActionRPCConsumerName           = "action_rpc"
+	AxeEngineName                   = "engine-axe"
 	AxeExchangeName                 = "engine-axe"
 	AxeQueueName                    = "Engine_axe"
 	AxeServiceRPCClientQueueName    = "Engine_axe_service_rpc_client"
@@ -51,7 +52,7 @@ const (
 	FIFOAckQueueName                = "FIFO_ack"
 	FIFOConsumerName                = "fifo"
 	FIFOAckConsumerName             = "fifo_ack"
-	CorrelationEngineName           = "\"engine-correlation\""
+	CorrelationEngineName           = "engine-correlation"
 	CorrelationQueueName            = "Engine_correlation"
 	CorrelationConsumerName         = "correlation"
 	PeriodicalWaitTime              = time.Minute
@@ -63,4 +64,6 @@ const (
 	RemediationRPCConsumerName       = "remediation_rpc"
 	RemediationRPCQueueServerName    = "Engine_remediation_rpc_server"
 	RemediationRPCQueueServerJobName = "Engine_remediation_rpc_server_job"
+
+	WebhookEngineName                = "engine-webhook"
 )

@@ -433,3 +433,31 @@ statuses = { SUCCESS = "succeeded", FAIL = "failed", ERROR = "failed", FIXED = "
 [Remediation.external_api.jenkins.output_endpoint]
 url_tpl = "{{ .host }}/job/{{ .jobID }}/{{ .executionID }}/consoleText"
 method = "GET"
+
+[[HealthCheck.engine_pairs]]
+from = "engine-fifo"
+to = "engine-che"
+[[HealthCheck.engine_pairs]]
+from = "engine-che"
+to = "engine-pbehavior"
+[[HealthCheck.engine_pairs]]
+from = "engine-pbehavior"
+to = "engine-axe"
+[[HealthCheck.engine_pairs]]
+from = "engine-axe"
+to = "engine-correlation"
+[[HealthCheck.engine_pairs]]
+from = "engine-axe"
+to = "engine-remediation"
+[[HealthCheck.engine_pairs]]
+from = "engine-correlation"
+to = "engine-service"
+[[HealthCheck.engine_pairs]]
+from = "engine-service"
+to = "engine-dynamic-infos"
+[[HealthCheck.engine_pairs]]
+from = "engine-dynamic-infos"
+to = "engine-action"
+[[HealthCheck.engine_pairs]]
+from = "engine-action"
+to = "engine-webhook"
