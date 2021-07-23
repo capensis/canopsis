@@ -1170,6 +1170,9 @@ definitions:
         items:
           $ref: '#/definitions/eventfilter.Action'
         type: array
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+        type: object
       created:
         type: integer
       description:
@@ -1196,6 +1199,17 @@ definitions:
     - description
     - enabled
     - type
+    type: object
+  eventfilter.RuleConfig:
+    properties:
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      resource:
+        type: string
     type: object
   export.Field:
     properties:
