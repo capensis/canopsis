@@ -7144,6 +7144,9 @@ var doc = `{
                 "is_auto_instruction_running": {
                     "type": "boolean"
                 },
+                "is_manual_instruction_waiting_result": {
+                    "type": "boolean"
+                },
                 "links": {
                     "type": "object",
                     "additionalProperties": true

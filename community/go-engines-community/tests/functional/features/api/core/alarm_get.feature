@@ -1085,9 +1085,7 @@ Feature: Get alarms
                 "name": "test-instruction-to-assign-name",
                 "execution": null
             }
-          ],
-          "is_auto_instruction_running": false,
-          "is_all_auto_instructions_completed": false
+          ]
         }
       ],
       "meta": {
