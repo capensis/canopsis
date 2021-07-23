@@ -9979,6 +9979,10 @@ var doc = `{
                         "$ref": "#/definitions/eventfilter.Action"
                     }
                 },
+                "config": {
+                    "type": "object",
+                    "$ref": "#/definitions/eventfilter.RuleConfig"
+                },
                 "created": {
                     "type": "integer"
                 },
@@ -10010,6 +10014,23 @@ var doc = `{
                 },
                 "updated": {
                     "type": "integer"
+                }
+            }
+        },
+        "eventfilter.RuleConfig": {
+            "type": "object",
+            "properties": {
+                "component": {
+                    "type": "string"
+                },
+                "connector": {
+                    "type": "string"
+                },
+                "connector_name": {
+                    "type": "string"
+                },
+                "resource": {
+                    "type": "string"
                 }
             }
         },
