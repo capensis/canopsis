@@ -1,7 +1,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import { get } from 'lodash';
 
-import { EXPORT_STATUSES, REMEDIATION_INSTRUCTION_FILTER_ALL } from '@/constants';
+import { EXPORT_STATUSES } from '@/constants';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
@@ -59,7 +59,6 @@ export default {
 
       const params = {
         limit: 1,
-        with_instructions: REMEDIATION_INSTRUCTION_FILTER_ALL,
         correlation: !!alarm.consequences || !!alarm.causes,
       };
 
