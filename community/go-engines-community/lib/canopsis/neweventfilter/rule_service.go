@@ -23,7 +23,7 @@ func (s *ruleService) LoadRules(ctx context.Context) error {
 		return err
 	}
 
-	s.logger.Info().Int("number", len(s.rules)).Msg("Successfully loaded meta-alarm rules")
+	s.logger.Info().Int("number", len(s.rules)).Msg("Successfully loaded eventfilter rules")
 
 	return nil
 }
