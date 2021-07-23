@@ -2,16 +2,22 @@
   span.c-horizontal-time-line-card
     v-tooltip(:disabled="!step.m", top)
       v-layout(slot="activator", align-center, column)
-        c-alarm-chip(v-if="isState", :value="step.val")
+        c-alarm-chip(v-if="isStepTypeState", :value="step.val")
         v-icon(v-else, :style="{ color: style.icon }") {{ style.icon }}
         span.c-horizontal-time-line-card__time {{ step.t | date('time') }}
-      span(v-html="step.m")
+      div.pre-line
+        div
+          strong {{ stepTitle }}
+        div(v-html="step.m")
 </template>
 
 <script>
 import { formatStep } from '@/helpers/formatting';
 
+import { widgetExpandPanelAlarmTimelineCard } from '@/mixins/widget/expand-panel/alarm/timeline-card';
+
 export default {
+  mixins: [widgetExpandPanelAlarmTimelineCard],
   props: {
     step: {
       type: Object,
@@ -19,10 +25,6 @@ export default {
     },
   },
   computed: {
-    isState() {
-      return this.step._t.startsWith('state');
-    },
-
     style() {
       return formatStep(this.step);
     },
