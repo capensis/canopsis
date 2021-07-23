@@ -344,6 +344,17 @@ func (ch *baseChannel) QueuePurge(name string, noWait bool) (int, error) {
 	return res, err
 }
 
+func (ch *baseChannel) QueueInspect(name string) (amqp.Queue, error) {
+	var res amqp.Queue
+	err := ch.retry(func() error {
+		var err error
+		res, err = ch.amqpCh.QueueInspect(name)
+		return err
+	})
+
+	return res, err
+}
+
 // IsClosed returns true if the channel is marked as closed.
 func (ch *baseChannel) IsClosed() bool {
 	ch.closedM.Lock()
