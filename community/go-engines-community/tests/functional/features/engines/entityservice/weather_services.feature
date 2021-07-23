@@ -208,10 +208,11 @@ Feature: update service weather on event
           "connector_name": "",
           "component": "",
           "resource": "",
-          "state": {"val": 0},
-          "status": {"val": 0},
+          "state": {"val": 0, "t": null},
+          "status": {"val": 0, "t": null},
           "ack": null,
           "snooze": null,
+          "last_update_date": null,
           "infos": {},
           "category": {
             "_id": "test-category-service-weather"
