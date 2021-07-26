@@ -114,10 +114,17 @@ export default {
     },
 
     hasAlarmInstruction() {
-      const { assigned_instructions: assignedInstructions = [] } = this.alarm;
       const { children_instructions: childrenInstructions = false } = this.parentAlarm || {};
+      const {
+        assigned_instructions: assignedInstructions = [],
+        is_auto_instruction_running: isAutoInstructionRunning = false,
+        is_all_auto_instructions_completed: isAutoInstructionCompleted = false,
+      } = this.alarm;
 
-      return assignedInstructions.length || childrenInstructions;
+      return assignedInstructions.length
+          || isAutoInstructionRunning
+          || isAutoInstructionCompleted
+          || childrenInstructions;
     },
 
     isResolvedAlarm() {

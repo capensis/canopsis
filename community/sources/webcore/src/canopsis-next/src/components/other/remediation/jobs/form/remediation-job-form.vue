@@ -21,13 +21,24 @@
         name="job_id"
       )
     v-layout(row)
-      c-json-field(
-        v-field="form.payload",
-        :label="$t('common.payload')",
-        :help-text="$t('modals.createRemediationJob.payloadHelp')",
-        name="payload",
-        variables
-      )
+      v-btn.ml-0(
+        v-if="!form.payload",
+        color="primary",
+        outline,
+        @click="addPayload"
+      ) {{ $t('modals.createRemediationJob.addPayload') }}
+      template(v-else)
+        c-json-field(
+          v-field="form.payload",
+          :label="$t('common.payload')",
+          :help-text="$t('modals.createRemediationJob.payloadHelp')",
+          name="payload",
+          variables
+        )
+        v-tooltip(bottom)
+          v-btn(slot="activator", icon, @click="removePayload")
+            v-icon(color="error") delete
+          span {{ $t('modals.createRemediationJob.deletePayload') }}
     v-layout(row)
       c-text-pairs-field(
         v-field="form.query",
@@ -39,6 +50,8 @@
 </template>
 
 <script>
+import { formMixin } from '@/mixins/form';
+
 import RemediationJobConfigurationField from './fields/remediation-job-configuration-field.vue';
 
 export default {
@@ -46,6 +59,7 @@ export default {
   components: {
     RemediationJobConfigurationField,
   },
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -54,6 +68,17 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+  },
+  methods: {
+    addPayload() {
+      this.updateField('payload', '{}');
+    },
+
+    removePayload() {
+      this.updateField('payload', '');
+
+      this.$validator.reset({ name: 'payload' });
     },
   },
 };

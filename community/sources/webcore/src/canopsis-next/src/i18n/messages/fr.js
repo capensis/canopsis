@@ -1410,6 +1410,8 @@ export default {
       errors: {
         invalidJSON: 'JSON non valide',
       },
+      addPayload: 'Ajouter une charge utile',
+      deletePayload: 'Supprimer la charge utile',
       payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
         '<i>Quelques exemples:</i>' +
         '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',

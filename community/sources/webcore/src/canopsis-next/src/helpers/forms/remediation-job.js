@@ -1,3 +1,5 @@
+import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
+
 /**
  * @typedef {Object} RemediationJob
  * @property {Object|string} config
@@ -5,9 +7,11 @@
  * @property {string} job_id
  * @property {string} name
  * @property {string} payload
+ * @property {Object} query
  */
 /**
  * @typedef {RemediationJob} RemediationJobForm
+ * @property {TextPairObject[]} query
  */
 
 /**
@@ -20,7 +24,8 @@ export const remediationJobToForm = (remediationJob = {}) => ({
   config: remediationJob.config || '',
   job_id: remediationJob.job_id || '',
   name: remediationJob.name || '',
-  payload: remediationJob.payload || '{}',
+  payload: remediationJob.payload || '',
+  query: remediationJob.query ? objectToTextPairs(remediationJob.query) : [],
 });
 
 /**
@@ -31,6 +36,7 @@ export const remediationJobToForm = (remediationJob = {}) => ({
  */
 export const formToRemediationJob = form => ({
   ...form,
+
   config: form.config._id,
-  payload: form.payload,
+  query: textPairsToObject(form.query),
 });

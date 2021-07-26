@@ -43,6 +43,9 @@
         "models_exploitation_scenario": {
           "checksum": 15
         },
+        "models_notification_instructionStats": {
+          "checksum": 15
+        },
         "tabs_showeditionmenu" : {
             "checksum": 1
         },

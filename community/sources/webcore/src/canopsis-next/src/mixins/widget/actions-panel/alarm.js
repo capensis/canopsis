@@ -222,17 +222,6 @@ export default {
       });
     },
 
-    showRateInstructionModal(instruction) {
-      this.$modals.show({
-        name: MODALS.rate,
-        config: {
-          title: this.$t('modals.rateInstruction.title', { name: instruction.name }),
-          text: this.$t('modals.rateInstruction.text'),
-          action: data => this.rateRemediationInstructionExecution({ id: instruction._id, data }),
-        },
-      });
-    },
-
     actionsAccessFilterHandler({ type }) {
       const permission = BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[type];
 

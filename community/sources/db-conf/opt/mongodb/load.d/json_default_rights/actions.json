@@ -497,6 +497,14 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_notification_instructionStats",
+        "loader_id": "models_notification_instructionStats",
+        "crecord_name": "models_notification_instructionStats",
+        "crecord_type": "action",
+        "desc": "Notifications: Instructions stats",
+        "type": "CRUD"
+    },
+    {
         "_id": "listalarm_ack",
         "loader_id": "listalarm_ack",
         "crecord_name": "listalarm_ack",
