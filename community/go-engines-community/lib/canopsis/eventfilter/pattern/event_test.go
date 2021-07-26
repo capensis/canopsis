@@ -157,6 +157,9 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 						"has_every": bson.A{"test1", "test2"},
 						"has_not":   bson.A{"test3"},
 					},
+					"extra_info_2": bson.M{
+						"is_empty": false,
+					},
 				},
 			},
 			Pattern: pattern.EventPattern{
@@ -216,6 +219,14 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 							HasNot: types.OptionalStringArray{
 								Set:   true,
 								Value: []string{"test3"},
+							},
+						},
+					},
+					"extra_info_2": {
+						StringArrayConditions: pattern.StringArrayConditions{
+							IsEmpty: types.OptionalBool{
+								Set:   true,
+								Value: false,
 							},
 						},
 					},
@@ -418,6 +429,9 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 							"has_not":   bson.A{"test3"},
 						},
 						"extra_info_2": "test_info",
+						"extra_info_3": bson.M{
+							"is_empty": true,
+						},
 					},
 				},
 			},
@@ -552,6 +566,14 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 									Equal: types.OptionalString{
 										Set:   true,
 										Value: "test_info",
+									},
+								},
+							},
+							"extra_info_3": {
+								StringArrayConditions: pattern.StringArrayConditions{
+									IsEmpty: types.OptionalBool{
+										Set:   true,
+										Value: true,
 									},
 								},
 							},
