@@ -35,6 +35,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/playlist"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionstats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
@@ -70,7 +71,6 @@ const (
 	authObjViewGroup        = "api_viewgroup"
 	authObjPlaylist         = "api_playlist"
 	authPermAlarmRead       = "api_alarm_read"
-	authEngine              = "api_engine"
 	authObjContextGraph     = "api_contextgraph"
 	authAcl                 = "api_acl"
 	authObjStateSettings    = "api_state_settings"
@@ -606,7 +606,7 @@ func RegisterRoutes(
 		}
 		protected.GET(
 			"/engine-runinfo",
-			middleware.Authorize(authEngine, permCan, enforcer),
+			middleware.Authorize(apisecurity.PermHealthcheck, permCan, enforcer),
 			engineinfo.GetRunInfo(ctx, runInfoManager),
 		)
 
