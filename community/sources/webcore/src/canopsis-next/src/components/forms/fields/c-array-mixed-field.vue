@@ -4,7 +4,7 @@
       v-flex
         c-mixed-field(v-field="values[index]", :disabled="disabled", :types="types")
       c-action-btn(v-if="!disabled", type="delete", @click="removeItemFromArray(index)")
-    v-btn.mx-0(color="primary", :disabled="disabled", outline, @click="addItem") {{ $t('common.add') }}
+    v-btn.mx-0(:disabled="disabled", color="primary", outline, @click="addItem") {{ $t('common.add') }}
 </template>
 
 <script>
