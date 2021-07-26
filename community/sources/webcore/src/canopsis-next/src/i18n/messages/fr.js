@@ -221,6 +221,7 @@ export default {
     number: 'Nombre',
     boolean: 'Booléen',
     null: 'Nul',
+    array: 'Array',
   },
   user: {
     role: 'Rôle',
@@ -2159,6 +2160,7 @@ export default {
       number: '@:variableTypes.number',
       boolean: '@:variableTypes.boolean',
       null: '@:variableTypes.null',
+      array: '@:variableTypes.array',
     },
   },
 
