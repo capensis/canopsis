@@ -29,14 +29,14 @@ type ServiceChanges struct {
 }
 
 type store struct {
-	db           mongo.DbClient
-	dbCollection mongo.DbCollection
+	dbCollection      mongo.DbCollection
+	alarmDbCollection mongo.DbCollection
 }
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		db:           db,
-		dbCollection: db.Collection(mongo.EntityMongoCollection),
+		dbCollection:      db.Collection(mongo.EntityMongoCollection),
+		alarmDbCollection: db.Collection(mongo.AlarmMongoCollection),
 	}
 }
 
@@ -304,18 +304,20 @@ func (s *store) Delete(ctx context.Context, id string) (bool, *types.Alarm, erro
 		return false, nil, err
 	}
 
-	collection := s.db.Collection(mongo.AlarmMongoCollection)
-	res := collection.FindOneAndDelete(ctx, bson.M{"d": id})
-	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return true, nil, nil
+	// Delete open alarm.
+	var alarm *types.Alarm
+	res := s.alarmDbCollection.FindOneAndDelete(ctx, bson.M{"d": id, "v.resolved": nil})
+	if err := res.Err(); err == nil {
+		alarm = &types.Alarm{}
+		err := res.Decode(alarm)
+		if err != nil {
+			return false, nil, err
 		}
-
+	} else if err != mongodriver.ErrNoDocuments {
 		return false, nil, err
 	}
-
-	alarm := &types.Alarm{}
-	err = res.Decode(alarm)
+	// Delete resolved alarms.
+	_, err = s.alarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
 	if err != nil {
 		return false, nil, err
 	}
