@@ -70,6 +70,8 @@ Feature: Get alarms
               "test-alarm-get-entity-meta-1/metaalarm"
             ],
             "resolved": 1597034023,
+            "duration": 3801,
+            "current_state_duration": 3801,
             "resource": "test-alarm-get-resource-4",
             "state": {
               "_t": "stateinc",
