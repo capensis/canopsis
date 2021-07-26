@@ -1,9 +1,10 @@
 package pattern_test
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -69,12 +70,14 @@ func TestStringArrayInterfacePatternToMongoDriverQuery(t *testing.T) {
 				"has_every":  []string{"test1"},
 				"has_one_of": []string{"test2"},
 				"has_not":    []string{"test3"},
+				"is_empty":   false,
 			},
 		}
 		mongoFilter := bson.M{
-			"$all": []string{"test1"},
-			"$in":  []string{"test2"},
-			"$nin": []string{"test3"},
+			"$all":    []string{"test1"},
+			"$in":     []string{"test2"},
+			"$nin":    []string{"test3"},
+			"$exists": true, "$ne": bson.A{},
 		}
 		bsonPattern, err := bson.Marshal(mapPattern)
 		So(err, ShouldBeNil)
@@ -572,6 +575,7 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 					"has_every":  bson.A{"test1"},
 					"has_one_of": bson.A{"test2"},
 					"has_not":    bson.A{"test3"},
+					"is_empty":   false,
 				},
 			},
 			Pattern: pattern.InterfacePattern{
@@ -587,6 +591,10 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 					HasNot: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test3"},
+					},
+					IsEmpty: types.OptionalBool{
+						Set:   true,
+						Value: false,
 					},
 				},
 			},
