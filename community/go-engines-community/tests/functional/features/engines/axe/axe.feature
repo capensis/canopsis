@@ -4,7 +4,7 @@ Feature: create and update alarm by main event stream
   Scenario: given check event should create alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-axe-1",
       "connector_name" : "test-connector-name-axe-1",
@@ -25,7 +25,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-1"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -100,7 +100,7 @@ Feature: create and update alarm by main event stream
   Scenario: given check event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-axe-2",
       "connector_name" : "test-connector-name-axe-2",
@@ -119,7 +119,7 @@ Feature: create and update alarm by main event stream
     When I save response createTimestamp={{ now.UTC.Unix }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-axe-2",
       "connector_name" : "test-connector-name-axe-2",
@@ -139,7 +139,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-2"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -221,7 +221,7 @@ Feature: create and update alarm by main event stream
   Scenario: given ack event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-3",
@@ -239,7 +239,7 @@ Feature: create and update alarm by main event stream
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "ack",
       "connector" : "test-connector-axe-3",
@@ -258,7 +258,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-3"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -313,7 +313,7 @@ Feature: create and update alarm by main event stream
   Scenario: given remove ack event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-4",
@@ -331,7 +331,7 @@ Feature: create and update alarm by main event stream
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "ack",
       "connector" : "test-connector-axe-4",
@@ -348,7 +348,7 @@ Feature: create and update alarm by main event stream
     When I save response ackEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "ackremove",
       "connector" : "test-connector-axe-4",
@@ -367,7 +367,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-4"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -423,7 +423,7 @@ Feature: create and update alarm by main event stream
   Scenario: given cancel event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-5",
@@ -440,7 +440,7 @@ Feature: create and update alarm by main event stream
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "cancel",
       "connector" : "test-connector-axe-5",
@@ -459,7 +459,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-5"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -525,7 +525,7 @@ Feature: create and update alarm by main event stream
   Scenario: given uncancel event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-6",
@@ -542,7 +542,7 @@ Feature: create and update alarm by main event stream
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "cancel",
       "connector" : "test-connector-axe-6",
@@ -559,7 +559,7 @@ Feature: create and update alarm by main event stream
     When I save response cancelEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "uncancel",
       "connector" : "test-connector-axe-6",
@@ -578,7 +578,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-6"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -652,7 +652,7 @@ Feature: create and update alarm by main event stream
   Scenario: given comment event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-7",
@@ -670,7 +670,7 @@ Feature: create and update alarm by main event stream
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "comment",
       "connector" : "test-connector-axe-7",
@@ -689,7 +689,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-7"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -744,7 +744,7 @@ Feature: create and update alarm by main event stream
   Scenario: given done event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-8",
@@ -762,7 +762,7 @@ Feature: create and update alarm by main event stream
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "done",
       "connector" : "test-connector-axe-8",
@@ -781,7 +781,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-8"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -836,7 +836,7 @@ Feature: create and update alarm by main event stream
   Scenario: given assoc ticket event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-9",
@@ -854,7 +854,7 @@ Feature: create and update alarm by main event stream
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "assocticket",
       "ticket": "testticket",
@@ -874,7 +874,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-9"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -929,7 +929,7 @@ Feature: create and update alarm by main event stream
   Scenario: given change state event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-10",
@@ -947,7 +947,7 @@ Feature: create and update alarm by main event stream
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "changestate",
       "state": 3,
@@ -967,7 +967,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-10"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1019,7 +1019,7 @@ Feature: create and update alarm by main event stream
   Scenario: given snooze event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-11",
@@ -1037,7 +1037,7 @@ Feature: create and update alarm by main event stream
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "snooze",
       "duration": 600,
@@ -1057,7 +1057,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-11"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1112,7 +1112,7 @@ Feature: create and update alarm by main event stream
   Scenario: given unsnooze event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-12",
@@ -1130,7 +1130,7 @@ Feature: create and update alarm by main event stream
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "snooze",
       "duration": 600,
@@ -1148,7 +1148,7 @@ Feature: create and update alarm by main event stream
     When I save response snoozeEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "unsnooze",
       "connector" : "test-connector-axe-12",
@@ -1166,7 +1166,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-12"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1215,7 +1215,7 @@ Feature: create and update alarm by main event stream
   Scenario: given resolve done event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-13",
@@ -1233,7 +1233,7 @@ Feature: create and update alarm by main event stream
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "done",
       "connector" : "test-connector-axe-13",
@@ -1250,7 +1250,7 @@ Feature: create and update alarm by main event stream
     When I save response doneEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "resolve_done",
       "connector" : "test-connector-axe-13",
@@ -1269,7 +1269,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-13"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1318,7 +1318,7 @@ Feature: create and update alarm by main event stream
   Scenario: given resolve cancel event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-14",
@@ -1335,7 +1335,7 @@ Feature: create and update alarm by main event stream
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "cancel",
       "connector" : "test-connector-axe-14",
@@ -1352,7 +1352,7 @@ Feature: create and update alarm by main event stream
     When I save response cancelEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "resolve_cancel",
       "connector" : "test-connector-axe-14",
@@ -1371,7 +1371,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-14"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1427,7 +1427,7 @@ Feature: create and update alarm by main event stream
   Scenario: given resolve close event should update alarm
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-15",
@@ -1445,7 +1445,7 @@ Feature: create and update alarm by main event stream
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "state" : 0,
@@ -1463,7 +1463,7 @@ Feature: create and update alarm by main event stream
     When I save response closeEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "resolve_close",
       "connector" : "test-connector-axe-15",
@@ -1482,7 +1482,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-15"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1538,7 +1538,7 @@ Feature: create and update alarm by main event stream
   Scenario: given not alarm event should do nothing
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-16",
@@ -1556,7 +1556,7 @@ Feature: create and update alarm by main event stream
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "test",
       "connector" : "test-connector-axe-16",
@@ -1574,7 +1574,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-16"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1615,7 +1615,7 @@ Feature: create and update alarm by main event stream
   Scenario: given ack resources event should update resource alarms
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-17",
@@ -1633,7 +1633,7 @@ Feature: create and update alarm by main event stream
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "check",
       "connector" : "test-connector-axe-17",
@@ -1649,7 +1649,7 @@ Feature: create and update alarm by main event stream
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type" : "ack",
       "connector" : "test-connector-axe-17",
@@ -1668,7 +1668,7 @@ Feature: create and update alarm by main event stream
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-17"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1705,6 +1705,213 @@ Feature: create and update alarm by main event stream
                 "a": "test-author-axe-17",
                 "m": "test-output-axe-17",
                 "t": {{ .ackEventTimestamp }},
+                "val": 0
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given change state event should not update alarm state anymore
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "event_type" : "check",
+      "connector" : "test-connector-axe-18",
+      "connector_name" : "test-connector-name-axe-18",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-18",
+      "resource" : "test-resource-axe-18",
+      "state" : 1,
+      "output" : "test-output-axe-18",
+      "long_output" : "test-long-output-axe-18",
+      "author" : "test-author-axe-18",
+      "timestamp": {{ (now.Add (parseDuration "-19s")).UTC.Unix }}
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "event_type" : "changestate",
+      "state": 2,
+      "connector" : "test-connector-axe-18",
+      "connector_name" : "test-connector-name-axe-18",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-18",
+      "resource" : "test-resource-axe-18",
+      "output" : "test-output-axe-18",
+      "long_output" : "test-long-output-axe-18",
+      "author" : "test-author-axe-18",
+      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "event_type" : "check",
+      "connector" : "test-connector-axe-18",
+      "connector_name" : "test-connector-name-axe-18",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-18",
+      "resource" : "test-resource-axe-18",
+      "state" : 3,
+      "output" : "test-output-axe-18",
+      "long_output" : "test-long-output-axe-18",
+      "author" : "test-author-axe-18"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-18"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-component-axe-18",
+            "connector": "test-connector-axe-18",
+            "connector_name": "test-connector-name-axe-18",
+            "resource": "test-resource-axe-18",
+            "state": {
+              "_t": "changestate",
+              "a": "test-author-axe-18",
+              "m": "test-output-axe-18",
+              "val": 2
+            },
+            "status": {
+              "val": 1
+            },
+            "steps": [
+              {
+                "_t": "stateinc",
+                "val": 1
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "changestate",
+                "a": "test-author-axe-18",
+                "m": "test-output-axe-18",
+                "val": 2
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given change state event should resolve alarm anyway
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "event_type" : "check",
+      "connector" : "test-connector-axe-19",
+      "connector_name" : "test-connector-name-axe-19",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-19",
+      "resource" : "test-resource-axe-19",
+      "state" : 1,
+      "output" : "test-output-axe-19",
+      "long_output" : "test-long-output-axe-19",
+      "author" : "test-author-axe-19",
+      "timestamp": {{ (now.Add (parseDuration "-19s")).UTC.Unix }}
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "event_type" : "changestate",
+      "state": 2,
+      "connector" : "test-connector-axe-19",
+      "connector_name" : "test-connector-name-axe-19",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-19",
+      "resource" : "test-resource-axe-19",
+      "output" : "test-output-axe-19",
+      "long_output" : "test-long-output-axe-19",
+      "author" : "test-author-axe-19",
+      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "event_type" : "check",
+      "connector" : "test-connector-axe-19",
+      "connector_name" : "test-connector-name-axe-19",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-19",
+      "resource" : "test-resource-axe-19",
+      "state" : 0,
+      "output" : "test-output-axe-19",
+      "long_output" : "test-long-output-axe-19",
+      "author" : "test-author-axe-19"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-19"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-component-axe-19",
+            "connector": "test-connector-axe-19",
+            "connector_name": "test-connector-name-axe-19",
+            "resource": "test-resource-axe-19",
+            "state": {
+              "val": 0
+            },
+            "status": {
+              "val": 0
+            },
+            "steps": [
+              {
+                "_t": "stateinc",
+                "val": 1
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "changestate",
+                "a": "test-author-axe-19",
+                "m": "test-output-axe-19",
+                "val": 2
+              },
+              {
+                "_t": "statedec",
+                "val": 0
+              },
+              {
+                "_t": "statusdec",
                 "val": 0
               }
             ]
