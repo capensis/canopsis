@@ -40,6 +40,7 @@
             v-for="(rule, ruleKey) in group.rules",
             :key="ruleKey",
             :rule="rule",
+            :name="ruleKey",
             :possible-fields="possibleFields",
             @delete-rule="deleteRule(ruleKey)",
             @input="updateRule(ruleKey, $event)"
@@ -50,7 +51,7 @@
             v-for="(group, groupKey) in group.groups",
             :key="groupKey",
             :group="group",
-            :possibleFields="possibleFields",
+            :possible-fields="possibleFields",
             @input="updateGroup(groupKey, $event)",
             @delete-group="deleteGroup(groupKey)"
           )

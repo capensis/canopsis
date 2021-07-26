@@ -188,6 +188,13 @@ export default {
       year: 'année | années',
     },
   },
+  variableTypes: {
+    string: 'String',
+    number: 'Nombre',
+    boolean: 'Booléen',
+    null: 'Nul',
+    array: 'Array',
+  },
   user: {
     role: 'Rôle',
     defaultView: 'Vue par défaut',
@@ -2050,6 +2057,16 @@ export default {
     },
     errors: {
       actionRequired: 'Veuillez ajouter au moins une action',
+    },
+  },
+
+  mixedField: {
+    types: {
+      string: '@:variableTypes.string',
+      number: '@:variableTypes.number',
+      boolean: '@:variableTypes.boolean',
+      null: '@:variableTypes.null',
+      array: '@:variableTypes.array',
     },
   },
 

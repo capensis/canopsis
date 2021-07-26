@@ -13,69 +13,54 @@
         v-icon close
     v-layout.px-2(row, wrap, justify-space-around)
       v-flex.pa-1(data-test="fieldRule", xs12, md4)
-        v-combobox.my-2(
+        filter-rule-field.my-2(
           v-field="rule.field",
           :items="possibleFields",
-          solo-inverted,
-          hide-details,
-          dense,
-          flat,
-          :return-object="false",
-          item-text="name",
-          item-value="value",
-          :loading="filterHintsPending"
+          :selected-field="selectedField"
         )
-          template(slot="item", slot-scope="props")
-            v-list-tile-content {{ props.item.name }} ({{ props.item.value }})
       v-flex.pa-1(data-test="operatorRule", xs12, md3)
-        v-combobox.my-2(
-          v-field="rule.operator",
-          :items="operators",
-          solo-inverted,
-          hide-details,
-          dense,
-          flat
-        )
+        v-combobox.my-2(v-field="rule.operator", v-bind="operatorProps")
       v-flex.pa-1(data-test="inputRule", xs12, md5)
         template(v-if="isOperatorForArray")
-          v-layout(v-for="(input, index) in rule.input", :key="input.key", row, align-center)
-            c-mixed-field.my-2(
-              v-field="rule.input[index].value",
+          v-layout(v-for="(input, index) in rule.input", :key="input.key", row, align-top)
+            c-mixed-field.mt-2(
               v-show="isShownInputField",
-              solo-inverted,
-              hide-details,
-              flat
+              v-bind="getValueProps(input.value, input.key)",
+              v-validate="valueValidationRules",
+              @input="updateField(`input[${index}].value`, $event)"
             )
-            v-btn(icon, small, @click="removeInput(index)")
+            v-btn.mt-3(icon, small, @click="removeInput(index)")
               v-icon(color="error", small) close
-          v-layout.mt-2(row, justify-center)
+          v-layout(row, justify-center)
             v-btn(icon, @click="addInput")
               v-icon(color="primary") add
         template(v-else)
           c-mixed-field.my-2(
-            v-field="rule.input",
             v-show="isShownInputField",
-            solo-inverted,
-            hide-details,
-            flat
+            v-bind="getValueProps(rule.input)",
+            v-validate="valueValidationRules",
+            @input="updateField('input', $event)"
           )
 </template>
 
 <script>
-import { isBoolean, isNumber, get } from 'lodash';
+import { get } from 'lodash';
 
-import { FILTER_OPERATORS, FILTER_OPERATORS_FOR_ARRAY, FILTER_INPUT_TYPES } from '@/constants';
+import { FILTER_OPERATORS, FILTER_OPERATORS_FOR_ARRAY } from '@/constants';
 
 import uid from '@/helpers/uid';
 
 import formMixin from '@/mixins/form';
-import filterHintsMixin from '@/mixins/entities/filter-hint';
+
+import FilterRuleField from './filter-rule-field.vue';
 
 /**
  * Component representing a rule in MongoDB filter
  */
 export default {
-  mixins: [formMixin, filterHintsMixin],
+  inject: ['$validator'],
+  components: { FilterRuleField },
+  mixins: [formMixin],
   model: {
     prop: 'rule',
     event: 'input',
@@ -89,6 +74,10 @@ export default {
       type: Array,
       required: true,
     },
+    name: {
+      type: String,
+      default: 'rule',
+    },
     operators: {
       type: Array,
       default() {
@@ -96,46 +85,62 @@ export default {
       },
     },
   },
-  data() {
-    return {
-      types: [
-        { text: 'String', value: FILTER_INPUT_TYPES.string },
-        { text: 'Number', value: FILTER_INPUT_TYPES.number },
-        { text: 'Boolean', value: FILTER_INPUT_TYPES.boolean },
-      ],
-    };
-  },
   computed: {
-    isOperatorForArray() {
-      return [FILTER_OPERATORS.in, FILTER_OPERATORS.notIn].includes(this.rule.operator);
+    ruleValueName() {
+      return `${this.name}.value`;
     },
 
-    switchLabel() {
-      return String(this.rule.input);
-    },
-
-    inputType() {
-      if (isBoolean(this.rule.input)) {
-        return FILTER_INPUT_TYPES.boolean;
-      } else if (isNumber(this.rule.input)) {
-        return FILTER_INPUT_TYPES.number;
+    selectedField() {
+      if (!this.rule.field) {
+        return {};
       }
 
-      return FILTER_INPUT_TYPES.string;
+      return this.possibleFields.find(({ value, additionalFieldProps }) => {
+        if (additionalFieldProps) {
+          return this.rule.field.startsWith(`${value}.`) || value === this.rule.field;
+        }
+
+        return value === this.rule.field;
+      }) || {};
     },
 
-    isInputTypeText() {
-      return [FILTER_INPUT_TYPES.number, FILTER_INPUT_TYPES.string].includes(this.inputType);
-    },
+    operatorProps() {
+      const { operatorProps = {} } = this.selectedField;
 
-    getInputTypeIcon() {
-      const TYPES_ICONS_MAP = {
-        [FILTER_INPUT_TYPES.string]: 'title',
-        [FILTER_INPUT_TYPES.number]: 'exposure_plus_1',
-        [FILTER_INPUT_TYPES.boolean]: 'toggle_on',
+      return {
+        items: this.operators,
+        soloInverted: true,
+        hideDetails: true,
+        dense: true,
+        flat: true,
+
+        ...operatorProps,
       };
+    },
 
-      return type => TYPES_ICONS_MAP[type];
+    valueProps() {
+      const { valueProps = {} } = this.selectedField;
+
+      return {
+        soloInverted: true,
+        dense: true,
+        flat: true,
+        value: this.rule.input,
+        name: this.ruleValueName,
+        errorMessages: this.errors.collect(this.ruleValueName),
+
+        ...valueProps,
+      };
+    },
+
+    valueValidationRules() {
+      const { valueValidationRules = {} } = this.selectedField;
+
+      return valueValidationRules;
+    },
+
+    isOperatorForArray() {
+      return [FILTER_OPERATORS.in, FILTER_OPERATORS.notIn].includes(this.rule.operator);
     },
 
     isShownInputField() {
@@ -163,6 +168,23 @@ export default {
     },
   },
   methods: {
+    getValueProps(value, nameSuffix) {
+      const { valueProps = {} } = this.selectedField;
+      const name = nameSuffix ? `${this.ruleValueName}.${nameSuffix}` : this.ruleValueName;
+
+      return {
+        value,
+        name,
+
+        soloInverted: true,
+        dense: true,
+        flat: true,
+        errorMessages: this.errors.collect(name),
+
+        ...valueProps,
+      };
+    },
+
     getKeyedInput(value = '') {
       return { value, key: uid() };
     },
