@@ -146,7 +146,8 @@ func (a *Alarm) PartialUpdateUncancel(timestamp CpsTime, author, output, role,
 }
 
 // PartialUpdateChangeState add state change step to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateChangeState(state CpsNumber, timestamp CpsTime, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdateChangeState(state CpsNumber, timestamp CpsTime,
+	author, output, role, initiator string, cfg config.CanopsisConf) error {
 	if a.Value.State != nil && a.Value.State.Value == state {
 		return nil
 	}
@@ -160,8 +161,35 @@ func (a *Alarm) PartialUpdateChangeState(state CpsNumber, timestamp CpsTime, aut
 		return err
 	}
 
-	a.addUpdate("$set", bson.M{"v.state": a.Value.State})
-	a.addUpdate("$push", bson.M{"v.steps": a.Value.State})
+	currentStatus := a.CurrentStatus(cfg)
+	newStatus := a.ComputeStatus(cfg)
+
+	if newStatus == currentStatus && a.Value.Status != nil {
+		a.addUpdate("$set", bson.M{"v.state": a.Value.State})
+		a.addUpdate("$push", bson.M{"v.steps": a.Value.State})
+		return nil
+	}
+
+	newStepStatus := NewAlarmStep(AlarmStepStatusIncrease, timestamp, author, output, role, initiator)
+	newStepStatus.Value = newStatus
+	if a.Value.Status != nil && newStepStatus.Value < a.Value.Status.Value {
+		newStepStatus.Type = AlarmStepStatusDecrease
+	}
+	a.Value.Status = &newStepStatus
+	if err := a.Value.Steps.Add(newStepStatus); err != nil {
+		return err
+	}
+
+	a.Value.StateChangesSinceStatusUpdate = 0
+	a.Value.LastUpdateDate = timestamp
+
+	a.addUpdate("$set", bson.M{
+		"v.state":                             a.Value.State,
+		"v.status":                            a.Value.Status,
+		"v.state_changes_since_status_update": a.Value.StateChangesSinceStatusUpdate,
+		"v.last_update_date":                  a.Value.LastUpdateDate,
+	})
+	a.addUpdate("$push", bson.M{"v.steps": bson.M{"$each": bson.A{a.Value.State, a.Value.Status}}})
 
 	return nil
 }
