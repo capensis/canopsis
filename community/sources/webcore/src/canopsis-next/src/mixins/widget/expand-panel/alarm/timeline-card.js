@@ -1,9 +1,11 @@
 import { ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR, ENTITIES_STATES_STYLES, ENTITY_INFOS_TYPE } from '@/constants';
 
 export const widgetExpandPanelAlarmTimelineCard = {
-  step: {
-    type: Object,
-    required: true,
+  props: {
+    step: {
+      type: Object,
+      required: true,
+    },
   },
   computed: {
     stepType() {
