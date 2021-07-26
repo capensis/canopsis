@@ -1,16 +1,16 @@
 package pattern_test
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/utils"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"reflect"
 	"testing"
 
 	"git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"git.canopsis.net/canopsis/go-engines/lib/utils"
 	mgobson "github.com/globalsign/mgo/bson"
 	. "github.com/smartystreets/goconvey/convey"
 	mongobson "go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type eventPatternWrapper struct {
@@ -562,6 +562,9 @@ func TestPatternMatchMgoDriver(t *testing.T) {
 				"has_every": []string{"test1", "test2"},
 				"has_not":   []string{"test3"},
 			},
+			"extra_info_2": mgobson.M{
+				"is_empty": false,
+			},
 		}
 		bsonPattern, err := mgobson.Marshal(mapPattern)
 		So(err, ShouldBeNil)
@@ -575,6 +578,7 @@ func TestPatternMatchMgoDriver(t *testing.T) {
 		Convey("The pattern accepts events with the right value", func() {
 			extraInfos := make(map[string]interface{})
 			extraInfos["extra_info"] = []string{"test1", "test2", "test4"}
+			extraInfos["extra_info_2"] = []string{"test5"}
 			event1 := types.Event{
 				ExtraInfos: extraInfos,
 			}
@@ -584,6 +588,7 @@ func TestPatternMatchMgoDriver(t *testing.T) {
 		Convey("The pattern accepts events with the wrong value 1", func() {
 			extraInfos := make(map[string]interface{})
 			extraInfos["extra_info"] = []string{"test1", "test2", "test3", "test4"}
+			extraInfos["extra_info_2"] = []string{"test5"}
 			event1 := types.Event{
 				ExtraInfos: extraInfos,
 			}
@@ -593,6 +598,26 @@ func TestPatternMatchMgoDriver(t *testing.T) {
 		Convey("The pattern accepts events with the wrong value 2", func() {
 			extraInfos := make(map[string]interface{})
 			extraInfos["extra_info"] = []string{"test1", "test4"}
+			extraInfos["extra_info_2"] = []string{"test5"}
+			event1 := types.Event{
+				ExtraInfos: extraInfos,
+			}
+			So(p.Matches(event1, &m), ShouldBeFalse)
+		})
+
+		Convey("The pattern rejects events with empty extra_info_2", func() {
+			extraInfos := make(map[string]interface{})
+			extraInfos["extra_info"] = []string{"test1", "test2", "test4"}
+			extraInfos["extra_info_2"] = []string{}
+			event1 := types.Event{
+				ExtraInfos: extraInfos,
+			}
+			So(p.Matches(event1, &m), ShouldBeFalse)
+		})
+
+		Convey("The pattern rejects events without extra_info_2", func() {
+			extraInfos := make(map[string]interface{})
+			extraInfos["extra_info"] = []string{"test1", "test2", "test4"}
 			event1 := types.Event{
 				ExtraInfos: extraInfos,
 			}
@@ -1353,7 +1378,7 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 		TestName             string
 		ExpectedUnmarshalled mongobson.M
 		Pattern              pattern.EventPattern
-	} {
+	}{
 		{
 			TestName: "test for pattern",
 			ExpectedUnmarshalled: mongobson.M{
@@ -1374,6 +1399,9 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 					"extra_info": mongobson.M{
 						"has_every": mongobson.A{"test1", "test2"},
 						"has_not":   mongobson.A{"test3"},
+					},
+					"extra_info_2": mongobson.M{
+						"is_empty": false,
 					},
 				},
 			},
@@ -1434,6 +1462,14 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 							HasNot: utils.OptionalStringArray{
 								Set:   true,
 								Value: []string{"test3"},
+							},
+						},
+					},
+					"extra_info_2": {
+						StringArrayConditions: pattern.StringArrayConditions{
+							IsEmpty: utils.OptionalBool{
+								Set:   true,
+								Value: false,
 							},
 						},
 					},
@@ -1696,7 +1732,7 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 		TestName             string
 		ExpectedUnmarshalled mongobson.M
 		Pattern              pattern.EventPatternList
-	} {
+	}{
 		{
 			TestName: "test for pattern list",
 			ExpectedUnmarshalled: mongobson.M{
@@ -1739,11 +1775,14 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 							"has_not":   mongobson.A{"test3"},
 						},
 						"extra_info_2": "test_info",
+						"extra_info_3": mongobson.M{
+							"is_empty": true,
+						},
 					},
 				},
 			},
 			Pattern: pattern.EventPatternList{
-				Set: true,
+				Set:   true,
 				Valid: true,
 				Patterns: []pattern.EventPattern{
 					{
@@ -1873,6 +1912,14 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 									Equal: utils.OptionalString{
 										Set:   true,
 										Value: "test_info",
+									},
+								},
+							},
+							"extra_info_3": {
+								StringArrayConditions: pattern.StringArrayConditions{
+									IsEmpty: utils.OptionalBool{
+										Set:   true,
+										Value: true,
 									},
 								},
 							},
