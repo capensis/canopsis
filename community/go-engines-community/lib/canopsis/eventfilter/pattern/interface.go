@@ -3,6 +3,7 @@ package pattern
 import (
 	"errors"
 	"fmt"
+
 	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
 	mgobson "github.com/globalsign/mgo/bson"
 	"github.com/rs/zerolog/log"
@@ -51,7 +52,9 @@ func (p *InterfacePattern) AsMongoDriverQuery() mongobson.M {
 	if p.EqualNil {
 		return nil
 	} else {
-		if !p.IntegerConditions.Empty() && !p.StringConditions.Empty() {
+		if !p.IntegerConditions.Empty() && !p.StringConditions.Empty() ||
+			(!p.IntegerConditions.Empty() && !p.StringArrayConditions.Empty()) ||
+			(!p.StringArrayConditions.Empty() && !p.StringConditions.Empty()) {
 			// Returns a mongo query that always fails, as the conditions are conflicting
 			query["$in"] = nil
 		} else if !p.IntegerConditions.Empty() {
@@ -112,7 +115,7 @@ func (p *InterfacePattern) SetBSON(raw mgobson.Raw) error {
 		if len(p.IntegerConditions.UnexpectedFields) != 0 &&
 			len(p.StringConditions.UnexpectedFields) != 0 &&
 			len(p.StringArrayConditions.UnexpectedFields) != 0 {
-			return fmt.Errorf("interface patterns should only contain conditions on a string (regex_match) or conditions on an integer (>, <, >=, <=) or conditions on a string array(has_every, has_one_of, has_not); those three types of conditions cannot be mixed")
+			return fmt.Errorf("interface patterns should only contain conditions on a string (regex_match) or conditions on an integer (>, <, >=, <=) or conditions on a string array (has_every, has_one_of, has_not, is_empty); those 4 types of conditions cannot be mixed")
 		}
 		return nil
 
@@ -204,7 +207,9 @@ func (p *InterfacePattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte)
 		if len(p.IntegerConditions.UnexpectedFields) != 0 &&
 			len(p.StringConditions.UnexpectedFields) != 0 &&
 			len(p.StringArrayConditions.UnexpectedFields) != 0 {
-			return fmt.Errorf("interface patterns should only contain conditions on a string (regex_match) or conditions on an integer (>, <, >=, <=) or conditions on a string array(has_every, has_one_of, has_not); those three types of conditions cannot be mixed")
+			return UnexpectedFieldsError{
+				Err: fmt.Errorf("interface patterns should only contain conditions on a string (regex_match) or conditions on an integer (>, <, >=, <=) or conditions on a string array (has_every, has_one_of, has_not, is_empty); those 4 types of conditions cannot be mixed"),
+			}
 		}
 		return nil
 	default:
@@ -219,27 +224,27 @@ func (p *InterfacePattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte)
 // sub-expressions are written in the matches argument.
 func (p InterfacePattern) Matches(value interface{}, matches *RegexMatches) bool {
 	if value == nil {
-		return p.IntegerConditions.Empty() && p.StringConditions.Empty() && (p.StringArrayConditions.Empty() || p.StringArrayConditions.OnlyHasNotCondition())
-	} else if p.EqualNil {
-		return false
-	} else {
-		intValue, success := types.AsInteger(value)
-		if success {
-			return p.StringConditions.Empty() && p.StringArrayConditions.Empty() && p.IntegerConditions.Matches(types.CpsNumber(intValue))
-		}
-
-		stringValue, success := value.(string)
-		if success {
-			return p.IntegerConditions.Empty() && p.StringArrayConditions.Empty() && p.StringConditions.Matches(stringValue, matches)
-		}
-
-		arrayValue, err := types.InterfaceToStringSlice(value)
-		if err != nil {
-			log.Error().Err(err)
-		} else {
-			return p.StringConditions.Empty() && p.IntegerConditions.Empty() && p.StringArrayConditions.Matches(arrayValue)
-		}
-
+		return p.IntegerConditions.Empty() && p.StringConditions.Empty() &&
+			(p.StringArrayConditions.Empty() || p.StringArrayConditions.OnlyHasNotCondition() || p.StringArrayConditions.OnlyIsEmpty())
+	}
+	if p.EqualNil {
 		return false
 	}
+
+	intValue, success := types.AsInteger(value)
+	if success {
+		return p.StringConditions.Empty() && p.StringArrayConditions.Empty() && p.IntegerConditions.Matches(types.CpsNumber(intValue))
+	}
+
+	stringValue, success := value.(string)
+	if success {
+		return p.IntegerConditions.Empty() && p.StringArrayConditions.Empty() && p.StringConditions.Matches(stringValue, matches)
+	}
+
+	arrayValue, err := types.InterfaceToStringSlice(value)
+	if err != nil {
+		log.Error().Err(err)
+		return false
+	}
+	return p.StringConditions.Empty() && p.IntegerConditions.Empty() && p.StringArrayConditions.Matches(arrayValue)
 }

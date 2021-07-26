@@ -1,15 +1,15 @@
 package pattern_test
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/utils"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"reflect"
 	"testing"
 
 	"git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/go-engines/lib/utils"
 	mgobson "github.com/globalsign/mgo/bson"
 	. "github.com/smartystreets/goconvey/convey"
 	mongobson "go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type interfacePatternWrapper struct {
@@ -142,12 +142,14 @@ func TestStringArrayInterfacePatternToMongoDriverQuery(t *testing.T) {
 				"has_every":  []string{"test1"},
 				"has_one_of": []string{"test2"},
 				"has_not":    []string{"test3"},
+				"is_empty":   false,
 			},
 		}
 		mongoFilter := mongobson.M{
-			"$all": []string{"test1"},
-			"$in":  []string{"test2"},
-			"$nin": []string{"test3"},
+			"$all":    []string{"test1"},
+			"$in":     []string{"test2"},
+			"$nin":    []string{"test3"},
+			"$exists": true, "$ne": mongobson.A{},
 		}
 		bsonPattern, err := mongobson.Marshal(mapPattern)
 		So(err, ShouldBeNil)
@@ -1046,7 +1048,7 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 		TestName             string
 		ExpectedUnmarshalled mongobson.M
 		Pattern              pattern.InterfacePattern
-	} {
+	}{
 		{
 			TestName: "test for equal string",
 			ExpectedUnmarshalled: mongobson.M{
@@ -1082,6 +1084,7 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 					"has_every":  mongobson.A{"test1"},
 					"has_one_of": mongobson.A{"test2"},
 					"has_not":    mongobson.A{"test3"},
+					"is_empty":   false,
 				},
 			},
 			Pattern: pattern.InterfacePattern{
@@ -1097,6 +1100,10 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 					HasNot: utils.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test3"},
+					},
+					IsEmpty: utils.OptionalBool{
+						Set:   true,
+						Value: false,
 					},
 				},
 			},

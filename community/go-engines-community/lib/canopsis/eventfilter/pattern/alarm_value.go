@@ -31,6 +31,8 @@ type AlarmValueRegexMatches struct {
 	InitialLongOutput RegexMatches
 	LongOutput        RegexMatches
 	Resource          RegexMatches
+	Parents           RegexMatches
+	Children          RegexMatches
 }
 
 // NewAlarmValueRegexMatches creates an AlarmValueRegexMatches, with the Extra
@@ -72,6 +74,8 @@ type AlarmValueFields struct {
 	Resolved                      TimeRefPattern              `bson:"resolved,omitempty"`
 	StateChangesSinceStatusUpdate IntegerPattern              `bson:"state_changes_since_status_update,omitempty"`
 	TotalStateChanges             IntegerPattern              `bson:"total_state_changes,omitempty"`
+	Parents                       StringArrayPattern          `bson:"parents,omitempty"`
+	Children                      StringArrayPattern          `bson:"children,omitempty"`
 
 	// When unmarshalling a BSON document, the fields of this document that are
 	// not defined in this struct are added to UnexpectedFields.
@@ -101,7 +105,9 @@ func (p AlarmValueFields) Empty() bool {
 		p.Resource.Empty() &&
 		p.Resolved.Empty() &&
 		p.StateChangesSinceStatusUpdate.Empty() &&
-		p.TotalStateChanges.Empty()
+		p.TotalStateChanges.Empty() &&
+		p.Parents.Empty() &&
+		p.Children.Empty()
 }
 
 // AlarmValuePattern is a type representing a pattern that can be applied to an
@@ -135,7 +141,8 @@ func (p AlarmValuePattern) IsSet() bool {
 		p.AlarmValueFields.State.IsSet() ||
 		p.AlarmValueFields.StateChangesSinceStatusUpdate.IsSet() ||
 		p.AlarmValueFields.Status.IsSet() ||
-		p.AlarmValueFields.TotalStateChanges.IsSet()
+		p.AlarmValueFields.TotalStateChanges.IsSet() ||
+		!p.Parents.Empty() || !p.Children.Empty()
 }
 
 // AsMongoQuery returns a mongodb filter from the AlarmValuePattern
@@ -263,6 +270,16 @@ func (p AlarmValuePattern) AsMongoDriverQuery(prefix string, query mongobson.M) 
 	for key, value := range p.Extra {
 		query[fmt.Sprintf("%s.extra.%s", prefix, key)] = value.AsMongoDriverQuery()
 	}
+
+	q := p.Parents.AsMongoDriverQuery()
+	if q != nil && len(q) != 0 {
+		query[fmt.Sprintf("%s.parents", prefix)] = q
+	}
+
+	q = p.Children.AsMongoDriverQuery()
+	if q != nil && len(q) != 0 {
+		query[fmt.Sprintf("%s.children", prefix)] = q
+	}
 }
 
 // Matches returns true if an alarm value is matched by a pattern. If the
@@ -291,7 +308,9 @@ func (p AlarmValuePattern) Matches(value types.AlarmValue, matches *AlarmValueRe
 		p.Resource.Matches(value.Resource, &matches.Resource) &&
 		p.Resolved.Matches(value.Resolved) &&
 		p.StateChangesSinceStatusUpdate.Matches(value.StateChangesSinceStatusUpdate) &&
-		p.TotalStateChanges.Matches(value.TotalStateChanges)
+		p.TotalStateChanges.Matches(value.TotalStateChanges) &&
+		p.Parents.Matches(value.Parents) &&
+		p.Children.Matches(value.Children)
 	if !match {
 		return false
 	}
@@ -557,6 +576,24 @@ func (p AlarmValuePattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		resultBson[bsonFieldName] = p.TotalStateChanges
 	}
 
+	if !p.Parents.Empty() {
+		bsonFieldName, err := GetFieldBsonName(p, "Parents", "parents")
+		if err != nil {
+			return bsontype.Undefined, nil, err
+		}
+
+		resultBson[bsonFieldName] = p.Parents
+	}
+
+	if !p.Children.Empty() {
+		bsonFieldName, err := GetFieldBsonName(p, "Children", "children")
+		if err != nil {
+			return bsontype.Undefined, nil, err
+		}
+
+		resultBson[bsonFieldName] = p.Children
+	}
+
 	if len(resultBson) > 0 {
 		return mongobson.MarshalValue(resultBson)
 	}
@@ -578,7 +615,7 @@ func (p *AlarmValuePattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte
 			}
 
 			return UnexpectedFieldsError{
-				Err: fmt.Errorf("Unexpected pattern fields: %s", strings.Join(unexpectedFieldNames, ", ")),
+				Err: fmt.Errorf("unexpected pattern fields: %s", strings.Join(unexpectedFieldNames, ", ")),
 			}
 		}
 	default:
