@@ -23,7 +23,6 @@ require (
 	github.com/cucumber/godog v0.10.0
 	github.com/cucumber/messages-go/v10 v10.0.3
 	github.com/dlclark/regexp2 v1.4.0
-	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/go-playground/locales v0.13.0
