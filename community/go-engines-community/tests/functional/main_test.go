@@ -88,10 +88,19 @@ func TestMain(m *testing.M) {
 			Logger()
 	}
 
+	paths := make([]string, 0, len(flags.paths))
+	for _, p := range flags.paths {
+		matches, err := filepath.Glob(p)
+		if err == nil && matches != nil {
+			paths = append(paths, matches...)
+		} else {
+			paths = append(paths, p)
+		}
+	}
 	opts := godog.Options{
 		StopOnFailure: true,
 		Format:        "pretty",
-		Paths:         flags.paths,
+		Paths:         paths,
 	}
 	testSuiteInitializer := InitializeTestSuite(ctx, flags)
 	scenarioInitializer, err := InitializeScenario(flags, eventLogger)
