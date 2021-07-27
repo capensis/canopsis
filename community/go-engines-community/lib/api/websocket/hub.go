@@ -151,7 +151,7 @@ func (h *hub) closeConnections(room string) {
 	defer h.roomsMx.Unlock(room)
 
 	for _, conn := range h.rooms[room] {
-		err := conn.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""), time.Time{})
+		err := conn.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""), time.Now().Add(writeWait))
 		if err != nil {
 			h.logger.Err(err).
 				Str("room", room).
@@ -185,16 +185,7 @@ func (h *hub) pingConnections(room string) {
 	defer h.roomsMx.Unlock(room)
 
 	for _, conn := range h.rooms[room] {
-		err := conn.SetWriteDeadline(time.Now().Add(writeWait))
-		if err != nil {
-			h.logger.Err(err).
-				Str("room", room).
-				Str("addr", conn.RemoteAddr().String()).
-				Msg("cannot set write deadline")
-			continue
-		}
-
-		err = conn.WriteMessage(websocket.PingMessage, nil)
+		err := conn.WriteControl(websocket.PingMessage, nil, time.Now().Add(writeWait))
 		if err != nil {
 			h.logger.Err(err).
 				Str("room", room).
