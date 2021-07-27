@@ -82,7 +82,7 @@ Feature: entity_service idle_rules integration
       }
     }
     """
-    When I do GET /api/v4/entityservices/test-entityservice-idle-since-integration/dependencies
+    When I do GET /api/v4/entityservice-dependencies?_id=test-entityservice-idle-since-integration
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -250,7 +250,7 @@ Feature: entity_service idle_rules integration
       }
     }
     """
-    When I do GET /api/v4/entityservices/test-entityservice-idle-since-integration-4/dependencies
+    When I do GET /api/v4/entityservice-dependencies?_id=test-entityservice-idle-since-integration-4
     Then the response code should be 200
     Then the response body should contain:
     """
