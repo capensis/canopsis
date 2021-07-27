@@ -453,12 +453,12 @@ Feature: update connector alarm
               },
               {
                 "_t": "assocticket",
-                "a": "test-author-axe-idlerule-connector-4",
+                "a": "root",
                 "m": "test-ticket-axe-idlerule-connector-4"
               },
               {
                 "_t": "ack",
-                "a": "test-author-axe-idlerule-connector-4",
+                "a": "root",
                 "m": "test-output-axe-idlerule-connector-4"
               }
             ]
