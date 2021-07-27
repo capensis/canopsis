@@ -120,7 +120,26 @@ Feature: update a PBehavior
         "name":"test-pbehavior-to-update-name",
         "rrule": "",
         "tstart":1591172881,
-        "tstop":-62135596800,
+        "tstop":null,
+        "type": {
+          "_id": "test-default-pause-type",
+          "name": "Default Type Pause",
+          "description": "Default Type Pause",
+          "type": "pause",
+          "priority": 3,
+          "icon_name": "test-pause-icon"
+        }
+      }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-update
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+      {
+        "_id": "test-pbehavior-to-update",
+        "name":"test-pbehavior-to-update-name",
+        "tstart":1591172881,
+        "tstop":null,
         "type": {
           "_id": "test-default-pause-type",
           "name": "Default Type Pause",
