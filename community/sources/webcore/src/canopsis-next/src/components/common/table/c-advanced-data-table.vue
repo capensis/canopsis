@@ -40,6 +40,7 @@
       :expand="expand",
       :is-disabled-item="isDisabledItem",
       :hide-actions="hideActions || advancedPagination || noPagination",
+      :multi-sort="multiSort",
       @update:pagination="updatePagination"
     )
       template(slot="items", slot-scope="props")
@@ -169,6 +170,10 @@ export default {
     toolbarProps: {
       type: Object,
       required: false,
+    },
+    multiSort: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

@@ -12,6 +12,7 @@ export const localQueryMixin = {
         search: '',
         sortKey: '',
         sortDir: SORT_ORDERS.asc,
+        multiSortBy: [],
       },
     };
   },
@@ -34,6 +35,7 @@ export const localQueryMixin = {
           rowsPerPage: value.rowsPerPage || PAGINATION_LIMIT,
           sortKey: value.sortBy,
           sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
+          multiSortBy: value.multiSortBy,
         };
       },
       get() {
@@ -41,6 +43,7 @@ export const localQueryMixin = {
           ...pick(this.query, ['page', 'rowsPerPage', 'search']),
           sortBy: this.query.sortKey,
           descending: this.query.sortDir === SORT_ORDERS.desc,
+          multiSortBy: this.query.multiSortBy,
         };
       },
     },

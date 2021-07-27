@@ -1,6 +1,7 @@
 <script>
 import { VDataTable } from 'vuetify/es5/components/VDataTable';
-import { VCheckbox } from 'vuetify/es5/components/VCheckbox';
+import { VIcon } from 'vuetify/es5/components/VIcon';
+import { consoleWarn } from 'vuetify/es5/util/console';
 
 export default {
   extends: VDataTable,
@@ -8,6 +9,10 @@ export default {
     isDisabledItem: {
       type: Function,
       default: item => !item,
+    },
+    multiSort: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -20,48 +25,123 @@ export default {
     },
   },
   methods: {
-    genTHead() {
-      if (this.hideHeaders) {
-        return null;
+    /* eslint-disable no-param-reassign */
+    genHeaderSortingData(header, children, data, classes) {
+      if (!('value' in header)) {
+        consoleWarn('Headers must have a value property that corresponds to a value in the v-model array', this);
       }
 
-      let children = [];
+      data.attrs.tabIndex = 0;
+      data.on = {
+        click: () => {
+          this.expanded = {};
+          this.sort(header.value);
+        },
+        keydown: (e) => {
+          // check for space
+          if (e.keyCode === 32) {
+            e.preventDefault();
+            this.sort(header.value);
+          }
+        },
+      };
 
-      if (this.$scopedSlots.headers) {
-        const row = this.$scopedSlots.headers({
-          headers: this.headers,
-          indeterminate: this.indeterminate,
-          all: this.everyItem,
-        });
+      classes.push('sortable');
 
-        children = [this.hasTag(row, 'th') ? this.genTR(row) : row, this.genTProgress()];
+      const icon = this.$createElement(VIcon, {
+        props: {
+          small: true,
+        },
+      }, this.sortIcon);
+      if (!header.align || header.align === 'left') {
+        children.push(icon);
       } else {
-        const row = this.headers.map((o, i) => this.genHeader(o, this.headerKey ? o[this.headerKey] : i));
-        const checkbox = this.$createElement(VCheckbox, {
-          props: {
-            dark: this.dark,
-            light: this.light,
-            color: this.selectAll === true ? '' : this.selectAll,
-            hideDetails: true,
-            inputValue: this.everyItem,
-            indeterminate: this.indeterminate,
+        children.unshift(icon);
+      }
 
-            /**
-             * disabled added for case with all inactive items
-             */
-            disabled: !this.activeItems.length,
-          },
-          on: { change: this.toggle },
-        });
+      const pagination = this.computedPagination;
 
-        if (this.hasSelectAll) {
-          row.unshift(this.$createElement('th', [checkbox]));
+      const addDataAttributes = (sortBy, descending) => {
+        const beingSorted = sortBy === header.value;
+
+        if (beingSorted) {
+          classes.push('active');
+          if (descending) {
+            classes.push('desc');
+            data.attrs['aria-sort'] = 'descending';
+            data.attrs['aria-label'] += ': Sorted descending. Activate to remove sorting.'; // TODO: Localization
+          } else {
+            classes.push('asc');
+            data.attrs['aria-sort'] = 'ascending';
+            data.attrs['aria-label'] += ': Sorted ascending. Activate to sort descending.'; // TODO: Localization
+          }
+        } else {
+          data.attrs['aria-label'] += ': Not sorted. Activate to sort ascending.'; // TODO: Localization
+        }
+      };
+
+      if (this.multiSort) {
+        const { multiSortBy = [] } = pagination;
+        const sortItemIndex = multiSortBy.findIndex(item => item.sortBy === header.value);
+        const sortItem = multiSortBy[sortItemIndex];
+
+        if (sortItem) {
+          const sortPriority = this.$createElement('span', {
+            class: 'mx-1 caption',
+          }, `${sortItemIndex + 1}`);
+
+          children.push(sortPriority, children.pop());
+
+          addDataAttributes(sortItem.sortBy, sortItem.descending);
         }
 
-        children = [this.genTR(row), this.genTProgress()];
+        return;
       }
 
-      return this.$createElement('thead', [children]);
+      addDataAttributes(pagination.sortBy, pagination.descending);
+    },
+    /* eslint-enable no-param-reassign */
+
+    sort(index) {
+      if (this.multiSort) {
+        this.updateMultiSort(index);
+
+        return;
+      }
+
+      const { sortBy, descending } = this.computedPagination;
+
+      if (sortBy === null) {
+        this.updatePagination({ sortBy: index, descending: false });
+      } else if (sortBy === index && !descending) {
+        this.updatePagination({ descending: true });
+      } else if (sortBy !== index) {
+        this.updatePagination({ sortBy: index, descending: false });
+      } else if (!this.mustSort) {
+        this.updatePagination({ sortBy: null, descending: null });
+      } else {
+        this.updatePagination({ sortBy: index, descending: false });
+      }
+    },
+
+    updateMultiSort(index) {
+      const { multiSortBy = [] } = this.computedPagination;
+      let newMultiSortBy = [...multiSortBy];
+
+      const sortItemIndex = multiSortBy.findIndex(item => item.sortBy === index);
+      const sortItem = multiSortBy[sortItemIndex];
+
+      if (sortItem) {
+        if (!sortItem.descending) {
+          newMultiSortBy[sortItemIndex] = { ...sortItem, descending: true };
+        } else {
+          newMultiSortBy = newMultiSortBy.filter(item => item.sortBy !== index);
+        }
+      } else {
+        newMultiSortBy.push({ sortBy: index, descending: false });
+      }
+
+      this.updatePagination({ multiSortBy: newMultiSortBy });
     },
   },
 };
