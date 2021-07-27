@@ -251,9 +251,21 @@ func (s *baseService) applyAlarmRule(
 	event.SourceType = event.DetectSourceType()
 
 	switch rule.Operation.Type {
-	case types.ActionTypeAck, types.ActionTypeAckRemove, types.ActionTypeCancel:
+	case types.ActionTypeAck:
 		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
 			event.EventType = types.EventTypeAck
+			event.Output = params.Output
+			event.Author = params.Author
+		}
+	case types.ActionTypeAckRemove:
+		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
+			event.EventType = types.EventTypeAckremove
+			event.Output = params.Output
+			event.Author = params.Author
+		}
+	case types.ActionTypeCancel:
+		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
+			event.EventType = types.EventTypeCancel
 			event.Output = params.Output
 			event.Author = params.Author
 		}
