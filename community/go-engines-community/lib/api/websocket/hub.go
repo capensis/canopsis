@@ -3,6 +3,7 @@ package websocket
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
 
@@ -114,7 +115,8 @@ func (h *hub) Subscribe(w http.ResponseWriter, r *http.Request, room string) err
 				continue
 			}
 
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseNormalClosure) {
+			closeErr := &websocket.CloseError{}
+			if !errors.As(err, &closeErr) || closeErr.Code != websocket.CloseNormalClosure {
 				h.logger.
 					Err(err).
 					Str("room", room).
@@ -135,15 +137,28 @@ func (h *hub) Send(room string, msg interface{}) {
 	h.roomsMx.Lock(room)
 	defer h.roomsMx.Unlock(room)
 
+	conns := make([]*websocket.Conn, 0, len(h.rooms[room]))
+
 	for _, conn := range h.rooms[room] {
 		err := conn.WriteJSON(msg)
-		if err != nil {
+		if err == nil {
+			conns = append(conns, conn)
+		} else {
 			h.logger.Err(err).
 				Str("room", room).
 				Str("addr", conn.RemoteAddr().String()).
-				Msg("cannot write message to connection")
+				Msg("cannot write message to connection, connection will be closed")
+			err = conn.Close()
+			if err != nil {
+				h.logger.Err(err).
+					Str("room", room).
+					Str("addr", conn.RemoteAddr().String()).
+					Msg("connection close failed")
+			}
 		}
 	}
+
+	h.rooms[room] = conns
 }
 
 func (h *hub) closeConnections(room string) {
@@ -184,13 +199,25 @@ func (h *hub) pingConnections(room string) {
 	h.roomsMx.Lock(room)
 	defer h.roomsMx.Unlock(room)
 
+	conns := make([]*websocket.Conn, 0, len(h.rooms[room]))
 	for _, conn := range h.rooms[room] {
 		err := conn.WriteControl(websocket.PingMessage, nil, time.Now().Add(writeWait))
-		if err != nil {
+		if err == nil {
+			conns = append(conns, conn)
+		} else {
 			h.logger.Err(err).
 				Str("room", room).
 				Str("addr", conn.RemoteAddr().String()).
-				Msg("cannot ping connection")
+				Msg("cannot ping connection, connection will be closed")
+			err = conn.Close()
+			if err != nil {
+				h.logger.Err(err).
+					Str("room", room).
+					Str("addr", conn.RemoteAddr().String()).
+					Msg("connection close failed")
+			}
 		}
 	}
+
+	h.rooms[room] = conns
 }
