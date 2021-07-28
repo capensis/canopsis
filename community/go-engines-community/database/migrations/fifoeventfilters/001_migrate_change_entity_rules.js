@@ -40,6 +40,7 @@ db.eventfilter.find({
         config: config,
         external_data: doc.external_data,
         created: now,
+        updated: now,
         author: doc.author
     });
 });
