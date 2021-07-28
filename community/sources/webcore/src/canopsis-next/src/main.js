@@ -70,6 +70,7 @@ import CTextPairField from '@/components/forms/fields/text-pairs/c-text-pair-fie
 import CJsonField from '@/components/forms/fields/c-json-field.vue';
 import CRetryField from '@/components/forms/fields/c-retry-field.vue';
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
+import CArrayMixedField from '@/components/forms/fields/c-array-mixed-field.vue';
 import CColorPickerField from '@/components/forms/fields/c-color-picker-field.vue';
 
 import BullhornIcon from '@/components/icons/bullhorn.vue';
@@ -197,6 +198,7 @@ Vue.component('c-text-pairs-field', CTextPairsField);
 Vue.component('c-json-field', CJsonField);
 Vue.component('c-retry-field', CRetryField);
 Vue.component('c-mixed-field', CMixedField);
+Vue.component('c-array-mixed-field', CArrayMixedField);
 Vue.component('c-color-picker-field', CColorPickerField);
 Vue.component('c-json-field', CJsonField);
 

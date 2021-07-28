@@ -1,14 +1,13 @@
 <template lang="pug">
   div.mixed-field(:class="{ 'mixed-field__solo-inverted': soloInverted }")
     v-select.mixed-field__type-selector(
-      :items="availableTypes",
+      :items="preparedTypes",
       :value="inputType",
       :label="label",
       :disabled="disabled",
       :solo-inverted="soloInverted",
       :flat="flat",
       :error-messages="errorMessages",
-      data-test="mixedInputType",
       hide-details,
       dense,
       @input="updateType"
@@ -20,42 +19,15 @@
           v-icon.mixed-field__type-selector-icon(small) {{ getInputTypeIcon(item.value) }}
         v-list-tile-content
           v-list-tile-title {{ item.text }}
-    v-text-field.mixed-field__text(
-      v-if="isInputTypeText",
-      data-test="mixedInput",
-      :type="inputType === $constants.FILTER_INPUT_TYPES.number ? 'number' : 'text'",
-      :value="value",
-      :name="name",
-      :disabled="disabled",
-      :solo-inverted="soloInverted",
-      :hide-details="hideDetails",
-      :flat="flat",
-      :error-messages="errorMessages",
-      single-line,
-      dense,
-      @input="updateTextFieldValue"
-    )
-    v-switch.ma-0.ml-3.mixed-field__switch(
-      v-else-if="inputType === $constants.FILTER_INPUT_TYPES.boolean",
-      :inputValue="value",
-      :label="switchLabel",
-      :disabled="disabled",
-      color="primary",
-      data-test="mixedInputSwitch",
-      hide-details,
-      @change="updateModel"
-    )
-    v-text-field.mixed-field__text(
-      v-else,
-      :error-messages="errorMessages",
-      data-test="mixedInput",
-      value="null",
-      disabled
+    component(
+      :is="inputComponent.is",
+      v-bind="inputComponent.bind",
+      v-on="inputComponent.on"
     )
 </template>
 
 <script>
-import { isBoolean, isNumber, isNan, isNull } from 'lodash';
+import { isBoolean, isNumber, isNan, isArray, isUndefined, isEmpty, isNull, pick } from 'lodash';
 
 import { FILTER_INPUT_TYPES } from '@/constants';
 
@@ -75,7 +47,7 @@ export default {
   mixins: [formBaseMixin],
   props: {
     value: {
-      type: [String, Number, Boolean],
+      type: [String, Number, Boolean, Array],
       default: '',
     },
     name: {
@@ -106,17 +78,35 @@ export default {
       type: Array,
       default: () => [],
     },
-    availableTypes: {
+    items: {
+      type: Array,
+      default: () => [],
+    },
+    itemText: {
+      type: String,
+      default: 'text',
+    },
+    itemValue: {
+      type: String,
+      default: 'value',
+    },
+    types: {
       type: Array,
       default: () => [
-        { text: 'String', value: FILTER_INPUT_TYPES.string },
-        { text: 'Number', value: FILTER_INPUT_TYPES.number },
-        { text: 'Boolean', value: FILTER_INPUT_TYPES.boolean },
-        { text: 'Null', value: FILTER_INPUT_TYPES.null },
+        { value: FILTER_INPUT_TYPES.string },
+        { value: FILTER_INPUT_TYPES.number },
+        { value: FILTER_INPUT_TYPES.boolean },
+        { value: FILTER_INPUT_TYPES.null },
+        { value: FILTER_INPUT_TYPES.array },
       ],
     },
   },
   computed: {
+    preparedTypes() {
+      return this.types.map(type =>
+        (type.text ? type : ({ ...type, text: this.$t(`mixedField.types.${type.value}`) })));
+    },
+
     switchLabel() {
       return String(this.value);
     },
@@ -128,6 +118,8 @@ export default {
         return FILTER_INPUT_TYPES.number;
       } else if (isNull(this.value)) {
         return FILTER_INPUT_TYPES.null;
+      } else if (isArray(this.value)) {
+        return FILTER_INPUT_TYPES.array;
       }
 
       return FILTER_INPUT_TYPES.string;
@@ -135,6 +127,92 @@ export default {
 
     isInputTypeText() {
       return [FILTER_INPUT_TYPES.number, FILTER_INPUT_TYPES.string].includes(this.inputType);
+    },
+
+    inputComponent() {
+      if (this.isInputTypeText) {
+        const additionalProps = this.items.length
+          ? { ...pick(this, ['items', 'itemText', 'itemValue']), returnObject: false, forceSearching: true }
+          : {};
+
+        return {
+          is: this.items.length ? 'v-combobox' : 'v-text-field',
+          bind: {
+            ...pick(this, [
+              'value',
+              'name',
+              'disabled',
+              'soloInverted',
+              'hideDetails',
+              'flat',
+              'errorMessages',
+            ]),
+            ...additionalProps,
+
+            class: 'mixed-field__text',
+            type: this.inputType === FILTER_INPUT_TYPES.number ? 'number' : 'text',
+            singleLine: true,
+            dense: true,
+          },
+          on: {
+            input: this.updateTextFieldValue,
+            'update:searchInput': this.updateTextFieldValue,
+          },
+        };
+      } else if (this.inputType === FILTER_INPUT_TYPES.boolean) {
+        return {
+          is: 'v-switch',
+
+          bind: {
+            class: 'ma-0 ml-3 mixed-field__switch',
+            inputValue: this.value,
+            label: this.switchLabel,
+            disabled: this.disabled,
+            color: 'primary',
+            hideDetails: true,
+          },
+          on: {
+            change: this.updateModel,
+          },
+        };
+      } else if (this.inputType === FILTER_INPUT_TYPES.array) {
+        return {
+          is: 'c-array-mixed-field',
+
+          bind: {
+            class: 'ml-3',
+            values: this.value,
+            disabled: this.disabled,
+            types: this.types.filter(({ value }) => value !== FILTER_INPUT_TYPES.array),
+          },
+          on: {
+            change: this.updateModel,
+          },
+        };
+      }
+
+      return {
+        is: 'v-text-field',
+
+        bind: {
+          class: 'mixed-field__text',
+          errorMessages: this.errorMessages,
+          value: 'null',
+          disabled: true,
+        },
+      };
+    },
+  },
+  watch: {
+    types: {
+      immediate: true,
+      handler(types = []) {
+        if (!types.some(({ value }) => value === this.inputType)) {
+          const [type = {}] = types;
+
+          this.updateType(type.value, type.defaultValue);
+        }
+      },
     },
   },
   methods: {
@@ -144,30 +222,46 @@ export default {
         [FILTER_INPUT_TYPES.number]: 'exposure_plus_1',
         [FILTER_INPUT_TYPES.boolean]: 'toggle_on',
         [FILTER_INPUT_TYPES.null]: 'space_bar',
+        [FILTER_INPUT_TYPES.array]: 'view_array',
       }[type];
     },
 
-    updateType(value) {
-      switch (value) {
+    updateType(type, defaultValueForType) {
+      const preparedValue = isEmpty(this.value) && !isUndefined(defaultValueForType)
+        ? defaultValueForType
+        : this.value;
+
+      switch (type) {
         case FILTER_INPUT_TYPES.number:
-          this.updateModel(Number(this.value));
+          this.updateModel(Number(preparedValue));
           break;
         case FILTER_INPUT_TYPES.boolean:
-          this.updateModel(Boolean(this.value));
+          this.updateModel(Boolean(preparedValue));
           break;
         case FILTER_INPUT_TYPES.string:
-          this.updateModel((isNan(this.value) || isNull(this.value)) ? '' : String(this.value));
+          this.updateModel((isNan(preparedValue) || isNull(preparedValue)) ? '' : String(preparedValue));
           break;
         case FILTER_INPUT_TYPES.null:
           this.updateModel(null);
+          break;
+        case FILTER_INPUT_TYPES.array:
+          this.updateModel([preparedValue]);
           break;
       }
     },
 
     updateTextFieldValue(value) {
-      const isInputTypeNumber = this.inputType === FILTER_INPUT_TYPES.number;
+      let preparedValue = value;
 
-      this.updateModel(isInputTypeNumber ? Number(value) : value);
+      if (isNull(value) && this.inputType !== FILTER_INPUT_TYPES.null) {
+        preparedValue = '';
+      }
+
+      if (this.inputType === FILTER_INPUT_TYPES.number) {
+        preparedValue = Number(value);
+      }
+
+      this.updateModel(preparedValue);
     },
   },
 };
@@ -186,6 +280,8 @@ export default {
     }
 
     &__text {
+      margin-top: 0;
+
       & /deep/ input {
         padding-left: 5px;
       }

@@ -38,6 +38,14 @@ export function convertObjectToTreeview(parent, parentKey, parentPath = '', isPa
 }
 
 /**
+ * Check if rule is simple value
+ *
+ * @param {string} rule
+ * @returns {boolean}
+ */
+export const isSimpleRule = (rule = '') => isArray(rule) || !isObject(rule);
+
+/**
  * Check if rule is value (not node with children)
  *
  * @param {string} rule
@@ -45,7 +53,7 @@ export function convertObjectToTreeview(parent, parentKey, parentPath = '', isPa
  * @returns {number|boolean}
  */
 export function isValuePatternRule(rule = '', operators = []) {
-  if (!isObject(rule)) {
+  if (isSimpleRule(rule)) {
     return true;
   }
 
@@ -73,7 +81,7 @@ export function convertPatternToTreeview(source, operators = [], prevPath = []) 
 
     if (isValuePatternRule(value, operators)) {
       item.rule = { field, value };
-      item.isSimpleRule = !isObject(value);
+      item.isSimpleRule = isSimpleRule(value);
     } else {
       item.children = convertPatternToTreeview(value, operators, path);
     }
