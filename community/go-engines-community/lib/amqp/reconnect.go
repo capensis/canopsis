@@ -135,6 +135,14 @@ func (c *baseConnection) IsClosed() bool {
 	c.closedM.Lock()
 	defer c.closedM.Unlock()
 
+	if c.closed {
+		return c.closed
+	}
+
+	if c.amqpConn.IsClosed() {
+		c.closed = true
+	}
+
 	return c.closed
 }
 
