@@ -53,6 +53,8 @@
 <script>
 import { APP_HOST } from '@/config';
 
+import { removeTrailingSlashes } from '@/helpers/url';
+
 import { permissionsTechnicalPlaylistMixin } from '@/mixins/permissions/technical/playlist';
 
 import PlaylistListExpandItem from './playlists-list-expand-item.vue';
@@ -120,7 +122,7 @@ export default {
     getPlaylistRouteFullUrlById(id) {
       const { href } = this.$router.resolve(this.getPlaylistRouteById(id));
 
-      return `${APP_HOST}${href}`;
+      return removeTrailingSlashes(`${APP_HOST}${href}`);
     },
 
     onSuccessCopied() {
