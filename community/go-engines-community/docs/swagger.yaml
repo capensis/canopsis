@@ -50,6 +50,8 @@ definitions:
       causes:
         $ref: '#/definitions/alarm.Causes'
         type: object
+      children_instructions:
+        type: boolean
       consequences:
         $ref: '#/definitions/alarm.Children'
         type: object
@@ -70,6 +72,8 @@ definitions:
       is_all_auto_instructions_completed:
         type: boolean
       is_auto_instruction_running:
+        type: boolean
+      is_manual_instruction_waiting_result:
         type: boolean
       links:
         additionalProperties: true
@@ -481,6 +485,9 @@ definitions:
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
         type: object
+      remediation:
+        $ref: '#/definitions/appinfo.RemediationConf'
+        type: object
       stack:
         type: string
       timezone:
@@ -493,6 +500,13 @@ definitions:
       interval:
         type: integer
       unit:
+        type: string
+    type: object
+  appinfo.JobConfigType:
+    properties:
+      auth_type:
+        type: string
+      name:
         type: string
     type: object
   appinfo.LoginConfig:
@@ -536,6 +550,16 @@ definitions:
         type: object
       info:
         $ref: '#/definitions/appinfo.IntervalUnit'
+        type: object
+    type: object
+  appinfo.RemediationConf:
+    properties:
+      job_config_types:
+        items:
+          $ref: '#/definitions/appinfo.JobConfigType'
+        type: array
+      pause_manual_instruction_interval:
+        $ref: '#/definitions/types.DurationWithUnit'
         type: object
     type: object
   appinfo.UserInterfaceConf:
@@ -852,7 +876,7 @@ definitions:
     additionalProperties:
       $ref: '#/definitions/entity.Info'
     type: object
-  entity.ListRequest:
+  entity.ListRequestWithPagination:
     properties:
       active_columns[]:
         items:
@@ -862,12 +886,22 @@ definitions:
         type: string
       filter:
         type: string
+      limit:
+        type: integer
+      no_events:
+        type: boolean
+      page:
+        type: integer
+      paginate:
+        type: boolean
       search:
         type: string
       sort:
         type: string
       sort_by:
         type: string
+      with_flags:
+        type: boolean
     type: object
   entitybasic.EditRequest:
     properties:
@@ -2054,11 +2088,6 @@ definitions:
         type: boolean
       total_count:
         type: integer
-    type: object
-  pbehavior.EID:
-    properties:
-      id:
-        type: string
     type: object
   pbehavior.EditRequest:
     properties:
@@ -4231,6 +4260,18 @@ paths:
         name: filter
         type: string
       - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: no_events
+        type: boolean
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
         name: search
         type: string
       - in: query
@@ -4239,6 +4280,9 @@ paths:
       - in: query
         name: sort_by
         type: string
+      - in: query
+        name: with_flags
+        type: boolean
       produces:
       - application/json
       responses:
@@ -6258,10 +6302,10 @@ paths:
       summary: Update behavior by id
       tags:
       - pbehaviors
-  /pbehaviors/{id}/eids:
+  /pbehaviors/{id}/entities:
     get:
-      description: Get pbehavior eids list
-      operationId: pbehaviors-get-eids
+      description: Find entities by pbehavior id
+      operationId: pbehaviors-find-entities
       parameters:
       - description: pbehavior id
         in: path
@@ -6301,7 +6345,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/pbehavior.EID'
+                    $ref: '#/definitions/entity.Entity'
                   type: array
               type: object
         "400":
@@ -6315,7 +6359,7 @@ paths:
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
-      summary: Get pbehavior eids list
+      summary: Find entities by pbehavior id
       tags:
       - pbehaviors
   /pbehaviors/count:

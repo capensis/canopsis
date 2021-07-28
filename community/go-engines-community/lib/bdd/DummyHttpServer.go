@@ -26,14 +26,22 @@ func RunDummyHttpServer(ctx context.Context, addr string) error {
 			return
 		}
 
-		if response.Code != http.StatusOK {
+		if response.Code != http.StatusOK && response.Code != http.StatusNoContent {
 			http.Error(w, response.Body, response.Code)
 			return
 		}
 
-		_, err := fmt.Fprintf(w, response.Body)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		for k, v := range response.Headers {
+			w.Header().Set(k, v)
+		}
+
+		w.WriteHeader(response.Code)
+
+		if response.Body != "" {
+			_, err := fmt.Fprintf(w, response.Body)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
 		}
 	})
 
@@ -66,6 +74,7 @@ type dummyResponse struct {
 	Code    int
 	Method  string
 	Body    string
+	Headers map[string]string
 	Timeout time.Duration
 }
 
@@ -147,6 +156,67 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
 			Body:   "test-job-execution-long-succeeded-output",
+		},
+		// AWX
+		"/api/v2/job_templates/test-job-succeeded/launch/": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+			Body:   "{\"url\":\"/api/v2/jobs/test-job-execution-succeeded\"}",
+		},
+		"/api/v2/jobs/test-job-execution-succeeded": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"id\":\"test-job-execution-succeeded\",\"status\":\"successful\"}",
+		},
+		"/api/v2/jobs/test-job-execution-succeeded/stdout": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-succeeded-output",
+		},
+		// Jenkins
+		"/job/test-job-succeeded/build": {
+			Code:   http.StatusNoContent,
+			Method: http.MethodPost,
+			Headers: map[string]string{
+				"Location": "/queue/item/test-job-queue-succeeded/",
+			},
+		},
+		"/queue/item/test-job-queue-succeeded/api/json": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"executable\":{\"url\":\"/job/test-job-succeeded/test-job-execution-succeeded\"}}",
+		},
+		"/job/test-job-succeeded/test-job-execution-succeeded/api/json": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"id\":\"test-job-execution-succeeded\",\"result\":\"SUCCESS\"}",
+		},
+		"/job/test-job-succeeded/test-job-execution-succeeded/consoleText": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-succeeded-output",
+		},
+		"/job/test-job-params-succeeded/buildWithParameters": {
+			Code:   http.StatusNoContent,
+			Method: http.MethodPost,
+			Headers: map[string]string{
+				"Location": "/queue/item/test-job-queue-params-succeeded/",
+			},
+		},
+		"/queue/item/test-job-queue-params-succeeded/api/json": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"executable\":{\"url\":\"/job/test-job-params-succeeded/test-job-execution-params-succeeded\"}}",
+		},
+		"/job/test-job-params-succeeded/test-job-execution-params-succeeded/api/json": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"id\":\"test-job-execution-params-succeeded\",\"result\":\"SUCCESS\"}",
+		},
+		"/job/test-job-params-succeeded/test-job-execution-params-succeeded/consoleText": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-params-succeeded-output",
 		},
 	}
 }

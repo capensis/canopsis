@@ -1975,7 +1975,7 @@
     "description": "test-instruction-to-run-auto-instruction-4-1-description",
     "jobs": [
       {
-        "job": "test-job-to-run-auto-instruction-1",
+        "job": "test-job-to-run-auto-instruction-5",
         "stop_on_fail": false
       }
     ],
@@ -3477,5 +3477,21 @@
     "last_executed_on": 1618280210,
     "last_modified": 1596712203,
     "created": 1596712203
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions",
+    "type": 0,
+    "name": "test-alarm-meta-children-with-instructions-name",
+    "description": "test-alarm-meta-children-with-instructions-description",
+    "author": "test-alarm-meta-children-with-instructions-author",
+    "enabled": true,
+    "alarm_patterns": [
+      {
+        "v": {
+          "component": "test-alarm-meta-children-with-instructions-component-1"
+        }
+      }
+    ],
+    "steps": []
   }
 ]

@@ -118,10 +118,55 @@ Feature: create a job's config
     """json
     {
       "errors": {
-        "auth_token": "AuthToken is missing.",
         "host": "Host is missing.",
         "name": "Name is missing.",
         "type": "Type is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/job-configs:
+    """json
+    {
+      "type": "rundeck"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "auth_token": "AuthToken is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/job-configs:
+    """json
+    {
+      "type": "awx"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "auth_token": "AuthToken is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/job-configs:
+    """json
+    {
+      "type": "jenkins"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "auth_token": "AuthToken is missing.",
+        "auth_username": "AuthUsername is missing."
       }
     }
     """
@@ -163,7 +208,7 @@ Feature: create a job's config
     """json
     {
       "errors": {
-        "type": "Type must be one of [awx, rundeck]."
+        "type": "Type must be one of [awx, jenkins, rundeck]."
       }
     }
     """

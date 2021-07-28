@@ -59,26 +59,28 @@ type ExportResponse struct {
 }
 
 type Alarm struct {
-	ID            string                            `bson:"_id" json:"_id"`
-	Time          types.CpsTime                     `bson:"t" json:"t" swaggertype:"integer"`
-	Entity        entity.Entity                     `bson:"entity" json:"entity"`
-	Value         AlarmValue                        `bson:"v" json:"v"`
-	Infos         map[string]map[string]interface{} `bson:"infos" json:"infos"`
-	Pbehavior     *Pbehavior                        `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
-	MetaAlarmRule *MetaAlarmRule                    `bson:"meta_alarm_rule,omitempty" json:"rule,omitempty"`
-	IsMetaAlarm   *bool                             `bson:"is_meta_alarm,omitempty" json:"metaalarm,omitempty"`
-	ChildrenIDs   *struct {
+	ID                   string                            `bson:"_id" json:"_id"`
+	Time                 types.CpsTime                     `bson:"t" json:"t" swaggertype:"integer"`
+	Entity               entity.Entity                     `bson:"entity" json:"entity"`
+	Value                AlarmValue                        `bson:"v" json:"v"`
+	Infos                map[string]map[string]interface{} `bson:"infos" json:"infos"`
+	Pbehavior            *Pbehavior                        `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
+	MetaAlarmRule        *MetaAlarmRule                    `bson:"meta_alarm_rule,omitempty" json:"rule,omitempty"`
+	IsMetaAlarm          *bool                             `bson:"is_meta_alarm,omitempty" json:"metaalarm,omitempty"`
+	ChildrenInstructions bool                              `bson:"children_instructions" json:"children_instructions"`
+	ChildrenIDs          *struct {
 		Data  []string `bson:"data"`
 		Total int      `bson:"total"`
 	} `bson:"children_ids,omitempty" json:"-"`
-	Children                       *Children               `bson:"children,omitempty" json:"consequences,omitempty"`
-	Causes                         *Causes                 `bson:"causes,omitempty" json:"causes,omitempty"`
-	FilteredChildrenIDs            []string                `bson:"filtered_children_ids,omitempty" json:"filtered_children,omitempty"`
-	AssignedInstructions           []InstructionWithAlarms `bson:"assigned_instructions,omitempty" json:"assigned_instructions,omitempty"`
-	IsAutoInstructionRunning       *bool                   `bson:"is_auto_instruction_running,omitempty" json:"is_auto_instruction_running,omitempty"`
-	IsAllAutoInstructionsCompleted *bool                   `bson:"is_all_auto_instructions_completed,omitempty" json:"is_all_auto_instructions_completed,omitempty"`
-	Links                          map[string]interface{}  `json:"links"`
-	ImpactState                    int64                   `bson:"impact_state" json:"impact_state"`
+	Children                         *Children               `bson:"children,omitempty" json:"consequences,omitempty"`
+	Causes                           *Causes                 `bson:"causes,omitempty" json:"causes,omitempty"`
+	FilteredChildrenIDs              []string                `bson:"filtered_children_ids,omitempty" json:"filtered_children,omitempty"`
+	AssignedInstructions             []InstructionWithAlarms `bson:"assigned_instructions,omitempty" json:"assigned_instructions,omitempty"`
+	IsAutoInstructionRunning         *bool                   `bson:"-" json:"is_auto_instruction_running,omitempty"`
+	IsAllAutoInstructionsCompleted   *bool                   `bson:"-" json:"is_all_auto_instructions_completed,omitempty"`
+	IsManualInstructionWaitingResult *bool                   `bson:"-" json:"is_manual_instruction_waiting_result,omitempty"`
+	Links                            map[string]interface{}  `bson:"-" json:"links"`
+	ImpactState                      int64                   `bson:"impact_state" json:"impact_state"`
 }
 
 type MetaAlarmRule struct {
@@ -139,7 +141,7 @@ type AlarmValue struct {
 
 type AlarmStep struct {
 	Type      string          `bson:"_t" json:"_t"`
-	Timestamp types.CpsTime   `bson:"t" json:"t" swaggertype:"integer"`
+	Timestamp *types.CpsTime  `bson:"t" json:"t" swaggertype:"integer"`
 	Author    string          `bson:"a" json:"a"`
 	Message   string          `bson:"m" json:"m"`
 	Value     types.CpsNumber `bson:"val" json:"val"`

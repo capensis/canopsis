@@ -61,3 +61,32 @@ func (a *userInterfaceAdapter) GetConfig(ctx context.Context) (UserInterfaceConf
 
 	return conf, err
 }
+
+type RemediationAdapter interface {
+	GetConfig(ctx context.Context) (RemediationConf, error)
+	UpsertConfig(ctx context.Context, conf RemediationConf) error
+}
+
+type remediationAdapter struct {
+	collection mongo.DbCollection
+}
+
+func NewRemediationAdapter(client mongo.DbClient) RemediationAdapter {
+	return &remediationAdapter{
+		collection: client.Collection(mongo.ConfigurationMongoCollection),
+	}
+}
+
+func (a *remediationAdapter) GetConfig(ctx context.Context) (RemediationConf, error) {
+	conf := RemediationConf{}
+	err := a.collection.FindOne(ctx, bson.M{"_id": RemediationKeyName}).Decode(&conf)
+
+	return conf, err
+}
+
+func (a *remediationAdapter) UpsertConfig(ctx context.Context, conf RemediationConf) error {
+	_, err := a.collection.UpdateOne(ctx, bson.M{"_id": RemediationKeyName},
+		bson.M{"$set": conf}, options.Update().SetUpsert(true))
+
+	return err
+}

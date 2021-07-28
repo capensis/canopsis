@@ -1,5 +1,7 @@
 package appinfo
 
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+
 type VersionConf struct {
 	Edition string `json:"edition" bson:"edition"`
 	Stack   string `json:"stack" bson:"stack"`
@@ -24,18 +26,29 @@ type UserInterfaceConf struct {
 	Language                  string        `json:"language,omitempty" bson:"language,omitempty" binding:"oneoforempty=fr en"`
 	PopupTimeout              *PopupTimeout `json:"popup_timeout,omitempty" bson:"popup_timeout,omitempty"`
 	AllowChangeSeverityToInfo bool          `json:"allow_change_severity_to_info" bson:"allow_change_severity_to_info"`
-	MaxMatchedItems           int64         `json:"max_matched_items" bson:"max_matched_items"`
-	CheckCountRequestTimeout  int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout"`
+	MaxMatchedItems           int64         `json:"max_matched_items" bson:"max_matched_items" binding:"gt=0"`
+	CheckCountRequestTimeout  int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout" binding:"gt=0"`
 }
 
 type TimezoneConf struct {
 	Timezone string `json:"timezone,omitempty" bson:"timezone"`
 }
 
+type RemediationConf struct {
+	PauseManualInstructionInterval types.DurationWithUnit `json:"pause_manual_instruction_interval"`
+	JobConfigTypes                 []JobConfigType        `json:"job_config_types"`
+}
+
+type JobConfigType struct {
+	Name     string `json:"name"`
+	AuthType string `json:"auth_type"`
+}
+
 type AppInfoResponse struct {
 	UserInterfaceConf
 	TimezoneConf
 	VersionConf
+	Remediation RemediationConf `json:"remediation"`
 }
 
 type LoginConfig struct {

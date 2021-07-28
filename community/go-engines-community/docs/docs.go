@@ -1440,6 +1440,26 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "no_events",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "paginate",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "search",
                         "in": "query"
@@ -1452,6 +1472,11 @@ var doc = `{
                     {
                         "type": "string",
                         "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "with_flags",
                         "in": "query"
                     }
                 ],
@@ -4777,7 +4802,7 @@ var doc = `{
                 }
             }
         },
-        "/pbehaviors/{id}/eids": {
+        "/pbehaviors/{id}/entities": {
             "get": {
                 "security": [
                     {
@@ -4787,15 +4812,15 @@ var doc = `{
                         "BasicAuth": []
                     }
                 ],
-                "description": "Get pbehavior eids list",
+                "description": "Find entities by pbehavior id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "pbehaviors"
                 ],
-                "summary": "Get pbehavior eids list",
-                "operationId": "pbehaviors-get-eids",
+                "summary": "Find entities by pbehavior id",
+                "operationId": "pbehaviors-find-entities",
                 "parameters": [
                     {
                         "type": "string",
@@ -4851,7 +4876,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/pbehavior.EID"
+                                                "$ref": "#/definitions/entity.Entity"
                                             }
                                         }
                                     }
@@ -7086,6 +7111,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/alarm.Causes"
                 },
+                "children_instructions": {
+                    "type": "boolean"
+                },
                 "consequences": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.Children"
@@ -7114,6 +7142,9 @@ var doc = `{
                     "type": "boolean"
                 },
                 "is_auto_instruction_running": {
+                    "type": "boolean"
+                },
+                "is_manual_instruction_waiting_result": {
                     "type": "boolean"
                 },
                 "links": {
@@ -7729,6 +7760,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/appinfo.PopupTimeout"
                 },
+                "remediation": {
+                    "type": "object",
+                    "$ref": "#/definitions/appinfo.RemediationConf"
+                },
                 "stack": {
                     "type": "string"
                 },
@@ -7747,6 +7782,17 @@ var doc = `{
                     "type": "integer"
                 },
                 "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "appinfo.JobConfigType": {
+            "type": "object",
+            "properties": {
+                "auth_type": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }
@@ -7811,6 +7857,21 @@ var doc = `{
                 "info": {
                     "type": "object",
                     "$ref": "#/definitions/appinfo.IntervalUnit"
+                }
+            }
+        },
+        "appinfo.RemediationConf": {
+            "type": "object",
+            "properties": {
+                "job_config_types": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/appinfo.JobConfigType"
+                    }
+                },
+                "pause_manual_instruction_interval": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
                 }
             }
         },
@@ -8286,7 +8347,7 @@ var doc = `{
                 "$ref": "#/definitions/entity.Info"
             }
         },
-        "entity.ListRequest": {
+        "entity.ListRequestWithPagination": {
             "type": "object",
             "properties": {
                 "active_columns[]": {
@@ -8301,6 +8362,18 @@ var doc = `{
                 "filter": {
                     "type": "string"
                 },
+                "limit": {
+                    "type": "integer"
+                },
+                "no_events": {
+                    "type": "boolean"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginate": {
+                    "type": "boolean"
+                },
                 "search": {
                     "type": "string"
                 },
@@ -8309,6 +8382,9 @@ var doc = `{
                 },
                 "sort_by": {
                     "type": "string"
+                },
+                "with_flags": {
+                    "type": "boolean"
                 }
             }
         },
@@ -9773,14 +9849,6 @@ var doc = `{
                 },
                 "total_count": {
                     "type": "integer"
-                }
-            }
-        },
-        "pbehavior.EID": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
                 }
             }
         },

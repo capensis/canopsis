@@ -136,11 +136,12 @@ func TestRpcServer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testing.T) 
 	mockChannel.EXPECT().Ack(gomock.Any(), gomock.Any()).Times(0)
 	mockChannel.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any())
 
-	expectedErr := errors.New("test err")
+	expectedErr := &testErr{msg: "test error"}
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Any()).Return(nil, expectedErr)
 
 	err := consumer.Consume(context.Background())
-	if err != expectedErr {
+	testErr := &testErr{}
+	if !errors.As(err, &testErr) || testErr.Error() != expectedErr.Error() {
 		t.Errorf("expected error %v but got %v", expectedErr, err)
 	}
 }

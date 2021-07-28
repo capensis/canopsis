@@ -66,8 +66,12 @@ Feature: Get alarms
               ""
             ],
             "output": "test-alarm-get criticité",
-            "parents": [],
+            "parents": [
+              "test-alarm-get-entity-meta-1/metaalarm"
+            ],
             "resolved": 1597034023,
+            "duration": 3801,
+            "current_state_duration": 3801,
             "resource": "test-alarm-get-resource-4",
             "state": {
               "_t": "stateinc",
@@ -682,14 +686,10 @@ Feature: Get alarms
     {
       "data": [
         {
-          "_id": "test-alarm-get-4",
-          "metaalarm": false
-        },
-        {
           "_id": "test-alarm-get-meta-1",
           "metaalarm": true,
           "consequences": {
-              "total": 2
+              "total": 3
           },
           "rule": {
             "id": "test-alarm-get-metaalarm-rule-1",
@@ -738,7 +738,7 @@ Feature: Get alarms
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 6
+        "total_count": 5
       }
     }
     """
@@ -793,10 +793,6 @@ Feature: Get alarms
     {
       "data": [
         {
-          "_id": "test-alarm-get-4",
-          "metaalarm": false
-        },
-        {
           "_id": "test-alarm-get-meta-1",
           "metaalarm": true,
           "consequences": {
@@ -806,9 +802,12 @@ Feature: Get alarms
                 },
                 {
                   "_id": "test-alarm-get-3"
+                },
+                {
+                  "_id": "test-alarm-get-4"
                 }
               ],
-              "total": 2
+              "total": 3
           },
           "rule": {
             "id": "test-alarm-get-metaalarm-rule-1",
@@ -862,7 +861,7 @@ Feature: Get alarms
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 6
+        "total_count": 5
       }
     }
     """
@@ -881,7 +880,7 @@ Feature: Get alarms
           "_id": "test-alarm-get-meta-1",
           "metaalarm": true,
           "consequences": {
-              "total": 2
+              "total": 3
           },
           "filtered_children": [
             "test-alarm-get-2"
@@ -1054,6 +1053,9 @@ Feature: Get alarms
     {
       "data": [
         {
+          "_id": "test-alarm-get-4"
+        },
+        {
           "_id": "test-alarm-get-3"
         },
         {
@@ -1064,7 +1066,7 @@ Feature: Get alarms
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
@@ -1085,9 +1087,7 @@ Feature: Get alarms
                 "name": "test-instruction-to-assign-name",
                 "execution": null
             }
-          ],
-          "is_auto_instruction_running": false,
-          "is_all_auto_instructions_completed": false
+          ]
         }
       ],
       "meta": {
@@ -1681,6 +1681,99 @@ Feature: Get alarms
         "page_count": 1,
         "per_page": 10,
         "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given get correlation with_instructions request should return
+  meta alarms with children, children should have assigned instruction if they have it, the corresponding
+  metaalarm should have a mark about it.
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-meta-children-with-instructions&correlation=true&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-meta-children-with-instructions-1",
+          "metaalarm": true,
+          "children_instructions": true,
+          "consequences": {
+            "data": [
+              {
+                "_id": "test-alarm-meta-children-with-instructions-alarm-1-1",
+                "assigned_instructions": [
+                  {
+                    "_id": "test-alarm-meta-children-with-instructions"
+                  }
+                ]
+              }
+            ],
+            "total": 1
+          }
+        },
+        {
+          "_id": "test-alarm-meta-children-with-instructions-2",
+          "metaalarm": true,
+          "children_instructions": false,
+          "consequences": {
+            "data": [
+              {
+                "_id": "test-alarm-meta-children-with-instructions-alarm-2-1"
+              }
+            ],
+            "total": 1
+          }
+        },
+        {
+          "_id": "test-alarm-meta-children-with-instructions-3",
+          "metaalarm": true,
+          "children_instructions": true,
+          "consequences": {
+            "total": 2
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
+
+  Scenario: given get correlation without with_instructions request should return
+  meta alarms without mark that children has assigned instructions even if they have it.
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-meta-children-with-instructions&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-meta-children-with-instructions-1",
+          "metaalarm": true,
+          "children_instructions": false
+        },
+        {
+          "_id": "test-alarm-meta-children-with-instructions-2",
+          "metaalarm": true,
+          "children_instructions": false
+        },
+        {
+          "_id": "test-alarm-meta-children-with-instructions-3",
+          "metaalarm": true,
+          "children_instructions": false
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
       }
     }
     """

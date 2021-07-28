@@ -4,7 +4,7 @@ Feature: run an auto instruction
   Scenario: given new alarm should run auto instructions
     When I am admin
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-to-run-auto-instruction-1",
       "connector_name": "test-connector-name-to-run-auto-instruction-1",
@@ -21,7 +21,7 @@ Feature: run an auto instruction
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-1&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -89,7 +89,7 @@ Feature: run an auto instruction
   Scenario: given new alarm should not run next auto instructions if alarm is ok
     When I am admin
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-to-run-auto-instruction-2",
       "connector_name": "test-connector-name-to-run-auto-instruction-2",
@@ -102,9 +102,9 @@ Feature: run an auto instruction
     }
     """
     When I wait the end of event processing
-    When I wait 2s
+    When I wait 1s
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-to-run-auto-instruction-2",
       "connector_name": "test-connector-name-to-run-auto-instruction-2",
@@ -121,7 +121,7 @@ Feature: run an auto instruction
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-2&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -167,7 +167,7 @@ Feature: run an auto instruction
   Scenario: given new alarm should run next auto instructions if instruction failed
     When I am admin
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-to-run-auto-instruction-3",
       "connector_name": "test-connector-name-to-run-auto-instruction-3",
@@ -184,7 +184,7 @@ Feature: run an auto instruction
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-3&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -242,7 +242,7 @@ Feature: run an auto instruction
   Scenario: given new alarm should not run auto instruction if instruction is running for another alarm
    When I am admin
    When I send an event:
-   """
+   """json
    {
      "connector": "test-connector-to-run-auto-instruction-4",
      "connector_name": "test-connector-name-to-run-auto-instruction-4",
@@ -256,7 +256,7 @@ Feature: run an auto instruction
    """
    When I wait the end of event processing
    When I send an event:
-   """
+   """json
    {
      "connector": "test-connector-to-run-auto-instruction-4",
      "connector_name": "test-connector-name-to-run-auto-instruction-4",
@@ -273,7 +273,7 @@ Feature: run an auto instruction
    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-4-1&with_steps=true
    Then the response code should be 200
    Then the response body should contain:
-   """
+   """json
    {
      "data": [
        {
@@ -290,12 +290,12 @@ Feature: run an auto instruction
              {
                "_t": "instructionjobstart",
                "a": "system",
-               "m": "Instruction test-instruction-to-run-auto-instruction-4-1-name. Job test-job-to-run-auto-instruction-1-name."
+               "m": "Instruction test-instruction-to-run-auto-instruction-4-1-name. Job test-job-to-run-auto-instruction-5-name."
              },
              {
                "_t": "instructionjobcomplete",
                "a": "system",
-               "m": "Instruction test-instruction-to-run-auto-instruction-4-1-name. Job test-job-to-run-auto-instruction-1-name."
+               "m": "Instruction test-instruction-to-run-auto-instruction-4-1-name. Job test-job-to-run-auto-instruction-5-name."
              },
              {
                "_t": "autoinstructioncomplete",
@@ -331,7 +331,7 @@ Feature: run an auto instruction
    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-4-2&with_steps=true
    Then the response code should be 200
    Then the response body should contain:
-   """
+   """json
    {
      "data": [
        {
@@ -347,7 +347,7 @@ Feature: run an auto instruction
              {
                "_t": "instructionjobcomplete",
                "a": "system",
-               "m": "Instruction test-instruction-to-run-auto-instruction-4-1-name. Job test-job-to-run-auto-instruction-1-name."
+               "m": "Instruction test-instruction-to-run-auto-instruction-4-1-name. Job test-job-to-run-auto-instruction-5-name."
              },
              {
                "_t": "autoinstructioncomplete",
@@ -384,7 +384,7 @@ Feature: run an auto instruction
   Scenario: given http error during job execution should return failed job status
     When I am admin
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-to-run-auto-instruction-5",
       "connector_name": "test-connector-name-to-run-auto-instruction-5",
@@ -401,7 +401,7 @@ Feature: run an auto instruction
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-5&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
