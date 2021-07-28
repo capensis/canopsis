@@ -139,9 +139,8 @@ func (c *baseConnection) IsClosed() bool {
 		return c.closed
 	}
 
-	isClosed := c.amqpConn.IsClosed()
-	if isClosed != c.closed {
-		c.closed = isClosed
+	if c.amqpConn.IsClosed() {
+		c.closed = true
 	}
 
 	return c.closed
