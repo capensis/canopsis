@@ -1,5 +1,5 @@
-import { isObject } from 'lodash';
 import uid from '@/helpers/uid';
+import { isSimpleRule } from '@/helpers/treeview';
 
 /**
  * @typedef {Object} PatternRuleFormAdvancedField
@@ -24,7 +24,7 @@ import uid from '@/helpers/uid';
  * @returns {PatternRuleForm}
  */
 export function patternRuleToForm({ field = '', value = '' } = {}) {
-  const isSimple = !isObject(value);
+  const isSimple = isSimpleRule(value);
   const form = {
     field,
     value: '',
