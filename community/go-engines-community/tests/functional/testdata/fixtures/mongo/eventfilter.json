@@ -102,5 +102,23 @@
     "enabled": true,
     "created": 1608635535,
     "updated": 1608635535
+  },
+  {
+    "_id": "test-update-change-entity",
+    "author": "root",
+    "description": "update change_entity",
+    "type": "change_entity",
+    "patterns": [
+      {
+        "resource": "never be used change entity update test"
+      }
+    ],
+    "config": {
+      "component": "change_entity"
+    },
+    "priority": 5,
+    "enabled": true,
+    "created": 1608635535,
+    "updated": 1608635535
   }
 ]

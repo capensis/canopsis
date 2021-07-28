@@ -12,10 +12,11 @@ import (
 
 type changeEntityApplicator struct {
 	dataSourceFactories map[string]eventfilter.DataSourceFactory
+	buf bytes.Buffer
 }
 
 func NewChangeEntityApplicator(dataSourceFactories map[string]eventfilter.DataSourceFactory) RuleApplicator {
-	return &changeEntityApplicator{dataSourceFactories: dataSourceFactories}
+	return &changeEntityApplicator{dataSourceFactories: dataSourceFactories, buf: bytes.Buffer{}}
 }
 
 func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches) (int, types.Event, error) {
@@ -31,28 +32,28 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event typ
 	}
 
 	if rule.Config.Resource != "" {
-		event.Resource, err = executeTpl(rule.Config.Resource, templateParams)
+		event.Resource, err = a.executeTpl(rule.Config.Resource, templateParams)
 		if err != nil {
 			return OutcomeDrop, event, err
 		}
 	}
 
 	if rule.Config.Component != "" {
-		event.Component, err = executeTpl(rule.Config.Component, templateParams)
+		event.Component, err = a.executeTpl(rule.Config.Component, templateParams)
 		if err != nil {
 			return OutcomeDrop, event, err
 		}
 	}
 
 	if rule.Config.Connector != "" {
-		event.Connector, err = executeTpl(rule.Config.Connector, templateParams)
+		event.Connector, err = a.executeTpl(rule.Config.Connector, templateParams)
 		if err != nil {
 			return OutcomeDrop, event, err
 		}
 	}
 
 	if rule.Config.ConnectorName != "" {
-		event.ConnectorName, err = executeTpl(rule.Config.ConnectorName, templateParams)
+		event.ConnectorName, err = a.executeTpl(rule.Config.ConnectorName, templateParams)
 		if err != nil {
 			return OutcomeDrop, event, err
 		}
@@ -89,17 +90,18 @@ func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule,
 	return externalData, nil
 }
 
-func executeTpl(tplText string, params TemplateParameters) (string, error) {
+func (a *changeEntityApplicator) executeTpl(tplText string, params TemplateParameters) (string, error) {
 	tpl, err := template.New("tpl").Funcs(types.GetTemplateFunc()).Parse(tplText)
 	if err != nil {
 		return "", err
 	}
 
-	buf := new(bytes.Buffer)
-	err = tpl.Execute(buf, params)
+	a.buf.Reset()
+
+	err = tpl.Execute(&a.buf, params)
 	if err != nil {
 		return "", err
 	}
 
-	return buf.String(), nil
+	return a.buf.String(), nil
 }

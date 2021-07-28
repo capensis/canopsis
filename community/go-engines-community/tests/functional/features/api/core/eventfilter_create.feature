@@ -375,3 +375,87 @@ Feature: Create an eventfilter
       "error":"request has invalid structure"
     }
     """
+  Scenario: given POST change_entity rule requests should return error, because of empty config
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test",
+      "type": "change_entity",
+      "patterns": [
+        {
+          "connector": "test_connector",
+          "customer_tags": {
+            "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+          }
+        }
+      ],
+      "enabled": true
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config": "Config is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test",
+      "type": "change_entity",
+      "patterns": [
+        {
+          "connector": "test_connector",
+          "customer_tags": {
+            "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+          }
+        }
+      ],
+      "config": {
+        "component": "",
+        "connector": "",
+        "resource": "",
+        "connector_name": ""
+      },
+      "enabled": true
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config": "Config is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test",
+      "type": "change_entity",
+      "patterns": [
+        {
+          "connector": "test_connector",
+          "customer_tags": {
+            "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+          }
+        }
+      ],
+      "config": {},
+      "enabled": true
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config": "Config is missing."
+      }
+    }
+    """
