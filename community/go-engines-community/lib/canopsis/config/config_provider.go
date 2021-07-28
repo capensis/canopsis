@@ -55,6 +55,7 @@ type AlarmConfig struct {
 	DisplayNameScheme     *template.Template
 	displayNameSchemeText string
 	OutputLength          int
+	LongOutputLength      int
 	// DisableActionSnoozeDelayOnPbh ignores Pbh state to resolve snoozed with Action alarm while is True
 	DisableActionSnoozeDelayOnPbh bool
 }
@@ -161,12 +162,21 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 	}
 
 	if cfg.Alarm.OutputLength <= 0 {
-		logger.Warn().Msg("OutputLength of alarm config section is not set or less than 1: the event's output and long_output won't be truncated")
+		logger.Warn().Msg("OutputLength of alarm config section is not set or less than 1: the event's output won't be truncated")
 	} else {
 		conf.OutputLength = cfg.Alarm.OutputLength
 		logger.Info().
 			Int("value", conf.OutputLength).
 			Msg("OutputLength of alarm config section is used")
+	}
+
+	if cfg.Alarm.LongOutputLength <= 0 {
+		logger.Warn().Msg("LongOutputLength of alarm config section is not set or less than 1: the event's long_output won't be truncated")
+	} else {
+		conf.LongOutputLength = cfg.Alarm.LongOutputLength
+		logger.Info().
+			Int("value", conf.LongOutputLength).
+			Msg("LongOutputLength of alarm config section is used")
 	}
 
 	if cfg.Alarm.FlappingFreqLimit < 0 {

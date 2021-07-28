@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"runtime/trace"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -15,8 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
-	"runtime/trace"
-	"time"
 )
 
 type messageProcessor struct {
@@ -69,7 +70,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	alarmConfig := p.AlarmConfigProvider.Get()
 	event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
-	event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.OutputLength)
+	event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
 	updatedEntityServices := libcontext.UpdatedEntityServices{}
 
 	// Process event by event filters.

@@ -283,6 +283,7 @@ EnableLastEventDate = false
 CancelAutosolveDelay = "1h"
 DisplayNameScheme = "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}"
 OutputLength = 255
+LongOutputLength = 1024
 DisableActionSnoozeDelayOnPbh = false
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
