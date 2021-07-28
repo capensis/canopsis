@@ -420,6 +420,7 @@ export default {
       hasInstruction: 'There is an instruction for this type of incidents',
       hasAutoInstructionInRunning: 'Automatic instruction in progress',
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
+      awaitingInstructionComplete: 'Awaiting for the instruction to complete',
     },
   },
   weather: {

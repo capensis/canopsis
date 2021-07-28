@@ -420,6 +420,7 @@ export default {
       hasInstruction: 'Au moins une consigne est attachée à cette alarme',
       hasAutoInstructionInRunning: 'Instruction automatique en cours',
       allAutoInstructionExecuted: 'Toutes les instructions automatiques ont été exécutées',
+      awaitingInstructionComplete: 'En attente de l\'instruction pour terminer',
     },
   },
   weather: {

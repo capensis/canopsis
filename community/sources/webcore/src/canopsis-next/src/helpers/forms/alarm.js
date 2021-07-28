@@ -30,6 +30,19 @@
  */
 
 /**
+ * @typedef {Object} AlarmAssignedInstructionExecution
+ * @property {string} _id
+ * @property {string} status
+ */
+
+/**
+ * @typedef {Object} AlarmAssignedInstruction
+ * @property {string} _id
+ * @property {string} name
+ * @property {?AlarmAssignedInstructionExecution} execution
+ */
+
+/**
  * @typedef {Object} AlarmValue
  * @property {string[]} long_output_history
  * @property {number} last_event_date
@@ -68,6 +81,11 @@
  * @property {string} _id
  * @property {Entity} entity
  * @property {boolean} metaalarm
+ * @property {AlarmAssignedInstruction[]} [assigned_instructions]
+ * @property {boolean} [is_auto_instruction_running]
+ * @property {boolean} [is_manual_instruction_waiting_result]
+ * @property {boolean} [is_all_auto_instructions_completed]
+ * @property {boolean} [children_instructions]
  * @property {InfosObject} infos
  * @property {AlarmRule} rule
  * @property {Correlation} consequences
