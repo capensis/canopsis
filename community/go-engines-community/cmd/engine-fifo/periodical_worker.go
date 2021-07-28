@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
 	"github.com/rs/zerolog"
 	"time"
@@ -22,8 +23,7 @@ func (w *periodicalWorker) Work(ctx context.Context) error {
 
 	err := w.RuleService.LoadRules(ctx)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("unable to load rules")
-		return err
+		return fmt.Errorf("unable to load rules: %w", err)
 	}
 
 	return nil

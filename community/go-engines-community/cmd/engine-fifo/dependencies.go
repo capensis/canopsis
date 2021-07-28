@@ -17,7 +17,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
-	"io/ioutil"
 	"path/filepath"
 	"plugin"
 	"strings"
@@ -220,17 +219,15 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 func LoadDataSourceFactories(dataSourceDirectory string) (map[string]eventfilter.DataSourceFactory, error) {
 	factories := make(map[string]eventfilter.DataSourceFactory)
 
-	files, err := ioutil.ReadDir(dataSourceDirectory)
+	files, err := filepath.Glob(filepath.Join(dataSourceDirectory, fmt.Sprintf("*%s", canopsis.PluginExtension)))
 	if err != nil {
 		return nil, err
 	}
 
 	for _, file := range files {
-		if strings.HasSuffix(file.Name(), canopsis.PluginExtension) {
-			sourceName := strings.TrimSuffix(file.Name(), canopsis.PluginExtension)
-			fileName := filepath.Join(dataSourceDirectory, file.Name())
-
-			plug, err := plugin.Open(fileName)
+		if strings.HasSuffix(file, canopsis.PluginExtension) {
+			sourceName := strings.TrimSuffix(filepath.Base(file), canopsis.PluginExtension)
+			plug, err := plugin.Open(file)
 			if err != nil {
 				return nil, fmt.Errorf("unable to open plugin: %w", err)
 			}
