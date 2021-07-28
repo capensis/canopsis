@@ -8,7 +8,7 @@ db.eventfilter.find({
 }).forEach(function (doc) {
     var now = Math.ceil((new Date()).getTime() / 1000);
 
-    config = {}
+    var config = {};
 
     doc.actions.forEach(function (action) {
         if (action.type === "set_field" || action.type === "set_field_from_template") {
