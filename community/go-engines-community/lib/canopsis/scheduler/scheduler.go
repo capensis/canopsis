@@ -362,6 +362,10 @@ func getChildren(b []byte) ([]string, error) {
 	jsonChildren := jsonEvent.GetArray("ma_children")
 	children := make([]string, len(jsonChildren))
 	for idx, child := range jsonChildren {
+		if child == nil {
+			continue
+		}
+
 		children[idx], err = strconv.Unquote(child.String())
 		if err != nil {
 			return nil, err

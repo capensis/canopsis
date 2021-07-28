@@ -313,13 +313,14 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		return false
 	}
 
+	ctx := c.Request.Context()
 	if err != mongodriver.ErrNoDocuments {
 		processArray(value, "ma_parents", alarm.Value.Parents)
 		processArray(value, "ma_children", alarm.Value.Children)
 
 		if alarm.IsMetaAlarm() && len(alarm.Value.Children) > 0 {
 			cursor, err := api.alarmCollection.Aggregate(
-				c.Request.Context(),
+				ctx,
 				[]bson.M{
 					{
 						"$match": bson.M{
@@ -351,13 +352,13 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 				api.logger.Err(err).Str("event", string(value.MarshalTo(nil))).Msg("Failed to get related parents info from mongo")
 				return false
 			}
-			defer cursor.Close(c.Request.Context())
+			defer cursor.Close(ctx)
 
 			var relatedParentsInfo struct{
 				RelatedParents []string `bson:"related_parents"`
 			}
 
-			if cursor.Next(c.Request.Context()) {
+			if cursor.Next(ctx) {
 				err = cursor.Decode(&relatedParentsInfo)
 				if err != nil {
 					api.logger.Err(err).Str("event", string(value.MarshalTo(nil))).Msg("Failed to get related parents info from mongo")
