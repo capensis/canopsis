@@ -53,6 +53,7 @@ require (
 	github.com/vmihailenco/msgpack/v4 v4.3.12
 	go.mongodb.org/mongo-driver v1.5.3
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/text v0.3.6
 	gopkg.in/yaml.v2 v2.4.0
 )

@@ -3,6 +3,10 @@ package redis
 import "time"
 
 const (
+	KeyDelimiter = "$$"
+
+	RunInfoKey = "engine-run-info"
+
 	PbehaviorPeriodicalLockKey      = "pbehavior-periodical-lock-key"
 	PbehaviorCleanPeriodicalLockKey = "pbehavior-clean-periodical-lock-key"
 	RecomputeLockKey                = "pbehavior-recompute-lock-key"

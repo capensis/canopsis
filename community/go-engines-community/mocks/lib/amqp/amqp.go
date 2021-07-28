@@ -228,6 +228,21 @@ func (mr *MockChannelMockRecorder) QueueDeclare(arg0, arg1, arg2, arg3, arg4, ar
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueDeclare", reflect.TypeOf((*MockChannel)(nil).QueueDeclare), arg0, arg1, arg2, arg3, arg4, arg5)
 }
 
+// QueueInspect mocks base method
+func (m *MockChannel) QueueInspect(arg0 string) (amqp0.Queue, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "QueueInspect", arg0)
+	ret0, _ := ret[0].(amqp0.Queue)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// QueueInspect indicates an expected call of QueueInspect
+func (mr *MockChannelMockRecorder) QueueInspect(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueInspect", reflect.TypeOf((*MockChannel)(nil).QueueInspect), arg0)
+}
+
 // QueuePurge mocks base method
 func (m *MockChannel) QueuePurge(arg0 string, arg1 bool) (int, error) {
 	m.ctrl.T.Helper()

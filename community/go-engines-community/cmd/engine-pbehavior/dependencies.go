@@ -40,11 +40,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
-	amqpChannel, err := amqpConnection.Channel()
-	if err != nil {
-		panic(err)
-	}
-
+	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	pbhRedisSession := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
@@ -206,11 +202,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	enginePbehavior.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisSession),
-		engine.RunInfo{
-			Name:         canopsis.PBehaviorEngineName,
-			ConsumeQueue: canopsis.PBehaviorQueueName,
-			PublishQueue: options.PublishToQueue,
-		},
+		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, canopsis.PBehaviorQueueName, options.PublishToQueue),
+		amqpChannel,
 		logger,
 	))
 	enginePbehavior.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(

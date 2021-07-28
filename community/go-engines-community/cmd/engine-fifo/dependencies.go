@@ -39,6 +39,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
+	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
 	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
 	statsRedisClient := m.DepRedisSession(ctx, redis.FIFOMessageStatisticsStorage, logger, cfg)
@@ -154,11 +155,8 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	engine.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
 		canopsis.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
-		libengine.RunInfo{
-			Name:         canopsis.FIFOEngineName,
-			ConsumeQueue: options.ConsumeFromQueue,
-			PublishQueue: options.PublishToQueue,
-		},
+		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, options.ConsumeFromQueue, options.PublishToQueue),
+		amqpChannel,
 		logger,
 	))
 
