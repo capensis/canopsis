@@ -48,7 +48,7 @@ func NewLdapProvider(
 		ldapDialer:     d,
 		configProvider: cp,
 		userProvider:   up,
-		enforcer: enforcer,
+		enforcer:       enforcer,
 	}
 }
 
