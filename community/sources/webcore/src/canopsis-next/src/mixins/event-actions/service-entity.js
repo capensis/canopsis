@@ -132,7 +132,7 @@ export default {
         filter: {
           _id: { $in: [entity._id] },
         },
-        name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${new Date().toLocaleString()}`,
+        name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${Date.now()}`,
         tstart: new Date(),
         tstop: new Date(MAX_PBEHAVIOR_DEFAULT_TSTOP * 1000),
       };
