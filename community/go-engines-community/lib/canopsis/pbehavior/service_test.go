@@ -4,7 +4,6 @@ import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	mock_pbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/pbehavior"
 	"github.com/golang/mock/gomock"
@@ -14,9 +13,9 @@ import (
 
 func TestService(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	defer func() {
-		ctrl.Finish()
-	}()
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	for suiteName, suiteData := range dataSetsForService() {
 		for caseName, data := range suiteData.cases {
@@ -32,16 +31,16 @@ func TestService(t *testing.T) {
 					}
 
 					return res, nil
-				})
+				}).MinTimes(0).MaxTimes(1)
 
-			service := pbehavior.NewService(mockProvider, mockEntityMatcher, log.NewTestLogger())
-			err := service.Compute(context.Background(), data.date)
+			service := pbehavior.NewService(mockProvider, mockEntityMatcher)
+			err := service.Compute(ctx, data.date)
 			if err != nil {
 				t.Errorf("%s %s: expected no error but got %v", suiteName, caseName, err)
 				continue
 			}
 
-			r, err := service.Resolve(context.Background(), &suiteData.entity, data.t)
+			r, err := service.Resolve(ctx, &suiteData.entity, data.t)
 			if err != nil {
 				t.Errorf("[Resolve] %s %s: expected no error but got %v", suiteName, caseName, err)
 				continue
