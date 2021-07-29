@@ -103,8 +103,6 @@ const (
 
 	authMessageRateStatsRead = apisecurity.PermMessageRateStatsRead
 
-	authPermHealthcheck = apisecurity.PermHealthcheck
-
 	permRead   = model.PermissionRead
 	permCreate = model.PermissionCreate
 	permUpdate = model.PermissionUpdate
@@ -623,7 +621,7 @@ func RegisterRoutes(
 		}
 		protected.GET(
 			"/engine-runinfo",
-			middleware.Authorize(authPermHealthcheck, permCan, enforcer),
+			middleware.Authorize(apisecurity.PermHealthcheck, permCan, enforcer),
 			engineinfo.GetRunInfo(ctx, runInfoManager),
 		)
 
