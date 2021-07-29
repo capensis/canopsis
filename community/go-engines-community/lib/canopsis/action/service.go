@@ -2,6 +2,7 @@ package action
 
 import (
 	"context"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -92,18 +93,23 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					MetaAlarmChildren: &alarm.Value.Children,
 				}
 
-				if result.Err != nil {
-					s.sendEventToFifoAck(event)
-					break
+				activationSent := false
+				if result.Err == nil ||
+					(result.Err != nil && len(result.ActionExecutions) > 0 &&
+						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook) {
+					// Send activation event
+					ok, err = s.activationService.Process(&alarm)
+					if err != nil {
+						s.logger.Error().Err(err).Msg("failed to send activation")
+						break
+					}
+
+					if ok {
+						activationSent = true
+					}
 				}
 
-				ok, err = s.activationService.Process(&alarm)
-				if err != nil {
-					s.logger.Error().Err(err).Msg("failed to send activation")
-					break
-				}
-
-				if !ok {
+				if !activationSent {
 					s.sendEventToFifoAck(event)
 				}
 			}

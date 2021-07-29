@@ -518,6 +518,7 @@ export const FILTER_INPUT_TYPES = {
   number: 'number',
   boolean: 'boolean',
   null: 'null',
+  array: 'array',
 };
 
 export const FILTER_DEFAULT_VALUES = {

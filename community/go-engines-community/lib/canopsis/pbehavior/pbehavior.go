@@ -50,7 +50,7 @@ type PBehavior struct {
 	Reason     string         `bson:"reason"`
 	RRule      string         `bson:"rrule"`
 	Start      *types.CpsTime `bson:"tstart"`
-	Stop       *types.CpsTime `bson:"tstop,omitempty"`
+	Stop       *types.CpsTime `bson:"tstop"`
 	Type       string         `bson:"type_"`
 	Exdates    []Exdate       `bson:"exdates"`
 	Exceptions []string       `bson:"exceptions"`

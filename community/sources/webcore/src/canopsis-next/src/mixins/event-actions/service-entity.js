@@ -112,7 +112,7 @@ export default {
     /**
      * Call emit add:event for pause entity event
      *
-     * @param {Object} entity
+     * @param {Entity} entity
      * @param {string} comment
      * @param {Object} reason
      * @param {Object} type
@@ -132,7 +132,7 @@ export default {
         filter: {
           _id: { $in: [entity._id] },
         },
-        name: WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
+        name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${Date.now()}`,
         tstart: new Date(),
         tstop: new Date(MAX_PBEHAVIOR_DEFAULT_TSTOP * 1000),
       };
@@ -143,7 +143,7 @@ export default {
     /**
      * Call emit add:event for play entity event
      *
-     * @param {Object} entity
+     * @param {Entity} entity
      */
     addPlayActionToQueue({ entity }) {
       this.addEvent({ type: EVENT_ENTITY_TYPES.play, data: entity }, entity);
@@ -152,7 +152,7 @@ export default {
     /**
      * Call emit add:event for cancel entity event
      *
-     * @param {Object} entity
+     * @param {Entity} entity
      * @param {string} output
      */
     addCancelActionToQueue({ entity, output }) {
@@ -168,7 +168,7 @@ export default {
     /**
      * Call emit add:event for comment entity event
      *
-     * @param {Object} entity
+     * @param {Entity} entity
      * @param {string} output
      */
     addCommentActionToQueue({ entity, output }) {

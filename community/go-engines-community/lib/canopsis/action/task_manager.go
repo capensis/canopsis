@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"github.com/rs/zerolog"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"github.com/rs/zerolog"
 )
 
 type redisBasedManager struct {
@@ -210,8 +211,9 @@ func (e *redisBasedManager) finishExecution(
 		return
 	default:
 		e.outputChannel <- ScenarioResult{
-			Alarm: alarm,
-			Err:   executionErr,
+			Alarm:            alarm,
+			Err:              executionErr,
+			ActionExecutions: execution.ActionExecutions,
 		}
 	}
 }
