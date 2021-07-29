@@ -2,6 +2,8 @@ package engine
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"time"
 )
@@ -9,13 +11,15 @@ import (
 func NewRunInfoPeriodicalWorker(
 	periodicalInterval time.Duration,
 	manager RunInfoManager,
-	info RunInfo,
+	info InstanceRunInfo,
+	channel amqp.Channel,
 	logger zerolog.Logger,
 ) PeriodicalWorker {
 	return &runInfoPeriodicalWorker{
 		periodicalInterval: periodicalInterval,
 		manager:            manager,
 		info:               info,
+		channel:            channel,
 		logger:             logger,
 	}
 }
@@ -23,7 +27,8 @@ func NewRunInfoPeriodicalWorker(
 type runInfoPeriodicalWorker struct {
 	periodicalInterval time.Duration
 	manager            RunInfoManager
-	info               RunInfo
+	info               InstanceRunInfo
+	channel            amqp.Channel
 	logger             zerolog.Logger
 }
 
@@ -32,7 +37,15 @@ func (w *runInfoPeriodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *runInfoPeriodicalWorker) Work(ctx context.Context) error {
-	err := w.manager.Save(ctx, w.info, w.GetInterval())
+	queue, err := w.channel.QueueInspect(w.info.ConsumeQueue)
+	if err != nil {
+		w.logger.Error().Err(err).Msg("cannot get consume queue length")
+		return err
+	}
+
+	w.info.QueueLength = queue.Messages
+	w.info.Time = types.CpsTime{Time: time.Now()}
+	err = w.manager.SaveInstance(ctx, w.info, w.GetInterval())
 	if err != nil {
 		w.logger.Error().Err(err).Msg("cannot save run info")
 	}

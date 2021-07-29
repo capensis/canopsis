@@ -42,6 +42,7 @@ const (
 	ServiceRPCQueueServerName       = "Engine_service_rpc_server"
 	ServiceConsumerName             = "service"
 	ServiceRPCConsumerName          = "service_rpc"
+	WebhookEngineName               = "engine-webhook"
 	WebhookRPCQueueServerName       = "Engine_webhook_rpc_server"
 	WebhookRPCConsumerName          = "webhook_rpc"
 	FIFOEngineName                  = "engine-fifo"
