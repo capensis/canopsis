@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sync"
+	"sort"
 	"time"
 
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
-	"github.com/rs/zerolog"
+	"golang.org/x/sync/errgroup"
 )
 
 var ErrRecomputeNeed = errors.New("provided time is out of computed date, probably need recompute data")
@@ -36,7 +36,6 @@ type typeResolver struct {
 	DefaultActiveTypeID string `json:"default_active_type"`
 	// TypesByID contains all types.
 	TypesByID map[string]*Type `json:"types"`
-	logger    zerolog.Logger
 }
 
 // NewTypeResolver creates new type resolver.
@@ -46,7 +45,6 @@ func NewTypeResolver(
 	computedPbehaviors map[string]ComputedPbehavior,
 	typesByID map[string]*Type,
 	defaultActiveTypeID string,
-	logger zerolog.Logger,
 	workerPoolSize ...int,
 ) *typeResolver {
 	poolSize := DefaultPoolSize
@@ -63,7 +61,6 @@ func NewTypeResolver(
 		ComputedPbehaviors:  computedPbehaviors,
 		DefaultActiveTypeID: defaultActiveTypeID,
 		TypesByID:           typesByID,
-		logger:              logger,
 		workerPoolSize:      poolSize,
 	}
 }
@@ -77,15 +74,9 @@ type ResolveResult struct {
 	ResolvedCreated   int64
 }
 
-// resolveResult uses for concurrency in Resolve.
-type resolveResult struct {
-	ResolveResult
-	Err error
-}
-
 // Resolve checks entity for each pbehavior concurrently. It uses "workerPoolSize" goroutines.
 func (r *typeResolver) Resolve(
-	parentCtx context.Context,
+	ctx context.Context,
 	entity *libtypes.Entity,
 	t time.Time,
 ) (ResolveResult, error) {
@@ -94,37 +85,29 @@ func (r *typeResolver) Resolve(
 		return ResolveResult{}, ErrRecomputeNeed
 	}
 
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
-	matchEntityByPbehavior, err := r.matchEntity(ctx, entity)
+	pbhRes, err := r.runWorkers(ctx, t, nil)
 	if err != nil {
 		return ResolveResult{}, err
 	}
 
-	resCh := r.runWorkers(ctx, t, matchEntityByPbehavior, nil)
+	pbhIDs := make([]string, len(pbhRes))
+	for i, v := range pbhRes {
+		pbhIDs[i] = v.ResolvedPbhID
+	}
+
+	matchEntityByPbehavior, err := r.matchEntity(ctx, entity, pbhIDs)
+	if err != nil {
+		return ResolveResult{}, err
+	}
+
 	// Use default active type if no pbehavior is in action for entity.
 	res := ResolveResult{}
 
-	// Get results from result channel and select result with max type priority.
-	for v := range resCh {
-		if v.Err == nil {
-			if res.ResolvedType == nil ||
-				res.ResolvedType.Priority < v.ResolvedType.Priority ||
-				res.ResolvedType.Priority == v.ResolvedType.Priority &&
-					res.ResolvedCreated < v.ResolvedCreated ||
-				res.ResolvedType.Priority == v.ResolvedType.Priority &&
-					res.ResolvedCreated == v.ResolvedCreated &&
-					res.ResolvedPbhID < v.ResolvedPbhID {
-				res = v.ResolveResult
-			}
-		} else {
-			err = v.Err
+	for _, v := range pbhRes {
+		if matchEntityByPbehavior[v.ResolvedPbhID] {
+			res = v
+			break
 		}
-	}
-
-	if err != nil {
-		return ResolveResult{}, err
 	}
 
 	// Empty result represents default active type.
@@ -135,9 +118,6 @@ func (r *typeResolver) Resolve(
 		}
 		if *res.ResolvedType == *activeType {
 			res = ResolveResult{}
-			r.logger.Debug().Msgf("resolve default active type for entity %v", entity.ID)
-		} else {
-			r.logger.Debug().Msgf("resolve type %v for entity %v", res.ResolvedType.ID, entity.ID)
 		}
 	}
 
@@ -172,28 +152,31 @@ func (r *typeResolver) GetPbehaviorStatus(
 		res[id] = false
 	}
 
-	resCh := r.runWorkers(ctx, t, nil, pbehaviorIDs)
-	var err error
-	for v := range resCh {
-		if v.Err == nil {
-			res[v.ResolvedPbhID] = true
-		} else {
-			err = v.Err
-		}
-	}
-
+	pbhRes, err := r.runWorkers(ctx, t, pbehaviorIDs)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, v := range pbhRes {
+		res[v.ResolvedPbhID] = true
 	}
 
 	return res, nil
 }
 
+func (r *typeResolver) GetComputedPbehaviorsCount() int {
+	return len(r.ComputedPbehaviors)
+}
+
 // matchEntity resolves if entity matches filter of each pbehavior.
-func (r *typeResolver) matchEntity(ctx context.Context, entity *libtypes.Entity) (map[string]bool, error) {
-	filters := make(map[string]string, len(r.ComputedPbehaviors))
-	for id, computed := range r.ComputedPbehaviors {
-		filters[id] = computed.Filter
+func (r *typeResolver) matchEntity(ctx context.Context, entity *libtypes.Entity, pbhIDs []string) (map[string]bool, error) {
+	if len(pbhIDs) == 0 {
+		return nil, nil
+	}
+
+	filters := make(map[string]string, len(pbhIDs))
+	for _, id := range pbhIDs {
+		filters[id] = r.ComputedPbehaviors[id].Filter
 	}
 
 	matchEntityByPbehavior, err := r.matcher.MatchAll(ctx, entity.ID, filters)
@@ -213,69 +196,72 @@ type workerData struct {
 func (r *typeResolver) runWorkers(
 	ctx context.Context,
 	t time.Time,
-	matchEntityByPbehavior map[string]bool,
 	pbehaviorIDs []string,
-) <-chan resolveResult {
-	resCh := make(chan resolveResult)
+) ([]ResolveResult, error) {
+	resCh := make(chan ResolveResult)
 	workerCh := r.createWorkerCh(ctx, pbehaviorIDs)
 
-	go func() {
-		wg := sync.WaitGroup{}
-		defer close(resCh)
+	g, ctx := errgroup.WithContext(ctx)
 
-		for i := 0; i < r.workerPoolSize; i++ {
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				workerCtx, cancel := context.WithCancel(ctx)
-				defer cancel()
-				for {
-					select {
-					case <-workerCtx.Done():
-						resCh <- resolveResult{Err: workerCtx.Err()}
-						return
-					case d, ok := <-workerCh:
+	for i := 0; i < r.workerPoolSize; i++ {
+		g.Go(func() error {
+			for {
+				select {
+				case <-ctx.Done():
+					return ctx.Err()
+				case d, ok := <-workerCh:
+					if !ok {
+						return nil
+					}
+
+					for _, computedType := range d.computed.Types {
+						if !computedType.Span.In(t) {
+							continue
+						}
+
+						resolvedType, ok := r.TypesByID[computedType.ID]
 						if !ok {
-							return
+							return fmt.Errorf("unknown type %v, probably need recompute data", computedType.ID)
 						}
 
-						if matchEntityByPbehavior != nil {
-							if m, ok := matchEntityByPbehavior[d.id]; !ok || !m {
-								continue
-							}
+						resCh <- ResolveResult{
+							ResolvedType:      resolvedType,
+							ResolvedPbhID:     d.id,
+							ResolvedPbhName:   d.computed.Name,
+							ResolvedPbhReason: d.computed.Reason,
+							ResolvedCreated:   d.computed.Created,
 						}
-
-						for _, computedType := range d.computed.Types {
-							if !computedType.Span.In(t) {
-								continue
-							}
-
-							resolvedType, ok := r.TypesByID[computedType.ID]
-							if !ok {
-								resCh <- resolveResult{Err: fmt.Errorf("unknown type %v, probably need recompute data", computedType.ID)}
-								return
-							}
-
-							resCh <- resolveResult{
-								ResolveResult: ResolveResult{
-									ResolvedType:      resolvedType,
-									ResolvedPbhID:     d.id,
-									ResolvedPbhName:   d.computed.Name,
-									ResolvedPbhReason: d.computed.Reason,
-									ResolvedCreated:   d.computed.Created,
-								},
-							}
-							break
-						}
+						break
 					}
 				}
-			}()
-		}
+			}
+		})
+	}
 
-		wg.Wait()
+	go func() {
+		_ = g.Wait() // check error in wrapper func
+		close(resCh)
 	}()
 
-	return resCh
+	res := make([]ResolveResult, 0)
+	for v := range resCh {
+		res = append(res, v)
+	}
+
+	if err := g.Wait(); err != nil {
+		return nil, err
+	}
+
+	sort.Slice(res, func(i, j int) bool {
+		return res[i].ResolvedType.Priority > res[j].ResolvedType.Priority ||
+			res[i].ResolvedType.Priority == res[j].ResolvedType.Priority &&
+				res[i].ResolvedCreated > res[j].ResolvedCreated ||
+			res[i].ResolvedType.Priority == res[j].ResolvedType.Priority &&
+				res[i].ResolvedCreated == res[j].ResolvedCreated &&
+				res[i].ResolvedPbhID > res[j].ResolvedPbhID
+	})
+
+	return res, nil
 }
 
 // createWorkerCh creates worker ch and fills it.

@@ -224,7 +224,7 @@ func (m DependencyMaker) getIdleAlarmService(ctx context.Context, logger zerolog
 		alarm.NewAdapter(client),
 		entity.NewAdapter(client),
 		redis.NewStore(m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg), "pbehaviors", 0),
-		pbehavior.NewService(pbehavior.NewModelProvider(client), pbehavior.NewEntityMatcher(client), logger),
+		pbehavior.NewService(pbehavior.NewModelProvider(client), pbehavior.NewEntityMatcher(client)),
 		json.NewEncoder(),
 		logger,
 	)

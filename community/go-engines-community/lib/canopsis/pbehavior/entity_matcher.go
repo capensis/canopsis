@@ -3,17 +3,17 @@ package pbehavior
 import (
 	"context"
 	"encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"go.mongodb.org/mongo-driver/bson"
 	"math"
 	"sort"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 const defaultAggregationStep = 100
 
 // EntityMatcher checks if an entity is matched to filter.
 type EntityMatcher interface {
-	Match(ctx context.Context, entityID string, filter string) (bool, error)
 	MatchAll(ctx context.Context, entityID string, filters map[string]string) (map[string]bool, error)
 }
 
@@ -37,45 +37,6 @@ func NewEntityMatcher(dbClient mongo.DbClient, aggregationStep ...int) EntityMat
 type entityMatcher struct {
 	aggregationStep int
 	dbCollection    mongo.DbCollection
-}
-
-// Match matches entity by mongo expression.
-func (m *entityMatcher) Match(
-	ctx context.Context,
-	entityID string,
-	filter string,
-) (res bool, resErr error) {
-	if filter == "" {
-		return true, nil
-	}
-
-	pipeline, err := transformFilter(filter)
-	if err != nil {
-		return false, err
-	}
-
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-	cursor, err := m.dbCollection.Find(ctx, []bson.M{
-		{"$match": bson.M{"_id": entityID}},
-		pipeline,
-	})
-	if err != nil {
-		return false, err
-	}
-
-	defer func() {
-		err := cursor.Close(ctx)
-		if resErr == nil && err != nil {
-			resErr = err
-		}
-	}()
-
-	for cursor.Next(ctx) {
-		return true, nil
-	}
-
-	return false, nil
 }
 
 // MatchAll matches entity by mongo expression. It uses $facet to reduce amount
@@ -106,7 +67,7 @@ func (m *entityMatcher) MatchAll(
 		b := offset * m.aggregationStep
 		e := int(math.Min(float64(filtersLen), float64(b+m.aggregationStep)))
 		subFilters := filtersArr[b:e]
-		pipeline, err := getAggregatePipeline([]string{entityID}, subFilters)
+		pipeline, err := getAggregatePipeline(entityID, subFilters)
 		if err != nil {
 			return nil, err
 		}
@@ -161,7 +122,7 @@ func transformFilter(filter string) (bson.M, error) {
 
 // getAggregatePipeline returns doc where key is filter key and value is 1 or 0.
 func getAggregatePipeline(
-	entityIDs []string,
+	entityID string,
 	filters []keyValue,
 ) ([]bson.M, error) {
 	facetPipeline := bson.M{}
@@ -176,7 +137,7 @@ func getAggregatePipeline(
 	}
 
 	return []bson.M{
-		{"$match": bson.M{"_id": bson.M{"$in": entityIDs}}},
+		{"$match": bson.M{"_id": entityID}},
 		{"$facet": facetPipeline},
 		{"$addFields": bson.M{
 			"ids": bson.M{

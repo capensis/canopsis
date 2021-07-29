@@ -1,13 +1,12 @@
 package pbehavior
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/pbehavior/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior Service
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/pbehavior/pbehavior.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior Service,EntityMatcher,ModelProvider,EventManager
 
 import (
 	"context"
 	"encoding/json"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
-	"github.com/rs/zerolog"
 	"time"
 )
 
@@ -19,6 +18,7 @@ type Service interface {
 	Recompute(ctx context.Context, pbehaviorID string) error
 	GetSpan() timespan.Span
 	GetPbehaviorStatus(ctx context.Context, pbehaviorIDs []string, t time.Time) (map[string]bool, error)
+	GetComputedPbehaviorsCount() int
 }
 
 // service uses TypeComputer to compute data and TypeResolver to resolve type by this data.
@@ -26,7 +26,6 @@ type service struct {
 	resolver       *typeResolver
 	computer       TypeComputer
 	matcher        EntityMatcher
-	logger         zerolog.Logger
 	workerPoolSize int
 }
 
@@ -34,7 +33,6 @@ type service struct {
 func NewService(
 	modelProvider ModelProvider,
 	matcher EntityMatcher,
-	logger zerolog.Logger,
 	workerPoolSize ...int,
 ) Service {
 	poolSize := DefaultPoolSize
@@ -52,11 +50,9 @@ func NewService(
 			nil,
 			nil,
 			"",
-			logger,
 		),
-		computer:       NewTypeComputer(modelProvider, logger, poolSize),
+		computer:       NewTypeComputer(modelProvider, poolSize),
 		matcher:        matcher,
-		logger:         logger,
 		workerPoolSize: poolSize,
 	}
 }
@@ -73,7 +69,6 @@ func (s *service) Compute(ctx context.Context, span timespan.Span) error {
 		res.computedPbehaviors,
 		res.typesByID,
 		res.defaultTypes[TypeActive],
-		s.logger,
 	)
 
 	return nil
@@ -102,6 +97,10 @@ func (s *service) GetPbehaviorStatus(
 	return s.resolver.GetPbehaviorStatus(ctx, pbehaviorIDs, t)
 }
 
+func (s *service) GetComputedPbehaviorsCount() int {
+	return s.resolver.GetComputedPbehaviorsCount()
+}
+
 func (s *service) GetSpan() timespan.Span {
 	return s.resolver.GetSpan()
 }
@@ -117,7 +116,6 @@ func (s *service) UnmarshalJSON(b []byte) error {
 		nil,
 		nil,
 		"",
-		s.logger,
 	)
 	err := json.Unmarshal(b, resolver)
 	if err != nil {
