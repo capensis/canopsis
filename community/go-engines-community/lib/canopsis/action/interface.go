@@ -4,6 +4,7 @@ package action
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -70,8 +71,9 @@ type ScenarioExecution struct {
 }
 
 type ScenarioResult struct {
-	Alarm types.Alarm
-	Err   error
+	Alarm            types.Alarm
+	Err              error
+	ActionExecutions []Execution
 }
 
 type ExecuteScenariosTask struct {
