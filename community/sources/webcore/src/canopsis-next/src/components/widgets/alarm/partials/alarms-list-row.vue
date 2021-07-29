@@ -118,12 +118,14 @@ export default {
       const {
         assigned_instructions: assignedInstructions = [],
         is_auto_instruction_running: isAutoInstructionRunning = false,
+        is_manual_instruction_waiting_result: isManualInstructionWaitingResult = false,
         is_all_auto_instructions_completed: isAutoInstructionCompleted = false,
       } = this.alarm;
 
       return assignedInstructions.length
           || isAutoInstructionRunning
           || isAutoInstructionCompleted
+          || isManualInstructionWaitingResult
           || childrenInstructions;
     },
 

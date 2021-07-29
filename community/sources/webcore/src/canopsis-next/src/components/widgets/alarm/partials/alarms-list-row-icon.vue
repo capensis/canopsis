@@ -19,11 +19,13 @@ export default {
   },
   computed: {
     iconData() {
-      if (this.alarm.is_auto_instruction_running) {
+      if (this.alarm.is_auto_instruction_running || this.alarm.is_manual_instruction_waiting_result) {
         return {
           icon: 'assignment',
           class: 'instruction-icon--auto-running',
-          tooltip: this.$t('alarmList.tooltips.hasAutoInstructionInRunning'),
+          tooltip: this.alarm.is_manual_instruction_waiting_result
+            ? this.$t('alarmList.tooltips.awaitingInstructionComplete')
+            : this.$t('alarmList.tooltips.hasAutoInstructionInRunning'),
         };
       } else if (this.alarm.is_all_auto_instructions_completed) {
         return {
