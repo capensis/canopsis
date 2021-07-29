@@ -211,7 +211,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisClient),
 		engine.RunInfo{
-			Name:         canopsis.AxeExchangeName,
+			Name:         canopsis.AxeEngineName,
 			ConsumeQueue: canopsis.AxeQueueName,
 			PublishQueue: options.PublishToQueue,
 		},

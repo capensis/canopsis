@@ -13,7 +13,6 @@ const (
 	ActionConsumerName              = "action"
 	ActionRPCConsumerName           = "action_rpc"
 	AxeEngineName                   = "engine-axe"
-	AxeExchangeName                 = "engine-axe"
 	AxeQueueName                    = "Engine_axe"
 	AxeServiceRPCClientQueueName    = "Engine_axe_service_rpc_client"
 	AxePbehaviorRPCClientQueueName  = "Engine_axe_pbehavior_rpc_client"

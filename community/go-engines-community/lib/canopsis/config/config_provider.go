@@ -4,7 +4,6 @@ package config
 
 import (
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"html/template"
 	"reflect"
 	"strconv"
@@ -457,81 +456,6 @@ func (p *BaseDataStorageConfigProvider) Get() DataStorageConfig {
 	defer p.mx.RUnlock()
 
 	return p.conf
-}
-
-type BaseHealthCheckConfigProvider struct {
-	conf   HealthCheckConf
-	mx     sync.RWMutex
-	logger zerolog.Logger
-}
-
-func NewBaseHealthCheckConfigProvider(cfg HealthCheckConf, logger zerolog.Logger) *BaseHealthCheckConfigProvider {
-	return &BaseHealthCheckConfigProvider{
-		conf:   HealthCheckConf{EngineOrder: parseEngineOrder(cfg.EngineOrder, defaultConfig, logger)},
-		logger: logger,
-	}
-}
-
-func (p *BaseHealthCheckConfigProvider) Update(cfg HealthCheckConf) error {
-	p.mx.Lock()
-	defer p.mx.Unlock()
-
-	p.conf.EngineOrder = parseEngineOrder(cfg.EngineOrder, p.conf.EngineOrder, p.logger)
-
-	return nil
-}
-
-func (p *BaseHealthCheckConfigProvider) Get() HealthCheckConf {
-	p.mx.RLock()
-	defer p.mx.RUnlock()
-
-	return p.conf
-}
-
-func parseEngineOrder(value []EngineOrder, oldValue []EngineOrder, logger zerolog.Logger) []EngineOrder {
-	var possibleEngines = []string{
-		canopsis.FIFOEngineName,
-		canopsis.CheEngineName,
-		canopsis.PBehaviorEngineName,
-		canopsis.AxeEngineName,
-		canopsis.CorrelationEngineName,
-		canopsis.RemediationEngineName,
-		canopsis.ServiceEngineName,
-		canopsis.DynamicInfosEngineName,
-		canopsis.ActionEngineName,
-		canopsis.WebhookEngineName,
-	}
-
-	for idx, pair := range value {
-		fromValid := false
-		toValid := false
-
-		for _, engineName := range possibleEngines {
-			if pair.From == engineName {
-				fromValid = true
-			}
-
-			if pair.To == engineName {
-				toValid = true
-			}
-
-			if fromValid && toValid {
-				break
-			}
-		}
-
-		if !fromValid || !toValid {
-			logger.Error().
-				Int("index", idx).
-				Str("from", pair.From).
-				Str("to", pair.To).
-				Msgf("from and to values should be one of %v", possibleEngines)
-
-			return oldValue
-		}
-	}
-
-	return value
 }
 
 func parseScheduledTime(
