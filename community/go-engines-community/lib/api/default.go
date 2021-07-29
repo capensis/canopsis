@@ -113,7 +113,6 @@ func Default(
 	pbhService := libpbehavior.NewService(
 		libpbehavior.NewModelProvider(dbClient),
 		libpbehavior.NewEntityMatcher(dbClient),
-		logger,
 	)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)

@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -14,7 +17,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type Options struct {
@@ -66,8 +68,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	eventManager := pbehavior.NewEventManager()
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
-			logger.Debug().Msg("Initialize process")
-
 			computeLock, err := lockerClient.Obtain(ctx, redis.RecomputeLockKey, redis.RecomputeLockDuration, &redislock.Options{
 				RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 			})
@@ -76,23 +76,19 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 				if computeLock != nil {
 					err := computeLock.Release(ctx)
 					if err != nil && err != redislock.ErrLockNotHeld {
-						logger.Warn().Msg("Initialize: failed to manually release compute-lock, the lock will be released by ttl")
+						logger.Warn().Msg("failed to manually release compute-lock, the lock will be released by ttl")
 					}
 				}
 			}()
 
 			if err != nil {
-				logger.Err(err).Msg("Initialize: obtain redlock failed! The engine will be stopped")
-
-				return err
+				return fmt.Errorf("obtain redlock failed: %w", err)
 			}
 
-			pbhService := pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger)
+			pbhService := pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient))
 			ok, err := store.Restore(ctx, pbhService)
 			if err != nil {
-				logger.Err(err).Msg("Initialize: get pbehavior's frames from redis failed! The engine will be stopped")
-
-				return err
+				return fmt.Errorf("get pbehavior's frames from redis failed: %w", err)
 			}
 
 			now := time.Now().In(timezoneConfigProvider.Get().Location)
@@ -101,28 +97,29 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			if !ok || span.To().Before(now.Add(frameDuration/2)) {
 				err = pbhService.Compute(ctx, timespan.New(now, now.Add(frameDuration)))
 				if err != nil {
-					logger.Err(err).Msg("Initialize: compute pbehavior's frames failed! The engine will be stopped")
-
-					return err
+					return fmt.Errorf("compute pbehavior's frames failed: %w", err)
 				}
 
 				err = store.Save(ctx, pbhService)
 				if err != nil {
-					logger.Err(err).Msg("Initialize: save pbehavior's frames to redis failed! The engine will be stopped")
-
-					return err
+					return fmt.Errorf("save pbehavior's frames to redis failed: %w", err)
 				}
+
+				newSpan := pbhService.GetSpan()
+				logger.Info().
+					Time("interval from", newSpan.From()).
+					Time("interval to", newSpan.To()).
+					Int("count", pbhService.GetComputedPbehaviorsCount()).
+					Msg("pbehaviors are recomputed")
 			}
 
 			err = computeLock.Release(ctx)
 			if err != nil {
 				if err == redislock.ErrLockNotHeld {
-					logger.Err(err).Msg("Initialize: the pbehavior's frames computing took more time than redlock ttl, the data might be inconsistent, engine will be stopped")
-
-					return err
-				} else {
-					logger.Warn().Msg("Initialize: failed to manually release compute-lock, the lock will be released by ttl")
+					return fmt.Errorf("the pbehavior's frames computing took more time than redlock ttl, the data might be inconsistent: %w", err)
 				}
+
+				logger.Warn().Msg("failed to manually release compute-lock, the lock will be released by ttl")
 			}
 
 			return nil
@@ -143,7 +140,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		amqpConnection,
 		&messageProcessor{
 			Store:                    store,
-			PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger),
+			PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient)),
 			TimezoneConfigProvider:   timezoneConfigProvider,
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			Encoder:                  json.NewEncoder(),
@@ -153,7 +150,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 				DbClient:                 dbClient,
 				LockerClient:             lockerClient,
 				Store:                    store,
-				PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger),
+				PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient)),
 				EventManager:             pbehavior.NewEventManager(),
 				AlarmAdapter:             alarm.NewAdapter(dbClient),
 				TimezoneConfigProvider:   timezoneConfigProvider,
@@ -177,7 +174,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 				DbClient:                 dbClient,
 				LockerClient:             lockerClient,
 				Store:                    store,
-				PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger),
+				PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient)),
 				EventManager:             pbehavior.NewEventManager(),
 				AlarmAdapter:             alarm.NewAdapter(dbClient),
 				TimezoneConfigProvider:   timezoneConfigProvider,
@@ -204,7 +201,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		PeriodicalInterval:     options.PeriodicalWaitTime,
 		LockerClient:           lockerClient,
 		Store:                  store,
-		PbhService:             pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger),
+		PbhService:             pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient)),
 		DbClient:               dbClient,
 		EventManager:           eventManager,
 		FrameDuration:          frameDuration,

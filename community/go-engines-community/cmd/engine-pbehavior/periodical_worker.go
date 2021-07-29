@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -17,7 +19,6 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
-	"time"
 )
 
 type periodicalWorker struct {
@@ -39,14 +40,12 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *periodicalWorker) Work(ctx context.Context) error {
-	w.Logger.Debug().Msg("Periodical process")
-
 	_, err := w.LockerClient.Obtain(ctx, redis.PeriodicalLockKey, w.GetInterval(), nil)
 	if err == redislock.ErrNotObtained {
-		w.Logger.Debug().Msg("Periodical process: Could not obtain periodical lock! Skip periodical process")
+		w.Logger.Debug().Msg("Could not obtain periodical lock! Skip periodical process")
 		return nil
 	} else if err != nil {
-		w.Logger.Error().Err(err).Msg("Periodical process: obtain redis lock - unexpected error! Skip periodical process")
+		w.Logger.Error().Err(err).Msg("obtain redis lock - unexpected error! Skip periodical process")
 		return nil
 	}
 
@@ -60,19 +59,19 @@ func (w *periodicalWorker) Work(ctx context.Context) error {
 		if computeLock != nil {
 			err := computeLock.Release(ctx)
 			if err != nil && err != redislock.ErrLockNotHeld {
-				w.Logger.Warn().Err(err).Msg("Periodical process: failed to manually release compute-lock, the lock will be released by ttl")
+				w.Logger.Warn().Err(err).Msg("failed to manually release compute-lock, the lock will be released by ttl")
 			}
 		}
 	}()
 
 	if err != nil {
-		w.Logger.Err(err).Msg("Periodical process: obtain redlock failed! Skip periodical process")
+		w.Logger.Err(err).Msg("obtain redlock failed! Skip periodical process")
 		return nil
 	}
 
 	ok, err := w.Store.Restore(ctx, w.PbhService)
 	if err != nil {
-		w.Logger.Err(err).Msg("Periodical process: get pbehavior's frames from redis failed! Skip periodical process")
+		w.Logger.Err(err).Msg("get pbehavior's frames from redis failed! Skip periodical process")
 		return nil
 	}
 
@@ -82,13 +81,20 @@ func (w *periodicalWorker) Work(ctx context.Context) error {
 	if !ok || span.To().Before(now.Add(w.FrameDuration/2)) {
 		err = w.PbhService.Compute(ctx, timespan.New(now, now.Add(w.FrameDuration)))
 		if err != nil {
-			w.Logger.Err(err).Msg("Periodical process: compute pbehavior's frames failed! Skip periodical process")
+			w.Logger.Err(err).Msg("compute pbehavior's frames failed! Skip periodical process")
 			return nil
 		}
 
+		newSpan := w.PbhService.GetSpan()
+		w.Logger.Info().
+			Time("interval from", newSpan.From()).
+			Time("interval to", newSpan.To()).
+			Int("count", w.PbhService.GetComputedPbehaviorsCount()).
+			Msg("pbehaviors are recomputed")
+
 		err = w.Store.Save(ctx, w.PbhService)
 		if err != nil {
-			w.Logger.Err(err).Msg("Periodical process: save pbehavior's frames to redis failed! Skip periodical process")
+			w.Logger.Err(err).Msg("save pbehavior's frames to redis failed! Skip periodical process")
 			return nil
 		}
 	}
@@ -98,7 +104,7 @@ func (w *periodicalWorker) Work(ctx context.Context) error {
 		if err == redislock.ErrLockNotHeld {
 			return nil
 		} else {
-			w.Logger.Warn().Msg("Periodical process: failed to manually release compute-lock, the lock will be released by ttl")
+			w.Logger.Warn().Msg("failed to manually release compute-lock, the lock will be released by ttl")
 		}
 	}
 
@@ -123,7 +129,7 @@ func (w *periodicalWorker) Work(ctx context.Context) error {
 	})
 
 	if err != nil {
-		w.Logger.Err(err).Msg("Periodical process: get alarms from mongo failed! Skip periodical process")
+		w.Logger.Err(err).Msg("get alarms from mongo failed! Skip periodical process")
 		return nil
 	}
 
@@ -134,7 +140,7 @@ func (w *periodicalWorker) Work(ctx context.Context) error {
 
 		err = cursor.Decode(&alarmWithEntity)
 		if err != nil {
-			w.Logger.Err(err).Msg("Periodical process: decode alarm with entity failed! Skip periodical process")
+			w.Logger.Err(err).Msg("decode alarm with entity failed! Skip periodical process")
 			return nil
 		}
 
@@ -143,7 +149,7 @@ func (w *periodicalWorker) Work(ctx context.Context) error {
 
 		resolveResult, err := w.PbhService.Resolve(ctx, &entity, now)
 		if err != nil {
-			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("Periodical process: resolve an entity failed! Skip periodical process")
+			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("resolve an entity failed! Skip periodical process")
 			return nil
 		}
 
@@ -155,7 +161,11 @@ func (w *periodicalWorker) Work(ctx context.Context) error {
 				return nil
 			}
 
-			w.Logger.Debug().Str("resolve pbehavior", resolveResult.ResolvedPbhID).Str("resolve type", fmt.Sprintf("%+v", resolveResult.ResolvedType)).Str("alarm", alarm.ID).Msgf("Periodical process: send %s event", event.EventType)
+			w.Logger.Debug().
+				Str("resolve pbehavior", resolveResult.ResolvedPbhID).
+				Str("resolve type", fmt.Sprintf("%+v", resolveResult.ResolvedType)).
+				Str("alarm", alarm.ID).
+				Msgf("send %s event", event.EventType)
 		}
 	}
 
