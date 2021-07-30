@@ -2456,6 +2456,11 @@ export default {
       message: 'The SNMP engine allows the processing of SNMP traps retrieved by the connector snmp2canopsis.',
     },
 
+    [USERS_PERMISSIONS.technical.exploitation.healthcheck]: {
+      title: 'Healthcheck',
+      message: '',
+    },
+
     /**
      * Admin access
      */
@@ -2484,10 +2489,6 @@ export default {
     /**
      * Admin general
      */
-    [USERS_PERMISSIONS.technical.engine]: {
-      title: 'Engines',
-      message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
-    },
     [USERS_PERMISSIONS.technical.parameters]: {
       title: 'Parameters',
     },

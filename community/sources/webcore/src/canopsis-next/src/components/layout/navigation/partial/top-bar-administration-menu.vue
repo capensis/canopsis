@@ -91,11 +91,6 @@ export default {
     administrationGeneralLinks() {
       return [
         {
-          route: { name: 'admin-engines' },
-          icon: '$vuetify.icons.alt_route',
-          permission: USERS_PERMISSIONS.technical.engine,
-        },
-        {
           route: { name: 'admin-parameters' },
           icon: 'settings',
           permission: USERS_PERMISSIONS.technical.parameters,
@@ -110,12 +105,6 @@ export default {
           icon: 'assignment',
           permission: USERS_PERMISSIONS.technical.remediation,
         },
-      ];
-    },
-
-    permissionsWithDefaultType() {
-      return [
-        USERS_PERMISSIONS.technical.engine,
       ];
     },
   },

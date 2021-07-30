@@ -18,18 +18,18 @@ import AdminParameters from '@/views/admin/parameters.vue';
 import AdminBroadcastMessages from '@/views/admin/broadcast-messages.vue';
 import AdminPlaylists from '@/views/admin/playlists.vue';
 import AdminPlanning from '@/views/admin/planning.vue';
-import AdminEngines from '@/views/admin/engines.vue';
 import AdminRemediation from '@/views/admin/remediation.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
 import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
 import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
-import Playlist from '@/views/playlist.vue';
+import ExploitationHealthcheck from '@/views/exploitation/healthcheck.vue';
 import ExploitationMetaAlarmRules from '@/views/exploitation/meta-alarm-rules.vue';
 import ExploitationScenarios from '@/views/exploitation/scenarios.vue';
+import ExploitationIdleRules from '@/views/exploitation/idle-rules.vue';
+import Playlist from '@/views/playlist.vue';
 import NotificationInstructionStats from '@/views/notification/instruction-stats.vue';
-import IdleRules from '@/views/exploitation/idle-rules.vue';
 
 Vue.use(Router);
 
@@ -154,18 +154,6 @@ const routes = [
     },
   },
   {
-    path: '/admin/engines',
-    name: 'admin-engines',
-    component: AdminEngines,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        action: CRUD_ACTIONS.can,
-        id: USERS_PERMISSIONS.technical.engine,
-      },
-    },
-  },
-  {
     path: '/admin/remediation',
     name: 'admin-remediation-administration',
     component: AdminRemediation,
@@ -268,12 +256,23 @@ const routes = [
   },
   {
     path: '/exploitation/idle-rules',
-    name: 'idle-rules',
-    component: IdleRules,
+    name: 'exploitation-idle-rules',
+    component: ExploitationIdleRules,
     meta: {
       requiresLogin: true,
       requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.idleRules,
+      },
+    },
+  },
+  {
+    path: '/admin/healthcheck',
+    name: 'exploitation-healthcheck',
+    component: ExploitationHealthcheck,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.healthcheck,
       },
     },
   },

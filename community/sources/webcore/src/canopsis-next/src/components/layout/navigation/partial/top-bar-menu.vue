@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import { USERS_PERMISSIONS } from '@/constants';
+
 import { layoutNavigationTopBarMenuMixin } from '@/mixins/layout/navigation/top-bar-menu';
 
 import TopBarMenuLink from './top-bar-menu-link.vue';
@@ -30,6 +32,12 @@ export default {
   computed: {
     preparedLinks() {
       return this.prepareLinks(this.links);
+    },
+
+    permissionsWithDefaultType() {
+      return [
+        USERS_PERMISSIONS.technical.exploitation.healthcheck,
+      ];
     },
   },
 };

@@ -46,6 +46,10 @@
         "models_exploitation_idleRules": {
           "checksum": 15
         },
+        "models_exploitation_healthcheck": {
+          "checksum": 1,
+          "desc": ""
+        },
         "tabs_showeditionmenu" : {
             "checksum": 1
         },
@@ -455,10 +459,6 @@
         },
         "models_remediationConfiguration": {
           "checksum": 15,
-          "desc": ""
-        },
-        "models_engine": {
-          "checksum": 1,
           "desc": ""
         },
         "common_variablesHelp": {
