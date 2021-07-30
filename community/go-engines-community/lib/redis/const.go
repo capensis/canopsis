@@ -19,6 +19,8 @@ const (
 	AxePeriodicalLockKey                 = "axe-periodical-lock-key"
 	AxeResolvedArchiverPeriodicalLockKey = "axe-resolved-archiver-periodical-lock-key"
 
+	FifoDeleteOutdatedRatesLockKey = "fifo-delete-outdated-rates-lock-key"
+
 	ChePeriodicalLockKey = "che-periodical-lock-key"
 
 	ServicePeriodicalLockKey          = "service-periodical-lock"

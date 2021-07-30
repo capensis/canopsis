@@ -3341,7 +3341,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/messageratestats.StatsResponse"
+                                                "$ref": "#/definitions/messageratestats.StatsListResponse"
                                             }
                                         }
                                     }
@@ -8224,6 +8224,15 @@ var doc = `{
                         }
                     }
                 },
+                "health_check": {
+                    "type": "object",
+                    "properties": {
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
                 "junit": {
                     "type": "object",
                     "properties": {
@@ -8280,6 +8289,9 @@ var doc = `{
                 "entity": {
                     "type": "object",
                     "$ref": "#/definitions/datastorage.HistoryWithCount"
+                },
+                "health_check": {
+                    "type": "integer"
                 },
                 "junit": {
                     "type": "integer"
@@ -9146,6 +9158,37 @@ var doc = `{
                 },
                 "to": {
                     "type": "integer"
+                }
+            }
+        },
+        "messageratestats.StatsListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/messageratestats.StatsResponse"
+                    }
+                },
+                "meta": {
+                    "type": "object",
+                    "properties": {
+                        "deleted_before": {
+                            "type": "integer"
+                        },
+                        "page": {
+                            "type": "integer"
+                        },
+                        "page_count": {
+                            "type": "integer"
+                        },
+                        "per_page": {
+                            "type": "integer"
+                        },
+                        "total_count": {
+                            "type": "integer"
+                        }
+                    }
                 }
             }
         },

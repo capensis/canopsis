@@ -1,6 +1,7 @@
 package messageratestats
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -27,6 +28,14 @@ type StatsResponse struct {
 type AggregationResult struct {
 	Data       []StatsResponse `bson:"data" json:"data"`
 	TotalCount int64           `bson:"total_count" json:"total_count"`
+}
+
+type StatsListResponse struct {
+	Data []StatsResponse `json:"data"`
+	Meta struct {
+		common.PaginatedMeta
+		DeletedBefore *types.CpsTime `json:"deleted_before,omitempty" swaggertype:"integer"`
+	} `json:"meta"`
 }
 
 func (r AggregationResult) GetTotal() int64 {

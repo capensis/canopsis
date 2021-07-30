@@ -769,6 +769,12 @@ definitions:
             $ref: '#/definitions/types.DurationWithEnabled'
             type: object
         type: object
+      health_check:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+        type: object
       junit:
         properties:
           delete_after:
@@ -808,6 +814,8 @@ definitions:
       entity:
         $ref: '#/definitions/datastorage.HistoryWithCount'
         type: object
+      health_check:
+        type: integer
       junit:
         type: integer
       pbehavior:
@@ -1397,6 +1405,26 @@ definitions:
     - from
     - interval
     - to
+    type: object
+  messageratestats.StatsListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/messageratestats.StatsResponse'
+        type: array
+      meta:
+        properties:
+          deleted_before:
+            type: integer
+          page:
+            type: integer
+          page_count:
+            type: integer
+          per_page:
+            type: integer
+          total_count:
+            type: integer
+        type: object
     type: object
   messageratestats.StatsResponse:
     properties:
@@ -5461,7 +5489,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/messageratestats.StatsResponse'
+                    $ref: '#/definitions/messageratestats.StatsListResponse'
                   type: array
               type: object
         "400":
