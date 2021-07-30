@@ -105,6 +105,11 @@ export default {
           icon: 'assignment',
           permission: USERS_PERMISSIONS.technical.remediation,
         },
+        {
+          route: { name: 'admin-healthcheck' },
+          icon: '$vuetify.icons.alt_route',
+          permission: USERS_PERMISSIONS.technical.healthcheck,
+        },
       ];
     },
   },

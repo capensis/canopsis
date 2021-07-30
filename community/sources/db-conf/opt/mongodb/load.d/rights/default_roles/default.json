@@ -46,7 +46,7 @@
         "models_exploitation_idleRules": {
           "checksum": 15
         },
-        "models_exploitation_healthcheck": {
+        "models_healthcheck": {
           "checksum": 1,
           "desc": ""
         },

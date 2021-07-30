@@ -498,9 +498,9 @@
         "type": "CRUD"
     },
     {
-        "_id": "models_exploitation_healthcheck",
-        "loader_id": "models_exploitation_healthcheck",
-        "crecord_name": "models_exploitation_healthcheck",
+        "_id": "models_healthcheck",
+        "loader_id": "models_healthcheck",
+        "crecord_name": "models_healthcheck",
         "crecord_type": "action",
         "desc": "Healthcheck"
     },

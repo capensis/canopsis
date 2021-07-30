@@ -2456,11 +2456,6 @@ export default {
       message: 'The SNMP engine allows the processing of SNMP traps retrieved by the connector snmp2canopsis.',
     },
 
-    [USERS_PERMISSIONS.technical.exploitation.healthcheck]: {
-      title: 'Healthcheck',
-      message: '',
-    },
-
     /**
      * Admin access
      */
@@ -2484,6 +2479,10 @@ export default {
     [USERS_PERMISSIONS.technical.playlist]: {
       title: 'Playlists',
       message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
+    },
+    [USERS_PERMISSIONS.technical.healthcheck]: {
+      title: 'Healthcheck',
+      message: '',
     },
 
     /**

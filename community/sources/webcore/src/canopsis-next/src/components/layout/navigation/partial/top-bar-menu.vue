@@ -36,7 +36,7 @@ export default {
 
     permissionsWithDefaultType() {
       return [
-        USERS_PERMISSIONS.technical.exploitation.healthcheck,
+        USERS_PERMISSIONS.technical.healthcheck,
       ];
     },
   },
