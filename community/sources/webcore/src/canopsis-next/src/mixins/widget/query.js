@@ -54,17 +54,17 @@ export default {
 
       set(value) {
         const { sortBy = null, descending = false, multiSortBy = [] } = value;
-        const oldQuery = pick(this.query, ['sortKey', 'sortDir', 'multiSort']);
-        const updatesForQuery = {
+        const oldQuery = pick(this.query, ['sortKey', 'sortDir', 'multiSortBy']);
+        const newQuery = {
           sortKey: sortBy,
           sortDir: descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
-          multiSort: multiSortBy,
+          multiSortBy,
         };
 
-        if (!isEqual(oldQuery, updatesForQuery)) {
+        if (!isEqual(oldQuery, newQuery)) {
           this.query = {
             ...this.query,
-            ...updatesForQuery,
+            ...newQuery,
           };
         }
       },
@@ -78,7 +78,7 @@ export default {
         'sortKey',
         'sortDir',
         'category',
-        'multiSort',
+        'multiSortBy',
         'limit',
       ]);
 
@@ -88,7 +88,7 @@ export default {
         sortKey,
         sortDir,
         category,
-        multiSort = [],
+        multiSortBy = [],
         limit = PAGINATION_LIMIT,
       } = this.query;
 
@@ -113,8 +113,8 @@ export default {
         query.category = category;
       }
 
-      if (multiSort.length) {
-        query.multi_sort = multiSort.map(({ sortBy, descending }) =>
+      if (multiSortBy.length) {
+        query.multi_sort = multiSortBy.map(({ sortBy, descending }) =>
           `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
       }
 
