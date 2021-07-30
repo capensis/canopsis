@@ -209,11 +209,20 @@
     "crecord_name": "api_instruction_approve"
   },
   {
+    "_id": "api_healthcheck",
+    "crecord_type": "action",
+    "crecord_name": "api_healthcheck"
+  },
+  {
     "_id": "admin",
     "crecord_type": "role",
     "crecord_name": "admin",
     "rights": {
       "api_event": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_healthcheck": {
         "checksum": 1,
         "crecord_type": "right"
       },
