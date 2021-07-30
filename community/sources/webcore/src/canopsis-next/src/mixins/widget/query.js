@@ -46,10 +46,10 @@ export default {
 
     vDataTablePagination: {
       get() {
-        const { sortDir, sortKey: sortBy, multiSort = [] } = this.query;
+        const { sortDir, sortKey: sortBy, multiSortBy = [] } = this.query;
         const descending = sortDir === SORT_ORDERS.desc;
 
-        return { sortBy, descending, multiSortBy: multiSort };
+        return { sortBy, descending, multiSortBy };
       },
 
       set(value) {
