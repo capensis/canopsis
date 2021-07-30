@@ -28,7 +28,10 @@ type Security interface {
 	GetAuthProviders() []libsecurity.Provider
 	// RegisterCallbackRoutes registers callback routes for auth methods.
 	RegisterCallbackRoutes(router gin.IRouter)
+	// GetAuthMiddleware returns corresponding config auth middlewares.
 	GetAuthMiddleware() []gin.HandlerFunc
+	// GetWebsocketAuthMiddleware returns auth middlewares for websocket.
+	GetWebsocketAuthMiddleware() []gin.HandlerFunc
 	GetSessionStore() libsession.Store
 	GetConfig() libsecurity.Config
 	GetPasswordEncoder() password.Encoder
@@ -120,6 +123,14 @@ func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		middleware.Auth(s.GetHttpAuthProviders()),
 		middleware.SessionAuth(s.DbClient, s.SessionStore),
+	}
+}
+
+func (s *security) GetWebsocketAuthMiddleware() []gin.HandlerFunc {
+	return []gin.HandlerFunc{
+		middleware.Auth([]libsecurity.HttpProvider{
+			httpprovider.NewApikeyProvider(s.newUserProvider()),
+		}),
 	}
 }
 

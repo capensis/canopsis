@@ -69,13 +69,11 @@ func main() {
 		enforcer,
 		nil,
 		logger,
-		func(ctx context.Context) error {
+		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {
-				return err
+				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
-
-			return nil
 		},
 	)
 	if err != nil {
