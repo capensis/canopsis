@@ -22,7 +22,7 @@ export default {
   mixins: [authMixin, entitiesUserMixin],
   computed: {
     userName() {
-      return this.currentUser.crecord_name || this.currentUser._id;
+      return this.currentUser.name || this.currentUser._id;
     },
   },
   methods: {
