@@ -26,6 +26,11 @@ export default {
     },
   },
   methods: {
+    /**
+     * Get thead element for a table
+     *
+     * @note Was replaced for disabling select all checkbox if all items is disabled
+     */
     genTHead() {
       if (this.hideHeaders) {
         return null;
@@ -71,6 +76,16 @@ export default {
     },
 
     /* eslint-disable no-param-reassign */
+    /**
+     * Get header sorting data.
+     *
+     * @note Was replaced for multi sort support
+     *
+     * @param {Object} header
+     * @param {Object[]} children
+     * @param {Object} data
+     * @param {string[]} classes
+     */
     genHeaderSortingData(header, children, data, classes) {
       if (!('value' in header)) {
         consoleWarn('Headers must have a value property that corresponds to a value in the v-model array', this);
@@ -156,6 +171,13 @@ export default {
     },
     /* eslint-enable no-param-reassign */
 
+    /**
+     * Update pagination parameters for the sorting
+     *
+     * @note Was replaced for multi sort support
+     *
+     * @param {string | number} index
+     */
     sort(index) {
       if (this.multiSort) {
         this.updateMultiSort(index);
@@ -178,6 +200,13 @@ export default {
       }
     },
 
+    /**
+     * Update pagination parameters for the multi sorting
+     *
+     * @note New method
+     *
+     * @param {string | number} index
+     */
     updateMultiSort(index) {
       const { multiSortBy = [] } = this.computedPagination;
       let newMultiSortBy = [...multiSortBy];
