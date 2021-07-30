@@ -204,6 +204,14 @@ export default {
     },
   },
   methods: {
+    refreshExpanded() {
+      Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
+        if (expanded && !this.alarms.some(alarm => alarm._id === id)) {
+          this.$set(this.$refs.alarmsTable.expanded, id, false);
+        }
+      });
+    },
+
     updateCorrelation(correlation) {
       this.updateWidgetPreferencesInUserPreference({
         ...this.userPreference.widget_preferences,
@@ -282,7 +290,7 @@ export default {
       });
     },
 
-    fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
+    async fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
       if (this.hasColumns) {
         const query = this.getQuery();
 
@@ -290,10 +298,12 @@ export default {
           query.with_steps = true;
         }
 
-        this.fetchAlarmsList({
+        await this.fetchAlarmsList({
           widgetId: this.widget._id,
           params: query,
         });
+
+        this.refreshExpanded();
       }
     },
 
