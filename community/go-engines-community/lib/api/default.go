@@ -2,13 +2,12 @@ package api
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"os"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
@@ -16,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -149,39 +149,33 @@ func Default(
 	// Create api.
 	api := New(
 		addr,
-		func(ctx context.Context) error {
+		func(ctx context.Context) {
 			close(pbhComputeChan)
 			close(entityPublChan)
 			close(entityCleanerTaskChan)
 
-			var resErr error
 			err := dbClient.Disconnect(ctx)
-			if err != nil && resErr == nil {
-				resErr = err
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
 			err = amqpConn.Close()
-			if err != nil && resErr == nil {
-				resErr = err
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
 
 			err = pbhRedisSession.Close()
-			if err != nil && resErr == nil {
-				resErr = err
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
 
 			err = engineRedisSession.Close()
-			if err != nil && resErr == nil {
-				resErr = err
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
 
 			if deferFunc != nil {
-				err := deferFunc(ctx)
-				if err != nil && resErr == nil {
-					resErr = err
-				}
+				deferFunc(ctx)
 			}
-
-			return resErr
 		},
 		logger,
 	)
@@ -250,7 +244,24 @@ func Default(
 	api.AddWorker("import job", func(ctx context.Context) {
 		importWorker.Run(ctx)
 	})
-	api.AddWorker("config reload", func(ctx context.Context) {
+	api.AddWorker("config reload", updateConfig(timezoneConfigProvider, configAdapter,
+		userInterfaceConfigProvider, userInterfaceAdapter, test, logger))
+	api.AddWorker("data export", func(ctx context.Context) {
+		exportExecutor.Execute(ctx)
+	})
+
+	return api, nil
+}
+
+func updateConfig(
+	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
+	configAdapter config.Adapter,
+	userInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider,
+	userInterfaceAdapter config.UserInterfaceAdapter,
+	test bool,
+	logger zerolog.Logger,
+) func(ctx context.Context) {
+	return func(ctx context.Context) {
 		timeout := canopsis.PeriodicalWaitTime
 		if test {
 			timeout = time.Second
@@ -274,7 +285,7 @@ func Default(
 					continue
 				}
 
-				userInterfaceConfig, err = userInterfaceAdapter.GetConfig(ctx)
+				userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {
 					logger.Err(err).Msg("fail to load user interface config")
 					continue
@@ -288,10 +299,5 @@ func Default(
 				return
 			}
 		}
-	})
-	api.AddWorker("data export", func(ctx context.Context) {
-		exportExecutor.Execute(ctx)
-	})
-
-	return api, nil
+	}
 }
