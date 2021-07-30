@@ -1,6 +1,7 @@
 <script>
 import { VDataTable } from 'vuetify/es5/components/VDataTable';
 import { VIcon } from 'vuetify/es5/components/VIcon';
+import { VCheckbox } from 'vuetify/es5/components/VCheckbox';
 import { consoleWarn } from 'vuetify/es5/util/console';
 
 export default {
@@ -25,11 +26,80 @@ export default {
     },
   },
   methods: {
+    genTHead() {
+      if (this.hideHeaders) {
+        return null;
+      }
+
+      let children = [];
+
+      if (this.$scopedSlots.headers) {
+        const row = this.$scopedSlots.headers({
+          headers: this.headers,
+          indeterminate: this.indeterminate,
+          all: this.everyItem,
+        });
+
+        children = [this.hasTag(row, 'th') ? this.genTR(row) : row, this.genTProgress()];
+      } else {
+        const row = this.headers.map((o, i) => this.genHeader(o, this.headerKey ? o[this.headerKey] : i));
+        const checkbox = this.$createElement(VCheckbox, {
+          props: {
+            dark: this.dark,
+            light: this.light,
+            color: this.selectAll === true ? '' : this.selectAll,
+            hideDetails: true,
+            inputValue: this.everyItem,
+            indeterminate: this.indeterminate,
+
+            /**
+             * disabled added for case with all inactive items
+             */
+            disabled: !this.activeItems.length,
+          },
+          on: { change: this.toggle },
+        });
+
+        if (this.hasSelectAll) {
+          row.unshift(this.$createElement('th', [checkbox]));
+        }
+
+        children = [this.genTR(row), this.genTProgress()];
+      }
+
+      return this.$createElement('thead', [children]);
+    },
+
     /* eslint-disable no-param-reassign */
     genHeaderSortingData(header, children, data, classes) {
       if (!('value' in header)) {
         consoleWarn('Headers must have a value property that corresponds to a value in the v-model array', this);
       }
+
+      /**
+       * Add data attributes into header item
+       *
+       * @param {string | number} sortBy
+       * @param {boolean} descending
+       */
+      const addDataAttributes = (sortBy, descending) => {
+        const beingSorted = sortBy === header.value;
+
+        if (beingSorted) {
+          classes.push('active');
+          if (descending) {
+            classes.push('desc');
+            data.attrs['aria-sort'] = 'descending';
+            data.attrs['aria-label'] += ': Sorted descending. Activate to remove sorting.'; // vuetify TODO: Localization
+          } else {
+            classes.push('asc');
+            data.attrs['aria-sort'] = 'ascending';
+            data.attrs['aria-label'] += ': Sorted ascending. Activate to sort descending.'; // vuetify TODO: Localization
+          }
+        } else {
+          data.attrs['aria-label'] += ': Not sorted. Activate to sort ascending.'; // vuetify TODO: Localization
+        }
+      };
 
       data.attrs.tabIndex = 0;
       data.on = {
@@ -61,25 +131,9 @@ export default {
 
       const pagination = this.computedPagination;
 
-      const addDataAttributes = (sortBy, descending) => {
-        const beingSorted = sortBy === header.value;
-
-        if (beingSorted) {
-          classes.push('active');
-          if (descending) {
-            classes.push('desc');
-            data.attrs['aria-sort'] = 'descending';
-            data.attrs['aria-label'] += ': Sorted descending. Activate to remove sorting.'; // vuetify TODO: Localization
-          } else {
-            classes.push('asc');
-            data.attrs['aria-sort'] = 'ascending';
-            data.attrs['aria-label'] += ': Sorted ascending. Activate to sort descending.'; // vuetify TODO: Localization
-          }
-        } else {
-          data.attrs['aria-label'] += ': Not sorted. Activate to sort ascending.'; // vuetify TODO: Localization
-        }
-      };
-
+      /**
+       * Added multi sort support
+       */
       if (this.multiSort) {
         const { multiSortBy = [] } = pagination;
         const sortItemIndex = multiSortBy.findIndex(item => item.sortBy === header.value);
