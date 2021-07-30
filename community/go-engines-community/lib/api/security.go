@@ -204,8 +204,7 @@ func (s *security) casCallbackHandler(p libsecurity.HttpProvider) gin.HandlerFun
 
 		err = s.enforcer.LoadPolicy()
 		if err != nil {
-			s.Logger.Err(err).Msg("casCallbackHandler: reload enforcer error")
-			panic(err)
+			panic(fmt.Errorf("reload enforcer error: %w", err))
 		}
 
 		c.Redirect(http.StatusPermanentRedirect, request.Redirect)

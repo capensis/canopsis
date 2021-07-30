@@ -334,8 +334,7 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 
 		err = sp.enforcer.LoadPolicy()
 		if err != nil {
-			sp.logger.Err(err).Msg("SamlAcsHandler: reload enforcer error")
-			panic(err)
+			panic(fmt.Errorf("reload enforcer error: %w", err))
 		}
 
 		c.Redirect(http.StatusPermanentRedirect, relayUrl.String())

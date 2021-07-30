@@ -206,7 +206,7 @@ func (p *ldapProvider) saveUser(
 
 	err = p.enforcer.LoadPolicy()
 	if err != nil {
-		return nil, fmt.Errorf("LdapProvider: reload enforcer error")
+		return nil, fmt.Errorf("LdapProvider: reload enforcer error: %w", err)
 	}
 
 	return user, nil
