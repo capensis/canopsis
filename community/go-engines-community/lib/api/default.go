@@ -99,7 +99,7 @@ func Default(
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = int(sessionStoreSessionMaxAge.Seconds())
 	sessionStore.Options.Secure = secureSession
-	security := NewSecurity(securityConfig, dbClient, sessionStore, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, logger)
 
 	proxyAccessConfig, err := proxy.LoadAccessConfig(configDir)
 	if err != nil {
