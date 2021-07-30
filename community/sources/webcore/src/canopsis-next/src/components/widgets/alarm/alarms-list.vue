@@ -282,11 +282,11 @@ export default {
       });
     },
 
-    fetchList({ isPeriodicRefresh } = {}) {
+    fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
       if (this.hasColumns) {
         const query = this.getQuery();
 
-        if (isPeriodicRefresh && !isEmpty(this.$refs.alarmsTable.expanded)) {
+        if ((isPeriodicRefresh || isQueryNonceUpdate) && !isEmpty(this.$refs.alarmsTable.expanded)) {
           query.with_steps = true;
         }
 
