@@ -69,14 +69,14 @@ export default {
           if (descending) {
             classes.push('desc');
             data.attrs['aria-sort'] = 'descending';
-            data.attrs['aria-label'] += ': Sorted descending. Activate to remove sorting.'; // TODO: Localization
+            data.attrs['aria-label'] += ': Sorted descending. Activate to remove sorting.'; // vuetify TODO: Localization
           } else {
             classes.push('asc');
             data.attrs['aria-sort'] = 'ascending';
-            data.attrs['aria-label'] += ': Sorted ascending. Activate to sort descending.'; // TODO: Localization
+            data.attrs['aria-label'] += ': Sorted ascending. Activate to sort descending.'; // vuetify TODO: Localization
           }
         } else {
-          data.attrs['aria-label'] += ': Not sorted. Activate to sort ascending.'; // TODO: Localization
+          data.attrs['aria-label'] += ': Not sorted. Activate to sort ascending.'; // vuetify TODO: Localization
         }
       };
 
@@ -87,10 +87,10 @@ export default {
 
         if (sortItem) {
           const sortPriority = this.$createElement('span', {
-            class: 'mx-1 caption',
+            class: 'v-data-table-header__sort-badge',
           }, `${sortItemIndex + 1}`);
 
-          children.push(sortPriority, children.pop());
+          children.push(sortPriority);
 
           addDataAttributes(sortItem.sortBy, sortItem.descending);
         }
@@ -146,3 +146,19 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.v-data-table-header__sort-badge {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  border-radius: 50%;
+  min-width: 18px;
+  min-height: 18px;
+  height: 18px;
+  width: 18px;
+  background-color: rgba(0,0,0,.12);
+  color: rgba(0,0,0,.87);
+}
+</style>
