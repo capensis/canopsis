@@ -272,6 +272,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
+        action: CRUD_ACTIONS.can,
         id: USERS_PERMISSIONS.technical.exploitation.healthcheck,
       },
     },
