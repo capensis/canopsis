@@ -160,6 +160,22 @@ db.default_rights.insertMany([
         crecord_type: "action",
         desc: "Event",
     },
+    {
+        _id: "api_flapping_rule",
+        loader_id: "api_flapping_rule",
+        crecord_name: "api_flapping_rule",
+        crecord_type: "action",
+        type: "CRUD",
+        desc: "flapping rule",
+    },
+    {
+        _id: "api_baggot_rule",
+        loader_id: "api_baggot_rule",
+        crecord_name: "api_baggot_rule",
+        crecord_type: "action",
+        type: "CRUD",
+        desc: "baggot rule",
+    }
 ]);
 db.default_rights.find({
     "crecord_name": {

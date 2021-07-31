@@ -1,0 +1,81 @@
+[
+  {
+    "_id": "test-flapping-rule-to-get-1",
+    "author": "root",
+    "description": "flapping rule 1",
+    "flapping_interval": {
+      "seconds": 10,
+      "unit": "s"
+    },
+    "flapping_freq_limit": 3,
+    "alarm_patterns": [
+      {
+        "v": {
+          "connector": "test-flapping-rule-to-get-1-pattern"
+        }
+      }
+    ],
+    "created": 1619083733,
+    "updated": 1619083733,
+    "priority": 0
+  },
+  {
+    "_id": "test-flapping-rule-to-get-2",
+    "author": "root",
+    "description": "flapping rule 2",
+    "flapping_interval": {
+      "seconds": 23,
+      "unit": "s"
+    },
+    "flapping_freq_limit": 5,
+    "created": 1619083533,
+    "updated": 1619083533,
+    "priority": 1
+  },
+  {
+    "_id": "test-flapping-rule-to-update",
+    "author": "root",
+    "description": "flapping rule to update",
+    "flapping_interval": {
+      "seconds": 21,
+      "unit": "s"
+    },
+    "flapping_freq_limit": 5,
+    "alarm_patterns": [
+      {
+        "v": {
+          "connector": "test-flapping-rule-to-update-pattern"
+        }
+      }
+    ],
+    "created": 1619083733,
+    "updated": 1619083733,
+    "priority": 2
+  },
+  {
+    "_id": "test-flapping-rule-to-delete",
+    "author": "root",
+    "description": "flapping rule to delete",
+    "flapping_interval": {
+      "seconds": 10,
+      "unit": "s"
+    },
+    "flapping_freq_limit": 5,
+    "created": 1619083533,
+    "updated": 1619083533,
+    "priority": 3
+  },
+  {
+    "_id": "test-flapping-rule-to-check-unique",
+    "author": "root",
+    "description": "flapping rule to check",
+    "flapping_interval": {
+      "seconds": 10,
+      "unit": "s"
+    },
+    "flapping_freq_limit": 5,
+    "created": 1619083533,
+    "updated": 1619083533,
+    "priority": 3
+  }
+]

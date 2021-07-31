@@ -141,6 +141,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		} else {
 			err = s.delayedScenarioManager.PauseDelayedScenarios(ctx, alarm)
 		}
+
 		if err != nil {
 			return err
 		}

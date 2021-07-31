@@ -1,14 +1,21 @@
 package types_test
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"go.mongodb.org/mongo-driver/bson"
 	"testing"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"go.mongodb.org/mongo-driver/bson"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
 )
+
+func init() {
+	types.SetFlapping(func(a *types.Alarm) bool {
+		return types.IsFlappingWithDurationAndStep(a, time.Second, 1)
+	})
+}
 
 func GetStep() types.AlarmStep {
 	return types.AlarmStep{
@@ -187,9 +194,6 @@ func TestAlarmComputeStatusWhenFlapping(t *testing.T) {
 		c := getTestAlarmConfig()
 
 		Convey("When the alarm is Flapping", func() {
-			c.FlappingInterval = time.Hour
-			c.FlappingFreqLimit = 1
-			So(c.FlappingFreqLimit, ShouldEqual, 1)
 
 			event := getEvent()
 			event.State = types.AlarmStateCritical
@@ -200,8 +204,6 @@ func TestAlarmComputeStatusWhenFlapping(t *testing.T) {
 			Convey("Then the status is Flapping", func() {
 				So(a.ComputeStatus(c), ShouldEqual, types.AlarmStatusFlapping)
 			})
-			c.FlappingInterval = 0
-			c.FlappingFreqLimit = 0
 		})
 	})
 }
@@ -485,7 +487,10 @@ func TestIsMatchedAlarm(t *testing.T) {
 	})
 }
 
-func TestBagot(t *testing.T) {
+func TestBaggot(t *testing.T) {
+	types.SetFlapping(func(a *types.Alarm) bool {
+		return types.IsFlappingWithDurationAndStep(a, 0, 0)
+	})
 
 	Convey("Given an alarm from an event", t, func() {
 		e := getEvent()
@@ -855,8 +860,6 @@ func getTestAlarmConfig() config.AlarmConfig {
 		panic(err)
 	}
 	return config.AlarmConfig{
-		FlappingFreqLimit:    1,
-		FlappingInterval:     time.Second,
 		StealthyInterval:     100 * time.Second,
 		CancelAutosolveDelay: time.Hour,
 		DisplayNameScheme:    displayNameScheme,

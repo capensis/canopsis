@@ -27,25 +27,6 @@ func NewService(alarmAdapter Adapter, logger zerolog.Logger) Service {
 	}
 }
 
-func (s *service) ResolveAlarms(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error) {
-	defer trace.StartRegion(ctx, "alarm.ResolveAlarms").End()
-
-	updatedAlarms := make([]types.Alarm, 0)
-
-	unresolvedAlarms, err := s.adapter.GetUnresolved(ctx)
-	if err != nil {
-		return updatedAlarms, fmt.Errorf("unresolved alarms error: %v", err)
-	}
-
-	for _, alarm := range unresolvedAlarms {
-		if alarm.Closable(alarmConfig.BaggotTime) {
-			updatedAlarms = append(updatedAlarms, alarm)
-		}
-	}
-
-	return updatedAlarms, nil
-}
-
 func (s *service) ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error) {
 	defer trace.StartRegion(ctx, "alarm.ResolveCancels").End()
 

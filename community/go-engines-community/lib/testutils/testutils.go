@@ -1,9 +1,10 @@
 package testutils
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"os"
 	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 )
 
 // Testutils constants
@@ -58,8 +59,6 @@ func GetTestConf() config.CanopsisConf {
 			PrefetchSize:  0,
 		},
 		Alarm: config.SectionAlarm{
-			FlappingFreqLimit:    1,
-			FlappingInterval:     1,
 			StealthyInterval:     100,
 			CancelAutosolveDelay: "1h",
 		},

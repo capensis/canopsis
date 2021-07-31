@@ -303,6 +303,14 @@ func (a mongoAdapter) GetOpenedAlarmsWithEntityByIDs(ctx context.Context, ids []
 	return err
 }
 
+func (a mongoAdapter) GetOpenedAlarmsWithEntity(ctx context.Context) (libmongo.Cursor, error) {
+	filter := bson.M{
+		"v.resolved": nil,
+	}
+
+	return a.entityAggregateCursor(ctx, filter)
+}
+
 func (a mongoAdapter) GetCountOpenedAlarmsByIDs(ctx context.Context, ids []string) (int64, error) {
 	return a.getAlarmsCount(ctx, bson.M{
 		"d":          bson.M{"$in": ids},
@@ -498,6 +506,29 @@ func (a mongoAdapter) GetLastAlarmByEntityID(ctx context.Context, entityID strin
 	}
 
 	return nil, nil
+}
+
+func (a mongoAdapter) entityAggregateCursor(ctx context.Context, filter bson.M) (libmongo.Cursor, error) {
+	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
+		{"$match": filter},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         libmongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+		{"$match": bson.M{"entity.enabled": true}},
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	return cursor, nil
 }
 
 func (a mongoAdapter) getAlarmsWithEntity(ctx context.Context, filter bson.M) ([]types.AlarmWithEntity, error) {

@@ -4,10 +4,11 @@ package alarm
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"time"
 )
 
 type Adapter interface {
@@ -65,6 +66,7 @@ type Adapter interface {
 	GetOpenedAlarmsByIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
 	GetOpenedAlarmsWithEntityByIDs(ctx context.Context, ids []string, alarms *[]types.AlarmWithEntity) error
 	GetCountOpenedAlarmsByIDs(ctx context.Context, ids []string) (int64, error)
+	GetOpenedAlarmsWithEntity(ctx context.Context) (mongo.Cursor, error)
 
 	// GetOpenedAlarmsByAlarmIDs gets ongoing alarms related the provided alarm ids
 	GetOpenedAlarmsByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
@@ -105,9 +107,6 @@ type EventProcessor interface {
 }
 
 type Service interface {
-	// ResolveAlarms that have v.resolved to null
-	ResolveAlarms(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
-
 	// ResolveCancels close canceled alarms when time has expired
 	ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
 

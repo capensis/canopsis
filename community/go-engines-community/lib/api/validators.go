@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/baggotrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
@@ -12,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -229,4 +231,16 @@ func RegisterValidators(client mongo.DbClient) {
 
 	v.RegisterStructValidation(alarm.ValidateListRequest, alarm.ListRequest{})
 	v.RegisterStructValidation(datastorage.ValidateConfig, libdatastorage.Config{})
+
+	baggotRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.BaggotRuleMongoCollection, "ID")
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		baggotRuleIdUniqueValidator.Validate(ctx, sl)
+		baggotrule.NewBaggotRuleValidator().Validate(sl)
+	}, baggotrule.Payload{})
+
+	flappingRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.FlappingRuleMongoCollection, "ID")
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		flappingRuleIdUniqueValidator.Validate(ctx, sl)
+		flappingrule.NewFlappingRuleValidator().Validate(sl)
+	}, flappingrule.Payload{})
 }

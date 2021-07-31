@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -12,11 +14,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type Options struct {
@@ -55,6 +57,9 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
+
+	flappingRuleAdapter := flappingrule.NewAdapter(mongoClient)
+	flappingRule := flappingrule.SetThenGetFlappingCheck(flappingRuleAdapter, ctx, options.PeriodicalWaitTime, logger)
 
 	eventFilterService := eventfilter.NewService(eventFilterAdapter, logger)
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
@@ -202,6 +207,7 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 		},
 		logger,
 	))
+	engine.AddPeriodicalWorker(flappingRule)
 
 	return engine
 }

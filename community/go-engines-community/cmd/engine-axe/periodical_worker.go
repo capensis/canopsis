@@ -9,6 +9,7 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/baggotrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
@@ -27,6 +28,7 @@ type periodicalWorker struct {
 	IdleAlarmService    idlealarm.Service
 	AlarmConfigProvider config.AlarmConfigProvider
 	Logger              zerolog.Logger
+	AlarmBaggotService  baggotrule.Service
 }
 
 func (w *periodicalWorker) GetInterval() time.Duration {
@@ -52,7 +54,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) error {
 
 	// Resolve the alarms whose state is info.
 	w.Logger.Debug().Msg("Closing alarms")
-	closed, err := w.AlarmService.ResolveAlarms(ctx, alarmConfig)
+	closed, err := w.AlarmBaggotService.Process(ctx)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("cannot resolve ok alarms")
 		return nil

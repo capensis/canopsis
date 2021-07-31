@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
@@ -57,6 +58,9 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		delayedScenarioManager, storage, json.NewEncoder(), amqpChannel,
 		options.FifoAckExchange, options.FifoAckQueue,
 		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName, logger), logger)
+
+	flappingRuleAdapter := flappingrule.NewAdapter(mongoClient)
+	flappingRule := flappingrule.SetThenGetFlappingCheck(flappingRuleAdapter, ctx, options.PeriodicalWaitTime, logger)
 
 	rpcResultChannel := make(chan action.RpcResult)
 
@@ -212,6 +216,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		},
 		logger,
 	))
+	engineAction.AddPeriodicalWorker(flappingRule)
 
 	return engineAction
 }

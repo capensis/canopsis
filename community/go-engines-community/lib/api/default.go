@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
@@ -91,6 +93,10 @@ func Default(
 		logger.Err(err).Msg("cannot load security config")
 		return nil, err
 	}
+
+	// flapping rule
+	flappingRuleAdapter := flappingrule.NewAdapter(dbClient)
+	flappingRule := flappingrule.SetThenGetFlappingCheck(flappingRuleAdapter, ctx, 0, logger)
 
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = int(sessionStoreSessionMaxAge.Seconds())
@@ -286,6 +292,22 @@ func Default(
 	})
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
+	})
+	api.AddWorker("load flapping rule", func(ctx context.Context) {
+		ticker := time.NewTicker(flappingRule.GetInterval())
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ticker.C:
+				err := flappingRule.Work(ctx)
+				if err != nil {
+					logger.Err(err).Msg("fail to load flapping rules")
+				}
+			case <-ctx.Done():
+				return
+			}
+		}
 	})
 
 	return api, nil

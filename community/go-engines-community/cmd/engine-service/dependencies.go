@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
@@ -51,6 +52,10 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 	if !options.AutoRecomputeAll {
 		serviceLockClient = redis.NewLockClient(redisSession)
 	}
+
+	flappingRuleAdapter := flappingrule.NewAdapter(mongoClient)
+	flappingRule := flappingrule.SetThenGetFlappingCheck(flappingRuleAdapter, ctx, options.PeriodicalWaitTime, logger)
+
 	entityServicesService := entityservice.NewService(
 		amqpChannel,
 		canopsis.CheExchangeName,
@@ -218,6 +223,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		},
 		logger,
 	))
+	engineService.AddPeriodicalWorker(flappingRule)
 
 	return engineService
 }

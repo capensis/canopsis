@@ -3,17 +3,19 @@ package main
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/baggotrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -64,6 +66,9 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 	corrRedisClient := m.DepRedisSession(ctx, redis.CorrelationLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
+
+	flappingRuleAdapter := flappingrule.NewAdapter(dbClient)
+	flappingRule := flappingrule.SetThenGetFlappingCheck(flappingRuleAdapter, ctx, options.PeriodicalWaitTime, logger)
 
 	serviceRpcClient := engine.NewRPCClient(
 		canopsis.AxeRPCConsumerName,
@@ -226,7 +231,11 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			ChannelPub:         channelPub,
 			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), logger),
 			AlarmAdapter:       alarm.NewAdapter(dbClient),
-			Encoder:            json.NewEncoder(),
+			AlarmBaggotService: baggotrule.NewService(
+				baggotrule.NewAdapter(dbClient),
+				alarm.NewAdapter(dbClient),
+				logger),
+			Encoder: json.NewEncoder(),
 			IdleAlarmService: idlealarm.NewService(
 				idlerule.NewRuleAdapter(dbClient),
 				alarm.NewAdapter(dbClient),
@@ -266,6 +275,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		timezoneConfigProvider,
 		logger,
 	))
+	engineAxe.AddPeriodicalWorker(flappingRule)
 
 	return engineAxe
 }

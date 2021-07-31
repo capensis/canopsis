@@ -67,6 +67,9 @@ const (
 	ArchivedAlarmMongoCollection = "archived_alarms"
 	// Data storage entity collections
 	ArchivedEntitiesMongoCollection = "archived_entities"
+
+	BaggotRuleMongoCollection   = "baggot_rule"
+	FlappingRuleMongoCollection = "flapping_rule"
 )
 
 type SingleResultHelper interface {

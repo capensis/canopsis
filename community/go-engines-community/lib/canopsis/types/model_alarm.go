@@ -429,7 +429,7 @@ func (a *Alarm) ComputeStatus(alarmConfig config.AlarmConfig) CpsNumber {
 		return AlarmStatusCancelled
 	}
 
-	if a.IsFlapping(alarmConfig) {
+	if IsFlapping(a) {
 		return AlarmStatusFlapping
 	}
 
@@ -615,36 +615,6 @@ func (a Alarm) IsAck() bool {
 // IsCanceled check if an Alarm is canceled
 func (a Alarm) IsCanceled() bool {
 	return a.Value.Canceled != nil && !a.IsResolved()
-}
-
-// IsFlapping check if an Alarm is currently flapping
-func (a Alarm) IsFlapping(alarmConfig config.AlarmConfig) bool {
-	lastStepType := ""
-	freq := 0
-
-	for i := len(a.Value.Steps) - 1; i >= 0; i-- {
-		s := a.Value.Steps[i]
-		duration := time.Since(s.Timestamp.Time)
-		if duration >= alarmConfig.FlappingInterval {
-			break
-		}
-
-		if s.Type != lastStepType {
-			switch s.Type {
-			case AlarmStepStateIncrease:
-				fallthrough
-			case AlarmStepStateDecrease:
-				lastStepType = s.Type
-				freq++
-			}
-		}
-
-		if freq > alarmConfig.FlappingFreqLimit {
-			return true
-		}
-	}
-
-	return false
 }
 
 // IsMatched tell if an alarm is catched by a regex
