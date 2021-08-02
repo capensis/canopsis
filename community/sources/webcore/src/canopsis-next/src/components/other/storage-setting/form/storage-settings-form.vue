@@ -65,6 +65,13 @@
         :help-text="$t('storageSetting.junit.deleteAfterHelpText')",
         :name="junitDeleteAfterFieldName"
       )
+    storage-setting-block(:title="$t('storageSetting.healthCheck.title')")
+      template(v-if="history.health_check", slot="subtitle") {{ healthCheckSubTitle }}
+      storage-setting-duration-field(
+        v-field="form.health_check.delete_after",
+        :label="$t('storageSetting.healthCheck.deleteAfter')",
+        :name="healthCheckDeleteAfterFieldName"
+      )
 </template>
 
 <script>
@@ -117,6 +124,10 @@ export default {
       return 'pbehavior.delete_after';
     },
 
+    healthCheckDeleteAfterFieldName() {
+      return 'health_check.delete_after';
+    },
+
     junitSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
         launchedAt: this.$options.filters.date(this.history.junit, DATETIME_FORMATS.long, true),
@@ -132,6 +143,12 @@ export default {
     pbehaviorSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
         launchedAt: this.$options.filters.date(this.history.pbehavior, DATETIME_FORMATS.long, true),
+      });
+    },
+
+    healthCheckSubTitle() {
+      return this.$t('storageSetting.history.scriptLaunched', {
+        launchedAt: this.$options.filters.date(this.history.health_check, DATETIME_FORMATS.long, true),
       });
     },
 
