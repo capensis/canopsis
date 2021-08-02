@@ -43,6 +43,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
+	engineLockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
 	statsRedisClient := m.DepRedisSession(ctx, redis.FIFOMessageStatisticsStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
@@ -162,7 +163,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		logger,
 	))
 	engine.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
-		redis.NewLockClient(lockRedisClient),
+		redis.NewLockClient(engineLockRedisClient),
 		redis.FifoDeleteOutdatedRatesLockKey,
 		&deleteOutdatedRatesWorker{
 			PeriodicalInterval:        time.Hour,

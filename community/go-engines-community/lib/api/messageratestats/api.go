@@ -1,6 +1,7 @@
 package messageratestats
 
 import (
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
@@ -56,8 +57,13 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
+	data, ok := res.Data.([]StatsResponse)
+	if !ok {
+		panic(fmt.Errorf("paginated response data should be []StatsResponse"))
+	}
+
 	response := StatsListResponse{}
-	response.Data = res.Data.([]StatsResponse)
+	response.Data = data
 	response.Meta.PaginatedMeta = res.Meta
 
 	if r.Interval == IntervalHour {
