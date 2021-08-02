@@ -4,6 +4,7 @@ import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
@@ -38,9 +39,11 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	mongoClient := m.DepMongoClient(ctx)
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
+	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
+	engineLockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
 	statsRedisClient := m.DepRedisSession(ctx, redis.FIFOMessageStatisticsStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
@@ -157,6 +160,19 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		libengine.NewRunInfoManager(runInfoRedisClient),
 		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, options.ConsumeFromQueue, options.PublishToQueue),
 		amqpChannel,
+		logger,
+	))
+	engine.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(engineLockRedisClient),
+		redis.FifoDeleteOutdatedRatesLockKey,
+		&deleteOutdatedRatesWorker{
+			PeriodicalInterval:        time.Hour,
+			TimezoneConfigProvider:    timezoneConfigProvider,
+			DataStorageConfigProvider: config.NewDataStorageConfigProvider(cfg, logger),
+			LimitConfigAdapter:        datastorage.NewAdapter(mongoClient),
+			RateLimitAdapter:          ratelimit.NewAdapter(mongoClient),
+			Logger:                    logger,
+		},
 		logger,
 	))
 

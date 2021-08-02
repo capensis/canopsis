@@ -4,26 +4,26 @@ import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
-	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"time"
 )
 
-type cleanPeriodicalWorker struct {
+type deleteOutdatedRatesWorker struct {
 	PeriodicalInterval        time.Duration
 	TimezoneConfigProvider    config.TimezoneConfigProvider
 	DataStorageConfigProvider config.DataStorageConfigProvider
 	LimitConfigAdapter        datastorage.Adapter
-	PbehaviorCleaner          libpbehavior.Cleaner
+	RateLimitAdapter          ratelimit.Adapter
 	Logger                    zerolog.Logger
 }
 
-func (w *cleanPeriodicalWorker) GetInterval() time.Duration {
+func (w *deleteOutdatedRatesWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *cleanPeriodicalWorker) Work(ctx context.Context) error {
+func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) error {
 	schedule := w.DataStorageConfigProvider.Get().TimeToExecute
 	// Skip if schedule is not defined.
 	if schedule == nil {
@@ -43,29 +43,29 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) error {
 	}
 	// Skip if already executed today.
 	dateFormat := "2006-01-02"
-	if conf.History.Pbehavior != nil && conf.History.Pbehavior.Time.Format(dateFormat) == now.Format(dateFormat) {
+	if conf.History.HealthCheck != nil && conf.History.HealthCheck.Time.Format(dateFormat) == now.Format(dateFormat) {
 		return nil
 	}
 
-	if conf.Config.Pbehavior.DeleteAfter == nil || !*conf.Config.Pbehavior.DeleteAfter.Enabled {
-		return nil
+	updated := false
+	if conf.Config.HealthCheck.DeleteAfter != nil && *conf.Config.HealthCheck.DeleteAfter.Enabled {
+		d := conf.Config.HealthCheck.DeleteAfter.Duration()
+		if d > 0 {
+			updated = true
+			deleted, err := w.RateLimitAdapter.DeleteBefore(ctx, now.Add(-d).Unix())
+			if err != nil {
+				w.Logger.Err(err).Msg("cannot delete message rates")
+			} else if deleted > 0 {
+				w.Logger.Info().Int64("count", deleted).Msg("message rates were deleted")
+			}
+		}
 	}
 
-	d := conf.Config.Pbehavior.DeleteAfter.Duration()
-	if d == 0 {
-		return nil
-	}
-
-	deleted, err := w.PbehaviorCleaner.Clean(ctx, d)
-	if err != nil {
-		w.Logger.Err(err).Msg("cannot accumulate week statistics")
-	} else if deleted > 0 {
-		w.Logger.Info().Int64("count", deleted).Msg("pbehaviors were deleted")
-	}
-
-	err = w.LimitConfigAdapter.UpdateHistoryPbehavior(ctx, types.CpsTime{Time: now})
-	if err != nil {
-		w.Logger.Err(err).Msg("cannot update config history")
+	if updated {
+		err := w.LimitConfigAdapter.UpdateHistoryHealthCheck(ctx, types.CpsTime{Time: now})
+		if err != nil {
+			w.Logger.Err(err).Msg("cannot update config history")
+		}
 	}
 
 	return nil
