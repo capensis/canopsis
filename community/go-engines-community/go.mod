@@ -30,6 +30,7 @@ require (
 	github.com/go-playground/universal-translator v0.17.0
 	github.com/go-playground/validator/v10 v10.6.1
 	github.com/go-redis/redis/v8 v8.10.0
+	github.com/golang-jwt/jwt v3.2.1+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-cmp v0.5.6
 	github.com/google/uuid v1.2.0

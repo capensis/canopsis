@@ -5,6 +5,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/saml"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/configprovider"
@@ -12,13 +13,18 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/provider"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
 	"net/http"
 	"net/url"
+	"os"
+	"time"
 )
+
+const JwtSecretEnv = "CPS_JWT_SECRET"
 
 // Security is used to init auth methods by config.
 type Security interface {
@@ -35,6 +41,8 @@ type Security interface {
 	GetSessionStore() libsession.Store
 	GetConfig() libsecurity.Config
 	GetPasswordEncoder() password.Encoder
+	GetTokenService() token.Service
+	GetTokenStore() token.Store
 }
 
 type security struct {
@@ -67,6 +75,7 @@ func (s *security) GetHttpAuthProviders() []libsecurity.HttpProvider {
 		case libsecurity.AuthMethodBasic:
 			baseProvider := s.newBaseAuthProvider()
 			res = append(res, httpprovider.NewBasicProvider(baseProvider))
+			res = append(res, httpprovider.NewBearerProvider(s.GetTokenService(), s.GetTokenStore(), s.newUserProvider(), s.Logger))
 		case libsecurity.AuthMethodApiKey:
 			res = append(res, httpprovider.NewApikeyProvider(s.newUserProvider()))
 		case libsecurity.AuthMethodLdap:
@@ -144,6 +153,15 @@ func (s *security) GetConfig() libsecurity.Config {
 
 func (s *security) GetPasswordEncoder() password.Encoder {
 	return password.NewSha1Encoder()
+}
+
+func (s *security) GetTokenService() token.Service {
+	secretKey := os.Getenv(JwtSecretEnv)
+
+	return token.NewJwtService([]byte(secretKey), canopsis.AppName, time.Second*100)
+}
+func (s *security) GetTokenStore() token.Store {
+	return token.NewMongoStore(s.DbClient, s.Logger)
 }
 
 type casLoginRequest struct {

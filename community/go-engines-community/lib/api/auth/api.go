@@ -1,128 +1,125 @@
 package auth
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
-	"github.com/gin-gonic/gin"
-	"github.com/gorilla/sessions"
 	"net/http"
+	"strings"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
+	"github.com/gin-gonic/gin"
+)
+
+const (
+	headerAuthorization = "Authorization"
+	bearerPrefix        = "Bearer"
 )
 
 type API interface {
-	// LogoutHandler deletes session.
-	LogoutHandler() gin.HandlerFunc
-	// LoginHandler authenticates user and starts sessions.
-	LoginHandler() gin.HandlerFunc
-	// GetSessionsCount returns active sessions count.
-	GetSessionsCount() gin.HandlerFunc
+	Login(c *gin.Context)
+	Logout(c *gin.Context)
+	GetLoggedUserCount(c *gin.Context)
 }
 
 func NewApi(
-	sessionStore libsession.Store,
+	tokenService token.Service,
+	tokenStore token.Store,
 	providers []security.Provider,
+	sessionStore session.Store,
 ) API {
 	return &api{
-		sessionStore: sessionStore,
+		tokenService: tokenService,
+		tokenStore:   tokenStore,
 		providers:    providers,
+		sessionStore: sessionStore,
 	}
 }
 
 type api struct {
-	sessionStore libsession.Store
+	tokenService token.Service
+	tokenStore   token.Store
 	providers    []security.Provider
+
+	sessionStore session.Store
 }
 
-func (a *api) LoginHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		session := a.getSession(c)
-		var request loginRequest
+func (a *api) Login(c *gin.Context) {
+	var request loginRequest
 
-		if err := c.ShouldBind(&request); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-			return
-		}
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
 
-		var user *security.User
-		var err error
-		for _, p := range a.providers {
-			user, err = p.Auth(c.Request.Context(), request.Username, request.Password)
-			if err != nil {
-				panic(err)
-			}
-
-			if user != nil {
-				break
-			}
-		}
-
-		if user == nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-			return
-		}
-
-		var response loginResponse
-		response.AuthApiKey = user.AuthApiKey
-		response.Contact.Name = user.Contact.Name
-		response.Contact.Address = user.Contact.Address
-		response.Name = user.Name
-		response.Email = user.Email
-		response.Role = user.Role
-
-		session.Values["user"] = user.ID
-		err = session.Save(c.Request, c.Writer)
-
+	var user *security.User
+	var err error
+	for _, p := range a.providers {
+		user, err = p.Auth(c.Request.Context(), request.Username, request.Password)
 		if err != nil {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, response)
-	}
-}
-
-func (a *api) LogoutHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		session := a.getSession(c)
-		session.Options.MaxAge = -1
-		err := session.Save(c.Request, c.Writer)
-
-		if err != nil {
-			panic(err)
+		if user != nil {
+			break
 		}
-
-		c.Next()
 	}
-}
 
-// Get counts of active sessions
-// @Summary Get counts of active sessions
-// @Description Get counts of active sessions
-// @Tags auth
-// @ID auth-get-session-counts
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Success 200 {object} sessionsCountResponse
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /sessions-count [get]
-func (a *api) GetSessionsCount() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		count, err := a.sessionStore.GetActiveSessionsCount(c.Request.Context())
-		if err != nil {
-			panic(err)
-		}
-
-		c.JSON(http.StatusOK, sessionsCountResponse{Count: count})
+	if user == nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		return
 	}
-}
 
-func (a *api) getSession(c *gin.Context) *sessions.Session {
-	session, err := a.sessionStore.Get(c.Request, security.SessionKey)
-
+	accessToken, expiresAt, err := a.tokenService.GenerateToken(user.ID)
 	if err != nil {
 		panic(err)
 	}
 
-	return session
+	err = a.tokenStore.Save(c.Request.Context(), accessToken, types.CpsTime{Time: expiresAt})
+	if err != nil {
+		panic(err)
+	}
+
+	response := loginResponse{AccessToken: accessToken}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func (a *api) Logout(c *gin.Context) {
+	header := c.GetHeader(headerAuthorization)
+	if header == "" || !strings.HasPrefix(header, bearerPrefix) {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		return
+	}
+
+	tokenString := strings.TrimSpace(header[len(bearerPrefix):])
+	ok, err := a.tokenStore.Delete(c.Request.Context(), tokenString)
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func (a *api) GetLoggedUserCount(c *gin.Context) {
+	count, err := a.tokenStore.Count(c.Request.Context())
+	if err != nil {
+		panic(err)
+	}
+
+	// todo : remove after session delete
+	sessionCount, err := a.sessionStore.GetActiveSessionsCount(c.Request.Context())
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, loggedUserCountResponse{
+		Count: count + sessionCount,
+	})
 }

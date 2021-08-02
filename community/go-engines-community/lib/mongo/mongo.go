@@ -68,6 +68,8 @@ const (
 	ArchivedAlarmMongoCollection = "archived_alarms"
 	// Data storage entity collections
 	ArchivedEntitiesMongoCollection = "archived_entities"
+
+	TokenMongoCollection = "token"
 )
 
 type SingleResultHelper interface {

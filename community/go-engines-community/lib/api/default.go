@@ -249,6 +249,9 @@ func Default(
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})
+	api.AddWorker("auth token", func(ctx context.Context) {
+		security.GetTokenStore().DeleteExpired(ctx, canopsis.PeriodicalWaitTime)
+	})
 
 	return api, nil
 }

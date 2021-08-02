@@ -12,6 +12,7 @@ type queryProvider struct {
 }
 
 // NewQueryProvider creates new provider.
+// Deprecated : use Basic Auth.
 func NewQueryProvider(p security.Provider) security.HttpProvider {
 	return &queryProvider{provider: p}
 }

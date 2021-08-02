@@ -6,6 +6,7 @@ import (
 
 // Globals
 const (
+	AppName                         = "canopsis"
 	ActionEngineName                = "engine-action"
 	ActionQueueName                 = "Engine_action"
 	ActionAxeRPCClientQueueName     = "Engine_action_axe_rpc_client"
