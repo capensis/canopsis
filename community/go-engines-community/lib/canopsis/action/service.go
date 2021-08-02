@@ -2,6 +2,7 @@ package action
 
 import (
 	"context"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -82,31 +83,34 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					break
 				}
 
-				if result.Err != nil {
-					s.sendEventToFifoAck(&types.Event{
-						Connector:     alarm.Value.Connector,
-						ConnectorName: alarm.Value.ConnectorName,
-						Component:     alarm.Value.Component,
-						Resource:      alarm.Value.Resource,
-						Alarm:         &alarm,
-					})
-					break
+				event := &types.Event{
+					Connector:         alarm.Value.Connector,
+					ConnectorName:     alarm.Value.ConnectorName,
+					Component:         alarm.Value.Component,
+					Resource:          alarm.Value.Resource,
+					Alarm:             &alarm,
+					MetaAlarmParents:  &alarm.Value.Parents,
+					MetaAlarmChildren: &alarm.Value.Children,
 				}
 
-				ok, err = s.activationService.Process(&alarm)
-				if err != nil {
-					s.logger.Error().Err(err).Msg("failed to send activation")
-					break
+				activationSent := false
+				if result.Err == nil ||
+					(result.Err != nil && len(result.ActionExecutions) > 0 &&
+						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook) {
+					// Send activation event
+					ok, err = s.activationService.Process(&alarm)
+					if err != nil {
+						s.logger.Error().Err(err).Msg("failed to send activation")
+						break
+					}
+
+					if ok {
+						activationSent = true
+					}
 				}
 
-				if !ok {
-					s.sendEventToFifoAck(&types.Event{
-						Connector:     alarm.Value.Connector,
-						ConnectorName: alarm.Value.ConnectorName,
-						Component:     alarm.Value.Component,
-						Resource:      alarm.Value.Resource,
-						Alarm:         &alarm,
-					})
+				if !activationSent {
+					s.sendEventToFifoAck(event)
 				}
 			}
 		}

@@ -2,6 +2,7 @@ package alarm
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -22,9 +23,13 @@ type ListRequest struct {
 }
 
 type FilterRequest struct {
+	BaseFilterRequest
+	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
+}
+
+type BaseFilterRequest struct {
 	Filter              string         `form:"filter" json:"filter"`
 	Search              string         `form:"search" json:"search"`
-	SearchBy            []string       `form:"active_columns[]" json:"active_columns[]"`
 	StartFrom           *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
 	StartTo             *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
 	OnlyOpened          bool           `form:"opened" json:"opened"`
@@ -37,9 +42,12 @@ type FilterRequest struct {
 }
 
 type ExportRequest struct {
-	ListRequest
-	Separator  string `form:"separator" json:"separator" binding:"oneoforempty=comma semicolon tab space"`
-	TimeFormat string `form:"time_format" json:"time_format" binding:"time_format"`
+	BaseFilterRequest
+	WithSteps    bool          `json:"with_steps"`
+	WithChildren bool          `json:"with_consequences"`
+	Fields       export.Fields `json:"fields"`
+	Separator    string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
+	TimeFormat   string        `json:"time_format" binding:"time_format"`
 }
 
 type ExportResponse struct {
@@ -126,7 +134,7 @@ type AlarmValue struct {
 
 type AlarmStep struct {
 	Type      string          `bson:"_t" json:"_t"`
-	Timestamp types.CpsTime   `bson:"t" json:"t" swaggertype:"integer"`
+	Timestamp *types.CpsTime  `bson:"t" json:"t" swaggertype:"integer"`
 	Author    string          `bson:"a" json:"a"`
 	Message   string          `bson:"m" json:"m"`
 	Value     types.CpsNumber `bson:"val" json:"val"`

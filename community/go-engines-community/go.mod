@@ -20,10 +20,9 @@ require (
 	github.com/beevik/etree v1.1.0
 	github.com/bsm/redislock v0.7.0
 	github.com/casbin/casbin/v2 v2.19.4
-	github.com/cucumber/godog v0.10.0
+	github.com/cucumber/godog v0.11.0
 	github.com/cucumber/messages-go/v10 v10.0.3
 	github.com/dlclark/regexp2 v1.4.0
-	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/go-playground/locales v0.13.0
@@ -39,7 +38,6 @@ require (
 	github.com/json-iterator/go v1.1.10
 	github.com/mailru/easyjson v0.7.1 // indirect
 	github.com/mitchellh/mapstructure v1.4.1
-	github.com/neverlee/keymutex v0.0.0-20171121013845-f593aa834bf9
 	github.com/pelletier/go-toml v1.9.1
 	github.com/rs/zerolog v1.20.0
 	github.com/russellhaering/gosaml2 v0.6.0

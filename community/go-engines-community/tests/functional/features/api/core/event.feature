@@ -309,16 +309,17 @@ Feature: send an event
     """json
     {
       "sent_events": [
-    {
-      "connector": "test_connector",
-      "connector_name": "test_connectorname",
-      "source_type": "resource",
-      "event_type": "check",
-      "component": "test_component",
-      "state": 1,
-      "long_output": "",
-      "resource": "test_resource2"
-    }
+        {
+          "author": "root",
+          "connector": "test_connector",
+          "connector_name": "test_connectorname",
+          "source_type": "resource",
+          "event_type": "check",
+          "component": "test_component",
+          "state": 1,
+          "long_output": "",
+          "resource": "test_resource2"
+        }
       ],
       "failed_events": [],
       "retry_events": []
@@ -426,6 +427,60 @@ Feature: send an event
             "test-alarm-get-entity-meta-1/metaalarm",
             "test-alarm-get-entity-meta-2/metaalarm"
           ]
+        }
+      ],
+      "failed_events": [],
+      "retry_events": []
+    }
+    """
+
+  Scenario: POST a valid event should keep ma_children
+    When I am admin
+    When I do POST /api/v4/event:
+    """json
+    {
+      "author": "root",
+      "connector": "engine",
+      "connector_name": "correlation",
+      "source_type": "resource",
+      "component": "metaalarm",
+      "state": 1,
+      "event_type": "manual_metaalarm_group",
+      "resource": "test-manual-group-alarms-1",
+      "origin": "canopsis",
+      "initiator": "user",
+      "state_type": 1,
+      "output": "Output test",
+      "display_name":"Test MetaAlarm 1", 
+      "ma_children": [
+        "test-manual-group-alarms-3/manual_group",
+        "test-manual-group-alarms-1/manual_group",
+        "test-manual-group-alarms-2/manual_group"]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "sent_events": [
+        {
+          "author": "root",
+          "connector": "engine",
+          "connector_name": "correlation",
+          "source_type": "resource",
+          "component": "metaalarm",
+          "state": 1,
+          "event_type": "manual_metaalarm_group",
+          "resource": "test-manual-group-alarms-1",
+          "origin": "canopsis",
+          "initiator": "user",
+          "state_type": 1,
+          "output": "Output test",
+          "display_name":"Test MetaAlarm 1", 
+          "ma_children": [
+            "test-manual-group-alarms-3/manual_group",
+            "test-manual-group-alarms-1/manual_group",
+            "test-manual-group-alarms-2/manual_group"]
         }
       ],
       "failed_events": [],
@@ -638,6 +693,7 @@ Feature: send an event
       "sent_events": [],
       "failed_events": [
         {
+          "author": "root",
           "connector_name": "test_connectorname",
           "source_type": "resource",
           "component": "test_component",
@@ -646,6 +702,7 @@ Feature: send an event
           "resource": "test_resource"
         },
         {
+          "author": "root",
           "connector": "test_connector",
           "source_type": "resource",
           "component": "test_component",
@@ -708,6 +765,7 @@ Feature: send an event
       "sent_events": [],
       "failed_events": [
         {
+          "author": "root",
           "connector": 123,
           "connector_name": "test_connectorname",
           "source_type": "resource",
@@ -717,6 +775,7 @@ Feature: send an event
           "resource": "test_resource"
         },
         {
+          "author": "root",
           "connector": "test_connector",
           "connector_name": 123,
           "source_type": "resource",
@@ -726,6 +785,7 @@ Feature: send an event
           "resource": "test_resource"
         },
         {
+          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "source_type": "resource",
@@ -735,6 +795,7 @@ Feature: send an event
           "resource": "test_resource"
         },
         {
+          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "source_type": "resource",
@@ -781,6 +842,7 @@ Feature: send an event
     {
       "sent_events": [
         {
+          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "event_type": "ack",
@@ -788,6 +850,7 @@ Feature: send an event
           "source_type": "connector"
         },
         {
+          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "component": "test_component",
@@ -796,13 +859,14 @@ Feature: send an event
           "state": 1
         },
         {
+          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "component": "test_component",
           "event_type": "check",
+          "source_type": "resource",
           "ma_children": [],
           "ma_parents": [],
-          "source_type": "resource",
           "state": 1,
           "resource": "test_resource"
         }
@@ -848,6 +912,7 @@ Feature: send an event
     {
       "sent_events": [
         {
+          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "event_type": "ack",
@@ -855,6 +920,7 @@ Feature: send an event
           "source_type": "connector"
         },
         {
+          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "component": "test_component",
@@ -863,13 +929,14 @@ Feature: send an event
           "state": 1
         },
         {
+          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "component": "test_component",
           "event_type": "check",
+          "source_type": "resource",
           "ma_children": [],
           "ma_parents": [],
-          "source_type": "resource",
           "state": 1,
           "resource": "test_resource"
         }
@@ -899,6 +966,7 @@ Feature: send an event
       "sent_events": [],
       "failed_events": [
         {
+          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "event_type": "check",

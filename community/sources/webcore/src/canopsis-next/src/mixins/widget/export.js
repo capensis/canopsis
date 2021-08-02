@@ -21,19 +21,19 @@ import { saveCsvFile } from '@/helpers/file/files';
  */
 export default ({ createExport, fetchExport, fetchExportFile }) => ({
   methods: {
-    async generateWidgetFile({ params } = {}) {
+    async generateWidgetFile({ data } = {}) {
       const widgetId = this.widget._id;
 
-      const { _id: id } = await this[createExport]({ params, widgetId });
+      const { _id: id } = await this[createExport]({ data, widgetId });
 
       await this.waitGeneratingCsvFile({ id, widgetId });
 
       return this[fetchExportFile]({ id, widgetId });
     },
 
-    async exportWidgetAsCsv({ params, name } = {}) {
+    async exportWidgetAsCsv({ data, name } = {}) {
       try {
-        const file = await this.generateWidgetFile({ params });
+        const file = await this.generateWidgetFile({ data });
 
         saveCsvFile(file, name);
       } catch (err) {

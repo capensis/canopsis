@@ -43,12 +43,13 @@ type serviceProvider struct {
 	samlSP       *saml2.SAMLServiceProvider
 	userProvider security.UserProvider
 	sessionStore libsession.Store
+	enforcer     security.Enforcer
 	config       *security.Config
 	logger       zerolog.Logger
 }
 
-func NewServiceProvider(userProvider security.UserProvider, sessionStore libsession.Store, config *security.Config, logger zerolog.Logger) (ServiceProvider, error) {
-	if config.Security.Saml.IdpMetadataUrl != "" && config.Security.Saml.IdpMetadataXml != ""{
+func NewServiceProvider(userProvider security.UserProvider, sessionStore libsession.Store, enforcer security.Enforcer, config *security.Config, logger zerolog.Logger) (ServiceProvider, error) {
+	if config.Security.Saml.IdpMetadataUrl != "" && config.Security.Saml.IdpMetadataXml != "" {
 		return nil, fmt.Errorf("should provide only idp metadata url or xml, not both")
 	}
 
@@ -151,8 +152,9 @@ func NewServiceProvider(userProvider security.UserProvider, sessionStore libsess
 		},
 		userProvider: userProvider,
 		sessionStore: sessionStore,
-		config: config,
-		logger: logger,
+		enforcer:     enforcer,
+		config:       config,
+		logger:       logger,
 	}, nil
 }
 
@@ -289,7 +291,13 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 
 		if user == nil {
 			if !sp.config.Security.Saml.AutoUserRegistration {
-				c.AbortWithStatusJSON(http.StatusNotFound, common.NewErrorResponse(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)))
+				sp.logger.Err(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)).Msg("AutoUserRegistration is disabled")
+
+				query := relayUrl.Query()
+				query.Set("errorMessage", "This user is not allowed to log into Canopsis")
+				relayUrl.RawQuery = query.Encode()
+
+				c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
 				return
 			}
 
@@ -322,6 +330,11 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 		if err != nil {
 			sp.logger.Err(err).Msg("SamlAcsHandler: save session error")
 			panic(err)
+		}
+
+		err = sp.enforcer.LoadPolicy()
+		if err != nil {
+			panic(fmt.Errorf("reload enforcer error: %w", err))
 		}
 
 		c.Redirect(http.StatusPermanentRedirect, relayUrl.String())

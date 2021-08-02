@@ -1,150 +1,272 @@
-package scheduler
+package scheduler_test
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
+	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
+	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
+	"github.com/go-redis/redis/v8"
+	"github.com/golang/mock/gomock"
+	"github.com/rs/zerolog"
 	"testing"
 	"time"
-
-	amqpLib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
-func testNewSchedulerService() (Scheduler, QueueLock) {
-	ctx := context.Background()
-	logger := log.NewTestLogger()
+func TestScheduler_ProcessEvent_GivenEventAndNoLock_ShouldPublishEvent(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	redisLockStorage, err := redis.NewSession(ctx, redis.LockStorage, logger, 0, 0)
+	event := types.Event{
+		Connector:     "test-connector",
+		ConnectorName: "test-connector-name",
+		Component:     "test-component",
+		Resource:      "test-resource",
+	}
+	lockID := "test-resource/test-component"
+	body := []byte("test-body")
+
+	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage.EXPECT().SetNX(gomock.Any(), gomock.Eq(lockID), gomock.Any(), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockChannel := mock_amqp.NewMockChannel(ctrl)
+	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(nil)
+	publishToQueue := "test-queue"
+	lockTtl := 100
+	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
+	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+	mockEncoder.EXPECT().Encode(gomock.Eq(event)).Return(body, nil)
+
+	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
+		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder, true)
+
+	err := service.ProcessEvent(ctx, event)
 	if err != nil {
-		panic(err)
+		t.Errorf("expected no error but got %v", err)
 	}
-
-	redisQueueStorage, err := redis.NewSession(ctx, redis.QueueStorage, logger, 0, 0)
-	if err != nil {
-		panic(err)
-	}
-
-	queue := NewQueueLock(redisLockStorage, time.Second, redisQueueStorage, true, logger)
-
-	amqpSession, err := amqpLib.NewConnection(log.NewLogger(false), 0, 0)
-	if err != nil {
-		panic(err)
-	}
-
-	pubChannel, err := amqpSession.Channel()
-	if err != nil {
-		panic(err)
-	}
-
-	shd := scheduler{
-		redisConn:      redisLockStorage,
-		channelPub:     pubChannel,
-		publishToQueue: "",
-		queueLock:      queue,
-		logger:         logger,
-		jsonDecoder:    json.NewDecoder(),
-	}
-	shd.subscribe(ctx)
-
-	return &shd, queue
 }
 
-func TestScheduler(t *testing.T) {
-	ctx := context.Background()
-	shd, queue := testNewSchedulerService()
+func TestScheduler_ProcessEvent_GivenEventAndLock_ShouldAddEventToQueue(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	bytesEvent := []byte(`{"_id":"testEvent","component":"testschedulerComponent","connector":"testschedulerConnector"}`)
-	event := types.Event{}
-
-	amqpSession, err := amqpLib.NewConnection(log.NewLogger(false), 0, 0)
-	if err != nil {
-		panic(err)
+	event := types.Event{
+		Connector:     "test-connector",
+		ConnectorName: "test-connector-name",
+		Component:     "test-component",
+		Resource:      "test-resource",
 	}
+	lockID := "test-resource/test-component"
+	body := []byte("test-body")
 
-	pubChannel, err := amqpSession.Channel()
+	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage.EXPECT().SetNX(gomock.Any(), gomock.Eq(lockID), gomock.Any(), gomock.Any()).
+		Return(redis.NewBoolResult(false, nil))
+	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisQueueStorage.EXPECT().RPush(gomock.Any(), gomock.Eq(lockID), gomock.Any()).
+		Return(redis.NewIntResult(1, nil))
+	mockChannel := mock_amqp.NewMockChannel(ctrl)
+	publishToQueue := "test-queue"
+	lockTtl := 100
+	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
+	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+	mockEncoder.EXPECT().Encode(gomock.Eq(event)).Return(body, nil)
+
+	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
+		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder, true)
+
+	err := service.ProcessEvent(ctx, event)
 	if err != nil {
-		panic(err)
+		t.Errorf("expected no error but got %v", err)
 	}
-
-	Convey("scheduler should process event without errors", t, func() {
-		decoder := json.NewDecoder()
-		err := decoder.Decode(bytesEvent, &event)
-		So(err, ShouldBeNil)
-
-		lockID := event.GetLockID()
-		err = shd.ProcessEvent(ctx, pubChannel, lockID, bytesEvent)
-		So(err, ShouldBeNil)
-
-		Convey("Then event should be locked and should not be queued", func() {
-			locked := queue.IsLocked(ctx, event.GetLockID())
-			So(locked, ShouldBeTrue)
-
-			queued := !queue.IsEmpty(ctx, event.GetLockID())
-			So(queued, ShouldBeFalse)
-
-			Convey("Then event should be acked without errors and should not be locked", func() {
-				err = shd.AckEvent(ctx, pubChannel, event)
-				So(err, ShouldBeNil)
-
-				//sleep one second, because unlock processed in goroutine
-				time.Sleep(time.Second * 1)
-
-				locked = queue.IsLocked(ctx, event.GetLockID())
-				So(locked, ShouldBeFalse)
-			})
-		})
-
-	})
-
-	encoder := json.NewEncoder()
-
-	Convey("scheduler should must process two messages related to the same alarm", t, func() {
-		event1 := &types.Event{
-			ID:        strPtr("testEvent1"),
-			Component: "testschedulerComponent1",
-			Connector: "testschedulerConnector1",
-		}
-		bytesEvent1, err := encoder.Encode(&event1)
-		event2 := &types.Event{
-			ID:        strPtr("testEvent2"),
-			Component: "testschedulerComponent1",
-			Connector: "testschedulerConnector1",
-		}
-		bytesEvent2, err := encoder.Encode(&event2)
-		lockID1 := event1.GetLockID()
-		lockID2 := event2.GetLockID()
-
-		err = shd.ProcessEvent(ctx, pubChannel, lockID1, bytesEvent1)
-		So(err, ShouldBeNil)
-
-		err = shd.ProcessEvent(ctx, pubChannel, lockID2, bytesEvent2)
-		So(err, ShouldBeNil)
-
-		Convey("Then event should be locked and one event queued", func() {
-			locked := queue.IsLocked(ctx, event1.GetLockID())
-			So(locked, ShouldBeTrue)
-
-			queued := !queue.IsEmpty(ctx, event1.GetLockID())
-			So(queued, ShouldBeTrue)
-
-			Convey("Then ack message, event should be locked and queue should be empty", func() {
-				err = shd.AckEvent(ctx, pubChannel, *event1)
-				So(err, ShouldBeNil)
-
-				locked = queue.IsLocked(ctx, event1.GetLockID())
-				So(locked, ShouldBeTrue)
-
-				queued = !queue.IsEmpty(ctx, event1.GetLockID())
-				So(queued, ShouldBeFalse)
-			})
-		})
-
-	})
 }
 
-func strPtr(v string) *string {
-	return &v
+func TestScheduler_AckEvent_GivenEventAndNoNextEventInQueue_ShouldUnlock(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	event := types.Event{
+		Connector:     "test-connector",
+		ConnectorName: "test-connector-name",
+		Component:     "test-component",
+		Resource:      "test-resource",
+	}
+	lockID := "test-resource/test-component"
+
+	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(lockID), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisLockStorage.EXPECT().Del(gomock.Any(), gomock.Eq(lockID)).
+		Return(redis.NewIntResult(1, nil))
+	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(lockID)).
+		Return(redis.NewStringResult("", redis.Nil))
+	mockChannel := mock_amqp.NewMockChannel(ctrl)
+	publishToQueue := "test-queue"
+	lockTtl := 100
+	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
+	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+
+	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
+		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder, true)
+
+	err := service.AckEvent(ctx, event)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+
+	// Wait unlock in goroutine.
+	time.Sleep(time.Millisecond * 10)
+}
+
+func TestScheduler_AckEvent_GivenEventAndNextEvent_ShouldPublishNextEvent(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	event := types.Event{
+		Connector:     "test-connector",
+		ConnectorName: "test-connector-name",
+		Component:     "test-component",
+		Resource:      "test-resource",
+	}
+	lockID := "test-resource/test-component"
+	body := []byte("test-body")
+
+	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(lockID), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(lockID)).
+		Return(redis.NewStringResult(string(body), nil))
+	mockChannel := mock_amqp.NewMockChannel(ctrl)
+	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(nil)
+	publishToQueue := "test-queue"
+	lockTtl := 100
+	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
+	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+
+	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
+		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder, true)
+
+	err := service.AckEvent(ctx, event)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+}
+
+func TestScheduler_AckEvent_GivenChildEventAndMetaAlarmNextEvent_ShouldPublishMetaAlarmNextEvent(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	metaAlarmID := "meta-alarm-entity-test/metaalarm"
+	childID := "test-resource/test-component"
+	childEvent := types.Event{
+		Connector:        "test-connector",
+		ConnectorName:    "test-connector-name",
+		Component:        "test-component",
+		Resource:         "test-resource",
+		MetaAlarmParents: &[]string{metaAlarmID},
+	}
+	metaAlarmEvent := types.Event{
+		Connector:         "engine",
+		ConnectorName:     "correlation",
+		Component:         "metaalarm",
+		Resource:          "meta-alarm-entity-test",
+		MetaAlarmChildren: &[]string{childID},
+	}
+	body := []byte("test-body")
+
+	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(childID), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil)).Times(2)
+	mockRedisLockStorage.EXPECT().Del(gomock.Any(), gomock.Eq(childID)).
+		Return(redis.NewIntResult(1, nil))
+	mockRedisLockStorage.EXPECT().SetNX(gomock.Any(), gomock.Eq(metaAlarmID), gomock.Any(), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisLockStorage.EXPECT().MSetNX(gomock.Any(), gomock.Eq(map[string]interface{}{childID: 1})).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(childID)).
+		Return(redis.NewStringResult("", redis.Nil))
+	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(metaAlarmID)).
+		Return(redis.NewStringResult(string(body), nil))
+	mockChannel := mock_amqp.NewMockChannel(ctrl)
+	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(nil)
+	publishToQueue := "test-queue"
+	lockTtl := 100
+	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
+	mockDecoder.EXPECT().Decode(gomock.Eq(body), gomock.Any()).
+		Do(func(_ []byte, v *types.Event) {
+			*v = metaAlarmEvent
+		}).
+		Return(nil)
+	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+
+	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
+		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder, true)
+
+	err := service.AckEvent(ctx, childEvent)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+
+	// Wait parent process in goroutine.
+	time.Sleep(time.Millisecond * 10)
+}
+
+func TestScheduler_AckEvent_GivenMetaAlarmEventAndChildNextEvent_ShouldPublishChildNextEvent(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	metaAlarmID := "meta-alarm-entity-test/metaalarm"
+	childID := "test-resource/test-component"
+	metaAlarmEvent := types.Event{
+		Connector:         "engine",
+		ConnectorName:     "correlation",
+		Component:         "metaalarm",
+		Resource:          "meta-alarm-entity-test",
+		MetaAlarmChildren: &[]string{childID},
+	}
+	body := []byte("test-body")
+
+	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(childID), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisLockStorage.EXPECT().Del(gomock.Any(), gomock.Eq(metaAlarmID)).
+		Return(redis.NewIntResult(1, nil))
+	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(childID)).
+		Return(redis.NewStringResult(string(body), nil))
+	mockChannel := mock_amqp.NewMockChannel(ctrl)
+	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(nil)
+	publishToQueue := "test-queue"
+	lockTtl := 100
+	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
+	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+
+	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
+		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder, true)
+
+	err := service.AckEvent(ctx, metaAlarmEvent)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
 }

@@ -61,7 +61,10 @@ func TestLdapProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.
 		Save(gomock.Eq(expectedUser)).
 		Return(nil)
 
-	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer)
+	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
+	mockEnforcer.EXPECT().LoadPolicy().Return(nil)
+
+	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer, mockEnforcer)
 	user, err := p.Auth(username, password)
 
 	if err != nil {
@@ -108,7 +111,9 @@ func TestLdapProvider_Auth_GivenInvalidAdminCredentials_ShouldReturnError(t *tes
 		FindByExternalSource(gomock.Any(), gomock.Any()).
 		Times(0)
 
-	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer)
+	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
+
+	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer, mockEnforcer)
 	user, err := p.Auth(username, password)
 
 	if err == nil {
@@ -155,7 +160,9 @@ func TestLdapProvider_Auth_GivenInvalidUsername_ShouldReturnNil(t *testing.T) {
 		FindByExternalSource(gomock.Any(), gomock.Any()).
 		Times(0)
 
-	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer)
+	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
+
+	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer, mockEnforcer)
 	user, err := p.Auth(username, password)
 
 	if err != nil {
@@ -209,7 +216,9 @@ func TestLdapProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 		FindByExternalSource(gomock.Any(), gomock.Any()).
 		Times(0)
 
-	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer)
+	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
+
+	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer, mockEnforcer)
 	user, err := p.Auth(username, password)
 
 	if err != nil {
@@ -288,7 +297,10 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNoUserInStore_ShouldCreate
 		Save(gomock.Eq(expectedUser)).
 		Return(nil)
 
-	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer)
+	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
+	mockEnforcer.EXPECT().LoadPolicy().Return(nil)
+
+	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer, mockEnforcer)
 	_, _ = p.Auth(username, password)
 }
 
@@ -367,6 +379,9 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndUserInStore_ShouldUpdateUs
 		Save(gomock.Eq(expectedUser)).
 		Return(nil)
 
-	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer)
+	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
+	mockEnforcer.EXPECT().LoadPolicy().Return(nil)
+
+	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer, mockEnforcer)
 	_, _ = p.Auth(username, password)
 }
