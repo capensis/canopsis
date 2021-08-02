@@ -2480,14 +2480,14 @@ export default {
       title: 'Playlists',
       message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
     },
+    [USERS_PERMISSIONS.technical.healthcheck]: {
+      title: 'Bilan de santé',
+      message: '',
+    },
 
     /**
      * Admin general
      */
-    [USERS_PERMISSIONS.technical.engine]: {
-      title: 'Engines',
-      message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
-    },
     [USERS_PERMISSIONS.technical.parameters]: {
       title: 'Paramètres',
     },

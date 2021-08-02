@@ -348,13 +348,6 @@
         "type": "CRUD"
     },
     {
-        "_id": "models_engine",
-        "loader_id": "models_engine",
-        "crecord_name": "models_engine",
-        "crecord_type": "action",
-        "desc": "Engines"
-    },
-    {
         "_id": "models_serie",
         "loader_id": "models_serie",
         "crecord_name": "models_serie",
@@ -503,6 +496,13 @@
         "crecord_type": "action",
         "desc": "Exploitation: Idle rules",
         "type": "CRUD"
+    },
+    {
+        "_id": "models_healthcheck",
+        "loader_id": "models_healthcheck",
+        "crecord_name": "models_healthcheck",
+        "crecord_type": "action",
+        "desc": "Healthcheck"
     },
     {
         "_id": "listalarm_ack",
