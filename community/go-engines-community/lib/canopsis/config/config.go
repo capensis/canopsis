@@ -10,6 +10,7 @@ const (
 	UserInterfaceKeyName = "user_interface"
 	VersionKeyName       = "canopsis_version"
 	RemediationKeyName   = "remediation"
+	HealthCheckName      = "health_check"
 )
 
 // SectionAlarm ...

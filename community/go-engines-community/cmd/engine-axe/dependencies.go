@@ -202,7 +202,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 	engineAxe.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisClient),
-		engine.NewInstanceRunInfo(canopsis.AxeExchangeName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
+		engine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
 		amqpChannel,
 		logger,
 	))
