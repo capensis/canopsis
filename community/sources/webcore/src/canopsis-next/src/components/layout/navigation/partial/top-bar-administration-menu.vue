@@ -112,6 +112,12 @@ export default {
         },
       ];
     },
+
+    permissionsWithDefaultType() {
+      return [
+        USERS_PERMISSIONS.technical.healthcheck,
+      ];
+    },
   },
 };
 </script>
