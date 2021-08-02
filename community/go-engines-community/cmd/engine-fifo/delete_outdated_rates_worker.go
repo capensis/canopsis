@@ -55,9 +55,9 @@ func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) error {
 			deleted, err := w.RateLimitAdapter.DeleteBefore(ctx, now.Unix()-int64(d.Seconds()))
 			if err != nil {
 				w.Logger.Err(err).Msg("cannot delete message rates")
+			} else if deleted > 0 {
+				w.Logger.Info().Int64("count", deleted).Msg("message rates were deleted")
 			}
-
-			w.Logger.Info().Int64("count", deleted).Msg("message rates were deleted")
 		}
 	}
 
