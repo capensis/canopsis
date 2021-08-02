@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Store interface {
@@ -70,27 +71,11 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 }
 
 func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*types.CpsTime, error) {
-	cursor, err := s.db.Collection(mongo.MessageRateStatsHourCollectionName).Aggregate(ctx, []bson.M{
-		{"$group": bson.M{
-			"_id":  nil,
-			"time": bson.M{"$min": "$_id"},
-		}},
-	})
-	if err != nil {
-		return nil, err
-	}
+	res := struct {
+		Time types.CpsTime `bson:"_id"`
+	}{}
 
-	if cursor.Next(ctx) {
-		res := struct {
-			Time types.CpsTime `bson:"time"`
-		}{}
-		err := cursor.Decode(&res)
-		if err != nil {
-			return nil, err
-		}
+	err := s.db.Collection(mongo.MessageRateStatsHourCollectionName).FindOne(ctx, bson.M{}, options.FindOne().SetSort(bson.M{"_id": 1})).Decode(&res)
 
-		return &res.Time, nil
-	}
-
-	return nil, nil
+	return &res.Time, err
 }
