@@ -1,4 +1,4 @@
-package metaalarm
+package correlation
 
 import (
 	"context"
@@ -7,10 +7,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
-)
-
-const (
-	RulesCollectionName = "meta_alarm_rules"
 )
 
 // RulesAdapter is a type that provides access to the MongoDB collection containing

@@ -1,4 +1,4 @@
-package metaalarm
+package correlation
 
 // RuleType is a type representing the type of an meta-alarm's rule.
 type RuleType string

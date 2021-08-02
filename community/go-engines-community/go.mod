@@ -48,7 +48,7 @@ require (
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
 	github.com/teambition/rrule-go v1.7.0
-	github.com/tidwall/gjson v1.8.0
+	github.com/tidwall/pretty v1.1.0 // indirect
 	github.com/valyala/fastjson v1.6.3
 	github.com/vmihailenco/msgpack/v4 v4.3.12
 	go.mongodb.org/mongo-driver v1.5.3

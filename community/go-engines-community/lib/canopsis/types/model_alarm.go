@@ -105,7 +105,11 @@ type Alarm struct {
 	Value    AlarmValue `bson:"v" json:"v"`
 	// update contains alarm changes after last mongo update. Use functions Update* to
 	// fill it.
-	update bson.M
+	update         bson.M
+	childrenUpdate []string
+	childrenRemove []string
+	parentsUpdate  []string
+	parentsRemove  []string
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
@@ -224,27 +228,25 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
 }
 
 // Apply actions (ACK, Snooze, AssocTicket, DeclareTicket) from steps to alarm
-func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) (done bool, err error) {
+func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) error {
 	ts := NewCpsTime(time.Now().Unix())
+
 	for j := 0; j < len(steps); j++ {
-		done = true
 		step := steps[j]
 		step.Author = "correlation"
 		step.Timestamp = ts
-		switch steps[j].Type {
+		switch step.Type {
 		case AlarmStepAck:
-			if a.Value.ACK != nil {
-				continue
+			err := a.PartialUpdateAck(ts, step.Author, step.Message, step.Role, step.Initiator)
+			if err != nil {
+				return err
 			}
-
-			a.Value.ACK = &step
 		case AlarmStepSnooze:
-			if a.Value.Snooze != nil {
-				continue
+			err := a.PartialUpdateSnooze(ts, step.Value, step.Author, step.Message, step.Role, step.Initiator)
+			if err != nil {
+				return err
 			}
-
-			a.Value.Snooze = &step
-		case AlarmStepAssocTicket, AlarmStepDeclareTicket:
+		case AlarmStepAssocTicket:
 			if a.Value.Ticket != nil {
 				continue
 			}
@@ -252,16 +254,30 @@ func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) (done bool, 
 			if ticket == nil {
 				continue
 			}
-			ticket := step.NewTicket(ticket.Value, ticket.Data)
-			a.Value.Ticket = &ticket
+
+			err := a.PartialUpdateAssocTicket(ts, ticket.Data, step.Author, ticket.Value, step.Role, step.Initiator)
+			if err != nil {
+				return err
+			}
+		case AlarmStepDeclareTicket:
+			if a.Value.Ticket != nil {
+				continue
+			}
+
+			if ticket == nil {
+				continue
+			}
+
+			err := a.PartialUpdateDeclareTicket(ts, step.Author, step.Message, ticket.Value, ticket.Data, step.Role, step.Initiator)
+			if err != nil {
+				return err
+			}
 		default:
-			return false, fmt.Errorf("unsupported action type: %s", step.Type)
-		}
-		if err = a.Value.Steps.Add(step); err != nil {
-			return false, err
+			return fmt.Errorf("unsupported action type: %s", step.Type)
 		}
 	}
-	return done, nil
+
+	return nil
 }
 
 // CurrentState returns the Current State of the Alarm
@@ -731,6 +747,81 @@ func (a Alarm) HasChildByEID(childEID string) bool {
 	}
 
 	return false
+}
+
+func (a Alarm) HasParentByEID(parentEID string) bool {
+	for _, parent := range a.Value.Parents {
+		if parent == parentEID {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (a *Alarm) AddChild(childEID string) {
+	if a.HasChildByEID(childEID) {
+		return
+	}
+
+	a.Value.Children = append(a.Value.Children, childEID)
+	a.childrenUpdate = append(a.childrenUpdate, childEID)
+
+	a.addUpdate("$addToSet", bson.M{"v.children": bson.M{"$each": a.childrenUpdate}})
+}
+
+func (a *Alarm) RemoveChild(childEID string) {
+	removed := false
+	for idx, child := range a.Value.Children {
+		if child == childEID {
+			a.Value.Children = append(a.Value.Children[:idx], a.Value.Children[idx+1:]...)
+			removed = true
+
+			break
+		}
+	}
+
+	if removed {
+		a.childrenRemove = append(a.childrenRemove, childEID)
+		a.addUpdate("$pull", bson.M{"v.children": bson.M{"$in": a.childrenRemove}})
+	}
+}
+
+func (a *Alarm) AddParent(parentEID string) {
+	if a.HasParentByEID(parentEID) {
+		return
+	}
+
+	a.Value.Parents = append(a.Value.Parents, parentEID)
+	a.parentsUpdate = append(a.parentsUpdate, parentEID)
+	a.addUpdate("$addToSet", bson.M{"v.parents": bson.M{"$each": a.parentsUpdate}})
+}
+
+func (a *Alarm) RemoveParent(parentEID string) {
+	removed := false
+	for idx, parent := range a.Value.Parents {
+		if parent == parentEID {
+			a.Value.Parents = append(a.Value.Parents[:idx], a.Value.Parents[idx+1:]...)
+			removed = true
+
+			break
+		}
+	}
+
+	if removed {
+		a.parentsRemove = append(a.parentsRemove, parentEID)
+		a.addUpdate("$pull", bson.M{"v.parents": bson.M{"$in": a.parentsRemove}})
+	}
+}
+
+func (a *Alarm) SetMeta(meta string) {
+	a.Value.Meta = meta
+	a.addUpdate("$set", bson.M{"v.meta": meta})
+}
+
+func (a *Alarm) SetMetaValuePath(path string) {
+	a.Value.MetaValuePath = path
+	a.addUpdate("$set", bson.M{"v.meta_value_path": path})
 }
 
 // UpdateState updates alarm's state to stateValue if it worst

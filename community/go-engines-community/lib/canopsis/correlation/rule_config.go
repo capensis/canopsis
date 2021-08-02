@@ -1,4 +1,4 @@
-package metaalarm
+package correlation
 
 import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 
