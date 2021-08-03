@@ -1595,6 +1595,9 @@ definitions:
       canceled:
         $ref: '#/definitions/pattern.AlarmStepRefPattern'
         type: object
+      children:
+        $ref: '#/definitions/pattern.StringArrayPattern'
+        type: object
       component:
         $ref: '#/definitions/pattern.StringPattern'
         type: object
@@ -1637,6 +1640,9 @@ definitions:
         type: object
       output:
         $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      parents:
+        $ref: '#/definitions/pattern.StringArrayPattern'
         type: object
       resolved:
         $ref: '#/definitions/pattern.TimeRefPattern'
@@ -1973,6 +1979,9 @@ definitions:
       hasOneOf:
         $ref: '#/definitions/types.OptionalStringArray'
         type: object
+      isEmpty:
+        $ref: '#/definitions/types.OptionalBool'
+        type: object
       lt:
         $ref: '#/definitions/types.OptionalInt64'
         description: |-
@@ -1990,6 +1999,24 @@ definitions:
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        type: object
+    type: object
+  pattern.StringArrayPattern:
+    properties:
+      hasEvery:
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      hasNot:
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      hasOneOf:
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      isEmpty:
+        $ref: '#/definitions/types.OptionalBool'
         type: object
       unexpectedFields:
         additionalProperties: true
@@ -3020,6 +3047,10 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      related_parents:
+        items:
+          type: string
+        type: array
       resolved:
         $ref: '#/definitions/types.CpsTime'
         type: object
@@ -3095,6 +3126,17 @@ definitions:
     required:
     - seconds
     - unit
+    type: object
+  types.OptionalBool:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the bool. It should only be taken into
+          account if Set is true.
+        type: boolean
     type: object
   types.OptionalInt64:
     properties:
