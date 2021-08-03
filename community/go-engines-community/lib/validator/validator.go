@@ -61,9 +61,9 @@ func RegisterTranslations(v *validator.Validate) {
 		return t
 	})
 	_ = v.RegisterTranslation("gtefield", trans, func(ut ut.Translator) error {
-		return ut.Add("gtfield", "{0} should be greater or equal than {1}.", true)
+		return ut.Add("gtefield", "{0} should be greater or equal than {1}.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("gtfield", fe.StructField(), fe.Param())
+		t, _ := ut.T("gtefield", fe.StructField(), fe.Param())
 		return t
 	})
 	_ = v.RegisterTranslation("gt", trans, func(ut ut.Translator) error {
