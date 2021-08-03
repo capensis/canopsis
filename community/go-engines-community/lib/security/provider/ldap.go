@@ -35,6 +35,7 @@ type ldapProvider struct {
 	configProvider security.ConfigProvider
 	userProvider   security.UserProvider
 	ldapDialer     LdapDialer
+	enforcer       security.Enforcer
 }
 
 // NewLdapProvider creates new provider.
@@ -42,11 +43,13 @@ func NewLdapProvider(
 	cp security.ConfigProvider,
 	up security.UserProvider,
 	d LdapDialer,
+	enforcer security.Enforcer,
 ) security.Provider {
 	return &ldapProvider{
 		ldapDialer:     d,
 		configProvider: cp,
 		userProvider:   up,
+		enforcer:       enforcer,
 	}
 }
 
@@ -220,6 +223,11 @@ func (p *ldapProvider) saveUser(
 	err = p.userProvider.Save(ctx, user)
 	if err != nil {
 		return nil, fmt.Errorf("cannot save user: %w", err)
+	}
+
+	err = p.enforcer.LoadPolicy()
+	if err != nil {
+		return nil, fmt.Errorf("LdapProvider: reload enforcer error: %w", err)
 	}
 
 	return user, nil

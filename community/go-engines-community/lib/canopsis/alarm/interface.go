@@ -19,6 +19,8 @@ type Adapter interface {
 
 	PartialUpdateOpen(ctx context.Context, alarm *types.Alarm) error
 
+	PartialMassUpdateOpen(ctx context.Context, alarms []types.Alarm) error
+
 	// GetAlarmsByID finds all alarms with an entity id.
 	GetAlarmsByID(ctx context.Context, id string) ([]types.Alarm, error)
 

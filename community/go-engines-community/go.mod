@@ -23,7 +23,6 @@ require (
 	github.com/cucumber/godog v0.11.0
 	github.com/cucumber/messages-go/v10 v10.0.3
 	github.com/dlclark/regexp2 v1.4.0
-	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.2
 	github.com/go-ldap/ldap/v3 v3.3.0
 	github.com/go-playground/locales v0.13.0
@@ -48,7 +47,7 @@ require (
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
 	github.com/teambition/rrule-go v1.7.0
-	github.com/tidwall/gjson v1.8.0
+	github.com/tidwall/pretty v1.1.0 // indirect
 	github.com/valyala/fastjson v1.6.3
 	github.com/vmihailenco/msgpack/v4 v4.3.12
 	go.mongodb.org/mongo-driver v1.5.3

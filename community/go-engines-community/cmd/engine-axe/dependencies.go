@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
@@ -15,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation/executor"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -172,7 +172,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			EventProcessor: alarm.NewEventProcessor(
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
-				metaalarm.NewRuleAdapter(dbClient),
+				correlation.NewRuleAdapter(dbClient),
 				alarmConfigProvider,
 				m.depOperationExecutor(dbClient, alarmConfigProvider, statsService),
 				redis.NewLockClient(corrRedisClient),
