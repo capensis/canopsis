@@ -6,6 +6,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/go-ldap/ldap/v3"
 )
@@ -25,6 +26,7 @@ func NewLdapDialer() LdapDialer {
 
 func (baseDialer) DialURL(config *security.LdapConfig) (ldap.Client, error) {
 	return ldap.DialURL(config.Url, ldap.DialWithTLSConfig(&tls.Config{
+		ServerName:         "",
 		InsecureSkipVerify: config.InsecureSkipVerify,
 	}))
 }
