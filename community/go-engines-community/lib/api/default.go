@@ -23,7 +23,6 @@ import (
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -94,7 +93,7 @@ func Default(
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = int(sessionStoreSessionMaxAge.Seconds())
 	sessionStore.Options.Secure = secureSession
-	security := NewSecurity(securityConfig, dbClient, sessionStore, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, logger)
 
 	proxyAccessConfig, err := proxy.LoadAccessConfig(configDir)
 	if err != nil {
@@ -176,10 +175,6 @@ func Default(
 		logger,
 	)
 	api.AddRouter(func(router gin.IRouter) {
-		corsConfig := cors.DefaultConfig()
-		corsConfig.AllowAllOrigins = true
-		corsConfig.AllowCredentials = true
-		router.Use(cors.New(corsConfig))
 		router.Use(middleware.Cache())
 
 		if test {
