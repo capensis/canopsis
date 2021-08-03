@@ -16,6 +16,7 @@
     c-table-pagination(
       :total-items="alarmsMeta.total_count",
       :rows-per-page="query.limit",
+      :rowsPerPageItems="[1, 2, 3]",
       :page="query.page",
       @update:page="updateQueryPage",
       @update:rows-per-page="updateRecordsPerPage"
@@ -23,7 +24,7 @@
 </template>
 
 <script>
-import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS } from '@/constants';
+import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, ALARM_ENTITY_FIELDS } from '@/constants';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
 
@@ -64,6 +65,7 @@ export default {
           ...column,
           value,
           text: label,
+          sortable: value !== ALARM_ENTITY_FIELDS.extraDetails,
         }));
       }
 
