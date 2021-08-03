@@ -3,8 +3,8 @@ package alarm
 import (
 	"context"
 	"errors"
-	"time"
 	"math"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -29,7 +29,7 @@ type mongoAdapter struct {
 
 func NewAdapter(dbClient libmongo.DbClient) Adapter {
 	return &mongoAdapter{
-		mainDbCollection:     dbClient.Collection(AlarmCollectionName),
+		mainDbCollection:     dbClient.Collection(libmongo.AlarmMongoCollection),
 		resolvedDbCollection: dbClient.Collection(libmongo.ResolvedAlarmMongoCollection),
 		archivedDbCollection: dbClient.Collection(libmongo.ArchivedAlarmMongoCollection),
 	}
@@ -108,7 +108,7 @@ func (a mongoAdapter) PartialMassUpdateOpen(ctx context.Context, alarms []types.
 		alarms[idx] = alarm
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err = a.dbCollection.BulkWrite(ctx, writeModels)
+			_, err = a.mainDbCollection.BulkWrite(ctx, writeModels)
 			if err != nil {
 				return err
 			}
@@ -118,7 +118,7 @@ func (a mongoAdapter) PartialMassUpdateOpen(ctx context.Context, alarms []types.
 	}
 
 	if len(writeModels) > 0 {
-		_, err = a.dbCollection.BulkWrite(ctx, writeModels)
+		_, err = a.mainDbCollection.BulkWrite(ctx, writeModels)
 	}
 
 	return err
