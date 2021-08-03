@@ -5,15 +5,15 @@ import {
   EVENT_ENTITY_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   CRUD_ACTIONS,
-  WIDGET_TYPES,
   STATS_QUICK_RANGES,
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
+import { authMixin } from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
@@ -22,8 +22,9 @@ import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/reme
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
-export default {
+export const widgetActionsPanelAlarmMixin = {
   mixins: [
+    authMixin,
     queryMixin,
     eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
@@ -168,7 +169,8 @@ export default {
     },
 
     showHistoryModal() {
-      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const widget = generateDefaultAlarmListWidget();
+
       const filter = { $and: [{ 'entity._id': get(this.item, 'entity._id') }] };
       const entityFilter = {
         title: this.item.entity.name,

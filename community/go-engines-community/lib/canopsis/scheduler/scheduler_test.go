@@ -2,6 +2,7 @@ package scheduler_test
 
 import (
 	"context"
+	"encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
@@ -188,14 +189,18 @@ func TestScheduler_AckEvent_GivenChildEventAndMetaAlarmNextEvent_ShouldPublishMe
 		Resource:          "meta-alarm-entity-test",
 		MetaAlarmChildren: &[]string{childID},
 	}
-	body := []byte("test-body")
+
+	body, err := json.Marshal(metaAlarmEvent)
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
 
 	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
 	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(childID), gomock.Any()).
 		Return(redis.NewBoolResult(true, nil)).Times(2)
 	mockRedisLockStorage.EXPECT().Del(gomock.Any(), gomock.Eq(childID)).
 		Return(redis.NewIntResult(1, nil))
-	mockRedisLockStorage.EXPECT().SetNX(gomock.Any(), gomock.Eq(metaAlarmID), gomock.Any(), gomock.Any()).
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(metaAlarmID), gomock.Any()).
 		Return(redis.NewBoolResult(true, nil))
 	mockRedisLockStorage.EXPECT().MSetNX(gomock.Any(), gomock.Eq(map[string]interface{}{childID: 1})).
 		Return(redis.NewBoolResult(true, nil))
@@ -210,17 +215,12 @@ func TestScheduler_AckEvent_GivenChildEventAndMetaAlarmNextEvent_ShouldPublishMe
 	publishToQueue := "test-queue"
 	lockTtl := 100
 	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
-	mockDecoder.EXPECT().Decode(gomock.Eq(body), gomock.Any()).
-		Do(func(_ []byte, v *types.Event) {
-			*v = metaAlarmEvent
-		}).
-		Return(nil)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 
 	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
 		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder, true)
 
-	err := service.AckEvent(ctx, childEvent)
+	err = service.AckEvent(ctx, childEvent)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}

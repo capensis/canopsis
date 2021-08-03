@@ -3,6 +3,7 @@ package alarm
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"runtime/trace"
 	"sync"
 	"time"
@@ -10,7 +11,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
 	liboperation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
@@ -25,7 +25,7 @@ const MaxRedisLockRetries = 10
 type eventProcessor struct {
 	adapter             Adapter
 	entityAdapter       entity.Adapter
-	ruleAdapter         metaalarm.RulesAdapter
+	ruleAdapter         correlation.RulesAdapter
 	redisLockClient     redis.LockClient
 	alarmConfigProvider config.AlarmConfigProvider
 	executor            liboperation.Executor
@@ -35,7 +35,7 @@ type eventProcessor struct {
 func NewEventProcessor(
 	adapter Adapter,
 	entityAdapter entity.Adapter,
-	ruleAdapter metaalarm.RulesAdapter,
+	ruleAdapter correlation.RulesAdapter,
 	alarmConfigProvider config.AlarmConfigProvider,
 	executor liboperation.Executor,
 	redisLockClient redis.LockClient,

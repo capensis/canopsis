@@ -3,8 +3,10 @@ package alarm
 import (
 	"context"
 	"errors"
+	"math"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -27,7 +29,7 @@ type mongoAdapter struct {
 
 func NewAdapter(dbClient libmongo.DbClient) Adapter {
 	return &mongoAdapter{
-		mainDbCollection:     dbClient.Collection(AlarmCollectionName),
+		mainDbCollection:     dbClient.Collection(libmongo.AlarmMongoCollection),
 		resolvedDbCollection: dbClient.Collection(libmongo.ResolvedAlarmMongoCollection),
 		archivedDbCollection: dbClient.Collection(libmongo.ArchivedAlarmMongoCollection),
 	}
@@ -77,6 +79,49 @@ func (a mongoAdapter) PartialUpdateOpen(ctx context.Context, alarm *types.Alarm)
 	}
 
 	return nil
+}
+
+func (a mongoAdapter) PartialMassUpdateOpen(ctx context.Context, alarms []types.Alarm) error {
+	var err error
+	writeModels := make([]mongo.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(alarms)))))
+
+	for idx, alarm := range alarms {
+		update := alarm.GetUpdate()
+		if len(update) == 0 {
+			continue
+		}
+
+		writeModels = append(
+			writeModels,
+			mongo.NewUpdateOneModel().
+				SetFilter(bson.M{
+					"_id": alarm.ID,
+					"$or": []bson.M{
+						{"v.resolved": nil},
+						{"v.resolved": bson.M{"$exists": false}},
+					},
+				}).
+				SetUpdate(update),
+		)
+
+		alarm.CleanUpdate()
+		alarms[idx] = alarm
+
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			_, err = a.mainDbCollection.BulkWrite(ctx, writeModels)
+			if err != nil {
+				return err
+			}
+
+			writeModels = writeModels[:0]
+		}
+	}
+
+	if len(writeModels) > 0 {
+		_, err = a.mainDbCollection.BulkWrite(ctx, writeModels)
+	}
+
+	return err
 }
 
 func (a mongoAdapter) GetAlarmsByID(ctx context.Context, id string) ([]types.Alarm, error) {

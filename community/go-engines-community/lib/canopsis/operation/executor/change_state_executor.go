@@ -40,13 +40,15 @@ func (e *changeStateExecutor) Exec(
 		return "", nil
 	}
 
+	conf := e.configProvider.Get()
 	err := alarm.PartialUpdateChangeState(
 		params.State,
 		time,
 		params.Author,
-		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
+		utils.TruncateString(params.Output, conf.OutputLength),
 		role,
 		initiator,
+		conf,
 	)
 	if err != nil {
 		return "", err

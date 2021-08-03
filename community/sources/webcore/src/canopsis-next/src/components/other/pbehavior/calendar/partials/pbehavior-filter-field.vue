@@ -26,7 +26,7 @@
 import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS } from '@/constants';
+import { ENTITIES_TYPES, MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form/object';
 
@@ -84,6 +84,7 @@ export default {
         config: {
           filter: { filter: this.form.filter },
           hiddenFields: ['title'],
+          entitiesType: ENTITIES_TYPES.entity,
           action: ({ filter }) => {
             this.updateField('filter', filter);
             this.fetchCountForFilter(filter);
