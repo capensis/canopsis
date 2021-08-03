@@ -16,7 +16,6 @@
     c-table-pagination(
       :total-items="alarmsMeta.total_count",
       :rows-per-page="query.limit",
-      :rowsPerPageItems="[1, 2, 3]",
       :page="query.page",
       @update:page="updateQueryPage",
       @update:rows-per-page="updateRecordsPerPage"
