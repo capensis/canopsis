@@ -199,6 +199,9 @@ export const COLORS = {
     failed: '#ff5252',
     skipped: '#5a6D80',
   },
+  healthcheck: {
+    unknown: '',
+  },
   statsDefault: '#dddddd',
   impactState: [
     '#2FAB63',

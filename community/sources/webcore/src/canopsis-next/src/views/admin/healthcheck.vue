@@ -10,17 +10,19 @@ import cytoscape from 'cytoscape';
 import cytoscapeNodeHtmlLabel from 'cytoscape-node-html-label';
 import cytoscapeDagre from 'cytoscape-dagre';
 
+// import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation/healthcheck-network-graph.vue';
+
 import entitiesEngineRunInfoMixin from '@/mixins/entities/engine-run-info';
 
 cytoscapeNodeHtmlLabel(cytoscape);
 cytoscape.use(cytoscapeDagre);
 
 export default {
+  // components: { HealthcheckNetworkGraph },
   mixins: [entitiesEngineRunInfoMixin],
   data() {
     return {
       pending: true,
-      engines: [],
       response: {
         services: [
           {
@@ -145,8 +147,17 @@ export default {
       },
     };
   },
+  computed: {
+    services() {
+      return this.response.services;
+    },
+
+    engines() {
+      return this.response.engines;
+    },
+  },
   mounted() {
-    const SPACING_FACTOR = 1.9;
+    const SPACING_FACTOR = 2;
     const NODES_SPACE = 85;
     const SERVICES_NAMES = {
       mongo: 'MongoDB',
@@ -253,11 +264,23 @@ export default {
       container: this.$refs.cover,
       style: [
         {
+          selector: 'core',
+          style: {
+            'active-bg-size': 0,
+          },
+        },
+        {
           selector: 'node',
           style: {
             width: 60,
             height: 60,
             'border-width': 3,
+          },
+        },
+        {
+          selector: `node[id="${SERVICES_NAMES.enginesChain}"]`,
+          style: {
+            events: 'no',
           },
         },
         {
@@ -312,6 +335,7 @@ export default {
       ],
 
       elements,
+      wheelSensitivity: 0.5,
       layout: {
         name: 'dagre',
         direction: true,

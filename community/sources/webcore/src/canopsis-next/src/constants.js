@@ -1947,3 +1947,36 @@ export const ALARMS_OPENED_VALUES = {
   all: null,
   resolved: false,
 };
+
+export const HEALTHCHECK_SERVICES_NAMES = {
+  mongo: 'MongoDB',
+  redis: 'Redis',
+  rabbit: 'RabbitMQ',
+  events: 'Events',
+  api: 'API',
+  healthcheck: 'Healthcheck',
+  enginesChain: 'Engines chain',
+};
+
+export const HEALTHCHECK_ENGINES_NAMES = {
+  event: 'event',
+  webhook: 'engine-webhook',
+  fifo: 'engine-fifo',
+  axe: 'engine-axe',
+  che: 'engine-che',
+  pbehavior: 'engine-pbehavior',
+  action: 'engine-action',
+  service: 'engine-service',
+  dynamicInfo: 'engine-dynamic-info',
+  correlation: 'engine-correlation',
+  heartbeat: 'engine-heartbeat',
+};
+
+export const HEALTHCHECK_STATUSES = {
+  ok: 0,
+  notRunning: 1,
+  unknown: 2,
+  queueOverflow: 3,
+  tooFewInstances: 4,
+  diffInstancesConfig: 5,
+};
