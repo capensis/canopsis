@@ -13,6 +13,7 @@ import (
 
 type Store interface {
 	Find(context.Context, ListRequest) (*AggregationResult, error)
+	// get the lower bound time value for hourly /message-rate-stats request.
 	GetDeletedBeforeForHours(ctx context.Context) (*types.CpsTime, error)
 }
 
