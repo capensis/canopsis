@@ -2788,29 +2788,33 @@ cyclist@~0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-0.2.2.tgz#1b33792e11e914a2fd6d6ed6447464444e5fa640"
 
-"d3-dispatch@1 - 2":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/d3-dispatch/-/d3-dispatch-2.0.0.tgz#8a18e16f76dd3fcaef42163c97b926aa9b55e7cf"
-  integrity sha512-S/m2VsXI7gAti2pBoLClFFTMOO1HTtT0j99AuXLoGFKO6deHDdnv6ZGTxSTTUTgO1zVcv82fCOtDjYK4EECmWA==
-
-d3-force@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/d3-force/-/d3-force-2.1.1.tgz#f20ccbf1e6c9e80add1926f09b51f686a8bc0937"
-  integrity sha512-nAuHEzBqMvpFVMf9OX75d00OxvOXdxY+xECIXjW6Gv8BRrXu6gAWbv/9XKrvfJ5i5DCokDW7RYE50LRoK092ew==
+cytoscape-dagre@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/cytoscape-dagre/-/cytoscape-dagre-2.3.2.tgz#f83d4357642c86d3bd7530dd9c1dffc2e1079d3c"
+  integrity sha512-dL9+RvGkatSlIdOKXiFwHpnpTo8ydFMqIYzZFkImJXNbDci3feyYxR46wFoaG9GFiWimc6XD9Lm0x29b1wvWpw==
   dependencies:
-    d3-dispatch "1 - 2"
-    d3-quadtree "1 - 2"
-    d3-timer "1 - 2"
+    dagre "^0.8.5"
 
-"d3-quadtree@1 - 2":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/d3-quadtree/-/d3-quadtree-2.0.0.tgz#edbad045cef88701f6fee3aee8e93fb332d30f9d"
-  integrity sha512-b0Ed2t1UUalJpc3qXzKi+cPGxeXRr4KU9YSlocN74aTzp6R/Ud43t79yLLqxHRWZfsvWXmbDWPpoENK1K539xw==
+cytoscape-node-html-label@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/cytoscape-node-html-label/-/cytoscape-node-html-label-1.2.2.tgz#cad4942a52be2075f55521b3ea376daadc67d65f"
+  integrity sha512-oUVwrlsIlaJJ8QrQFSMdv3uXVXPg6tMH/Tfofr8JuZIovqI4fPqBi6sQgCMcVpS6k9Td0TTjowBsNRw32CESWg==
 
-"d3-timer@1 - 2":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/d3-timer/-/d3-timer-2.0.0.tgz#055edb1d170cfe31ab2da8968deee940b56623e6"
-  integrity sha512-TO4VLh0/420Y/9dO3+f9abDEFYeCUr2WZRlxJvbp4HPTQcSylXNiL6yZa9FIUvV1yRiFufl1bszTCLDqv9PWNA==
+cytoscape@^3.19.0:
+  version "3.19.0"
+  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.19.0.tgz#b3e3136f823ca00a1c7752741c2a349e52545f57"
+  integrity sha512-DANM8bM4EuSTS3DraPK0nLSmzANrzQ2g/cb3u5Biexu/NVsJA+xAoXVvWHRIHDXz3y0gpMjTPv3Z13ZbkNrEPw==
+  dependencies:
+    heap "^0.2.6"
+    lodash.debounce "^4.0.8"
+
+dagre@^0.8.5:
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/dagre/-/dagre-0.8.5.tgz#ba30b0055dac12b6c1fcc247817442777d06afee"
+  integrity sha512-/aTqmnRta7x7MCCpExk7HQL2O4owCT2h8NT//9I1OQ9vt29Pa0BzSAkR5lwFUcQ7491yVi/3CXU9jQ5o0Mn2Sw==
+  dependencies:
+    graphlib "^2.1.8"
+    lodash "^4.17.15"
 
 dashdash@^1.12.0:
   version "1.14.1"
@@ -4333,6 +4337,13 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
 
+graphlib@^2.1.8:
+  version "2.1.8"
+  resolved "https://registry.yarnpkg.com/graphlib/-/graphlib-2.1.8.tgz#5761d414737870084c92ec7b5dbcb0592c9d35da"
+  integrity sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A==
+  dependencies:
+    lodash "^4.17.15"
+
 growl@1.9.2:
   version "1.9.2"
   resolved "https://registry.yarnpkg.com/growl/-/growl-1.9.2.tgz#0ea7743715db8d8de2c5ede1775e1b45ac85c02f"
@@ -4461,6 +4472,11 @@ hash.js@^1.0.0, hash.js@^1.0.3:
 he@1.2.x, he@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
+
+heap@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/heap/-/heap-0.2.6.tgz#087e1f10b046932fc8594dd9e6d378afc9d1e5ac"
+  integrity sha1-CH4fELBGky/IWU3Z5tN4r8nR5aw=
 
 hex-color-regex@^1.1.0:
   version "1.1.0"
@@ -6411,6 +6427,11 @@ lodash@^4.15.0:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
+
+lodash@^4.17.15:
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
+  integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
 log-symbols@^1.0.2:
   version "1.0.2"

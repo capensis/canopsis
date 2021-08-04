@@ -854,7 +854,7 @@ export const USERS_PERMISSIONS = {
     remediationInstruction: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstruction`,
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
-    healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
+    healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_engine`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
