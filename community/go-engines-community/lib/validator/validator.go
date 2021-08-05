@@ -289,18 +289,6 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("must_be_empty", fe.Field())
 		return t
 	})
-	_ = v.RegisterTranslation("invalid_engine_name", trans, func(ut ut.Translator) error {
-		return ut.Add("invalid_engine_name", "engine's name is not valid.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("invalid_engine_name", fe.Field())
-		return t
-	})
-	_ = v.RegisterTranslation("engine_is_not_defined", trans, func(ut ut.Translator) error {
-		return ut.Add("engine_is_not_defined", "engine is not defined", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("engine_is_not_defined", fe.Field())
-		return t
-	})
 }
 
 // TranslateError returns custom validation error message.
