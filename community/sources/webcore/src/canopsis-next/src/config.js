@@ -143,6 +143,7 @@ export const API_ROUTES = {
   file: '/api/v4/cat/file',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
+  healthcheck: '/api/v4/cat/healthcheck',
   remediation: {
     instructions: '/api/v4/cat/instructions',
     instructionStats: '/api/v4/cat/instruction-stats',
@@ -200,7 +201,11 @@ export const COLORS = {
     skipped: '#5a6D80',
   },
   healthcheck: {
-    unknown: '',
+    error: '#FF5252',
+    warning: '#FFA800',
+    unknown: '#C4C4C4',
+    edgeGray: '#979797',
+    edgeBlack: '#000000',
   },
   statsDefault: '#dddddd',
   impactState: [

@@ -1980,3 +1980,21 @@ export const HEALTHCHECK_STATUSES = {
   tooFewInstances: 4,
   diffInstancesConfig: 5,
 };
+
+export const HEALTHCHECK_NETWORK_GRAPH_OPTIONS = {
+  nodeSpace: 110,
+  spacingFactor: 2,
+  fitPadding: 15,
+  wheelSensitivity: 0.5,
+  maxZoom: 1.2,
+};
+
+export const HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS = {
+  [HEALTHCHECK_SERVICES_NAMES.events]: { x: -3, y: 1 },
+  [HEALTHCHECK_SERVICES_NAMES.mongo]: { x: -3, y: 0 },
+  [HEALTHCHECK_SERVICES_NAMES.api]: { x: -2, y: 0 },
+  [HEALTHCHECK_SERVICES_NAMES.rabbit]: { x: -2, y: 1 },
+  [HEALTHCHECK_SERVICES_NAMES.healthcheck]: { x: -2, y: -0.5 },
+  [HEALTHCHECK_SERVICES_NAMES.redis]: { x: -1, y: 0 },
+  [HEALTHCHECK_SERVICES_NAMES.enginesChain]: { x: 0, y: -0.5 },
+};

@@ -39,6 +39,7 @@ import associativeTableModule from './associative-table';
 import dataStorageModule from './data-storage';
 import notificationSettingsModule from './notification-settings';
 import idleRulesModule from './idle-rules';
+import healthcheckModule from './healthcheck';
 
 export default {
   alarm: alarmModule,
@@ -82,4 +83,5 @@ export default {
   dataStorage: dataStorageModule,
   notificationSettings: notificationSettingsModule,
   idleRules: idleRulesModule,
+  healthcheck: healthcheckModule,
 };
