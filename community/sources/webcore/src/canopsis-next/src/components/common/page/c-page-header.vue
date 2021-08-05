@@ -1,6 +1,7 @@
 <template lang="pug">
   div
-    h2.text-xs-center.display-1.font-weight-medium.mt-3.mb-2 {{ $t(`pageHeaders.${name}.title`) }}
+    h2.text-xs-center.display-1.font-weight-medium.mt-3.mb-2
+      slot {{ $t(`pageHeaders.${name}.title`) }}
       v-btn(v-if="hasMessage", icon, @click="toggleMessageVisibility")
         v-icon(color="info") help_outline
     v-expand-transition
