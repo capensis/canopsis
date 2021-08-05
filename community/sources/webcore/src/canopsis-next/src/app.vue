@@ -4,6 +4,7 @@
       the-navigation#main-navigation(v-if="$route.name !== 'login'")
       v-content#main-content
         active-broadcast-message
+        limited-line-chart
         router-view(:key="routeViewKey")
     the-side-bars
     the-modals
@@ -27,11 +28,13 @@ import entitiesUserMixin from '@/mixins/entities/user';
 import keepaliveMixin from '@/mixins/entities/keepalive';
 
 import '@/assets/styles/main.scss';
+import LimitedLineChart from '@/components/common/chart/limited-line-chart.vue';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
 export default {
   components: {
+    LimitedLineChart,
     TheNavigation,
     TheSideBars,
     ActiveBroadcastMessage,
