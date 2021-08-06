@@ -11,9 +11,7 @@ import (
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
@@ -69,8 +67,6 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 type createPbehaviorMessageProcessor struct {
 	FeaturePrintEventOnError bool
 	DbClient                 mongo.DbClient
-	LockerClient             redis.LockClient
-	Store                    redis.Store
 	PbhService               libpbehavior.Service
 	EventManager             libpbehavior.EventManager
 	AlarmAdapter             alarm.Adapter
@@ -191,46 +187,10 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 }
 
 func (p *createPbehaviorMessageProcessor) recomputePbehavior(ctx context.Context, pbehaviorID string) error {
-	ok, err := p.Store.Restore(ctx, p.PbhService)
-	if err != nil || !ok {
-		if err == nil {
-			err = fmt.Errorf("pbehavior intervals are not computed, cache is empty")
-		} else {
-			err = fmt.Errorf("get pbehavior's frames from redis failed: %w", err)
-		}
-		return err
-	}
-
-	computeLock, err := p.LockerClient.Obtain(
-		ctx,
-		redis.RecomputeLockKey,
-		redis.RecomputeLockDuration,
-		&redislock.Options{
-			RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(100*time.Millisecond), 10),
-		},
-	)
-	if err != nil {
-		return fmt.Errorf("obtain redlock failed: %w", err)
-	}
-
-	defer func() {
-		if computeLock != nil {
-			err := computeLock.Release(ctx)
-			if err != nil && err != redislock.ErrLockNotHeld {
-				p.Logger.Warn().Err(err).Msg("failed to manually release compute-lock, the lock will be released by ttl")
-			}
-		}
-	}()
-
-	err = p.PbhService.Recompute(ctx, pbehaviorID)
+	err := p.PbhService.RecomputeByID(ctx, pbehaviorID)
 
 	if err != nil {
 		return fmt.Errorf("pbehavior recompute failed: %w", err)
-	}
-
-	err = p.Store.Save(ctx, p.PbhService)
-	if err != nil {
-		return fmt.Errorf("save pbehavior's frames to redis failed, the data might be inconsistent: %w", err)
 	}
 
 	p.Logger.Debug().Str("pbehavior", pbehaviorID).Msg("pbehavior recomputed")
@@ -241,7 +201,7 @@ func (p *createPbehaviorMessageProcessor) recomputePbehavior(ctx context.Context
 func (p *createPbehaviorMessageProcessor) getResolveResult(ctx context.Context, entity *types.Entity) (libpbehavior.ResolveResult, error) {
 	location := p.TimezoneConfigProvider.Get().Location
 	now := time.Now().In(location)
-	resolveResult, err := p.PbhService.Resolve(ctx, entity, now)
+	resolveResult, err := p.PbhService.Resolve(ctx, entity.ID, now)
 	if err != nil {
 		return libpbehavior.ResolveResult{}, fmt.Errorf("resolve an entity failed: %w", err)
 	}

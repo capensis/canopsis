@@ -24,8 +24,8 @@ const DefaultPoolSize = 100
 // TypeComputer is used to compute periodical behavior timespans for provided interval.
 type TypeComputer interface {
 	// Compute calculates types for provided timespan.
-	Compute(ctx context.Context, span timespan.Span) (*ComputeResult, error)
-	Recompute(ctx context.Context, span timespan.Span, pbehaviorID string) (*ComputedPbehavior, error)
+	Compute(ctx context.Context, span timespan.Span) (ComputeResult, error)
+	Recompute(ctx context.Context, span timespan.Span, pbehaviorID string) (ComputedPbehavior, error)
 }
 
 // typeComputer computes periodical behavior timespans for provided interval.
@@ -61,7 +61,7 @@ type computedType struct {
 type ComputeResult struct {
 	computedPbehaviors map[string]ComputedPbehavior
 	typesByID          map[string]*Type
-	defaultTypes       map[string]string
+	defaultActiveType  string
 }
 
 // models contains all required models for computing.
@@ -101,7 +101,7 @@ type pbhComputeResult struct {
 func (c *typeComputer) Compute(
 	ctx context.Context,
 	span timespan.Span,
-) (*ComputeResult, error) {
+) (ComputeResult, error) {
 	stepChan := make(chan int, 1)
 	defer close(stepChan)
 	stepChan <- getPbehaviorsStep
@@ -109,14 +109,14 @@ func (c *typeComputer) Compute(
 	var (
 		pbehaviorsByID map[string]*PBehavior
 		models         models
-		computed       *ComputeResult
+		computed       ComputeResult
 		res            map[string]ComputedPbehavior
 	)
 
 	for {
 		select {
 		case <-ctx.Done():
-			return nil, ctx.Err()
+			return computed, nil
 		case step := <-stepChan:
 			nextStep := -1
 			var err error
@@ -166,15 +166,15 @@ func (c *typeComputer) Compute(
 					break
 				}
 
-				computed = &ComputeResult{
+				computed = ComputeResult{
 					computedPbehaviors: res,
 					typesByID:          models.typesByID,
-					defaultTypes:       models.defaultTypes,
+					defaultActiveType:  models.defaultTypes[TypeActive],
 				}
 			}
 
 			if err != nil {
-				return nil, err
+				return computed, err
 			}
 
 			if nextStep == -1 {
@@ -190,19 +190,19 @@ func (c *typeComputer) Recompute(
 	ctx context.Context,
 	span timespan.Span,
 	pbehaviorID string,
-) (*ComputedPbehavior, error) {
+) (ComputedPbehavior, error) {
 	stepChan := make(chan int, 1)
 	defer close(stepChan)
 	stepChan <- getPbehaviorsStep
 
 	var pbehavior *PBehavior
 	var models models
-	var computed *ComputedPbehavior
+	var computed ComputedPbehavior
 
 	for {
 		select {
 		case <-ctx.Done():
-			return nil, ctx.Err()
+			return computed, nil
 		case step := <-stepChan:
 			nextStep := -1
 			var err error
@@ -254,7 +254,7 @@ func (c *typeComputer) Recompute(
 			}
 
 			if err != nil {
-				return nil, err
+				return computed, err
 			}
 
 			if nextStep == -1 {
@@ -311,7 +311,7 @@ func (c *typeComputer) runWorkers(
 			for {
 				select {
 				case <-ctx.Done():
-					return ctx.Err()
+					return nil
 				case p, ok := <-workerChan:
 					if !ok {
 						return nil
@@ -322,10 +322,10 @@ func (c *typeComputer) runWorkers(
 						return err
 					}
 
-					if res != nil {
+					if len(res.Types) > 0 {
 						resCh <- pbhComputeResult{
 							id:  p.ID,
-							res: *res,
+							res: res,
 						}
 					}
 				}
@@ -375,7 +375,7 @@ func (c *typeComputer) computePbehavior(
 	pbehavior *PBehavior,
 	span timespan.Span,
 	models models,
-) (*ComputedPbehavior, error) {
+) (ComputedPbehavior, error) {
 	var event Event
 	location := span.From().Location()
 	var stop time.Time
@@ -391,7 +391,7 @@ func (c *typeComputer) computePbehavior(
 	} else {
 		rOption, err := rrule.StrToROption(pbehavior.RRule)
 		if err != nil {
-			return nil, err
+			return ComputedPbehavior{}, err
 		}
 
 		event = NewRecEvent(pbehavior.Start.In(location), stop, rOption)
@@ -399,17 +399,17 @@ func (c *typeComputer) computePbehavior(
 
 	resByExdate, err := c.computeByExdate(pbehavior, event, span, models)
 	if err != nil {
-		return nil, err
+		return ComputedPbehavior{}, err
 	}
 
 	resByRrule, err := c.computeByRrule(pbehavior, event, span)
 	if err != nil {
-		return nil, err
+		return ComputedPbehavior{}, err
 	}
 
 	resByActiveType, err := c.computeByActiveType(pbehavior, event, span, models)
 	if err != nil {
-		return nil, err
+		return ComputedPbehavior{}, err
 	}
 
 	res := resByExdate
@@ -423,7 +423,7 @@ func (c *typeComputer) computePbehavior(
 			reasonName = reason.Name
 		}
 
-		return &ComputedPbehavior{
+		return ComputedPbehavior{
 			Filter:  pbehavior.Filter,
 			Name:    pbehavior.Name,
 			Reason:  reasonName,
@@ -432,7 +432,7 @@ func (c *typeComputer) computePbehavior(
 		}, nil
 	}
 
-	return nil, nil
+	return ComputedPbehavior{}, nil
 }
 
 // computeByExdate returns all time spans for pbehavior on the date which are defined by exdate.

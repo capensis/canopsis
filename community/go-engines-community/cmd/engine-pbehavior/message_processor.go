@@ -25,13 +25,12 @@ const (
 )
 
 type messageProcessor struct {
-	Store                    redis.Store
-	PbhService               libpbehavior.Service
+	PbhService               libpbehavior.EntityTypeResolver
 	TimezoneConfigProvider   config.TimezoneConfigProvider
 	FeaturePrintEventOnError bool
 	Encoder                  encoding.Encoder
 	Decoder                  encoding.Decoder
-	CreatePbehaviroProcessor createPbehaviorMessageProcessor
+	CreatePbehaviorProcessor createPbehaviorMessageProcessor
 	ChannelPub               libamqp.Channel
 	Logger                   zerolog.Logger
 	// resolveDeadlineExceededAt contains time of last logged deadline exceeded error.
@@ -99,57 +98,32 @@ func (p *messageProcessor) processEvent(ctx context.Context, event types.Event, 
 	defer cancel()
 	now := time.Now().In(p.TimezoneConfigProvider.Get().Location)
 
-	ok, err := p.Store.Restore(ctx, p.PbhService)
-	if err == nil && ok {
-		resolveResult, err := p.PbhService.Resolve(ctx, event.Entity, now)
-		if err == nil {
-			if !p.resolveDeadlineExceededAt.IsZero() {
-				p.resolveDeadlineExceededAt = time.Time{}
-				p.Logger.Info().Msg("entity resolving has been fixed")
-			}
-
-			return libpbehavior.NewPBehaviorInfo(resolveResult), nil
+	resolveResult, err := p.PbhService.Resolve(ctx, event.Entity.ID, now)
+	if err == nil {
+		if !p.resolveDeadlineExceededAt.IsZero() {
+			p.resolveDeadlineExceededAt = time.Time{}
+			p.Logger.Info().Msg("entity resolving has been fixed")
 		}
 
-		if errors.Is(err, context.DeadlineExceeded) {
-			if p.resolveDeadlineExceededAt.IsZero() || p.resolveDeadlineExceededAt.Add(resolveDeadlineExceededErrInterval).Before(now) {
-				p.resolveDeadlineExceededAt = now
-				p.Logger.Err(err).
-					Str("entity", event.Entity.ID).
-					Int("count", p.PbhService.GetComputedPbehaviorsCount()).
-					Msg("resolve an entity too long")
-			}
-
-			return types.PbehaviorInfo{}, nil
-		}
-
-		if redis.IsConnectionError(err) {
-			return types.PbehaviorInfo{}, err
-		}
-
-		p.logError(err, "resolve an entity failed", msg)
-		return types.PbehaviorInfo{}, nil
+		return libpbehavior.NewPBehaviorInfo(resolveResult), nil
 	}
 
-	if err != nil {
-		if errors.Is(err, context.DeadlineExceeded) {
-			if p.resolveDeadlineExceededAt.IsZero() || p.resolveDeadlineExceededAt.Add(resolveDeadlineExceededErrInterval).Before(now) {
-				p.resolveDeadlineExceededAt = now
-				p.Logger.Err(err).Msg("restore pbehavior's frames from redis too long")
-			}
-
-			return types.PbehaviorInfo{}, nil
-		}
-
-		if redis.IsConnectionError(err) {
-			return types.PbehaviorInfo{}, err
+	if errors.Is(err, context.DeadlineExceeded) {
+		if p.resolveDeadlineExceededAt.IsZero() || time.Since(p.resolveDeadlineExceededAt) > resolveDeadlineExceededErrInterval {
+			p.resolveDeadlineExceededAt = now
+			p.Logger.Err(err).
+				Str("entity", event.Entity.ID).
+				Msg("resolve an entity too long")
 		}
 
 		return types.PbehaviorInfo{}, nil
 	}
 
-	err = fmt.Errorf("pbehavior intervals are not computed, cache is empty")
-	p.logError(err, "get pbehavior's frames from redis failed", msg)
+	if redis.IsConnectionError(err) {
+		return types.PbehaviorInfo{}, err
+	}
+
+	p.logError(err, "resolve an entity failed", msg)
 	return types.PbehaviorInfo{}, nil
 }
 
@@ -161,7 +135,7 @@ func (p *messageProcessor) processPbhCreateEvent(ctx context.Context, event type
 		return nil
 	}
 
-	pbhEvent, err := p.CreatePbehaviroProcessor.Process(ctx, event.Alarm, event.Entity,
+	pbhEvent, err := p.CreatePbehaviorProcessor.Process(ctx, event.Alarm, event.Entity,
 		params, msg)
 	if err != nil {
 		if redis.IsConnectionError(err) {
