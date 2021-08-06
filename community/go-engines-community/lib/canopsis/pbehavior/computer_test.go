@@ -4,12 +4,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
 	mock_pbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/pbehavior"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/redis"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
@@ -19,12 +17,10 @@ import (
 )
 
 func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockLockClient := mock_redis.NewMockLockClient(ctrl)
-	mockLock := mock_redis.NewMockLock(ctrl)
-	mockStore := mock_redis.NewMockStore(ctrl)
 	mockService := mock_pbehavior.NewMockService(ctrl)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockEventManager := mock_pbehavior.NewMockEventManager(ctrl)
@@ -32,14 +28,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 	mockPublisher := mock_amqp.NewMockPublisher(ctrl)
 	pbehaviorID := "test-pbehavior-id"
 
-	mockLockClient.EXPECT().Obtain(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-		Return(mockLock, nil)
-	mockLock.EXPECT().Release(gomock.Any())
-
-	mockStore.EXPECT().Restore(gomock.Any(), gomock.Any()).Return(true, nil)
-	mockStore.EXPECT().Save(gomock.Any(), gomock.Any())
-
-	mockService.EXPECT().Recompute(gomock.Any(), gomock.Eq(pbehaviorID))
+	mockService.EXPECT().RecomputeByID(gomock.Any(), gomock.Eq(pbehaviorID))
 
 	mockPbhDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEntityDbCollection := mock_mongo.NewMockDbCollection(ctrl)
@@ -55,12 +44,10 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 	mockEntityDbCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(mockCursor, nil)
 	mockCursor.EXPECT().Next(gomock.Any()).Return(false)
 
-	computer := pbehavior.NewCancelableComputer(mockLockClient, mockStore, mockService,
+	computer := pbehavior.NewCancelableComputer(mockService,
 		mockDbClient, mockPublisher, mockEventManager, mockEncoder, "test-queue",
 		zerolog.Logger{})
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{
 		PbehaviorID:   pbehaviorID,
@@ -80,27 +67,15 @@ func TestCancelableComputer_Compute_GivenEmptyPbehaviorID_ShouldRecomputeAllPbeh
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockLockClient := mock_redis.NewMockLockClient(ctrl)
-	mockLock := mock_redis.NewMockLock(ctrl)
-	mockStore := mock_redis.NewMockStore(ctrl)
 	mockService := mock_pbehavior.NewMockService(ctrl)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockEventManager := mock_pbehavior.NewMockEventManager(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockPublisher := mock_amqp.NewMockPublisher(ctrl)
-	span := timespan.New(time.Now(), time.Now().Add(time.Hour))
 
-	mockLockClient.EXPECT().Obtain(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-		Return(mockLock, nil)
-	mockLock.EXPECT().Release(gomock.Any())
+	mockService.EXPECT().Recompute(gomock.Any())
 
-	mockStore.EXPECT().Restore(gomock.Any(), gomock.Any()).Return(true, nil)
-	mockStore.EXPECT().Save(gomock.Any(), gomock.Any())
-
-	mockService.EXPECT().GetSpan().Return(span)
-	mockService.EXPECT().Compute(gomock.Any(), gomock.Eq(span))
-
-	computer := pbehavior.NewCancelableComputer(mockLockClient, mockStore, mockService,
+	computer := pbehavior.NewCancelableComputer(mockService,
 		mockDbClient, mockPublisher, mockEventManager, mockEncoder, "test-queue",
 		zerolog.Logger{})
 
@@ -119,12 +94,10 @@ func TestCancelableComputer_Compute_GivenEmptyPbehaviorID_ShouldRecomputeAllPbeh
 }
 
 func TestCancelableComputer_Compute_GivenPbehaviorIDAndOperationType_ShouldSendPbehaviorEvent(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockLockClient := mock_redis.NewMockLockClient(ctrl)
-	mockLock := mock_redis.NewMockLock(ctrl)
-	mockStore := mock_redis.NewMockStore(ctrl)
 	mockService := mock_pbehavior.NewMockService(ctrl)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockPbhDbCollection := mock_mongo.NewMockDbCollection(ctrl)
@@ -148,14 +121,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorIDAndOperationType_ShouldSendP
 	event := types.Event{EventType: types.EventTypePbhEnter}
 	body := []byte("test-body")
 
-	mockLockClient.EXPECT().Obtain(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-		Return(mockLock, nil)
-	mockLock.EXPECT().Release(gomock.Any())
-
-	mockStore.EXPECT().Restore(gomock.Any(), gomock.Any()).Return(true, nil)
-	mockStore.EXPECT().Save(gomock.Any(), gomock.Any())
-
-	mockService.EXPECT().Recompute(gomock.Any(), gomock.Any())
+	mockService.EXPECT().RecomputeByID(gomock.Any(), gomock.Any())
 	mockService.EXPECT().Resolve(gomock.Any(), gomock.Any(), gomock.Any()).Return(resolveResult, nil)
 
 	mockDbClient.EXPECT().Collection(gomock.Any()).DoAndReturn(func(collectionName string) mongo.DbCollection {
@@ -195,12 +161,10 @@ func TestCancelableComputer_Compute_GivenPbehaviorIDAndOperationType_ShouldSendP
 			DeliveryMode: amqp.Persistent,
 		}))
 
-	computer := pbehavior.NewCancelableComputer(mockLockClient, mockStore, mockService,
+	computer := pbehavior.NewCancelableComputer(mockService,
 		mockDbClient, mockPublisher, mockEventManager, mockEncoder, queue,
 		zerolog.Logger{})
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{PbehaviorID: pbehaviorID, OperationType: pbehavior.OperationCreate}
 	defer close(ch)
