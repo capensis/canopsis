@@ -1958,6 +1958,7 @@ export const HEALTHCHECK_SERVICES_NAMES = {
   enginesChain: 'Engines chain',
 };
 
+// TODO: we have the copy of this map - ENGINES_NAMES
 export const HEALTHCHECK_ENGINES_NAMES = {
   event: 'event',
   webhook: 'engine-webhook',
@@ -1982,11 +1983,13 @@ export const HEALTHCHECK_STATUSES = {
 };
 
 export const HEALTHCHECK_NETWORK_GRAPH_OPTIONS = {
-  nodeSpace: 110,
+  nodeSpace: 110, // Magic variable. Was calculated by imperative method
   spacingFactor: 2,
   fitPadding: 15,
   wheelSensitivity: 0.5,
-  maxZoom: 1.2,
+  minZoom: 0.05,
+  maxZoom: 1.5,
+  nodeSize: 60,
 };
 
 export const HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS = {
