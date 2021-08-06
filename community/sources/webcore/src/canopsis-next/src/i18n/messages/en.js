@@ -2345,6 +2345,10 @@ export default {
       deleteAfter: 'Delete PBehavior data after',
       deleteAfterHelpText: 'When switched on, inactive PBehaviors will be deleted after the defined time period from the last event.',
     },
+    healthCheck: {
+      title: 'Healthcheck data storage',
+      deleteAfter: 'Delete FIFO incoming flow data after',
+    },
     history: {
       scriptLaunched: 'Script launched at {launchedAt}.',
       alarm: {

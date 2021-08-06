@@ -2345,6 +2345,10 @@ export default {
       deleteAfter: 'Supprimer les données PBehavior après',
       deleteAfterHelpText: 'Lorsqu\'il est activé, les PBehaviors inactifs seront supprimés après la période de temps définie à partir du dernier événement.',
     },
+    healthCheck: {
+      title: 'Stockage des données du bilan de santé',
+      deleteAfter: 'Supprimer les données de flux entrant FIFO après',
+    },
     history: {
       scriptLaunched: 'Script lancé à {launchedAt}.',
       alarm: {
