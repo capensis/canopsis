@@ -48,8 +48,6 @@ func (m *entityMatcher) MatchAll(
 	filters map[string]string,
 ) (map[string]bool, error) {
 	res := make(map[string]bool)
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
 	filtersLen := len(filters)
 	offsetCount := int(math.Ceil(float64(filtersLen) / float64(m.aggregationStep)))
 	filtersArr := make([]keyValue, filtersLen)
@@ -67,7 +65,7 @@ func (m *entityMatcher) MatchAll(
 		b := offset * m.aggregationStep
 		e := int(math.Min(float64(filtersLen), float64(b+m.aggregationStep)))
 		subFilters := filtersArr[b:e]
-		pipeline, err := getAggregatePipeline(entityID, subFilters)
+		pipeline, err := getEntityAggregatePipeline(entityID, subFilters)
 		if err != nil {
 			return nil, err
 		}
@@ -80,7 +78,7 @@ func (m *entityMatcher) MatchAll(
 		// Check context done.
 		select {
 		case <-ctx.Done():
-			return nil, ctx.Err()
+			return nil, nil
 		default:
 		}
 
@@ -120,8 +118,8 @@ func transformFilter(filter string) (bson.M, error) {
 	return bson.M{"$match": bsonFilter}, nil
 }
 
-// getAggregatePipeline returns doc where key is filter key and value is 1 or 0.
-func getAggregatePipeline(
+// getEntityAggregatePipeline returns doc where key is filter key and value is 1 or 0.
+func getEntityAggregatePipeline(
 	entityID string,
 	filters []keyValue,
 ) ([]bson.M, error) {

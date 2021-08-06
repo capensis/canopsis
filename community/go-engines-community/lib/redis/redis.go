@@ -36,8 +36,6 @@ const (
 	EngineLockStorage
 )
 
-const PbehaviorKey = "pbehaviors"
-
 // Env vars for redis session
 const (
 	EnvURL = "CPS_REDIS_URL"

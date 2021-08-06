@@ -165,11 +165,11 @@ func minTime(left, right time.Time) time.Time {
 }
 
 func (s Span) MarshalJSON() ([]byte, error) {
-	return json.Marshal([]time.Time{s.from, s.to})
+	return json.Marshal([]int64{s.from.Unix(), s.to.Unix()})
 }
 
 func (s *Span) UnmarshalJSON(b []byte) error {
-	var v []time.Time
+	var v []int64
 	err := json.Unmarshal(b, &v)
 	if err != nil {
 		return err
@@ -179,8 +179,8 @@ func (s *Span) UnmarshalJSON(b []byte) error {
 		return errors.New("invalid data")
 	}
 
-	s.from = v[0]
-	s.to = v[1]
+	s.from = time.Unix(v[0], 0)
+	s.to = time.Unix(v[1], 0)
 
 	return nil
 }
