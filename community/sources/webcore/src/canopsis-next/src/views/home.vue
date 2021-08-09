@@ -6,6 +6,7 @@
 <script>
 import { authMixin } from '@/mixins/auth';
 import entitiesRoleMixin from '@/mixins/entities/role';
+
 import { ROUTE_NAMES } from '@/constants';
 
 export default {

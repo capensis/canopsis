@@ -26,8 +26,9 @@ import entitiesInfoMixin from '@/mixins/entities/info';
 import entitiesUserMixin from '@/mixins/entities/user';
 import keepaliveMixin from '@/mixins/entities/keepalive';
 
-import '@/assets/styles/main.scss';
 import { removeCookie } from '@/helpers/cookies';
+
+import '@/assets/styles/main.scss';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
