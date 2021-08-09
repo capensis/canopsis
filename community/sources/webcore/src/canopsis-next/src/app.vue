@@ -69,10 +69,6 @@ export default {
   async mounted() {
     try {
       await this.fetchCurrentUser();
-
-      if (ROUTE_NAMES.error === this.$route.name) {
-        this.$router.push({ name: ROUTE_NAMES.home });
-      }
     } catch (err) {
       removeCookie();
 

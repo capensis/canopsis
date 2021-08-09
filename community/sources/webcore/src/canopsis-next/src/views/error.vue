@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     redirectToLogin() {
-      return this.$router.push({ name: ROUTE_NAMES.login });
+      return this.$router.replace({ name: ROUTE_NAMES.login });
     },
   },
 };

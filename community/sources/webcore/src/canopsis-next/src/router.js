@@ -34,10 +34,6 @@ import Error from '@/views/error.vue';
 
 Vue.use(Router);
 
-const requiresLoginMeta = {
-  requiresLogin: true,
-};
-
 const routes = [
   {
     path: ROUTES.login,
@@ -51,7 +47,9 @@ const routes = [
     path: ROUTES.home,
     name: ROUTE_NAMES.home,
     component: Home,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+    },
   },
   {
     path: ROUTES.view,
@@ -294,6 +292,9 @@ const routes = [
     name: ROUTE_NAMES.error,
     component: Error,
     props: route => ({ message: route.query.message }),
+    meta: {
+      requiresLogin: false,
+    },
   },
   {
     path: '*',
