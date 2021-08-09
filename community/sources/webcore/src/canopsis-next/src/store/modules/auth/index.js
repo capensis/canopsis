@@ -1,15 +1,11 @@
 import { keyBy } from 'lodash';
-import Cookies from 'js-cookie';
 import qs from 'qs';
 
 import router from '@/router';
+import { API_ROUTES, DEFAULT_LOCALE, VUETIFY_ANIMATION_DELAY } from '@/config';
+
 import request from '@/services/request';
-import {
-  API_ROUTES,
-  COOKIE_SESSION_KEY,
-  DEFAULT_LOCALE,
-  VUETIFY_ANIMATION_DELAY,
-} from '@/config';
+import { hasCookie } from '@/helpers/cookies';
 
 const types = {
   LOGIN: 'LOGIN',
@@ -25,7 +21,7 @@ const types = {
 export default {
   namespaced: true,
   state: {
-    isLoggedIn: !!Cookies.get(COOKIE_SESSION_KEY),
+    isLoggedIn: hasCookie(),
     currentUser: {},
     pending: true,
   },

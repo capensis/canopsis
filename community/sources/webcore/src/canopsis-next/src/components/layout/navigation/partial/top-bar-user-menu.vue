@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, ROUTE_NAMES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import entitiesUserMixin from '@/mixins/entities/user';
@@ -43,7 +43,7 @@ export default {
     },
 
     logoutHandler() {
-      return this.logout({ redirectTo: { name: 'login' } });
+      return this.logout({ redirectTo: { name: ROUTE_NAMES.login } });
     },
 
     async updateUserWithPopup({ data, id }) {

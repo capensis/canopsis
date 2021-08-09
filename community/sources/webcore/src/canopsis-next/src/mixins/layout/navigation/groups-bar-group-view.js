@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, ROUTE_NAMES } from '@/constants';
 
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 
@@ -21,7 +21,7 @@ export default {
     viewLink() {
       const { view } = this;
       const link = {
-        name: 'view',
+        name: ROUTE_NAMES.view,
         params: { id: view._id },
       };
 

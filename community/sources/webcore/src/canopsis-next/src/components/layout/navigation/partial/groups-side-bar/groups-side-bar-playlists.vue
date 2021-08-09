@@ -7,7 +7,7 @@
         v-for="playlist in availablePlaylists",
         :key="playlist._id",
         :title="playlist.name",
-        :to="{ name: 'playlist', params: { id: playlist._id } }"
+        :to="{ name: $constants.ROUTE_NAMES.playlist, params: { id: playlist._id } }"
       )
         v-card.secondary.lighten-2
           v-card-text

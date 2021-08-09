@@ -12,7 +12,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS } from '@/constants';
+import { MODALS, ROUTE_NAMES } from '@/constants';
 
 import { generateCopyOfViewTab, getViewsTabsWidgetsIdsMappings } from '@/helpers/entities';
 import { viewToRequest } from '@/helpers/forms/view';
@@ -84,7 +84,7 @@ export default {
       await this.addTabIntoViewById(newTab, viewId);
 
       this.$router.push({
-        name: 'view',
+        name: ROUTE_NAMES.view,
         params: {
           id: viewId,
         },

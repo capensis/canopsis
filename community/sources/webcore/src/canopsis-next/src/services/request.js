@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { get } from 'lodash';
-import Cookies from 'js-cookie';
 
-import { API_BASE_URL, COOKIE_SESSION_KEY } from '@/config';
+import { API_BASE_URL } from '@/config';
+import { removeCookie } from '@/helpers/cookies';
 
 /**
  * Active axios sources
@@ -66,7 +66,7 @@ function errorResponseHandler(responseWithError) {
      * When we will receive 502 or 401 error we must remove cookie to avoid getting a infinity page refreshing
      */
     if ([502, 401].includes(responseWithError.response.status)) {
-      Cookies.remove(COOKIE_SESSION_KEY);
+      removeCookie();
       window.location.reload();
     }
 

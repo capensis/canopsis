@@ -1,7 +1,7 @@
 <template lang="pug">
   v-app#app
     v-layout(v-if="!pending")
-      the-navigation#main-navigation(v-if="$route.name !== 'login'")
+      the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
         active-broadcast-message
         router-view(:key="routeViewKey")
@@ -11,10 +11,10 @@
 </template>
 
 <script>
+import { isObject, isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
-import { isEmpty } from 'lodash';
 
-import { MAX_LIMIT } from '@/constants';
+import { MAX_LIMIT, ROUTE_NAMES } from '@/constants';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import TheSideBars from '@/components/side-bars/the-sidebars.vue';
@@ -27,6 +27,7 @@ import entitiesUserMixin from '@/mixins/entities/user';
 import keepaliveMixin from '@/mixins/entities/keepalive';
 
 import '@/assets/styles/main.scss';
+import { removeCookie } from '@/helpers/cookies';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
@@ -50,20 +51,39 @@ export default {
   },
   computed: {
     routeViewKey() {
-      if (this.$route.name === 'view') {
+      if (this.$route.name === ROUTE_NAMES.view) {
         return this.$route.path;
       }
 
       return this.$route.fullPath;
+    },
+
+    shownNavigation() {
+      return ![ROUTE_NAMES.login, ROUTE_NAMES.error].includes(this.$route.name);
     },
   },
   created() {
     this.registerCurrentUserOnceWatcher();
   },
   async mounted() {
-    await this.fetchCurrentUser();
+    try {
+      await this.fetchCurrentUser();
 
-    this.pending = false;
+      if (ROUTE_NAMES.error === this.$route.name) {
+        this.$router.push({ name: ROUTE_NAMES.home });
+      }
+    } catch (err) {
+      removeCookie();
+
+      this.$router.push({
+        name: ROUTE_NAMES.error,
+        query: {
+          message: isObject(err) ? err.error || err.message : undefined,
+        },
+      });
+    } finally {
+      this.pending = false;
+    }
   },
   beforeDestroy() {
     this.stopKeepalive();

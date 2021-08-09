@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { USERS_PERMISSIONS } from '@/constants';
+import { USERS_PERMISSIONS, ROUTE_NAMES } from '@/constants';
 
 import { layoutNavigationTopBarMenuMixin } from '@/mixins/layout/navigation/top-bar-menu';
 
@@ -56,17 +56,17 @@ export default {
     administrationAccessLinks() {
       return [
         {
-          route: { name: 'admin-rights' },
+          route: { name: ROUTE_NAMES.adminRights },
           icon: 'verified_user',
           permission: USERS_PERMISSIONS.technical.action,
         },
         {
-          route: { name: 'admin-roles' },
+          route: { name: ROUTE_NAMES.adminRoles },
           icon: 'supervised_user_circle',
           permission: USERS_PERMISSIONS.technical.role,
         },
         {
-          route: { name: 'admin-users' },
+          route: { name: ROUTE_NAMES.adminUsers },
           icon: 'people',
           permission: USERS_PERMISSIONS.technical.user,
         },
@@ -76,12 +76,12 @@ export default {
     administrationCommunicationsLinks() {
       return [
         {
-          route: { name: 'admin-broadcast-messages' },
+          route: { name: ROUTE_NAMES.adminBroadcastMessages },
           icon: '$vuetify.icons.bullhorn',
           permission: USERS_PERMISSIONS.technical.broadcastMessage,
         },
         {
-          route: { name: 'admin-playlists' },
+          route: { name: ROUTE_NAMES.adminPlaylists },
           icon: 'playlist_play',
           permission: USERS_PERMISSIONS.technical.playlist,
         },
@@ -91,22 +91,22 @@ export default {
     administrationGeneralLinks() {
       return [
         {
-          route: { name: 'admin-parameters' },
+          route: { name: ROUTE_NAMES.adminParameters },
           icon: 'settings',
           permission: USERS_PERMISSIONS.technical.parameters,
         },
         {
-          route: { name: 'admin-planning-administration' },
+          route: { name: ROUTE_NAMES.adminPlanning },
           icon: 'event_note',
           permission: USERS_PERMISSIONS.technical.planning,
         },
         {
-          route: { name: 'admin-remediation-administration' },
+          route: { name: ROUTE_NAMES.adminRemediation },
           icon: 'assignment',
           permission: USERS_PERMISSIONS.technical.remediation,
         },
         {
-          route: { name: 'admin-healthcheck' },
+          route: { name: ROUTE_NAMES.adminHealthcheck },
           icon: '$vuetify.icons.alt_route',
           permission: USERS_PERMISSIONS.technical.healthcheck,
         },

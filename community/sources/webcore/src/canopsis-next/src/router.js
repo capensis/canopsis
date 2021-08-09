@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Cookies from 'js-cookie';
 
-import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
-import { CRUD_ACTIONS, USERS_PERMISSIONS } from '@/constants';
+import { ROUTER_MODE } from '@/config';
+import { CRUD_ACTIONS, ROUTE_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
 import store from '@/store';
 import { checkAppInfoAccessForRoute, checkUserAccessForRoute, getKeepalivePathByRoute } from '@/helpers/router';
+import { hasCookie } from '@/helpers/cookies';
 
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
@@ -30,6 +30,7 @@ import ExploitationScenarios from '@/views/exploitation/scenarios.vue';
 import ExploitationIdleRules from '@/views/exploitation/idle-rules.vue';
 import Playlist from '@/views/playlist.vue';
 import NotificationInstructionStats from '@/views/notification/instruction-stats.vue';
+import Error from '@/views/error.vue';
 
 Vue.use(Router);
 
@@ -39,22 +40,22 @@ const requiresLoginMeta = {
 
 const routes = [
   {
-    path: '/login',
-    name: 'login',
+    path: ROUTES.login,
+    name: ROUTE_NAMES.login,
     component: Login,
     meta: {
       requiresLogin: false,
     },
   },
   {
-    path: '/',
-    name: 'home',
+    path: ROUTES.home,
+    name: ROUTE_NAMES.home,
     component: Home,
     meta: requiresLoginMeta,
   },
   {
-    path: '/view/:id',
-    name: 'view',
+    path: ROUTES.view,
+    name: ROUTE_NAMES.view,
     component: View,
     meta: {
       requiresLogin: true,
@@ -65,8 +66,8 @@ const routes = [
     props: route => ({ id: route.params.id }),
   },
   {
-    path: '/alarms/:id',
-    name: 'alarms',
+    path: ROUTES.alarms,
+    name: ROUTE_NAMES.alarms,
     component: Alarm,
     meta: {
       requiresLogin: true,
@@ -77,8 +78,8 @@ const routes = [
     props: route => ({ id: route.params.id }),
   },
   {
-    path: '/admin/rights',
-    name: 'admin-rights',
+    path: ROUTES.adminRights,
+    name: ROUTE_NAMES.adminRights,
     component: AdminPermissions,
     meta: {
       requiresLogin: true,
@@ -88,8 +89,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/users',
-    name: 'admin-users',
+    path: ROUTES.adminUsers,
+    name: ROUTE_NAMES.adminUsers,
     component: AdminUsers,
     meta: {
       requiresLogin: true,
@@ -99,8 +100,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/roles',
-    name: 'admin-roles',
+    path: ROUTES.adminRoles,
+    name: ROUTE_NAMES.adminRoles,
     component: AdminRoles,
     meta: {
       requiresLogin: true,
@@ -110,8 +111,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/parameters',
-    name: 'admin-parameters',
+    path: ROUTES.adminParameters,
+    name: ROUTE_NAMES.adminParameters,
     component: AdminParameters,
     meta: {
       requiresLogin: true,
@@ -121,8 +122,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/broadcast-messages',
-    name: 'admin-broadcast-messages',
+    path: ROUTES.adminBroadcastMessages,
+    name: ROUTE_NAMES.adminBroadcastMessages,
     component: AdminBroadcastMessages,
     meta: {
       requiresLogin: true,
@@ -132,8 +133,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/playlists',
-    name: 'admin-playlists',
+    path: ROUTES.adminPlaylists,
+    name: ROUTE_NAMES.adminPlaylists,
     component: AdminPlaylists,
     meta: {
       requiresLogin: true,
@@ -143,8 +144,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/planning',
-    name: 'admin-planning-administration',
+    path: ROUTES.adminPlanning,
+    name: ROUTE_NAMES.adminPlanning,
     component: AdminPlanning,
     meta: {
       requiresLogin: true,
@@ -154,8 +155,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/remediation',
-    name: 'admin-remediation-administration',
+    path: ROUTES.adminRemediation,
+    name: ROUTE_NAMES.adminRemediation,
     component: AdminRemediation,
     meta: {
       requiresLogin: true,
@@ -165,8 +166,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/healthcheck',
-    name: 'admin-healthcheck',
+    path: ROUTES.adminHealthcheck,
+    name: ROUTE_NAMES.adminHealthcheck,
     component: AdminHealthcheck,
     meta: {
       requiresLogin: true,
@@ -177,8 +178,8 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/pbehaviors',
-    name: 'exploitation-pbehaviors',
+    path: ROUTES.exploitationPbehaviors,
+    name: ROUTE_NAMES.exploitationPbehaviors,
     component: ExploitationPbehaviors,
     meta: {
       requiresLogin: true,
@@ -188,8 +189,8 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/event-filter',
-    name: 'exploitation-event-filter',
+    path: ROUTES.exploitationEventFilter,
+    name: ROUTE_NAMES.exploitationEventFilter,
     component: ExploitationEventFilter,
     meta: {
       requiresLogin: true,
@@ -199,8 +200,8 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/snmp-rules',
-    name: 'exploitation-snmp-rules',
+    path: ROUTES.exploitationSnmpRules,
+    name: ROUTE_NAMES.exploitationSnmpRules,
     component: ExploitationSnmpRules,
     meta: {
       requiresLogin: true,
@@ -210,8 +211,8 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/heartbeats',
-    name: 'exploitation-heartbeats',
+    path: ROUTES.exploitationHeartbeats,
+    name: ROUTE_NAMES.exploitationHeartbeats,
     component: ExploitationHeartbeats,
     meta: {
       requiresLogin: true,
@@ -221,8 +222,8 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/dynamic-infos',
-    name: 'exploitation-dynamic-infos',
+    path: ROUTES.exploitationDynamicInfos,
+    name: ROUTE_NAMES.exploitationDynamicInfos,
     component: ExploitationDynamicInfos,
     meta: {
       requiresLogin: true,
@@ -232,8 +233,8 @@ const routes = [
     },
   },
   {
-    path: '/playlist/:id',
-    name: 'playlist',
+    path: ROUTES.playlist,
+    name: ROUTE_NAMES.playlist,
     component: Playlist,
     meta: {
       requiresLogin: true,
@@ -245,8 +246,8 @@ const routes = [
     props: route => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
   },
   {
-    path: '/exploitation/meta-alarm-rule',
-    name: 'exploitation-meta-alarm-rules',
+    path: ROUTES.exploitationMetaAlarmRules,
+    name: ROUTE_NAMES.exploitationMetaAlarmRules,
     component: ExploitationMetaAlarmRules,
     meta: {
       requiresLogin: true,
@@ -256,8 +257,8 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/scenarios',
-    name: 'exploitation-scenarios',
+    path: ROUTES.exploitationScenarios,
+    name: ROUTE_NAMES.exploitationScenarios,
     component: ExploitationScenarios,
     meta: {
       requiresLogin: true,
@@ -267,8 +268,8 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/idle-rules',
-    name: 'exploitation-idle-rules',
+    path: ROUTES.exploitationIdleRules,
+    name: ROUTE_NAMES.exploitationIdleRules,
     component: ExploitationIdleRules,
     meta: {
       requiresLogin: true,
@@ -278,8 +279,8 @@ const routes = [
     },
   },
   {
-    path: '/notification/instruction-stats',
-    name: 'notification-instruction-stats',
+    path: ROUTES.notificationInstructionStats,
+    name: ROUTE_NAMES.notificationInstructionStats,
     component: NotificationInstructionStats,
     meta: {
       requiresLogin: true,
@@ -289,9 +290,15 @@ const routes = [
     },
   },
   {
+    path: ROUTES.error,
+    name: ROUTE_NAMES.error,
+    component: Error,
+    props: route => ({ message: route.query.message }),
+  },
+  {
     path: '*',
     redirect: {
-      name: 'home',
+      name: ROUTE_NAMES.home,
     },
   },
 ];
@@ -307,11 +314,11 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const isRequiresAuth = to.matched.some(v => v.meta.requiresLogin);
   const isDontRequiresAuth = to.matched.some(v => v.meta.requiresLogin === false);
-  const isLoggedIn = !!Cookies.get(COOKIE_SESSION_KEY);
+  const isLoggedIn = hasCookie();
 
   if (!isLoggedIn && isRequiresAuth) {
     return next({
-      name: 'login',
+      name: ROUTE_NAMES.login,
       query: {
         redirect: to.fullPath,
         errorMessage: to.query.errorMessage,
@@ -319,7 +326,7 @@ router.beforeEach((to, from, next) => {
     });
   } else if (isLoggedIn && isDontRequiresAuth) {
     return next({
-      name: 'home',
+      name: ROUTE_NAMES.home,
     });
   }
 
@@ -334,13 +341,13 @@ router.beforeResolve(async (to, from, next) => {
     next();
   } catch (err) {
     next({
-      name: 'home',
+      name: ROUTE_NAMES.home,
     });
   }
 });
 
 router.afterEach((to, from) => {
-  const isLoggedIn = !!Cookies.get(COOKIE_SESSION_KEY);
+  const isLoggedIn = hasCookie();
 
   if (to.path !== from.path) {
     store.dispatch('entities/sweep');
