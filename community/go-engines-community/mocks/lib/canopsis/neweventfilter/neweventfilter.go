@@ -37,10 +37,10 @@ func (m *MockRuleApplicator) EXPECT() *MockRuleApplicatorMockRecorder {
 }
 
 // Apply mocks base method
-func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 neweventfilter.Rule, arg2 types.Event, arg3 pattern.EventRegexMatches) (int, types.Event, error) {
+func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 neweventfilter.Rule, arg2 types.Event, arg3 pattern.EventRegexMatches) (string, types.Event, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Apply", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(types.Event)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
@@ -88,6 +88,21 @@ func (m *MockRuleAdapter) GetAll(arg0 context.Context) ([]neweventfilter.Rule, e
 func (mr *MockRuleAdapterMockRecorder) GetAll(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockRuleAdapter)(nil).GetAll), arg0)
+}
+
+// GetByType mocks base method
+func (m *MockRuleAdapter) GetByType(arg0 context.Context, arg1 string) ([]neweventfilter.Rule, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByType", arg0, arg1)
+	ret0, _ := ret[0].([]neweventfilter.Rule)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByType indicates an expected call of GetByType
+func (mr *MockRuleAdapterMockRecorder) GetByType(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByType", reflect.TypeOf((*MockRuleAdapter)(nil).GetByType), arg0, arg1)
 }
 
 // MockRuleApplicatorContainer is a mock of RuleApplicatorContainer interface

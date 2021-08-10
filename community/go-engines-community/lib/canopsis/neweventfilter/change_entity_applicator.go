@@ -19,7 +19,7 @@ func NewChangeEntityApplicator(dataSourceFactories map[string]eventfilter.DataSo
 	return &changeEntityApplicator{dataSourceFactories: dataSourceFactories, buf: bytes.Buffer{}}
 }
 
-func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches) (int, types.Event, error) {
+func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches) (string, types.Event, error) {
 	externalData, err := a.getExternalData(ctx, rule, event, regexMatch)
 	if err != nil {
 		return OutcomeDrop, event, err

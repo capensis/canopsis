@@ -4,15 +4,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
-
-type RuleConfig struct {
-	Resource      string `bson:"resource,omitempty" json:"resource,omitempty"`
-	Component     string `bson:"component,omitempty" json:"component,omitempty"`
-	Connector     string `bson:"connector,omitempty" json:"connector,omitempty"`
-	ConnectorName string `bson:"connector_name,omitempty" json:"connector_name,omitempty"`
-}
 
 type EventFilterPayload struct {
 	Author      string `bson:"author" json:"author" swaggerignore:"true"`
@@ -24,7 +18,7 @@ type EventFilterPayload struct {
 	Priority int   `bson:"priority" json:"priority"`
 	Enabled  *bool `bson:"enabled" json:"enabled" binding:"required"`
 
-	Config RuleConfig `bson:"config" json:"config"`
+	Config neweventfilter.RuleConfig `bson:"config" json:"config"`
 
 	Actions      []eventfilter.Action   `bson:"actions,omitempty" json:"actions,omitempty" binding:"required_if=Type enrichment"`
 	ExternalData map[string]interface{} `bson:"external_data,omitempty" json:"external_data,omitempty"`

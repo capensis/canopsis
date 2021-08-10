@@ -198,6 +198,8 @@ type Event struct {
 
 	// Execution is used only for instruction events: EventTypeInstructionStarted, EventTypeInstructionCompleted, etc..
 	Execution string `bson:"execution,omitempty" json:"execution,omitempty"`
+
+	IsEntityUpdated bool `bson:"-" json:"-"`
 }
 
 // ContextInformation regroup context values necessary for creating a new entity

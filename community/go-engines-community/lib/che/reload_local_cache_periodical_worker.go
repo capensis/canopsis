@@ -3,13 +3,13 @@ package che
 import (
 	"context"
 	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
 	"github.com/rs/zerolog"
 	"time"
 )
 
 type reloadLocalCachePeriodicalWorker struct {
-	EventFilterService eventfilter.Service
+	EventFilterService neweventfilter.EventFilterService
 	EnrichmentCenter   libcontext.EnrichmentCenter
 	PeriodicalInterval time.Duration
 	Logger             zerolog.Logger

@@ -3,6 +3,10 @@ package che
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
+	"path/filepath"
+	"plugin"
+	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -70,16 +74,26 @@ func NewEngine(
 	)
 	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
 
+	logger.Debug().Msg("Loading event filter data sources")
+	factories, err := LoadDataSourceFactories(options.DataSourceDirectory)
+	if err != nil {
+		panic(fmt.Errorf("unable to load data sources: %w", err))
+	}
+
+	ruleAdapter := neweventfilter.NewRuleAdapter(mongoClient)
+
+	ruleApplicatorContainer := neweventfilter.NewRuleApplicatorContainer()
+	ruleApplicatorContainer.Set(neweventfilter.RuleTypeChangeEntity, neweventfilter.NewChangeEntityApplicator(factories))
+	ruleApplicatorContainer.Set(neweventfilter.RuleTypeEnrichment, neweventfilter.NewEnrichmentApplicator(factories, neweventfilter.NewActionProcessor()))
+	ruleApplicatorContainer.Set(neweventfilter.RuleTypeDrop, neweventfilter.NewDropApplicator())
+	ruleApplicatorContainer.Set(neweventfilter.RuleTypeBreak, neweventfilter.NewBreakApplicator())
+
+	newEventFilterService := neweventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, logger)
+
 	engine := libengine.New(
 		func(ctx context.Context) error {
-			logger.Debug().Msg("Loading event filter data sources")
-			err := eventFilterService.LoadDataSourceFactories(options.DataSourceDirectory)
-			if err != nil {
-				return fmt.Errorf("unable to load data sources: %v", err)
-			}
-
 			logger.Debug().Msg("Loading event filter rules")
-			err = eventFilterService.LoadRules(ctx)
+			err = newEventFilterService.LoadRules(ctx)
 			if err != nil {
 				return fmt.Errorf("unable to load rules: %v", err)
 			}
@@ -162,6 +176,7 @@ func NewEngine(
 			FeatureContextCreation:   options.FeatureContextCreation,
 			AlarmConfigProvider:      alarmConfigProvider,
 			EventFilterService:       eventFilterService,
+			NewEventFilterService:    newEventFilterService,
 			EnrichmentCenter:         enrichmentCenter,
 			EnrichFields:             enrichFields,
 			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
@@ -173,7 +188,7 @@ func NewEngine(
 		logger,
 	))
 	engine.AddPeriodicalWorker(&reloadLocalCachePeriodicalWorker{
-		EventFilterService: eventFilterService,
+		EventFilterService: newEventFilterService,
 		EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
@@ -209,4 +224,38 @@ func NewEngine(
 	))
 
 	return engine
+}
+
+//TODO: copy from eventfilter package, all mongo plugin feature should be refactored
+func LoadDataSourceFactories(dataSourceDirectory string) (map[string]eventfilter.DataSourceFactory, error) {
+	factories := make(map[string]eventfilter.DataSourceFactory)
+
+	files, err := filepath.Glob(filepath.Join(dataSourceDirectory, fmt.Sprintf("*%s", canopsis.PluginExtension)))
+	if err != nil {
+		return nil, err
+	}
+
+	for _, file := range files {
+		if strings.HasSuffix(file, canopsis.PluginExtension) {
+			sourceName := strings.TrimSuffix(filepath.Base(file), canopsis.PluginExtension)
+			plug, err := plugin.Open(file)
+			if err != nil {
+				return nil, fmt.Errorf("unable to open plugin: %w", err)
+			}
+
+			factorySymbol, err := plug.Lookup("DataSourceFactory")
+			if err != nil {
+				return nil, fmt.Errorf("unable to load plugin: %w", err)
+			}
+
+			factory, isFactory := factorySymbol.(eventfilter.DataSourceFactory)
+			if !isFactory {
+				return nil, fmt.Errorf("the plugin does not define a valid data source")
+			}
+
+			factories[sourceName] = factory
+		}
+	}
+
+	return factories, nil
 }
