@@ -18,14 +18,26 @@ func NewRuleAdapter(dbClient mongo.DbClient) RuleAdapter {
 }
 
 func (a mongoAdapter) GetAll(ctx context.Context) ([]Rule, error) {
-	//TODO: after eventfilter revamp, it should retrieve all kind of rules
-	cursor, err := a.dbCollection.Find(ctx, bson.M{
+	return a.find(ctx, bson.M{
 		"$or": []bson.M{
 			{"enabled": true},
 			{"enabled": bson.M{"$exists": false}},
 		},
-		"type": RuleTypeChangeEntity,
-	}, options.Find().SetSort(bson.M{"priority": 1}))
+	})
+}
+
+func (a mongoAdapter) GetByType(ctx context.Context, t string) ([]Rule, error) {
+	return a.find(ctx, bson.M{
+		"$or": []bson.M{
+			{"enabled": true},
+			{"enabled": bson.M{"$exists": false}},
+		},
+		"type": t,
+	})
+}
+
+func (a mongoAdapter) find(ctx context.Context, filter bson.M) ([]Rule, error) {
+	cursor, err := a.dbCollection.Find(ctx, filter, options.Find().SetSort(bson.M{"priority": 1}))
 	if err != nil {
 		return nil, err
 	}

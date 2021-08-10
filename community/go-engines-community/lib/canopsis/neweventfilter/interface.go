@@ -10,18 +10,23 @@ import (
 
 // outcome constant values
 const (
-	OutcomePass = iota
-	OutcomeDrop
-	OutcomeBreak
+	OutcomePass  = "pass"
+	OutcomeDrop  = "drop"
+	OutcomeBreak = "break"
 )
 
+type ActionProcessor interface {
+	Process(action Action, event types.Event, regexMatch pattern.EventRegexMatches, externalData map[string]interface{}) (types.Event, error)
+}
+
 type RuleApplicator interface {
-	// Apply eventfilter rule, the first return value(int) should be one of the outcome constant values
-	Apply(context.Context, Rule, types.Event, pattern.EventRegexMatches) (int, types.Event, error)
+	// Apply eventfilter rule, the first return value(string) should be one of the outcome constant values
+	Apply(context.Context, Rule, types.Event, pattern.EventRegexMatches) (string, types.Event, error)
 }
 
 type RuleAdapter interface {
 	GetAll(context.Context) ([]Rule, error)
+	GetByType(context.Context, string) ([]Rule, error)
 }
 
 type EventFilterService interface {

@@ -48,9 +48,6 @@ func (v *eventfilterValidator) validateFields(p EventFilterPayload, sl validator
 	}
 
 	if eventfilter.Type(p.Type) == eventfilter.RuleTypeEnrichment {
-		if len(p.Actions) == 0 {
-			sl.ReportError(p.Actions, "actions", "Actions", "required", "")
-		}
 		validOutcome := []string{
 			string(eventfilter.Pass),
 			string(eventfilter.Drop),

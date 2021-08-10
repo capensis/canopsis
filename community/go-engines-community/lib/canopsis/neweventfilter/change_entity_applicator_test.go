@@ -310,7 +310,7 @@ func TestApply(t *testing.T) {
 			}
 
 			if outcome != neweventfilter.OutcomePass {
-				t.Errorf("expected outcome %d, but got %d", neweventfilter.OutcomePass, outcome)
+				t.Errorf("expected outcome %s, but got %s", neweventfilter.OutcomePass, outcome)
 			}
 
 			if !reflect.DeepEqual(dataSet.expectedEvent, resultEvent) {
@@ -372,7 +372,7 @@ func TestApplyWithExternalData(t *testing.T) {
 	}
 
 	if outcome != neweventfilter.OutcomePass {
-		t.Errorf("expected outcome %d, but got %d", neweventfilter.OutcomePass, outcome)
+		t.Errorf("expected outcome %s, but got %s", neweventfilter.OutcomePass, outcome)
 	}
 
 	if !reflect.DeepEqual(expectedEvent, resultEvent) {
