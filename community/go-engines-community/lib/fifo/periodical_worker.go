@@ -1,4 +1,4 @@
-package main
+package fifo
 
 import (
 	"context"
@@ -9,9 +9,9 @@ import (
 )
 
 type periodicalWorker struct {
-	RuleService neweventfilter.EventFilterService
+	RuleService        neweventfilter.EventFilterService
 	PeriodicalInterval time.Duration
-	Logger      zerolog.Logger
+	Logger             zerolog.Logger
 }
 
 func (w *periodicalWorker) GetInterval() time.Duration {

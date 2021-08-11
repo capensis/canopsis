@@ -1,8 +1,8 @@
 package neweventfilter
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -36,6 +36,19 @@ const (
 	ActionCopy = "copy"
 )
 
+type ExternalDataParameters struct {
+	Type string `json:"type" bson:"type"`
+
+	// are used in mongo external data
+	Collection string            `json:"collection,omitempty" bson:"collection,omitempty"`
+	Select     map[string]string `json:"select,omitempty" bson:"select,omitempty"`
+
+	//are used in api external data
+	RequestParameters request.Parameters      `bson:"request" json:"request"`
+	RetryCount        int                     `bson:"retry_count,omitempty" json:"retry_count,omitempty" mapstructure:"retry_count"`
+	RetryDelay        *types.DurationWithUnit `bson:"retry_delay,omitempty" json:"retry_delay,omitempty" mapstructure:"retry_delay"`
+}
+
 type Rule struct {
 	ID          string                   `bson:"_id"`
 	Description string                   `bson:"description"`
@@ -48,18 +61,19 @@ type Rule struct {
 	Updated     *types.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 	Author      string                   `bson:"author"`
 
-	//TODO: copy from eventfilter package, all mongo plugin feature should be refactored
-	ExternalData map[string]eventfilter.DataSource `bson:"external_data" json:"external_data"`
+	ExternalData map[string]ExternalDataParameters `bson:"external_data" json:"external_data"`
 }
 
 type RuleConfig struct {
-	Resource      string   `bson:"resource,omitempty" json:"resource,omitempty"`
-	Component     string   `bson:"component,omitempty" json:"component,omitempty"`
-	Connector     string   `bson:"connector,omitempty" json:"connector,omitempty"`
-	ConnectorName string   `bson:"connector_name,omitempty" json:"connector_name,omitempty"`
-	Actions       []Action `bson:"actions,omitempty" json:"actions,omitempty" binding:"required_if=Type enrichment"`
-	OnSuccess     string   `bson:"on_success,omitempty" json:"on_success,omitempty" binding:"required_if=Type enrichment"`
-	OnFailure     string   `bson:"on_failure,omitempty" json:"on_failure,omitempty" binding:"required_if=Type enrichment"`
+	Resource      string `bson:"resource,omitempty" json:"resource,omitempty"`
+	Component     string `bson:"component,omitempty" json:"component,omitempty"`
+	Connector     string `bson:"connector,omitempty" json:"connector,omitempty"`
+	ConnectorName string `bson:"connector_name,omitempty" json:"connector_name,omitempty"`
+
+	// enrichment fields
+	Actions   []Action `bson:"actions,omitempty" json:"actions,omitempty" binding:"required_if=Type enrichment"`
+	OnSuccess string   `bson:"on_success,omitempty" json:"on_success,omitempty" binding:"required_if=Type enrichment"`
+	OnFailure string   `bson:"on_failure,omitempty" json:"on_failure,omitempty" binding:"required_if=Type enrichment"`
 }
 
 type Action struct {
