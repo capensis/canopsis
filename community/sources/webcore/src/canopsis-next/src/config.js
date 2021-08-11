@@ -42,6 +42,8 @@ export const POPUP_TICK_DELAY = 100;
 
 export const SIDE_BAR_WIDTH = 250;
 
+export const TOP_BAR_HEIGHT = 48;
+
 export const EXPAND_DEFAULT_MAX_LETTERS = 50;
 
 export const SCHEMA_EMBEDDED_KEY = '_embedded';

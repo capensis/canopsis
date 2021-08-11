@@ -1,15 +1,17 @@
 <template lang="pug">
-  div.position-relative
-    c-page-header
-    c-progress-overlay(:pending="pending")
-    healthcheck-network-graph(
-      v-if="!pending",
-      :services="services",
-      :engines="engines",
-      :has-invalid-engines-order="hasInvalidEnginesOrder",
-      @click="showNodeModal"
-    )
-    c-fab-btn(@refresh="fetchList")
+  div.position-relative.fill-height
+    v-layout(column, fill-height)
+      c-page-header
+      c-progress-overlay(:pending="pending")
+      v-flex
+        healthcheck-network-graph(
+          v-if="!pending",
+          :services="services",
+          :engines="engines",
+          :has-invalid-engines-order="hasInvalidEnginesOrder",
+          @click="showNodeModal"
+        )
+      c-fab-btn(@refresh="fetchList")
 </template>
 
 <script>

@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import tinycolor from 'tinycolor2';
 
 import { COLORS } from '@/config';
-import { COLOR_INDICATOR_TYPES, ENTITIES_STATES_STYLES } from '@/constants';
+import { CAT_ENGINES, COLOR_INDICATOR_TYPES, ENTITIES_STATES_STYLES, HEALTHCHECK_STATUSES } from '@/constants';
 
 /**
  * Get most readable text color ('white' or 'black')
@@ -40,3 +40,18 @@ export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYP
 
   return COLORS.impactState[entity.impact_state];
 };
+
+/**
+ * Get color for a node
+ *
+ * @param {HealthcheckNode} node
+ * @returns {string}
+ */
+export const getHealthcheckNodeColor = node => ({
+  [HEALTHCHECK_STATUSES.ok]: CAT_ENGINES[node.name] ? COLORS.secondary : COLORS.primary,
+  [HEALTHCHECK_STATUSES.notRunning]: COLORS.healthcheck.error,
+  [HEALTHCHECK_STATUSES.unknown]: COLORS.healthcheck.unknown,
+  [HEALTHCHECK_STATUSES.queueOverflow]: COLORS.healthcheck.error,
+  [HEALTHCHECK_STATUSES.tooFewInstances]: COLORS.healthcheck.warning,
+  [HEALTHCHECK_STATUSES.diffInstancesConfig]: COLORS.healthcheck.warning,
+}[node.status] || COLORS.healthcheck.unknown);

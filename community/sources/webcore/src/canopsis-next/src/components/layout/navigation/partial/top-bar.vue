@@ -1,5 +1,6 @@
 <template lang="pug">
   v-toolbar.top-bar.primary(
+    :height="$config.TOP_BAR_HEIGHT",
     dense,
     fixed,
     app

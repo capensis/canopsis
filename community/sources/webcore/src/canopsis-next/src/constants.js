@@ -1954,8 +1954,8 @@ export const HEALTHCHECK_SERVICES_NAMES = {
   rabbit: 'RabbitMQ',
   events: 'Events',
   api: 'API',
-  healthcheck: 'Healthcheck',
-  enginesChain: 'Engines chain',
+  healthcheck: 'healthcheck',
+  enginesChain: 'engines-chain',
 };
 
 // TODO: we have the copy of this map - ENGINES_NAMES
@@ -1968,9 +1968,10 @@ export const HEALTHCHECK_ENGINES_NAMES = {
   pbehavior: 'engine-pbehavior',
   action: 'engine-action',
   service: 'engine-service',
-  dynamicInfo: 'engine-dynamic-info',
+  dynamicInfos: 'engine-dynamic-infos',
   correlation: 'engine-correlation',
   heartbeat: 'engine-heartbeat',
+  remediation: 'engine-remediation',
 };
 
 export const HEALTHCHECK_STATUSES = {
