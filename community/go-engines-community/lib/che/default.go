@@ -37,6 +37,7 @@ func NewEngine(
 	mongoClient mongo.DbClient,
 	pgPool postgres.Pool,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
+	ExternalDataContainer *neweventfilter.ExternalDataContainer,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
@@ -74,37 +75,19 @@ func NewEngine(
 	)
 	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
 
-	logger.Debug().Msg("Loading event filter data sources")
-	factories, err := LoadDataSourceFactories(options.DataSourceDirectory)
-	if err != nil {
-		panic(fmt.Errorf("unable to load data sources: %w", err))
-	}
-
-	ruleAdapter := neweventfilter.NewRuleAdapter(mongoClient)
-
 	ruleApplicatorContainer := neweventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(neweventfilter.RuleTypeChangeEntity, neweventfilter.NewChangeEntityApplicator(factories))
-	ruleApplicatorContainer.Set(neweventfilter.RuleTypeEnrichment, neweventfilter.NewEnrichmentApplicator(factories, neweventfilter.NewActionProcessor()))
+	ruleApplicatorContainer.Set(neweventfilter.RuleTypeChangeEntity, neweventfilter.NewChangeEntityApplicator(ExternalDataContainer))
+	ruleApplicatorContainer.Set(neweventfilter.RuleTypeEnrichment, neweventfilter.NewEnrichmentApplicator(ExternalDataContainer, neweventfilter.NewActionProcessor()))
 	ruleApplicatorContainer.Set(neweventfilter.RuleTypeDrop, neweventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(neweventfilter.RuleTypeBreak, neweventfilter.NewBreakApplicator())
+
+	ruleAdapter := neweventfilter.NewRuleAdapter(mongoClient)
 
 	newEventFilterService := neweventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, logger)
 
 	engine := libengine.New(
 		func(ctx context.Context) error {
-			logger.Debug().Msg("Loading event filter rules")
-			err = newEventFilterService.LoadRules(ctx)
-			if err != nil {
-				return fmt.Errorf("unable to load rules: %v", err)
-			}
-
-			logger.Debug().Msg("Loading services")
-			err = enrichmentCenter.LoadServices(ctx)
-			if err != nil {
-				logger.Error().Err(err).Msg("unable to load services")
-			}
-
-			_, err = periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
+			_, err := periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
@@ -125,6 +108,18 @@ func NewEngine(
 				logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
 			}
 			logger.Debug().Msg("Recompute impacted services for connectors finished")
+
+			logger.Debug().Msg("Loading event filter rules")
+			err = newEventFilterService.LoadRules(ctx)
+			if err != nil {
+				return fmt.Errorf("unable to load rules: %v", err)
+			}
+
+			logger.Debug().Msg("Loading services")
+			err = enrichmentCenter.LoadServices(ctx)
+			if err != nil {
+				logger.Error().Err(err).Msg("unable to load services")
+			}
 			return nil
 		},
 		func(ctx context.Context) {

@@ -3,20 +3,19 @@ package neweventfilter
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type enrichmentApplicator struct {
-	dataSourceFactories map[string]eventfilter.DataSourceFactory
-	actionProcessor ActionProcessor
+	externalDataContainer *ExternalDataContainer
+	actionProcessor       ActionProcessor
 }
 
-func NewEnrichmentApplicator(dataSourceFactories map[string]eventfilter.DataSourceFactory, processor ActionProcessor) RuleApplicator {
+func NewEnrichmentApplicator(externalDataContainer *ExternalDataContainer, processor ActionProcessor) RuleApplicator {
 	return &enrichmentApplicator{
-		dataSourceFactories: dataSourceFactories,
-		actionProcessor: processor,
+		externalDataContainer: externalDataContainer,
+		actionProcessor:       processor,
 	}
 }
 
@@ -36,24 +35,19 @@ func (a *enrichmentApplicator) Apply(ctx context.Context, rule Rule, event types
 	return rule.Config.OnSuccess, event, nil
 }
 
-//TODO: copy from eventfilter package, all mongo plugin feature should be refactored
 func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
-	for name, source := range rule.ExternalData {
-		factory, success := a.dataSourceFactories[source.Type]
-		if !success {
-			return nil, fmt.Errorf("no such data source: %s", source.Type)
-		}
-		getter, err := factory.Create(source.DataSourceBase.Parameters)
-		if err != nil {
-			return nil, err
+	for name, parameters := range rule.ExternalData {
+		getter, ok := a.externalDataContainer.Get(parameters.Type)
+		if !ok {
+			return nil, fmt.Errorf("no such data source: %s", parameters.Type)
 		}
 
-		data, err := getter.Get(ctx, eventfilter.DataSourceGetterParameters{
+		data, err := getter.Get(ctx, parameters, TemplateParameters{
 			Event:      event,
 			RegexMatch: regexMatch,
-		}, &eventfilter.Report{})
+		})
 		if err != nil {
 			return externalData, err
 		}

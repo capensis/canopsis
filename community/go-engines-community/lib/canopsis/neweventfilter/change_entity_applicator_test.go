@@ -2,19 +2,17 @@ package neweventfilter_test
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
+	mock_neweventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/neweventfilter"
 	"github.com/golang/mock/gomock"
 	"reflect"
 	"testing"
 )
 
 func TestApply(t *testing.T) {
-	factories := make(map[string]eventfilter.DataSourceFactory)
-	applicator := neweventfilter.NewChangeEntityApplicator(factories)
+	applicator := neweventfilter.NewChangeEntityApplicator(neweventfilter.NewExternalDataGetterContainer())
 
 	var dataSets = []struct {
 		testName      string
@@ -324,21 +322,17 @@ func TestApplyWithExternalData(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	getter := mock_eventfilter.NewMockDataSourceGetter(ctrl)
+	getter := mock_neweventfilter.NewMockExternalDataGetter(ctrl)
 	getter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).Return(types.Entity{ID: "test_value"}, nil)
 
-	factory := mock_eventfilter.NewMockDataSourceFactory(ctrl)
-	factory.EXPECT().Create(gomock.Any()).Return(getter, nil)
-	factories := make(map[string]eventfilter.DataSourceFactory)
-	factories["test"] = factory
+	externalDataContainer := neweventfilter.NewExternalDataGetterContainer()
+	externalDataContainer.Set("test", getter)
 
-	applicator := neweventfilter.NewChangeEntityApplicator(factories)
+	applicator := neweventfilter.NewChangeEntityApplicator(externalDataContainer)
 
-	externalData := make(map[string]eventfilter.DataSource)
-	externalData["test"] = eventfilter.DataSource{
-		DataSourceBase: eventfilter.DataSourceBase{
-			Type: "test",
-		},
+	externalData := make(map[string]neweventfilter.ExternalDataParameters)
+	externalData["test"] = neweventfilter.ExternalDataParameters{
+		Type: "test",
 	}
 
 	event := types.Event{

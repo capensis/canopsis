@@ -1,6 +1,6 @@
 package neweventfilter
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/neweventfilter/neweventfilter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter RuleApplicator,RuleAdapter,RuleApplicatorContainer
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/neweventfilter/neweventfilter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter RuleApplicator,RuleAdapter,RuleApplicatorContainer,ExternalDataGetter
 
 import (
 	"context"
@@ -37,4 +37,8 @@ type EventFilterService interface {
 type RuleApplicatorContainer interface {
 	Get(string) (RuleApplicator, bool)
 	Set(string, RuleApplicator)
+}
+
+type ExternalDataGetter interface {
+	Get(ctx context.Context, parameters ExternalDataParameters, templateParameters TemplateParameters) (interface{}, error)
 }
