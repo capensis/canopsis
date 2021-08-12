@@ -793,6 +793,10 @@
         "api_acl": {
             "checksum": 1,
             "desc": ""
+        },
+        "api_app_info_read": {
+            "checksum": 1,
+            "crecord_type": "right"
         }
     },
     "defaultview": "view.current_alarms"
@@ -893,6 +897,10 @@
         "api_acl": {
             "checksum": 1,
             "desc": ""
+        },
+        "api_app_info_read": {
+            "checksum": 1,
+            "crecord_type": "right"
         }
     },
     "defaultview": "view.current_alarms"
@@ -918,6 +926,10 @@
         "api_acl": {
             "checksum": 1,
             "desc": ""
+        },
+        "api_app_info_read": {
+            "checksum": 1,
+            "crecord_type": "right"
         }
     },
     "defaultview": "view.current_alarms"
