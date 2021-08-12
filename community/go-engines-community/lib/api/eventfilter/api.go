@@ -2,6 +2,7 @@ package eventfilter
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"net/http"
 
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -31,7 +32,7 @@ type api struct {
 // @Failure 400 {object} common.ErrorResponse
 // @Router /eventfilter/rules [post]
 func (a api) Create(c *gin.Context) {
-	request := EventFilter{}
+	request := eventfilter.Rule{}
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -135,17 +136,15 @@ func (a api) Get(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /eventfilter/rules/{id} [put]
 func (a api) Update(c *gin.Context) {
-	var request EventFilterPayload
+	var request eventfilter.Rule
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 
 		return
 	}
 
-	var data EventFilter
-	data.EventFilterPayload = request
-	data.ID = c.Param("id")
-	ok, _ := a.store.Update(c.Request.Context(), &data)
+	request.ID = c.Param("id")
+	ok, _ := a.store.Update(c.Request.Context(), &request)
 
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -155,13 +154,13 @@ func (a api) Update(c *gin.Context) {
 	err := a.actionLogger.Action(c, logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeEventFilter,
-		ValueID:   data.ID,
+		ValueID:   request.ID,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	c.JSON(http.StatusOK, data)
+	c.JSON(http.StatusOK, request)
 }
 
 // Delete eventfilter by id

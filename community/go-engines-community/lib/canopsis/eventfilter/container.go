@@ -1,4 +1,4 @@
-package neweventfilter
+package eventfilter
 
 type Container struct {
 	applicators map[string]RuleApplicator

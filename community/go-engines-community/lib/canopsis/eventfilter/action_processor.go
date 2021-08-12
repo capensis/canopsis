@@ -1,8 +1,9 @@
-package neweventfilter
+package eventfilter
 
 import (
 	"bytes"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -17,7 +18,7 @@ func NewActionProcessor() ActionProcessor {
 	return &actionProcessor{buf: bytes.Buffer{}}
 }
 
-func (p *actionProcessor) Process(action Action, event types.Event, regexMatch pattern.EventRegexMatches, externalData map[string]interface{}) (types.Event, error) {
+func (p *actionProcessor) Process(action Action, event types.Event, regexMatch pattern.EventRegexMatches, externalData map[string]interface{}, cfgTimezone *config.TimezoneConfig) (types.Event, error) {
 	switch action.Type {
 	case ActionSetField:
 		err := event.SetField(action.Name, action.Value)
@@ -35,6 +36,7 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatch p
 				RegexMatch:   regexMatch,
 				ExternalData: externalData,
 			},
+			cfgTimezone,
 		)
 		if err != nil {
 			return event, err
@@ -63,6 +65,7 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatch p
 				RegexMatch:   regexMatch,
 				ExternalData: externalData,
 			},
+			cfgTimezone,
 		)
 		if err != nil {
 			return event, err
@@ -127,8 +130,8 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatch p
 	return event, fmt.Errorf("action type = %s is invalid", action.Type)
 }
 
-func (p *actionProcessor) executeTpl(tplText string, params TemplateParameters) (string, error) {
-	tpl, err := template.New("tpl").Funcs(types.GetTemplateFunc()).Parse(tplText)
+func (p *actionProcessor) executeTpl(tplText string, params TemplateParameters, cfgTimezone *config.TimezoneConfig) (string, error) {
+	tpl, err := template.New("tpl").Funcs(types.GetTemplateFunc(cfgTimezone)).Parse(tplText)
 	if err != nil {
 		return "", err
 	}

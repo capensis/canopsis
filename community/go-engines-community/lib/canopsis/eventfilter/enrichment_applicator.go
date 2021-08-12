@@ -1,8 +1,9 @@
-package neweventfilter
+package eventfilter
 
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -19,14 +20,14 @@ func NewEnrichmentApplicator(externalDataContainer *ExternalDataContainer, proce
 	}
 }
 
-func (a *enrichmentApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches) (string, types.Event, error) {
+func (a *enrichmentApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches, cfgTimezone *config.TimezoneConfig) (string, types.Event, error) {
 	externalData, err := a.getExternalData(ctx, rule, event, regexMatch)
 	if err != nil {
 		return rule.Config.OnFailure, event, err
 	}
 
 	for _, action := range rule.Config.Actions {
-		event, err = a.actionProcessor.Process(action, event, regexMatch, externalData)
+		event, err = a.actionProcessor.Process(action, event, regexMatch, externalData, cfgTimezone)
 		if err != nil {
 			return rule.Config.OnFailure, event, err
 		}

@@ -2,6 +2,7 @@ package eventfilter
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -16,16 +17,16 @@ import (
 )
 
 type Store interface {
-	Insert(ctx context.Context, model *EventFilter) error
-	GetById(ctx context.Context, id string) (*EventFilter, error)
+	Insert(ctx context.Context, model *eventfilter.Rule) error
+	GetById(ctx context.Context, id string) (*eventfilter.Rule, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
-	Update(ctx context.Context, model *EventFilter) (bool, error)
+	Update(ctx context.Context, model *eventfilter.Rule) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
 type AggregationResult struct {
-	Data       []*EventFilter `bson:"data" json:"data"`
-	TotalCount int64          `bson:"total_count" json:"total_count"`
+	Data       []*eventfilter.Rule `bson:"data" json:"data"`
+	TotalCount int64                  `bson:"total_count" json:"total_count"`
 }
 
 type store struct {
@@ -44,7 +45,7 @@ func NewStore(
 	}
 }
 
-func (s *store) Insert(ctx context.Context, model *EventFilter) error {
+func (s *store) Insert(ctx context.Context, model *eventfilter.Rule) error {
 	if model.ID == "" {
 		model.ID = utils.NewID()
 	}
@@ -60,8 +61,8 @@ func (s *store) Insert(ctx context.Context, model *EventFilter) error {
 	return err
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*EventFilter, error) {
-	ef := &EventFilter{}
+func (s *store) GetById(ctx context.Context, id string) (*eventfilter.Rule, error) {
+	ef := &eventfilter.Rule{}
 	d := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
 	if d.Err() != nil {
 		return nil, d.Err()
@@ -105,8 +106,8 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, model *EventFilter) (bool, error) {
-	var data EventFilter
+func (s *store) Update(ctx context.Context, model *eventfilter.Rule) (bool, error) {
+	var data eventfilter.Rule
 	updated := types.NewCpsTime(time.Now().Unix())
 	model.Created = nil
 	model.Updated = &updated

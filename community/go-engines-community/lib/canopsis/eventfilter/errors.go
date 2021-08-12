@@ -1,4 +1,4 @@
-package neweventfilter
+package eventfilter
 
 import "errors"
 

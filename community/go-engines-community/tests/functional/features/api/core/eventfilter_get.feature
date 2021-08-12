@@ -20,21 +20,22 @@ Feature: Get an eventfilter
       ],
       "priority": 0,
       "enabled": true,
-      "config": {},
-      "actions": [
-        {
-          "type": "set_field",
-          "name": "connector",
-          "value": "kafka_connector"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "external_data": {
         "entity": {
           "type": "entity"
         }
       },
-      "on_success": "pass",
-      "on_failure": "pass",
       "created": 1608284568,
       "updated": 1608285370
     }
@@ -58,23 +59,24 @@ Feature: Get an eventfilter
               "resource": "test-eventfilter-to-get-1-pattern"
             }
           ],
-          "config": {},
+          "config": {
+            "actions": [
+              {
+                "type": "set_field",
+                "name": "connector",
+                "value": "kafka_connector"
+              }
+            ],
+            "on_success": "pass",
+            "on_failure": "pass"
+          },
           "priority": 0,
           "enabled": true,
-          "actions": [
-            {
-              "type": "set_field",
-              "name": "connector",
-              "value": "kafka_connector"
-            }
-          ],
           "external_data": {
             "entity": {
               "type": "entity"
             }
           },
-          "on_success": "pass",
-          "on_failure": "pass",
           "created": 1608284568,
           "updated": 1608285370
         },

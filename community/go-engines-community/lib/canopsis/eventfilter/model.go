@@ -1,4 +1,4 @@
-package neweventfilter
+package eventfilter
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
@@ -44,24 +44,21 @@ type ExternalDataParameters struct {
 	Select     map[string]string `json:"select,omitempty" bson:"select,omitempty"`
 
 	//are used in api external data
-	RequestParameters request.Parameters      `bson:"request" json:"request"`
-	RetryCount        int                     `bson:"retry_count,omitempty" json:"retry_count,omitempty" mapstructure:"retry_count"`
-	RetryDelay        *types.DurationWithUnit `bson:"retry_delay,omitempty" json:"retry_delay,omitempty" mapstructure:"retry_delay"`
+	RequestParameters *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
 }
 
 type Rule struct {
-	ID          string                   `bson:"_id"`
-	Description string                   `bson:"description"`
-	Type        string                   `bson:"type"`
-	Patterns    pattern.EventPatternList `bson:"patterns"`
-	Priority    int                      `bson:"priority"`
-	Enabled     bool                     `bson:"enabled"`
-	Config      RuleConfig               `bson:"config"`
-	Created     *types.CpsTime           `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated     *types.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
-	Author      string                   `bson:"author"`
-
-	ExternalData map[string]ExternalDataParameters `bson:"external_data" json:"external_data"`
+	ID           string                            `bson:"_id" json:"_id" binding:"id"`
+	Author       string                            `bson:"author" json:"author" swaggerignore:"true"`
+	Description  string                            `bson:"description" json:"description" binding:"required,max=255"`
+	Type         string                            `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
+	Patterns     pattern.EventPatternList          `bson:"patterns" json:"patterns"`
+	Priority     int                               `bson:"priority" json:"priority"`
+	Enabled      bool                              `bson:"enabled" json:"enabled"`
+	Config       RuleConfig                        `bson:"config" json:"config"`
+	ExternalData map[string]ExternalDataParameters `bson:"external_data,omitempty" json:"external_data,omitempty"`
+	Created      *types.CpsTime                    `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated      *types.CpsTime                    `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type RuleConfig struct {
@@ -72,14 +69,14 @@ type RuleConfig struct {
 
 	// enrichment fields
 	Actions   []Action `bson:"actions,omitempty" json:"actions,omitempty" binding:"required_if=Type enrichment"`
-	OnSuccess string   `bson:"on_success,omitempty" json:"on_success,omitempty" binding:"required_if=Type enrichment"`
-	OnFailure string   `bson:"on_failure,omitempty" json:"on_failure,omitempty" binding:"required_if=Type enrichment"`
+	OnSuccess string   `bson:"on_success,omitempty" json:"on_success,omitempty"`
+	OnFailure string   `bson:"on_failure,omitempty" json:"on_failure,omitempty"`
 }
 
 type Action struct {
 	Type        string      `bson:"type" json:"type"`
 	Name        string      `bson:"name" json:"name"`
-	Description string      `bson:"description" json:"description"`
+	Description string      `bson:"description,omitempty" json:"description,omitempty"`
 	Value       interface{} `bson:"value" json:"value"`
 }
 

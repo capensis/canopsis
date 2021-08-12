@@ -3,7 +3,7 @@ package fifo
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -17,7 +17,7 @@ import (
 
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
-	EventFilterService       neweventfilter.EventFilterService
+	EventFilterService       eventfilter.Service
 	Scheduler                scheduler.Scheduler
 	StatsSender              ratelimit.StatsSender
 	Decoder                  encoding.Decoder

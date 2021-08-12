@@ -1,9 +1,10 @@
-package neweventfilter
+package eventfilter
 
 import (
 	"bytes"
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"text/template"
@@ -18,7 +19,7 @@ func NewChangeEntityApplicator(externalDataContainer *ExternalDataContainer) Rul
 	return &changeEntityApplicator{externalDataContainer: externalDataContainer, buf: bytes.Buffer{}}
 }
 
-func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches) (string, types.Event, error) {
+func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches, cfgTimezone *config.TimezoneConfig) (string, types.Event, error) {
 	externalData, err := a.getExternalData(ctx, rule, event, regexMatch)
 	if err != nil {
 		return OutcomeDrop, event, err
@@ -31,28 +32,28 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event typ
 	}
 
 	if rule.Config.Resource != "" {
-		event.Resource, err = a.executeTpl(rule.Config.Resource, templateParams)
+		event.Resource, err = a.executeTpl(rule.Config.Resource, templateParams, cfgTimezone)
 		if err != nil {
 			return OutcomeDrop, event, err
 		}
 	}
 
 	if rule.Config.Component != "" {
-		event.Component, err = a.executeTpl(rule.Config.Component, templateParams)
+		event.Component, err = a.executeTpl(rule.Config.Component, templateParams, cfgTimezone)
 		if err != nil {
 			return OutcomeDrop, event, err
 		}
 	}
 
 	if rule.Config.Connector != "" {
-		event.Connector, err = a.executeTpl(rule.Config.Connector, templateParams)
+		event.Connector, err = a.executeTpl(rule.Config.Connector, templateParams, cfgTimezone)
 		if err != nil {
 			return OutcomeDrop, event, err
 		}
 	}
 
 	if rule.Config.ConnectorName != "" {
-		event.ConnectorName, err = a.executeTpl(rule.Config.ConnectorName, templateParams)
+		event.ConnectorName, err = a.executeTpl(rule.Config.ConnectorName, templateParams, cfgTimezone)
 		if err != nil {
 			return OutcomeDrop, event, err
 		}
@@ -84,8 +85,8 @@ func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule,
 	return externalData, nil
 }
 
-func (a *changeEntityApplicator) executeTpl(tplText string, params TemplateParameters) (string, error) {
-	tpl, err := template.New("tpl").Funcs(types.GetTemplateFunc()).Parse(tplText)
+func (a *changeEntityApplicator) executeTpl(tplText string, params TemplateParameters, cfgTimezone *config.TimezoneConfig) (string, error) {
+	tpl, err := template.New("tpl").Funcs(types.GetTemplateFunc(cfgTimezone)).Parse(tplText)
 	if err != nil {
 		return "", err
 	}

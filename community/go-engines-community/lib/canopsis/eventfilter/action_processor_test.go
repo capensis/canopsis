@@ -1,8 +1,8 @@
-package neweventfilter_test
+package eventfilter_test
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"testing"
@@ -11,7 +11,7 @@ import (
 func TestActionProcessor(t *testing.T) {
 	dataSets := []struct {
 		testName      string
-		action        neweventfilter.Action
+		action        eventfilter.Action
 		event         types.Event
 		regexMatches  pattern.EventRegexMatches
 		externalData  map[string]interface{}
@@ -20,8 +20,8 @@ func TestActionProcessor(t *testing.T) {
 	}{
 		{
 			testName: "given set_field action should return success",
-			action: neweventfilter.Action{
-				Type:  neweventfilter.ActionSetField,
+			action: eventfilter.Action{
+				Type:  eventfilter.ActionSetField,
 				Name:  "Output",
 				Value: "test output",
 			},
@@ -35,8 +35,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_field action should return error, because of wrong value field type",
-			action: neweventfilter.Action{
-				Type:  neweventfilter.ActionSetField,
+			action: eventfilter.Action{
+				Type:  eventfilter.ActionSetField,
 				Name:  "Output",
 				Value: 5,
 			},
@@ -48,8 +48,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_field_from_template action should return success",
-			action: neweventfilter.Action{
-				Type:  neweventfilter.ActionSetFieldFromTemplate,
+			action: eventfilter.Action{
+				Type:  eventfilter.ActionSetFieldFromTemplate,
 				Name:  "Output",
 				Value: "{{.ExternalData.data_1}}",
 			},
@@ -65,8 +65,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_field_from_template action should return error, because of wrong template",
-			action: neweventfilter.Action{
-				Type:  neweventfilter.ActionSetFieldFromTemplate,
+			action: eventfilter.Action{
+				Type:  eventfilter.ActionSetFieldFromTemplate,
 				Name:  "Output",
 				Value: "{{.Some.data_1}}",
 			},
@@ -80,8 +80,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_field_from_template action should return error, because value should be a string",
-			action: neweventfilter.Action{
-				Type:  neweventfilter.ActionSetFieldFromTemplate,
+			action: eventfilter.Action{
+				Type:  eventfilter.ActionSetFieldFromTemplate,
 				Name:  "Output",
 				Value: 123,
 			},
@@ -95,8 +95,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info action should return success with string type",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionSetEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "test output",
@@ -122,8 +122,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info action should return success with int type",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionSetEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       123,
@@ -149,8 +149,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info action should return success with bool type",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionSetEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       true,
@@ -176,8 +176,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info action should return updated entity true, if infos is changed",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionSetEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "new info",
@@ -211,8 +211,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info action should not return updated entity true, if info is not changed",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionSetEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "new info",
@@ -245,8 +245,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info_from_template action should return success",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionSetEntityInfoFromTemplate,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfoFromTemplate,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "{{.ExternalData.data_1}}",
@@ -274,8 +274,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info_from_template action should return error, because of wrong template",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionSetEntityInfoFromTemplate,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfoFromTemplate,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "{{.Some.data}}",
@@ -292,8 +292,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info_from_template action should return error, because value should be a string",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionSetEntityInfoFromTemplate,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfoFromTemplate,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       123,
@@ -310,8 +310,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info_from_template action should return updated entity true, if infos is changed",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionSetEntityInfoFromTemplate,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfoFromTemplate,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "new info",
@@ -345,8 +345,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info_from_template action should not return updated entity true, if info is not changed",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionSetEntityInfoFromTemplate,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfoFromTemplate,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "new info",
@@ -379,8 +379,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy action should return success",
-			action: neweventfilter.Action{
-				Type:  neweventfilter.ActionCopy,
+			action: eventfilter.Action{
+				Type:  eventfilter.ActionCopy,
 				Name:  "Output",
 				Value: "Event.Resource",
 			},
@@ -397,8 +397,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy action should return error, because value should be a string",
-			action: neweventfilter.Action{
-				Type:  neweventfilter.ActionCopy,
+			action: eventfilter.Action{
+				Type:  eventfilter.ActionCopy,
 				Name:  "Output",
 				Value: 123,
 			},
@@ -414,8 +414,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy action should return error, because get field doesn't exist",
-			action: neweventfilter.Action{
-				Type:  neweventfilter.ActionCopy,
+			action: eventfilter.Action{
+				Type:  eventfilter.ActionCopy,
 				Name:  "Output",
 				Value: "Some",
 			},
@@ -431,8 +431,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy action should return error, because set field doesn't exist",
-			action: neweventfilter.Action{
-				Type:  neweventfilter.ActionCopy,
+			action: eventfilter.Action{
+				Type:  eventfilter.ActionCopy,
 				Name:  "Some",
 				Value: "Event.Resource",
 			},
@@ -448,8 +448,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with string type",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionCopyToEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "Event.Resource",
@@ -477,8 +477,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with string type",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionCopyToEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "Event.Resource",
@@ -506,8 +506,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with int type",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionCopyToEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "ExternalData.Info",
@@ -537,8 +537,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with bool type",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionCopyToEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "ExternalData.Info",
@@ -568,8 +568,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with string type",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionCopyToEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "Event.Resource",
@@ -597,8 +597,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should change existing info",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionCopyToEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "Event.Resource",
@@ -634,8 +634,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should not return entity updated true, if info is not changed",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionCopyToEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "Event.Resource",
@@ -670,8 +670,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return error, because value is not a string",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionCopyToEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       123,
@@ -690,8 +690,8 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return error, because value field is not exist",
-			action: neweventfilter.Action{
-				Type:        neweventfilter.ActionCopyToEntityInfo,
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
 				Value:       "Some",
@@ -710,10 +710,10 @@ func TestActionProcessor(t *testing.T) {
 		},
 	}
 
-	processor := neweventfilter.NewActionProcessor()
+	processor := eventfilter.NewActionProcessor()
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			resultEvent, resultErr := processor.Process(dataset.action, dataset.event, dataset.regexMatches, dataset.externalData)
+			resultEvent, resultErr := processor.Process(dataset.action, dataset.event, dataset.regexMatches, dataset.externalData, nil)
 			if !reflect.DeepEqual(resultEvent, dataset.expectedEvent) {
 				t.Errorf("expected an event = %v, but got %v", dataset.expectedEvent, resultEvent)
 			}

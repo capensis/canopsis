@@ -13,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -27,7 +26,6 @@ type messageProcessor struct {
 	FeatureContextCreation   bool
 	AlarmConfigProvider      config.AlarmConfigProvider
 	EventFilterService       eventfilter.Service
-	NewEventFilterService    neweventfilter.EventFilterService
 	EnrichmentCenter         libcontext.EnrichmentCenter
 	EnrichFields             libcontext.EnrichFields
 	AmqpPublisher            libamqp.Publisher
@@ -105,7 +103,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	// Process event by event filters.
 	if p.FeatureEventProcessing {
-		event, err = p.NewEventFilterService.ProcessEvent(ctx, event)
+		event, err = p.EventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			if engine.IsConnectionError(err) {
 				return nil, err

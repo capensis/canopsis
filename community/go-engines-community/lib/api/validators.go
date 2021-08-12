@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	libeventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
@@ -226,8 +227,7 @@ func RegisterValidators(client mongo.DbClient) {
 	v.RegisterStructValidation(stateSettingsValidator.ValidateStateThresholds, statesettings.StateThresholds{})
 
 	eventfilterValidator := eventfilter.NewValidator(client)
-	v.RegisterStructValidationCtx(eventfilterValidator.ValidateEventFilter, eventfilter.EventFilter{})
-	v.RegisterStructValidation(eventfilterValidator.ValidateEventFilterPayload, eventfilter.EventFilterPayload{})
+	v.RegisterStructValidationCtx(eventfilterValidator.ValidateEventFilter, libeventfilter.Rule{})
 
 	broadcastmessageValidator := broadcastmessage.NewValidator(client)
 	v.RegisterStructValidationCtx(broadcastmessageValidator.Validate, broadcastmessage.BroadcastMessage{})
