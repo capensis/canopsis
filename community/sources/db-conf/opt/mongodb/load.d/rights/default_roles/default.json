@@ -725,6 +725,18 @@
         "listalarm_addFilter": {
             "checksum": 1,
             "desc": ""
+        },
+        "api_viewgroup": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_playlist": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_acl": {
+            "checksum": 1,
+            "desc": ""
         }
     },
     "defaultview": "view.current_alarms"
@@ -767,6 +779,18 @@
             "desc": ""
         },
         "listalarm_listFilters": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "api_viewgroup": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_playlist": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_acl": {
             "checksum": 1,
             "desc": ""
         }
@@ -857,6 +881,18 @@
         "listalarm_addFilter": {
             "checksum": 1,
             "desc": ""
+        },
+        "api_viewgroup": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_playlist": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_acl": {
+            "checksum": 1,
+            "desc": ""
         }
     },
     "defaultview": "view.current_alarms"
@@ -870,6 +906,18 @@
         "listalarm_listFilters": {
             "checksum": 1,
             "desc": ""
+        },
+        "api_viewgroup": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_playlist": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_acl": {
+            "checksum": 1,
+            "desc": ""
         }
     },
     "defaultview": "view.current_alarms"
@@ -878,6 +926,18 @@
     "rights": {
         "view_norights": {
             "checksum": 5,
+            "desc": ""
+        },
+        "api_viewgroup": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_playlist": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_acl": {
+            "checksum": 1,
             "desc": ""
         }
     },
