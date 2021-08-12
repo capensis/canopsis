@@ -68,4 +68,19 @@
             },
         }
     );
+
+    db.default_rights.updateMany(
+        {
+            crecord_name: { "$in": ["Manager", "Support", "Visualisation"] },
+            crecord_type: "role",
+        },
+        {
+            $set: {
+                "rights.api_acl": {
+                    checksum: 1,
+                    crecord_type: "right",
+                },
+            },
+        }
+    )
 })();
