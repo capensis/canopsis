@@ -8,7 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
@@ -57,7 +57,7 @@ func ParseOptions() Options {
 	return opts
 }
 
-func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, ExternalDataContainer *neweventfilter.ExternalDataContainer, logger zerolog.Logger) libengine.Engine {
+func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, ExternalDataContainer *eventfilter.ExternalDataContainer, logger zerolog.Logger) libengine.Engine {
 	var m depmake.DependencyMaker
 
 	cfg := m.DepConfig(ctx, mongoClient)
@@ -94,16 +94,16 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		logger,
 	)
 
-	ruleAdapter := neweventfilter.NewRuleAdapter(mongoClient)
-	ruleApplicatorContainer := neweventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(neweventfilter.RuleTypeChangeEntity, neweventfilter.NewChangeEntityApplicator(ExternalDataContainer))
-	eventFilterService := neweventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, logger)
+	ruleAdapter := eventfilter.NewRuleAdapter(mongoClient)
+	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(ExternalDataContainer))
+	eventFilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, config.NewTimezoneConfigProvider(cfg, logger), logger)
 
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			scheduler.Start(ctx)
 
-			err := eventFilterService.LoadRules(ctx)
+			err := eventFilterService.LoadRules(ctx, []string{eventfilter.RuleTypeChangeEntity})
 			if err != nil {
 				return err
 			}

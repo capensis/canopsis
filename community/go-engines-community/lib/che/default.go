@@ -3,10 +3,6 @@ package che
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
-	"path/filepath"
-	"plugin"
-	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -37,7 +33,7 @@ func NewEngine(
 	mongoClient mongo.DbClient,
 	pgPool postgres.Pool,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
-	ExternalDataContainer *neweventfilter.ExternalDataContainer,
+	ExternalDataContainer *eventfilter.ExternalDataContainer,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
@@ -53,14 +49,12 @@ func NewEngine(
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	entityAdapter := entity.NewAdapter(mongoClient)
-	eventFilterAdapter := eventfilter.NewAdapter(mongoClient)
 	entityServiceAdapter := entityservice.NewAdapter(mongoClient)
 	redisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
 
-	eventFilterService := eventfilter.NewService(eventFilterAdapter, timezoneConfigProvider, logger)
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
 		options.FeatureContextEnrich,
@@ -75,15 +69,15 @@ func NewEngine(
 	)
 	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
 
-	ruleApplicatorContainer := neweventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(neweventfilter.RuleTypeChangeEntity, neweventfilter.NewChangeEntityApplicator(ExternalDataContainer))
-	ruleApplicatorContainer.Set(neweventfilter.RuleTypeEnrichment, neweventfilter.NewEnrichmentApplicator(ExternalDataContainer, neweventfilter.NewActionProcessor()))
-	ruleApplicatorContainer.Set(neweventfilter.RuleTypeDrop, neweventfilter.NewDropApplicator())
-	ruleApplicatorContainer.Set(neweventfilter.RuleTypeBreak, neweventfilter.NewBreakApplicator())
+	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(ExternalDataContainer))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(ExternalDataContainer, eventfilter.NewActionProcessor()))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 
-	ruleAdapter := neweventfilter.NewRuleAdapter(mongoClient)
+	ruleAdapter := eventfilter.NewRuleAdapter(mongoClient)
 
-	newEventFilterService := neweventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, logger)
+	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, config.NewTimezoneConfigProvider(cfg, logger), logger)
 
 	engine := libengine.New(
 		func(ctx context.Context) error {
@@ -110,7 +104,7 @@ func NewEngine(
 			logger.Debug().Msg("Recompute impacted services for connectors finished")
 
 			logger.Debug().Msg("Loading event filter rules")
-			err = newEventFilterService.LoadRules(ctx)
+			err = eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
 			if err != nil {
 				return fmt.Errorf("unable to load rules: %v", err)
 			}
@@ -170,8 +164,7 @@ func NewEngine(
 			FeatureEventProcessing:   options.FeatureEventProcessing,
 			FeatureContextCreation:   options.FeatureContextCreation,
 			AlarmConfigProvider:      alarmConfigProvider,
-			EventFilterService:       eventFilterService,
-			NewEventFilterService:    newEventFilterService,
+			EventFilterService:       eventfilterService,
 			EnrichmentCenter:         enrichmentCenter,
 			EnrichFields:             enrichFields,
 			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
@@ -183,7 +176,7 @@ func NewEngine(
 		logger,
 	))
 	engine.AddPeriodicalWorker(&reloadLocalCachePeriodicalWorker{
-		EventFilterService: newEventFilterService,
+		EventFilterService: eventfilterService,
 		EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
@@ -219,38 +212,4 @@ func NewEngine(
 	))
 
 	return engine
-}
-
-//TODO: copy from eventfilter package, all mongo plugin feature should be refactored
-func LoadDataSourceFactories(dataSourceDirectory string) (map[string]eventfilter.DataSourceFactory, error) {
-	factories := make(map[string]eventfilter.DataSourceFactory)
-
-	files, err := filepath.Glob(filepath.Join(dataSourceDirectory, fmt.Sprintf("*%s", canopsis.PluginExtension)))
-	if err != nil {
-		return nil, err
-	}
-
-	for _, file := range files {
-		if strings.HasSuffix(file, canopsis.PluginExtension) {
-			sourceName := strings.TrimSuffix(filepath.Base(file), canopsis.PluginExtension)
-			plug, err := plugin.Open(file)
-			if err != nil {
-				return nil, fmt.Errorf("unable to open plugin: %w", err)
-			}
-
-			factorySymbol, err := plug.Lookup("DataSourceFactory")
-			if err != nil {
-				return nil, fmt.Errorf("unable to load plugin: %w", err)
-			}
-
-			factory, isFactory := factorySymbol.(eventfilter.DataSourceFactory)
-			if !isFactory {
-				return nil, fmt.Errorf("the plugin does not define a valid data source")
-			}
-
-			factories[sourceName] = factory
-		}
-	}
-
-	return factories, nil
 }

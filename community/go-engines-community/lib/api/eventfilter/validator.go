@@ -3,7 +3,6 @@ package eventfilter
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,8 +15,8 @@ type eventfilterValidator struct {
 }
 
 func (v *eventfilterValidator) ValidateEventFilter(ctx context.Context, sl validator.StructLevel) {
-	r := sl.Current().Interface().(EventFilter)
-	v.validateFields(r.EventFilterPayload, sl)
+	r := sl.Current().Interface().(eventfilter.Rule)
+	v.validateFields(r, sl)
 
 	if r.ID != "" {
 		err := v.dbClient.Collection(mongo.EventFilterRulesMongoCollection).FindOne(ctx, bson.M{"_id": r.ID}).Err()
@@ -29,42 +28,46 @@ func (v *eventfilterValidator) ValidateEventFilter(ctx context.Context, sl valid
 	}
 }
 
-func (v *eventfilterValidator) ValidateEventFilterPayload(sl validator.StructLevel) {
-	r := sl.Current().Interface().(EventFilterPayload)
-	v.validateFields(r, sl)
-}
-
-func (v *eventfilterValidator) validateFields(p EventFilterPayload, sl validator.StructLevel) {
-	if p.Patterns != nil && !p.Patterns.IsValid() {
+func (v *eventfilterValidator) validateFields(p eventfilter.Rule, sl validator.StructLevel) {
+	if !p.Patterns.IsValid() {
 		sl.ReportError(p.Patterns, "patterns", "Patterns", "eventfilter_patterns_invalid", "")
 	}
 
-	if p.Type == neweventfilter.RuleTypeChangeEntity &&
+	if p.Type == eventfilter.RuleTypeChangeEntity &&
 		p.Config.Component == "" &&
 		p.Config.Resource == "" &&
 		p.Config.Connector == "" &&
 		p.Config.ConnectorName == "" {
-		sl.ReportError(p.Actions, "config", "Config", "required", "")
+		sl.ReportError(p.Config, "config", "Config", "required", "")
 	}
 
-	if eventfilter.Type(p.Type) == eventfilter.RuleTypeEnrichment {
-		validOutcome := []string{
-			string(eventfilter.Pass),
-			string(eventfilter.Drop),
-			string(eventfilter.Break),
+	if p.Type == eventfilter.RuleTypeEnrichment {
+		if len(p.Config.Actions) == 0 {
+			sl.ReportError(p.Config.Actions, "actions", "Actions", "required", "")
 		}
-		if p.OnSuccess != "" {
-			switch eventfilter.Outcome(p.OnSuccess) {
-			case eventfilter.Pass, eventfilter.Drop, eventfilter.Break:
+
+		validOutcome := []string{
+			eventfilter.OutcomePass,
+			eventfilter.OutcomeDrop,
+			eventfilter.OutcomeBreak,
+		}
+		if p.Config.OnSuccess == "" {
+			sl.ReportError(p.Config.OnSuccess, "on_success", "OnSuccess", "required_if", "Type enrichment")
+		} else {
+			switch p.Config.OnSuccess {
+			case eventfilter.OutcomePass, eventfilter.OutcomeDrop, eventfilter.OutcomeBreak:
 			default:
-				sl.ReportError(p.OnSuccess, "OnSuccess", "OnSuccess", "oneof", strings.Join(validOutcome, " "))
+				sl.ReportError(p.Config.OnSuccess, "on_success", "OnSuccess", "oneof", strings.Join(validOutcome, " "))
 			}
 		}
-		if p.OnFailure != "" {
-			switch eventfilter.Outcome(p.OnFailure) {
-			case eventfilter.Pass, eventfilter.Drop, eventfilter.Break:
+
+		if p.Config.OnFailure == "" {
+			sl.ReportError(p.Config.OnFailure, "on_failure", "OnFailure", "required_if", "Type enrichment")
+		} else {
+			switch p.Config.OnFailure {
+			case eventfilter.OutcomePass, eventfilter.OutcomeDrop, eventfilter.OutcomeBreak:
 			default:
-				sl.ReportError(p.OnFailure, "OnFailure", "OnFailure", "oneof", strings.Join(validOutcome, " "))
+				sl.ReportError(p.Config.OnFailure, "on_failure", "OnFailure", "oneof", strings.Join(validOutcome, " "))
 			}
 		}
 	}

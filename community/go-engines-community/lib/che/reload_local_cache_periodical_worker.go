@@ -3,13 +3,13 @@ package che
 import (
 	"context"
 	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"github.com/rs/zerolog"
 	"time"
 )
 
 type reloadLocalCachePeriodicalWorker struct {
-	EventFilterService neweventfilter.EventFilterService
+	EventFilterService eventfilter.Service
 	EnrichmentCenter   libcontext.EnrichmentCenter
 	PeriodicalInterval time.Duration
 	Logger             zerolog.Logger
@@ -21,7 +21,7 @@ func (w *reloadLocalCachePeriodicalWorker) GetInterval() time.Duration {
 
 func (w *reloadLocalCachePeriodicalWorker) Work(ctx context.Context) error {
 	w.Logger.Debug().Msg("Loading event filter rules")
-	err := w.EventFilterService.LoadRules(ctx)
+	err := w.EventFilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("unable to load rules")
 	}

@@ -1,0 +1,12 @@
+[
+  {
+    "_id": "assets_1",
+    "component_status": "assets_status_1",
+    "component_customer": "assets_customer_1"
+  },
+  {
+    "_id": "assets_2",
+    "component_status": "assets_status_2",
+    "component_customer": "assets_customer_2"
+  }
+]

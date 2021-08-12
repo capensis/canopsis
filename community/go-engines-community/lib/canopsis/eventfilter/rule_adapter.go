@@ -1,4 +1,4 @@
-package neweventfilter
+package eventfilter
 
 import (
 	"context"
@@ -26,13 +26,13 @@ func (a mongoAdapter) GetAll(ctx context.Context) ([]Rule, error) {
 	})
 }
 
-func (a mongoAdapter) GetByType(ctx context.Context, t string) ([]Rule, error) {
+func (a mongoAdapter) GetByTypes(ctx context.Context, types []string) ([]Rule, error) {
 	return a.find(ctx, bson.M{
 		"$or": []bson.M{
 			{"enabled": true},
 			{"enabled": bson.M{"$exists": false}},
 		},
-		"type": t,
+		"type": bson.M{"$in": types},
 	})
 }
 

@@ -1,30 +1,30 @@
-package neweventfilter_test
+package eventfilter_test
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/neweventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	mock_neweventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/neweventfilter"
+	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	"github.com/golang/mock/gomock"
 	"reflect"
 	"testing"
 )
 
-func TestApply(t *testing.T) {
-	applicator := neweventfilter.NewChangeEntityApplicator(neweventfilter.NewExternalDataGetterContainer())
+func TestChangeEntityApply(t *testing.T) {
+	applicator := eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer())
 
 	var dataSets = []struct {
 		testName      string
-		rule          neweventfilter.Rule
+		rule          eventfilter.Rule
 		event         types.Event
 		expectedEvent types.Event
 		regexMatches  pattern.EventRegexMatches
 	}{
 		{
 			testName: "given event and rule, resource should be changed",
-			rule: neweventfilter.Rule{
-				Config: neweventfilter.RuleConfig{
+			rule: eventfilter.Rule{
+				Config: eventfilter.RuleConfig{
 					Resource: "new value",
 				},
 			},
@@ -43,8 +43,8 @@ func TestApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, component should be changed",
-			rule: neweventfilter.Rule{
-				Config: neweventfilter.RuleConfig{
+			rule: eventfilter.Rule{
+				Config: eventfilter.RuleConfig{
 					Component: "new value",
 				},
 			},
@@ -63,8 +63,8 @@ func TestApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, connector should be changed",
-			rule: neweventfilter.Rule{
-				Config: neweventfilter.RuleConfig{
+			rule: eventfilter.Rule{
+				Config: eventfilter.RuleConfig{
 					Connector: "new value",
 				},
 			},
@@ -83,8 +83,8 @@ func TestApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, connector_name should be changed",
-			rule: neweventfilter.Rule{
-				Config: neweventfilter.RuleConfig{
+			rule: eventfilter.Rule{
+				Config: eventfilter.RuleConfig{
 					ConnectorName: "new value",
 				},
 			},
@@ -103,8 +103,8 @@ func TestApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, resource should be changed by template",
-			rule: neweventfilter.Rule{
-				Config: neweventfilter.RuleConfig{
+			rule: eventfilter.Rule{
+				Config: eventfilter.RuleConfig{
 					Resource: "{{.Event.Output}}",
 				},
 			},
@@ -125,8 +125,8 @@ func TestApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, component should be changed by template",
-			rule: neweventfilter.Rule{
-				Config: neweventfilter.RuleConfig{
+			rule: eventfilter.Rule{
+				Config: eventfilter.RuleConfig{
 					Component: "{{.Event.Output}}",
 				},
 			},
@@ -147,8 +147,8 @@ func TestApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, connector should be changed by template",
-			rule: neweventfilter.Rule{
-				Config: neweventfilter.RuleConfig{
+			rule: eventfilter.Rule{
+				Config: eventfilter.RuleConfig{
 					Connector: "{{.Event.Output}}",
 				},
 			},
@@ -169,8 +169,8 @@ func TestApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, connector_name should be changed by template",
-			rule: neweventfilter.Rule{
-				Config: neweventfilter.RuleConfig{
+			rule: eventfilter.Rule{
+				Config: eventfilter.RuleConfig{
 					ConnectorName: "{{.Event.Output}}",
 				},
 			},
@@ -191,8 +191,8 @@ func TestApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, resource should be changed by regexMatches template",
-			rule: neweventfilter.Rule{
-				Config: neweventfilter.RuleConfig{
+			rule: eventfilter.Rule{
+				Config: eventfilter.RuleConfig{
 					Resource: "{{.RegexMatch.ExtraInfos.data.match}}",
 				},
 			},
@@ -218,8 +218,8 @@ func TestApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, component should be changed by regexMatches template",
-			rule: neweventfilter.Rule{
-				Config: neweventfilter.RuleConfig{
+			rule: eventfilter.Rule{
+				Config: eventfilter.RuleConfig{
 					Component: "{{.RegexMatch.ExtraInfos.data.match}}",
 				},
 			},
@@ -245,8 +245,8 @@ func TestApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, connector should be changed by regexMatches template",
-			rule: neweventfilter.Rule{
-				Config: neweventfilter.RuleConfig{
+			rule: eventfilter.Rule{
+				Config: eventfilter.RuleConfig{
 					Connector: "{{.RegexMatch.ExtraInfos.data.match}}",
 				},
 			},
@@ -272,8 +272,8 @@ func TestApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, connector_name should be changed by regexMatches template",
-			rule: neweventfilter.Rule{
-				Config: neweventfilter.RuleConfig{
+			rule: eventfilter.Rule{
+				Config: eventfilter.RuleConfig{
 					ConnectorName: "{{.RegexMatch.ExtraInfos.data.match}}",
 				},
 			},
@@ -301,14 +301,14 @@ func TestApply(t *testing.T) {
 
 	for _, dataSet := range dataSets {
 		t.Run(dataSet.testName, func(t *testing.T) {
-			outcome, resultEvent, err := applicator.Apply(context.Background(), dataSet.rule, dataSet.event, dataSet.regexMatches)
+			outcome, resultEvent, err := applicator.Apply(context.Background(), dataSet.rule, dataSet.event, dataSet.regexMatches, nil)
 
 			if err != nil {
 				t.Errorf("expected not error but got %v", err)
 			}
 
-			if outcome != neweventfilter.OutcomePass {
-				t.Errorf("expected outcome %s, but got %s", neweventfilter.OutcomePass, outcome)
+			if outcome != eventfilter.OutcomePass {
+				t.Errorf("expected outcome %s, but got %s", eventfilter.OutcomePass, outcome)
 			}
 
 			if !reflect.DeepEqual(dataSet.expectedEvent, resultEvent) {
@@ -318,20 +318,20 @@ func TestApply(t *testing.T) {
 	}
 }
 
-func TestApplyWithExternalData(t *testing.T) {
+func TestChangeEntityApplyWithExternalData(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	getter := mock_neweventfilter.NewMockExternalDataGetter(ctrl)
+	getter := mock_eventfilter.NewMockExternalDataGetter(ctrl)
 	getter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).Return(types.Entity{ID: "test_value"}, nil)
 
-	externalDataContainer := neweventfilter.NewExternalDataGetterContainer()
+	externalDataContainer := eventfilter.NewExternalDataGetterContainer()
 	externalDataContainer.Set("test", getter)
 
-	applicator := neweventfilter.NewChangeEntityApplicator(externalDataContainer)
+	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer)
 
-	externalData := make(map[string]neweventfilter.ExternalDataParameters)
-	externalData["test"] = neweventfilter.ExternalDataParameters{
+	externalData := make(map[string]eventfilter.ExternalDataParameters)
+	externalData["test"] = eventfilter.ExternalDataParameters{
 		Type: "test",
 	}
 
@@ -351,22 +351,23 @@ func TestApplyWithExternalData(t *testing.T) {
 
 	outcome, resultEvent, err := applicator.Apply(
 		context.Background(),
-		neweventfilter.Rule{
+		eventfilter.Rule{
 			ExternalData: externalData,
-			Config: neweventfilter.RuleConfig{
+			Config: eventfilter.RuleConfig{
 				Resource: "{{.ExternalData.test.ID}}",
 			},
 		},
 		event,
 		pattern.EventRegexMatches{},
+		nil,
 	)
 
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
 
-	if outcome != neweventfilter.OutcomePass {
-		t.Errorf("expected outcome %s, but got %s", neweventfilter.OutcomePass, outcome)
+	if outcome != eventfilter.OutcomePass {
+		t.Errorf("expected outcome %s, but got %s", eventfilter.OutcomePass, outcome)
 	}
 
 	if !reflect.DeepEqual(expectedEvent, resultEvent) {
