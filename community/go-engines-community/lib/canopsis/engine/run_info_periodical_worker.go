@@ -2,6 +2,7 @@ package engine
 
 import (
 	"context"
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
@@ -37,15 +38,17 @@ func (w *runInfoPeriodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *runInfoPeriodicalWorker) Work(ctx context.Context) error {
-	queue, err := w.channel.QueueInspect(w.info.ConsumeQueue)
-	if err != nil {
-		w.logger.Error().Err(err).Msg("cannot get consume queue length")
-		return err
+	if w.info.ConsumeQueue != "" {
+		queue, err := w.channel.QueueInspect(w.info.ConsumeQueue)
+		if err != nil {
+			return fmt.Errorf("cannot get consume queue length: %w", err)
+		}
+
+		w.info.QueueLength = queue.Messages
 	}
 
-	w.info.QueueLength = queue.Messages
 	w.info.Time = types.CpsTime{Time: time.Now()}
-	err = w.manager.SaveInstance(ctx, w.info, w.GetInterval())
+	err := w.manager.SaveInstance(ctx, w.info, w.GetInterval())
 	if err != nil {
 		w.logger.Error().Err(err).Msg("cannot save run info")
 	}

@@ -164,8 +164,9 @@ type Event struct {
 	MetaAlarmRuleID    string `bson:"metaalarm_rule_id" json:"metaalarm_rule_id"`
 	MetaAlarmValuePath string `bson:"metaalarm_value_path" json:"metaalarm_value_path"`
 
-	MetaAlarmParents  *[]string `bson:"ma_parents" json:"ma_parents"`
-	MetaAlarmChildren *[]string `bson:"ma_children" json:"ma_children"`
+	MetaAlarmRelatedParents []string  `bson:"ma_related_parents" json:"ma_related_parents"`
+	MetaAlarmParents        *[]string `bson:"ma_parents" json:"ma_parents"`
+	MetaAlarmChildren       *[]string `bson:"ma_children" json:"ma_children"`
 
 	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info" json:"pbehavior_info"`
 

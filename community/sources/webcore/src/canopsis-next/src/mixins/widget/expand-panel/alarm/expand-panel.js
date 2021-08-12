@@ -1,4 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
+
 import { SORT_ORDERS } from '@/constants';
 
 import queryMixin from '@/mixins/query';
@@ -24,7 +25,6 @@ export default {
         correlation,
 
         with_steps: true,
-        with_instructions: true,
       };
 
       if (!this.hideGroups && correlation) {

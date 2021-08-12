@@ -70,9 +70,9 @@ type RunInfoManager interface {
 
 // RunInfo is engine run information.
 type RunInfo struct {
-	Name         string
-	ConsumeQueue string
-	PublishQueue string
+	Name         string `json:"name"`
+	ConsumeQueue string `json:"consume_queue"`
+	PublishQueue string `json:"publish_queue"`
 }
 
 // InstanceRunInfo is instance of engine run information.

@@ -13,7 +13,7 @@ const (
 	ActionWebhookRPCClientQueueName = "Engine_action_webhook_rpc_client"
 	ActionConsumerName              = "action"
 	ActionRPCConsumerName           = "action_rpc"
-	AxeExchangeName                 = "engine-axe"
+	AxeEngineName                   = "engine-axe"
 	AxeQueueName                    = "Engine_axe"
 	AxeServiceRPCClientQueueName    = "Engine_axe_service_rpc_client"
 	AxePbehaviorRPCClientQueueName  = "Engine_axe_pbehavior_rpc_client"

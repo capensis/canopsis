@@ -1,11 +1,11 @@
 package messageratestats
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"net/http"
-
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type API interface {
@@ -34,7 +34,7 @@ func NewApi(
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param request query ListRequest true "request"
-// @Success 200 {object} common.PaginatedListResponse{data=[]StatsResponse}
+// @Success 200 {object} common.PaginatedListResponse{data=[]StatsListResponse}
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /message-rate-stats [get]
 func (a *api) List(c *gin.Context) {
@@ -57,5 +57,21 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	data, ok := res.Data.([]StatsResponse)
+	if !ok {
+		panic(fmt.Errorf("paginated response data should be []StatsResponse"))
+	}
+
+	response := StatsListResponse{}
+	response.Data = data
+	response.Meta.PaginatedMeta = res.Meta
+
+	if r.Interval == IntervalHour {
+		response.Meta.DeletedBefore, err = a.store.GetDeletedBeforeForHours(c.Request.Context())
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	c.JSON(http.StatusOK, response)
 }

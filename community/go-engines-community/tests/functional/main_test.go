@@ -97,6 +97,15 @@ func TestMain(m *testing.M) {
 			Logger()
 	}
 
+	paths := make([]string, 0, len(flags.paths))
+	for _, p := range flags.paths {
+		matches, err := filepath.Glob(p)
+		if err == nil && matches != nil {
+			paths = append(paths, matches...)
+		} else {
+			paths = append(paths, p)
+		}
+	}
 	err := bdd.RunDummyHttpServer(ctx, fmt.Sprintf("localhost:%d", flags.dummyHttpPort))
 	if err != nil {
 		log.Fatal(err)
@@ -137,7 +146,7 @@ func TestMain(m *testing.M) {
 	opts := godog.Options{
 		StopOnFailure: true,
 		Format:        "pretty",
-		Paths:         flags.paths,
+		Paths:         paths,
 	}
 	testSuiteInitializer := InitializeTestSuite(ctx, flags, dbClient, redisClient)
 	scenarioInitializer, err := InitializeScenario(flags, dbClient, amqpConnection, eventLogger)

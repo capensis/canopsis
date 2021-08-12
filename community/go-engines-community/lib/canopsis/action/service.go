@@ -2,6 +2,7 @@ package action
 
 import (
 	"context"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -83,27 +84,34 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 				}
 
 				event := &types.Event{
-					Connector:         alarm.Value.Connector,
-					ConnectorName:     alarm.Value.ConnectorName,
-					Component:         alarm.Value.Component,
-					Resource:          alarm.Value.Resource,
-					Alarm:             &alarm,
-					MetaAlarmParents:  &alarm.Value.Parents,
-					MetaAlarmChildren: &alarm.Value.Children,
+					Connector:               alarm.Value.Connector,
+					ConnectorName:           alarm.Value.ConnectorName,
+					Component:               alarm.Value.Component,
+					Resource:                alarm.Value.Resource,
+					Alarm:                   &alarm,
+					MetaAlarmParents:        &alarm.Value.Parents,
+					MetaAlarmChildren:       &alarm.Value.Children,
+					// need it for fifo metaalarm lock
+					MetaAlarmRelatedParents: result.Alarm.Value.RelatedParents,
 				}
 
-				if result.Err != nil {
-					s.sendEventToFifoAck(event)
-					break
+				activationSent := false
+				if result.Err == nil ||
+					(result.Err != nil && len(result.ActionExecutions) > 0 &&
+						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook) {
+					// Send activation event
+					ok, err = s.activationService.Process(&alarm)
+					if err != nil {
+						s.logger.Error().Err(err).Msg("failed to send activation")
+						break
+					}
+
+					if ok {
+						activationSent = true
+					}
 				}
 
-				ok, err = s.activationService.Process(&alarm)
-				if err != nil {
-					s.logger.Error().Err(err).Msg("failed to send activation")
-					break
-				}
-
-				if !ok {
+				if !activationSent {
 					s.sendEventToFifoAck(event)
 				}
 			}
@@ -120,6 +128,9 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 
 	alarm := *event.Alarm
 	entity := *event.Entity
+
+	// need it for fifo metaalarm lock
+	alarm.Value.RelatedParents = event.MetaAlarmRelatedParents
 
 	switch event.AlarmChange.Type {
 	case types.AlarmChangeTypePbhEnter, types.AlarmChangeTypePbhLeave,

@@ -75,7 +75,7 @@
         )
 
       template(slot="mass-actions", slot-scope="props")
-        mass-actions-panel.ml-3(:items-ids="props.selected")
+        mass-actions-panel.ml-3(:items="props.selected")
     c-table-pagination(
       :total-items="contextEntitiesMeta.total_count",
       :rows-per-page="query.limit",

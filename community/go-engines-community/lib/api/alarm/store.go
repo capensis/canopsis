@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"reflect"
 	"regexp"
 	"sort"
@@ -13,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -176,7 +176,7 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 		if err != nil {
 			return nil, err
 		}
-		err = s.fillAutoInstructionFlags(ctx, &result)
+		err = s.fillInstructionFlags(ctx, &result)
 		if err != nil {
 			return nil, err
 		}
@@ -578,7 +578,7 @@ func (s *store) fillAssignedInstructions(ctx context.Context, result *Aggregatio
 	return nil
 }
 
-func (s *store) fillAutoInstructionFlags(ctx context.Context, result *AggregationResult) error {
+func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationResult) error {
 	alarmIDs := make([]string, len(result.Data))
 	for i, item := range result.Data {
 		alarmIDs[i] = item.ID
@@ -595,44 +595,66 @@ func (s *store) fillAutoInstructionFlags(ctx context.Context, result *Aggregatio
 			"as":           "instruction",
 		}},
 		{"$unwind": "$instruction"},
-		{"$match": bson.M{
-			"instruction.type": InstructionTypeAuto,
-		}},
 		{"$group": bson.M{
-			"_id":      "$alarm",
-			"statuses": bson.M{"$addToSet": "$status"},
+			"_id": "$alarm",
+			"auto_statuses": bson.M{"$addToSet": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$instruction.type", InstructionTypeAuto}},
+				"then": "$status",
+				"else": "$$REMOVE",
+			}}},
+			"manual_statuses": bson.M{"$addToSet": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$instruction.type", InstructionTypeManual}},
+				"then": "$status",
+				"else": "$$REMOVE",
+			}}},
+		}},
+		{"$addFields": bson.M{
+			"auto_running": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$auto_statuses",
+					"cond":  bson.M{"$in": bson.A{"$$this", []int{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}}},
+				}}},
+				0,
+			}},
+			"manual_running": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$manual_statuses",
+					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusWaitResult}},
+				}}},
+				0,
+			}},
+		}},
+		{"$addFields": bson.M{
+			"auto_all_completed": bson.M{"$and": bson.A{
+				bson.M{"$not": "$auto_running"},
+				bson.M{"$gt": bson.A{bson.M{"$size": "$auto_statuses"}, 0}},
+			}},
 		}},
 	})
 	if err != nil {
 		return err
 	}
-	executionStatuses := make([]struct {
-		ID       string `bson:"_id"`
-		Statuses []int  `bson:"statuses"`
-	}, 0)
+
+	type status struct {
+		ID               string `bson:"_id"`
+		AutoRunning      *bool  `bson:"auto_running"`
+		ManualRunning    *bool  `bson:"manual_running"`
+		AutoAllCompleted *bool  `bson:"auto_all_completed"`
+	}
+	executionStatuses := make([]status, 0)
 	err = cursor.All(ctx, &executionStatuses)
 	if err != nil {
 		return err
 	}
-	runningByAlarm := make(map[string]bool, len(executionStatuses))
-	completedByAlarm := make(map[string]bool, len(executionStatuses))
-	for _, item := range executionStatuses {
-		running := false
-		for _, status := range item.Statuses {
-			if status == InstructionExecutionStatusRunning || status == InstructionExecutionStatusWaitResult {
-				running = true
-				break
-			}
-		}
-		runningByAlarm[item.ID] = running
-		completedByAlarm[item.ID] = !running && len(item.Statuses) > 0
+	statusesByAlarm := make(map[string]status, len(executionStatuses))
+	for _, v := range executionStatuses {
+		statusesByAlarm[v.ID] = v
 	}
 
-	for i := range result.Data {
-		isAutoInstructionRunning := runningByAlarm[result.Data[i].ID]
-		isAllAutoInstructionsCompleted := completedByAlarm[result.Data[i].ID]
-		result.Data[i].IsAutoInstructionRunning = &isAutoInstructionRunning
-		result.Data[i].IsAllAutoInstructionsCompleted = &isAllAutoInstructionsCompleted
+	for i, v := range result.Data {
+		result.Data[i].IsAutoInstructionRunning = statusesByAlarm[v.ID].AutoRunning
+		result.Data[i].IsAllAutoInstructionsCompleted = statusesByAlarm[v.ID].AutoAllCompleted
+		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualRunning
 	}
 
 	return nil
@@ -958,7 +980,7 @@ func (s *store) addSearchFilter(r FilterRequest, pipeline *[]bson.M,
 
 func (s *store) addOnlyManualFilter(r FilterRequest, match *[]bson.M) error {
 	if r.OnlyManual {
-		*match = append(*match, bson.M{"$expr": bson.M{"$eq": bson.A{"$meta_alarm_rule.type", metaalarm.RuleManualGroup}}})
+		*match = append(*match, bson.M{"$expr": bson.M{"$eq": bson.A{"$meta_alarm_rule.type", correlation.RuleManualGroup}}})
 	}
 
 	return nil
@@ -1012,7 +1034,7 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 	if r.OnlyParents {
 		*pipeline = append(*pipeline,
 			bson.M{"$lookup": bson.M{
-				"from":         metaalarm.RulesCollectionName,
+				"from":         mongo.MetaAlarmRulesMongoCollection,
 				"localField":   "v.meta",
 				"foreignField": "_id",
 				"as":           "meta_alarm_rule",
@@ -1053,12 +1075,26 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 				"in":           bson.M{"$mergeObjects": bson.A{bson.M{}, "$$this"}},
 			},
 		},
-		"v.duration": bson.M{"$subtract": bson.A{now, bson.M{"$cond": bson.M{
-			"if":   "$v.activation_date",
-			"then": "$v.activation_date",
-			"else": "$v.creation_date",
-		}}}},
-		"v.current_state_duration": bson.M{"$subtract": bson.A{now, "$v.state.t"}},
+		"v.duration": bson.M{"$subtract": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$v.resolved",
+				"then": "$v.resolved",
+				"else": now,
+			}},
+			bson.M{"$cond": bson.M{
+				"if":   "$v.activation_date",
+				"then": "$v.activation_date",
+				"else": "$v.creation_date",
+			}},
+		}},
+		"v.current_state_duration": bson.M{"$subtract": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$v.resolved",
+				"then": "$v.resolved",
+				"else": now,
+			}},
+			"$v.state.t",
+		}},
 	}
 
 	project := bson.M{
@@ -1164,7 +1200,7 @@ func (s *store) getCausesPipeline() []bson.M {
 			"as":               "parents",
 		}},
 		{"$lookup": bson.M{
-			"from":         metaalarm.RulesCollectionName,
+			"from":         mongo.MetaAlarmRulesMongoCollection,
 			"localField":   "parents.v.meta",
 			"foreignField": "_id",
 			"as":           "causes_rules",
