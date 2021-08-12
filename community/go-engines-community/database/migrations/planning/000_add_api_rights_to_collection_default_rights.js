@@ -221,13 +221,36 @@ db.default_rights.find({
 }).forEach(function (doc) {
     db.default_rights.update(
         {
-            crecord_name: "admin",
+            crecord_name: { "$in": ["Manager", "Support", "Visualisation"] },
             crecord_type: "role",
         },
         {
             $set: {
                 ['rights.' + doc._id]: {
                     checksum: 15,
+                    crecord_type: "right",
+                },
+            },
+        }
+    )
+});
+db.default_rights.find({
+    "crecord_name": {
+        "$in": [
+            "api_playlist",
+            "api_viewgroup",
+        ],
+    }
+}).forEach(function (doc) {
+    db.default_rights.updateMany(
+        {
+            crecord_name: { "$in": ["Manager", "Support", "Visualisation"] },
+            crecord_type: "role",
+        },
+        {
+            $set: {
+                ['rights.' + doc._id]: {
+                    checksum: 4,
                     crecord_type: "right",
                 },
             },
