@@ -2,8 +2,11 @@ package token
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/golang-jwt/jwt"
 )
 
 type Service interface {
@@ -14,19 +17,19 @@ type Service interface {
 func NewJwtService(
 	secretKey []byte,
 	issuer string,
-	expirationInterval time.Duration,
+	apiConfigProvider config.ApiConfigProvider,
 ) Service {
 	return &jwtService{
-		secretKey:          secretKey,
-		issuer:             issuer,
-		expirationInterval: expirationInterval,
+		secretKey:         secretKey,
+		issuer:            issuer,
+		apiConfigProvider: apiConfigProvider,
 	}
 }
 
 type jwtService struct {
-	secretKey          []byte
-	issuer             string
-	expirationInterval time.Duration
+	secretKey         []byte
+	issuer            string
+	apiConfigProvider config.ApiConfigProvider
 }
 
 type tokenClaims struct {
@@ -35,17 +38,19 @@ type tokenClaims struct {
 }
 
 func (s *jwtService) GenerateToken(id string) (string, time.Time, error) {
+	cfg := s.apiConfigProvider.Get()
 	now := time.Now()
-	expiresAt := now.Add(s.expirationInterval)
+	expiresAt := now.Add(cfg.TokenExpiration)
 	claims := tokenClaims{
 		ID: id,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expiresAt.Unix(),
+			Id:        utils.NewID(),
 			IssuedAt:  now.Unix(),
 			Issuer:    s.issuer,
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token := jwt.NewWithClaims(cfg.TokenSigningMethod, claims)
 
 	t, err := token.SignedString(s.secretKey)
 	if err != nil {
@@ -57,8 +62,10 @@ func (s *jwtService) GenerateToken(id string) (string, time.Time, error) {
 
 func (s *jwtService) ValidateToken(tokenString string) (string, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		cfg := s.apiConfigProvider.Get()
+
+		if token.Method.Alg() != cfg.TokenSigningMethod.Alg() {
+			return nil, fmt.Errorf("unexpected signing method: %q, expected %q", token.Method.Alg(), cfg.TokenSigningMethod.Alg())
 		}
 
 		return s.secretKey, nil

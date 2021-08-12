@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/saml"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/configprovider"
@@ -21,7 +22,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"time"
 )
 
 const JwtSecretEnv = "CPS_JWT_SECRET"
@@ -51,6 +51,8 @@ type security struct {
 	SessionStore libsession.Store
 	enforcer     libsecurity.Enforcer
 	Logger       zerolog.Logger
+
+	apiConfigProvider config.ApiConfigProvider
 }
 
 // NewSecurity creates new security.
@@ -59,6 +61,7 @@ func NewSecurity(
 	dbClient mongo.DbClient,
 	sessionStore libsession.Store,
 	enforcer libsecurity.Enforcer,
+	apiConfigProvider config.ApiConfigProvider,
 	logger zerolog.Logger,
 ) Security {
 	return &security{
@@ -67,6 +70,8 @@ func NewSecurity(
 		SessionStore: sessionStore,
 		enforcer:     enforcer,
 		Logger:       logger,
+
+		apiConfigProvider: apiConfigProvider,
 	}
 }
 
@@ -161,7 +166,7 @@ func (s *security) GetPasswordEncoder() password.Encoder {
 func (s *security) GetTokenService() token.Service {
 	secretKey := os.Getenv(JwtSecretEnv)
 
-	return token.NewJwtService([]byte(secretKey), canopsis.AppName, time.Second*100)
+	return token.NewJwtService([]byte(secretKey), canopsis.AppName, s.apiConfigProvider)
 }
 func (s *security) GetTokenStore() token.Store {
 	return token.NewMongoStore(s.DbClient, s.Logger)

@@ -23,7 +23,7 @@ func NewBasicProvider(p security.Provider) security.HttpProvider {
 
 func (p *basicProvider) Auth(r *http.Request) (*security.User, error, bool) {
 	header := r.Header.Get(headerAuthorization)
-	if header == "" || !strings.HasPrefix(header, basicPrefix) {
+	if len(header) < len(basicPrefix) || !strings.EqualFold(header[:len(basicPrefix)], basicPrefix) {
 		return nil, nil, false
 	}
 

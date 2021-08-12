@@ -88,7 +88,7 @@ func (a *api) Login(c *gin.Context) {
 
 func (a *api) Logout(c *gin.Context) {
 	header := c.GetHeader(headerAuthorization)
-	if header == "" || !strings.HasPrefix(header, bearerPrefix) {
+	if len(header) < len(bearerPrefix) || !strings.EqualFold(header[:len(bearerPrefix)], bearerPrefix) {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 		return
 	}

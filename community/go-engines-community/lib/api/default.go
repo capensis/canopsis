@@ -95,7 +95,8 @@ func Default(
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = int(sessionStoreSessionMaxAge.Seconds())
 	sessionStore.Options.Secure = secureSession
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, logger)
+	apiConfigProvider := config.NewApiConfigProvider(cfg, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, logger)
 
 	proxyAccessConfig, err := proxy.LoadAccessConfig(configDir)
 	if err != nil {
@@ -239,8 +240,8 @@ func Default(
 	api.AddWorker("import job", func(ctx context.Context) {
 		importWorker.Run(ctx)
 	})
-	api.AddWorker("config reload", updateConfig(timezoneConfigProvider, configAdapter,
-		userInterfaceConfigProvider, userInterfaceAdapter, test, logger))
+	api.AddWorker("config reload", updateConfig(timezoneConfigProvider, apiConfigProvider,
+		configAdapter, userInterfaceConfigProvider, userInterfaceAdapter, test, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})
@@ -253,6 +254,7 @@ func Default(
 
 func updateConfig(
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
+	apiConfigProvider *config.BaseApiConfigProvider,
 	configAdapter config.Adapter,
 	userInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider,
 	userInterfaceAdapter config.UserInterfaceAdapter,
@@ -279,7 +281,13 @@ func updateConfig(
 
 				err = timezoneConfigProvider.Update(cfg)
 				if err != nil {
-					logger.Err(err).Msg("fail to load config")
+					logger.Err(err).Msg("fail to update tz config")
+					continue
+				}
+
+				err = apiConfigProvider.Update(cfg)
+				if err != nil {
+					logger.Err(err).Msg("fail to update api config")
 					continue
 				}
 
@@ -290,7 +298,7 @@ func updateConfig(
 				}
 				err = userInterfaceConfigProvider.Update(userInterfaceConfig)
 				if err != nil {
-					logger.Err(err).Msg("fail to load user interface config")
+					logger.Err(err).Msg("fail to update user interface config")
 					continue
 				}
 			case <-ctx.Done():

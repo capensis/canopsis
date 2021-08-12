@@ -37,7 +37,7 @@ func NewBearerProvider(
 
 func (p *bearerProvider) Auth(r *http.Request) (*security.User, error, bool) {
 	header := r.Header.Get(headerAuthorization)
-	if header == "" || !strings.HasPrefix(header, bearerPrefix) {
+	if len(header) < len(bearerPrefix) || !strings.EqualFold(header[:len(bearerPrefix)], bearerPrefix) {
 		return nil, nil, false
 	}
 
@@ -56,7 +56,7 @@ func (p *bearerProvider) Auth(r *http.Request) (*security.User, error, bool) {
 
 	user, err := p.userProvider.FindByID(r.Context(), userID)
 	if err != nil {
-		return nil, fmt.Errorf("cannot find user: %v", err), true
+		return nil, fmt.Errorf("cannot find user: %w", err), true
 	}
 
 	if user == nil || !user.IsEnabled {
