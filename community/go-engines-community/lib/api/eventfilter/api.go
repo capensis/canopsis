@@ -27,8 +27,8 @@ type api struct {
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param body body EventFilter true "body"
-// @Success 201 {object} EventFilter
+// @Param body body eventfilter.Rule true "body"
+// @Success 201 {object} eventfilter.Rule
 // @Failure 400 {object} common.ErrorResponse
 // @Router /eventfilter/rules [post]
 func (a api) Create(c *gin.Context) {
@@ -67,7 +67,7 @@ func (a api) Create(c *gin.Context) {
 // @Param page query integer true "current page"
 // @Param limit query integer true "items per page"
 // @Param search query string false "search query"
-// @Success 200 {object} common.PaginatedListResponse{data=[]EventFilter}
+// @Success 200 {object} common.PaginatedListResponse{data=[]eventfilter.Rule}
 // @Failure 400 {object} common.ErrorResponse
 // @Router /eventfilter/rules [get]
 func (a api) List(c *gin.Context) {
@@ -102,7 +102,7 @@ func (a api) List(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param id path string true "eventfilter id"
-// @Success 200 {object} EventFilter
+// @Success 200 {object} eventfilter.Rule
 // @Failure 404 {object} common.ErrorResponse
 // @Router /eventfilter/rules/{id} [get]
 func (a api) Get(c *gin.Context) {
@@ -130,8 +130,8 @@ func (a api) Get(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param id path string true "eventfilter id"
-// @Param body body EventFilter true "body"
-// @Success 200 {object} EventFilter
+// @Param body body eventfilter.Rule true "body"
+// @Success 200 {object} eventfilter.Rule
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /eventfilter/rules/{id} [put]
