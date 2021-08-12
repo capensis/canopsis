@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import tinycolor from 'tinycolor2';
 
 import { COLORS } from '@/config';
-import { CAT_ENGINES, COLOR_INDICATOR_TYPES, ENTITIES_STATES_STYLES, HEALTHCHECK_STATUSES } from '@/constants';
+import { CAT_ENGINES, COLOR_INDICATOR_TYPES, ENTITIES_STATES_STYLES } from '@/constants';
 
 /**
  * Get most readable text color ('white' or 'black')
@@ -47,11 +47,18 @@ export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYP
  * @param {HealthcheckNode} node
  * @returns {string}
  */
-export const getHealthcheckNodeColor = node => ({
-  [HEALTHCHECK_STATUSES.ok]: CAT_ENGINES[node.name] ? COLORS.secondary : COLORS.primary,
-  [HEALTHCHECK_STATUSES.notRunning]: COLORS.healthcheck.error,
-  [HEALTHCHECK_STATUSES.unknown]: COLORS.healthcheck.unknown,
-  [HEALTHCHECK_STATUSES.queueOverflow]: COLORS.healthcheck.error,
-  [HEALTHCHECK_STATUSES.tooFewInstances]: COLORS.healthcheck.warning,
-  [HEALTHCHECK_STATUSES.diffInstancesConfig]: COLORS.healthcheck.warning,
-}[node.status] || COLORS.healthcheck.unknown);
+export const getHealthcheckNodeColor = (node) => {
+  if (!node.is_running || node.is_queue_overflown) {
+    return COLORS.healthcheck.error;
+  }
+
+  if (node.is_too_few_instances || node.is_diff_instances_config) {
+    return COLORS.healthcheck.warning;
+  }
+
+  if (node.is_running) {
+    return CAT_ENGINES.includes(node.name) ? COLORS.secondary : COLORS.primary;
+  }
+
+  return COLORS.healthcheck.unknown;
+};

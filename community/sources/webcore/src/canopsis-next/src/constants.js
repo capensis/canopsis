@@ -1682,52 +1682,6 @@ export const REMEDIATION_JOB_EXECUTION_STATUSES = {
  */
 export const MAX_PBEHAVIOR_DEFAULT_TSTOP = 2147483647;
 
-export const ENGINES_NAMES = {
-  event: 'event',
-  webhook: 'engine-webhook',
-  fifo: 'engine-fifo',
-  axe: 'engine-axe',
-  che: 'engine-che',
-  pbehavior: 'engine-pbehavior',
-  action: 'engine-action',
-  service: 'engine-service',
-  dynamicInfo: 'engine-dynamic-info',
-  correlation: 'engine-correlation',
-  heartbeat: 'engine-heartbeat',
-};
-
-export const ENGINES_QUEUE_NAMES = {
-  webhook: 'Engine_webhook',
-  fifo: 'Engine_fifo',
-  axe: 'Engine_axe',
-  che: 'Engine_che',
-  pbehavior: 'Engine_pbehavior',
-  action: 'Engine_action',
-  service: 'Engine_service',
-  dynamicInfo: 'Engine_dynamic_infos',
-  correlation: 'Engine_correlation',
-  heartbeat: 'Engine_heartbeat',
-};
-
-export const ENGINES_NAMES_TO_QUEUE_NAMES = {
-  [ENGINES_QUEUE_NAMES.webhook]: ENGINES_NAMES.webhook,
-  [ENGINES_QUEUE_NAMES.fifo]: ENGINES_NAMES.fifo,
-  [ENGINES_QUEUE_NAMES.axe]: ENGINES_NAMES.axe,
-  [ENGINES_QUEUE_NAMES.che]: ENGINES_NAMES.che,
-  [ENGINES_QUEUE_NAMES.pbehavior]: ENGINES_NAMES.pbehavior,
-  [ENGINES_QUEUE_NAMES.action]: ENGINES_NAMES.action,
-  [ENGINES_QUEUE_NAMES.service]: ENGINES_NAMES.service,
-  [ENGINES_QUEUE_NAMES.dynamicInfo]: ENGINES_NAMES.dynamicInfo,
-  [ENGINES_QUEUE_NAMES.correlation]: ENGINES_NAMES.correlation,
-  [ENGINES_QUEUE_NAMES.heartbeat]: ENGINES_NAMES.heartbeat,
-};
-
-export const CAT_ENGINES = [
-  ENGINES_NAMES.correlation,
-  ENGINES_NAMES.dynamicInfo,
-  ENGINES_NAMES.webhook,
-];
-
 export const REQUEST_METHODS = {
   post: 'POST',
   get: 'GET',
@@ -1958,7 +1912,6 @@ export const HEALTHCHECK_SERVICES_NAMES = {
   enginesChain: 'engines-chain',
 };
 
-// TODO: we have the copy of this map - ENGINES_NAMES
 export const HEALTHCHECK_ENGINES_NAMES = {
   event: 'event',
   webhook: 'engine-webhook',
@@ -1974,14 +1927,11 @@ export const HEALTHCHECK_ENGINES_NAMES = {
   remediation: 'engine-remediation',
 };
 
-export const HEALTHCHECK_STATUSES = {
-  ok: 0,
-  notRunning: 1,
-  unknown: 2,
-  queueOverflow: 3,
-  tooFewInstances: 4,
-  diffInstancesConfig: 5,
-};
+export const CAT_ENGINES = [
+  HEALTHCHECK_ENGINES_NAMES.correlation,
+  HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
+  HEALTHCHECK_ENGINES_NAMES.webhook,
+];
 
 export const HEALTHCHECK_NETWORK_GRAPH_OPTIONS = {
   nodeSpace: 110, // Magic variable. Was calculated by imperative method

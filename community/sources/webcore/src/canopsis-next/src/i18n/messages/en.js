@@ -22,7 +22,6 @@ import {
   IDLE_RULE_ALARM_CONDITIONS,
   USERS_PERMISSIONS,
   ALARMS_OPENED_VALUES,
-  HEALTHCHECK_STATUSES,
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_NAMES,
 } from '@/constants';
@@ -1960,12 +1959,13 @@ export default {
   },
 
   healthcheck: {
+    queueLength: 'Queue length {queueLength}/{maxQueueLength}',
+    instances: 'Instances {instances}/{minInstances}',
     statuses: {
-      [HEALTHCHECK_STATUSES.ok]: 'Ok',
-      [HEALTHCHECK_STATUSES.notRunning]: '{engine} is unavailable',
-      [HEALTHCHECK_STATUSES.queueOverflow]: 'Queue overflow',
-      [HEALTHCHECK_STATUSES.tooFewInstances]: 'Lack of instances',
-      [HEALTHCHECK_STATUSES.diffInstancesConfig]: 'Invalid instances configuration',
+      notRunning: '{engine} is unavailable',
+      queueOverflow: 'Queue overflow',
+      tooFewInstances: 'Lack of instances',
+      diffInstancesConfig: 'Invalid instances configuration',
     },
     services: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {

@@ -3,7 +3,10 @@ import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
 /**
  * @typedef {Object} HealthcheckNode
  * @property {string} name
- * @property {number} status
+ * @property {boolean} is_running
+ * @property {boolean} is_queue_overflown
+ * @property {boolean} is_too_few_instances
+ * @property {boolean} is_diff_instances_config
  */
 
 /**
@@ -29,3 +32,31 @@ import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
  */
 export const getHealthcheckNodeRenderedPositionDiff = (factor = 1) =>
   HEALTHCHECK_NETWORK_GRAPH_OPTIONS.nodeSpace * HEALTHCHECK_NETWORK_GRAPH_OPTIONS.spacingFactor * factor;
+
+/**
+ * Get translate keys for status message
+ *
+ * @param {HealthcheckNode} data
+ * @return {string[]}
+ */
+export const getHealthcheckStatusMessageKeys = (data) => {
+  const statusKeys = [];
+
+  if (!data.is_running) {
+    statusKeys.push('healthcheck.statuses.notRunning');
+  }
+
+  if (data.is_queue_overflown) {
+    statusKeys.push('healthcheck.statuses.queueOverflow');
+  }
+
+  if (data.is_too_few_instances) {
+    statusKeys.push('healthcheck.statuses.tooFewInstances');
+  }
+
+  if (data.is_diff_instances_config) {
+    statusKeys.push('healthcheck.statuses.diffInstancesConfig');
+  }
+
+  return statusKeys;
+};
