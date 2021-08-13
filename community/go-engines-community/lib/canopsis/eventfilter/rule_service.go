@@ -50,10 +50,6 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 			s.logger.Info().Msgf("Event filter rule service: check rule %s", rule.ID)
 		}
 
-		if !rule.Enabled {
-			continue
-		}
-
 		regexMatches, match := rule.Patterns.GetRegexMatches(event)
 		if !match {
 			if event.Debug {
