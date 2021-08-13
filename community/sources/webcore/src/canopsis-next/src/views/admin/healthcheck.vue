@@ -51,7 +51,7 @@ export default {
         HEALTHCHECK_SERVICES_NAMES.events,
       ];
 
-      if (excludedServices.includes(engine.id)) {
+      if (excludedServices.includes(engine.name)) {
         return;
       }
 

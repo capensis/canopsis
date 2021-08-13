@@ -1,8 +1,8 @@
 <template lang="pug">
   div
-    div.pre-wrap(v-if="!engine.is_running") {{ $t('healthcheck.engineDown', { name }) }}
+    p.pre-wrap(v-if="!engine.is_running") {{ $t('healthcheck.engineDown', { name }) }}
     div(v-if="engine.is_too_few_instances")
-      p.pre-wrap {{ $t('healthcheck.activeInstances', { instances, minInstances, optimalInstances }) }}
+      div.pre-wrap {{ $t('healthcheck.activeInstances', { instances, minInstances, optimalInstances }) }}
       healthcheck-engine-instance-diagram(
         :instances="instances",
         :min-instances="minInstances",
@@ -32,11 +32,11 @@ export default {
   },
   computed: {
     name() {
-      return this.getNodeName(this.engine.id);
+      return this.getNodeName(this.engine.name);
     },
 
     isCatEngine() {
-      return CAT_ENGINES.includes(this.engine.id);
+      return CAT_ENGINES.includes(this.engine.name);
     },
 
     queueLength() {

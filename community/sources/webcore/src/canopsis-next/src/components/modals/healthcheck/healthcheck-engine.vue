@@ -27,7 +27,7 @@ export default {
     },
 
     title() {
-      return this.getNodeName(this.engine.id);
+      return this.getNodeName(this.engine.name);
     },
   },
 };
