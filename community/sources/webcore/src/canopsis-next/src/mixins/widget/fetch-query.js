@@ -23,7 +23,7 @@ export const widgetFetchQueryMixin = {
     },
     tabQueryNonce(value, oldValue) {
       if (!this.isEditingMode && value > oldValue) {
-        this.fetchList();
+        this.fetchList({ isQueryNonceUpdate: true });
       }
     },
   },
