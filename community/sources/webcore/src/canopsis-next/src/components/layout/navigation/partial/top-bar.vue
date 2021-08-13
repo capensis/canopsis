@@ -16,7 +16,7 @@
         active-sessions-count(badgeColor="secondary")
         app-version
     v-toolbar-title.white--text.font-weight-regular(v-if="appTitle") {{ appTitle }}
-    v-spacer
+    healthcheck-chips-list
     portal-target(:name="$constants.PORTALS_NAMES.additionalTopBarItems")
     v-toolbar-items
       top-bar-exploitation-menu
@@ -29,6 +29,8 @@
 <script>
 import { authMixin } from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
+
+import HealthcheckChipsList from '@/components/other/healthcheck/healthcheck-chips-list.vue';
 
 import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';
@@ -54,6 +56,7 @@ export default {
     TopBarAdministrationMenu,
     TopBarNotificationsMenu,
     TopBarUserMenu,
+    HealthcheckChipsList,
   },
   mixins: [
     authMixin,

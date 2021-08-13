@@ -173,7 +173,7 @@ export default {
     percent: 'Pourcent | Pourcentages',
     tests: 'Tests',
     total: 'Total',
-    errors: 'Erreurs',
+    error: 'Erreur | Erreurs',
     failures: 'Failures',
     skipped: 'Ignoré',
     current: 'Actuel',

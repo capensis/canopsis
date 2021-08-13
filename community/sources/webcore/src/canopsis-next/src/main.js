@@ -43,6 +43,7 @@ import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
 import CStateCountChangesChips from '@/components/common/chips/c-state-count-changes-chips.vue';
 import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
 import CInstructionJobChip from '@/components/common/chips/c-instruction-job-chip.vue';
+import CEngineChip from '@/components/common/chips/c-engine-chip.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
 import CPageHeader from '@/components/common/page/c-page-header.vue';
@@ -63,6 +64,7 @@ import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue
 import CDraggableStepNumber from '@/components/common/drag-drop/c-draggable-step-number.vue';
 import CHelpIcon from '@/components/common/icons/c-help-icon.vue';
 import CNoEventsIcon from '@/components/common/icons/c-no-events-icon.vue';
+import CResponsiveList from '@/components/common/responsive-list/c-responsive-list.vue';
 
 /**
  * Fields
@@ -215,6 +217,7 @@ Vue.component('alarms-list-table', AlarmsListTable);
 Vue.component('c-alarm-chip', CAlarmChip);
 Vue.component('c-instruction-job-chip', CInstructionJobChip);
 Vue.component('c-test-suite-chip', CTestSuiteChip);
+Vue.component('c-engine-chip', CEngineChip);
 Vue.component('c-page-header', CPageHeader);
 Vue.component('c-advanced-data-table', CAdvancedDataTable);
 Vue.component('c-treeview-data-table', CTreeviewDataTable);
@@ -270,6 +273,7 @@ Vue.component('c-user-picker-field', CUserPickerField);
 Vue.component('c-instruction-type-field', CInstructionTypeField);
 Vue.component('c-priority-field', CPriorityField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
+Vue.component('c-responsive-list', CResponsiveList);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

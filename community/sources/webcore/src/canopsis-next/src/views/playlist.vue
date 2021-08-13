@@ -6,7 +6,7 @@
         c-page-header {{ playlist.name }}
         portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
           v-fade-transition
-            v-toolbar-items.mr-2(v-if="!pending")
+            v-toolbar-items.mr-2(v-if="!pending", :style="{ width: '250px' }")
               span.playlist-timer.white--text.mr-2 {{ time | duration }}
               v-btn(:disabled="!activeTab", dark, icon, @click="prevTab")
                 v-icon skip_previous

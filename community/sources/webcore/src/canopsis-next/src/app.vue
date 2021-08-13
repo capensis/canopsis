@@ -76,6 +76,11 @@ export default {
     registerCurrentUserOnceWatcher() {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
+          // const socket = new Socket(
+          //   '/ws/cat/healthcheck',
+          //   { query: { authkey: this.currentUser.authkey } },
+          // );
+
           await this.fetchAppInfos();
 
           this.setSystemData({

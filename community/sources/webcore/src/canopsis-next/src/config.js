@@ -1,6 +1,13 @@
 import { removeTrailingSlashes } from '@/helpers/url';
 
-export const { BASE_URL, VUE_APP_COOKIE_SESSION_KEY } = process.env;
+export const {
+  NODE_ENV,
+  BASE_URL,
+  VUE_APP_COOKIE_SESSION_KEY,
+  VUE_APP_PAGINATION_LIMIT,
+} = process.env;
+
+export const DEVELOP_MODE = NODE_ENV === 'development';
 
 export const API_BASE_URL = '/backend';
 
@@ -8,11 +15,17 @@ export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_U
 
 export const API_HOST = removeTrailingSlashes(`${APP_HOST}${API_BASE_URL}`);
 
+export const API_SOCKET_URL = '/ws';
+
+export const SOCKET_HOST = APP_HOST.replace(/^http(s?)/, DEVELOP_MODE ? 'ws' : 'wss');
+
+export const API_SOCKET_HOST = removeTrailingSlashes(`${SOCKET_HOST}${API_SOCKET_URL}`);
+
 export const ROUTER_MODE = 'history';
 
 export const COOKIE_SESSION_KEY = VUE_APP_COOKIE_SESSION_KEY;
 
-export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
+export const PAGINATION_LIMIT = parseInt(VUE_APP_PAGINATION_LIMIT, 10);
 
 export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 

@@ -176,6 +176,11 @@ module.exports = {
         secure: false,
         cookieDomainRewrite: '',
       },
+      '/ws': {
+        target: process.env.VUE_APP_API_HOST.replace(/^http(s?)/, 'wss'),
+        pathRewrite: { '^/ws': '' },
+        wss: true,
+      },
     },
     disableHostCheck: true,
     watchOptions: {
