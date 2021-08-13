@@ -1959,28 +1959,30 @@ export default {
   },
 
   healthcheck: {
-    queueLength: 'Queue length {queueLength}/{maxQueueLength}',
-    instances: 'Instances {instances}/{minInstances}',
-    statuses: {
-      notRunning: '{name} is unavailable',
-      queueOverflow: 'Queue overflow',
-      tooFewInstances: 'Lack of instances',
-      diffInstancesConfig: 'Invalid instances configuration',
-    },
+    notRunning: '{name} n\'est pas disponible',
+    queueOverflow: 'Débordement de file d\'attente',
+    lackOfInstances: 'Manque d\'instances',
+    diffInstancesConfig: 'Configuration des instances non valide',
+    queueLength: 'Longueur de la file d\'attente {queueLength}/{maxQueueLength}',
+    instancesCount: 'Instances {instances}/{minInstances}',
+    activeInstances: 'Seules {instances} sont actives sur {minInstances}. Le nombre optimal d\'instances est de {optimalInstances}.',
+    queueOverflowed: 'La file d\'attente est débordée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
+    engineDown: '{name} est en panne, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer le service.',
+    invalidInstancesConfiguration: 'Configuration des instances non valide : les instances du moteur lisent ou écrivent dans différentes files d\'attente.\nVeuillez vérifier les instances.',
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
-        edgeLabel: 'Status check',
+        edgeLabel: 'Vérification de l\'état',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.rabbit]: {
         name: 'RabbitMQ',
-        edgeLabel: 'Status check',
+        edgeLabel: 'Vérification de l\'état',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.redis]: {
         name: 'Redis',
-        edgeLabel: 'FIFO data\nRedis check',
+        edgeLabel: 'Données FIFO\nRedis vérifier',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.events]: {
