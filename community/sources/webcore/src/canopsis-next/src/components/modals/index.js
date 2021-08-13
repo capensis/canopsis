@@ -76,3 +76,4 @@ export { default as CreateScenario } from './scenario/create-scenario.vue';
 export { default as TestSuite } from './test-suite/test-suite.vue';
 export { default as StateSetting } from './state-setting/state-setting.vue';
 export { default as CreateIdleRule } from './idle-rule/create-idle-rule.vue';
+export { default as HealthcheckEngine } from './healthcheck/healthcheck-engine.vue';
