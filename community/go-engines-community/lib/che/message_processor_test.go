@@ -30,7 +30,7 @@ func TestMessageProcessor_Process_GivenRecomputeEntityServiceEvent_ShouldPassItT
 	expectedBody := []byte("test-next-body")
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
 	mockAlarmConfigProvider.EXPECT().Get().Return(config.AlarmConfig{})
-	mockEventFilterService := mock_eventfilter.NewMockEventFilterService(ctrl)
+	mockEventFilterService := mock_eventfilter.NewMockService(ctrl)
 	mockEventFilterService.EXPECT().ProcessEvent(gomock.Any(), gomock.Any()).Return(event, nil)
 	mockEnrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
 	mockEnrichmentCenter.EXPECT().HandleEntityServiceUpdate(gomock.Any(), gomock.Eq("test-component")).
@@ -82,7 +82,7 @@ func TestMessageProcessor_Process_GivenRecomputeEntityServiceEvent_ShouldReplace
 	expectedBody := []byte("test-next-body")
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
 	mockAlarmConfigProvider.EXPECT().Get().Return(config.AlarmConfig{})
-	mockEventFilterService := mock_eventfilter.NewMockEventFilterService(ctrl)
+	mockEventFilterService := mock_eventfilter.NewMockService(ctrl)
 	mockEventFilterService.EXPECT().ProcessEvent(gomock.Any(), gomock.Any()).Return(event, nil)
 	mockEnrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
 	mockEnrichmentCenter.EXPECT().HandleEntityServiceUpdate(gomock.Any(), gomock.Eq("test-component")).
