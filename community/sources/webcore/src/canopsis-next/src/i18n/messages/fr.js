@@ -1968,6 +1968,7 @@ export default {
     activeInstances: 'Seules {instances} sont actives sur {minInstances}. Le nombre optimal d\'instances est de {optimalInstances}.',
     queueOverflowed: 'La file d\'attente est débordée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
     engineDown: '{name} est en panne, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer le service.',
+    engineDownOrSlow: '{name} est en panne ou répond trop lentement, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
     invalidInstancesConfiguration: 'Configuration des instances non valide : les instances du moteur lisent ou écrivent dans différentes files d\'attente.\nVeuillez vérifier les instances.',
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {

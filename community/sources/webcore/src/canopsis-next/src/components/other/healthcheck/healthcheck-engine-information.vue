@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    p.pre-wrap(v-if="!engine.is_running") {{ $t('healthcheck.engineDown', { name }) }}
+    p.pre-wrap(v-if="!engine.is_running") {{ systemDownMessage }}
     div(v-if="engine.is_too_few_instances")
       div.pre-wrap {{ $t('healthcheck.activeInstances', { instances, minInstances, optimalInstances }) }}
       healthcheck-engine-instance-diagram(
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { CAT_ENGINES } from '@/constants';
+import { CAT_ENGINES, HEALTHCHECK_ENGINES_NAMES } from '@/constants';
 
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
 
@@ -57,6 +57,13 @@ export default {
 
     optimalInstances() {
       return this.engine.optimal_instances;
+    },
+
+    systemDownMessage() {
+      return this.$t(
+        this.engine.name === HEALTHCHECK_ENGINES_NAMES.fifo ? 'healthcheck.engineDownOrSlow' : 'healthcheck.engineDownOrSlow',
+        { name: this.name },
+      );
     },
   },
 };

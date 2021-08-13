@@ -1968,6 +1968,7 @@ export default {
     activeInstances: 'Only {instances} is active out of {minInstances}. The optimal number of instances is {optimalInstances}.',
     queueOverflowed: 'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
     engineDown: '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
+    engineDownOrSlow: '{name} is down or responds too slow, the system is not operational.\nPlease check the log or restart the instance.',
     invalidInstancesConfiguration: 'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
