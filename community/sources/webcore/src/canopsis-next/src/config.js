@@ -42,6 +42,8 @@ export const POPUP_TICK_DELAY = 100;
 
 export const SIDE_BAR_WIDTH = 250;
 
+export const TOP_BAR_HEIGHT = 48;
+
 export const EXPAND_DEFAULT_MAX_LETTERS = 50;
 
 export const SCHEMA_EMBEDDED_KEY = '_embedded';
@@ -143,6 +145,7 @@ export const API_ROUTES = {
   file: '/api/v4/cat/file',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
+  healthcheck: '/api/v4/cat/healthcheck',
   remediation: {
     instructions: '/api/v4/cat/instructions',
     instructionStats: '/api/v4/cat/instruction-stats',
@@ -198,6 +201,13 @@ export const COLORS = {
     error: '#ffa800',
     failed: '#ff5252',
     skipped: '#5a6D80',
+  },
+  healthcheck: {
+    error: '#FF5252',
+    warning: '#FFA800',
+    unknown: '#C4C4C4',
+    edgeGray: '#979797',
+    edgeBlack: '#000000',
   },
   statsDefault: '#dddddd',
   impactState: [

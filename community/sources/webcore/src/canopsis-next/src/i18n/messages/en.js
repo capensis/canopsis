@@ -10,7 +10,6 @@ import {
   USER_PERMISSIONS_PREFIXES,
   REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
-  ENGINES_NAMES,
   WIDGET_TYPES,
   ACTION_TYPES,
   ENTITY_TYPES,
@@ -23,6 +22,8 @@ import {
   IDLE_RULE_ALARM_CONDITIONS,
   USERS_PERMISSIONS,
   ALARMS_OPENED_VALUES,
+  HEALTHCHECK_SERVICES_NAMES,
+  HEALTHCHECK_ENGINES_NAMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1957,51 +1958,96 @@ export default {
     },
   },
 
-  engines: {
-    [ENGINES_NAMES.event]: {
-      title: 'Event',
-      description: 'Comes from resource',
+  healthcheck: {
+    queueLength: 'Queue length {queueLength}/{maxQueueLength}',
+    instances: 'Instances {instances}/{minInstances}',
+    statuses: {
+      notRunning: '{engine} is unavailable',
+      queueOverflow: 'Queue overflow',
+      tooFewInstances: 'Lack of instances',
+      diffInstancesConfig: 'Invalid instances configuration',
     },
+    services: {
+      [HEALTHCHECK_SERVICES_NAMES.mongo]: {
+        label: 'MongoDB',
+        edgeLabel: 'Status check',
+      },
 
-    [ENGINES_NAMES.webhook]: {
-      title: 'Webhook',
-      description: 'Triggers the webhooks launch',
+      [HEALTHCHECK_SERVICES_NAMES.rabbit]: {
+        label: 'RabbitMQ',
+        edgeLabel: 'Status check',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.redis]: {
+        label: 'Redis',
+        edgeLabel: 'FIFO data\nRedis check',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.events]: {
+        label: 'Events',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.api]: {
+        label: 'Canopsis API',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.enginesChain]: {
+        label: 'Engines chain',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.healthcheck]: {
+        label: 'Healthcheck',
+      },
     },
-    [ENGINES_NAMES.fifo]: {
-      title: 'FIFO',
-      description: 'Manages the queue of events and alarms',
-    },
-    [ENGINES_NAMES.axe]: {
-      title: 'AXE',
-      description: 'Creates alarms and performs actions with them',
-    },
-    [ENGINES_NAMES.che]: {
-      title: 'CHE',
-      description: 'Applies eventfilters and created entities',
-    },
-    [ENGINES_NAMES.pbehavior]: {
-      title: 'Pbehavior',
-      description: 'Checks if the alarm is under PBehvaior',
-    },
-    [ENGINES_NAMES.action]: {
-      title: 'Action',
-      description: 'Triggers the actions launch',
-    },
-    [ENGINES_NAMES.service]: {
-      title: 'Service',
-      description: 'Updates counters and generates service-events',
-    },
-    [ENGINES_NAMES.dynamicInfo]: {
-      title: 'Dynamic infos',
-      description: 'Adds dynamic infos to alarm',
-    },
-    [ENGINES_NAMES.correlation]: {
-      title: 'Correlation',
-      description: 'Adds dynamic infos to alarm',
-    },
-    [ENGINES_NAMES.heartbeat]: {
-      title: 'Heartbeat',
-      description: 'Adds dynamic infos to alarm',
+    engines: {
+      [HEALTHCHECK_ENGINES_NAMES.event]: {
+        label: 'Event',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.webhook]: {
+        label: 'Webhook',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.fifo]: {
+        label: 'FIFO',
+        edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.axe]: {
+        label: 'AXE',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.che]: {
+        label: 'CHE',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
+        label: 'Pbehavior',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.action]: {
+        label: 'Action',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.service]: {
+        label: 'Service',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
+        label: 'Dynamic infos',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.correlation]: {
+        label: 'Correlation',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.heartbeat]: {
+        label: 'Heartbeat',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.remediation]: {
+        label: 'Remediation',
+      },
     },
   },
 

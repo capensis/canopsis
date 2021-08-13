@@ -10,7 +10,6 @@ import {
   USER_PERMISSIONS_PREFIXES,
   REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
-  ENGINES_NAMES,
   WIDGET_TYPES,
   ACTION_TYPES,
   ENTITY_TYPES,
@@ -23,6 +22,8 @@ import {
   IDLE_RULE_ALARM_CONDITIONS,
   USERS_PERMISSIONS,
   ALARMS_OPENED_VALUES,
+  HEALTHCHECK_SERVICES_NAMES,
+  HEALTHCHECK_ENGINES_NAMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1957,51 +1958,96 @@ export default {
     },
   },
 
-  engines: {
-    [ENGINES_NAMES.event]: {
-      title: 'Event',
-      description: 'Provient de la ressource',
+  healthcheck: {
+    queueLength: 'Queue length {queueLength}/{maxQueueLength}',
+    instances: 'Instances {instances}/{minInstances}',
+    statuses: {
+      notRunning: '{engine} is unavailable',
+      queueOverflow: 'Queue overflow',
+      tooFewInstances: 'Lack of instances',
+      diffInstancesConfig: 'Invalid instances configuration',
     },
+    services: {
+      [HEALTHCHECK_SERVICES_NAMES.mongo]: {
+        label: 'MongoDB',
+        edgeLabel: 'Status check',
+      },
 
-    [ENGINES_NAMES.webhook]: {
-      title: 'Webhook',
-      description: 'Gère les webhooks',
+      [HEALTHCHECK_SERVICES_NAMES.rabbit]: {
+        label: 'RabbitMQ',
+        edgeLabel: 'Status check',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.redis]: {
+        label: 'Redis',
+        edgeLabel: 'FIFO data\nRedis check',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.events]: {
+        label: 'Events',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.api]: {
+        label: 'Canopsis API',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.enginesChain]: {
+        label: 'Engines chain',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.healthcheck]: {
+        label: 'Healthcheck',
+      },
     },
-    [ENGINES_NAMES.fifo]: {
-      title: 'FIFO',
-      description: 'Gère la file d\'attente des événements et des alarmes',
-    },
-    [ENGINES_NAMES.axe]: {
-      title: 'AXE',
-      description: 'Crée des alarmes et effectue des actions avec elles',
-    },
-    [ENGINES_NAMES.che]: {
-      title: 'CHE',
-      description: 'Applique les filtres d\'événements et les entités créées',
-    },
-    [ENGINES_NAMES.pbehavior]: {
-      title: 'Pbehavior',
-      description: 'Vérifie si l\'alarme est sous PBehavior',
-    },
-    [ENGINES_NAMES.action]: {
-      title: 'Action',
-      description: 'Déclenche le lancement des actions',
-    },
-    [ENGINES_NAMES.service]: {
-      title: 'Service',
-      description: 'Met à jour les compteurs et génère service-events',
-    },
-    [ENGINES_NAMES.dynamicInfo]: {
-      title: 'Dynamic infos',
-      description: 'Ajoute des informations dynamiques à l\'alarme',
-    },
-    [ENGINES_NAMES.correlation]: {
-      title: 'Correlation',
-      description: 'Gère la corrélation',
-    },
-    [ENGINES_NAMES.heartbeat]: {
-      title: 'Heartbeat',
-      description: 'Génère une alarme si un type d\'évènement ne se produit plus',
+    engines: {
+      [HEALTHCHECK_ENGINES_NAMES.event]: {
+        label: 'Event',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.webhook]: {
+        label: 'Webhook',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.fifo]: {
+        label: 'FIFO',
+        edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.axe]: {
+        label: 'AXE',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.che]: {
+        label: 'CHE',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
+        label: 'Pbehavior',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.action]: {
+        label: 'Action',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.service]: {
+        label: 'Service',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
+        label: 'Dynamic infos',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.correlation]: {
+        label: 'Correlation',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.heartbeat]: {
+        label: 'Heartbeat',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.remediation]: {
+        label: 'Remediation',
+      },
     },
   },
 
