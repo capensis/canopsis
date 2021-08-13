@@ -118,7 +118,7 @@ Feature: Create a user
     }
     """
 
-  Scenario: given create request should auth new user by api key auth
+  Scenario: given create request should auth new user by password
     When I am admin
     When I do POST /api/v4/users:
     """
@@ -136,7 +136,14 @@ Feature: Create a user
     }
     """
     Then the response code should be 201
-    When I am authenticated with api key "{{ .lastResponse.authkey }}"
+    When I do POST /api/v4/login:
+    """json
+    {
+      "username": "test-user-to-create-4-name",
+      "password": "test-password"
+    }
+    """
+    When I set header Authorization=Bearer {{ .lastResponse.access_token }}
     When I do GET /api/v4/account/me
     Then the response code should be 200
     Then the response body should contain:
