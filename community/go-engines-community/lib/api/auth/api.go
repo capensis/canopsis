@@ -45,6 +45,16 @@ type api struct {
 	sessionStore session.Store
 }
 
+// Log in
+// @Summary Log in
+// @Description Log in
+// @Tags auth
+// @ID auth-login
+// @Accept json
+// @Produce json
+// @Param body body loginRequest true "body"
+// @Success 200 {object} loginResponse
+// @Router /login [post]
 func (a *api) Login(c *gin.Context) {
 	var request loginRequest
 
@@ -86,6 +96,15 @@ func (a *api) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// Log out
+// @Summary Log out
+// @Description Log out
+// @Tags auth
+// @ID auth-logout
+// @Accept json
+// @Produce json
+// @Success 204
+// @Router /logout [post]
 func (a *api) Logout(c *gin.Context) {
 	header := c.GetHeader(headerAuthorization)
 	if len(header) < len(bearerPrefix) || !strings.EqualFold(header[:len(bearerPrefix)], bearerPrefix) {
@@ -107,6 +126,17 @@ func (a *api) Logout(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+// Get logged user count
+// @Summary Get logged user count
+// @Description Get logged user count
+// @Tags auth
+// @ID auth-logged-user-count
+// @Security ApiKeyAuth
+// @Security BasicAuth
+// @Accept json
+// @Produce json
+// @Success 204
+// @Router /logged-user-count [get]
 func (a *api) GetLoggedUserCount(c *gin.Context) {
 	count, err := a.tokenStore.Count(c.Request.Context())
 	if err != nil {

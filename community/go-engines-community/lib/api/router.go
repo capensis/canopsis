@@ -43,6 +43,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewstats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -180,6 +181,14 @@ func RegisterRoutes(
 		protected.GET("/account/me", account.NewApi(account.NewStore(dbClient)).Me)
 		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
 		protected.GET("/sessions-count", sessionauthApi.GetSessionsCount())
+
+		viewStatsRouter := protected.Group("/view-stats")
+		{
+			viewStatsApi := viewstats.NewApi(stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
+			viewStatsRouter.GET("", middleware.OnlyAuth(), viewStatsApi.List)
+			viewStatsRouter.POST("", middleware.OnlyAuth(), viewStatsApi.Create)
+			viewStatsRouter.PUT("/:id", middleware.OnlyAuth(), viewStatsApi.Update)
+		}
 
 		userRouter := protected.Group("/users")
 		{
