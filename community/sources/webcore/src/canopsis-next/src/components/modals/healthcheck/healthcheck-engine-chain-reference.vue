@@ -32,15 +32,20 @@ export default {
   components: { HealthcheckNetworkGraph, ModalWrapper },
   mixins: [healthcheckNodesMixin, entitiesInfoMixin],
   computed: {
-    engines() {
-      const nodeNames = Object.values(HEALTHCHECK_ENGINES_NAMES)
-        .filter(name => this.isCatVersion || !CAT_ENGINES.includes(name));
+    nodes() {
+      return Object.values(HEALTHCHECK_ENGINES_NAMES)
+        .reduce((acc, name) => {
+          if (this.isCatVersion || !CAT_ENGINES.includes(name)) {
+            acc.push({ name, is_running: true });
+          }
 
+          return acc;
+        }, []);
+    },
+
+    engines() {
       return {
-        nodes: nodeNames.map(name => ({
-          name,
-          is_running: true,
-        })),
+        nodes: this.nodes,
         edges: this.isCatVersion
           ? HEALTHCHECK_ENGINES_CAT_REFERENCE_EDGES
           : HEALTHCHECK_ENGINES_REFERENCE_EDGES,

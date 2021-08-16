@@ -312,7 +312,6 @@ Vue.use(ModalsPlugin, {
     [MODALS.createMetaAlarmRule]: { maxWidth: 920, lazy: true },
     [MODALS.createEventFilterRuleAction]: { maxWidth: 920 },
     [MODALS.testSuite]: { maxWidth: 920 },
-    [MODALS.healthcheckEngineOrderExample]: { contentClass: 'v-dialog__healthcheck-engine-order' },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },
