@@ -221,7 +221,7 @@ db.default_rights.find({
 }).forEach(function (doc) {
     db.default_rights.update(
         {
-            crecord_name: { "$in": ["Manager", "Support", "Visualisation"] },
+            crecord_name: "admin",
             crecord_type: "role",
         },
         {
