@@ -1959,94 +1959,96 @@ export default {
   },
 
   healthcheck: {
-    queueLength: 'Queue length {queueLength}/{maxQueueLength}',
-    instances: 'Instances {instances}/{minInstances}',
-    statuses: {
-      notRunning: '{engine} is unavailable',
-      queueOverflow: 'Queue overflow',
-      tooFewInstances: 'Lack of instances',
-      diffInstancesConfig: 'Invalid instances configuration',
-    },
-    services: {
+    notRunning: '{name} n\'est pas disponible',
+    queueOverflow: 'Débordement de file d\'attente',
+    lackOfInstances: 'Manque d\'instances',
+    diffInstancesConfig: 'Configuration des instances non valide',
+    queueLength: 'Longueur de la file d\'attente {queueLength}/{maxQueueLength}',
+    instancesCount: 'Instances {instances}/{minInstances}',
+    activeInstances: 'Seules {instances} sont actives sur {minInstances}. Le nombre optimal d\'instances est de {optimalInstances}.',
+    queueOverflowed: 'La file d\'attente est débordée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
+    engineDown: '{name} est en panne, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer le service.',
+    engineDownOrSlow: '{name} est en panne ou répond trop lentement, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
+    invalidInstancesConfiguration: 'Configuration des instances non valide : les instances du moteur lisent ou écrivent dans différentes files d\'attente.\nVeuillez vérifier les instances.',
+    nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
-        label: 'MongoDB',
-        edgeLabel: 'Status check',
+        name: 'MongoDB',
+        edgeLabel: 'Vérification de l\'état',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.rabbit]: {
-        label: 'RabbitMQ',
-        edgeLabel: 'Status check',
+        name: 'RabbitMQ',
+        edgeLabel: 'Vérification de l\'état',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.redis]: {
-        label: 'Redis',
-        edgeLabel: 'FIFO data\nRedis check',
+        name: 'Redis',
+        edgeLabel: 'Données FIFO\nRedis vérifier',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.events]: {
-        label: 'Events',
+        name: 'Events',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.api]: {
-        label: 'Canopsis API',
+        name: 'Canopsis API',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.enginesChain]: {
-        label: 'Engines chain',
+        name: 'Engines chain',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.healthcheck]: {
-        label: 'Healthcheck',
+        name: 'Healthcheck',
       },
-    },
-    engines: {
+
       [HEALTHCHECK_ENGINES_NAMES.event]: {
-        label: 'Event',
+        name: 'Event',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.webhook]: {
-        label: 'Webhook',
+        name: 'Webhook',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.fifo]: {
-        label: 'FIFO',
+        name: 'FIFO',
         edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.axe]: {
-        label: 'AXE',
+        name: 'AXE',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.che]: {
-        label: 'CHE',
+        name: 'CHE',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
-        label: 'Pbehavior',
+        name: 'Pbehavior',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.action]: {
-        label: 'Action',
+        name: 'Action',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.service]: {
-        label: 'Service',
+        name: 'Service',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
-        label: 'Dynamic infos',
+        name: 'Dynamic infos',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.correlation]: {
-        label: 'Correlation',
+        name: 'Correlation',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.heartbeat]: {
-        label: 'Heartbeat',
+        name: 'Heartbeat',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.remediation]: {
-        label: 'Remediation',
+        name: 'Remediation',
       },
     },
   },

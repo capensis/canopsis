@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { HEALTHCHECK_SERVICES_NAMES, MODALS } from '@/constants';
+
 import { createNamespacedHelpers } from 'vuex';
 
 import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation/healthcheck-network-graph.vue';
@@ -42,7 +44,31 @@ export default {
       fetchHealthcheckStatusWithoutStore: 'fetchStatusWithoutStore',
     }),
 
-    showNodeModal() {},
+    showNodeModal(engine) {
+      const excludedServices = [
+        HEALTHCHECK_SERVICES_NAMES.api,
+        HEALTHCHECK_SERVICES_NAMES.healthcheck,
+        HEALTHCHECK_SERVICES_NAMES.events,
+      ];
+
+      if (excludedServices.includes(engine.name)) {
+        return;
+      }
+
+      const hasError = !engine.is_running
+        || engine.is_queue_overflown
+        || engine.is_too_few_instances
+        || engine.is_diff_instances_config;
+
+      if (hasError) {
+        this.$modals.show({
+          name: MODALS.healthcheckEngine,
+          config: {
+            engine,
+          },
+        });
+      }
+    },
 
     async fetchList() {
       this.pending = true;

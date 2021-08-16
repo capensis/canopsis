@@ -128,6 +128,7 @@ export const MODALS = {
   stateSetting: 'state-setting',
   testSuite: 'test-suite',
   createIdleRule: 'create-idle-rule',
+  healthcheckEngine: 'healthcheck-engine',
 };
 
 export const EVENT_ENTITY_TYPES = {
