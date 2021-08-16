@@ -22,7 +22,7 @@ import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active
 
 import { authMixin } from '@/mixins/auth';
 import systemMixin from '@/mixins/system';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 import entitiesUserMixin from '@/mixins/entities/user';
 import keepaliveMixin from '@/mixins/entities/keepalive';
 

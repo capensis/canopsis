@@ -129,6 +129,7 @@ export const MODALS = {
   testSuite: 'test-suite',
   createIdleRule: 'create-idle-rule',
   healthcheckEngine: 'healthcheck-engine',
+  healthcheckEngineChainReference: 'healthcheck-engine-chain-reference',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -1914,7 +1915,6 @@ export const HEALTHCHECK_SERVICES_NAMES = {
 };
 
 export const HEALTHCHECK_ENGINES_NAMES = {
-  event: 'event',
   webhook: 'engine-webhook',
   fifo: 'engine-fifo',
   axe: 'engine-axe',
@@ -1924,9 +1924,74 @@ export const HEALTHCHECK_ENGINES_NAMES = {
   service: 'engine-service',
   dynamicInfos: 'engine-dynamic-infos',
   correlation: 'engine-correlation',
-  heartbeat: 'engine-heartbeat',
   remediation: 'engine-remediation',
 };
+
+export const HEALTHCHECK_ENGINES_REFERENCE_EDGES = [
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.fifo,
+    to: HEALTHCHECK_ENGINES_NAMES.che,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.che,
+    to: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+    to: HEALTHCHECK_ENGINES_NAMES.axe,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.axe,
+    to: HEALTHCHECK_ENGINES_NAMES.remediation,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.axe,
+    to: HEALTHCHECK_ENGINES_NAMES.service,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.service,
+    to: HEALTHCHECK_ENGINES_NAMES.action,
+  },
+];
+
+export const HEALTHCHECK_ENGINES_CAT_REFERENCE_EDGES = [
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.fifo,
+    to: HEALTHCHECK_ENGINES_NAMES.che,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.che,
+    to: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+    to: HEALTHCHECK_ENGINES_NAMES.axe,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.axe,
+    to: HEALTHCHECK_ENGINES_NAMES.remediation,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.axe,
+    to: HEALTHCHECK_ENGINES_NAMES.correlation,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.correlation,
+    to: HEALTHCHECK_ENGINES_NAMES.service,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.service,
+    to: HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
+    to: HEALTHCHECK_ENGINES_NAMES.action,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.action,
+    to: HEALTHCHECK_ENGINES_NAMES.webhook,
+  },
+];
 
 export const CAT_ENGINES = [
   HEALTHCHECK_ENGINES_NAMES.correlation,

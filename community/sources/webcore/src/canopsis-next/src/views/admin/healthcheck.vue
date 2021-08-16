@@ -9,6 +9,7 @@
           :services="services",
           :engines="engines",
           :has-invalid-engines-order="hasInvalidEnginesOrder",
+          show-description,
           @click="showNodeModal"
         )
       c-fab-btn(@refresh="fetchList")
@@ -44,7 +45,7 @@ export default {
       fetchHealthcheckStatusWithoutStore: 'fetchStatusWithoutStore',
     }),
 
-    showNodeModal(engine) {
+    showEngineModal(engine) {
       const excludedServices = [
         HEALTHCHECK_SERVICES_NAMES.api,
         HEALTHCHECK_SERVICES_NAMES.healthcheck,
@@ -67,6 +68,20 @@ export default {
             engine,
           },
         });
+      }
+    },
+
+    showEngineChainReferenceModal() {
+      this.$modals.show({
+        name: MODALS.healthcheckEngineChainReference,
+      });
+    },
+
+    showNodeModal(engine) {
+      if (engine.name !== HEALTHCHECK_SERVICES_NAMES.enginesChain) {
+        this.showEngineModal(engine);
+      } else if (this.hasInvalidEnginesOrder) {
+        this.showEngineChainReferenceModal(engine);
       }
     },
 

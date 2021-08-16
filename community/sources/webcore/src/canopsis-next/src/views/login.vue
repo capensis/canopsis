@@ -11,7 +11,7 @@
 
 <script>
 import { authMixin } from '@/mixins/auth';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import BaseLogin from '@/components/other/login/base-login.vue';
 import CasLogin from '@/components/other/login/cas-login.vue';
