@@ -247,12 +247,153 @@ func TestScheduler_AckEvent_GivenMetaAlarmEventAndChildNextEvent_ShouldPublishCh
 	body := []byte("test-body")
 
 	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(metaAlarmID), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil))
 	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(childID), gomock.Any()).
 		Return(redis.NewBoolResult(true, nil))
-	mockRedisLockStorage.EXPECT().Del(gomock.Any(), gomock.Eq(metaAlarmID)).
-		Return(redis.NewIntResult(1, nil))
 	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
 	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(childID)).
+		Return(redis.NewStringResult(string(body), nil))
+	mockChannel := mock_amqp.NewMockChannel(ctrl)
+	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(nil)
+	publishToQueue := "test-queue"
+	lockTtl := 100
+	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
+	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+
+	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
+		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder, true)
+
+	err := service.AckEvent(ctx, metaAlarmEvent)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+}
+
+func TestScheduler_AckEvent_GivenMetaAlarmEventAndMetaAlarmNextEvent_ShouldPublishMetaAlarmNextEvent(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	metaAlarmID := "meta-alarm-entity-test/metaalarm"
+	childID := "test-resource/test-component"
+	metaAlarmEvent := types.Event{
+		Connector:         "engine",
+		ConnectorName:     "correlation",
+		Component:         "metaalarm",
+		Resource:          "meta-alarm-entity-test",
+		MetaAlarmChildren: &[]string{childID},
+	}
+	body := []byte("test-body")
+
+	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(metaAlarmID), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(childID), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(childID)).
+		Return(redis.NewStringResult("", redis.Nil))
+	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(metaAlarmID)).
+		Return(redis.NewStringResult(string(body), nil))
+	mockChannel := mock_amqp.NewMockChannel(ctrl)
+	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(nil)
+	publishToQueue := "test-queue"
+	lockTtl := 100
+	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
+	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+
+	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
+		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder, true)
+
+	err := service.AckEvent(ctx, metaAlarmEvent)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+}
+
+func TestScheduler_AckEvent_GivenMetaAlarmEventAndNotNextEvent_ShouldUnlockAll(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	metaAlarmID := "meta-alarm-entity-test/metaalarm"
+	childID := "test-resource/test-component"
+	metaAlarmEvent := types.Event{
+		Connector:         "engine",
+		ConnectorName:     "correlation",
+		Component:         "metaalarm",
+		Resource:          "meta-alarm-entity-test",
+		MetaAlarmChildren: &[]string{childID},
+	}
+
+	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(metaAlarmID), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(childID), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisLockStorage.EXPECT().Del(gomock.Any(), gomock.Eq(metaAlarmID), gomock.Eq(childID)).
+		Return(redis.NewIntResult(2, nil))
+	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(childID)).
+		Return(redis.NewStringResult("", redis.Nil))
+	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(metaAlarmID)).
+		Return(redis.NewStringResult("", redis.Nil))
+	mockChannel := mock_amqp.NewMockChannel(ctrl)
+	publishToQueue := "test-queue"
+	lockTtl := 100
+	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
+	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+
+	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
+		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder, true)
+
+	err := service.AckEvent(ctx, metaAlarmEvent)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+}
+
+func TestScheduler_AckEvent_GivenMetaAlarmEventAndAnotherMetaAlarmNextEvent_ShouldPublishMetaAlarmNextEvent(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	metaAlarmID1 := "meta-alarm-entity-test-1/metaalarm"
+	metaAlarmID2 := "meta-alarm-entity-test-2/metaalarm"
+	childID := "test-resource/test-component"
+	metaAlarmEvent := types.Event{
+		Connector:               "engine",
+		ConnectorName:           "correlation",
+		Component:               "metaalarm",
+		Resource:                "meta-alarm-entity-test-1",
+		MetaAlarmChildren:       &[]string{childID},
+		MetaAlarmRelatedParents: []string{metaAlarmID2},
+	}
+	body := []byte("{\"ma_children\":[\"test-resource/test-component\"]}")
+
+	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(metaAlarmID1), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(metaAlarmID2), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(childID), gomock.Any()).
+		Return(redis.NewBoolResult(true, nil)).Times(2)
+	mockRedisLockStorage.EXPECT().Del(gomock.Any(), gomock.Eq(metaAlarmID1), gomock.Eq(childID)).
+		Return(redis.NewIntResult(2, nil))
+	mockRedisLockStorage.EXPECT().MSetNX(gomock.Any(), gomock.Eq(map[string]interface{}{childID: 1})).
+		Return(redis.NewBoolResult(true, nil))
+	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(childID)).
+		Return(redis.NewStringResult("", redis.Nil))
+	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(metaAlarmID1)).
+		Return(redis.NewStringResult("", redis.Nil))
+	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(metaAlarmID2)).
 		Return(redis.NewStringResult(string(body), nil))
 	mockChannel := mock_amqp.NewMockChannel(ctrl)
 	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).

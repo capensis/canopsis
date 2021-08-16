@@ -24,7 +24,13 @@ type QueueLock interface {
 	// ExtendAndPopMultiple tries to expire lockID and pops item from lockID queue.
 	// If next item exists it tries to lock lockIDList.
 	// Arg getLockIDList retrieves lockIDList from next item.
-	ExtendAndPopMultiple(ctx context.Context, lockID string, getLockIDList func([]byte) ([]string, error), asyncUnlock bool) ([]byte, error)
+	ExtendAndPopMultiple(ctx context.Context, lockID string, getLockIDList func([]byte) ([]string, error)) ([]byte, error)
+	// ExtendAndPopRelatedOrMultiple tries to expire lockID and lockIDList and pops item from lockIDList queues.
+	// If at least one next item from lockIDList exists it returns all next events from lockIDList
+	// and unlocks lockIDList without events.
+	// If there aren't next items it pops next item from lockID. If lockID queue is empty
+	// it unlocks all locks.
+	ExtendAndPopRelatedOrMultiple(ctx context.Context, lockIDList []string, lockID string) ([][]byte, error)
 	// PopOrUnlock tries to extend lock lockID and pops item from queue by lockID.
 	// It unlocks lockID if either fails.
 	PopOrUnlock(ctx context.Context, lockID string, asyncUnlock bool) ([]byte, error)
@@ -34,7 +40,7 @@ type QueueLock interface {
 	IsLocked(ctx context.Context, lockID string) bool
 	// IsEmpty returns true if queue lockID is empty.
 	IsEmpty(ctx context.Context, lockID string) bool
-	Unlock(ctx context.Context, lockID string) error
+	Unlock(ctx context.Context, lockID ...string) error
 }
 
 const defaultLockValue = 1
@@ -149,36 +155,15 @@ func (s *baseQueueLock) ExtendAndPopMultiple(
 	ctx context.Context,
 	lockID string,
 	f func([]byte) ([]string, error),
-	asyncUnlock bool,
 ) (res []byte, resErr error) {
 	s.mutex.Lock(lockID)
 	var extended bool
 	var err error
 
 	defer func() {
-		if resErr == nil && res != nil {
-			err := s.mutex.Unlock(lockID)
-			if err != nil {
-				s.logger.Err(err).Msg("cannot unlock mutex")
-			}
-			return
-		}
-
-		// Unlock in another goroutine for performance.
-		if asyncUnlock {
-			go func() {
-				defer func() {
-					err := s.mutex.Unlock(lockID)
-					if err != nil {
-						s.logger.Err(err).Msg("cannot unlock mutex")
-					}
-				}()
-			}()
-		} else {
-			err := s.mutex.Unlock(lockID)
-			if err != nil {
-				s.logger.Err(err).Msg("cannot unlock mutex")
-			}
+		err := s.mutex.Unlock(lockID)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot unlock mutex")
 		}
 	}()
 
@@ -224,6 +209,92 @@ func (s *baseQueueLock) ExtendAndPopMultiple(
 	}
 
 	return nextItem, nil
+}
+
+func (s *baseQueueLock) ExtendAndPopRelatedOrMultiple(
+	ctx context.Context,
+	lockIDList []string,
+	lockID string,
+) (res [][]byte, resErr error) {
+	s.mutex.Lock(lockID)
+	var extended bool
+	var err error
+
+	defer func() {
+		err := s.mutex.Unlock(lockID)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot unlock mutex")
+		}
+	}()
+
+	/**
+	The ExtendAndPopRelatedOrMultiple function is typically used in the metaalarm context,
+	since metaalarm leaves a lock after itself, we should try to extend it.
+	If success, then there is an event in the queue. We can try to pop it and lock children.
+	*/
+	extended, err = s.extendLock(ctx, lockID)
+	if !extended || err != nil {
+		return nil, err
+	}
+
+	// Sort to prevent deadlock
+	sort.Strings(lockIDList)
+	s.mutex.LockMultiple(lockIDList...)
+
+	defer func() {
+		err := s.mutex.UnlockMultiple(lockIDList...)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot unlock mutex")
+		}
+	}()
+
+	events := make([][]byte, 0)
+	noEvents := make([]string, 0)
+	for _, relatedLockID := range lockIDList {
+		extended, err = s.extendLock(ctx, relatedLockID)
+		if err != nil {
+			return nil, err
+		}
+		if extended {
+			event, err := s.pop(ctx, relatedLockID)
+			if err != nil {
+				return nil, err
+			}
+			if event == nil {
+				noEvents = append(noEvents, relatedLockID)
+			} else {
+				events = append(events, event)
+			}
+		}
+	}
+
+	if len(events) > 0 {
+		if len(noEvents) > 0 {
+			err = s.Unlock(ctx, noEvents...)
+			if err != nil {
+				s.logger.Err(err).Strs("lockID", noEvents).Msg("error on unlocking queue lock")
+			}
+		}
+
+		return events, nil
+	}
+
+	nextItem, err := s.pop(ctx, lockID)
+	if err != nil {
+		return nil, err
+	}
+
+	if nextItem == nil {
+		allLockIDList := append([]string{lockID}, lockIDList...)
+		err = s.Unlock(ctx, allLockIDList...)
+		if err != nil {
+			s.logger.Err(err).Strs("lockID", allLockIDList).Msg("error on unlocking queue lock")
+		}
+
+		return nil, nil
+	}
+
+	return [][]byte{nextItem}, nil
 }
 
 func (s *baseQueueLock) PopOrUnlock(ctx context.Context, lockID string, asyncUnlock bool) ([]byte, error) {
@@ -362,8 +433,8 @@ func (s *baseQueueLock) extendLock(ctx context.Context, lockID string) (bool, er
 	return result.Val(), nil
 }
 
-func (s *baseQueueLock) Unlock(ctx context.Context, lockID string) error {
-	result := s.lockClient.Del(ctx, lockID)
+func (s *baseQueueLock) Unlock(ctx context.Context, lockID ...string) error {
+	result := s.lockClient.Del(ctx, lockID...)
 
 	return result.Err()
 }
