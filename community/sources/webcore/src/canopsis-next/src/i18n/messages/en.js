@@ -1969,7 +1969,9 @@ export default {
     queueOverflowed: 'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
     engineDown: '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
     engineDownOrSlow: '{name} is down or responds too slow, the system is not operational.\nPlease check the log or restart the instance.',
+    invalidEnginesOrder: 'Invalid engines configuration',
     invalidInstancesConfiguration: 'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
+    chainConfigurationInvalid: 'Engines chain configuration is invalid.\nRefer below for the correct sequence of engines:',
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
@@ -2000,10 +2002,6 @@ export default {
 
       [HEALTHCHECK_SERVICES_NAMES.healthcheck]: {
         name: 'Healthcheck',
-      },
-
-      [HEALTHCHECK_ENGINES_NAMES.event]: {
-        name: 'Event',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.webhook]: {

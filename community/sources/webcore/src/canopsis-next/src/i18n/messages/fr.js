@@ -1969,7 +1969,9 @@ export default {
     queueOverflowed: 'La file d\'attente est débordée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
     engineDown: '{name} est en panne, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer le service.',
     engineDownOrSlow: '{name} est en panne ou répond trop lentement, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
+    invalidEnginesOrder: 'Configuration des moteurs non valide',
     invalidInstancesConfiguration: 'Configuration des instances non valide : les instances du moteur lisent ou écrivent dans différentes files d\'attente.\nVeuillez vérifier les instances.',
+    chainConfigurationInvalid: 'La configuration de la chaîne des moteurs n\'est pas valide.\nReportez-vous ci-dessous pour la séquence correcte des moteurs :',
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
@@ -2000,10 +2002,6 @@ export default {
 
       [HEALTHCHECK_SERVICES_NAMES.healthcheck]: {
         name: 'Healthcheck',
-      },
-
-      [HEALTHCHECK_ENGINES_NAMES.event]: {
-        name: 'Event',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.webhook]: {

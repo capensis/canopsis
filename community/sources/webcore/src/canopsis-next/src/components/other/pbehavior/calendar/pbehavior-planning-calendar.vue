@@ -61,7 +61,7 @@ import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/day
 import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
 import { convertDateToTimestampByTimezone } from '@/helpers/date/date';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 import entitiesPbehaviorTimespansMixin from '@/mixins/entities/pbehavior/timespans';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
