@@ -7,6 +7,7 @@ import (
 
 // Provider interface is used to implement user authentication by username and password.
 type Provider interface {
+	GetName() string
 	Auth(ctx context.Context, username, password string) (*User, error)
 }
 

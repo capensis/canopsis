@@ -3,6 +3,7 @@ package auth
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -65,6 +66,7 @@ func (a *api) Login(c *gin.Context) {
 
 	var user *security.User
 	var err error
+	var provider string
 	for _, p := range a.providers {
 		user, err = p.Auth(c.Request.Context(), request.Username, request.Password)
 		if err != nil {
@@ -72,6 +74,7 @@ func (a *api) Login(c *gin.Context) {
 		}
 
 		if user != nil {
+			provider = p.GetName()
 			break
 		}
 	}
@@ -86,7 +89,13 @@ func (a *api) Login(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.tokenStore.Save(c.Request.Context(), accessToken, types.CpsTime{Time: expiresAt})
+	err = a.tokenStore.Save(c.Request.Context(), token.Token{
+		ID:       accessToken,
+		User:     user.ID,
+		Provider: provider,
+		Created:  types.CpsTime{Time: time.Now()},
+		Expired:  types.CpsTime{Time: expiresAt},
+	})
 	if err != nil {
 		panic(err)
 	}

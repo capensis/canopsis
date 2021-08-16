@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestQueryProvider_Auth_GivenUsernameAndPasswordByQueryParam_ShouldAuthUser(t *testing.T) {
+func TestQueryBasicProvider_Auth_GivenUsernameAndPasswordByQueryParam_ShouldAuthUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	username := "testuser"
@@ -24,7 +24,7 @@ func TestQueryProvider_Auth_GivenUsernameAndPasswordByQueryParam_ShouldAuthUser(
 		Auth(gomock.Any(), gomock.Eq(username), gomock.Eq(password)).
 		Return(expectedUser, nil)
 
-	p := NewQueryProvider(mockProvider)
+	p := NewQueryBasicProvider(mockProvider)
 	r := newRequest()
 	r.URL.RawQuery = url.Values{
 		"username": []string{username},
@@ -45,7 +45,7 @@ func TestQueryProvider_Auth_GivenUsernameAndPasswordByQueryParam_ShouldAuthUser(
 	}
 }
 
-func TestQueryProvider_Auth_GivenNoQueryParam_ShouldReturnNil(t *testing.T) {
+func TestQueryBasicProvider_Auth_GivenNoQueryParam_ShouldReturnNil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockProvider := mock_security.NewMockProvider(ctrl)
@@ -54,7 +54,7 @@ func TestQueryProvider_Auth_GivenNoQueryParam_ShouldReturnNil(t *testing.T) {
 		Auth(gomock.Any(), gomock.Any(), gomock.Any()).
 		Times(0)
 
-	p := NewQueryProvider(mockProvider)
+	p := NewQueryBasicProvider(mockProvider)
 	r := newRequest()
 	user, err, ok := p.Auth(r)
 
@@ -71,7 +71,7 @@ func TestQueryProvider_Auth_GivenNoQueryParam_ShouldReturnNil(t *testing.T) {
 	}
 }
 
-func TestQueryProvider_Auth_GivenInvalidCredentials_ShouldReturnNil(t *testing.T) {
+func TestQueryBasicProvider_Auth_GivenInvalidCredentials_ShouldReturnNil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	username := "testuser"
@@ -82,7 +82,7 @@ func TestQueryProvider_Auth_GivenInvalidCredentials_ShouldReturnNil(t *testing.T
 		Auth(gomock.Any(), gomock.Eq(username), gomock.Eq(password)).
 		Return(nil, nil)
 
-	p := NewQueryProvider(mockProvider)
+	p := NewQueryBasicProvider(mockProvider)
 	r := newRequest()
 	r.URL.RawQuery = url.Values{
 		"username": []string{username},

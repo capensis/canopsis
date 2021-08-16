@@ -11,6 +11,7 @@ import (
 
 type Service interface {
 	GenerateToken(id string) (string, time.Time, error)
+	GenerateTokenWithExpiration(id string, t time.Time) (string, error)
 	ValidateToken(token string) (id string, err error)
 }
 
@@ -39,14 +40,20 @@ type tokenClaims struct {
 
 func (s *jwtService) GenerateToken(id string) (string, time.Time, error) {
 	cfg := s.apiConfigProvider.Get()
-	now := time.Now()
-	expiresAt := now.Add(cfg.TokenExpiration)
+	expiredAt := time.Now().Add(cfg.TokenExpiration)
+
+	token, err := s.GenerateTokenWithExpiration(id, expiredAt)
+	return token, expiredAt, err
+}
+
+func (s *jwtService) GenerateTokenWithExpiration(id string, expiresAt time.Time) (string, error) {
+	cfg := s.apiConfigProvider.Get()
 	claims := tokenClaims{
 		ID: id,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expiresAt.Unix(),
 			Id:        utils.NewID(),
-			IssuedAt:  now.Unix(),
+			IssuedAt:  time.Now().Unix(),
 			Issuer:    s.issuer,
 		},
 	}
@@ -54,10 +61,10 @@ func (s *jwtService) GenerateToken(id string) (string, time.Time, error) {
 
 	t, err := token.SignedString(s.secretKey)
 	if err != nil {
-		return "", time.Time{}, fmt.Errorf("cannot generate token: %w", err)
+		return "", fmt.Errorf("cannot generate token: %w", err)
 	}
 
-	return t, expiresAt, nil
+	return t, nil
 }
 
 func (s *jwtService) ValidateToken(tokenString string) (string, error) {
