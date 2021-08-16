@@ -915,6 +915,62 @@
             "checksum": 1,
             "desc": ""
         },
+        "api_alarmfilter": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_idlerule": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_eventfilter": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_action": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_webhook": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_metaalarmrule": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_dynamicinfos": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_heartbeat": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_watcher": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_view": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_pbehavior": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_pbehaviortype": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_pbehaviorreason": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_pbehaviorexception": {
+            "checksum": 4,
+            "desc": ""
+        },
         "api_viewgroup": {
             "checksum": 4,
             "desc": ""
