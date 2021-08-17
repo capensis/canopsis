@@ -98,7 +98,6 @@ export const API_ROUTES = {
     app: '/api/v4/internal/app_info',
     userInterface: '/api/v4/internal/user_interface',
   },
-  heartbeat: '/api/v4/heartbeats',
   associativeTable: '/api/v4/associativetable',
   sessionStart: '/api/v2/sessionstart',
   sessionTracePath: '/api/v2/session_tracepath',
