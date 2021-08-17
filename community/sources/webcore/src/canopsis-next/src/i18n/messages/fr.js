@@ -58,7 +58,7 @@ export default {
     no: 'Non',
     default: 'Défaut',
     confirmation: 'Êtes-vous sûr(e) ?',
-    parameters: 'Paramètres',
+    parameter: 'Paramètre | Paramètres',
     by: 'Par',
     date: 'Date',
     comment: 'Commentaire | Commentaires',
@@ -192,6 +192,10 @@ export default {
     summary: 'Résumé',
     statistics: 'Statistiques',
     action: 'Action',
+    minimal: 'Minimal',
+    optimal: 'Optimal',
+    graph: 'Graphique | Graphiques',
+    systemStatus: 'État du système',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1972,6 +1976,11 @@ export default {
     invalidEnginesOrder: 'Configuration des moteurs non valide',
     invalidInstancesConfiguration: 'Configuration des instances non valide : les instances du moteur lisent ou écrivent dans différentes files d\'attente.\nVeuillez vérifier les instances.',
     chainConfigurationInvalid: 'La configuration de la chaîne des moteurs n\'est pas valide.\nReportez-vous ci-dessous pour la séquence correcte des moteurs :',
+    queueLimit: 'Limite de longueur de file d\'attente',
+    defineQueueLimit: 'Définir la limite de longueur de file d\'attente des moteurs',
+    notifyUsersQueueLimit: 'Les utilisateurs peuvent être avertis lorsque la limite de longueur de file d\'attente est dépassée',
+    numberOfInstances: 'Nombre d\'instances',
+    notifyUsersNumberOfInstances: 'Les utilisateurs peuvent être avertis lorsque le nombre d\'instances actives est inférieur à la valeur minimale. Le nombre optimal d\'instances est affiché lorsque l\'état du moteur n\'est pas disponible.',
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',

@@ -40,6 +40,7 @@ import dataStorageModule from './data-storage';
 import notificationSettingsModule from './notification-settings';
 import idleRulesModule from './idle-rules';
 import healthcheckModule from './healthcheck';
+import healthcheckParametersModule from './healthcheck-parameters';
 
 export default {
   alarm: alarmModule,
@@ -84,4 +85,5 @@ export default {
   notificationSettings: notificationSettingsModule,
   idleRules: idleRulesModule,
   healthcheck: healthcheckModule,
+  healthcheckParameters: healthcheckParametersModule,
 };

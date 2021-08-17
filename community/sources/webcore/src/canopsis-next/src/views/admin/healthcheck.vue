@@ -1,9 +1,14 @@
 <template lang="pug">
-  div.position-relative.fill-height
-    v-layout(column, fill-height)
-      c-page-header
-      c-progress-overlay(:pending="pending")
-      v-flex
+  div.healthcheck
+    c-progress-overlay(:pending="pending")
+    c-page-header
+
+    v-tabs(v-model="activeTab", centered, slider-color="primary")
+      v-tab {{ $t('common.systemStatus') }}
+      v-tab {{ $tc('common.graph', 2) }}
+      v-tab {{ $tc('common.parameter', 2) }}
+    v-tabs-items.white.healthcheck__tabs(v-model="activeTab")
+      v-tab-item.healthcheck__graph-tab
         healthcheck-network-graph(
           v-if="!pending",
           :services="services",
@@ -12,25 +17,33 @@
           show-description,
           @click="showNodeModal"
         )
-      c-fab-btn(@refresh="fetchList")
+      v-tab-item(lazy)
+        healthcheck-graphs
+      v-tab-item(lazy)
+        healthcheck-parameters
+
+    c-fab-btn(@refresh="fetchList")
 </template>
 
 <script>
-import { HEALTHCHECK_SERVICES_NAMES, MODALS } from '@/constants';
-
 import { createNamespacedHelpers } from 'vuex';
 
+import { HEALTHCHECK_SERVICES_NAMES, MODALS } from '@/constants';
+
 import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation/healthcheck-network-graph.vue';
+import HealthcheckGraphs from '@/components/other/healthcheck/exploitation/healthcheck-graphs.vue';
+import HealthcheckParameters from '@/components/other/healthcheck/healthcheck-parameters.vue';
 
 import entitiesEngineRunInfoMixin from '@/mixins/entities/engine-run-info';
 
 const { mapActions } = createNamespacedHelpers('healthcheck');
 
 export default {
-  components: { HealthcheckNetworkGraph },
+  components: { HealthcheckParameters, HealthcheckNetworkGraph, HealthcheckGraphs },
   mixins: [entitiesEngineRunInfoMixin],
   data() {
     return {
+      activeTab: 0,
       pending: true,
       services: [],
       engines: {},
@@ -108,6 +121,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.healthcheck {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__tabs {
+    flex: 1;
+
+    /deep/ .v-window__container {
+      height: 100%;
+    }
+  }
+
+  &__graph-tab {
+    height: 100%;
+  }
+}
+
 #cy {
   background: white;
   position: relative;

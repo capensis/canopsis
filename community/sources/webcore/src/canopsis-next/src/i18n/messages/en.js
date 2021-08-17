@@ -58,7 +58,7 @@ export default {
     no: 'No',
     default: 'Default',
     confirmation: 'Are you sure?',
-    parameters: 'Parameters',
+    parameter: 'Parameter | Parameters',
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
@@ -192,6 +192,10 @@ export default {
     summary: 'Summary',
     statistics: 'Statistics',
     action: 'Action',
+    minimal: 'Minimal',
+    optimal: 'Optimal',
+    graph: 'Graph | Graphs',
+    systemStatus: 'System status',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1972,6 +1976,11 @@ export default {
     invalidEnginesOrder: 'Invalid engines configuration',
     invalidInstancesConfiguration: 'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
     chainConfigurationInvalid: 'Engines chain configuration is invalid.\nRefer below for the correct sequence of engines:',
+    queueLimit: 'Queue length limit',
+    defineQueueLimit: 'Define the engines queue length limit',
+    notifyUsersQueueLimit: 'Users can be notified when the queue length limit is exceeded',
+    numberOfInstances: 'Number of instances',
+    notifyUsersNumberOfInstances: 'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
