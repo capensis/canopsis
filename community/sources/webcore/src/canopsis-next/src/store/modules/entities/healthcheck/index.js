@@ -6,7 +6,7 @@ export default {
   namespaced: true,
   actions: {
     fetchStatusWithoutStore() {
-      return request.get(API_ROUTES.healthcheck);
+      return request.get(API_ROUTES.healthcheck.engines);
     },
   },
 };

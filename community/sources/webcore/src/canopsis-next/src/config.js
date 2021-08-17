@@ -145,7 +145,6 @@ export const API_ROUTES = {
   file: '/api/v4/cat/file',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
-  healthcheck: '/api/v4/cat/healthcheck',
   remediation: {
     instructions: '/api/v4/cat/instructions',
     instructionStats: '/api/v4/cat/instruction-stats',
@@ -163,6 +162,10 @@ export const API_ROUTES = {
     history: '/api/v4/cat/junit/test-suites-history',
     widget: '/api/v4/cat/junit/test-suites-widget',
     file: '/api/v4/cat/junit/test-cases-file',
+  },
+  healthcheck: {
+    engines: '/api/v4/cat/healthcheck',
+    parameters: '/api/v4/cat/healthcheck/parameters',
   },
 };
 
