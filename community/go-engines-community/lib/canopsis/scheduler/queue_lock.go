@@ -36,11 +36,6 @@ type QueueLock interface {
 	PopOrUnlock(ctx context.Context, lockID string, asyncUnlock bool) ([]byte, error)
 	// LockAndPop tries to lock lockID and pops item from queue by lockID.
 	LockAndPop(ctx context.Context, lockID string, asyncUnlock bool) ([]byte, error)
-	// IsLocked returns true if lock lockID is set.
-	IsLocked(ctx context.Context, lockID string) bool
-	// IsEmpty returns true if queue lockID is empty.
-	IsEmpty(ctx context.Context, lockID string) bool
-	Unlock(ctx context.Context, lockID ...string) error
 }
 
 const defaultLockValue = 1
@@ -270,7 +265,7 @@ func (s *baseQueueLock) ExtendAndPopRelatedOrMultiple(
 
 	if len(events) > 0 {
 		if len(noEvents) > 0 {
-			err = s.Unlock(ctx, noEvents...)
+			err = s.unlock(ctx, noEvents...)
 			if err != nil {
 				s.logger.Err(err).Strs("lockID", noEvents).Msg("error on unlocking queue lock")
 			}
@@ -286,7 +281,7 @@ func (s *baseQueueLock) ExtendAndPopRelatedOrMultiple(
 
 	if nextItem == nil {
 		allLockIDList := append([]string{lockID}, lockIDList...)
-		err = s.Unlock(ctx, allLockIDList...)
+		err = s.unlock(ctx, allLockIDList...)
 		if err != nil {
 			s.logger.Err(err).Strs("lockID", allLockIDList).Msg("error on unlocking queue lock")
 		}
@@ -333,13 +328,13 @@ func (s *baseQueueLock) PopOrUnlock(ctx context.Context, lockID string, asyncUnl
 					}
 				}()
 
-				err := s.Unlock(ctx, lockID)
+				err := s.unlock(ctx, lockID)
 				if err != nil {
 					s.logger.Err(err).Str(lockID, "lockID").Msg("error on unlocking queue lock")
 				}
 			}()
 		} else {
-			err := s.Unlock(ctx, lockID)
+			err := s.unlock(ctx, lockID)
 			if err != nil {
 				s.logger.Err(err).Str(lockID, "lockID").Msg("error on unlocking queue lock")
 			}
@@ -385,13 +380,13 @@ func (s *baseQueueLock) LockAndPop(ctx context.Context, lockID string, asyncUnlo
 					}
 				}()
 
-				err := s.Unlock(ctx, lockID)
+				err := s.unlock(ctx, lockID)
 				if err != nil {
 					s.logger.Err(err).Str(lockID, "lockID").Msg("error on unlocking queue lock")
 				}
 			}()
 		} else {
-			err := s.Unlock(ctx, lockID)
+			err := s.unlock(ctx, lockID)
 			if err != nil {
 				s.logger.Err(err).Str(lockID, "lockID").Msg("error on unlocking queue lock")
 			}
@@ -399,18 +394,6 @@ func (s *baseQueueLock) LockAndPop(ctx context.Context, lockID string, asyncUnlo
 	}
 
 	return nextItem, nil
-}
-
-func (s *baseQueueLock) IsLocked(ctx context.Context, lockID string) bool {
-	result := s.lockClient.Exists(ctx, lockID)
-
-	return result.Val() > 0
-}
-
-func (s *baseQueueLock) IsEmpty(ctx context.Context, lockID string) bool {
-	result := s.queueClient.Exists(ctx, lockID)
-
-	return result.Val() == 0
 }
 
 func (s *baseQueueLock) lock(ctx context.Context, lockID string) (bool, error) {
@@ -433,7 +416,7 @@ func (s *baseQueueLock) extendLock(ctx context.Context, lockID string) (bool, er
 	return result.Val(), nil
 }
 
-func (s *baseQueueLock) Unlock(ctx context.Context, lockID ...string) error {
+func (s *baseQueueLock) unlock(ctx context.Context, lockID ...string) error {
 	result := s.lockClient.Del(ctx, lockID...)
 
 	return result.Err()

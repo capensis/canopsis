@@ -210,7 +210,6 @@ func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, event types.Even
 		}
 
 		for _, nextEvent := range nextEvents {
-			s.logger.Info().Msgf("%s", nextEvent)
 			err = s.publishToNext(nextEvent)
 			if err != nil {
 				return err
