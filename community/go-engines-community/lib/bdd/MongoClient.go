@@ -28,10 +28,8 @@ func NewMongoClient(db libmongo.DbClient) (*MongoClient, error) {
 Step example:
 	And an alarm test_post_resource/test_post_component should be in the db
 */
-func (c *MongoClient) AlarmShouldBeInTheDb(eid string) error {
+func (c *MongoClient) AlarmShouldBeInTheDb(ctx context.Context, eid string) error {
 	var expectedAlarm types.Alarm
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	res := c.client.Collection(alarm.AlarmCollectionName).FindOne(ctx, bson.M{"d": eid})
 	if err := res.Err(); err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -53,10 +51,8 @@ func (c *MongoClient) AlarmShouldBeInTheDb(eid string) error {
 Step example:
 	And an entity test_post_resource/test_post_component should be in the db
 */
-func (c *MongoClient) EntityShouldBeInTheDb(eid string) error {
+func (c *MongoClient) EntityShouldBeInTheDb(ctx context.Context, eid string) error {
 	var expectedEntity types.Entity
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	res := c.client.Collection(libmongo.EntityMongoCollection).FindOne(ctx, bson.M{"_id": eid})
 	if err := res.Err(); err != nil {
 		if err == mongo.ErrNoDocuments {

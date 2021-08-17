@@ -20,8 +20,7 @@ require (
 	github.com/beevik/etree v1.1.0
 	github.com/bsm/redislock v0.7.1
 	github.com/casbin/casbin/v2 v2.36.1
-	github.com/cucumber/godog v0.11.0
-	github.com/cucumber/messages-go/v10 v10.0.3
+	github.com/cucumber/godog v0.12.0
 	github.com/dlclark/regexp2 v1.4.0
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-ldap/ldap/v3 v3.4.1
