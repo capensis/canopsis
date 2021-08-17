@@ -47,7 +47,7 @@ require (
 	github.com/teambition/rrule-go v1.7.1
 	github.com/tidwall/pretty v1.1.0 // indirect
 	github.com/valyala/fastjson v1.6.3
-	go.mongodb.org/mongo-driver v1.5.3
+	go.mongodb.org/mongo-driver v1.7.1
 	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d
 	golang.org/x/text v0.3.7
 	gopkg.in/yaml.v2 v2.4.0
