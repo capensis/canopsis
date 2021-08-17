@@ -1173,26 +1173,6 @@ export default {
     selectViewTab: {
       title: 'Select tab',
     },
-    createHeartbeat: {
-      create: {
-        title: 'Create heartbeat',
-        success: 'Heartbeat successfully created!',
-      },
-      edit: {
-        title: 'Modify heartbeat',
-        success: 'Heartbeat successfully modified!',
-      },
-      duplicate: {
-        title: 'Duplicate heartbeat',
-      },
-      remove: {
-        success: 'Heartbeat successfully removed!',
-      },
-      massRemove: {
-        success: 'Heartbeats successfully removed!',
-      },
-      patternRequired: 'Pattern is required',
-    },
     createDynamicInfo: {
       create: {
         title: 'Create dynamic information',
@@ -1850,15 +1830,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'See alarms',
   },
-  heartbeat: {
-    title: 'Heartbeats',
-    table: {
-      fields: {
-        id: 'ID',
-        expectedInterval: 'Expected interval',
-      },
-    },
-  },
   contextGeneralTable: {
     addSelection: 'Add selection',
   },
@@ -1985,10 +1956,6 @@ export default {
     },
     [ENGINES_NAMES.correlation]: {
       title: 'Correlation',
-      description: 'Adds dynamic infos to alarm',
-    },
-    [ENGINES_NAMES.heartbeat]: {
-      title: 'Heartbeat',
       description: 'Adds dynamic infos to alarm',
     },
   },
