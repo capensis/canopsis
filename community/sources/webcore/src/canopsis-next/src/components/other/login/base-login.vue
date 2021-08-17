@@ -26,7 +26,7 @@
 
 <script>
 import { authMixin } from '@/mixins/auth';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import LdapLoginInformation from '@/components/other/login/ldap-login-information.vue';
 import LoginForm from '@/components/other/login/form/login-form.vue';

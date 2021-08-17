@@ -28,7 +28,7 @@
 
 <script>
 import { authMixin } from '@/mixins/auth';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';

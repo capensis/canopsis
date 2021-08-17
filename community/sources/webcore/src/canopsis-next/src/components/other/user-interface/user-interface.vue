@@ -101,7 +101,7 @@
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
 import { formToUserInterface, userInterfaceToForm } from '@/helpers/forms/user-interface';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import PopupTimeoutField from '@/components/forms/fields/popup-timeout.vue';
