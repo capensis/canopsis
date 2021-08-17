@@ -9,7 +9,6 @@
         :name="enabledFieldName",
         color="primary"
       )
-        c-help-icon(v-if="helpText", slot="append", :text="helpText", max-width="300", top)
     v-flex(xs4)
       v-layout(column)
         v-layout(row, align-center)
@@ -59,10 +58,6 @@ export default {
       required: true,
     },
     label: {
-      type: String,
-      default: '',
-    },
-    helpText: {
       type: String,
       default: '',
     },
