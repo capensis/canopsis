@@ -38,6 +38,10 @@
       "remediation": "/tmp/canopsis/remediation",
       "junit": "/tmp/canopsis/junit",
       "junitapi": "/tmp/canopsis/junitapi"
+    },
+    "api": {
+      "tokenexpiration": "24h",
+      "tokensigningmethod": "HS256"
     }
   },
   {

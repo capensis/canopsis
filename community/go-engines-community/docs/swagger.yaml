@@ -591,10 +591,20 @@ definitions:
     type: object
   associativetable.Content:
     type: object
-  auth.sessionsCountResponse:
+  auth.loginRequest:
     properties:
-      count:
-        type: integer
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  auth.loginResponse:
+    properties:
+      access_token:
+        type: string
     type: object
   broadcastmessage.BroadcastMessage:
     properties:
@@ -2855,6 +2865,11 @@ definitions:
       links:
         type: object
     type: object
+  sessionauth.sessionsCountResponse:
+    properties:
+      count:
+        type: integer
+    type: object
   statesettings.JUnitThresholds:
     properties:
       errors:
@@ -2911,6 +2926,37 @@ definitions:
     - major
     - minor
     - type
+    type: object
+  stats.Stats:
+    properties:
+      _id:
+        type: string
+      id_beaker_session:
+        description: Deprecated
+        type: string
+      last_ping:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      last_visible_path:
+        type: object
+      last_visible_ping:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      session_id:
+        type: string
+      start:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      tab_duration:
+        additionalProperties: true
+        type: object
+      user_id:
+        type: string
+      username:
+        description: Deprecated
+        type: string
+      visible_duration:
+        type: integer
     type: object
   types.Alarm:
     properties:
@@ -3493,6 +3539,40 @@ definitions:
         items:
           $ref: '#/definitions/viewgroup.View'
         type: array
+    type: object
+  viewstats.listRequest:
+    properties:
+      isActive:
+        type: boolean
+      startedAfter:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      stoppedBefore:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      usernames:
+        items:
+          type: string
+        type: array
+    type: object
+  viewstats.listResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/stats.Stats'
+        type: array
+    type: object
+  viewstats.pingRequest:
+    properties:
+      path:
+        items:
+          type: string
+        type: array
+      visible:
+        type: boolean
+    required:
+    - path
+    - visible
     type: object
 info:
   contact: {}
@@ -5488,6 +5568,60 @@ paths:
       summary: update user interface
       tags:
       - internal
+  /logged-user-count:
+    get:
+      consumes:
+      - application/json
+      description: Get logged user count
+      operationId: auth-logged-user-count
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get logged user count
+      tags:
+      - auth
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Log in
+      operationId: auth-login
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.loginResponse'
+      summary: Log in
+      tags:
+      - auth
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: Log out
+      operationId: auth-logout
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      summary: Log out
+      tags:
+      - auth
   /message-rate-stats:
     get:
       consumes:
@@ -7096,7 +7230,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.sessionsCountResponse'
+            $ref: '#/definitions/sessionauth.sessionsCountResponse'
         "400":
           description: Bad Request
           schema:
@@ -7559,6 +7693,96 @@ paths:
       summary: Update views positions
       tags:
       - views
+  /view-stats:
+    get:
+      consumes:
+      - application/json
+      description: Get list of view stats
+      operationId: view-stats-find-all
+      parameters:
+      - in: query
+        name: isActive
+        type: boolean
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: usernames
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewstats.listResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find view stats
+      tags:
+      - view-stats
+    post:
+      consumes:
+      - application/json
+      description: Create view stats
+      operationId: view-stats-create
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/stats.Stats'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Create view stats
+      tags:
+      - view-stats
+  /view-stats/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update view stats by id
+      operationId: view-stats-update-by-id
+      parameters:
+      - description: view stats id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/viewstats.pingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/stats.Stats'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Update view stats by id
+      tags:
+      - view-stats
   /views:
     get:
       consumes:

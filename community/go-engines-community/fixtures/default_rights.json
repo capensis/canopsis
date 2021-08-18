@@ -974,9 +974,9 @@
   {
     "_id": "test-user-to-update-view-position",
     "crecord_type": "user",
-    "crecord_name": "test-to-update-view-position",
+    "crecord_name": "test-user-to-update-view-position",
     "role": "test-role-to-update-view-position",
-    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fwwww",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "authkey": "b1f67e3e-wwww-4140-a801-9a05cb683e2c",
     "enable": true
   },
@@ -1023,7 +1023,7 @@
     "crecord_name": "test-user-to-rate-instruction",
     "role": "test-role-to-rate-instruction",
     "mail": "test-user-to-rate-instruction@canopsis.net",
-    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982ucms3",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "authkey": "2be1d0ee-5e9e-8mdn-9d80-e857e50f4191",
     "enable": true
   },
@@ -1052,7 +1052,7 @@
     "crecord_name": "test-user-to-stats-instruction-get",
     "role": "test-role-to-stats-instruction-get",
     "mail": "test-user-to-stats-instruction-get@canopsis.net",
-    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982dime3",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f4191",
     "enable": true
   }

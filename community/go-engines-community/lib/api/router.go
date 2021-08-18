@@ -37,11 +37,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionauth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionstats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewstats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -135,15 +137,21 @@ func RegisterRoutes(
 	authMiddleware := security.GetAuthMiddleware()
 	security.RegisterCallbackRoutes(router)
 	authApi := auth.NewApi(
+		security.GetTokenService(),
+		security.GetTokenStore(),
+		security.GetAuthProviders(),
+		security.GetSessionStore(),
+	)
+	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
 	)
-	router.POST("/auth", authApi.LoginHandler())
+	router.POST("/auth", sessionauthApi.LoginHandler())
 	sessionStatsApi := sessionstats.NewApi(sessionStore, stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
 	sessionProtected := router.Group("")
 	{
 		sessionProtected.Use(middleware.SessionAuth(dbClient, sessionStore), middleware.OnlyAuth())
-		sessionProtected.GET("/logout", authApi.LogoutHandler())
+		sessionProtected.GET("/logout", sessionauthApi.LogoutHandler())
 
 		{
 			sessionProtected.GET("/api/v2/sessionstart", sessionStatsApi.StartHandler())
@@ -160,12 +168,27 @@ func RegisterRoutes(
 	)
 	router.GET("/api/v2/sessions", getStatsHandlers...)
 
+	unprotected := router.Group(baseUrl)
+	{
+		unprotected.POST("/login", authApi.Login)
+		unprotected.POST("/logout", authApi.Logout)
+	}
+
 	protected := router.Group(baseUrl)
 	{
 		protected.Use(authMiddleware...)
 
 		protected.GET("/account/me", account.NewApi(account.NewStore(dbClient)).Me)
-		protected.GET("/sessions-count", authApi.GetSessionsCount())
+		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
+		protected.GET("/sessions-count", sessionauthApi.GetSessionsCount())
+
+		viewStatsRouter := protected.Group("/view-stats")
+		{
+			viewStatsApi := viewstats.NewApi(stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
+			viewStatsRouter.GET("", middleware.OnlyAuth(), viewStatsApi.List)
+			viewStatsRouter.POST("", middleware.OnlyAuth(), viewStatsApi.Create)
+			viewStatsRouter.PUT("/:id", middleware.OnlyAuth(), viewStatsApi.Update)
+		}
 
 		userRouter := protected.Group("/users")
 		{

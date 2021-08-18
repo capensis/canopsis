@@ -14,6 +14,7 @@ type apikeyProvider struct {
 }
 
 // NewApikeyProvider creates new provider.
+// Deprecated : use JWT token instead.
 func NewApikeyProvider(p security.UserProvider) security.HttpProvider {
 	return &apikeyProvider{userProvider: p}
 }
