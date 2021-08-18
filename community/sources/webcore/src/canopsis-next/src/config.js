@@ -138,6 +138,7 @@ export const API_ROUTES = {
   logout: '/logout',
   idleRules: '/api/v4/idle-rules',
   idleRulesCount: '/api/v4/idle-rules/count',
+  messageRateStats: '/api/v4/message-rate-stats',
 
   /**
    * Cat routes

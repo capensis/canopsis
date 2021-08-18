@@ -41,6 +41,7 @@ import notificationSettingsModule from './notification-settings';
 import idleRulesModule from './idle-rules';
 import healthcheckModule from './healthcheck';
 import healthcheckParametersModule from './healthcheck-parameters';
+import messageRateStatsModule from './message-rate-stats';
 
 export default {
   alarm: alarmModule,
@@ -86,4 +87,5 @@ export default {
   idleRules: idleRulesModule,
   healthcheck: healthcheckModule,
   healthcheckParameters: healthcheckParametersModule,
+  messageRateStats: messageRateStatsModule,
 };
