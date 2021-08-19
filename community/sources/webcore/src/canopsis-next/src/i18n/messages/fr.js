@@ -1981,6 +1981,8 @@ export default {
     notifyUsersQueueLimit: 'Les utilisateurs peuvent être avertis lorsque la limite de longueur de file d\'attente est dépassée',
     numberOfInstances: 'Nombre d\'instances',
     notifyUsersNumberOfInstances: 'Les utilisateurs peuvent être avertis lorsque le nombre d\'instances actives est inférieur à la valeur minimale. Le nombre optimal d\'instances est affiché lorsque l\'état du moteur n\'est pas disponible.',
+    messagesHistory: 'Historique de traitement des messages FIFO',
+    messagesPerHour: 'messages/heure',
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',

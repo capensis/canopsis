@@ -64,15 +64,20 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
         annotation: {
-          annotations: [{
-            type: 'line',
-            mode: 'horizontal',
-            scaleID: 'y-axis-0',
-            value: this.limit.value,
-            borderColor: this.limit.borderColor || this.limit.backgroundColor,
-            borderWidth: this.limit.borderWidth || 2,
-            borderDash: this.limit.borderDash,
-          }],
+          annotations: this.limit.value
+            ? [{
+              type: 'line',
+              mode: 'horizontal',
+              scaleID: 'y-axis-0',
+              value: this.limit.value,
+              borderColor: this.limit.borderColor || this.limit.backgroundColor,
+              borderWidth: this.limit.borderWidth || 2,
+              borderDash: this.limit.borderDash,
+            }]
+            : [],
+        },
+        legend: {
+          display: false,
         },
         hover: {
           mode: 'index',
@@ -83,9 +88,7 @@ export default {
           intersect: false,
           displayColors: false,
           callbacks: {
-            label(tooltip) {
-              return this.unit ? `${tooltip.value} ${this.unit}` : tooltip.value;
-            },
+            label: tooltip => (this.unit ? `${tooltip.value} ${this.unit}` : tooltip.value),
           },
         },
         scales: {

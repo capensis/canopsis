@@ -18,7 +18,7 @@
           @click="showNodeModal"
         )
       v-tab-item(lazy)
-        healthcheck-graphs
+        healthcheck-graphs(:max-queue-length="maxQueueLength")
       v-tab-item(lazy)
         healthcheck-parameters
 
@@ -44,6 +44,7 @@ export default {
   data() {
     return {
       activeTab: 0,
+      maxQueueLength: 0,
       pending: true,
       services: [],
       engines: {},
@@ -110,6 +111,7 @@ export default {
 
       this.services = services;
       this.hasInvalidEnginesOrder = hasInvalidEnginesOrder;
+      this.maxQueueLength = maxQueueLength;
       this.engines = {
         edges: engines.edges,
         nodes: engines.nodes.map(node => ({ ...node, max_queue_length: maxQueueLength })),

@@ -565,8 +565,10 @@ export const FILTER_DEFAULT_VALUES = {
 
 export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
+  longWithDayOfWeek: 'ddd DD/MM/YYYY H:mm:ss',
   medium: 'DD/MM H:mm',
   short: 'DD/MM/YYYY',
+  shortWithDayOfWeek: 'ddd DD/MM/YYYY',
   time: 'H:mm:ss',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
   dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
@@ -856,7 +858,7 @@ export const USERS_PERMISSIONS = {
     remediationInstruction: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstruction`,
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
-    healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_engine`, // TODO: change to '_healthcheck'
+    healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -2017,4 +2019,9 @@ export const HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS = {
   [HEALTHCHECK_SERVICES_NAMES.healthcheck]: { x: -2, y: -0.5 },
   [HEALTHCHECK_SERVICES_NAMES.redis]: { x: -1, y: 0 },
   [HEALTHCHECK_SERVICES_NAMES.enginesChain]: { x: 0, y: -0.5 },
+};
+
+export const MESSAGE_STATS_INTERVALS = {
+  hour: 'hour',
+  minute: 'minute',
 };

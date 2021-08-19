@@ -1981,6 +1981,8 @@ export default {
     notifyUsersQueueLimit: 'Users can be notified when the queue length limit is exceeded',
     numberOfInstances: 'Number of instances',
     notifyUsersNumberOfInstances: 'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
+    messagesHistory: 'FIFO messages processing history',
+    messagesPerHour: 'messages/hour',
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
