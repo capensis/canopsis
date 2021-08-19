@@ -3,7 +3,6 @@ package scheduler
 import (
 	"context"
 	"fmt"
-	"github.com/valyala/fastjson"
 	"strconv"
 	"strings"
 	"time"
@@ -15,6 +14,7 @@ import (
 	redismod "github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
+	"github.com/valyala/fastjson"
 )
 
 var (
@@ -201,54 +201,28 @@ func (s *scheduler) AckEvent(ctx context.Context, event types.Event) error {
 func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, event types.Event) error {
 	lockID := event.GetEID()
 
-	// process children
-	childHasEvent := false
 	if metaAlarmChildren := event.MetaAlarmChildren; metaAlarmChildren != nil && len(*metaAlarmChildren) > 0 {
+		nextEvents, err := s.queueLock.ExtendAndPopRelatedOrMultiple(ctx, *metaAlarmChildren, lockID)
+		if err != nil {
+			s.logger.Err(err).
+				Str("lockID", lockID).
+				Msg("unable to process meta alarm")
+		}
 
-		for _, lockID := range *metaAlarmChildren {
-			nextEvent, err := s.queueLock.PopOrUnlock(ctx, lockID, true)
-			if err != nil {
-				s.logger.Err(err).
-					Str(lockID, "lockID").
-					Msg("unable to unlock alarm")
-			}
-
-			if nextEvent == nil {
-				continue
-			}
-
-			childHasEvent = true
+		for _, nextEvent := range nextEvents {
 			err = s.publishToNext(nextEvent)
 			if err != nil {
 				return err
 			}
 		}
-	}
 
-	if childHasEvent {
-		err := s.queueLock.Unlock(ctx, lockID)
-		if err != nil {
-			s.logger.Err(err).
-				Str(lockID, "lockID").
-				Msg("unable to unlock alarm")
+		if len(nextEvents) > 0 {
+			return nil
 		}
-
-		return nil
-	}
-
-	nextMetaAlarmEvent, err := s.queueLock.PopOrUnlock(ctx, lockID, true)
-	if err != nil {
-		s.logger.Err(err).
-			Str(lockID, "lockID").
-			Msg("unable to unlock alarm")
-	}
-
-	if nextMetaAlarmEvent != nil {
-		return s.publishToNext(nextMetaAlarmEvent)
 	}
 
 	for _, relatedParentId := range event.MetaAlarmRelatedParents {
-		nextMetaAlarmEvent, err = s.queueLock.ExtendAndPopMultiple(ctx, relatedParentId, getChildren, true)
+		nextMetaAlarmEvent, err := s.queueLock.ExtendAndPopMultiple(ctx, relatedParentId, getChildren)
 		if err != nil {
 			s.logger.Err(err).
 				Str(relatedParentId, "lockID").
@@ -268,7 +242,7 @@ func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, event types.Even
 func (s *scheduler) processMetaAlarmChildUnlock(ctx context.Context, event types.Event) {
 	if metaAlarmParents := event.MetaAlarmParents; metaAlarmParents != nil && len(*metaAlarmParents) > 0 {
 		for _, metaAlarmLock := range *metaAlarmParents {
-			nextEvent, err := s.queueLock.ExtendAndPopMultiple(ctx, metaAlarmLock, getChildren, true)
+			nextEvent, err := s.queueLock.ExtendAndPopMultiple(ctx, metaAlarmLock, getChildren)
 			if err != nil {
 				s.logger.Err(err).
 					Str(metaAlarmLock, "meta-alarm-lockID").

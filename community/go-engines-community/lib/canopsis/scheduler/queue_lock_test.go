@@ -307,7 +307,7 @@ func TestBaseQueueLock_ExtendAndPopMultiple_GivenLockIsSetAndQueueIsNotEmpty_Sho
 
 	item, err := queueLock.ExtendAndPopMultiple(ctx, lockID, func(i []byte) ([]string, error) {
 		return lockIDList, nil
-	}, false)
+	})
 
 	if !bytes.Equal(item, expectedItem) {
 		t.Errorf("expected item: %v but got %v", expectedItem, item)
@@ -343,7 +343,7 @@ func TestBaseQueueLock_ExtendAndPopMultiple_GivenLockIsNotSet_ShouldNotReturnNex
 
 	item, err := queueLock.ExtendAndPopMultiple(ctx, lockID, func(i []byte) ([]string, error) {
 		return lockIDList, nil
-	}, false)
+	})
 
 	if item != nil {
 		t.Errorf("expected item: nil but got %v", item)
@@ -384,7 +384,7 @@ func TestBaseQueueLock_ExtendAndPopMultiple_GivenLockIsSetAndQueueIsEmpty_Should
 
 	item, err := queueLock.ExtendAndPopMultiple(ctx, lockID, func(i []byte) ([]string, error) {
 		return lockIDList, nil
-	}, false)
+	})
 
 	if item != nil {
 		t.Errorf("expected item: %v but got %v", nil, item)
@@ -437,7 +437,7 @@ func TestBaseQueueLock_ExtendAndPopMultiple_GivenLockIsSetAndQueueIsNotEmptyAndA
 
 	item, err := queueLock.ExtendAndPopMultiple(ctx, lockID, func(i []byte) ([]string, error) {
 		return lockIDList, nil
-	}, false)
+	})
 
 	if item != nil {
 		t.Errorf("expected item: %v but got %v", nil, item)

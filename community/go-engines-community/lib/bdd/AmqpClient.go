@@ -11,7 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/cucumber/messages-go/v10"
+	"github.com/cucumber/godog"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
@@ -103,13 +103,13 @@ func NewAmqpClient(
 	}, nil
 }
 
-func (c *AmqpClient) Reset(_ *messages.Pickle) {
+func (c *AmqpClient) Reset(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	// Clear channel.
 	for {
 		select {
 		case <-c.mainStreamAckMsgs:
 		default:
-			return
+			return ctx, nil
 		}
 	}
 }
@@ -164,14 +164,14 @@ Step example:
 	}
 	"""
 */
-func (c *AmqpClient) ICallRPCAxeRequest(eid string, doc *messages.PickleStepArgument_PickleDocString) error {
-	alarm, err := c.findAlarm(eid)
+func (c *AmqpClient) ICallRPCAxeRequest(ctx context.Context, eid string, doc string) error {
+	alarm, err := c.findAlarm(ctx, eid)
 	if err != nil {
 		return err
 	}
 
 	var event types.RPCAxeEvent
-	err = c.decoder.Decode([]byte(doc.Content), &event)
+	err = c.decoder.Decode([]byte(doc), &event)
 	if err != nil {
 		return err
 	}
@@ -212,13 +212,13 @@ Step example:
 	}
 	"""
 */
-func (c *AmqpClient) ICallRPCWebhookRequest(eid string, doc *messages.PickleStepArgument_PickleDocString) error {
-	alarm, err := c.findAlarm(eid)
+func (c *AmqpClient) ICallRPCWebhookRequest(ctx context.Context, eid string, doc string) error {
+	alarm, err := c.findAlarm(ctx, eid)
 	if err != nil {
 		return err
 	}
 
-	content, err := c.executeTemplate(doc.Content)
+	content, err := c.executeTemplate(doc)
 	if err != nil {
 		return err
 	}
@@ -253,9 +253,7 @@ func (c *AmqpClient) ICallRPCWebhookRequest(eid string, doc *messages.PickleStep
 	return nil
 }
 
-func (c *AmqpClient) findAlarm(eid string) (*types.Alarm, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (c *AmqpClient) findAlarm(ctx context.Context, eid string) (*types.Alarm, error) {
 	res := c.mongoClient.Collection(libalarm.AlarmCollectionName).FindOne(ctx, bson.M{"d": eid})
 	if err := res.Err(); err != nil {
 		if err == mongodriver.ErrNoDocuments {
