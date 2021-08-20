@@ -4,10 +4,11 @@ import { Line } from 'vue-chartjs';
 
 import { chartAnnotationMixin } from '@/mixins/chart/annotation';
 import { chartLimitedSegmentMixin } from '@/mixins/chart/limited-segment';
+import { chartZoomMixin } from '@/mixins/chart/zoom';
 
 export default {
   extends: Line,
-  mixins: [chartAnnotationMixin, chartLimitedSegmentMixin],
+  mixins: [chartAnnotationMixin, chartLimitedSegmentMixin, chartZoomMixin],
   props: {
     ...Line.props,
 
@@ -110,7 +111,11 @@ export default {
   watch: {
     chartData(value, oldValue) {
       if (value !== oldValue) {
+        /* eslint-disable-next-line */
+        // this.$data._chart.destroy();
         this.renderChart(value, this.mergedOptions);
+        /* eslint-disable-next-line */
+        // this.$data._chart.resetZoom();
       }
     },
   },
