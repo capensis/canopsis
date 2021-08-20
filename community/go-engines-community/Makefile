@@ -37,8 +37,6 @@ test:
 	@echo "Running tests"
 	go build -o "${BUILD_OUTPUT_DIR}/ready" ./cmd/ready
 	"${BUILD_OUTPUT_DIR}/ready" -retries 0 -timeout 2m
-	cp ./cmd/canopsis-reconfigure/canopsis-core.toml.example ./canopsis.toml && go build -o "${BUILD_OUTPUT_DIR}/canopsis-reconfigure" ./cmd/canopsis-reconfigure
-	${BUILD_OUTPUT_DIR}/canopsis-reconfigure -conf ./canopsis.toml -mongoConf config/mongo
 	# The options -p 1 -parallel 1 ensure that the tests are not run
 	# concurrently, which is necessary for tests that use MongoDB, or
 	# environment variables.
