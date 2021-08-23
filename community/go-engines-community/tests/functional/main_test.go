@@ -97,6 +97,15 @@ func TestMain(m *testing.M) {
 			Logger()
 	}
 
+	paths := make([]string, 0, len(flags.paths))
+	for _, p := range flags.paths {
+		matches, err := filepath.Glob(p)
+		if err == nil && matches != nil {
+			paths = append(paths, matches...)
+		} else {
+			paths = append(paths, p)
+		}
+	}
 	err := bdd.RunDummyHttpServer(ctx, fmt.Sprintf("localhost:%d", flags.dummyHttpPort))
 	if err != nil {
 		log.Fatal(err)
@@ -135,9 +144,10 @@ func TestMain(m *testing.M) {
 	}()
 
 	opts := godog.Options{
-		StopOnFailure: true,
-		Format:        "pretty",
-		Paths:         flags.paths,
+		StopOnFailure:  true,
+		Format:         "pretty",
+		Paths:          paths,
+		DefaultContext: ctx,
 	}
 	testSuiteInitializer := InitializeTestSuite(ctx, flags, dbClient, redisClient)
 	scenarioInitializer, err := InitializeScenario(flags, dbClient, amqpConnection, eventLogger)
@@ -197,19 +207,22 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 	}
 
 	return func(ctx *godog.ScenarioContext) {
-		ctx.BeforeScenario(apiClient.ResetResponse)
-		ctx.BeforeScenario(amqpClient.Reset)
-		ctx.BeforeScenario(func(sc *godog.Scenario) {
+		ctx.Before(apiClient.ResetResponse)
+		ctx.Before(amqpClient.Reset)
+		ctx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 			eventLogger.Info().Str("file", sc.Uri).Msgf("%s", sc.Name)
+			return ctx, nil
 		})
 		if flags.checkUncaughtEvents {
-			ctx.AfterScenario(func(sc *godog.Scenario, scErr error) {
+			ctx.After(func(ctx context.Context, sc *godog.Scenario, scErr error) (context.Context, error) {
 				if scErr == nil {
 					err := amqpClient.IWaitTheEndOfEventProcessing()
 					if err == nil {
-						panic(errors.New("caught event"))
+						return ctx, errors.New("caught event")
 					}
 				}
+
+				return ctx, scErr
 			})
 		}
 

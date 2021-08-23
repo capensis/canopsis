@@ -109,7 +109,7 @@ func TestEngine_Run_GivenErrorOnPeriodicalProcess_ShouldStopEngine(t *testing.T)
 	defer close(done)
 
 	mockPeriodicalWorker := mock_engine.NewMockPeriodicalWorker(ctrl)
-	expectedErr := errors.New("test err")
+	expectedErr := &testErr{msg: "test error"}
 	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval)
 	mockPeriodicalWorker.EXPECT().Work(gomock.Any()).Return(expectedErr)
 
@@ -124,7 +124,8 @@ func TestEngine_Run_GivenErrorOnPeriodicalProcess_ShouldStopEngine(t *testing.T)
 
 	waitDone(t, done)
 
-	if err != expectedErr {
+	testErr := &testErr{}
+	if !errors.As(err, &testErr) || testErr.Error() != expectedErr.Error() {
 		t.Errorf("expected error %v but got %v", expectedErr, err)
 	}
 }
@@ -138,7 +139,7 @@ func TestEngine_Run_GivenErrorOnConsumer_ShouldStopEngine(t *testing.T) {
 	defer close(done)
 
 	mockConsumer := mock_engine.NewMockConsumer(ctrl)
-	expectedErr := errors.New("test err")
+	expectedErr := &testErr{msg: "test error"}
 	mockConsumer.EXPECT().Consume(gomock.Any()).Return(expectedErr)
 
 	engine := libengine.New(nil, nil, zerolog.Logger{})
@@ -152,7 +153,8 @@ func TestEngine_Run_GivenErrorOnConsumer_ShouldStopEngine(t *testing.T) {
 
 	waitDone(t, done)
 
-	if err != expectedErr {
+	testErr := &testErr{}
+	if !errors.As(err, &testErr) || testErr.Error() != expectedErr.Error() {
 		t.Errorf("expected error %v but got %v", expectedErr, err)
 	}
 }

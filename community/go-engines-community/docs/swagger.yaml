@@ -73,6 +73,8 @@ definitions:
         type: boolean
       is_auto_instruction_running:
         type: boolean
+      is_manual_instruction_waiting_result:
+        type: boolean
       links:
         additionalProperties: true
         type: object
@@ -483,6 +485,9 @@ definitions:
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
         type: object
+      remediation:
+        $ref: '#/definitions/appinfo.RemediationConf'
+        type: object
       stack:
         type: string
       timezone:
@@ -495,6 +500,13 @@ definitions:
       interval:
         type: integer
       unit:
+        type: string
+    type: object
+  appinfo.JobConfigType:
+    properties:
+      auth_type:
+        type: string
+      name:
         type: string
     type: object
   appinfo.LoginConfig:
@@ -538,6 +550,16 @@ definitions:
         type: object
       info:
         $ref: '#/definitions/appinfo.IntervalUnit'
+        type: object
+    type: object
+  appinfo.RemediationConf:
+    properties:
+      job_config_types:
+        items:
+          $ref: '#/definitions/appinfo.JobConfigType'
+        type: array
+      pause_manual_instruction_interval:
+        $ref: '#/definitions/types.DurationWithUnit'
         type: object
     type: object
   appinfo.UserInterfaceConf:

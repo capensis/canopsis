@@ -87,7 +87,7 @@
 
 <script>
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
-import { userInterfaceToForm } from '@/helpers/forms/user-interface';
+import { formToUserInterface, userInterfaceToForm } from '@/helpers/forms/user-interface';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -166,7 +166,7 @@ export default {
         const isValid = await this.$validator.validateAll();
 
         if (isValid) {
-          const data = { ...this.form };
+          const data = formToUserInterface(this.form);
 
           if (this.logoFile) {
             data.logo = await getFileDataUrlContent(this.logoFile);

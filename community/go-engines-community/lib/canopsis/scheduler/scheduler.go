@@ -3,6 +3,7 @@ package scheduler
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	redismod "github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
+	"github.com/valyala/fastjson"
 )
 
 var (
@@ -199,72 +201,48 @@ func (s *scheduler) AckEvent(ctx context.Context, event types.Event) error {
 func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, event types.Event) error {
 	lockID := event.GetEID()
 
-	// process children
-	childHasEvent := false
 	if metaAlarmChildren := event.MetaAlarmChildren; metaAlarmChildren != nil && len(*metaAlarmChildren) > 0 {
+		nextEvents, err := s.queueLock.ExtendAndPopRelatedOrMultiple(ctx, *metaAlarmChildren, lockID)
+		if err != nil {
+			s.logger.Err(err).
+				Str("lockID", lockID).
+				Msg("unable to process meta alarm")
+		}
 
-		for _, lockID := range *metaAlarmChildren {
-			nextEvent, err := s.queueLock.PopOrUnlock(ctx, lockID, true)
-			if err != nil {
-				s.logger.Err(err).
-					Str(lockID, "lockID").
-					Msg("unable to unlock alarm")
-			}
-
-			if nextEvent == nil {
-				continue
-			}
-
-			childHasEvent = true
+		for _, nextEvent := range nextEvents {
 			err = s.publishToNext(nextEvent)
 			if err != nil {
 				return err
 			}
 		}
+
+		if len(nextEvents) > 0 {
+			return nil
+		}
 	}
 
-	if childHasEvent {
-		err := s.queueLock.Unlock(ctx, lockID)
+	for _, relatedParentId := range event.MetaAlarmRelatedParents {
+		nextMetaAlarmEvent, err := s.queueLock.ExtendAndPopMultiple(ctx, relatedParentId, getChildren)
 		if err != nil {
 			s.logger.Err(err).
-				Str(lockID, "lockID").
+				Str(relatedParentId, "lockID").
 				Msg("unable to unlock alarm")
+
+			continue
 		}
 
-		return nil
+		if nextMetaAlarmEvent != nil {
+			return s.publishToNext(nextMetaAlarmEvent)
+		}
 	}
 
-	nextMetaAlarmEvent, err := s.queueLock.PopOrUnlock(ctx, lockID, true)
-	if err != nil {
-		s.logger.Err(err).
-			Str(lockID, "lockID").
-			Msg("unable to unlock alarm")
-	}
-
-	if nextMetaAlarmEvent == nil {
-		// todo if one the child has another parent then events of another parent are not processed
-		// possible solution 1 : find another parents from mongo and checks them, can be filtered
-		// by ids from redis queue.
-		// possible solution 2 : check if meta alarm locks are required at all.
-
-		return nil
-	}
-
-	return s.publishToNext(nextMetaAlarmEvent)
+	return nil
 }
 
 func (s *scheduler) processMetaAlarmChildUnlock(ctx context.Context, event types.Event) {
 	if metaAlarmParents := event.MetaAlarmParents; metaAlarmParents != nil && len(*metaAlarmParents) > 0 {
 		for _, metaAlarmLock := range *metaAlarmParents {
-			nextEvent, err := s.queueLock.LockAndPopMultiple(ctx, metaAlarmLock, func(b []byte) ([]string, error) {
-				metaAlarmEvent := types.Event{}
-				err := s.decoder.Decode(b, &metaAlarmEvent)
-				if err != nil || metaAlarmEvent.MetaAlarmChildren == nil {
-					return nil, err
-				}
-
-				return *metaAlarmEvent.MetaAlarmChildren, nil
-			}, true)
+			nextEvent, err := s.queueLock.ExtendAndPopMultiple(ctx, metaAlarmLock, getChildren)
 			if err != nil {
 				s.logger.Err(err).
 					Str(metaAlarmLock, "meta-alarm-lockID").
@@ -347,4 +325,26 @@ func (s *scheduler) processExpiredLock(ctx context.Context, lockID string) {
 			Str("lockID", lockID).
 			Msg("error on publishsing event to queue")
 	}
+}
+
+func getChildren(b []byte) ([]string, error) {
+	jsonEvent, err := fastjson.ParseBytes(b)
+	if err != nil {
+		return nil, err
+	}
+
+	jsonChildren := jsonEvent.GetArray("ma_children")
+	children := make([]string, len(jsonChildren))
+	for idx, child := range jsonChildren {
+		if child == nil {
+			continue
+		}
+
+		children[idx], err = strconv.Unquote(child.String())
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return children, nil
 }

@@ -23,7 +23,7 @@ import { MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateWidgetId } from '@/helpers/entities';
 import { removeFrom } from '@/helpers/immutable';
 
 export default {
@@ -75,9 +75,7 @@ export default {
      * Copy a widget's parameters, and open corresponding settings panel
      */
     cloneWidget({ viewId, tabId }) {
-      const { _id: newWidgetId } = generateWidgetByType(this.widget.type);
-
-      const newWidget = { ...this.widget, _id: newWidgetId };
+      const newWidget = { ...this.widget, _id: generateWidgetId(this.widget.type) };
 
       this.redirectToSelectedViewAndTab({ tabId, viewId });
 

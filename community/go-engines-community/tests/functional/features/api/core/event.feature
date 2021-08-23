@@ -346,7 +346,6 @@ Feature: send an event
     {
       "sent_events": [
         {
-          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "source_type": "resource",
@@ -694,7 +693,6 @@ Feature: send an event
       "sent_events": [],
       "failed_events": [
         {
-          "author": "root",
           "connector_name": "test_connectorname",
           "source_type": "resource",
           "component": "test_component",
@@ -704,7 +702,6 @@ Feature: send an event
           "author": "root"
         },
         {
-          "author": "root",
           "connector": "test_connector",
           "source_type": "resource",
           "component": "test_component",
@@ -768,7 +765,6 @@ Feature: send an event
       "sent_events": [],
       "failed_events": [
         {
-          "author": "root",
           "connector": 123,
           "connector_name": "test_connectorname",
           "source_type": "resource",
@@ -779,7 +775,6 @@ Feature: send an event
           "author": "root"
         },
         {
-          "author": "root",
           "connector": "test_connector",
           "connector_name": 123,
           "source_type": "resource",
@@ -790,7 +785,6 @@ Feature: send an event
           "author": "root"
         },
         {
-          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "source_type": "resource",
@@ -801,7 +795,6 @@ Feature: send an event
           "author": "root"
         },
         {
-          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "source_type": "resource",
@@ -849,7 +842,6 @@ Feature: send an event
     {
       "sent_events": [
         {
-          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "event_type": "ack",
@@ -858,7 +850,6 @@ Feature: send an event
           "author": "root"
         },
         {
-          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "component": "test_component",
@@ -868,14 +859,11 @@ Feature: send an event
           "author": "root"
         },
         {
-          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "component": "test_component",
           "event_type": "check",
           "source_type": "resource",
-          "ma_children": [],
-          "ma_parents": [],
           "state": 1,
           "resource": "test_resource",
           "author": "root"
@@ -922,7 +910,6 @@ Feature: send an event
     {
       "sent_events": [
         {
-          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "event_type": "ack",
@@ -931,7 +918,6 @@ Feature: send an event
           "author": "root"
         },
         {
-          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "component": "test_component",
@@ -941,14 +927,11 @@ Feature: send an event
           "author": "root"
         },
         {
-          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "component": "test_component",
           "event_type": "check",
           "source_type": "resource",
-          "ma_children": [],
-          "ma_parents": [],
           "state": 1,
           "resource": "test_resource",
           "author": "root"
@@ -979,7 +962,6 @@ Feature: send an event
       "sent_events": [],
       "failed_events": [
         {
-          "author": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "event_type": "check",

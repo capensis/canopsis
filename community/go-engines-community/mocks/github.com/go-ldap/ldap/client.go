@@ -2,7 +2,7 @@
 // Source: github.com/go-ldap/ldap/v3 (interfaces: Client)
 
 // Package mock_v3 is a generated GoMock package.
-package ldap
+package mock_v3
 
 import (
 	tls "crypto/tls"
@@ -158,6 +158,21 @@ func (m *MockClient) ModifyDN(arg0 *ldap.ModifyDNRequest) error {
 func (mr *MockClientMockRecorder) ModifyDN(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyDN", reflect.TypeOf((*MockClient)(nil).ModifyDN), arg0)
+}
+
+// ModifyWithResult mocks base method
+func (m *MockClient) ModifyWithResult(arg0 *ldap.ModifyRequest) (*ldap.ModifyResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ModifyWithResult", arg0)
+	ret0, _ := ret[0].(*ldap.ModifyResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ModifyWithResult indicates an expected call of ModifyWithResult
+func (mr *MockClientMockRecorder) ModifyWithResult(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyWithResult", reflect.TypeOf((*MockClient)(nil).ModifyWithResult), arg0)
 }
 
 // PasswordModify mocks base method

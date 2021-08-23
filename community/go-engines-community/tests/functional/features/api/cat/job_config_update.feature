@@ -1,28 +1,12 @@
 Feature: Job's config update
 
   Scenario: PUT as unauthorized
-    When I do PUT /api/v4/cat/job-configs/test-job-config-to-update:
-    """json
-    {
-      "name": "test-job-config-name-to-update",
-      "type": "rundeck",
-      "host": "http://example.com",
-      "auth_token": "test-auth-token"
-    }
-    """
+    When I do PUT /api/v4/cat/job-configs/test-job-config-to-update
     Then the response code should be 401
 
   Scenario: PUT without permissions
     When I am noperms
-    When I do PUT /api/v4/cat/job-configs/test-job-config-to-update:
-    """json
-    {
-      "name": "test-job-config-name-to-update",
-      "type": "rundeck",
-      "host": "http://example.com",
-      "auth_token": "test-auth-token"
-    }
-    """
+    When I do PUT /api/v4/cat/job-configs/test-job-config-to-update
     Then the response code should be 403
 
   Scenario: PUT a valid job's config
@@ -42,6 +26,7 @@ Feature: Job's config update
     {
       "_id": "test-job-config-to-update",
       "auth_token": "new token",
+      "auth_username": "",
       "author": {
         "_id": "root",
         "name": "root"
@@ -103,6 +88,7 @@ Feature: Job's config update
     {
       "_id": "test-job-config-to-update",
       "auth_token": "new token",
+      "auth_username": "",
       "author": {
         "_id": "root",
         "name": "root"
@@ -129,7 +115,7 @@ Feature: Job's config update
     """
       {
         "errors": {
-          "type": "Type must be one of [awx, rundeck]."
+          "type": "Type must be one of [awx, jenkins, rundeck]."
         }
       }
     """
