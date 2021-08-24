@@ -10,7 +10,7 @@ Feature: View stats
     When I am admin
     When I do POST /api/v4/view-stats
     Then the response code should be 201
-    When I do PUT /api/v4/view-stats/{{ .lastResponse.session_id }}:
+    When I do PUT /api/v4/view-stats/{{ .lastResponse._id }}:
     """json
     {
       "path": ["view", "tab"],
@@ -23,7 +23,7 @@ Feature: View stats
     When I am admin
     When I do POST /api/v4/view-stats
     Then the response code should be 201
-    When I do PUT /api/v4/view-stats/{{ .lastResponse.session_id }}:
+    When I do PUT /api/v4/view-stats/{{ .lastResponse._id }}:
     """json
     {
       "path": ["view", "tab"],
