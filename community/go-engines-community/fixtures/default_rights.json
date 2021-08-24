@@ -489,6 +489,22 @@
       "api_instruction": {
         "checksum": 15,
         "crecord_type": "right"
+      },
+      "api_playlist": {
+        "checksum": 4,
+        "crecord_type": "right"
+      },
+      "api_viewgroup": {
+        "checksum": 4,
+        "crecord_type": "right"
+      },
+      "api_acl": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_app_info_read": {
+        "checksum": 1,
+        "crecord_type": "right"
       }
     }
   },
