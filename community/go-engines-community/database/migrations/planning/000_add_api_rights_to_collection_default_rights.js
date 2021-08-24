@@ -234,3 +234,63 @@ db.default_rights.find({
         }
     )
 });
+db.default_rights.find({
+    "crecord_name": {
+        "$in": [
+            "api_alarmfilter",
+            "api_idlerule",
+            "api_eventfilter",
+            "api_action",
+            "api_webhook",
+            "api_metaalarmrule",
+            "api_playlist",
+            "api_dynamicinfos",
+            "api_heartbeat",
+            "api_watcher",
+            "api_viewgroup",
+            "api_view",
+            "api_pbehavior",
+            "api_pbehaviortype",
+            "api_pbehaviorreason",
+            "api_pbehaviorexception"
+        ],
+    }
+}).forEach(function (doc) {
+    db.default_rights.update(
+        {
+            crecord_name: "Visualisation",
+            crecord_type: "role",
+        },
+        {
+            $set: {
+                ['rights.' + doc._id]: {
+                    checksum: 4,
+                    crecord_type: "right",
+                },
+            },
+        }
+    )
+});
+db.default_rights.find({
+    "crecord_name": {
+        "$in": [
+            "api_playlist",
+            "api_viewgroup",
+        ],
+    }
+}).forEach(function (doc) {
+    db.default_rights.updateMany(
+        {
+            crecord_name: { "$in": ["Manager", "Support"] },
+            crecord_type: "role",
+        },
+        {
+            $set: {
+                ['rights.' + doc._id]: {
+                    checksum: 4,
+                    crecord_type: "right",
+                },
+            },
+        }
+    )
+});
