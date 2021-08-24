@@ -129,7 +129,7 @@ export const MODALS = {
   testSuite: 'test-suite',
   createIdleRule: 'create-idle-rule',
   healthcheckEngine: 'healthcheck-engine',
-  healthcheckEngineChainReference: 'healthcheck-engine-chain-reference',
+  healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -2020,6 +2020,8 @@ export const HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS = {
   [HEALTHCHECK_SERVICES_NAMES.redis]: { x: -1, y: 0 },
   [HEALTHCHECK_SERVICES_NAMES.enginesChain]: { x: 0, y: -0.5 },
 };
+
+export const HEALTHCHECK_FIFO_UNKNOWN_SERVICE = { name: HEALTHCHECK_ENGINES_NAMES.fifo, is_unknown: true };
 
 export const MESSAGE_STATS_INTERVALS = {
   hour: 'hour',

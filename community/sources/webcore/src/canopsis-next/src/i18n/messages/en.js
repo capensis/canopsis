@@ -1983,6 +1983,9 @@ export default {
     notifyUsersNumberOfInstances: 'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
     messagesHistory: 'FIFO messages processing history',
     messagesPerHour: 'messages/hour',
+    unknown: 'This system state is unavailable',
+    systemStatusChipError: 'The system is not operational',
+    systemStatusServerError: 'System configuration is invalid, please contact the administrator',
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',

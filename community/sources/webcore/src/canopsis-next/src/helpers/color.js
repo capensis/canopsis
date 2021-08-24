@@ -48,6 +48,10 @@ export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYP
  * @returns {string}
  */
 export const getHealthcheckNodeColor = (node) => {
+  if (node.is_unknown) {
+    return COLORS.healthcheck.unknown;
+  }
+
   if (!node.is_running || node.is_queue_overflown) {
     return COLORS.healthcheck.error;
   }
@@ -56,9 +60,5 @@ export const getHealthcheckNodeColor = (node) => {
     return COLORS.healthcheck.warning;
   }
 
-  if (node.is_running) {
-    return CAT_ENGINES.includes(node.name) ? COLORS.secondary : COLORS.primary;
-  }
-
-  return COLORS.healthcheck.unknown;
+  return CAT_ENGINES.includes(node.name) ? COLORS.secondary : COLORS.primary;
 };
