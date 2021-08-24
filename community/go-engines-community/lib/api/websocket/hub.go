@@ -215,14 +215,14 @@ func (h *hub) leave(connId, room string) error {
 }
 
 func (h *hub) closeConnections() {
+	h.connsMx.Lock()
+	defer h.connsMx.Unlock()
+
 	for room := range h.rooms {
 		h.roomsMx.Lock(room)
 		h.rooms[room] = nil
 		h.roomsMx.Unlock(room)
 	}
-
-	h.connsMx.Lock()
-	defer h.connsMx.Unlock()
 
 	for _, conn := range h.conns {
 		err := conn.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""), time.Now().Add(writeWait))
@@ -237,6 +237,9 @@ func (h *hub) closeConnections() {
 }
 
 func (h *hub) removeConnection(connId string) {
+	h.connsMx.Lock()
+	defer h.connsMx.Unlock()
+
 	for room, conns := range h.rooms {
 		h.roomsMx.Lock(room)
 
@@ -254,14 +257,14 @@ func (h *hub) removeConnection(connId string) {
 
 		h.roomsMx.Unlock(room)
 	}
-
-	h.connsMx.Lock()
-	defer h.connsMx.Unlock()
 
 	delete(h.conns, connId)
 }
 
 func (h *hub) closeConnection(connId string) {
+	h.connsMx.Lock()
+	defer h.connsMx.Unlock()
+
 	for room, conns := range h.rooms {
 		h.roomsMx.Lock(room)
 
@@ -279,9 +282,6 @@ func (h *hub) closeConnection(connId string) {
 
 		h.roomsMx.Unlock(room)
 	}
-
-	h.connsMx.Lock()
-	defer h.connsMx.Unlock()
 
 	if conn, ok := h.conns[connId]; ok {
 		err := conn.Close()
@@ -328,7 +328,7 @@ func (h *hub) listen(connId, userId string, conn Connection) {
 			syntaxErr := &json.SyntaxError{}
 			if errors.As(err, &syntaxErr) {
 				if !h.sendToConn(connId, WMessage{Type: WMessageFail, Error: "invalid message"}) {
-					break
+					return
 				}
 
 				continue
@@ -343,12 +343,12 @@ func (h *hub) listen(connId, userId string, conn Connection) {
 			}
 
 			h.removeConnection(connId)
-			break
+			return
 		}
 
 		if msg.Room == "" {
 			if !h.sendToConn(connId, WMessage{Type: WMessageFail, Error: "room is missing"}) {
-				break
+				return
 			}
 
 			continue
@@ -369,7 +369,7 @@ func (h *hub) listen(connId, userId string, conn Connection) {
 			if err != nil || !ok {
 				errMsg.Error = "cannot authorize user"
 				if !h.sendToConn(connId, errMsg) {
-					break
+					return
 				}
 				continue
 			}
@@ -378,7 +378,7 @@ func (h *hub) listen(connId, userId string, conn Connection) {
 			if err != nil {
 				errMsg.Error = err.Error()
 				if !h.sendToConn(connId, errMsg) {
-					break
+					return
 				}
 			}
 		case RMessageLeave:
@@ -386,16 +386,14 @@ func (h *hub) listen(connId, userId string, conn Connection) {
 			if err != nil {
 				errMsg.Error = err.Error()
 				if !h.sendToConn(connId, errMsg) {
-					break
+					return
 				}
 			}
 		default:
 			errMsg.Error = "unknown message type"
 			if !h.sendToConn(connId, errMsg) {
-				break
+				return
 			}
-
-			continue
 		}
 	}
 }

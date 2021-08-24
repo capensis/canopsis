@@ -217,7 +217,7 @@ func TestHub_Send_GivenDisconnectedConnection_ShouldNotSendMessageToConnection(t
 	waitDone(t, done)
 }
 
-func TestHub_Send_GivenErrOnWrite_ShouldCloseConnection(t *testing.T) {
+func TestHub_Send_GivenErrOnWriteMessage_ShouldCloseConnection(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -251,6 +251,46 @@ func TestHub_Send_GivenErrOnWrite_ShouldCloseConnection(t *testing.T) {
 			return &websocket.CloseError{Code: websocket.CloseNormalClosure}
 		}
 	}).Times(2)
+	mockConnection.EXPECT().WriteJSON(gomock.Any()).Return(errors.New("test error"))
+	mockConnection.EXPECT().RemoteAddr().Return(&net.TCPAddr{})
+	mockConnection.EXPECT().Close().Do(func() {
+		done <- true
+	}).Return(nil)
+
+	go hub.Start(ctx)
+
+	err := hub.Connect(userId, w, r)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+
+	waitDone(t, done)
+}
+
+func TestHub_Send_GivenErrOnWriteError_ShouldCloseConnection(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	done := make(chan bool)
+	defer close(done)
+	userId := "test-user"
+	room := "test-room"
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
+	mockConnection := mock_websocket.NewMockConnection(ctrl)
+	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
+	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
+	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
+	mockAuthorizer.EXPECT().Auth(gomock.Any(), gomock.Any()).Return(false, nil)
+	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, zerolog.Nop())
+	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
+	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
+	mockConnection.EXPECT().ReadJSON(gomock.Any()).Do(func(msg *libwebsocket.RMessage) {
+		msg.Room = room
+		msg.Type = libwebsocket.RMessageJoin
+	}).Return(nil)
 	mockConnection.EXPECT().WriteJSON(gomock.Any()).Return(errors.New("test error"))
 	mockConnection.EXPECT().RemoteAddr().Return(&net.TCPAddr{})
 	mockConnection.EXPECT().Close().Do(func() {
