@@ -66,6 +66,7 @@ export default {
     destroyCytoscape() {
       if (this.$cy) {
         this.$cy.destroy();
+        this.$cy = null;
       }
     },
 
