@@ -1,5 +1,6 @@
 <script>
 import { merge } from 'lodash';
+
 import { Pie } from '@/externals/vue-chart/components';
 
 import { TEST_SUITE_COLORS, TEST_SUITE_STATUSES } from '@/constants';

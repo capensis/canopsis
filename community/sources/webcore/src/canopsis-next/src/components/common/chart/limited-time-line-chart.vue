@@ -1,5 +1,6 @@
 <script>
 import { merge } from 'lodash';
+
 import { Line } from '@/externals/vue-chart/components';
 
 import { chartAnnotationMixin } from '@/mixins/chart/annotation';
@@ -17,12 +18,6 @@ export default {
       type: Array,
       required: false,
     },
-
-    unit: {
-      type: String,
-      default: '',
-    },
-
     datasets: {
       type: Array,
       default: () => [],
@@ -101,9 +96,6 @@ export default {
             mode: 'index',
             intersect: false,
             displayColors: false,
-            callbacks: {
-              label: tooltip => (this.unit ? `${tooltip.formattedValue} ${this.unit}` : tooltip.formattedValue),
-            },
           },
           annotation: {
             annotations: {

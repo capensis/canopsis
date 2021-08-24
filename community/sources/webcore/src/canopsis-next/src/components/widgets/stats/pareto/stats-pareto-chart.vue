@@ -1,5 +1,6 @@
 <script>
 import { merge } from 'lodash';
+
 import { Bar } from '@/externals/vue-chart/components';
 
 import { chartAnnotationMixin } from '@/mixins/chart/annotation';
