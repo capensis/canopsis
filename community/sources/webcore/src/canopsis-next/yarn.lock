@@ -630,13 +630,6 @@
   dependencies:
     "@types/babel-types" "*"
 
-"@types/chart.js@^2.7.55":
-  version "2.9.34"
-  resolved "https://registry.yarnpkg.com/@types/chart.js/-/chart.js-2.9.34.tgz#d41fb6b74b72a56bac70255bb4ed087386b66ed6"
-  integrity sha512-CtZVk+kh1IN67dv+fB0CWmCLCRrDJgqOj15qPic2B1VCMovNO6B7Vhf/TgPpNscjhAL1j+qUntDMWb9A4ZmPTg==
-  dependencies:
-    moment "^2.10.2"
-
 "@types/node@*":
   version "12.7.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.7.2.tgz#c4e63af5e8823ce9cc3f0b34f7b998c2171f0c44"
@@ -6821,7 +6814,7 @@ moment@2.22.1, moment@^2.22.2:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
 
-"moment@>= 2.9.0", moment@^2.10.2:
+"moment@>= 2.9.0":
   version "2.23.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.23.0.tgz#759ea491ac97d54bac5ad776996e2a58cc1bc225"
 
@@ -10030,13 +10023,6 @@ vue-async-computed@^3.8.2:
   version "3.8.2"
   resolved "https://registry.yarnpkg.com/vue-async-computed/-/vue-async-computed-3.8.2.tgz#d5dff221b62f95ad2f98ce9e7bbea5a067ec8b9a"
   integrity sha512-If5roOhp/x0WWd0TWRD77YsuFoiIw3MbkcRlIB/FE3TqQCPje52eQp5CV5NN/7B0VAyPuGX5JQa+rc9AOcGAYw==
-
-vue-chartjs@^3.4.0:
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/vue-chartjs/-/vue-chartjs-3.5.1.tgz#d25e845708f7744ae51bed9d23a975f5f8fc6529"
-  integrity sha512-foocQbJ7FtveICxb4EV5QuVpo6d8CmZFmAopBppDIGKY+esJV8IJgwmEW0RexQhxqXaL/E1xNURsgFFYyKzS/g==
-  dependencies:
-    "@types/chart.js" "^2.7.55"
 
 vue-cli-plugin-test-attrs@^0.1.4:
   version "0.1.4"

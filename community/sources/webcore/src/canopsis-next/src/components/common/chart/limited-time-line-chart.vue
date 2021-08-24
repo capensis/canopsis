@@ -119,9 +119,7 @@ export default {
                 borderDash: limit.borderDash || [],
                 label: {
                   enabled: false,
-                  font: {
-                    size: 14,
-                  },
+                  font: {},
                 },
               },
             },
@@ -135,8 +133,6 @@ export default {
     chartData(value, oldValue) {
       if (value !== oldValue) {
         this.updateChart(value, this.mergedOptions);
-
-        this.chart.resetZoom();
       }
     },
   },

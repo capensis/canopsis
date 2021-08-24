@@ -1,6 +1,6 @@
 <script>
 import { merge } from 'lodash';
-import { Bar } from 'vue-chartjs';
+import { Bar } from '@/externals/vue-chart/components';
 
 import { chartAnnotationMixin } from '@/mixins/chart/annotation';
 
@@ -26,9 +26,11 @@ export default {
       return merge({
         responsive: true,
         maintainAspectRatio: false,
-        tooltips: {
-          mode: 'index',
-          intersect: false,
+        plugins: {
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+          },
         },
       }, this.options);
     },
@@ -43,7 +45,7 @@ export default {
   watch: {
     chartData(value, oldValue) {
       if (value !== oldValue) {
-        this.renderChart(value, this.mergedOptions);
+        this.updateChart(value, this.mergedOptions);
       }
     },
   },
