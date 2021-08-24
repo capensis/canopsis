@@ -7,6 +7,7 @@ export const healthcheckNodesMixin = {
      * @return {string}
      */
     getTooltipText(data) {
+      const statusKeys = [];
       const itemWithDefaultFlags = {
         is_running: true,
         is_queue_overflown: false,
@@ -14,7 +15,6 @@ export const healthcheckNodesMixin = {
         is_diff_instances_config: false,
         ...data,
       };
-      const statusKeys = [];
 
       if (!itemWithDefaultFlags.is_running) {
         statusKeys.push('healthcheck.notRunning');
@@ -30,6 +30,10 @@ export const healthcheckNodesMixin = {
 
       if (itemWithDefaultFlags.is_diff_instances_config) {
         statusKeys.push('healthcheck.diffInstancesConfig');
+      }
+
+      if (itemWithDefaultFlags.is_unknown) {
+        statusKeys.push('healthcheck.unknown');
       }
 
       return statusKeys

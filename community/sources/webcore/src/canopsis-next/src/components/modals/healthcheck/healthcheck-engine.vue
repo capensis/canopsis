@@ -5,7 +5,7 @@
     template(slot="text")
       healthcheck-engine-information(:engine="engine")
     template(slot="actions")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.ok') }}
 </template>
 
 <script>

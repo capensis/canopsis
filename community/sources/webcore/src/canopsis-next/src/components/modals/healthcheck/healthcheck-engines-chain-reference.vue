@@ -7,7 +7,7 @@
       div.healthcheck-engine-chain-reference
         healthcheck-network-graph(:engines="engines")
     template(slot="actions")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.ok') }}
 </template>
 
 <script>
@@ -28,7 +28,7 @@ import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.healthcheckEngineChainReference,
+  name: MODALS.healthcheckEnginesChainReference,
   components: { HealthcheckNetworkGraph, ModalWrapper },
   mixins: [healthcheckNodesMixin, entitiesInfoMixin],
   computed: {
