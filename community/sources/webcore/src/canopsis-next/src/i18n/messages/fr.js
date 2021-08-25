@@ -2546,7 +2546,7 @@ export default {
     },
     [USERS_PERMISSIONS.technical.healthcheck]: {
       title: 'Bilan de santé',
-      message: '',
+      message: 'La fonction Healthcheck est le tableau de bord avec des indications d\'états et d\'erreurs de tous les systèmes inclus dans Canopsis.',
     },
 
     /**
