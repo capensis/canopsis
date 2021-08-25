@@ -1747,7 +1747,7 @@ export default {
         create: 'Create view',
         settings: 'Settings',
       },
-      activeSessions: 'Active sessions',
+      loggedUsersCount: 'Active sessions',
       ordering: {
         popups: {
           success: 'The groups was reordered',

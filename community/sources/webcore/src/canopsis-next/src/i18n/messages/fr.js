@@ -1747,7 +1747,7 @@ export default {
         create: 'Créer une vue',
         settings: 'Paramètres',
       },
-      activeSessions: 'Sessions actives',
+      loggedUsersCount: 'Sessions actives',
       ordering: {
         popups: {
           success: 'Les groupes ont été réorganisés',

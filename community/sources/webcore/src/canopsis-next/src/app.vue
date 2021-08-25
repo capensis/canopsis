@@ -23,8 +23,8 @@ import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active
 import { authMixin } from '@/mixins/auth';
 import systemMixin from '@/mixins/system';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { entitiesViewStatsMixin } from '@/mixins/entities/view-stats';
 import entitiesUserMixin from '@/mixins/entities/user';
-import keepaliveMixin from '@/mixins/entities/keepalive';
 
 import '@/assets/styles/main.scss';
 
@@ -40,8 +40,8 @@ export default {
     authMixin,
     systemMixin,
     entitiesInfoMixin,
+    entitiesViewStatsMixin,
     entitiesUserMixin,
-    keepaliveMixin,
   ],
   data() {
     return {
@@ -84,8 +84,7 @@ export default {
           });
 
           this.setTitle();
-
-          this.startKeepalive();
+          this.startViewStats();
           this.showPausedExecutionsPopup();
 
           unwatch();

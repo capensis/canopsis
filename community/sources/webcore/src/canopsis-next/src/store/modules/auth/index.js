@@ -1,15 +1,16 @@
 import { keyBy } from 'lodash';
-import Cookies from 'js-cookie';
-import qs from 'qs';
 
-import router from '@/router';
-import request from '@/services/request';
 import {
   API_ROUTES,
-  COOKIE_SESSION_KEY,
   DEFAULT_LOCALE,
   VUETIFY_ANIMATION_DELAY,
+  LOCAL_STORAGE_ACCESS_TOKEN_KEY,
 } from '@/config';
+
+import router from '@/router';
+
+import request from '@/services/request';
+import localStorageService from '@/services/local-storage';
 
 const types = {
   LOGIN: 'LOGIN',
@@ -25,7 +26,7 @@ const types = {
 export default {
   namespaced: true,
   state: {
-    isLoggedIn: !!Cookies.get(COOKIE_SESSION_KEY),
+    isLoggedIn: localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY),
     currentUser: {},
     pending: true,
   },
@@ -55,16 +56,17 @@ export default {
   actions: {
     async login({ commit, dispatch }, credentials) {
       try {
-        await request.post(API_ROUTES.auth, qs.stringify({ ...credentials, json_response: true }), {
-          headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        });
+        const { access_token: accessToken } = await request.post(API_ROUTES.login, credentials);
 
-        await request.get(API_ROUTES.sessionStart);
-
+        localStorageService.set(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
         commit(types.LOGIN_COMPLETED);
 
-        return dispatch('fetchCurrentUser');
+        return Promise.all([
+          dispatch('viewStats/create', null, { root: true }),
+          dispatch('fetchCurrentUser'),
+        ]);
       } catch (err) {
+        console.error(err);
         commit(types.LOGOUT);
 
         throw err;
@@ -94,11 +96,13 @@ export default {
         throw err;
       }
     },
+
     async logout({ commit }, { redirectTo } = {}) {
       try {
-        commit(types.LOGOUT);
+        await request.post(API_ROUTES.logout);
 
-        await request.get(API_ROUTES.logout);
+        commit(types.LOGOUT);
+        localStorageService.clear();
 
         if (redirectTo) {
           await router.replaceAsync(redirectTo);
@@ -112,6 +116,10 @@ export default {
       } catch (err) {
         console.error(err);
       }
+    },
+
+    fetchLoggedUsersCountWithoutStore() {
+      return request.get(API_ROUTES.loggedUserCount);
     },
   },
 };
