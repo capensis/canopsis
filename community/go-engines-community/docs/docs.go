@@ -6781,7 +6781,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/stats.Stats"
+                            "$ref": "#/definitions/viewstats.pingResponse"
                         }
                     }
                 }
@@ -6831,7 +6831,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/stats.Stats"
+                            "$ref": "#/definitions/viewstats.pingResponse"
                         }
                     },
                     "400": {
@@ -12294,6 +12294,14 @@ var doc = `{
                 },
                 "visible": {
                     "type": "boolean"
+                }
+            }
+        },
+        "viewstats.pingResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
                 }
             }
         }

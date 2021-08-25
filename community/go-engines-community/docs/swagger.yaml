@@ -3574,6 +3574,11 @@ definitions:
     - path
     - visible
     type: object
+  viewstats.pingResponse:
+    properties:
+      _id:
+        type: string
+    type: object
 info:
   contact: {}
   description: This is a Canopsis server.
@@ -7737,7 +7742,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/stats.Stats'
+            $ref: '#/definitions/viewstats.pingResponse'
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -7768,7 +7773,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/stats.Stats'
+            $ref: '#/definitions/viewstats.pingResponse'
         "400":
           description: Bad Request
           schema:

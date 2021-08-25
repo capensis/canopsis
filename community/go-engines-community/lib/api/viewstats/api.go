@@ -35,7 +35,7 @@ type api struct {
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Success 201 {object} stats.Stats
+// @Success 201 {object} pingResponse
 // @Router /view-stats [post]
 func (a *api) Create(c *gin.Context) {
 	s, err := a.manager.Ping(
@@ -50,7 +50,9 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	c.JSON(http.StatusCreated, s)
+	c.JSON(http.StatusCreated, pingResponse{
+		ID: s.SessionID,
+	})
 }
 
 // Update view stats by id
@@ -64,7 +66,7 @@ func (a *api) Create(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "view stats id"
 // @Param body body pingRequest true "body"
-// @Success 200 {object} stats.Stats
+// @Success 200 {object} pingResponse
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /view-stats/{id} [put]
@@ -109,7 +111,9 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	c.JSON(http.StatusOK, s)
+	c.JSON(http.StatusOK, pingResponse{
+		ID: s.SessionID,
+	})
 }
 
 // Find view stats

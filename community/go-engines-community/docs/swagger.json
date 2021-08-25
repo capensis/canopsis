@@ -6765,7 +6765,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/stats.Stats"
+                            "$ref": "#/definitions/viewstats.pingResponse"
                         }
                     }
                 }
@@ -6815,7 +6815,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/stats.Stats"
+                            "$ref": "#/definitions/viewstats.pingResponse"
                         }
                     },
                     "400": {
@@ -12278,6 +12278,14 @@
                 },
                 "visible": {
                     "type": "boolean"
+                }
+            }
+        },
+        "viewstats.pingResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
                 }
             }
         }
