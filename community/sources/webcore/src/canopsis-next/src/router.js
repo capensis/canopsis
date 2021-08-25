@@ -1,10 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import { LOCAL_STORAGE_ACCESS_TOKEN_KEY, ROUTER_MODE } from '@/config';
+import { ROUTER_MODE } from '@/config';
 import { CRUD_ACTIONS, USERS_PERMISSIONS } from '@/constants';
 import store from '@/store';
-import localStorageService from '@/services/local-storage';
 import {
   checkAppInfoAccessForRoute,
   checkUserAccessForRoute,
@@ -311,7 +310,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const isRequiresAuth = to.matched.some(v => v.meta.requiresLogin);
   const isDontRequiresAuth = to.matched.some(v => v.meta.requiresLogin === false);
-  const isLoggedIn = localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
+  const isLoggedIn = store.getters['auth/isLoggedIn'];
 
   if (!isLoggedIn && isRequiresAuth) {
     return next({
@@ -344,7 +343,7 @@ router.beforeResolve(async (to, from, next) => {
 });
 
 router.afterEach((to, from) => {
-  const isLoggedIn = localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
+  const isLoggedIn = store.getters['auth/isLoggedIn'];
 
   if (to.path !== from.path) {
     store.dispatch('entities/sweep');

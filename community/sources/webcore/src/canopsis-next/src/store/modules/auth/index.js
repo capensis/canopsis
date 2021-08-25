@@ -101,12 +101,12 @@ export default {
       try {
         await request.post(API_ROUTES.logout);
 
+        commit(types.LOGOUT);
+        localStorageService.clear();
+
         if (redirectTo) {
           await router.replaceAsync(redirectTo);
         }
-
-        commit(types.LOGOUT);
-        localStorageService.clear();
 
         /**
          * We've added timeout for the correct layout padding displaying with transition.

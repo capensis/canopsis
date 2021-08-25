@@ -27,8 +27,8 @@ export default {
       localStorageService.set(LOCAL_STORAGE_KEY, id);
     },
 
-    async update({ state }, { data }) {
-      if (!state.currentViewStatsId) {
+    async update({ state, rootGetters }, { data }) {
+      if (!state.currentViewStatsId || !rootGetters['auth/isLoggedIn']) {
         return Promise.resolve();
       }
 
