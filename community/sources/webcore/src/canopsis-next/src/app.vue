@@ -14,6 +14,10 @@
 import { createNamespacedHelpers } from 'vuex';
 import { isEmpty } from 'lodash';
 
+import { MAX_LIMIT } from '@/constants';
+
+import { reloadPageWithTrailingSlashes } from '@/helpers/url';
+
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import TheSideBars from '@/components/side-bars/the-sidebars.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
@@ -25,7 +29,6 @@ import entitiesUserMixin from '@/mixins/entities/user';
 import keepaliveMixin from '@/mixins/entities/keepalive';
 
 import '@/assets/styles/main.scss';
-import { MAX_LIMIT } from '@/constants';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
@@ -55,6 +58,9 @@ export default {
 
       return this.$route.fullPath;
     },
+  },
+  beforeCreate() {
+    reloadPageWithTrailingSlashes();
   },
   created() {
     this.registerCurrentUserOnceWatcher();
