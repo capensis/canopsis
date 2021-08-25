@@ -1,5 +1,3 @@
-import { isNil } from 'lodash';
-
 class LocalStorage {
   constructor() {
     this.storage = {};
@@ -28,7 +26,7 @@ class LocalStorage {
    * @returns {boolean}
    */
   has(key) {
-    return !isNil(this.storage[key]);
+    return key in this.storage;
   }
 
   /**
