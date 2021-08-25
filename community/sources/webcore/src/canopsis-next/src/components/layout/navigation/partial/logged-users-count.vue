@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-tooltip.active-sessions-count(left)
+  v-tooltip.logged-users-count(left)
     v-badge(slot="activator", :color="badgeColor", right, overlap)
       span(slot="badge") {{ count }}
       v-btn(flat, icon, small)
@@ -10,9 +10,9 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL } from '@/config';
+import { ACTIVE_LOGGED_USERS_COUNT_FETCHING_INTERVAL } from '@/config';
 
-const { mapActions } = createNamespacedHelpers('sessionsCount');
+const { mapActions } = createNamespacedHelpers('auth');
 
 export default {
   props: {
@@ -24,33 +24,30 @@ export default {
   data() {
     return {
       count: '',
-      requestTimer: undefined,
     };
   },
   mounted() {
-    this.startFetchActiveSessionsCount();
+    this.startFetchLoggedUsersCount();
   },
   beforeDestroy() {
-    this.stopFetchActiveSessionsCount();
+    this.stopFetchLoggedUsersCount();
   },
   methods: {
-    ...mapActions({
-      fetchSessionsCountWithoutStore: 'fetchItemWithoutStore',
-    }),
+    ...mapActions(['fetchLoggedUsersCountWithoutStore']),
 
-    async startFetchActiveSessionsCount() {
-      const { count } = await this.fetchSessionsCountWithoutStore();
+    async startFetchLoggedUsersCount() {
+      const { count } = await this.fetchLoggedUsersCountWithoutStore();
 
       this.count = count;
 
       if (this.requestTimer) {
-        this.stopFetchActiveSessionsCount();
+        this.stopFetchLoggedUsersCount();
       }
 
-      this.requestTimer = setTimeout(this.startFetchActiveSessionsCount, ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL);
+      this.requestTimer = setTimeout(this.startFetchLoggedUsersCount, ACTIVE_LOGGED_USERS_COUNT_FETCHING_INTERVAL);
     },
 
-    stopFetchActiveSessionsCount() {
+    stopFetchLoggedUsersCount() {
       clearTimeout(this.requestTimer);
 
       this.requestTimer = undefined;
@@ -60,7 +57,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .active-sessions-count /deep/ .v-badge__badge {
+  .logged-users-count /deep/ .v-badge__badge {
     top: 2px;
     right: 2px;
     height: 17px;

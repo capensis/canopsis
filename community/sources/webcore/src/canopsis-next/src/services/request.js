@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { get } from 'lodash';
-import Cookies from 'js-cookie';
 
-import { API_BASE_URL, COOKIE_SESSION_KEY } from '@/config';
+import { API_HOST, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
+
+import localStorageService from '@/services/local-storage';
 
 /**
  * Active axios sources
@@ -41,6 +42,20 @@ export async function useRequestCancelling(action, key) {
 }
 
 /**
+ * Prepare axios config before request sending
+ *
+ * @param {Object} config
+ * @returns {*}
+ */
+function requestHandler(config) {
+  if (localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY) && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`;
+  }
+
+  return config;
+}
+
+/**
  * Check error field inside successful response and reject them
  *
  * @param {Object} response
@@ -66,7 +81,7 @@ function errorResponseHandler(responseWithError) {
      * When we will receive 502 or 401 error we must remove cookie to avoid getting a infinity page refreshing
      */
     if ([502, 401].includes(responseWithError.response.status)) {
-      Cookies.remove(COOKIE_SESSION_KEY);
+      localStorageService.remove(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
       window.location.reload();
     }
 
@@ -82,11 +97,9 @@ function errorResponseHandler(responseWithError) {
   return Promise.reject(responseWithError);
 }
 
-const request = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true,
-});
+const request = axios.create({ baseURL: API_HOST });
 
+request.interceptors.request.use(requestHandler);
 request.interceptors.response.use(successResponseHandler, errorResponseHandler);
 
 export default request;

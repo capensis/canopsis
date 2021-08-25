@@ -13,7 +13,7 @@
     v-layout(v-else, fill-height, align-center)
       app-logo.canopsis-logo.mr-2
       v-layout.version.ml-1(fill-height, align-end)
-        active-sessions-count(badgeColor="secondary")
+        logged-users-count(badgeColor="secondary")
         app-version
     v-toolbar-title.white--text.font-weight-regular(v-if="appTitle") {{ appTitle }}
     v-spacer
@@ -32,7 +32,7 @@ import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';
-import ActiveSessionsCount from './active-sessions-count.vue';
+import LoggedUsersCount from './logged-users-count.vue';
 import GroupsTopBar from './groups-top-bar/groups-top-bar.vue';
 import TopBarExploitationMenu from './top-bar-exploitation-menu.vue';
 import TopBarAdministrationMenu from './top-bar-administration-menu.vue';
@@ -48,7 +48,7 @@ export default {
   components: {
     AppLogo,
     AppVersion,
-    ActiveSessionsCount,
+    LoggedUsersCount,
     GroupsTopBar,
     TopBarExploitationMenu,
     TopBarAdministrationMenu,
@@ -73,7 +73,7 @@ export default {
   font-size: 0.7em;
   position: relative;
 
-  & /deep/ .active-sessions-count {
+  & /deep/ .logged-users-count {
     position: absolute;
     top: 0;
     left: -8px;
