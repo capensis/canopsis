@@ -2546,7 +2546,7 @@ export default {
     },
     [USERS_PERMISSIONS.technical.healthcheck]: {
       title: 'Healthcheck',
-      message: '',
+      message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
     },
 
     /**
