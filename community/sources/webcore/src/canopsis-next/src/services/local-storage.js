@@ -11,16 +11,32 @@ class LocalStorage {
     }
   }
 
-  get(key, json = false) {
-    const value = this.storage[key];
-
-    return json ? JSON.parse(value) : this.storage[key];
+  /**
+   * Get data from storage
+   *
+   * @param {string | number} key
+   * @returns {any}
+   */
+  get(key) {
+    return this.storage[key];
   }
 
+  /**
+   * Check if storage has the data by key
+   *
+   * @param {string | number} key
+   * @returns {boolean}
+   */
   has(key) {
     return !isNil(this.storage[key]);
   }
 
+  /**
+   * Set value in storage by key
+   *
+   * @param {string | number} key
+   * @param {any} value
+   */
   set(key, value) {
     this.storage[key] = value;
 
@@ -31,6 +47,11 @@ class LocalStorage {
     }
   }
 
+  /**
+   * Remove data from storage by key
+   *
+   * @param {string | number} key
+   */
   remove(key) {
     delete this.storage[key];
 
@@ -41,11 +62,14 @@ class LocalStorage {
     }
   }
 
+  /**
+   * Clear storage
+   */
   clear() {
     this.storage = {};
 
     try {
-      localStorage.clear();
+      window.localStorage.clear();
     } catch (err) {
       console.warn(err);
     }

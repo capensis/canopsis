@@ -4,7 +4,7 @@
       span(slot="badge") {{ count }}
       v-btn(flat, icon, small)
         v-icon(color="white", small) people
-    span {{ $t('layout.sideBar.activeSessions') }}
+    span {{ $t('layout.sideBar.loggedUsersCount') }}
 </template>
 
 <script>

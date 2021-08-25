@@ -3,7 +3,6 @@ import { removeTrailingSlashes } from '@/helpers/url';
 export const {
   BASE_URL,
   VUE_APP_API_HOST,
-  VUE_APP_COOKIE_SESSION_KEY,
   VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY,
 } = process.env;
 
@@ -12,8 +11,6 @@ export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_U
 export const API_HOST = VUE_APP_API_HOST;
 
 export const ROUTER_MODE = 'history';
-
-export const COOKIE_SESSION_KEY = VUE_APP_COOKIE_SESSION_KEY;
 
 export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY || 'accessToken';
 

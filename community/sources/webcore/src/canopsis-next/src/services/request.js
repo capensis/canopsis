@@ -81,7 +81,7 @@ function errorResponseHandler(responseWithError) {
      * When we will receive 502 or 401 error we must remove cookie to avoid getting a infinity page refreshing
      */
     if ([502, 401].includes(responseWithError.response.status)) {
-      localStorageService.remove(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
+      localStorageService.clear();
       window.location.reload();
     }
 
