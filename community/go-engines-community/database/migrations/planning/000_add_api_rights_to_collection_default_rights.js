@@ -106,14 +106,6 @@ db.default_rights.insertMany([
         type: "CRUD",
     },
     {
-        _id: "api_watcher",
-        loader_id: "api_watcher",
-        crecord_name: "api_watcher",
-        crecord_type: "action",
-        desc: "Watchers",
-        type: "CRUD",
-    },
-    {
         _id: "api_viewgroup",
         loader_id: "api_viewgroup",
         crecord_name: "api_viewgroup",
@@ -209,7 +201,6 @@ db.default_rights.find({
             "api_playlist",
             "api_dynamicinfos",
             "api_heartbeat",
-            "api_watcher",
             "api_viewgroup",
             "api_view",
             "api_pbehavior",
@@ -246,7 +237,6 @@ db.default_rights.find({
             "api_playlist",
             "api_dynamicinfos",
             "api_heartbeat",
-            "api_watcher",
             "api_viewgroup",
             "api_view",
             "api_pbehavior",
@@ -281,13 +271,35 @@ db.default_rights.find({
 }).forEach(function (doc) {
     db.default_rights.updateMany(
         {
-            crecord_name: { "$in": ["Manager", "Support"] },
+            crecord_name: { "$in": ["Manager", "Support", "Supervision"] },
             crecord_type: "role",
         },
         {
             $set: {
                 ['rights.' + doc._id]: {
                     checksum: 4,
+                    crecord_type: "right",
+                },
+            },
+        }
+    )
+});
+db.default_rights.find({
+    "crecord_name": {
+        "$in": [
+            "api_alarm_read"
+        ],
+    }
+}).forEach(function (doc) {
+    db.default_rights.updateMany(
+        {
+            crecord_name: { "$in": ["Manager", "Support", "Visualisation", "Supervision"] },
+            crecord_type: "role",
+        },
+        {
+            $set: {
+                ['rights.' + doc._id]: {
+                    checksum: 1,
                     crecord_type: "right",
                 },
             },

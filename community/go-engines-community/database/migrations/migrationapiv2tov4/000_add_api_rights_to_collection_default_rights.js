@@ -70,13 +70,35 @@ db.default_rights.find({
 }).forEach(function (doc) {
     db.default_rights.updateMany(
         {
-            crecord_name: { "$in": ["Manager", "Support", "Visualisation"] },
+            crecord_name: { "$in": ["Manager", "Support", "Visualisation", "Supervision"] },
             crecord_type: "role",
         },
         {
             $set: {
                 ['rights.' + doc._id]: {
                     checksum: 1,
+                    crecord_type: "right",
+                },
+            },
+        }
+    )
+});
+db.default_rights.find({
+    "crecord_name": {
+        "$in": [
+            "api_associative_table"
+        ],
+    }
+}).forEach(function (doc) {
+    db.default_rights.updateMany(
+        {
+            crecord_name: { "$in": ["Manager", "Support", "Visualisation", "Supervision"] },
+            crecord_type: "role",
+        },
+        {
+            $set: {
+                ['rights.' + doc._id]: {
+                    checksum: 4,
                     crecord_type: "right",
                 },
             },
