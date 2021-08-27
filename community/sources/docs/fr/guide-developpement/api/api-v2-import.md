@@ -218,7 +218,7 @@ Dans tous les cas, la progression et le résultat de l'import sont disponibles v
 
 Dans le cas où l'import est `failed` ou `done`, la route `GET /api/contextgraph/import/status/<import_id>` retourne des informations supplémentaires : temps d'exécution, nombre d'éléments impactés ou raison de l'échec.
 
-Différents exemples de retour des routes `PUT /api/contextgraph/import` et `GET /api/contextgraph/import/status/<import_id>` sont disponibles dans le paragraphe suivant.
+Différents exemples de réponses des routes `PUT /api/contextgraph/import` et `GET /api/contextgraph/import/status/<import_id>` sont disponibles dans le paragraphe suivant.
 
 ## Utilisation de l'API d'import
 
