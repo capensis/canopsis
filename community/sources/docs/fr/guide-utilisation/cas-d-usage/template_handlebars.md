@@ -35,7 +35,6 @@ Le rendu s'effectue au clic sur la colonne *Nom du connecteur* comme précisé d
 
 ![Info popup visualisation](./img/templates_infopopup_visualisation.png "Info popup visualisation")  
 
-
 ### Plus d'infos
 
 Il existe un second mécanisme, *Plus d'infos*, dont le fonctionnement est identique à *Info popup*.  
@@ -49,7 +48,7 @@ Couplé avec des exemples fournis sur le site [vuetify](https://vuetifyjs.com/en
 
 Le template associé est dans ce cas le suivant :
 
-````
+```html
 <div class="v-card__text">
  <div class="v-tabs" data-booted="true">
   <div class="v-tabs__bar theme--dark cyan">
@@ -83,7 +82,7 @@ Le template associé est dans ce cas le suivant :
   </div>
  </div>
 </div>
-````
+```
 
 ### Variables
 
@@ -125,7 +124,7 @@ Voici un exemple concret de représentation.
 
 La structure dont on veut afficher les données est la suivante  :
 
-````
+```json
 "watcher_pbehavior": [
   {
     "connector": "canopsis",
@@ -155,12 +154,12 @@ La structure dont on veut afficher les données est la suivante  :
     "rrule": null
    }
 ]
-````
+```
 
 Nous souhaitons donc itérer sur le tableau `watcher_pbehavior` puis sur le tableau `comments`.  
 Voici le template de la modale : 
 
-````
+```handlebars
 {{#each entity.watcher_pbehavior}}
   {{#with . as |pbh|}}
     <strong>{{pbh.name}} ({{pbh.type_}} / {{pbh.reason}})</strong> <br>
@@ -173,12 +172,11 @@ Voici le template de la modale :
     </ul>
   {{/with}}
 {{/each}}
-````
+```
 
 L'affichage associé sera au final : 
 
 ![Affichage pbh](./img/templates_affichage_pbh.png "Affichage pbh")  
-
 
 ### Afficher des images dans une tuile de météo
 
@@ -188,14 +186,14 @@ Si vous souhaitez afficher des pictos applicatifs sur une tuile de météo, vous
 
 Le template handlebars associé est le suivant : 
 
-````
+```handlebars
 {{#if entity.infos.picto.value}}
 <img src="{{entity.infos.picto.value}}" width="200px">
 {{/if}}
-````
+```
 
 Cela suppose que l'attribut `picto` de votre entité porte un png encodé en base64.  
 
-````
+```
 data:image/png;base64,iVBORw0KGgoA ... ==
-````
+```
