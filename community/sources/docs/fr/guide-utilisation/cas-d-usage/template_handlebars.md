@@ -21,7 +21,7 @@ Pour pallier cette limite, 2 mécanismes sont mis à disposition :
 ### Info popup
 
 Les infos popup permettent d'afficher un popup contenant des données lors du clic sur un élément de colonne.  
-Toutes les colonnes affichées sont éligibles au système.  
+Toutes les colonnes affichées peuvent bénéficier de ce système.  
 
 Dans les paramètres du widget bac à alarmes :
 
