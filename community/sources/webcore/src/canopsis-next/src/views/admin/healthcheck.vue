@@ -13,21 +13,22 @@
       v-tab-item.healthcheck__graph-tab
         healthcheck-network-graph(
           v-if="!pending && !hasServerError",
-          :services="services",
-          :engines="engines",
-          :has-invalid-engines-order="hasInvalidEnginesOrder",
-          :max-queue-length="maxQueueLength",
+          :services="response.services",
+          :engines="response.engines",
+          :has-invalid-engines-order="response.has_invalid_engines_order",
+          :max-queue-length="response.max_queue_length",
           show-description
         )
         h2.my-4.headline.text-xs-center(v-else-if="hasServerError") {{ $t('healthcheck.systemStatusServerError') }}
       v-tab-item(lazy)
-        healthcheck-graphs(:max-queue-length="maxQueueLength")
+        healthcheck-graphs(:max-queue-length="response.max_queue_length")
       v-tab-item(lazy)
         healthcheck-parameters
     c-fab-btn(@refresh="fetchList")
 </template>
 
 <script>
+import { isEqual } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation/healthcheck-network-graph.vue';
@@ -44,43 +45,45 @@ export default {
   data() {
     return {
       activeTab: 0,
-      maxQueueLength: 0,
       pending: true,
-      services: [],
-      engines: {},
+      response: {},
       hasServerError: false,
-      hasInvalidEnginesOrder: false,
     };
   },
   computed: {
     hasAnyError() {
-      return this.hasServerError || this.hasInvalidEnginesOrder;
+      return this.hasServerError || this.response.has_invalid_engines_order;
     },
   },
   mounted() {
     this.fetchList();
+    this.$socket.on('open', () => {
+      this.$socket.join('healthcheck');
+    });
+
+    this.$socket.join('healthcheck');
+    this.$socket.room('healthcheck').addListener(this.setData);
+  },
+  beforeDestroy() {
+    this.$socket.leave('healthcheck');
   },
   methods: {
     ...mapActions({
       fetchHealthcheckStatusWithoutStore: 'fetchStatusWithoutStore',
     }),
 
+    setData(data) {
+      if (!isEqual(data, this.response)) {
+        this.response = data;
+      }
+    },
+
     async fetchList() {
       try {
         this.hasServerError = false;
         this.pending = true;
 
-        const {
-          services = [],
-          engines = {},
-          max_queue_length: maxQueueLength,
-          has_invalid_engines_order: hasInvalidEnginesOrder,
-        } = await this.fetchHealthcheckStatusWithoutStore();
-
-        this.services = services;
-        this.engines = engines;
-        this.maxQueueLength = maxQueueLength;
-        this.hasInvalidEnginesOrder = hasInvalidEnginesOrder;
+        this.response = await this.fetchHealthcheckStatusWithoutStore();
       } catch (err) {
         this.hasServerError = true;
       } finally {

@@ -162,6 +162,8 @@ module.exports = {
     return config;
   },
   devServer: {
+    host: 'localhost',
+    https: true,
     disableHostCheck: true,
     watchOptions: {
       aggregateTimeout: 300,

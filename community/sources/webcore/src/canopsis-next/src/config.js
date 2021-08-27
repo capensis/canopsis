@@ -10,6 +10,12 @@ export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_U
 
 export const API_HOST = VUE_APP_API_HOST;
 
+export const API_SOCKET_URL = '/api/v4/ws';
+
+export const SOCKET_HOST = VUE_APP_API_HOST.replace(/^http(s?)/, 'wss');
+
+export const API_SOCKET_HOST = removeTrailingSlashes(`${SOCKET_HOST}${API_SOCKET_URL}`);
+
 export const ROUTER_MODE = 'history';
 
 export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY || 'accessToken';

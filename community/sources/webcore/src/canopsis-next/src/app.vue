@@ -14,6 +14,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import { isEmpty } from 'lodash';
 
+import { API_SOCKET_HOST, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { MAX_LIMIT } from '@/constants';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
@@ -27,6 +28,8 @@ import { entitiesViewStatsMixin } from '@/mixins/entities/view-stats';
 import entitiesUserMixin from '@/mixins/entities/user';
 
 import '@/assets/styles/main.scss';
+
+import localStorageService from '@/services/local-storage';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
@@ -66,7 +69,7 @@ export default {
     this.pending = false;
   },
   beforeDestroy() {
-    this.stopKeepalive();
+    this.stopViewStats();
   },
   methods: {
     ...mapActions({
@@ -76,6 +79,7 @@ export default {
     registerCurrentUserOnceWatcher() {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
+          this.$socket.connect(`${API_SOCKET_HOST}?token=${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
           await this.fetchAppInfos();
 
           this.setSystemData({
