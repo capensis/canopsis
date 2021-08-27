@@ -472,21 +472,31 @@ func (h *hub) listen(connId string, conn Connection) {
 		msg := RMessage{}
 		err := conn.ReadJSON(&msg)
 		if err != nil {
+			unmarshalErr := &json.UnmarshalTypeError{}
 			syntaxErr := &json.SyntaxError{}
-			if errors.As(err, &syntaxErr) {
+			if errors.As(err, &syntaxErr) || errors.As(err, &unmarshalErr) {
 				closed = h.sendToConn(connId, WMessage{Type: WMessageFail, Error: "invalid message"})
 				continue
 			}
 
 			closeErr := &websocket.CloseError{}
-			if !errors.As(err, &closeErr) || closeErr.Code != websocket.CloseNormalClosure {
+			if errors.As(err, &closeErr) {
+				if closeErr.Code != websocket.CloseNormalClosure {
+					h.logger.
+						Err(err).
+						Str("addr", conn.RemoteAddr().String()).
+						Msg("connection closed unexpectedly")
+				}
+
+				h.removeConnections(connId)
+			} else {
 				h.logger.
 					Err(err).
 					Str("addr", conn.RemoteAddr().String()).
-					Msg("connection closed unexpectedly")
+					Msg("cannot read message from connection, connection will be closed")
+				h.disconnectConnections(connId)
 			}
 
-			h.removeConnections(connId)
 			return
 		}
 
