@@ -35,9 +35,9 @@ Une fois Docker installé, vous devez ensuite [installer Docker Compose](https:/
 
 Les images Docker officielles de Canopsis sont hébergées sur Docker Hub : <https://hub.docker.com/u/canopsis/> et seront prochainement migrées vers notre propre registre Docker.
 
-Le [dépôt Git de Canopsis](https://git.canopsis.net/canopsis/canopsis/-/tree/develop) contient des fichiers Docker Compose d'exemple :
+Le [dépôt Git de Canopsis](https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop) contient des fichiers Docker Compose d'exemple :
 ```sh
-git clone -b develop https://git.canopsis.net/canopsis/canopsis.git && cd canopsis/docker-compose
+git clone -b develop https://git.canopsis.net/canopsis/canopsis-community.git && cd canopsis-community/community/docker-compose
 ```
 
 !!! attention
