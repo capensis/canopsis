@@ -15,7 +15,7 @@ Comme observé sur le schéma de cycle de vie, les traps SNMP bruts sont traduit
 
 Pour rappel, le résultat de la traduction doit se concrétiser par la génération d'un message compréhensible par Canopsis.
 
-Ce message doit comporter à minima les informations suivantes :
+Ce message doit comporter au minimum les informations suivantes :
 
 *  `connector`
 *  `connector_name`
