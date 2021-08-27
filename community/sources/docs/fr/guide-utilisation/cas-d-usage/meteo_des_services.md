@@ -59,9 +59,9 @@ Instanciez le et utilisez le critère d'affichage "affichage_tv = oui" pour filt
 
 Pour personaliser le rendu du widget, il existe 3 niveaux de templates :  
 
-* 1 : La tuile
-* 2 : La modale après clic
-* 3 : La visualisation des sous éléments
+1. La tuile
+2. La modale après clic
+3. L'affichage des sous éléments
 
 Dans ces templates, vous pouvez utiliser la notation **handlebars** pour accéder aux variables de vos entités.  
 

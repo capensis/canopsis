@@ -58,8 +58,7 @@ Vous accéderez alors au formulaire d'édition.
 La suppression de playlists peut s'effectuer de manière unitaire avec le bouton de suppression ![Suppression playlist](./img/suppression_playlists.png  "Suppression de playlists") 
 ou de manière massive en sélectionnant les playslists à supprimer.
 
-
-## Visualisation et exploitation d'une playlist
+## Affichage et exploitation d'une playlist
 
 ### Démarrer une playlist
 
@@ -84,6 +83,7 @@ Pour cela, il vous faut cliquer sur le bouton permettant de recopier le lien de 
 Vous pouvez démarrer une playlist à partir de la liste des playlists en cliquant sur le bouton de lecture ![Lecture playlist](./img/lecture_playlists.png  "Lecture de playlists") 
 
 ### Boutons de navigation
+
 * Temps restant avant le chargement de la vue suivante
 * Vue précédente
 * Démarrer la playlist / Mettre en pause la playlist

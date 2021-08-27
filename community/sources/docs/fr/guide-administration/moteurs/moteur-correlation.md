@@ -26,7 +26,7 @@ Le moteur va alors vérifier si une règle de corrélation doit s'appliquer et s
 
 Une méta alarme permet de grouper dynamiquement des alarmes selon des critères définis dans une règle.
 
-Ces groupements d'alarmes permettent de visualiser rapidement les corrélations entre les différentes alarmes présentes dans le [bac à alarmes](../../guide-utilisation/interface/widgets/bac-a-alarmes/index.md).
+Ces groupements d'alarmes permettent de voir rapidement les corrélations entre les différentes alarmes présentes dans le [bac à alarmes](../../guide-utilisation/interface/widgets/bac-a-alarmes/index.md).
 
 ### Activation de la corrélation
 

@@ -8,7 +8,7 @@ Elle est liée à une [entité](#entite) de type [composant](#composant), [resso
 
 Elle peut connaître de multiples changements de criticité et de statut, et subir une suite d'actions (acquittement, mise en veille, changement de criticité, annulation, etc.), [utilisateurs](../interface/widgets/bac-a-alarmes/actions.md) ou [automatiques](../../guide-administration/moteurs/moteur-action.md). L'ensemble de ces changements et actions s'appelle un *cycle d'alarme*.
 
-On peut visualiser les alarmes via un widget [bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
+Les alarmes peuvent être affichées à l'aide d'un widget [Bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
 
 Vous pouvez consulter sa [structure dans la documentation développeur](../../guide-developpement/base-de-donnees/periodical-alarm.md).
 
@@ -25,7 +25,7 @@ Un *composant* peut être soit :
 
 ## Context-Graph
 
-Le *context-graph* est un schéma relationnel entre les [entités](#entite) de Canopsis. Il sert à grapher leur contexte. Il s'appuie sur les notions de [`impact` et `depends`](../../guide-developpement/base-de-donnees/default-entities.md#context-graph). Il est présent au sein de chaque [entité](#entite) et peut être visualisé via le widget [explorateur de contexte](../interface/widgets/contexte/index.md).
+Le *context-graph* est un schéma relationnel entre les [entités](#entite) de Canopsis. Il sert à grapher leur contexte. Il s'appuie sur les notions de [`impact` et `depends`](../../guide-developpement/base-de-donnees/default-entities.md#context-graph). Il est présent au sein de chaque [entité](#entite) et est accessible au travers du widget [Explorateur de contexte](../interface/widgets/contexte/index.md).
 
 ## Connecteur
 
@@ -56,7 +56,7 @@ L'*enrichissement* est l'action d'ajouter des informations supplémentaires. On 
 
 Les *entités* servent à structurer les [alarmes](#alarme). Elles sont liées entre elles via le [context-graph](#context-graph). Elles peuvent permettre, via l'[enrichissement](#enrichissement) de conserver des données statiques (emplacement du serveur, nom du client, etc.).
 
-Les entités peuvent être visualisées via le widget [explorateur de contexte](../interface/widgets/contexte/index.md)
+Les entités sont accessibles au travers du widget [Explorateur de contexte](../interface/widgets/contexte/index.md).
 
 Les types d'*entité* sont :
 
@@ -93,7 +93,7 @@ Un *nom de connecteur* (ou « connector name ») est le champ d'un [évènement]
 
 Un *observateur* est une [entité](#entite) destinée à inclure d'autres [entités](#entite) dans son [context-graph](#context-graph) via des patterns. Ils peuvent être ajoutés via l'[explorateur de contexte](../interface/widgets/contexte/index.md).
 
-Ils peuvent être visualisés via la [Météo](#meteo) de services.
+Ils sont utilisés dans la création d'une [Météo de services](#meteo).
 
 ## Ressource
 

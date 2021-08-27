@@ -45,7 +45,7 @@ Pour créer une plage, du lundi au vendredi, de 19h15 à 8h :
 
 ## Aperçu de la plage de service
 
-Après avoir validé les différents formulaires, vous pouvez visualiser le résultat dans le calendrier.
+Après avoir validé les différents formulaires, vous pouvez observer le résultat dans le calendrier.
 
 ![Aperçu de la plage de service](./img/pbh_apercu_plage_19h15-08h.png)
 
