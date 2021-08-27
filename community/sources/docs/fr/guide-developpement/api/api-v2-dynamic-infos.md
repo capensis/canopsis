@@ -360,7 +360,7 @@ curl -X GET -u root:root 'http://localhost:8082/api/v2/dynamic-infos/7b17aae1-8c
 **Paramètres** :
 
  - `search` : la valeur à rechercher.
- - `search_fields` : les noms des champs sur lesquels la recherche est effectuée, séparés par des virgules. Les valeurs acceptés sont `_id`, `name`, `description`, `infos.name` et `infos.value`. Par défault la recherche est effectuée sur tous ces champs.
+ - `search_fields` : les noms des champs sur lesquels la recherche est réalisée, séparés par des virgules. Les valeurs acceptés sont `_id`, `name`, `description`, `infos.name` et `infos.value`. Par défault la recherche opère sur tous ces champs.
  - `limit` : le nombre de règles à renvoyer.
  - `offset` : le nombre de règles à passer.
 

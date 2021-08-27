@@ -672,7 +672,7 @@ client et le responsable d'un composant dans une collection MongoDB
 ```
 
  - Cette règle n'est appliquée que si les informations `customer` et `manager`
-   ne sont pas déjà définies, pour éviter d'effectuer une requête MongoDB à
+   ne sont pas déjà définies, pour éviter de réaliser une requête MongoDB à
    chaque évènement.
  - Elle a une priorité supérieure à la règle ajoutant l'entité, pour que les
    actions de type `set_entity_info_from_template` n'échouent pas.

@@ -6,7 +6,8 @@ Elles peuvent être affichées en mode "plein écran" sur un téléviseur par ex
 
 ## Création d'une playlist
 
-Dans Canopsis, la création d'une playlist s'effectue par le menu 'Administration' puis 'Playlists'.
+Rendez-vous tout d'abord dans le menu Administration > Playlists :
+
 ![Menu playlists](./img/menu_playlists.png)
 
 Il est ensuite possible de créer une playlist en cliquant sur le bouton "+".
@@ -55,7 +56,7 @@ Vous accéderez alors au formulaire d'édition.
 
 ### Supprimer une playlist
 
-La suppression de playlists peut s'effectuer de manière unitaire avec le bouton de suppression ![Suppression playlist](./img/suppression_playlists.png  "Suppression de playlists") 
+La suppression de playlists peut se faire de manière unitaire avec le bouton de suppression ![Suppression playlist](./img/suppression_playlists.png  "Suppression de playlists") 
 ou de manière massive en sélectionnant les playslists à supprimer.
 
 ## Affichage et exploitation d'une playlist

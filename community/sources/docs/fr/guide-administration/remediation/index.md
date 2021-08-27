@@ -60,7 +60,7 @@ ordonnanceurs de tâches, selon les différentes configurations définies.
 
 ## Configuration des ordonnanceurs
 
-Cette section présente la configuration à effectuer dans l'ordonnanceur et la
+Cette section présente la configuration à réaliser dans l'ordonnanceur et la
 liaison à ajouter dans Canopsis.
 
 Les opérations sont décrites séparément pour les deux ordonnanceurs supportés :

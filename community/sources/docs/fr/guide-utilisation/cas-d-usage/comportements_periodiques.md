@@ -89,7 +89,7 @@ Vous observez que l'application est passée en pause.
 
 En parallèle des plages de services, vous pouvez déclarer des entités en maintenance par exemple.
 
-Vous avez la possibilité d'effectuer cette opération :
+Vous avez la possibilité de réaliser cette opération :
 
 * **Depuis le panneau d'exploitation des comportements périodiques** : la mise en maintenance s'effectue à partir d'un filtre.
 * **Depuis le Bac à alarmes** : dans ce cas, la mise en maintenance se fait de manière unitaire (en sélectionnant individuellement les alarmes concernées).

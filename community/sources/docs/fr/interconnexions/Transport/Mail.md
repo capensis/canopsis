@@ -244,7 +244,7 @@ La partie droite décrit les règles de transformations (où a, b et c sont des 
 - `line(a).trim_left` supprime l'espace à gauche de la sélection
 - `line(a).trim_right` supprime l'espace à droite de la sélection
 - `line(a).trim_both` supprime les espaces à gauche et à droite de la sélection
-- `and` permet d'effectuer une concaténation entre deux opérations
+- `and` permet de faire une concaténation entre deux opérations
 - `print(word)` permet d'assigner la valeur word dans le champ
 
 

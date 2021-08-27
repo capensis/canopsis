@@ -129,12 +129,12 @@ Pour plus d'informations, n'hésitez pas à nous consulter.
 
 De manière générale, vous pouvez consulter le contenu de la base de données qui porte les entités, le Contexte.
 
-Pour cela, vous devez instancier un widget « Explorateur de contexte » et effectuer une recherche sur l'entité voulue.
+Pour cela, vous devez instancier un widget « Explorateur de contexte » et y faire une recherche sur l'entité voulue.
 
-Voici un exemple avec `ressource-doc1`.
+Voici un exemple avec `ressource-doc1` :
 
 ![Contexte](./img/consulter_contexte.png "Consulter le contexte")
 
-Puis avec `ressource-doc2`.
+Puis avec `ressource-doc2` :
 
 ![Contexte](./img/consulter_contexte2.png "Consulter le contexte")
