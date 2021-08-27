@@ -120,6 +120,22 @@ export default {
               },
             },
           },
+          zoom: {
+            pan: {
+              enabled: false,
+            },
+            zoom: {
+              wheel: {
+                enabled: false,
+              },
+              pinch: {
+                enabled: false,
+              },
+              drag: {
+                enabled: false,
+              },
+            },
+          },
         },
       }, this.options);
     },
