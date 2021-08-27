@@ -35,9 +35,9 @@ Le critère de sélection est laissé à votre discrétion, vos manières de rep
 Voici les étapes de création de l'observateur.  
 Utilisez un widget **explorateur de contexte**.  
 
-![Creation observateur](./img/mds_observateur_creation1.png "Création de l'observateur")  
+![Création observateur](./img/mds_observateur_creation1.png "Création de l'observateur")  
 
-On nomme l'observateur et on positionne son filtre de sélection.  
+On nomme l'observateur et on configure son filtre de sélection.  
 
 ![Définition de l'observateur](./img/mds_observateur_creation2.png "Définition de l'observateur")  
 
@@ -69,14 +69,12 @@ La tuile :
 
 ![Template tuile](./img/mds_widget_template_tuile.png "Widget template tuile")  
 
-
 La modale :
 
 ![Template modale](./img/mds_widget_template_modale.png "Widget template modale")  
 
 !!! note
     Notez le helper *entities* qui est fourni directement par Canopsis et qui vous permet d'itérer sur l'ensemble des sous-éléments de l'observateur.
-
 
 Le rendu final sera
 
@@ -105,7 +103,6 @@ Les résultats observés seront alors :
 
 ![Résultats](./img/mds_resultat1.png "Résultats")  
 ![Résultats](./img/mds_resultat2.png "Résultats")  
-
 
 Depuis cette modale, vous pourrez au final exécuter les [actions adéquates](../interface/widgets/meteo-des-services/index.md#les-actions) de prise en charge des alarmes.  
 

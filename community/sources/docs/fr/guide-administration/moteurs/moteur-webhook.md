@@ -117,7 +117,7 @@ Lorsque le service appelé par le webhook répond une erreur (Code erreur HTTP !
 
 `unit` est exprimé en "s" pour seconde, "m" pour minute, et "h" pour heure.
 
-Ces paramètres sont positionnés dans la configuration de chaque webhook.  
+Ces paramètres sont présents dans la configuration de chaque webhook.  
 Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).
 
 Exemple de fichier `webhook.conf` :
@@ -140,7 +140,7 @@ Si l'API renvoie une réponse sous forme de JSON imbriqué, il faut prendre en c
 
 Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Data` de telle sorte que la clé dans `Data` corresponde à la valeur dans les données du service. Par exemple avec `"ticket_creation_date" : "timestamp"`, la valeur de `ticket["timestamp"]` sera mise dans `Alarm.Value.Ticket.Data["ticket_creation_date"]`.
 
-Les valeurs des champs `ticket_id` et autres champs de `declare_ticket` peuvent être définies sous forme d'expressions régulières. Pour cela, il est nécessaire de positionner l'option `regexp` à `true` comme dans l'exemple suivant :
+Les valeurs des champs `ticket_id` et autres champs de `declare_ticket` peuvent être définies sous forme d'expressions régulières. Pour cela, il est nécessaire de passer l'option `regexp` à `true` comme dans l'exemple suivant :
 
 ```json
 "declare_ticket": {

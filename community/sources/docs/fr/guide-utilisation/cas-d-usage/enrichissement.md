@@ -90,9 +90,9 @@ Considérons l'évènement suivant :
 
 Chose importante, les attributs pris en charge sont décrits [dans la partie sur les champs des évènements de la documentation de l'event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md#champs-des-evenements).
 
-Dans notre cas, l'attribut `groupe` est personalisé et sera donc positionné *automatiquement* dans un dictionnaire **`extrainfos`**.
+Dans notre cas, l'attribut `groupe` est personalisé et sera donc *automatiquement* inséré dans un dictionnaire **`extrainfos`**.
 
-On commence en ajoutant une règle via le menu adéquat
+On commence en ajoutant une règle via le menu adéquat :
 
 ![Menu Event-filter](./img/event_filter_menu.png "Menu Event-filter")
 
@@ -102,12 +102,12 @@ Ensuite, on définit sur quels évènements sera exécutée cette règle. Dans n
 
 ![Définition du pattern](./img/event_filter_edit_pattern.png "Définition du pattern")
 
-Dernière étape, nous allons récupérer le contenu de l'attribut `groupe` et le positionner dans un nouvel attribut d'entité `domainemetier`.
+Dernière étape, nous allons récupérer le contenu de l'attribut `groupe` et le placer dans un nouvel attribut d'entité `domainemetier`.
 
 ![Ajout d'une action](./img/event_filter_ajout_action.png "Ajout d'une action")
 
 !!! attention
-    Pour manipuler l'entité comme nous venons de le faire, une opération préalable est nécessaire. Une règle de [copie d'entité](../../guide-administration/moteurs/moteur-che-event_filter.md#ajout-dinformations-a-lentite) doit être présente
+    Pour manipuler l'entité comme nous venons de le faire, une opération préalable est nécessaire. Une règle de [copie d'entité](../../guide-administration/moteurs/moteur-che-event_filter.md#ajout-dinformations-a-lentite) doit être présente.
 
 Le résultat pourra être observé sur un Bac à alarmes, par exemple :
 
