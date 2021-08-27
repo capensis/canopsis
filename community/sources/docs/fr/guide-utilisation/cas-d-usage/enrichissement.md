@@ -2,25 +2,22 @@
 
 Canopsis étant un hyperviseur, une des fonctions attendues concerne l'enrichissement de données.  
 
-Nous pouvons considérer que les informations transmises par les sources de données et notamment les superviseurs, sont des informations *pauvres*.
+Nous pouvons considérer que les informations transmises par les sources de données (et notamment les superviseurs) sont des informations *pauvres*.
 
 Elles sont pauvres dans le sens où elles nous signifient dans la majeure partie des cas qu'il y a une alarme (ou une mise à jour d'alarme) concernant une entité.
 
 !!! note "Une entité ?"
-    Une entité est un composant typé (composant, ressource, observateur)
+    Une entité est un composant typé (composant, ressource, observateur).
 
 Pour aider les pilotes des centres d'opérations, il est indispensable d'enrichir ces informations et ainsi de qualifier au plus juste les alarmes à traiter.
 
-L'idée est donc de classer les alarmes, apporter de l'information objective sur des météos de services, afin de faciliter la prise de décision.
+Le but est donc de classer les alarmes et d'apporter de l'information objective sur des météos de services, afin de faciliter la prise de décision.
 
 Plusieurs possibilités sont offertes dans Canopsis :
 
 * Enrichissement systématique depuis les évènements
 * Enrichissement conditionné par des règles de gestion appliquées aux évènements (Pro)
 * Enrichissement par l'intermédiaire de référentiels externes (Pro)
-
-!!! attention
-    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go.
 
 ## Enrichissement depuis les évènements
 
@@ -121,7 +118,7 @@ L'enrichissement par référentiel externe passe par le développement d'un *dri
 
 Dans l'édition Pro de Canopsis, il est notamment possible d'interconnecter les outils **Service Now** et **iTop**.
 
-Pour plus d'informations, n'hésitez pas à nous consulter.
+Pour plus d'informations, n'hésitez pas à [nous consulter](https://www.capensis.fr/canopsis/).
 
 ## Annexes
 

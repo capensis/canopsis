@@ -95,7 +95,7 @@ On peut aussi enchaîner différentes fonctions à la suite si on veut transform
 
 #### Fonctionnalités spécifiques à Canopsis
 
-Certaines fonctionnalités ne sont pas présentes de base dans les templates Go. Elles ont été implémentées par l'équipe de Canopsis.
+Certaines fonctionnalités ne sont pas présentes de base dans les templates Go. Elles ont été spécifiquement ajoutées pour Canopsis.
 
 !!! note
     Les fonctions suivantes sont disponibles dans les templates des [webhooks](../moteurs/moteur-webhook.md), pas ceux de l'event-filter.

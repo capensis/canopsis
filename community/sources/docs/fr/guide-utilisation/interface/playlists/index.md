@@ -63,23 +63,23 @@ ou de manière massive en sélectionnant les playslists à supprimer.
 
 ### Démarrer une playlist
 
-**A partir du menu latéral**
+**À partir du menu latéral**
 
 Lorsque vous avez accès à une playlist, elle apparait automatiquement dans le menu latéral de Canopsis.
 
 ![Menu latéral playlist](./img/menu_lateral_playlists.png  "Menu latéral playlists") 
 
-**A partir de l'URL directe**
+**À partir de l'URL directe**
 
 Il est possible d'utiliser l'URL directe d'une playlist pour la jouer dans un navigateur.
 
 Pour cela, il vous faut cliquer sur le bouton permettant de recopier le lien de la playlist et l'utiliser directement dans votre navigateur.
 ![Copie lien  playlist](./img/copie_lien_playlists.png  "Copie lien playlists") 
 
-!!! Note
+!!! note
     Vous pouvez utiliser le paramètre `autoplay=true` pour que la playlist démarre automatiquement sans intervention
 
-**A partir de la liste des playlists**
+**À partir de la liste des playlists**
 
 Vous pouvez démarrer une playlist à partir de la liste des playlists en cliquant sur le bouton de lecture ![Lecture playlist](./img/lecture_playlists.png  "Lecture de playlists") 
 

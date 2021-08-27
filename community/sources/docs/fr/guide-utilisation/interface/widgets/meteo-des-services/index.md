@@ -158,7 +158,7 @@ Pour supprimer le filtre actuellement actif, cliquez sur l'icone de suppression 
 Ce paramètre permet de trier les tuiles selon un attribut pré-défini par ordre alphabétique.  
 
 !!! attention
-    Le tri implémenté est sensible à la casse et fait que les majuscules sont traitées avant les minuscules
+    Le tri implémenté est sensible à la casse et fait que les majuscules sont traitées avant les minuscules.
 
 Par défaut, les attributs disponibles pour le tri sont :
 

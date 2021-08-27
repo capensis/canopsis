@@ -22,18 +22,18 @@ D'un point de vue "structuration de données", nous allons utiliser un critère 
 L'observateur est une entité du contexte de Canopsis qui porte un filtre de sélection d'éléments.  
 Dans notre cas il s'agit de :
 
-````
+```
 "entity.infos.app.value" : "E-Commerce"
-````
+```
 
 Autrement dit, chaque entité de Canopsis qui portera un attribut **infos.app.value = E-Commerce** sera incluse dans l'observateur E-Commerce.  
 Le critère de sélection est laissé à votre discrétion, vos manières de représenter les données, les modèles utilisés dans vos référentiels.
 
-!!! Warning
+!!! attention
     La réflexion autour de ce sujet est extrêmement importante, ne la négligez pas.
 
 Voici les étapes de création de l'observateur.  
-Utilisez un widget **explorateur de contexte**.  
+Utilisez un widget **Explorateur de contexte**.  
 
 ![Création observateur](./img/mds_observateur_creation1.png "Création de l'observateur")  
 
@@ -46,7 +46,7 @@ On crée un attribut application_label qui nous servira plus tard à mieux repé
 
 ![Définition de l'observateur](./img/mds_observateur_creation3.png "Définition de l'observateur")  
 
-A ce stade, une alarme portant le critère app.value = "E-Commerce" aura un impact sur l'observateur.
+À ce stade, une alarme portant le critère app.value = "E-Commerce" aura un impact sur l'observateur.
 
 ## Widget ServiceWeather
 

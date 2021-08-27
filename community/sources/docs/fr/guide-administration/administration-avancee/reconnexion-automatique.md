@@ -1,6 +1,6 @@
 # Reconnexion automatique des services et des moteurs
 
-A partir de la version 4.1 de Canopsis, le fichier de configuration [`canopsis.toml`](./variables-environnement.md#chemin-dacces-au-fichier-de-configuration-global-canopsistoml) supporte de nouveaux paramètres permettant de configurer la reconnexion automatique en cas d'erreur.
+À partir de Canopsis 4.1.0, le fichier de configuration [`canopsis.toml`](./variables-environnement.md#chemin-dacces-au-fichier-de-configuration-global-canopsistoml) prend en charge de nouveaux paramètres permettant de configurer la reconnexion automatique en cas d'erreur.
 
 ## Configuration de la reconnexion
 
@@ -39,7 +39,7 @@ En cas d'incident de connexion, le processus exécute de nouveau la commande aut
 
 ### Processus de travail
 
-En cas d'erreur de connexion, le processus tente à nouveau d'exécuter la commande en fonction de la valeur de `ReconnectRetries`. Si l'incident persiste, il envoie un message de type `nack` à RabbitMQ, inscrit l'erreur dans les logs et arrête le moteur.
+En cas d'erreur de connexion, le processus tente de nouveau d'exécuter la commande en fonction de la valeur de `ReconnectRetries`. Si l'incident persiste, il envoie un message de type `nack` à RabbitMQ, inscrit l'erreur dans les logs et arrête le moteur.
 
 S'il s'agit d'une erreur d'un autre type, le processus envoie un message de type `ack` à RabbitMQ, inscrit l'erreur dans les logs et passe à la tâche suivante.
 

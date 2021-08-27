@@ -19,13 +19,13 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 
 ### Base de données
 
-| **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
+| **Nom** | **Source** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:------------:|
 | [SQL](Base-de-donnees/Mysql-MariaDB-PostgreSQL-Oracle.md) | Mysql, PostgeSQL, Oracle, DB2 et MSSQL | Community | Oui | Toutes versions |
 
 ### Transport
 
-| **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
+| **Nom** | **Source** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
 | [Logstash](Transport/Logstash.md) | [Liste des sources](https://www.elastic.co/guide/en/logstash/current/input-plugins.html) | Community | Oui | Toutes versions |
 | [Email](Transport/Mail.md) | Messages provenant d’une boîte mail **POP3** | Pro | Oui | Toutes versions |
@@ -33,7 +33,7 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 
 ### Supervision
 
-| **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
+| **Nom** | **Source** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
 | [Snmp Trap](Supervision/SNMPtrap.md) | Tout trap SNMP respectant la [RFC1157](https://www.rfc-editor.org/rfc/pdfrfc/rfc1157.txt.pdf) | Pro | Oui | Toutes versions |
 | [Snmp Trap Custom](Supervision/SNMPtrap_custom.md) | Tout trap SNMP nécessitant un traitement spécifique | Pro | Oui | Version ≥ 3 |
@@ -58,7 +58,7 @@ Le driver permet de peupler le référentiel interne Canopsis en vue de l’enri
 
 ### Référentiel
 
-| **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
+| **Nom** | **Source** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
 | iTop | Version [Pro 1.3.4-3287](https://www.combodo.com/itop) et [Community 2.4](https://www.combodo.com/itop) | Pro | Non | Version ≥ 3.25 |
 | Service Now | Version [Madrid](https://www.servicenow.fr/) | Pro | Non | Version ≥ 3.25 |
@@ -71,13 +71,13 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 ### Générique
 
-| **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
+| **Nom** | **Destination** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
 | [Webhooks](../guide-administration/moteurs/moteur-webhook.md) | Tout outil qui peut réceptionner des webhooks | Pro | Oui | Version ≥ 3 (moteurs Go) |
 
 ### Transport
 
-| **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
+| **Nom** | **Destination** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
 | [Logstash](../guide-utilisation/cas-d-usage/notifications.md) | [Liste des destinations](https://www.elastic.co/guide/en/logstash/current/output-plugins.html) | Pro | Oui | Version ≥ 3 (moteurs Go) |
 | [IM](../guide-utilisation/cas-d-usage/notifications.md) | Toute messagerie instantanée disposant d’une API qui accepte des requêtes HTTP | Pro | Oui | Version ≥ 3 (moteurs Go) |
@@ -85,7 +85,7 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 ### Ticketing
 
-| **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
+| **Nom** | **Destination** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
 | Service Now | Version [Madrid](https://www.servicenow.fr/) | Pro | Oui | Version ≥ 3 (moteurs Go) |
 | Observer | Observer | Pro | Non | Version ≥ 3 (moteurs Go) |

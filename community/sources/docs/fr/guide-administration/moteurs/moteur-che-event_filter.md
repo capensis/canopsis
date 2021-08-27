@@ -131,7 +131,7 @@ Il est également possible de créer des patterns basés sur l'absence d'un cham
 ```
 
 !!! note
-    A partir de Canopsis v3.46.0, de nouveaux opérateurs avancés ont été ajoutés pour tester les éléments d'un tableau.
+    À partir de Canopsis 3.46.0, de nouveaux opérateurs avancés ont été ajoutés pour tester les éléments d'un tableau.
 
  - `has_every` : le tableau doit contenir **tous** les éléments listés dans l'opérateur.
  - `has_one_of` : le tableau doit contenir **au moins un** des éléments listés dans l'opérateur.

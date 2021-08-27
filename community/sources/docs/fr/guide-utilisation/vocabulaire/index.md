@@ -20,7 +20,7 @@ Un [moteur](#moteur) effectue une tâche périodique appelée *battement* (ou «
 
 Un *composant* peut être soit :
 
-- Un type d'[entité](#entite) créé suite au traitement d'un [évènement](#evenement).
+- Un type d'[entité](#entite) créé après le traitement d'un [évènement](#evenement).
 - Un champ d'un [évènement](#evenement). Le plus souvent, il s'agit d'une machine ou d'un périphérique réseau (serveur, routeur, etc.). Une [alarme](#alarme) peut être rattachée à un *composant*.
 
 ## Context-Graph
@@ -105,7 +105,7 @@ Une *ressource* peut être soit :
 
 ## Statut
 
-Une [alarme](#alarme) a un *statut* , indiquant la situation dans laquelle se trouve l'alarme indiquant un incident. Il y a actuellement 5 statuts possibles :
+Une [alarme](#alarme) a un *statut*, indiquant la situation dans laquelle se trouve l'alarme indiquant un incident. Il y a actuellement 5 statuts possibles :
 
 *  0 - Fermée
 *  1 - En cours
