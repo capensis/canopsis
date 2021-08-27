@@ -39,14 +39,39 @@ import SocketPlugin from '@/plugins/socket';
 
 import { setSeveralFields } from '@/helpers/immutable';
 
-import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
+import CPageHeader from '@/components/common/page/c-page-header.vue';
+import CEnabled from '@/components/icons/c-enabled.vue';
+import CEllipsis from '@/components/common/table/c-ellipsis.vue';
+import CPagination from '@/components/common/pagination/c-pagination.vue';
+import CDraggableStepNumber from '@/components/common/drag-drop/c-draggable-step-number.vue';
+import CInformationBlock from '@/components/common/block/c-information-block.vue';
+
+/**
+ * Overlays
+ */
+import CAlertOverlay from '@/components/common/overlay/c-alert-overlay.vue';
+import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
+
+/**
+ * Chips
+ */
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
 import CStateCountChangesChips from '@/components/common/chips/c-state-count-changes-chips.vue';
 import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
 import CInstructionJobChip from '@/components/common/chips/c-instruction-job-chip.vue';
+
+/**
+ * Table
+ */
+import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
-import CPageHeader from '@/components/common/page/c-page-header.vue';
+import CEmptyDataTableColumns from '@/components/common/table/c-empty-data-table-columns.vue';
+import CTablePagination from '@/components/common/pagination/c-table-pagination.vue';
+
+/**
+ * Buttons
+ */
 import CExpandBtn from '@/components/common/buttons/c-expand-btn.vue';
 import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
 import CDownloadBtn from '@/components/common/buttons/c-download-btn.vue';
@@ -54,17 +79,6 @@ import CCopyBtn from '@/components/common/buttons/c-copy-btn.vue';
 import CFabExpandBtn from '@/components/common/buttons/c-fab-expand-btn.vue';
 import CFabBtn from '@/components/common/buttons/c-fab-btn.vue';
 import CRefreshBtn from '@/components/common/buttons/c-refresh-btn.vue';
-import CEmptyDataTableColumns from '@/components/common/table/c-empty-data-table-columns.vue';
-import CEnabled from '@/components/icons/c-enabled.vue';
-import CEllipsis from '@/components/common/table/c-ellipsis.vue';
-import CPagination from '@/components/common/pagination/c-pagination.vue';
-import CTablePagination from '@/components/common/pagination/c-table-pagination.vue';
-import CAlertOverlay from '@/components/common/overlay/c-alert-overlay.vue';
-import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
-import CDraggableStepNumber from '@/components/common/drag-drop/c-draggable-step-number.vue';
-import CHelpIcon from '@/components/common/icons/c-help-icon.vue';
-import CNoEventsIcon from '@/components/common/icons/c-no-events-icon.vue';
-import CInformationBlock from '@/components/common/block/c-information-block.vue';
 
 /**
  * Fields
@@ -104,7 +118,13 @@ import CInstructionTypeField from '@/components/forms/fields/c-instruction-type-
 import CPriorityField from '@/components/forms/fields/c-priority-field.vue';
 import CEnabledDurationField from '@/components/forms/fields/c-enabled-duration-field.vue';
 import CEnabledLimitField from '@/components/forms/fields/c-enabled-limit-field.vue';
+import CQuickDateIntervalField from '@/components/forms/fields/c-quick-date-interval-field.vue';
 
+/**
+ * Icons
+ */
+import CHelpIcon from '@/components/common/icons/c-help-icon.vue';
+import CNoEventsIcon from '@/components/common/icons/c-no-events-icon.vue';
 import BullhornIcon from '@/components/icons/bullhorn.vue';
 import AltRouteIcon from '@/components/icons/alt_route.vue';
 import SettingsSyncIcon from '@/components/icons/settings_sync.vue';
@@ -275,6 +295,7 @@ Vue.component('c-instruction-type-field', CInstructionTypeField);
 Vue.component('c-priority-field', CPriorityField);
 Vue.component('c-enabled-duration-field', CEnabledDurationField);
 Vue.component('c-enabled-limit-field', CEnabledLimitField);
+Vue.component('c-quick-date-interval-field', CQuickDateIntervalField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
 

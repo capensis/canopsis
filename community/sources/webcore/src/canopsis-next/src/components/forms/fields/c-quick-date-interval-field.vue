@@ -52,6 +52,10 @@ export default {
       type: Number,
       required: false,
     },
+    deletedBefore: {
+      type: Number,
+      required: false,
+    },
   },
   computed: {
     quickRanges() {
@@ -137,6 +141,10 @@ export default {
 
       if (dateTimestamp > toTimestamp) {
         return false;
+      }
+
+      if (this.deletedBefore) {
+        return dateTimestamp >= this.deletedBefore;
       }
 
       return this.isAllowedAccumulatedFromDate(dateMoment);

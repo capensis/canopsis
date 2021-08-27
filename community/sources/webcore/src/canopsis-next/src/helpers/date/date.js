@@ -105,4 +105,11 @@ export const isEndOfDay = (date, unit = 'seconds') => {
   return dateMoment.clone().endOf('day').diff(dateMoment, unit) === 0;
 };
 
+/**
+ * Return moment with start of day timestamp
+ *
+ * @param {Date|number|moment.Moment} date
+ */
+export const convertDateToStartOfDayMoment = date => moment(convertTimestampToMoment(date).startOf('day').format());
+
 export default convertTimestampToMoment;
