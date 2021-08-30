@@ -1904,7 +1904,6 @@ export const DOCUMENTATION_LINKS = {
   [USERS_PERMISSIONS.technical.exploitation.pbehavior]: 'guide-utilisation/cas-d-usage/comportements_periodiques/',
   [USERS_PERMISSIONS.technical.exploitation.snmpRule]: 'interconnexions/Supervision/SNMPtrap/',
   // [USERS_PERMISSIONS.technical.exploitation.idleRules]: '', // TODO: TBD
-  [USERS_PERMISSIONS.technical.exploitation.heartbeat]: 'guide-administration/moteurs/moteur-heartbeat/',
   [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: 'guide-administration/moteurs/moteur-dynamic-infos/',
   [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'guide-administration/moteurs/moteur-correlation/',
   [USERS_PERMISSIONS.technical.exploitation.scenario]: 'guide-administration/moteurs/moteur-action/',

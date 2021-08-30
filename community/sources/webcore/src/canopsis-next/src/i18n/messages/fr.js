@@ -2355,11 +2355,6 @@ export default {
       message: 'The Canopsis Dynamic infos are used to add information to the alarms. This information is defined with rules indicating under which conditions information must be presented on an alarm.',
     },
 
-    [USERS_PERMISSIONS.technical.exploitation.heartbeat]: {
-      title: 'Heartbeats',
-      message: 'Canopsis heartbeats can be used to define rules for inbound event patterns and time intervals.',
-    },
-
     [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
       title: 'Meta alarm rule',
       message: 'Meta alarm rules can be used for grouping alarms by types and criteria (parent-child relationship, time interval, etc).',
