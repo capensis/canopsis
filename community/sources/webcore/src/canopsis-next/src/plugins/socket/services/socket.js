@@ -74,98 +74,6 @@ class Socket {
     return this;
   }
 
-  /**
-   * Base handler for 'open' event
-   */
-  baseOpenHandler() {
-    this.reconnectsCount = 0;
-
-    if (this.sendQueue.length) {
-      this.sendQueue.forEach(data => this.send(data));
-    }
-
-    this.sendQueue = [];
-  }
-
-  /**
-   * Base handler for 'error' event
-   *
-   * @param {string} err
-   */
-  baseErrorHandler(err) {
-    if (this.isConnectionOpen) {
-      console.error(err);
-
-      return;
-    }
-
-    if (this.reconnectsCount >= MAX_RECONNECTS_COUNT) {
-      throw new Error(err);
-    }
-
-    this.reconnect();
-  }
-
-  /**
-   * Base handler for 'message' event
-   *
-   * @param {string} data
-   */
-  baseMessageHandler(data) {
-    try {
-      const { room, msg } = JSON.parse(data);
-
-      if (this.rooms[room]) {
-        this.rooms[room].call(null, msg);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  /**
-   * Join to a room
-   *
-   * @param {string} room
-   * @returns {Socket}
-   */
-  join(room) {
-    this.send({
-      room,
-      type: SOCKET_EVENTS_TYPES.join,
-    });
-
-    if (!this.rooms[room]) {
-      this.rooms[room] = new SocketRoom(room);
-    } else {
-      this.rooms[room].increment();
-    }
-
-    return this;
-  }
-
-  /**
-   * Leave a room
-   *
-   * @param {string} room
-   * @returns {Socket}
-   */
-  leave(room) {
-    this.send({
-      room,
-      type: SOCKET_EVENTS_TYPES.leave,
-    });
-
-    if (this.rooms[room]) {
-      this.rooms[room].decrement();
-
-      if (!this.rooms[room].count) {
-        delete this.rooms[room];
-      }
-    }
-
-    return this;
-  }
 
   /**
    * Add event listener for connection
@@ -216,12 +124,105 @@ class Socket {
   }
 
   /**
+   * Join to a room
+   *
+   * @param {string} room
+   * @returns {Socket}
+   */
+  join(room) {
+    this.send({
+      room,
+      type: SOCKET_EVENTS_TYPES.join,
+    });
+
+    if (!this.rooms[room]) {
+      this.rooms[room] = new SocketRoom(room);
+    } else {
+      this.rooms[room].increment();
+    }
+
+    return this;
+  }
+
+  /**
+   * Leave a room
+   *
+   * @param {string} room
+   * @returns {Socket}
+   */
+  leave(room) {
+    this.send({
+      room,
+      type: SOCKET_EVENTS_TYPES.leave,
+    });
+
+    if (this.rooms[room]) {
+      this.rooms[room].decrement();
+
+      if (!this.rooms[room].count) {
+        delete this.rooms[room];
+      }
+    }
+
+    return this;
+  }
+
+  /**
+   * Base handler for 'open' event
+   */
+  baseOpenHandler() {
+    this.reconnectsCount = 0;
+
+    if (this.sendQueue.length) {
+      this.sendQueue.forEach(data => this.send(data));
+    }
+
+    this.sendQueue = [];
+  }
+
+  /**
+   * Base handler for 'error' event
+   *
+   * @param {string} err
+   */
+  baseErrorHandler(err) {
+    if (this.isConnectionOpen) {
+      console.error(err);
+
+      return;
+    }
+
+    if (this.reconnectsCount >= MAX_RECONNECTS_COUNT) {
+      throw new Error(err);
+    }
+
+    this.reconnect();
+  }
+
+  /**
+   * Base handler for 'message' event
+   *
+   * @param {string} data
+   */
+  baseMessageHandler(data) {
+    try {
+      const { room, msg } = JSON.parse(data);
+
+      if (this.rooms[room]) {
+        this.rooms[room].call(null, msg);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  /**
    * Get socket room by name
    *
    * @param {string} name
    * @returns {SocketRoom}
    */
-  room(name) {
+  getRoom(name) {
     const room = this.rooms[name];
 
     if (!room) {
