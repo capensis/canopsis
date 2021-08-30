@@ -72,12 +72,12 @@ export const convertTimestampToMomentByTimezone = (
 /**
  * Convert date to timestamp with keep time
  *
- * @param {Date|moment.Moment} date
+ * @param {Date|number|moment.Moment} date
  * @param {string} timezone
  * @returns {number}
  */
 export const convertDateToTimestampByTimezone = (date, timezone = moment.tz.guess()) =>
-  moment(date).tz(timezone, true).unix();
+  convertTimestampToMoment(date).tz(timezone, true).unix();
 
 /**
  * Check if date is start of day

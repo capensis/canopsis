@@ -52,7 +52,7 @@ export default {
       type: Number,
       required: false,
     },
-    deletedBefore: {
+    min: {
       type: Number,
       required: false,
     },
@@ -143,8 +143,8 @@ export default {
         return false;
       }
 
-      if (this.deletedBefore) {
-        return dateTimestamp >= this.deletedBefore;
+      if (this.min) {
+        return dateTimestamp >= this.min;
       }
 
       return this.isAllowedAccumulatedFromDate(dateMoment);
@@ -163,9 +163,10 @@ export default {
     isAllowedToDate(date) {
       const dateMoment = moment(date);
       const dateTimestamp = dateMoment.unix();
+      const nowTimestamp = moment().unix();
       const fromTimestamp = this.intervalFromAsMoment.unix();
 
-      if (dateTimestamp < fromTimestamp) {
+      if (dateTimestamp < fromTimestamp || nowTimestamp < dateTimestamp) {
         return false;
       }
 
