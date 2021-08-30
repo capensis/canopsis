@@ -8,7 +8,6 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_PERMISSIONS_PREFIXES,
-  REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
   ENGINES_NAMES,
   WIDGET_TYPES,
@@ -415,6 +414,7 @@ export default {
       hasInstruction: 'Au moins une consigne est attachée à cette alarme',
       hasAutoInstructionInRunning: 'Instruction automatique en cours',
       allAutoInstructionExecuted: 'Toutes les instructions automatiques ont été exécutées',
+      awaitingInstructionComplete: 'En attente de l\'instruction pour terminer',
     },
   },
   weather: {
@@ -1167,26 +1167,6 @@ export default {
     selectViewTab: {
       title: 'Sélectionnez l\'onglet',
     },
-    createHeartbeat: {
-      create: {
-        title: 'Créer un heartbeat',
-        success: 'Heartbeat créé avec succès !',
-      },
-      edit: {
-        title: 'Modifier le heartbeat',
-        success: 'Heartbeat modifié avec succès !',
-      },
-      duplicate: {
-        title: 'Dupliquer un heartbeat',
-      },
-      remove: {
-        success: 'Heartbeat supprimé avec succès !',
-      },
-      massRemove: {
-        success: 'Heartbeats supprimés avec succès !',
-      },
-      patternRequired: 'Un pattern est requis',
-    },
     createDynamicInfo: {
       create: {
         title: 'Créer une information dynamique',
@@ -1379,10 +1359,6 @@ export default {
           success: '{configurationName} a été modifié avec succès',
         },
       },
-      types: {
-        [REMEDIATION_CONFIGURATION_TYPES.rundeck]: 'Rundeck',
-        [REMEDIATION_CONFIGURATION_TYPES.awx]: 'Awx',
-      },
       fields: {
         host: 'Hôte',
         token: 'Jeton d\'autorisation',
@@ -1404,10 +1380,13 @@ export default {
       fields: {
         configuration: 'Configuration',
         jobId: 'Job ID',
+        query: 'Mettre en doute',
       },
       errors: {
         invalidJSON: 'JSON non valide',
       },
+      addPayload: 'Ajouter une charge utile',
+      deletePayload: 'Supprimer la charge utile',
       payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
         '<i>Quelques exemples:</i>' +
         '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
@@ -1860,14 +1839,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
   },
-  heartbeat: {
-    table: {
-      fields: {
-        id: 'ID',
-        expectedInterval: 'Interval',
-      },
-    },
-  },
   contextGeneralTable: {
     addSelection: 'Ajouter une sélection',
   },
@@ -1992,10 +1963,6 @@ export default {
     [ENGINES_NAMES.correlation]: {
       title: 'Correlation',
       description: 'Gère la corrélation',
-    },
-    [ENGINES_NAMES.heartbeat]: {
-      title: 'Heartbeat',
-      description: 'Génère une alarme si un type d\'évènement ne se produit plus',
     },
   },
 

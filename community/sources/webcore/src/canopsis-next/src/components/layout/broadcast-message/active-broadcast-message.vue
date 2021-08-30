@@ -15,7 +15,7 @@ import { ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL } from '@/config';
 
 import { broadcastMessageSchema } from '@/store/schemas';
 
-import { createPollingMixin } from '@/mixins/polling';
+import { pollingMixinCreator } from '@/mixins/polling';
 import registrableMixin from '@/mixins/registrable';
 
 import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
@@ -26,14 +26,14 @@ export default {
   components: { BroadcastMessage },
   mixins: [
     registrableMixin([broadcastMessageSchema], 'activeMessages'),
-    createPollingMixin({
-      method: 'fetchActiveBroadcastMessagesList',
-      delay: ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL,
-      startOnMount: true,
-    }),
+    pollingMixinCreator({ method: 'fetchActiveBroadcastMessagesList' }),
   ],
   computed: {
     ...mapGetters(['activeMessages']),
+
+    pollingDelay() {
+      return ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL;
+    },
   },
   mounted() {
     this.fetchActiveBroadcastMessagesList();

@@ -31,9 +31,6 @@
         "models_exploitation_snmpRule": {
             "checksum": 15
         },
-        "models_exploitation_heartbeat": {
-            "checksum": 15
-        },
         "models_exploitation_dynamicInfo": {
             "checksum": 15
         },
@@ -44,6 +41,9 @@
           "checksum": 15
         },
         "models_exploitation_idleRules": {
+          "checksum": 15
+        },
+        "models_notification_instructionStats": {
           "checksum": 15
         },
         "tabs_showeditionmenu" : {
@@ -526,10 +526,6 @@
           "crecord_type": "right"
         },
         "api_dynamicinfos": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_heartbeat": {
           "checksum": 15,
           "crecord_type": "right"
         },

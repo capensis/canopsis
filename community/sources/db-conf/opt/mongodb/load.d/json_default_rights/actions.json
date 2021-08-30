@@ -465,14 +465,6 @@
         "type": "CRUD"
     },
     {
-        "_id": "models_exploitation_heartbeat",
-        "loader_id": "models_exploitation_heartbeat",
-        "crecord_name": "models_exploitation_heartbeat",
-        "crecord_type": "action",
-        "desc": "Exploitation: Heartbeat",
-        "type": "CRUD"
-    },
-    {
         "_id": "models_exploitation_dynamicInfo",
         "loader_id": "models_exploitation_dynamicInfo",
         "crecord_name": "models_exploitation_dynamicInfo",
@@ -502,6 +494,14 @@
         "crecord_name": "models_exploitation_idleRules",
         "crecord_type": "action",
         "desc": "Exploitation: Idle rules",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_notification_instructionStats",
+        "loader_id": "models_notification_instructionStats",
+        "crecord_name": "models_notification_instructionStats",
+        "crecord_type": "action",
+        "desc": "Notifications: Instructions stats",
         "type": "CRUD"
     },
     {
@@ -1187,14 +1187,6 @@
         "crecord_name": "api_dynamicinfos",
         "crecord_type": "action",
         "desc": "Dynamic infos",
-        "type": "CRUD"
-    },
-    {
-        "_id": "api_heartbeat",
-        "loader_id": "api_heartbeat",
-        "crecord_name": "api_heartbeat",
-        "crecord_type": "action",
-        "desc": "Heartbeats",
         "type": "CRUD"
     },
     {
