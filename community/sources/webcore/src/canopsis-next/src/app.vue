@@ -14,7 +14,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import { isEmpty } from 'lodash';
 
-import { API_SOCKET_HOST, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
+import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { MAX_LIMIT } from '@/constants';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
@@ -79,7 +79,7 @@ export default {
     registerCurrentUserOnceWatcher() {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
-          this.$socket.connect(`${API_SOCKET_HOST}?token=${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
+          this.$socket.connect(`${SOCKET_URL}?token=${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
           await this.fetchAppInfos();
 
           this.setSystemData({

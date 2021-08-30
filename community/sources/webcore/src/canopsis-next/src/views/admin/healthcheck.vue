@@ -57,15 +57,6 @@ export default {
   },
   mounted() {
     this.fetchList();
-    this.$socket.on('open', () => {
-      this.$socket.join('healthcheck');
-    });
-
-    this.$socket.join('healthcheck');
-    this.$socket.room('healthcheck').addListener(this.setData);
-  },
-  beforeDestroy() {
-    this.$socket.leave('healthcheck');
   },
   methods: {
     ...mapActions({
