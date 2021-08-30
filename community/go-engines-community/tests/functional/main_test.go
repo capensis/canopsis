@@ -7,23 +7,22 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"testing"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/bdd"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libjson "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"github.com/cucumber/godog"
 	redismod "github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
@@ -76,9 +75,10 @@ func TestMain(m *testing.M) {
 	}
 
 	if len(flags.fixtures) == 0 {
-		flags.fixtures = []string{"../../fixtures"}
+		flags.fixtures = []string{"../../database/fixtures/test"}
 	}
 
+	logger := liblog.NewLogger(true)
 	var eventLogger zerolog.Logger
 	if flags.eventLogs != "" {
 		f, err := os.OpenFile(flags.eventLogs, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
@@ -122,7 +122,7 @@ func TestMain(m *testing.M) {
 		}
 	}()
 
-	amqpConnection, err := amqp.NewConnection(liblog.NewLogger(false), 0, 0)
+	amqpConnection, err := amqp.NewConnection(logger, 0, 0)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -132,7 +132,7 @@ func TestMain(m *testing.M) {
 			log.Print(err)
 		}
 	}()
-	redisClient, err := redis.NewSession(ctx, 0, liblog.NewLogger(false), 0, 0)
+	redisClient, err := redis.NewSession(ctx, 0, logger, 0, 0)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -142,6 +142,8 @@ func TestMain(m *testing.M) {
 			log.Print(err)
 		}
 	}()
+	loader := fixtures.NewLoader(dbClient, flags.fixtures, true,
+		fixtures.NewParser(password.NewSha1Encoder()), logger)
 
 	opts := godog.Options{
 		StopOnFailure:  true,
@@ -149,7 +151,7 @@ func TestMain(m *testing.M) {
 		Paths:          paths,
 		DefaultContext: ctx,
 	}
-	testSuiteInitializer := InitializeTestSuite(ctx, flags, dbClient, redisClient)
+	testSuiteInitializer := InitializeTestSuite(ctx, flags, loader, redisClient)
 	scenarioInitializer, err := InitializeScenario(flags, dbClient, amqpConnection, eventLogger)
 	if err != nil {
 		log.Fatal(err)
@@ -169,17 +171,17 @@ func TestMain(m *testing.M) {
 	os.Exit(status)
 }
 
-func InitializeTestSuite(ctx context.Context, flags Flags, dbClient mongo.DbClient, redisClient redismod.Cmdable) func(*godog.TestSuiteContext) {
+func InitializeTestSuite(ctx context.Context, flags Flags, loader fixtures.Loader, redisClient redismod.Cmdable) func(*godog.TestSuiteContext) {
 	return func(godogCtx *godog.TestSuiteContext) {
 		godogCtx.BeforeSuite(func() {
-			err := clearStores(ctx, flags, dbClient, redisClient)
+			err := clearStores(ctx, loader, redisClient)
 			if err != nil {
 				panic(err)
 			}
 			time.Sleep(flags.periodicalWaitTime)
 		})
 		godogCtx.AfterSuite(func() {
-			err := clearStores(ctx, flags, dbClient, redisClient)
+			err := clearStores(ctx, loader, redisClient)
 			if err != nil {
 				panic(err)
 			}
@@ -260,13 +262,8 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 	}, nil
 }
 
-func clearStores(ctx context.Context, flags Flags, dbClient mongo.DbClient, redisClient redismod.Cmdable) error {
-	configs, err := getFixtureConfigs(flags.fixtures)
-	if err != nil {
-		return err
-	}
-
-	err = fixtures.LoadFixtures(ctx, dbClient, configs...)
+func clearStores(ctx context.Context, loader fixtures.Loader, redisClient redismod.Cmdable) error {
+	err := loader.Load(ctx)
 	if err != nil {
 		return err
 	}
@@ -277,34 +274,6 @@ func clearStores(ctx context.Context, flags Flags, dbClient mongo.DbClient, redi
 	}
 
 	return nil
-}
-
-func getFixtureConfigs(dirs []string) ([]fixtures.LoadConfig, error) {
-	configs := make([]fixtures.LoadConfig, 0)
-	re := regexp.MustCompile("^([a-z_]+)\\.json$")
-
-	for _, dirPath := range dirs {
-		files, err := ioutil.ReadDir(dirPath)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, fileInfo := range files {
-			filename := fileInfo.Name()
-			matches := re.FindStringSubmatch(filename)
-			if len(matches) < 2 {
-				continue
-			}
-
-			collection := matches[1]
-			configs = append(configs, fixtures.LoadConfig{
-				CollectionName: collection,
-				File:           filepath.Join(dirPath, filename),
-			})
-		}
-	}
-
-	return configs, nil
 }
 
 type eventLogWriter struct {

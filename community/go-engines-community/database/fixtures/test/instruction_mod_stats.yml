@@ -1,0 +1,165 @@
+instruction_mod_stats:
+  instruction_mod_stats_1:
+    _id: test-mod-stats-to-stats-summary-get-1-1
+    avg_complete_time: 400
+    date: 1596712203
+    execution_count: 6
+    init_critical: 3
+    init_major: 2
+    init_minor: 1
+    instruction: test-instruction-to-stats-summary-get-1
+    res_critical: 1
+    res_major: 2
+    res_minor: 3
+    res_ok: 0
+  instruction_mod_stats_2:
+    _id: test-mod-stats-to-stats-summary-get-1-2
+    avg_complete_time: 400
+    date: 1596712303
+    execution_count: 1
+    init_critical: 1
+    init_major: 0
+    init_minor: 0
+    instruction: test-instruction-to-stats-summary-get-1
+    res_critical: 0
+    res_major: 0
+    res_minor: 0
+    res_ok: 1
+  instruction_mod_stats_3:
+    _id: test-mod-stats-to-stats-summary-get-2-1
+    avg_complete_time: 400
+    date: 1596712203
+    execution_count: 6
+    init_critical: 3
+    init_major: 2
+    init_minor: 1
+    instruction: test-instruction-to-stats-summary-get-2
+    res_critical: 1
+    res_major: 2
+    res_minor: 3
+    res_ok: 0
+  instruction_mod_stats_4:
+    _id: test-mod-stats-to-stats-summary-get-2-2
+    avg_complete_time: 400
+    date: 1596712303
+    execution_count: 1
+    init_critical: 1
+    init_major: 0
+    init_minor: 0
+    instruction: test-instruction-to-stats-summary-get-2
+    res_critical: 0
+    res_major: 0
+    res_minor: 0
+    res_ok: 1
+  instruction_mod_stats_5:
+    _id: test-mod-stats-to-stats-changes-get-1-1
+    avg_complete_time: 400
+    date: 1596712203
+    execution_count: 1
+    init_critical: 1
+    init_major: 0
+    init_minor: 0
+    instruction: test-instruction-to-stats-changes-get-1
+    res_critical: 1
+    res_major: 0
+    res_minor: 0
+    res_ok: 0
+  instruction_mod_stats_6:
+    _id: test-mod-stats-to-stats-changes-get-1-2
+    avg_complete_time: 275
+    date: 1596712103
+    execution_count: 2
+    init_critical: 0
+    init_major: 2
+    init_minor: 0
+    instruction: test-instruction-to-stats-changes-get-1
+    res_critical: 1
+    res_major: 0
+    res_minor: 0
+    res_ok: 1
+  instruction_mod_stats_7:
+    _id: test-mod-stats-to-stats-changes-get-1-3
+    date: 1596712003
+    instruction: test-instruction-to-stats-changes-get-1
+  instruction_mod_stats_8:
+    _id: test-mod-stats-to-stats-changes-get-2-1
+    avg_complete_time: 400
+    date: 1596712203
+    execution_count: 1
+    init_critical: 1
+    init_major: 0
+    init_minor: 0
+    instruction: test-instruction-to-stats-changes-get-2
+    res_critical: 1
+    res_major: 0
+    res_minor: 0
+    res_ok: 0
+  instruction_mod_stats_9:
+    _id: test-mod-stats-to-stats-changes-get-2-2
+    avg_complete_time: 275
+    date: 1596712103
+    execution_count: 2
+    init_critical: 0
+    init_major: 2
+    init_minor: 0
+    instruction: test-instruction-to-stats-changes-get-2
+    res_critical: 1
+    res_major: 0
+    res_minor: 0
+    res_ok: 1
+  instruction_mod_stats_10:
+    _id: test-mod-stats-to-stats-changes-get-2-3
+    date: 1596712003
+    instruction: test-instruction-to-stats-changes-get-2
+  instruction_mod_stats_11:
+    _id: test-mod-stats-to-stats-changes-get-3
+    date: 1596712203
+    instruction: test-instruction-to-stats-changes-get-3
+  instruction_mod_stats_12:
+    _id: test-mod-stats-to-stats-executions-get-1
+    date: 1596712203
+    instruction: test-instruction-to-stats-executions-get-1
+  instruction_mod_stats_13:
+    _id: test-mod-stats-to-stats-executions-get-2
+    date: 1596712203
+    instruction: test-instruction-to-stats-executions-get-2
+  instruction_mod_stats_14:
+    _id: test-mod-stats-to-run-auto-instruction-1-1
+    date: 1596712203
+    instruction: test-instruction-to-run-auto-instruction-1-1
+  instruction_mod_stats_15:
+    _id: test-mod-stats-to-run-auto-instruction-1-2
+    date: 1596712203
+    instruction: test-instruction-to-run-auto-instruction-1-2
+  instruction_mod_stats_16:
+    _id: test-mod-stats-to-run-auto-instruction-2-1
+    date: 1596712203
+    instruction: test-instruction-to-run-auto-instruction-2-1
+  instruction_mod_stats_17:
+    _id: test-mod-stats-to-run-auto-instruction-2-2
+    date: 1596712203
+    instruction: test-instruction-to-run-auto-instruction-2-2
+  instruction_mod_stats_18:
+    _id: test-mod-stats-to-run-auto-instruction-3-1
+    date: 1596712203
+    instruction: test-instruction-to-run-auto-instruction-3-1
+  instruction_mod_stats_19:
+    _id: test-mod-stats-to-run-auto-instruction-3-2
+    date: 1596712203
+    instruction: test-instruction-to-run-auto-instruction-3-2
+  instruction_mod_stats_20:
+    _id: test-mod-stats-to-run-auto-instruction-4-1
+    date: 1596712203
+    instruction: test-instruction-to-run-auto-instruction-4-1
+  instruction_mod_stats_21:
+    _id: test-mod-stats-to-run-auto-instruction-4-2
+    date: 1596712203
+    instruction: test-instruction-to-run-auto-instruction-4-2
+  instruction_mod_stats_22:
+    _id: test-mod-stats-to-run-auto-instruction-4-3
+    date: 1596712203
+    instruction: test-instruction-to-run-auto-instruction-4-3
+  instruction_mod_stats_23:
+    _id: test-mod-stats-to-run-auto-instruction-5
+    date: 1596712203
+    instruction: test-instruction-to-run-auto-instruction-5

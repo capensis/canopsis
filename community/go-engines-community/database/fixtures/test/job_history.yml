@@ -1,0 +1,10 @@
+job_history:
+  job_history_1:
+    _id: test-job-execution-to-get
+    completed_at: 1597906537
+    fail_reason: test-job-execution-to-get-fail-reason
+    job: test-job-execution-to-get
+    launched_at: 1597906527
+    output: test-job-execution-to-get-output
+    started_at: 1597906527
+    status: 2

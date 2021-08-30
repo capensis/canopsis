@@ -115,6 +115,7 @@ type DbClient interface {
 	Disconnect(ctx context.Context) error
 	SetRetry(count int, timeout time.Duration)
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
+	ListCollectionNames(ctx context.Context, filter interface{}, opts ...*options.ListCollectionsOptions) ([]string, error)
 }
 
 type dbClient struct {
@@ -470,6 +471,10 @@ func (c *dbClient) Disconnect(ctx context.Context) error {
 
 func (c *dbClient) Ping(ctx context.Context, rp *readpref.ReadPref) error {
 	return c.Client.Ping(ctx, rp)
+}
+
+func (c *dbClient) ListCollectionNames(ctx context.Context, filter interface{}, opts ...*options.ListCollectionsOptions) ([]string, error) {
+	return c.Database.ListCollectionNames(ctx, filter, opts...)
 }
 
 func (c *dbClient) SetRetry(count int, timeout time.Duration) {
