@@ -56,6 +56,7 @@ export default {
         scales: {
           x: {
             type: 'time',
+            beginAtZero: true,
             time: {
               tooltipFormat: DATETIME_FORMATS.longWithDayOfWeek,
               displayFormats: {
@@ -70,20 +71,23 @@ export default {
               },
             },
             ticks: {
+              /**
+               * NOTE: Remove the first tick to get rid of the offset to the left during swipe and zoom.
+               */
+              callback: (label, index) => (index !== 0 ? label : ' '),
               max: Date.now(),
               fontSize: 11,
               autoSkip: true,
-              autoSkipPadding: 10,
+              autoSkipPadding: 5,
               maxRotation: 0,
-              beginAtZero: true,
             },
           },
           y: {
             type: 'linear',
+            beginAtZero: true,
             ticks: {
               min: 0,
               fontSize: 11,
-              beginAtZero: true,
               callback: value => (value >= 1000 ? `${value / 1000} k` : value),
             },
           },
