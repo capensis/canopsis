@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+
 	"git.canopsis.net/canopsis/go-engines/lib/security"
 	"github.com/go-ldap/ldap/v3"
 )
@@ -22,9 +23,20 @@ func NewLdapDialer() LdapDialer {
 }
 
 func (baseDialer) DialURL(config *security.LdapConfig) (ldap.Client, error) {
-	return ldap.DialURL(config.Url, ldap.DialWithTLSConfig(&tls.Config{
+	tc := &tls.Config{
 		InsecureSkipVerify: config.InsecureSkipVerify,
-	}))
+	}
+	switch config.MaxTLSVersion {
+	case "tls10":
+		tc.MaxVersion = tls.VersionTLS10
+	case "tls11":
+		tc.MaxVersion = tls.VersionTLS11
+	case "tls12":
+		tc.MaxVersion = tls.VersionTLS12
+	case "tls13":
+		tc.MaxVersion = tls.VersionTLS13
+	}
+	return ldap.DialURL(config.Url, ldap.DialWithTLSConfig(tc))
 }
 
 // ldapProvider implements LDAP authentication.
