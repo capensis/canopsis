@@ -1,9 +1,7 @@
 package websocket
 
 import (
-	"net/http"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,34 +9,19 @@ type API interface {
 	Handler(c *gin.Context)
 }
 
-func NewApi(hub Hub, rooms []string) API {
+func NewApi(hub Hub) API {
 	return &api{
-		hub:   hub,
-		rooms: rooms,
+		hub: hub,
 	}
 }
 
 type api struct {
-	rooms []string
-	hub   Hub
+	hub Hub
 }
 
 func (a *api) Handler(c *gin.Context) {
-	room := c.Param("room")
-	found := false
-	for _, v := range a.rooms {
-		if v == room {
-			found = true
-			break
-		}
-	}
-
-	if !found {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
-	err := a.hub.Subscribe(c.Writer, c.Request, room)
+	userId := c.MustGet(auth.UserKey).(string)
+	err := a.hub.Connect(userId, c.Writer, c.Request)
 	if err != nil {
 		panic(err)
 	}
