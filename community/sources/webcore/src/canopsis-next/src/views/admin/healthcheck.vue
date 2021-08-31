@@ -57,6 +57,13 @@ export default {
   },
   mounted() {
     this.fetchList();
+
+    this.$socket.join('healthcheck');
+    this.$socket.getRoom('healthcheck').addListener(this.setData);
+  },
+  beforeDestroy() {
+    this.$socket.getRoom('healthcheck').removeListener(this.setData);
+    this.$socket.join('healthcheck');
   },
   methods: {
     ...mapActions({
