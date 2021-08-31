@@ -190,7 +190,8 @@
       "parents": [],
       "children": [
         "test-alarm-get-resource-2/test-alarm-get-component",
-        "test-alarm-get-resource-3/test-alarm-get-component"
+        "test-alarm-get-resource-3/test-alarm-get-component",
+        "test-alarm-get-resource-4/test-alarm-get-component"
       ],
       "total_state_changes": 1,
       "extra": {
@@ -553,7 +554,9 @@
       "resource": "test-alarm-get-resource-4",
       "resolved": 1597034023,
       "tags": [],
-      "parents": [],
+      "parents": [
+        "test-alarm-get-entity-meta-1/metaalarm"
+      ],
       "children": [],
       "total_state_changes": 1,
       "extra": {
@@ -2050,290 +2053,6 @@
     }
   },
   {
-    "_id": "test-job-execution-start-1",
-    "d": "test-job-execution-start-resource-1/test-job-execution-start-component",
-    "t": 1596942720,
-    "v": {
-      "state": {
-        "_t": "stateinc",
-        "t": 1596942720,
-        "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-        "m": "test-job-execution-start alarm",
-        "val": 3
-      },
-      "status": {
-        "_t": "statusinc",
-        "t": 1596942720,
-        "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-        "m": "test-job-execution-start alarm",
-        "val": 1
-      },
-      "steps": [
-        {
-          "_t": "stateinc",
-          "t": 1596942720,
-          "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-          "m": "test-job-execution-start alarm",
-          "val": 3
-        },
-        {
-          "_t": "statusinc",
-          "t": 1596942720,
-          "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-          "m": "test-job-execution-start alarm",
-          "val": 1
-        },
-        {
-          "_t": "comment",
-          "t": 1597033041,
-          "a": "system",
-          "m": "comment test-job-execution-start",
-          "role": "admin",
-          "val": 0,
-          "initiator": "user"
-        }
-      ],
-      "component": "test-job-execution-start-component",
-      "connector": "test-job-execution-start-connector",
-      "connector_name": "test-job-execution-start-connectorname",
-      "creation_date": 1596942720,
-      "display_name": "RC-KC_tW",
-      "initial_output": "test-job-execution-start alarm",
-      "output": "test-job-execution-start alarm",
-      "initial_long_output": "",
-      "long_output": "test-job-execution-start-correlation-search",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1596942720,
-      "last_event_date": 1596942720,
-      "resource": "test-job-execution-start-resource-1",
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "extra": {
-      },
-      "infos": {
-      },
-      "infos_rule_version": {
-      }
-    }
-  },
-  {
-    "_id": "test-job-execution-start-2",
-    "d": "test-job-execution-start-resource-2/test-job-execution-start-component",
-    "t": 1596942720,
-    "v": {
-      "state": {
-        "_t": "stateinc",
-        "t": 1596942720,
-        "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-        "m": "test-job-execution-start alarm",
-        "val": 3
-      },
-      "status": {
-        "_t": "statusinc",
-        "t": 1596942720,
-        "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-        "m": "test-job-execution-start alarm",
-        "val": 1
-      },
-      "steps": [
-        {
-          "_t": "stateinc",
-          "t": 1596942720,
-          "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-          "m": "test-job-execution-start alarm",
-          "val": 3
-        },
-        {
-          "_t": "statusinc",
-          "t": 1596942720,
-          "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-          "m": "test-job-execution-start alarm",
-          "val": 1
-        },
-        {
-          "_t": "comment",
-          "t": 1597033041,
-          "a": "system",
-          "m": "comment test-job-execution-start",
-          "role": "admin",
-          "val": 0,
-          "initiator": "user"
-        }
-      ],
-      "component": "test-job-execution-start-component",
-      "connector": "test-job-execution-start-connector",
-      "connector_name": "test-job-execution-start-connectorname",
-      "creation_date": 1596942720,
-      "display_name": "RC-KC_tW",
-      "initial_output": "test-job-execution-start alarm",
-      "output": "test-job-execution-start alarm",
-      "initial_long_output": "",
-      "long_output": "test-job-execution-start-correlation-search",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1596942720,
-      "last_event_date": 1596942720,
-      "resource": "test-job-execution-start-resource-2",
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "extra": {
-      },
-      "infos": {
-      },
-      "infos_rule_version": {
-      }
-    }
-  },
-  {
-    "_id": "test-job-execution-start-3",
-    "d": "test-job-execution-start-resource-3/test-job-execution-start-component",
-    "t": 1596942720,
-    "v": {
-      "state": {
-        "_t": "stateinc",
-        "t": 1596942720,
-        "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-        "m": "test-job-execution-start alarm",
-        "val": 3
-      },
-      "status": {
-        "_t": "statusinc",
-        "t": 1596942720,
-        "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-        "m": "test-job-execution-start alarm",
-        "val": 1
-      },
-      "steps": [
-        {
-          "_t": "stateinc",
-          "t": 1596942720,
-          "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-          "m": "test-job-execution-start alarm",
-          "val": 3
-        },
-        {
-          "_t": "statusinc",
-          "t": 1596942720,
-          "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-          "m": "test-job-execution-start alarm",
-          "val": 1
-        },
-        {
-          "_t": "comment",
-          "t": 1597033041,
-          "a": "system",
-          "m": "comment test-job-execution-start",
-          "role": "admin",
-          "val": 0,
-          "initiator": "user"
-        }
-      ],
-      "component": "test-job-execution-start-component",
-      "connector": "test-job-execution-start-connector",
-      "connector_name": "test-job-execution-start-connectorname",
-      "creation_date": 1596942720,
-      "display_name": "RC-KC_tW",
-      "initial_output": "test-job-execution-start alarm",
-      "output": "test-job-execution-start alarm",
-      "initial_long_output": "",
-      "long_output": "test-job-execution-start-correlation-search",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1596942720,
-      "last_event_date": 1596942720,
-      "resource": "test-job-execution-start-resource-3",
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "extra": {
-      },
-      "infos": {
-      },
-      "infos_rule_version": {
-      }
-    }
-  },
-  {
-    "_id": "test-job-execution-start-4",
-    "d": "test-job-execution-start-resource-4/test-job-execution-start-component",
-    "t": 1596942720,
-    "v": {
-      "state": {
-        "_t": "stateinc",
-        "t": 1596942720,
-        "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-        "m": "test-job-execution-start alarm",
-        "val": 3
-      },
-      "status": {
-        "_t": "statusinc",
-        "t": 1596942720,
-        "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-        "m": "test-job-execution-start alarm",
-        "val": 1
-      },
-      "steps": [
-        {
-          "_t": "stateinc",
-          "t": 1596942720,
-          "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-          "m": "test-job-execution-start alarm",
-          "val": 3
-        },
-        {
-          "_t": "statusinc",
-          "t": 1596942720,
-          "a": "test-job-execution-start-connector.test-job-execution-start-connectorname",
-          "m": "test-job-execution-start alarm",
-          "val": 1
-        },
-        {
-          "_t": "comment",
-          "t": 1597033041,
-          "a": "system",
-          "m": "comment test-job-execution-start",
-          "role": "admin",
-          "val": 0,
-          "initiator": "user"
-        }
-      ],
-      "component": "test-job-execution-start-component",
-      "connector": "test-job-execution-start-connector",
-      "connector_name": "test-job-execution-start-connectorname",
-      "creation_date": 1596942720,
-      "display_name": "RC-KC_tW",
-      "initial_output": "test-job-execution-start alarm",
-      "output": "test-job-execution-start alarm",
-      "initial_long_output": "",
-      "long_output": "test-job-execution-start-correlation-search",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1596942720,
-      "last_event_date": 1596942720,
-      "resource": "test-job-execution-start-resource-4",
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "extra": {
-      },
-      "infos": {
-      },
-      "infos_rule_version": {
-      }
-    }
-  },
-  {
     "_id": "test-instruction-execution-cancel-1",
     "d": "test-instruction-execution-cancel-resource-1/test-instruction-execution-cancel-component",
     "t": 1596942720,
@@ -2999,6 +2718,77 @@
     }
   },
   {
+    "_id": "test-alarm-with-instruction-4",
+    "d": "test-alarm-with-instruction-resource-4/test-alarm-with-instruction-component",
+    "t": 1596942720,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-alarm-with-instruction-connector.test-alarm-with-instruction-connectorname",
+        "m": "test-alarm-with-instruction alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-alarm-with-instruction-connector.test-alarm-with-instruction-connectorname",
+        "m": "test-alarm-with-instruction alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-alarm-with-instruction-connector.test-alarm-with-instruction-connectorname",
+          "m": "test-alarm-with-instruction alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-alarm-with-instruction-connector.test-alarm-with-instruction-connectorname",
+          "m": "test-alarm-with-instruction alarm",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1597033041,
+          "a": "system",
+          "m": "comment test-alarm-with-instruction",
+          "role": "admin",
+          "val": 0,
+          "initiator": "user"
+        }
+      ],
+      "component": "test-alarm-with-instruction-component",
+      "connector": "test-alarm-with-instruction-connector",
+      "connector_name": "test-alarm-with-instruction-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-with-instruction alarm",
+      "output": "test-alarm-with-instruction alarm",
+      "initial_long_output": "",
+      "long_output": "test-alarm-with-instruction-correlation-search",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-alarm-with-instruction-resource-4",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
     "_id": "test-instruction-execution-get-1",
     "d": "test-instruction-execution-get-resource-1/test-instruction-execution-get-component",
     "t": 1596942720,
@@ -3447,181 +3237,6 @@
       "total_state_changes": 1,
       "pbehavior_info": {
         "type": "pbh-type-for-instruction-with-pbehavior-3"
-      },
-      "extra": {
-      },
-      "infos": {
-      },
-      "infos_rule_version": {
-      }
-    }
-  },
-  {
-    "_id": "test-alarm-get-pbehavior-eids-1",
-    "d": "test-alarm-get-pbehavior-eids-1/test-alarm-get-pbehavior-eids-component",
-    "t": 1596942716,
-    "v": {
-      "component": "test-alarm-get-pbehavior-eids-component",
-      "connector": "test-alarm-get-pbehavior-eids-connector",
-      "connector_name": "test-alarm-get-pbehavior-ids-connectorname",
-      "creation_date": 1596942720,
-      "display_name": "RC-KC_tW",
-      "initial_output": "test-alarm-get-pbehavior-eids-1 alarm",
-      "output": "test-alarm-get-pbehavior-eids-1 alarm",
-      "initial_long_output": "",
-      "long_output": "test-alarm-get-pbehavior-eids-1",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1596942720,
-      "last_event_date": 1596942720,
-      "resource": "test-alarm-get-pbehavior-eids-1",
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "pbehavior_info": {
-        "id": "test-pbehavior-to-get-eids"
-      },
-      "extra": {
-      },
-      "infos": {
-      },
-      "infos_rule_version": {
-      }
-    }
-  },
-  {
-    "_id": "test-alarm-get-pbehavior-eids-2",
-    "d": "test-alarm-get-pbehavior-eids-2/test-alarm-get-pbehavior-eids-component",
-    "t": 1596942717,
-    "v": {
-      "component": "test-alarm-get-pbehavior-eids-component",
-      "connector": "test-alarm-get-pbehavior-eids-connector",
-      "connector_name": "test-alarm-get-pbehavior-ids-connectorname",
-      "creation_date": 1596942720,
-      "display_name": "RC-KC_tW",
-      "initial_output": "test-alarm-get-pbehavior-eids-2 alarm",
-      "output": "test-alarm-get-pbehavior-eids-2 alarm",
-      "initial_long_output": "",
-      "long_output": "test-alarm-get-pbehavior-eids-2",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1596942720,
-      "last_event_date": 1596942720,
-      "resource": "test-alarm-get-pbehavior-eids-2",
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "pbehavior_info": {
-        "id": "test-pbehavior-to-get-eids"
-      },
-      "extra": {
-      },
-      "infos": {
-      },
-      "infos_rule_version": {
-      }
-    }
-  },
-  {
-    "_id": "test-alarm-get-pbehavior-eids-3",
-    "d": "test-alarm-get-pbehavior-eids-3/test-alarm-get-pbehavior-eids-component",
-    "t": 1596942718,
-    "v": {
-      "component": "test-alarm-get-pbehavior-eids-component",
-      "connector": "test-alarm-get-pbehavior-eids-connector",
-      "connector_name": "test-alarm-get-pbehavior-ids-connectorname",
-      "creation_date": 1596942720,
-      "display_name": "RC-KC_tW",
-      "initial_output": "test-alarm-get-pbehavior-eids-3 alarm",
-      "output": "test-alarm-get-pbehavior-eids-3 alarm",
-      "initial_long_output": "",
-      "long_output": "test-alarm-get-pbehavior-eids-3",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1596942720,
-      "last_event_date": 1596942720,
-      "resource": "test-alarm-get-pbehavior-eids-3",
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "pbehavior_info": {
-        "id": "test-pbehavior-to-get-eids"
-      },
-      "extra": {
-      },
-      "infos": {
-      },
-      "infos_rule_version": {
-      }
-    }
-  },
-  {
-    "_id": "test-alarm-get-pbehavior-eids-4",
-    "d": "test-alarm-get-pbehavior-eids-4/test-alarm-get-pbehavior-eids-component",
-    "t": 1596942719,
-    "v": {
-      "component": "test-alarm-get-pbehavior-eids-component",
-      "connector": "test-alarm-get-pbehavior-eids-connector",
-      "connector_name": "test-alarm-get-pbehavior-ids-connectorname",
-      "creation_date": 1596942720,
-      "display_name": "RC-KC_tW",
-      "initial_output": "test-alarm-get-pbehavior-eids-4 alarm",
-      "output": "test-alarm-get-pbehavior-eids-4 alarm",
-      "initial_long_output": "",
-      "long_output": "test-alarm-get-pbehavior-eids-4",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1596942720,
-      "last_event_date": 1596942720,
-      "resource": "test-alarm-get-pbehavior-eids-4",
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "pbehavior_info": {
-        "id": "test-pbehavior-to-get-eids"
-      },
-      "extra": {
-      },
-      "infos": {
-      },
-      "infos_rule_version": {
-      }
-    }
-  },
-  {
-    "_id": "test-alarm-get-pbehavior-eids-5",
-    "d": "test-alarm-get-pbehavior-eids-5/test-alarm-get-pbehavior-eids-component",
-    "t": 1596942720,
-    "v": {
-      "component": "test-alarm-get-pbehavior-eids-component",
-      "connector": "test-alarm-get-pbehavior-eids-connector",
-      "connector_name": "test-alarm-get-pbehavior-ids-connectorname",
-      "creation_date": 1596942720,
-      "display_name": "RC-KC_tW",
-      "initial_output": "test-alarm-get-pbehavior-eids-5 alarm",
-      "output": "test-alarm-get-pbehavior-eids-5 alarm",
-      "initial_long_output": "",
-      "long_output": "test-alarm-get-pbehavior-eids-5",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1596942720,
-      "last_event_date": 1596942720,
-      "resource": "test-alarm-get-pbehavior-eids-5",
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "pbehavior_info": {
-        "id": "test-pbehavior-to-get-eids"
       },
       "extra": {
       },
@@ -4106,6 +3721,1119 @@
       "extra": {},
       "infos": {},
       "infos_rule_version": {}
+    }
+  },
+  {
+    "_id": "test-alarm-to-not-run-auto-instruction-manually",
+    "d": "test-resource-to-not-run-auto-instruction-manually/test-component-to-not-run-auto-instruction-manually",
+    "t": 1596942720,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "",
+        "m": "",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [],
+      "component": "test-component-to-not-run-auto-instruction-manually",
+      "connector": "test-connector-to-not-run-auto-instruction-manually",
+      "connector_name": "test-connector-name-to-not-run-auto-instruction-manually",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "",
+      "output": "",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-resource-to-not-run-auto-instruction-manually",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-to-stats-executions-get-1",
+    "d": "test-resource-to-stats-executions-get-1/test-component-to-stats-executions-get-1",
+    "t": 1596942720,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "",
+        "m": "",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        }
+      ],
+      "component": "test-component-to-stats-executions-get-1",
+      "connector": "test-connector-to-stats-executions-get-1",
+      "connector_name": "test-connector-name-to-stats-executions-get-1",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "",
+      "output": "",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-resource-to-stats-executions-get-1",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-to-stats-executions-get-3",
+    "d": "test-resource-to-stats-executions-get-3/test-component-to-stats-executions-get-3",
+    "t": 1618279310,
+    "v": {
+      "state": {
+        "_t": "statedec",
+        "t": 1618280220,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1618279310,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 2
+        },
+        {
+          "_t": "statusinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "stateinc",
+          "t": 1618279510,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "comment",
+          "t": 1618279511,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1618279610,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-3"
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1618280210,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-3"
+        },
+        {
+          "_t": "ack",
+          "t": 1618280219,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "statedec",
+          "t": 1618280220,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "ack",
+          "t": 1618280221,
+          "a": "",
+          "m": ""
+        }
+      ],
+      "component": "test-component-to-stats-executions-get-3",
+      "connector": "test-connector-to-stats-executions-get-3",
+      "connector_name": "test-connector-name-to-stats-executions-get-3",
+      "creation_date": 1618279310,
+      "resource": "test-resource-to-stats-executions-get-3"
+    }
+  },
+  {
+    "_id": "test-alarm-to-stats-executions-get-4",
+    "d": "test-resource-to-stats-executions-get-4/test-component-to-stats-executions-get-4",
+    "t": 1618279310,
+    "v": {
+      "state": {
+        "_t": "statedec",
+        "t": 1618280220,
+        "a": "",
+        "m": "",
+        "val": 2
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1618279310,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 2
+        },
+        {
+          "_t": "statusinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "stateinc",
+          "t": 1618279510,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "comment",
+          "t": 1618279511,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1618279610,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-4"
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1618280210,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-4"
+        },
+        {
+          "_t": "ack",
+          "t": 1618280220,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "statedec",
+          "t": 1618280221,
+          "a": "",
+          "m": "",
+          "val": 2
+        }
+      ],
+      "component": "test-component-to-stats-executions-get-4",
+      "connector": "test-connector-to-stats-executions-get-4",
+      "connector_name": "test-connector-name-to-stats-executions-get-4",
+      "creation_date": 1618279310,
+      "resource": "test-resource-to-stats-executions-get-4"
+    }
+  },
+  {
+    "_id": "test-alarm-to-stats-executions-get-5",
+    "d": "test-resource-to-stats-executions-get-5/test-component-to-stats-executions-get-5",
+    "t": 1618279310,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1618279510,
+        "a": "",
+        "m": "",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1618279310,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 2
+        },
+        {
+          "_t": "statusinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "stateinc",
+          "t": 1618279510,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1618279610,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-5-1"
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1618280210,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-5-1"
+        },
+        {
+          "_t": "ack",
+          "t": 1618280220,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1618280230,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-5-2"
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1618280630,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-5-2"
+        },
+        {
+          "_t": "comment",
+          "t": 1618280650,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "comment",
+          "t": 1618280651,
+          "a": "",
+          "m": ""
+        }
+      ],
+      "component": "test-component-to-stats-executions-get-5",
+      "connector": "test-connector-to-stats-executions-get-5",
+      "connector_name": "test-connector-name-to-stats-executions-get-5",
+      "creation_date": 1618279310,
+      "resource": "test-resource-to-stats-executions-get-5"
+    }
+  },
+  {
+    "_id": "test-alarm-to-stats-executions-get-6",
+    "d": "test-resource-to-stats-executions-get-6/test-component-to-stats-executions-get-6",
+    "t": 1618279310,
+    "v": {
+      "state": {
+        "_t": "statedec",
+        "t": 1618280650,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1618279310,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 2
+        },
+        {
+          "_t": "statusinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "stateinc",
+          "t": 1618279510,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1618279610,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-6-1"
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1618280210,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-6-1"
+        },
+        {
+          "_t": "ack",
+          "t": 1618280221,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "statedec",
+          "t": 1618280222,
+          "a": "",
+          "m": "",
+          "val": 2
+        },
+        {
+          "_t": "comment",
+          "t": 1618280223,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1618280230,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-6-2"
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1618280630,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-6-2"
+        },
+        {
+          "_t": "comment",
+          "t": 1618280640,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "statedec",
+          "t": 1618280650,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1618280651,
+          "a": "",
+          "m": ""
+        }
+      ],
+      "component": "test-component-to-stats-executions-get-6",
+      "connector": "test-connector-to-stats-executions-get-6",
+      "connector_name": "test-connector-name-to-stats-executions-get-6",
+      "creation_date": 1618279310,
+      "resource": "test-resource-to-stats-executions-get-6"
+    }
+  },
+  {
+    "_id": "test-alarm-to-stats-executions-get-7",
+    "d": "test-resource-to-stats-executions-get-7/test-component-to-stats-executions-get-7",
+    "t": 1618279310,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1618279510,
+        "a": "",
+        "m": "",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1618279310,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 2
+        },
+        {
+          "_t": "statusinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "stateinc",
+          "t": 1618279510,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1618279610,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-7-1"
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1618280210,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-7-1"
+        },
+        {
+          "_t": "ack",
+          "t": 1618280220,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1618280230,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-7-2"
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1618280630,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-7-2"
+        },
+        {
+          "_t": "comment",
+          "t": 1618280650,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "comment",
+          "t": 1618280651,
+          "a": "",
+          "m": ""
+        }
+      ],
+      "component": "test-component-to-stats-executions-get-7",
+      "connector": "test-connector-to-stats-executions-get-7",
+      "connector_name": "test-connector-name-to-stats-executions-get-7",
+      "creation_date": 1618279310,
+      "resource": "test-resource-to-stats-executions-get-7"
+    }
+  },
+  {
+    "_id": "test-alarm-to-stats-executions-get-8",
+    "d": "test-resource-to-stats-executions-get-8/test-component-to-stats-executions-get-8",
+    "t": 1618279310,
+    "v": {
+      "state": {
+        "_t": "statedec",
+        "t": 1618280650,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1618279310,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 2
+        },
+        {
+          "_t": "statusinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "stateinc",
+          "t": 1618279510,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1618279610,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-8-1"
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1618280210,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-8-1"
+        },
+        {
+          "_t": "ack",
+          "t": 1618280220,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "statedec",
+          "t": 1618280222,
+          "a": "",
+          "m": "",
+          "val": 2
+        },
+        {
+          "_t": "comment",
+          "t": 1618280223,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1618280230,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-8-2"
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1618280630,
+          "a": "",
+          "m": "",
+          "exec": "test-instruction-execution-to-stats-executions-get-8-2"
+        },
+        {
+          "_t": "comment",
+          "t": 1618280640,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "statedec",
+          "t": 1618280650,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1618280651,
+          "a": "",
+          "m": ""
+        }
+      ],
+      "component": "test-component-to-stats-executions-get-8",
+      "connector": "test-connector-to-stats-executions-get-8",
+      "connector_name": "test-connector-name-to-stats-executions-get-8",
+      "creation_date": 1618279310,
+      "resource": "test-resource-to-stats-executions-get-8"
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-1",
+    "d": "test-alarm-meta-children-with-instructions-1/metaalarm",
+    "t": 1597030219,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        },
+        {
+          "_t": "statusinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        }
+      ],
+      "component": "metaalarm",
+      "connector": "engine",
+      "connector_name": "correlation",
+      "creation_date": 1597030219,
+      "display_name": "IK-JK-QB",
+      "initial_output": "test-alarm-get alarm",
+      "output": "test-alarm-get alarm",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1597030219,
+      "last_event_date": 1597030219,
+      "resource": "test-alarm-meta-children-with-instructions-1",
+      "tags": [],
+      "meta": "test-alarm-metaalarm-children-instructions-rule-1",
+      "parents": [],
+      "children": [
+        "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-1"
+      ],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-2",
+    "d": "test-alarm-meta-children-with-instructions-2/metaalarm",
+    "t": 1597030219,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        },
+        {
+          "_t": "statusinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        }
+      ],
+      "component": "metaalarm",
+      "connector": "engine",
+      "connector_name": "correlation",
+      "creation_date": 1597030219,
+      "display_name": "IK-JK-QB",
+      "initial_output": "test-alarm-get alarm",
+      "output": "test-alarm-get alarm",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1597030219,
+      "last_event_date": 1597030219,
+      "resource": "test-alarm-meta-children-with-instructions-2",
+      "tags": [],
+      "meta": "test-alarm-metaalarm-children-instructions-rule-1",
+      "parents": [],
+      "children": [
+        "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-2"
+      ],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-3",
+    "d": "test-alarm-meta-children-with-instructions-3/metaalarm",
+    "t": 1597030219,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        },
+        {
+          "_t": "statusinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        }
+      ],
+      "component": "metaalarm",
+      "connector": "engine",
+      "connector_name": "correlation",
+      "creation_date": 1597030219,
+      "display_name": "IK-JK-QB",
+      "initial_output": "test-alarm-get alarm",
+      "output": "test-alarm-get alarm",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1597030219,
+      "last_event_date": 1597030219,
+      "resource": "test-alarm-meta-children-with-instructions-3",
+      "tags": [],
+      "meta": "test-alarm-metaalarm-children-instructions-rule-1",
+      "parents": [],
+      "children": [
+        "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-1",
+        "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-2"
+      ],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-alarm-1-1",
+    "d": "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-1",
+    "t": 1596942720,
+    "v": {
+      "component": "test-alarm-meta-children-with-instructions-component-1",
+      "connector": "test-alarm-meta-children-with-instructions-connector",
+      "connector_name": "test-alarm-meta-children-with-instructions-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-meta-children-with-instructions-output",
+      "output": "test-alarm-meta-children-with-instructions-output",
+      "initial_long_output": "",
+      "long_output": "test-alarm-meta-children-with-instructions-output",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-alarm-meta-children-with-instructions-resource-1",
+      "tags": [],
+      "parents": [
+        "test-alarm-meta-children-with-instructions-1"
+      ],
+      "children": [],
+      "total_state_changes": 1,
+      "pbehavior_info": null,
+      "extra": {},
+      "infos": {},
+      "infos_rule_version": {}
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-alarm-2-1",
+    "d": "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-2",
+    "t": 1596942720,
+    "v": {
+      "component": "test-alarm-meta-children-with-instructions-component-2",
+      "connector": "test-alarm-meta-children-with-instructions-connector",
+      "connector_name": "test-alarm-meta-children-with-instructions-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-meta-children-with-instructions-output",
+      "output": "test-alarm-meta-children-with-instructions-output",
+      "initial_long_output": "",
+      "long_output": "test-alarm-meta-children-with-instructions-output",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-alarm-meta-children-with-instructions-resource-1",
+      "tags": [],
+      "parents": [
+        "test-alarm-meta-children-with-instructions-2"
+      ],
+      "children": [],
+      "total_state_changes": 1,
+      "pbehavior_info": null,
+      "extra": {},
+      "infos": {},
+      "infos_rule_version": {}
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-alarm-1-2",
+    "d": "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-1",
+    "t": 1596942720,
+    "v": {
+      "component": "test-alarm-meta-children-with-instructions-component-1",
+      "connector": "test-alarm-meta-children-with-instructions-connector",
+      "connector_name": "test-alarm-meta-children-with-instructions-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-meta-children-with-instructions-output",
+      "output": "test-alarm-meta-children-with-instructions-output",
+      "initial_long_output": "",
+      "long_output": "test-alarm-meta-children-with-instructions-output",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-alarm-meta-children-with-instructions-resource-2",
+      "tags": [],
+      "parents": [
+        "test-alarm-meta-children-with-instructions-3"
+      ],
+      "children": [],
+      "total_state_changes": 1,
+      "pbehavior_info": null,
+      "extra": {},
+      "infos": {},
+      "infos_rule_version": {}
+    }
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-alarm-2-2",
+    "d": "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-2",
+    "t": 1596942720,
+    "v": {
+      "component": "test-alarm-meta-children-with-instructions-component-2",
+      "connector": "test-alarm-meta-children-with-instructions-connector",
+      "connector_name": "test-alarm-meta-children-with-instructions-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-meta-children-with-instructions-output",
+      "output": "test-alarm-meta-children-with-instructions-output",
+      "initial_long_output": "",
+      "long_output": "test-alarm-meta-children-with-instructions-output",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-alarm-meta-children-with-instructions-resource-2",
+      "tags": [],
+      "parents": [
+        "test-alarm-meta-children-with-instructions-3"
+      ],
+      "children": [],
+      "total_state_changes": 1,
+      "pbehavior_info": null,
+      "extra": {},
+      "infos": {},
+      "infos_rule_version": {}
+    }
+  },
+  {
+    "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-1",
+    "d": "test-resource-to-stats-executions-get-with-resolved-alarms-1/test-component-to-stats-executions-get-with-resolved-alarms-1",
+    "t": 1596942720,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "",
+        "m": "",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        }
+      ],
+      "component": "test-component-to-stats-executions-get-with-resolved-alarms-1",
+      "connector": "test-connector-to-stats-executions-get-with-resolved-alarms-1",
+      "connector_name": "test-connector-name-to-stats-executions-get-with-resolved-alarms-1",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "",
+      "output": "",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-resource-to-stats-executions-get-with-resolved-alarms-1",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
     }
   },
   {

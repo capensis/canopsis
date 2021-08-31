@@ -49,7 +49,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	permissions, err := a.store.Find(query)
+	permissions, err := a.store.Find(c.Request.Context(), query)
 	if err != nil {
 		panic(err)
 	}

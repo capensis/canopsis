@@ -6,7 +6,7 @@
 site_name: Documentation Canopsis
 site_url: https://doc.canopsis.net
 
-repo_url: https://git.canopsis.net/canopsis/canopsis
+repo_url: https://git.canopsis.net/canopsis/canopsis-community
 repo_name: 'git.canopsis.net'
 
 docs_dir:
@@ -21,43 +21,51 @@ theme:
   icon:
     repo: fontawesome/brands/gitlab
   palette:
-    primary: green
-    accent: green
-    # (Automatic) dark theme still not OK with green
-    #scheme: preference
+    - scheme: default
+      primary: green
+      accent: green
+      toggle:
+        icon: material/weather-night
+        name: Activer le thème sombre
+    - scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Désactiver le thème sombre
   features:
     - navigation.expand
     - navigation.sections
     - navigation.tabs
+    - search.highlight
     - toc.integrate
-    # still a bit buggy, as of mkdocs-6.2.x (e.g. Mermaid loading)
+    # still a bit buggy (e.g. Mermaid loading)
     #- navigation.instant
 
 markdown_extensions:
     - admonition
+    - attr_list
     - codehilite:
         guess_lang: false
     - def_list
-    - pymdownx.tabbed
-    - toc:
-        permalink: true
     - pymdownx.superfences:
         custom_fences:
           - name: mermaid
             class: mermaid
             format: !!python/name:pymdownx.superfences.fence_div_format
-    - attr_list
+    - pymdownx.tabbed
+    - toc:
+        permalink: true
 
 plugins:
+    - git-revision-date-localized:
+        locale: fr
+        type: iso_date
     - search:
         # requires Node
         #prebuild_index: true
         lang:
           - en
-    - git-revision-date-localized:
-        locale: fr
-        type: iso_date
-
 extra:
   social:
     - icon: fontawesome/brands/twitter
@@ -68,4 +76,4 @@ extra:
       link: https://hub.docker.com/u/canopsis/
 
 extra_javascript:
-  - https://unpkg.com/mermaid@8.9.3/dist/mermaid.min.js
+  - https://unpkg.com/mermaid@8.10.2/dist/mermaid.min.js

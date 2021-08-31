@@ -1,6 +1,7 @@
 package pattern_test
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"testing"
 
@@ -91,7 +92,7 @@ func TestInfoPatternMarshalBSON(t *testing.T) {
 				InfoFields: pattern.InfoFields{
 					Name: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							Equal: utils.OptionalString{
+							Equal: types.OptionalString{
 								Set:   true,
 								Value: "test",
 							},
@@ -99,7 +100,7 @@ func TestInfoPatternMarshalBSON(t *testing.T) {
 					},
 					Description: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							Equal: utils.OptionalString{
+							Equal: types.OptionalString{
 								Set:   true,
 								Value: "test info",
 							},
@@ -107,7 +108,7 @@ func TestInfoPatternMarshalBSON(t *testing.T) {
 					},
 					Value: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							RegexMatch: utils.OptionalRegexp{
+							RegexMatch: types.OptionalRegexp{
 								Set:   true,
 								Value: testRegexp,
 							},
@@ -128,7 +129,7 @@ func TestInfoPatternMarshalBSON(t *testing.T) {
 				InfoFields: pattern.InfoFields{
 					Description: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							Equal: utils.OptionalString{
+							Equal: types.OptionalString{
 								Set:   true,
 								Value: "test info",
 							},
@@ -136,7 +137,7 @@ func TestInfoPatternMarshalBSON(t *testing.T) {
 					},
 					Value: pattern.StringPattern{
 						StringConditions: pattern.StringConditions{
-							RegexMatch: utils.OptionalRegexp{
+							RegexMatch: types.OptionalRegexp{
 								Set:   true,
 								Value: testRegexp,
 							},

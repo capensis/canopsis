@@ -15,11 +15,11 @@ import (
 )
 
 type Store interface {
-	GetOneBy(ctx context.Context, id string) (*EntityService, error)
+	GetOneBy(ctx context.Context, id string) (*Response, error)
 	GetDependencies(ctx context.Context, id string, query pagination.Query) (*ContextGraphAggregationResult, error)
 	GetImpacts(ctx context.Context, id string, query pagination.Query) (*ContextGraphAggregationResult, error)
-	Create(ctx context.Context, request CreateRequest) (*EntityService, error)
-	Update(ctx context.Context, request UpdateRequest) (*EntityService, ServiceChanges, error)
+	Create(ctx context.Context, request CreateRequest) (*Response, error)
+	Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error)
 	Delete(ctx context.Context, id string) (bool, *types.Alarm, error)
 }
 
@@ -29,18 +29,20 @@ type ServiceChanges struct {
 }
 
 type store struct {
-	db           mongo.DbClient
-	dbCollection mongo.DbCollection
+	dbCollection              mongo.DbCollection
+	alarmDbCollection         mongo.DbCollection
+	resolvedAlarmDbCollection mongo.DbCollection
 }
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		db:           db,
-		dbCollection: db.Collection(mongo.EntityMongoCollection),
+		dbCollection:              db.Collection(mongo.EntityMongoCollection),
+		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
+		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
 	}
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*EntityService, error) {
+func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": id, "type": types.EntityTypeService}},
 		{"$lookup": bson.M{
@@ -56,7 +58,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*EntityService, error)
 	}
 
 	if cursor.Next(ctx) {
-		res := EntityService{}
+		res := Response{}
 		err := cursor.Decode(&res)
 		if err != nil {
 			return nil, err
@@ -118,7 +120,7 @@ func (s *store) GetDependencies(ctx context.Context, id string, q pagination.Que
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		q,
 		pipeline,
-		bson.M{"$sort": bson.D{{"impact_state", -1}, {"entity._id", 1}}},
+		bson.M{"$sort": bson.D{{Key: "impact_state", Value: -1}, {Key: "entity._id", Value: 1}}},
 		projectPipeline,
 	))
 	if err != nil {
@@ -197,7 +199,7 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		q,
 		pipeline,
-		bson.M{"$sort": bson.D{{"impact_state", -1}, {"entity._id", 1}}},
+		bson.M{"$sort": bson.D{{Key: "impact_state", Value: -1}, {Key: "entity._id", Value: 1}}},
 		projectPipeline,
 	))
 	if err != nil {
@@ -217,7 +219,7 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 	return result, nil
 }
 
-func (s *store) Create(ctx context.Context, request CreateRequest) (*EntityService, error) {
+func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, error) {
 	entity := entityservice.EntityService{
 		Entity: types.Entity{
 			ID:            utils.NewID(),
@@ -249,7 +251,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*EntityServi
 	return s.GetOneBy(ctx, entity.ID)
 }
 
-func (s *store) Update(ctx context.Context, request UpdateRequest) (*EntityService, ServiceChanges, error) {
+func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error) {
 	serviceChanges := ServiceChanges{}
 	res := s.dbCollection.FindOneAndUpdate(
 		ctx,
@@ -304,18 +306,24 @@ func (s *store) Delete(ctx context.Context, id string) (bool, *types.Alarm, erro
 		return false, nil, err
 	}
 
-	collection := s.db.Collection(mongo.AlarmMongoCollection)
-	res := collection.FindOneAndDelete(ctx, bson.M{"d": id})
-	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return true, nil, nil
+	// Delete open alarm.
+	var alarm *types.Alarm
+	res := s.alarmDbCollection.FindOneAndDelete(ctx, bson.M{"d": id, "v.resolved": nil})
+	if err := res.Err(); err == nil {
+		alarm = &types.Alarm{}
+		err := res.Decode(alarm)
+		if err != nil {
+			return false, nil, err
 		}
-
+	} else if err != mongodriver.ErrNoDocuments {
 		return false, nil, err
 	}
-
-	alarm := &types.Alarm{}
-	err = res.Decode(alarm)
+	// Delete resolved alarms.
+	_, err = s.alarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
+	if err != nil {
+		return false, nil, err
+	}
+	_, err = s.resolvedAlarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
 	if err != nil {
 		return false, nil, err
 	}

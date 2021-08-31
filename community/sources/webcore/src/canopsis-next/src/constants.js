@@ -518,6 +518,7 @@ export const FILTER_INPUT_TYPES = {
   number: 'number',
   boolean: 'boolean',
   null: 'null',
+  array: 'array',
 };
 
 export const FILTER_DEFAULT_VALUES = {
@@ -920,10 +921,10 @@ export const USERS_PERMISSIONS = {
         alarmsList: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_alarmsList`,
         pbehaviorList: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_pbehaviorList`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.weather}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.weather}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.weather}_addFilter`,
-        userFilter: `${USER_PERMISSIONS_PREFIXES.business.weather}_userFilter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_userFilter`,
 
         category: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_category`,
 
@@ -1170,6 +1171,7 @@ export const META_ALARMS_RULE_TYPES = {
   attribute: 'attribute',
   complex: 'complex',
   valuegroup: 'valuegroup',
+  corel: 'corel',
 
   /**
    * Manual group type doesn't using in the form
@@ -1555,7 +1557,7 @@ export const WIDGET_GRID_ROW_HEIGHT = 20;
 
 export const WIDGET_GRID_COLUMNS_COUNT = 12;
 
-export const META_ALARM_EVENT_DEFAULT_FIELDS = {
+export const MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS = {
   component: 'metaalarm',
   connector: 'engine',
   connector_name: 'correlation',

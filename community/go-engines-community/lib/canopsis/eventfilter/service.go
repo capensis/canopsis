@@ -119,8 +119,8 @@ func (s *service) loadRuleDataSources(rule *Rule) error {
 // LoadRules loads the event filter rules from the database, and adds them to
 // the service. Note that LoadDataSourceFactories needs to be called before
 // calling LoadRules.
-func (s *service) LoadRules() error {
-	allRules, err := s.adapter.List()
+func (s *service) LoadRules(ctx context.Context) error {
+	allRules, err := s.adapter.List(ctx)
 	if err != nil {
 		return err
 	}

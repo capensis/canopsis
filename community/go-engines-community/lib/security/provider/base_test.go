@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	mock_password "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security/password"
@@ -11,6 +12,8 @@ import (
 func TestBaseProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	username := "testname"
 	password := "testpass"
 	expectedUser := &security.User{
@@ -22,7 +25,7 @@ func TestBaseProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByUsername(gomock.Eq(username)).
+		FindByUsername(gomock.Any(), gomock.Eq(username)).
 		Return(expectedUser, nil)
 	mockEncoder := mock_password.NewMockEncoder(ctrl)
 	mockEncoder.
@@ -31,7 +34,7 @@ func TestBaseProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.
 		Return(true)
 
 	p := NewBaseProvider(mockUserProvider, mockEncoder)
-	user, err := p.Auth(username, password)
+	user, err := p.Auth(ctx, username, password)
 
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -45,12 +48,14 @@ func TestBaseProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.
 func TestBaseProvider_Auth_GivenInvalidUsername_ShouldReturnNil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	username := "testname"
 	password := "testpass"
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByUsername(gomock.Eq(username)).
+		FindByUsername(gomock.Any(), gomock.Eq(username)).
 		Return(nil, nil)
 	mockEncoder := mock_password.NewMockEncoder(ctrl)
 	mockEncoder.
@@ -59,7 +64,7 @@ func TestBaseProvider_Auth_GivenInvalidUsername_ShouldReturnNil(t *testing.T) {
 		Times(0)
 
 	p := NewBaseProvider(mockUserProvider, mockEncoder)
-	user, err := p.Auth(username, password)
+	user, err := p.Auth(ctx, username, password)
 
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -73,6 +78,8 @@ func TestBaseProvider_Auth_GivenInvalidUsername_ShouldReturnNil(t *testing.T) {
 func TestBaseProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	username := "testname"
 	password := "testpass"
 	expectedUser := &security.User{
@@ -84,7 +91,7 @@ func TestBaseProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByUsername(gomock.Eq(username)).
+		FindByUsername(gomock.Any(), gomock.Eq(username)).
 		Return(expectedUser, nil)
 	mockEncoder := mock_password.NewMockEncoder(ctrl)
 	mockEncoder.
@@ -93,7 +100,7 @@ func TestBaseProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 		Return(false)
 
 	p := NewBaseProvider(mockUserProvider, mockEncoder)
-	user, err := p.Auth(username, password)
+	user, err := p.Auth(ctx, username, password)
 
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)

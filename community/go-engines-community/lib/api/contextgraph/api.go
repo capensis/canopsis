@@ -18,7 +18,7 @@ type API interface {
 }
 
 type Graph struct {
-	Impact *[]string
+	Impact  *[]string
 	Depends *[]string
 }
 
@@ -61,10 +61,10 @@ func NewApi(
 func (a *api) Import(c *gin.Context) {
 	job := ImportJob{
 		Creation: time.Now(),
-		Status: statusPending,
+		Status:   statusPending,
 	}
 
-	err := a.reporter.ReportCreate(&job)
+	err := a.reporter.ReportCreate(c.Request.Context(), &job)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
@@ -100,7 +100,7 @@ func (a *api) Import(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /contextgraph/import/status/{id} [get]
 func (a *api) Status(c *gin.Context) {
-	status, err := a.reporter.GetStatus(c.Param("id"))
+	status, err := a.reporter.GetStatus(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		if err == ErrNotFound {
 			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)

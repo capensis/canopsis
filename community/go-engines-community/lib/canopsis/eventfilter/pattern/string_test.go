@@ -1,6 +1,7 @@
 package pattern_test
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"testing"
 
@@ -567,7 +568,7 @@ func TestStringPatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.StringPattern{
 				StringConditions: pattern.StringConditions{
-					Equal: utils.OptionalString{
+					Equal: types.OptionalString{
 						Set:   true,
 						Value: "test",
 					},
@@ -583,7 +584,7 @@ func TestStringPatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.StringPattern{
 				StringConditions: pattern.StringConditions{
-					RegexMatch: utils.OptionalRegexp{
+					RegexMatch: types.OptionalRegexp{
 						Set:   true,
 						Value: testRegexp,
 					},
@@ -644,7 +645,7 @@ func TestStringRefPatternMarshalBSON(t *testing.T) {
 				EqualNil: false,
 				StringPattern: pattern.StringPattern{
 					StringConditions: pattern.StringConditions{
-						Equal: utils.OptionalString{
+						Equal: types.OptionalString{
 							Set:   true,
 							Value: "test",
 						},
@@ -663,7 +664,7 @@ func TestStringRefPatternMarshalBSON(t *testing.T) {
 				EqualNil: false,
 				StringPattern: pattern.StringPattern{
 					StringConditions: pattern.StringConditions{
-						RegexMatch: utils.OptionalRegexp{
+						RegexMatch: types.OptionalRegexp{
 							Set:   true,
 							Value: testRegexp,
 						},

@@ -33,6 +33,7 @@ func (a *api) StartHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, userID := a.getSession(c)
 		s, err := a.manager.Ping(
+			c.Request.Context(),
 			stats.SessionData{
 				SessionID: session.ID,
 				UserID:    userID,
@@ -64,6 +65,7 @@ func (a *api) PingHandler() gin.HandlerFunc {
 		}
 
 		s, err := a.manager.Ping(
+			c.Request.Context(),
 			stats.SessionData{
 				SessionID: session.ID,
 				UserID:    userID,
@@ -99,6 +101,7 @@ func (a *api) ChangePathHandler() gin.HandlerFunc {
 		}
 
 		s, err := a.manager.Ping(
+			c.Request.Context(),
 			stats.SessionData{
 				SessionID: session.ID,
 				UserID:    userID,
@@ -126,7 +129,7 @@ func (a *api) ListHandler() gin.HandlerFunc {
 			return
 		}
 
-		s, err := a.manager.Find(stats.Filter{
+		s, err := a.manager.Find(c.Request.Context(), stats.Filter{
 			IsActive:      r.IsActive,
 			Usernames:     r.Usernames,
 			StartedAfter:  r.StartedAfter,

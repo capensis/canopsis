@@ -7,7 +7,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -82,11 +81,11 @@ func TestAction_UnmarshalBSONValue_GivenValidData_ShouldReturnProcessor(t *testi
 			},
 			actionType: eventfilter.SetField,
 			processor: eventfilter.SetFieldProcessor{
-				Name: utils.OptionalString{
+				Name: types.OptionalString{
 					Set:   true,
 					Value: "testname",
 				},
-				Value: utils.OptionalInterface{
+				Value: types.OptionalInterface{
 					Set:   true,
 					Value: "testval",
 				},
@@ -101,11 +100,11 @@ func TestAction_UnmarshalBSONValue_GivenValidData_ShouldReturnProcessor(t *testi
 			},
 			actionType: eventfilter.SetEntityInfo,
 			processor: eventfilter.SetEntityInfoProcessor{
-				Name: utils.OptionalString{
+				Name: types.OptionalString{
 					Set:   true,
 					Value: "testname",
 				},
-				Value: utils.OptionalInterface{
+				Value: types.OptionalInterface{
 					Set:   true,
 					Value: "testval",
 				},
@@ -120,11 +119,11 @@ func TestAction_UnmarshalBSONValue_GivenValidData_ShouldReturnProcessor(t *testi
 			},
 			actionType: eventfilter.CopyToEntityInfo,
 			processor: eventfilter.CopyToEntityInfoProcessor{
-				Name: utils.OptionalString{
+				Name: types.OptionalString{
 					Set:   true,
 					Value: "testname",
 				},
-				From: utils.OptionalString{
+				From: types.OptionalString{
 					Set:   true,
 					Value: "testfrom",
 				},
@@ -139,11 +138,11 @@ func TestAction_UnmarshalBSONValue_GivenValidData_ShouldReturnProcessor(t *testi
 			},
 			actionType: eventfilter.Copy,
 			processor: eventfilter.CopyProcessor{
-				From: utils.OptionalString{
+				From: types.OptionalString{
 					Set:   true,
 					Value: "testfrom",
 				},
-				To: utils.OptionalString{
+				To: types.OptionalString{
 					Set:   true,
 					Value: "testto",
 				},
@@ -176,8 +175,8 @@ func TestAction_UnmarshalBSONValue_GivenValidData_ShouldReturnProcessor(t *testi
 func TestSetFieldProcessor_Apply_GivenValidData_ShouldApplyIt(t *testing.T) {
 	expectedState := 3
 	processor := eventfilter.SetFieldProcessor{
-		Name:  utils.OptionalString{Set: true, Value: "State"},
-		Value: utils.OptionalInterface{Set: true, Value: expectedState},
+		Name:  types.OptionalString{Set: true, Value: "State"},
+		Value: types.OptionalInterface{Set: true, Value: expectedState},
 	}
 	report := eventfilter.Report{}
 	event := types.Event{
@@ -198,14 +197,14 @@ func TestSetFieldProcessor_Apply_GivenValidData_ShouldApplyIt(t *testing.T) {
 
 func TestSetFieldProcessor_Apply_GivenInvalidData_ShouldReturnError(t *testing.T) {
 	processor := eventfilter.SetFieldProcessor{
-		Name:  utils.OptionalString{Set: true, Value: "State"},
-		Value: utils.OptionalInterface{Set: true, Value: "invalid state"},
+		Name:  types.OptionalString{Set: true, Value: "State"},
+		Value: types.OptionalInterface{Set: true, Value: "invalid state"},
 	}
 	report := eventfilter.Report{}
 	event := types.Event{
 		State: 1,
 	}
-	event, err := processor.Apply(event, eventfilter.ActionParameters{}, &report)
+	_, err := processor.Apply(event, eventfilter.ActionParameters{}, &report)
 	if err == nil {
 		t.Errorf("expected error but nothing")
 	}
@@ -220,8 +219,8 @@ func TestSetFieldFromTemplateProcessor_Apply_GivenValidData_ShouldApplyIt(t *tes
 	}
 
 	processor := eventfilter.SetFieldFromTemplateProcessor{
-		Name: utils.OptionalString{Set: true, Value: "Output"},
-		Value: utils.OptionalTemplate{
+		Name: types.OptionalString{Set: true, Value: "Output"},
+		Value: types.OptionalTemplate{
 			Set:   true,
 			Value: tpl,
 		},
@@ -265,8 +264,8 @@ func TestSetFieldFromTemplateProcessor_Apply_GivenInvalidData_ShouldReturnError(
 	}{
 		{
 			processor: eventfilter.SetFieldFromTemplateProcessor{
-				Name: utils.OptionalString{Set: true, Value: "State"},
-				Value: utils.OptionalTemplate{
+				Name: types.OptionalString{Set: true, Value: "State"},
+				Value: types.OptionalTemplate{
 					Set:   true,
 					Value: validTpl,
 				},
@@ -278,8 +277,8 @@ func TestSetFieldFromTemplateProcessor_Apply_GivenInvalidData_ShouldReturnError(
 		},
 		{
 			processor: eventfilter.SetFieldFromTemplateProcessor{
-				Name: utils.OptionalString{Set: true, Value: "State"},
-				Value: utils.OptionalTemplate{
+				Name: types.OptionalString{Set: true, Value: "State"},
+				Value: types.OptionalTemplate{
 					Set:   true,
 					Value: invalidTpl,
 				},
@@ -304,8 +303,8 @@ func TestSetEntityInfoFromTemplateProcessor_Apply_GivenValidData_ShouldApplyIt(t
 		return
 	}
 	processor := eventfilter.SetEntityInfoFromTemplateProcessor{
-		Name: utils.OptionalString{Set: true, Value: "Customer"},
-		Value: utils.OptionalTemplate{
+		Name: types.OptionalString{Set: true, Value: "Customer"},
+		Value: types.OptionalTemplate{
 			Set:   true,
 			Value: tpl,
 		},
@@ -351,8 +350,8 @@ func TestSetEntityInfoFromTemplateProcessor_Apply_GivenInvalidData_ShouldReturnE
 	}{
 		{
 			processor: eventfilter.SetEntityInfoFromTemplateProcessor{
-				Name: utils.OptionalString{Set: true, Value: "Customer"},
-				Value: utils.OptionalTemplate{
+				Name: types.OptionalString{Set: true, Value: "Customer"},
+				Value: types.OptionalTemplate{
 					Set:   true,
 					Value: invalidTpl,
 				},
@@ -363,8 +362,8 @@ func TestSetEntityInfoFromTemplateProcessor_Apply_GivenInvalidData_ShouldReturnE
 		},
 		{
 			processor: eventfilter.SetEntityInfoFromTemplateProcessor{
-				Name: utils.OptionalString{Set: true, Value: "Customer"},
-				Value: utils.OptionalTemplate{
+				Name: types.OptionalString{Set: true, Value: "Customer"},
+				Value: types.OptionalTemplate{
 					Set:   true,
 					Value: validTpl,
 				},
@@ -386,8 +385,8 @@ func TestSetEntityInfoFromTemplateProcessor_Apply_GivenInvalidData_ShouldReturnE
 func TestSetEntityInfoProcessor_Apply_GivenValidData_ShouldApplyIt(t *testing.T) {
 	expectedCustomer := "test-output (by test-author)"
 	processor := eventfilter.SetEntityInfoProcessor{
-		Name:  utils.OptionalString{Set: true, Value: "Customer"},
-		Value: utils.OptionalInterface{Set: true, Value: expectedCustomer},
+		Name:  types.OptionalString{Set: true, Value: "Customer"},
+		Value: types.OptionalInterface{Set: true, Value: expectedCustomer},
 	}
 	report := eventfilter.Report{}
 	event := types.Event{
@@ -415,8 +414,8 @@ func TestSetEntityInfoProcessor_Apply_GivenInvalidData_ShouldReturnError(t *test
 	}{
 		{
 			processor: eventfilter.SetEntityInfoProcessor{
-				Name:  utils.OptionalString{Set: true, Value: "Customer"},
-				Value: utils.OptionalInterface{Set: true, Value: "testcustomer"},
+				Name:  types.OptionalString{Set: true, Value: "Customer"},
+				Value: types.OptionalInterface{Set: true, Value: "testcustomer"},
 			},
 			event: types.Event{
 				Entity: nil,
@@ -435,8 +434,8 @@ func TestSetEntityInfoProcessor_Apply_GivenInvalidData_ShouldReturnError(t *test
 func TestCopyToEntityInfoProcessor_Apply_GivenValidData_ShouldApplyIt(t *testing.T) {
 	expectedCustomer := "test-output (by test-author)"
 	processor := eventfilter.CopyToEntityInfoProcessor{
-		Name: utils.OptionalString{Set: true, Value: "Customer"},
-		From: utils.OptionalString{Set: true, Value: "Event.Output"},
+		Name: types.OptionalString{Set: true, Value: "Customer"},
+		From: types.OptionalString{Set: true, Value: "Event.Output"},
 	}
 	report := eventfilter.Report{}
 	event := types.Event{
@@ -468,8 +467,8 @@ func TestCopyToEntityInfoProcessor_Apply_GivenInvalidData_ShouldReturnError(t *t
 	}{
 		{
 			processor: eventfilter.CopyToEntityInfoProcessor{
-				Name: utils.OptionalString{Set: true, Value: "Customer"},
-				From: utils.OptionalString{Set: true, Value: "Event.UnknownField"},
+				Name: types.OptionalString{Set: true, Value: "Customer"},
+				From: types.OptionalString{Set: true, Value: "Event.UnknownField"},
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
@@ -477,8 +476,8 @@ func TestCopyToEntityInfoProcessor_Apply_GivenInvalidData_ShouldReturnError(t *t
 		},
 		{
 			processor: eventfilter.CopyToEntityInfoProcessor{
-				Name: utils.OptionalString{Set: true, Value: "Customer"},
-				From: utils.OptionalString{Set: true, Value: "Event.Output"},
+				Name: types.OptionalString{Set: true, Value: "Customer"},
+				From: types.OptionalString{Set: true, Value: "Event.Output"},
 			},
 			event: types.Event{},
 		},
@@ -494,8 +493,8 @@ func TestCopyToEntityInfoProcessor_Apply_GivenInvalidData_ShouldReturnError(t *t
 
 func TestCopyProcessor_Apply_GivenValidData_ShouldApplyIt(t *testing.T) {
 	processor := eventfilter.CopyProcessor{
-		From: utils.OptionalString{Set: true, Value: "ExternalData.Entity"},
-		To:   utils.OptionalString{Set: true, Value: "Entity"},
+		From: types.OptionalString{Set: true, Value: "ExternalData.Entity"},
+		To:   types.OptionalString{Set: true, Value: "Entity"},
 	}
 	report := eventfilter.Report{}
 	expectedEntityID := "test-entity-id"
@@ -526,11 +525,11 @@ func TestCopyProcessor_Apply_GivenInvalidData_ShouldReturnError(t *testing.T) {
 	}{
 		{
 			processor: eventfilter.CopyProcessor{
-				From: utils.OptionalString{
+				From: types.OptionalString{
 					Set:   true,
 					Value: "Event.UnknownField",
 				},
-				To: utils.OptionalString{
+				To: types.OptionalString{
 					Set:   true,
 					Value: "Event.Output",
 				},
@@ -539,11 +538,11 @@ func TestCopyProcessor_Apply_GivenInvalidData_ShouldReturnError(t *testing.T) {
 		},
 		{
 			processor: eventfilter.CopyProcessor{
-				To: utils.OptionalString{
+				To: types.OptionalString{
 					Set:   true,
 					Value: "Event.UnknownField",
 				},
-				From: utils.OptionalString{
+				From: types.OptionalString{
 					Set:   true,
 					Value: "Event.Output",
 				},

@@ -22,12 +22,12 @@ type OperationParameters struct {
 }
 
 func (p *OperationParameters) Template(data interface{}) error {
-	output, err := renderTemplate(p.Output, data, nil)
+	output, err := renderTemplate(p.Output, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}
 	p.Output = output
-	author, err := renderTemplate(p.Author, data, nil)
+	author, err := renderTemplate(p.Author, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}
@@ -43,12 +43,12 @@ type OperationAssocTicketParameters struct {
 }
 
 func (p *OperationAssocTicketParameters) Template(data interface{}) error {
-	output, err := renderTemplate(p.Output, data, nil)
+	output, err := renderTemplate(p.Output, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}
 	p.Output = output
-	author, err := renderTemplate(p.Author, data, nil)
+	author, err := renderTemplate(p.Author, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}
@@ -64,12 +64,12 @@ type OperationSnoozeParameters struct {
 }
 
 func (p *OperationSnoozeParameters) Template(data interface{}) error {
-	output, err := renderTemplate(p.Output, data, nil)
+	output, err := renderTemplate(p.Output, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}
 	p.Output = output
-	author, err := renderTemplate(p.Author, data, nil)
+	author, err := renderTemplate(p.Author, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}
@@ -85,12 +85,12 @@ type OperationChangeStateParameters struct {
 }
 
 func (p *OperationChangeStateParameters) Template(data interface{}) error {
-	output, err := renderTemplate(p.Output, data, nil)
+	output, err := renderTemplate(p.Output, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}
 	p.Output = output
-	author, err := renderTemplate(p.Author, data, nil)
+	author, err := renderTemplate(p.Author, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}
@@ -107,12 +107,12 @@ type OperationDeclareTicketParameters struct {
 }
 
 func (p *OperationDeclareTicketParameters) Template(data interface{}) error {
-	output, err := renderTemplate(p.Output, data, nil)
+	output, err := renderTemplate(p.Output, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}
 	p.Output = output
-	author, err := renderTemplate(p.Author, data, nil)
+	author, err := renderTemplate(p.Author, data, GetTemplateFunc())
 	if err != nil {
 		return err
 	}
@@ -125,6 +125,12 @@ type OperationPbhParameters struct {
 	PbehaviorInfo PbehaviorInfo `json:"pbehavior_info"`
 	Output        string        `json:"output"`
 	Author        string        `json:"author"`
+}
+
+type OperationInstructionParameters struct {
+	Execution string `bson:"execution" json:"execution"`
+	Output    string `bson:"output" json:"output"`
+	Author    string `bson:"author" json:"author"`
 }
 
 func renderTemplate(templateStr string, data interface{}, f template.FuncMap) (string, error) {

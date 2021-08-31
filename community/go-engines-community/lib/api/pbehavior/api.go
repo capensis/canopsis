@@ -19,7 +19,7 @@ import (
 type API interface {
 	common.CrudAPI
 	ListByEntityID(c *gin.Context)
-	GetEIDs(c *gin.Context)
+	ListEntities(c *gin.Context)
 	CountFilter(c *gin.Context)
 }
 
@@ -64,7 +64,7 @@ func NewApi(
 // @Param search query string false "search query"
 // @Param sort query string false "sort query"
 // @Param sort_by query string false "sort query"
-// @Success 200 {object} common.PaginatedListResponse{data=[]PBehavior}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /pbehaviors [get]
 func (a *api) List(c *gin.Context) {
@@ -101,7 +101,7 @@ func (a *api) List(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param id query string true "Entity id"
-// @Success 200 {array} PBehavior
+// @Success 200 {array} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /entities/pbehaviors [get]
 func (a *api) ListByEntityID(c *gin.Context) {
@@ -129,7 +129,7 @@ func (a *api) ListByEntityID(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param id path string true "pbehavior id"
-// @Success 200 {object} PBehavior
+// @Success 200 {object} Response
 // @Failure 404 {object} common.ErrorResponse
 // @Router /pbehaviors/{id} [get]
 func (a *api) Get(c *gin.Context) {
@@ -146,11 +146,11 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, pbh)
 }
 
-// Get pbehavior eids list
-// @Summary Get pbehavior eids list
-// @Description Get pbehavior eids list
+// Find entities by pbehavior id
+// @Summary Find entities by pbehavior id
+// @Description Find entities by pbehavior id
 // @Tags pbehaviors
-// @ID pbehaviors-get-eids
+// @ID pbehaviors-find-entities
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
@@ -160,12 +160,12 @@ func (a *api) Get(c *gin.Context) {
 // @Param search query string false "search query"
 // @Param sort query string false "sort query"
 // @Param sort_by query string false "sort query"
-// @Success 200 {object} common.PaginatedListResponse{data=[]EID}
+// @Success 200 {object} common.PaginatedListResponse{data=[]entity.Entity}
 // @Failure 404 {object} common.ErrorResponse
 // @Failure 400 {object} common.ErrorResponse
-// @Router /pbehaviors/{id}/eids [get]
-func (a *api) GetEIDs(c *gin.Context) {
-	var r EIDsListRequest
+// @Router /pbehaviors/{id}/entities [get]
+func (a *api) ListEntities(c *gin.Context) {
+	var r EntitiesListRequest
 	r.Query = pagination.GetDefaultQuery()
 
 	if err := c.ShouldBind(&r); err != nil {
@@ -174,22 +174,17 @@ func (a *api) GetEIDs(c *gin.Context) {
 		return
 	}
 
-	pbh, err := a.store.GetOneBy(c.Request.Context(), bson.M{"_id": c.Param("id")})
+	aggregationResult, err := a.store.FindEntities(c.Request.Context(), c.Param("id"), r)
 	if err != nil {
 		panic(err)
 	}
 
-	if pbh == nil {
+	if aggregationResult == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	aggregationResult, err := a.store.GetEIDs(c.Request.Context(), pbh.ID, r)
-	if err != nil {
-		panic(err)
-	}
-
-	res, err := common.NewPaginatedResponse(r.Query, &aggregationResult)
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
@@ -208,7 +203,7 @@ func (a *api) GetEIDs(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param body body EditRequest true "body"
-// @Success 201 {object} PBehavior
+// @Success 201 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /pbehaviors [post]
 func (a *api) Create(c *gin.Context) {
@@ -220,7 +215,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	model, err := a.transformer.TransformCreateRequestToModel(request)
+	model, err := a.transformer.TransformCreateRequestToModel(c.Request.Context(), request)
 	if err != nil {
 		if err == ErrReasonNotExists || err == ErrExceptionNotExists || err == pbehaviorexception.ErrTypeNotExists {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -263,7 +258,7 @@ func (a *api) Create(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "pbehavior id"
 // @Param body body EditRequest true "body"
-// @Success 200 {object} PBehavior
+// @Success 200 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /pbehaviors/{id} [put]
@@ -278,7 +273,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	model, err := a.transformer.TransformUpdateRequestToModel(request)
+	model, err := a.transformer.TransformUpdateRequestToModel(c.Request.Context(), request)
 	if err != nil {
 		if err == ErrReasonNotExists || err == ErrExceptionNotExists || err == pbehaviorexception.ErrTypeNotExists {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))

@@ -221,6 +221,7 @@ export default {
     number: 'Number',
     boolean: 'Boolean',
     null: 'Null',
+    array: 'Array',
   },
   user: {
     role: 'Role',
@@ -257,6 +258,10 @@ export default {
     },
     entityInfo: {
       valueAsList: 'Change value type to list',
+    },
+    fab: {
+      common: 'Add a new entity',
+      addService: 'Add a new service entity',
     },
   },
   search: {
@@ -426,7 +431,7 @@ export default {
     tabs: {
       filter: 'Filter',
       comments: 'Comments',
-      eids: 'EIDS',
+      entities: 'Entities',
     },
   },
   settings: {
@@ -450,6 +455,7 @@ export default {
     defaultSortColumn: 'Default sort column',
     sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
     columnNames: 'Column names',
+    exportColumnNames: 'Export column names',
     groupColumnNames: 'Column names for meta alarms',
     trackColumnNames: 'Track alarm source columns',
     treeOfDependenciesColumnNames: 'Column names for tree of dependencies',
@@ -1697,6 +1703,14 @@ export default {
     valuePath: 'Value path | Value paths',
     autoResolve: 'Auto resolve',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
+    corelId: 'Corel ID',
+    corelIdHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
+      '<i>For example:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+    corelStatus: 'Corel status',
+    corelStatusHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
+      '<i>For example:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+    corelParent: 'Corel parent',
+    corelChild: 'Corel child',
     outputTemplateHelp: '<p>The accessible variables are:</p>' +
       '<p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>' +
       '<p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p>' +
@@ -2150,6 +2164,7 @@ export default {
       number: '@:variableTypes.number',
       boolean: '@:variableTypes.boolean',
       null: '@:variableTypes.null',
+      array: '@:variableTypes.array',
     },
   },
 

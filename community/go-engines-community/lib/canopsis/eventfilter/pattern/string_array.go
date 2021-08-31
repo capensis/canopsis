@@ -2,21 +2,23 @@ package pattern
 
 import (
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"strings"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
-	"strings"
 )
 
 type StringArrayConditions struct {
-	HasEvery         utils.OptionalStringArray `bson:"has_every,omitempty"`
-	HasOneOf         utils.OptionalStringArray `bson:"has_one_of,omitempty"`
-	HasNot           utils.OptionalStringArray `bson:"has_not,omitempty"`
+	HasEvery         types.OptionalStringArray `bson:"has_every,omitempty"`
+	HasOneOf         types.OptionalStringArray `bson:"has_one_of,omitempty"`
+	HasNot           types.OptionalStringArray `bson:"has_not,omitempty"`
+	IsEmpty          types.OptionalBool        `bson:"is_empty,omitempty"`
 	UnexpectedFields map[string]interface{}    `bson:",inline"`
 }
 
 // Matches returns true if the value satisfies each of the conditions defined
-// in the IntegerConditions.
+// in the StringArrayConditions.
 func (p StringArrayConditions) Matches(value []string) bool {
 	valueMap := make(map[string]bool)
 
@@ -27,6 +29,7 @@ func (p StringArrayConditions) Matches(value []string) bool {
 	hasEveryCondition := true
 	hasOneOfCondition := true
 	hasNotCondition := true
+	isEmptyCondition := true
 
 	if p.HasEvery.Set {
 		for _, v := range p.HasEvery.Value {
@@ -57,15 +60,23 @@ func (p StringArrayConditions) Matches(value []string) bool {
 		}
 	}
 
-	return hasEveryCondition && hasOneOfCondition && hasNotCondition
+	if p.IsEmpty.Set {
+		isEmptyCondition = !p.IsEmpty.Value && len(value) != 0 || p.IsEmpty.Value && len(value) == 0
+	}
+
+	return hasEveryCondition && hasOneOfCondition && hasNotCondition && isEmptyCondition
 }
 
 func (p StringArrayConditions) Empty() bool {
-	return !(p.HasEvery.Set || p.HasNot.Set || p.HasOneOf.Set)
+	return !(p.HasEvery.Set || p.HasNot.Set || p.HasOneOf.Set || p.IsEmpty.Set)
 }
 
 func (p StringArrayConditions) OnlyHasNotCondition() bool {
-	return !p.HasEvery.Set && !p.HasOneOf.Set && p.HasNot.Set
+	return !p.HasEvery.Set && !p.HasOneOf.Set && !p.IsEmpty.Set && p.HasNot.Set
+}
+
+func (p StringArrayConditions) OnlyIsEmpty() bool {
+	return !p.HasEvery.Set && !p.HasOneOf.Set && !p.HasNot.Set && p.IsEmpty.Set && p.IsEmpty.Value
 }
 
 func (p StringArrayConditions) AsMongoDriverQuery() bson.M {
@@ -82,6 +93,15 @@ func (p StringArrayConditions) AsMongoDriverQuery() bson.M {
 		query["$all"] = p.HasEvery.Value
 	}
 
+	if p.IsEmpty.Set {
+		if p.IsEmpty.Value {
+			query["$eq"] = bson.A{}
+		} else {
+			query["$exists"] = true
+			query["$ne"] = bson.A{}
+		}
+	}
+
 	return query
 }
 
@@ -89,34 +109,30 @@ type StringArrayPattern struct {
 	StringArrayConditions
 }
 
+type fieldBsonValue struct {
+	isFieldSet bool
+	fieldName  string
+	bsonName   string
+	value      interface{}
+}
+
 func (p StringArrayPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	resultBson := bson.M{}
 
-	if p.HasEvery.Set {
-		bsonFieldName, err := GetFieldBsonName(p, "HasEvery", "hasevery")
-		if err != nil {
-			return bsontype.Undefined, nil, err
+	for _, v := range []fieldBsonValue{
+		{p.HasEvery.Set, "HasEvery", "hasevery", p.HasEvery.Value},
+		{p.HasNot.Set, "HasNot", "hasnot", p.HasNot.Value},
+		{p.HasOneOf.Set, "HasOneOf", "hasoneof", p.HasOneOf.Value},
+		{p.IsEmpty.Set, "IsEmpty", "isempty", p.IsEmpty.Value},
+	} {
+		if v.isFieldSet {
+			bsonFieldName, err := GetFieldBsonName(p, v.fieldName, v.bsonName)
+			if err != nil {
+				return bsontype.Undefined, nil, err
+			}
+
+			resultBson[bsonFieldName] = v.value
 		}
-
-		resultBson[bsonFieldName] = p.HasEvery.Value
-	}
-
-	if p.HasNot.Set {
-		bsonFieldName, err := GetFieldBsonName(p, "HasNot", "hasnot")
-		if err != nil {
-			return bsontype.Undefined, nil, err
-		}
-
-		resultBson[bsonFieldName] = p.HasNot.Value
-	}
-
-	if p.HasOneOf.Set {
-		bsonFieldName, err := GetFieldBsonName(p, "HasOneOf", "hasoneof")
-		if err != nil {
-			return bsontype.Undefined, nil, err
-		}
-
-		resultBson[bsonFieldName] = p.HasOneOf.Value
 	}
 
 	if len(resultBson) > 0 {
@@ -138,11 +154,11 @@ func (p *StringArrayPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byt
 			for key := range p.UnexpectedFields {
 				unexpectedFieldNames = append(unexpectedFieldNames, key)
 			}
-			return fmt.Errorf("Unexpected pattern fields: %s", strings.Join(unexpectedFieldNames, ", "))
+			return fmt.Errorf("unexpected pattern fields: %s", strings.Join(unexpectedFieldNames, ", "))
 		}
 		return nil
 
 	default:
-		return fmt.Errorf("A string array patter should be a document")
+		return fmt.Errorf("a string array pattern should be a document")
 	}
 }

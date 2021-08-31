@@ -2,10 +2,12 @@ package entity
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 	"net/http"
 )
 
@@ -14,25 +16,41 @@ type API interface {
 	StartExport(c *gin.Context)
 	GetExport(c *gin.Context)
 	DownloadExport(c *gin.Context)
+	Clean(c *gin.Context)
 }
 
 type api struct {
 	store               Store
 	exportExecutor      export.TaskExecutor
-	defaultExportFields []string
+	defaultExportFields export.Fields
 	exportSeparators    map[string]rune
+	cleanTaskChan       chan<- CleanTask
+	logger              zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	exportExecutor export.TaskExecutor,
+	cleanTaskChan chan<- CleanTask,
+	logger zerolog.Logger,
 ) API {
+	fields := []string{"_id", "name", "type", "enabled", "depends", "impact"}
+	defaultExportFields := make(export.Fields, len(fields))
+	for i, field := range fields {
+		defaultExportFields[i] = export.Field{
+			Name:  field,
+			Label: field,
+		}
+	}
+
 	return &api{
 		store:               store,
 		exportExecutor:      exportExecutor,
-		defaultExportFields: []string{"_id", "name", "type", "enabled", "depends", "impact"},
+		defaultExportFields: defaultExportFields,
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
+		cleanTaskChan: cleanTaskChan,
+		logger:        logger,
 	}
 }
 
@@ -45,7 +63,7 @@ func NewApi(
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param request query ListRequest true "request"
+// @Param request query ListRequestWithPagination true "request"
 // @Success 200 {object} common.PaginatedListResponse{data=[]Entity}
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /entities [get]
@@ -79,35 +97,39 @@ func (a *api) List(c *gin.Context) {
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param request query ExportRequest true "request"
+// @Param request body ExportRequest true "request"
 // @Success 200 {object} ExportResponse
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /entity-export [post]
 func (a *api) StartExport(c *gin.Context) {
 	var r ExportRequest
-	if err := c.ShouldBindQuery(&r); err != nil {
+	if err := c.ShouldBind(&r); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 		return
 	}
 
 	separator := a.exportSeparators[r.Separator]
-	exportFields := r.SearchBy
+	exportFields := r.Fields
 	if len(exportFields) == 0 {
 		exportFields = a.defaultExportFields
 	}
 
+	fields := exportFields.Fields()
 	taskID, err := a.exportExecutor.StartExecute(c.Request.Context(), export.Task{
 		ExportFields: exportFields,
 		Separator:    separator,
 		DataFetcher: func(ctx context.Context, page, limit int64) ([]map[string]string, int64, error) {
 			res, err := a.store.Find(ctx, ListRequestWithPagination{
-				Query:       pagination.Query{Paginate: true, Page: page, Limit: limit},
-				ListRequest: r.ListRequest,
+				Query: pagination.Query{Paginate: true, Page: page, Limit: limit},
+				ListRequest: ListRequest{
+					BaseFilterRequest: r.BaseFilterRequest,
+					SearchBy:          fields,
+				},
 			})
 			if err != nil {
 				return nil, 0, err
 			}
-			data, err := export.ConvertToMap(res.Data, exportFields, "", nil)
+			data, err := export.ConvertToMap(res.Data, fields, "", nil)
 			if err != nil {
 				return nil, 0, err
 			}
@@ -187,4 +209,37 @@ func (a *api) DownloadExport(c *gin.Context) {
 	c.Header("Content-Type", "text/csv")
 	c.ContentType()
 	c.File(t.File)
+}
+
+// Clean disabled entities
+// @Summary Clean disabled entities
+// @Description Clean disabled entities
+// @Tags entities
+// @ID entities-clean
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Security BasicAuth
+// @Param request query CleanRequest true "request"
+// @Success 202
+// @Failure 400 {object} common.ErrorResponse
+// @Router /entities/clean [post]
+func (a *api) Clean(c *gin.Context) {
+	var r CleanRequest
+	if err := c.ShouldBindJSON(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	select {
+	case a.cleanTaskChan <- CleanTask{
+		Archive:             r.Archive,
+		ArchiveDependencies: r.ArchiveDependencies,
+		UserID:              c.MustGet(auth.UserKey).(string),
+	}:
+	default:
+		a.logger.Debug().Msg("cleaning in progress, skip")
+	}
+
+	c.Status(http.StatusAccepted)
 }

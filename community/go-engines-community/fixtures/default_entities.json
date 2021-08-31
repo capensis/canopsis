@@ -154,6 +154,23 @@
     "impact_level": 1
   },
   {
+    "_id": "test-alarm-with-instruction-resource-4/test-alarm-with-instruction-component",
+    "depends": ["test-alarm-with-instruction-connector/test-alarm-with-instruction-connectorname"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-alarm-with-instruction-component"],
+    "infos": {
+      "customer": {
+        "value": "test-alarm-with-instruction-customer"
+      }
+    },
+    "measurements": null,
+    "name": "test-alarm-with-instruction-resource-4",
+    "type": "resource",
+    "component": "test-alarm-with-instruction-component",
+    "impact_level": 1
+  },
+  {
     "_id": "test-alarm-get-resource-4/test-alarm-get-component",
     "depends": ["test-alarm-get-connector/test-alarm-get-connectorname"],
     "enable_history": [1597030118],
@@ -718,61 +735,6 @@
     "type": "resource",
     "component": "test-instruction-execution-resume-component",
     "impact_level": 1
-  },
-  {
-    "_id": "test-job-execution-start-resource-1/test-job-execution-start-component",
-    "depends": [],
-    "enable_history": [1597030220],
-    "enabled": true,
-    "impact": [],
-    "infos": {
-    },
-    "measurements": null,
-    "name": "test-job-execution-start-resource-1",
-    "type": "resource",
-    "component": "test-job-execution-start-component",
-    "impact_level": 1
-  },
-  {
-    "_id": "test-job-execution-start-resource-2/test-job-execution-start-component",
-    "depends": [],
-    "enable_history": [1597030220],
-    "enabled": true,
-    "impact": [],
-    "infos": {
-    },
-    "measurements": null,
-    "name": "test-job-execution-start-resource-2",
-    "type": "resource",
-    "component": "test-job-execution-start-component",
-    "impact_level": 1
-  },
-  {
-    "_id": "test-job-execution-start-resource-3/test-job-execution-start-component",
-    "depends": [],
-    "enable_history": [1597030220],
-    "enabled": true,
-    "impact": [],
-    "infos": {
-    },
-    "measurements": null,
-    "name": "test-job-execution-start-resource-3",
-    "type": "resource",
-    "component": "test-job-execution-start-component",
-    "impact_level": 1
-  },
-  {
-    "_id": "test-job-execution-start-resource-4/test-job-execution-start-component",
-    "depends": [],
-    "enable_history": [1597030220],
-    "enabled": true,
-    "impact": [],
-    "infos": {
-    },
-    "measurements": null,
-    "name": "test-job-execution-start-resource-4",
-    "type": "resource",
-    "component": "test-job-execution-start-component"
   },
   {
     "_id": "test-instruction-execution-get-resource-1/test-instruction-execution-get-component",
@@ -2187,6 +2149,2232 @@
     "name": "test-idle-rule-count-patterns-resource-5",
     "type": "resource",
     "component": "test-idle-rule-count-patterns-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh",
+    "depends": ["test-component-to-entities-get-by-pbh"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": [
+      "test-resource-to-entities-get-by-pbh-1/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-2/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-3/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-4/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-5/test-component-to-entities-get-by-pbh"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-connectorname-to-entities-get-by-pbh",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-component-to-entities-get-by-pbh",
+    "depends": [
+      "test-resource-to-entities-get-by-pbh-1/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-2/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-3/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-4/test-component-to-entities-get-by-pbh",
+      "test-resource-to-entities-get-by-pbh-5/test-component-to-entities-get-by-pbh"
+    ],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-component-to-entities-get-by-pbh",
+    "type": "component",
+    "component": "test-component-to-entities-get-by-pbh",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-to-entities-get-by-pbh-1/test-component-to-entities-get-by-pbh",
+    "depends": ["test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-component-to-entities-get-by-pbh"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-resource-to-entities-get-by-pbh-1",
+    "type": "resource",
+    "component": "test-component-to-entities-get-by-pbh",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-to-entities-get-by-pbh-2/test-component-to-entities-get-by-pbh",
+    "depends": ["test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-component-to-entities-get-by-pbh"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-resource-to-entities-get-by-pbh-2",
+    "type": "resource",
+    "component": "test-component-to-entities-get-by-pbh",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-to-entities-get-by-pbh-3/test-component-to-entities-get-by-pbh",
+    "depends": ["test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-component-to-entities-get-by-pbh"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-resource-to-entities-get-by-pbh-3",
+    "type": "resource",
+    "component": "test-component-to-entities-get-by-pbh",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-to-entities-get-by-pbh-4/test-component-to-entities-get-by-pbh",
+    "depends": ["test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-component-to-entities-get-by-pbh"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-resource-to-entities-get-by-pbh-4",
+    "type": "resource",
+    "component": "test-component-to-entities-get-by-pbh",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-to-entities-get-by-pbh-5/test-component-to-entities-get-by-pbh",
+    "depends": ["test-connector-to-entities-get-by-pbh/test-connectorname-to-entities-get-by-pbh"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-component-to-entities-get-by-pbh"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-resource-to-entities-get-by-pbh-5",
+    "type": "resource",
+    "component": "test-component-to-entities-get-by-pbh",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-to-not-run-auto-instruction-manually/test-component-to-not-run-auto-instruction-manually",
+    "depends": [],
+    "enabled": true,
+    "impact": [],
+    "infos": {},
+    "name": "test-resource-to-not-run-auto-instruction-manually",
+    "type": "resource",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-1-connector/test-complex-rule-rate-1-connectorname",
+    "depends": ["test-complex-rule-rate-1-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-complex-rule-rate-1-resource-1/test-complex-rule-rate-1-component",
+      "test-complex-rule-rate-1-resource-2/test-complex-rule-rate-1-component",
+      "test-complex-rule-rate-1-resource-3/test-complex-rule-rate-1-component",
+      "test-complex-rule-rate-1-resource-4/test-complex-rule-rate-1-component",
+      "test-complex-rule-rate-1-resource-5/test-complex-rule-rate-1-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-1-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-1-component",
+    "depends": [
+      "test-complex-rule-rate-1-resource-1/test-complex-rule-rate-1-component",
+      "test-complex-rule-rate-1-resource-2/test-complex-rule-rate-1-component",
+      "test-complex-rule-rate-1-resource-3/test-complex-rule-rate-1-component",
+      "test-complex-rule-rate-1-resource-4/test-complex-rule-rate-1-component",
+      "test-complex-rule-rate-1-resource-5/test-complex-rule-rate-1-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-1-connector/test-complex-rule-rate-1-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-1-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-1-resource-1/test-complex-rule-rate-1-component",
+    "depends": ["test-complex-rule-rate-1-connector/test-complex-rule-rate-1-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-1-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-1-resource-1",
+    "type": "resource",
+    "component": "test-complex-rule-rate-1-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-1-resource-2/test-complex-rule-rate-1-component",
+    "depends": ["test-complex-rule-rate-1-connector/test-complex-rule-rate-1-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-1-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-1-resource-2",
+    "type": "resource",
+    "component": "test-complex-rule-rate-1-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-1-resource-3/test-complex-rule-rate-1-component",
+    "depends": ["test-complex-rule-rate-1-connector/test-complex-rule-rate-1-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-1-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-1-resource-3",
+    "type": "resource",
+    "component": "test-complex-rule-rate-1-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-1-resource-4/test-complex-rule-rate-1-component",
+    "depends": ["test-complex-rule-rate-1-connector/test-complex-rule-rate-1-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-1-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-1-resource-4",
+    "type": "resource",
+    "component": "test-complex-rule-rate-1-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-1-resource-5/test-complex-rule-rate-1-component",
+    "depends": ["test-complex-rule-rate-1-connector/test-complex-rule-rate-1-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-1-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-1-resource-5",
+    "type": "resource",
+    "component": "test-complex-rule-rate-1-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-2-connector/test-complex-rule-rate-2-connectorname",
+    "depends": ["test-complex-rule-rate-2-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-complex-rule-rate-2-resource-1/test-complex-rule-rate-2-component",
+      "test-complex-rule-rate-2-resource-2/test-complex-rule-rate-2-component",
+      "test-complex-rule-rate-2-resource-3/test-complex-rule-rate-2-component",
+      "test-complex-rule-rate-2-resource-4/test-complex-rule-rate-2-component",
+      "test-complex-rule-rate-2-resource-5/test-complex-rule-rate-2-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-2-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-2-component",
+    "depends": [
+      "test-complex-rule-rate-2-resource-1/test-complex-rule-rate-2-component",
+      "test-complex-rule-rate-2-resource-2/test-complex-rule-rate-2-component",
+      "test-complex-rule-rate-2-resource-3/test-complex-rule-rate-2-component",
+      "test-complex-rule-rate-2-resource-4/test-complex-rule-rate-2-component",
+      "test-complex-rule-rate-2-resource-5/test-complex-rule-rate-2-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-2-connector/test-complex-rule-rate-2-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-2-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-2-resource-1/test-complex-rule-rate-2-component",
+    "depends": ["test-complex-rule-rate-2-connector/test-complex-rule-rate-2-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-2-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-2-resource-1",
+    "type": "resource",
+    "component": "test-complex-rule-rate-2-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-2-resource-2/test-complex-rule-rate-2-component",
+    "depends": ["test-complex-rule-rate-2-connector/test-complex-rule-rate-2-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-2-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-2-resource-2",
+    "type": "resource",
+    "component": "test-complex-rule-rate-2-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-2-resource-3/test-complex-rule-rate-2-component",
+    "depends": ["test-complex-rule-rate-2-connector/test-complex-rule-rate-2-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-2-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-2-resource-3",
+    "type": "resource",
+    "component": "test-complex-rule-rate-2-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-2-resource-4/test-complex-rule-rate-2-component",
+    "depends": ["test-complex-rule-rate-2-connector/test-complex-rule-rate-2-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-2-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-2-resource-4",
+    "type": "resource",
+    "component": "test-complex-rule-rate-2-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-2-resource-5/test-complex-rule-rate-2-component",
+    "depends": ["test-complex-rule-rate-2-connector/test-complex-rule-rate-2-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-2-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-2-resource-5",
+    "type": "resource",
+    "component": "test-complex-rule-rate-2-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-3-connector/test-complex-rule-rate-3-connectorname",
+    "depends": ["test-complex-rule-rate-3-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-complex-rule-rate-3-resource-1/test-complex-rule-rate-3-component",
+      "test-complex-rule-rate-3-resource-2/test-complex-rule-rate-3-component",
+      "test-complex-rule-rate-3-resource-3/test-complex-rule-rate-3-component",
+      "test-complex-rule-rate-3-resource-4/test-complex-rule-rate-3-component",
+      "test-complex-rule-rate-3-resource-5/test-complex-rule-rate-3-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-3-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-3-component",
+    "depends": [
+      "test-complex-rule-rate-3-resource-1/test-complex-rule-rate-3-component",
+      "test-complex-rule-rate-3-resource-2/test-complex-rule-rate-3-component",
+      "test-complex-rule-rate-3-resource-3/test-complex-rule-rate-3-component",
+      "test-complex-rule-rate-3-resource-4/test-complex-rule-rate-3-component",
+      "test-complex-rule-rate-3-resource-5/test-complex-rule-rate-3-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-3-connector/test-complex-rule-rate-3-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-3-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-3-resource-1/test-complex-rule-rate-3-component",
+    "depends": ["test-complex-rule-rate-3-connector/test-complex-rule-rate-3-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-3-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-3-resource-1",
+    "type": "resource",
+    "component": "test-complex-rule-rate-3-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-3-resource-2/test-complex-rule-rate-3-component",
+    "depends": ["test-complex-rule-rate-3-connector/test-complex-rule-rate-3-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-3-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-3-resource-2",
+    "type": "resource",
+    "component": "test-complex-rule-rate-3-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-3-resource-3/test-complex-rule-rate-3-component",
+    "depends": ["test-complex-rule-rate-3-connector/test-complex-rule-rate-3-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-3-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-3-resource-3",
+    "type": "resource",
+    "component": "test-complex-rule-rate-3-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-3-resource-4/test-complex-rule-rate-3-component",
+    "depends": ["test-complex-rule-rate-3-connector/test-complex-rule-rate-3-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-3-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-3-resource-4",
+    "type": "resource",
+    "component": "test-complex-rule-rate-3-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-3-resource-5/test-complex-rule-rate-3-component",
+    "depends": ["test-complex-rule-rate-3-connector/test-complex-rule-rate-3-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-3-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-3-resource-5",
+    "type": "resource",
+    "component": "test-complex-rule-rate-3-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-4-connector/test-complex-rule-rate-4-connectorname",
+    "depends": ["test-complex-rule-rate-4-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-complex-rule-rate-4-resource-1/test-complex-rule-rate-4-component",
+      "test-complex-rule-rate-4-resource-2/test-complex-rule-rate-4-component",
+      "test-complex-rule-rate-4-resource-3/test-complex-rule-rate-4-component",
+      "test-complex-rule-rate-4-resource-4/test-complex-rule-rate-4-component",
+      "test-complex-rule-rate-4-resource-5/test-complex-rule-rate-4-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-4-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-4-component",
+    "depends": [
+      "test-complex-rule-rate-4-resource-1/test-complex-rule-rate-4-component",
+      "test-complex-rule-rate-4-resource-2/test-complex-rule-rate-4-component",
+      "test-complex-rule-rate-4-resource-3/test-complex-rule-rate-4-component",
+      "test-complex-rule-rate-4-resource-4/test-complex-rule-rate-4-component",
+      "test-complex-rule-rate-4-resource-5/test-complex-rule-rate-4-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-4-connector/test-complex-rule-rate-4-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-4-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-4-resource-1/test-complex-rule-rate-4-component",
+    "depends": ["test-complex-rule-rate-4-connector/test-complex-rule-rate-4-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-4-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-4-resource-1",
+    "type": "resource",
+    "component": "test-complex-rule-rate-4-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-4-resource-2/test-complex-rule-rate-4-component",
+    "depends": ["test-complex-rule-rate-4-connector/test-complex-rule-rate-4-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-4-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-4-resource-2",
+    "type": "resource",
+    "component": "test-complex-rule-rate-4-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-4-resource-3/test-complex-rule-rate-4-component",
+    "depends": ["test-complex-rule-rate-4-connector/test-complex-rule-rate-4-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-4-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-4-resource-3",
+    "type": "resource",
+    "component": "test-complex-rule-rate-4-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-4-resource-4/test-complex-rule-rate-4-component",
+    "depends": ["test-complex-rule-rate-4-connector/test-complex-rule-rate-4-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-4-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-4-resource-4",
+    "type": "resource",
+    "component": "test-complex-rule-rate-4-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-4-resource-5/test-complex-rule-rate-4-component",
+    "depends": ["test-complex-rule-rate-4-connector/test-complex-rule-rate-4-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-4-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-4-resource-5",
+    "type": "resource",
+    "component": "test-complex-rule-rate-4-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-5-connector/test-complex-rule-rate-5-connectorname",
+    "depends": ["test-complex-rule-rate-5-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-complex-rule-rate-5-resource-1/test-complex-rule-rate-5-component",
+      "test-complex-rule-rate-5-resource-2/test-complex-rule-rate-5-component",
+      "test-complex-rule-rate-5-resource-3/test-complex-rule-rate-5-component",
+      "test-complex-rule-rate-5-resource-4/test-complex-rule-rate-5-component",
+      "test-complex-rule-rate-5-resource-5/test-complex-rule-rate-5-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-5-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-5-component",
+    "depends": [
+      "test-complex-rule-rate-5-resource-1/test-complex-rule-rate-5-component",
+      "test-complex-rule-rate-5-resource-2/test-complex-rule-rate-5-component",
+      "test-complex-rule-rate-5-resource-3/test-complex-rule-rate-5-component",
+      "test-complex-rule-rate-5-resource-4/test-complex-rule-rate-5-component",
+      "test-complex-rule-rate-5-resource-5/test-complex-rule-rate-5-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-5-connector/test-complex-rule-rate-5-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-5-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-5-resource-1/test-complex-rule-rate-5-component",
+    "depends": ["test-complex-rule-rate-5-connector/test-complex-rule-rate-5-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-5-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-5-resource-1",
+    "type": "resource",
+    "component": "test-complex-rule-rate-5-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-5-resource-2/test-complex-rule-rate-5-component",
+    "depends": ["test-complex-rule-rate-5-connector/test-complex-rule-rate-5-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-5-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-5-resource-2",
+    "type": "resource",
+    "component": "test-complex-rule-rate-5-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-5-resource-3/test-complex-rule-rate-5-component",
+    "depends": ["test-complex-rule-rate-5-connector/test-complex-rule-rate-5-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-5-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-5-resource-3",
+    "type": "resource",
+    "component": "test-complex-rule-rate-5-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-5-resource-4/test-complex-rule-rate-5-component",
+    "depends": ["test-complex-rule-rate-5-connector/test-complex-rule-rate-5-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-5-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-5-resource-4",
+    "type": "resource",
+    "component": "test-complex-rule-rate-5-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-5-resource-5/test-complex-rule-rate-5-component",
+    "depends": ["test-complex-rule-rate-5-connector/test-complex-rule-rate-5-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-5-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-5-resource-5",
+    "type": "resource",
+    "component": "test-complex-rule-rate-5-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname",
+    "depends": ["test-complex-rule-rate-6-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-complex-rule-rate-6-resource-1/test-complex-rule-rate-6-component",
+      "test-complex-rule-rate-6-resource-2/test-complex-rule-rate-6-component",
+      "test-complex-rule-rate-6-resource-3/test-complex-rule-rate-6-component",
+      "test-complex-rule-rate-6-resource-4/test-complex-rule-rate-6-component",
+      "test-complex-rule-rate-6-resource-5/test-complex-rule-rate-6-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-6-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-6-component",
+    "depends": [
+      "test-complex-rule-rate-6-resource-1/test-complex-rule-rate-6-component",
+      "test-complex-rule-rate-6-resource-2/test-complex-rule-rate-6-component",
+      "test-complex-rule-rate-6-resource-3/test-complex-rule-rate-6-component",
+      "test-complex-rule-rate-6-resource-4/test-complex-rule-rate-6-component",
+      "test-complex-rule-rate-6-resource-5/test-complex-rule-rate-6-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-6-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-6-resource-1/test-complex-rule-rate-6-component",
+    "depends": ["test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-6-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-6-resource-1",
+    "type": "resource",
+    "component": "test-complex-rule-rate-6-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-6-resource-2/test-complex-rule-rate-6-component",
+    "depends": ["test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-6-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-6-resource-2",
+    "type": "resource",
+    "component": "test-complex-rule-rate-6-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-6-resource-3/test-complex-rule-rate-6-component",
+    "depends": ["test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-6-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-6-resource-3",
+    "type": "resource",
+    "component": "test-complex-rule-rate-6-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-6-resource-4/test-complex-rule-rate-6-component",
+    "depends": ["test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-6-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-6-resource-4",
+    "type": "resource",
+    "component": "test-complex-rule-rate-6-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-6-resource-5/test-complex-rule-rate-6-component",
+    "depends": ["test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-6-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-6-resource-5",
+    "type": "resource",
+    "component": "test-complex-rule-rate-6-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-7-connector/test-complex-rule-rate-7-connectorname",
+    "depends": ["test-complex-rule-rate-7-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-complex-rule-rate-7-resource-1/test-complex-rule-rate-7-component",
+      "test-complex-rule-rate-7-resource-2/test-complex-rule-rate-7-component",
+      "test-complex-rule-rate-7-resource-3/test-complex-rule-rate-7-component",
+      "test-complex-rule-rate-7-resource-4/test-complex-rule-rate-7-component",
+      "test-complex-rule-rate-7-resource-5/test-complex-rule-rate-7-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-7-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-7-component",
+    "depends": [
+      "test-complex-rule-rate-7-resource-1/test-complex-rule-rate-7-component",
+      "test-complex-rule-rate-7-resource-2/test-complex-rule-rate-7-component",
+      "test-complex-rule-rate-7-resource-3/test-complex-rule-rate-7-component",
+      "test-complex-rule-rate-7-resource-4/test-complex-rule-rate-7-component",
+      "test-complex-rule-rate-7-resource-5/test-complex-rule-rate-7-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-7-connector/test-complex-rule-rate-7-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-complex-rule-rate-7-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-7-resource-1/test-complex-rule-rate-7-component",
+    "depends": ["test-complex-rule-rate-7-connector/test-complex-rule-rate-7-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-7-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-7-resource-1",
+    "type": "resource",
+    "component": "test-complex-rule-rate-7-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-7-resource-2/test-complex-rule-rate-7-component",
+    "depends": ["test-complex-rule-rate-7-connector/test-complex-rule-rate-7-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-7-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-7-resource-2",
+    "type": "resource",
+    "component": "test-complex-rule-rate-7-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-7-resource-3/test-complex-rule-rate-7-component",
+    "depends": ["test-complex-rule-rate-7-connector/test-complex-rule-rate-7-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-7-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-7-resource-3",
+    "type": "resource",
+    "component": "test-complex-rule-rate-7-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-7-resource-4/test-complex-rule-rate-7-component",
+    "depends": ["test-complex-rule-rate-7-connector/test-complex-rule-rate-7-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-7-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-7-resource-4",
+    "type": "resource",
+    "component": "test-complex-rule-rate-7-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-complex-rule-rate-7-resource-5/test-complex-rule-rate-7-component",
+    "depends": ["test-complex-rule-rate-7-connector/test-complex-rule-rate-7-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-complex-rule-rate-7-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-complex-rule-rate-7-resource-5",
+    "type": "resource",
+    "component": "test-complex-rule-rate-7-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-1-connector/test-valuegroup-rule-rate-1-connectorname",
+    "depends": ["test-valuegroup-rule-rate-1-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-valuegroup-rule-rate-1-resource-1/test-valuegroup-rule-rate-1-component",
+      "test-valuegroup-rule-rate-1-resource-2/test-valuegroup-rule-rate-1-component",
+      "test-valuegroup-rule-rate-1-resource-3/test-valuegroup-rule-rate-1-component",
+      "test-valuegroup-rule-rate-1-resource-4/test-valuegroup-rule-rate-1-component",
+      "test-valuegroup-rule-rate-1-resource-5/test-valuegroup-rule-rate-1-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-1-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-1-component",
+    "depends": [
+      "test-valuegroup-rule-rate-1-resource-1/test-valuegroup-rule-rate-1-component",
+      "test-valuegroup-rule-rate-1-resource-2/test-valuegroup-rule-rate-1-component",
+      "test-valuegroup-rule-rate-1-resource-3/test-valuegroup-rule-rate-1-component",
+      "test-valuegroup-rule-rate-1-resource-4/test-valuegroup-rule-rate-1-component",
+      "test-valuegroup-rule-rate-1-resource-5/test-valuegroup-rule-rate-1-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-1-connector/test-valuegroup-rule-rate-1-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-1-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-1-resource-1/test-valuegroup-rule-rate-1-component",
+    "depends": ["test-valuegroup-rule-rate-1-connector/test-valuegroup-rule-rate-1-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-1-component"],
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-1-resource-1",
+    "infos": {
+      "valuegroupRate1": {
+        "name": "valuegroupRate1",
+        "description": "valuegroupRate1",
+        "value": "1"
+      }
+    },
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-1-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-1-resource-2/test-valuegroup-rule-rate-1-component",
+    "depends": ["test-valuegroup-rule-rate-1-connector/test-valuegroup-rule-rate-1-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-1-component"],
+    "infos": {
+      "valuegroupRate1": {
+        "name": "valuegroupRate1",
+        "description": "valuegroupRate1",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-1-resource-2",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-1-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-1-resource-3/test-valuegroup-rule-rate-1-component",
+    "depends": ["test-valuegroup-rule-rate-1-connector/test-valuegroup-rule-rate-1-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-1-component"],
+    "infos": {
+      "valuegroupRate1": {
+        "name": "valuegroupRate1",
+        "description": "valuegroupRate1",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-1-resource-3",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-1-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-1-resource-4/test-valuegroup-rule-rate-1-component",
+    "depends": ["test-valuegroup-rule-rate-1-connector/test-valuegroup-rule-rate-1-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-1-component"],
+    "infos": {
+      "valuegroupRate1": {
+        "name": "valuegroupRate1",
+        "description": "valuegroupRate1",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-1-resource-4",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-1-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-1-resource-5/test-valuegroup-rule-rate-1-component",
+    "depends": ["test-valuegroup-rule-rate-1-connector/test-valuegroup-rule-rate-1-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-1-component"],
+    "infos": {
+      "valuegroupRate1": {
+        "name": "valuegroupRate1",
+        "description": "valuegroupRate1",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-1-resource-5",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-1-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-2-connector/test-valuegroup-rule-rate-2-connectorname",
+    "depends": ["test-valuegroup-rule-rate-2-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-valuegroup-rule-rate-2-resource-1/test-valuegroup-rule-rate-2-component",
+      "test-valuegroup-rule-rate-2-resource-2/test-valuegroup-rule-rate-2-component",
+      "test-valuegroup-rule-rate-2-resource-3/test-valuegroup-rule-rate-2-component",
+      "test-valuegroup-rule-rate-2-resource-4/test-valuegroup-rule-rate-2-component",
+      "test-valuegroup-rule-rate-2-resource-5/test-valuegroup-rule-rate-2-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-2-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-2-component",
+    "depends": [
+      "test-valuegroup-rule-rate-2-resource-1/test-valuegroup-rule-rate-2-component",
+      "test-valuegroup-rule-rate-2-resource-2/test-valuegroup-rule-rate-2-component",
+      "test-valuegroup-rule-rate-2-resource-3/test-valuegroup-rule-rate-2-component",
+      "test-valuegroup-rule-rate-2-resource-4/test-valuegroup-rule-rate-2-component",
+      "test-valuegroup-rule-rate-2-resource-5/test-valuegroup-rule-rate-2-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-2-connector/test-valuegroup-rule-rate-2-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-2-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-2-resource-1/test-valuegroup-rule-rate-2-component",
+    "depends": ["test-valuegroup-rule-rate-2-connector/test-valuegroup-rule-rate-2-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-2-component"],
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-2-resource-1",
+    "infos": {
+      "valuegroupRate2": {
+        "name": "valuegroupRate2",
+        "description": "valuegroupRate2",
+        "value": "1"
+      }
+    },
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-2-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-2-resource-2/test-valuegroup-rule-rate-2-component",
+    "depends": ["test-valuegroup-rule-rate-2-connector/test-valuegroup-rule-rate-2-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-2-component"],
+    "infos": {
+      "valuegroupRate2": {
+        "name": "valuegroupRate2",
+        "description": "valuegroupRate2",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-2-resource-2",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-2-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-2-resource-3/test-valuegroup-rule-rate-2-component",
+    "depends": ["test-valuegroup-rule-rate-2-connector/test-valuegroup-rule-rate-2-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-2-component"],
+    "infos": {
+      "valuegroupRate2": {
+        "name": "valuegroupRate2",
+        "description": "valuegroupRate2",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-2-resource-3",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-2-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-2-resource-4/test-valuegroup-rule-rate-2-component",
+    "depends": ["test-valuegroup-rule-rate-2-connector/test-valuegroup-rule-rate-2-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-2-component"],
+    "infos": {
+      "valuegroupRate2": {
+        "name": "valuegroupRate2",
+        "description": "valuegroupRate2",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-2-resource-4",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-2-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-2-resource-5/test-valuegroup-rule-rate-2-component",
+    "depends": ["test-valuegroup-rule-rate-2-connector/test-valuegroup-rule-rate-2-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-2-component"],
+    "infos": {
+      "valuegroupRate2": {
+        "name": "valuegroupRate2",
+        "description": "valuegroupRate2",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-2-resource-5",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-2-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-3-connector/test-valuegroup-rule-rate-3-connectorname",
+    "depends": ["test-valuegroup-rule-rate-3-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-valuegroup-rule-rate-3-resource-1/test-valuegroup-rule-rate-3-component",
+      "test-valuegroup-rule-rate-3-resource-2/test-valuegroup-rule-rate-3-component",
+      "test-valuegroup-rule-rate-3-resource-3/test-valuegroup-rule-rate-3-component",
+      "test-valuegroup-rule-rate-3-resource-4/test-valuegroup-rule-rate-3-component",
+      "test-valuegroup-rule-rate-3-resource-5/test-valuegroup-rule-rate-3-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-3-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-3-component",
+    "depends": [
+      "test-valuegroup-rule-rate-3-resource-1/test-valuegroup-rule-rate-3-component",
+      "test-valuegroup-rule-rate-3-resource-2/test-valuegroup-rule-rate-3-component",
+      "test-valuegroup-rule-rate-3-resource-3/test-valuegroup-rule-rate-3-component",
+      "test-valuegroup-rule-rate-3-resource-4/test-valuegroup-rule-rate-3-component",
+      "test-valuegroup-rule-rate-3-resource-5/test-valuegroup-rule-rate-3-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-3-connector/test-valuegroup-rule-rate-3-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-3-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-3-resource-1/test-valuegroup-rule-rate-3-component",
+    "depends": ["test-valuegroup-rule-rate-3-connector/test-valuegroup-rule-rate-3-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-3-component"],
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-3-resource-1",
+    "infos": {
+      "valuegroupRate3": {
+        "name": "valuegroupRate3",
+        "description": "valuegroupRate3",
+        "value": "1"
+      }
+    },
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-3-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-3-resource-2/test-valuegroup-rule-rate-3-component",
+    "depends": ["test-valuegroup-rule-rate-3-connector/test-valuegroup-rule-rate-3-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-3-component"],
+    "infos": {
+      "valuegroupRate3": {
+        "name": "valuegroupRate3",
+        "description": "valuegroupRate3",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-3-resource-2",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-3-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-3-resource-3/test-valuegroup-rule-rate-3-component",
+    "depends": ["test-valuegroup-rule-rate-3-connector/test-valuegroup-rule-rate-3-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-3-component"],
+    "infos": {
+      "valuegroupRate3": {
+        "name": "valuegroupRate3",
+        "description": "valuegroupRate3",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-3-resource-3",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-3-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-3-resource-4/test-valuegroup-rule-rate-3-component",
+    "depends": ["test-valuegroup-rule-rate-3-connector/test-valuegroup-rule-rate-3-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-3-component"],
+    "infos": {
+      "valuegroupRate3": {
+        "name": "valuegroupRate3",
+        "description": "valuegroupRate3",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-3-resource-4",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-3-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-3-resource-5/test-valuegroup-rule-rate-3-component",
+    "depends": ["test-valuegroup-rule-rate-3-connector/test-valuegroup-rule-rate-3-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-3-component"],
+    "infos": {
+      "valuegroupRate3": {
+        "name": "valuegroupRate3",
+        "description": "valuegroupRate3",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-3-resource-5",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-3-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-4-connector/test-valuegroup-rule-rate-4-connectorname",
+    "depends": ["test-valuegroup-rule-rate-4-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-valuegroup-rule-rate-4-resource-1/test-valuegroup-rule-rate-4-component",
+      "test-valuegroup-rule-rate-4-resource-2/test-valuegroup-rule-rate-4-component",
+      "test-valuegroup-rule-rate-4-resource-3/test-valuegroup-rule-rate-4-component",
+      "test-valuegroup-rule-rate-4-resource-4/test-valuegroup-rule-rate-4-component",
+      "test-valuegroup-rule-rate-4-resource-5/test-valuegroup-rule-rate-4-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-4-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-4-component",
+    "depends": [
+      "test-valuegroup-rule-rate-4-resource-1/test-valuegroup-rule-rate-4-component",
+      "test-valuegroup-rule-rate-4-resource-2/test-valuegroup-rule-rate-4-component",
+      "test-valuegroup-rule-rate-4-resource-3/test-valuegroup-rule-rate-4-component",
+      "test-valuegroup-rule-rate-4-resource-4/test-valuegroup-rule-rate-4-component",
+      "test-valuegroup-rule-rate-4-resource-5/test-valuegroup-rule-rate-4-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-4-connector/test-valuegroup-rule-rate-4-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-4-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-4-resource-1/test-valuegroup-rule-rate-4-component",
+    "depends": ["test-valuegroup-rule-rate-4-connector/test-valuegroup-rule-rate-4-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-4-component"],
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-4-resource-1",
+    "infos": {
+      "valuegroupRate4": {
+        "name": "valuegroupRate4",
+        "description": "valuegroupRate4",
+        "value": "1"
+      }
+    },
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-4-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-4-resource-2/test-valuegroup-rule-rate-4-component",
+    "depends": ["test-valuegroup-rule-rate-4-connector/test-valuegroup-rule-rate-4-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-4-component"],
+    "infos": {
+      "valuegroupRate4": {
+        "name": "valuegroupRate4",
+        "description": "valuegroupRate4",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-4-resource-2",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-4-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-4-resource-3/test-valuegroup-rule-rate-4-component",
+    "depends": ["test-valuegroup-rule-rate-4-connector/test-valuegroup-rule-rate-4-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-4-component"],
+    "infos": {
+      "valuegroupRate4": {
+        "name": "valuegroupRate4",
+        "description": "valuegroupRate4",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-4-resource-3",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-4-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-4-resource-4/test-valuegroup-rule-rate-4-component",
+    "depends": ["test-valuegroup-rule-rate-4-connector/test-valuegroup-rule-rate-4-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-4-component"],
+    "infos": {
+      "valuegroupRate4": {
+        "name": "valuegroupRate4",
+        "description": "valuegroupRate4",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-4-resource-4",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-4-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-4-resource-5/test-valuegroup-rule-rate-4-component",
+    "depends": ["test-valuegroup-rule-rate-4-connector/test-valuegroup-rule-rate-4-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-4-component"],
+    "infos": {
+      "valuegroupRate4": {
+        "name": "valuegroupRate4",
+        "description": "valuegroupRate4",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-4-resource-5",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-4-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-5-connector/test-valuegroup-rule-rate-5-connectorname",
+    "depends": ["test-valuegroup-rule-rate-5-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-valuegroup-rule-rate-5-resource-1/test-valuegroup-rule-rate-5-component",
+      "test-valuegroup-rule-rate-5-resource-2/test-valuegroup-rule-rate-5-component",
+      "test-valuegroup-rule-rate-5-resource-3/test-valuegroup-rule-rate-5-component",
+      "test-valuegroup-rule-rate-5-resource-4/test-valuegroup-rule-rate-5-component",
+      "test-valuegroup-rule-rate-5-resource-5/test-valuegroup-rule-rate-5-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-5-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-5-component",
+    "depends": [
+      "test-valuegroup-rule-rate-5-resource-1/test-valuegroup-rule-rate-5-component",
+      "test-valuegroup-rule-rate-5-resource-2/test-valuegroup-rule-rate-5-component",
+      "test-valuegroup-rule-rate-5-resource-3/test-valuegroup-rule-rate-5-component",
+      "test-valuegroup-rule-rate-5-resource-4/test-valuegroup-rule-rate-5-component",
+      "test-valuegroup-rule-rate-5-resource-5/test-valuegroup-rule-rate-5-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-5-connector/test-valuegroup-rule-rate-5-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-5-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-5-resource-1/test-valuegroup-rule-rate-5-component",
+    "depends": ["test-valuegroup-rule-rate-5-connector/test-valuegroup-rule-rate-5-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-5-component"],
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-5-resource-1",
+    "infos": {
+      "valuegroupRate5": {
+        "name": "valuegroupRate5",
+        "description": "valuegroupRate5",
+        "value": "1"
+      }
+    },
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-5-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-5-resource-2/test-valuegroup-rule-rate-5-component",
+    "depends": ["test-valuegroup-rule-rate-5-connector/test-valuegroup-rule-rate-5-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-5-component"],
+    "infos": {
+      "valuegroupRate5": {
+        "name": "valuegroupRate5",
+        "description": "valuegroupRate5",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-5-resource-2",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-5-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-5-resource-3/test-valuegroup-rule-rate-5-component",
+    "depends": ["test-valuegroup-rule-rate-5-connector/test-valuegroup-rule-rate-5-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-5-component"],
+    "infos": {
+      "valuegroupRate5": {
+        "name": "valuegroupRate5",
+        "description": "valuegroupRate5",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-5-resource-3",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-5-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-5-resource-4/test-valuegroup-rule-rate-5-component",
+    "depends": ["test-valuegroup-rule-rate-5-connector/test-valuegroup-rule-rate-5-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-5-component"],
+    "infos": {
+      "valuegroupRate5": {
+        "name": "valuegroupRate5",
+        "description": "valuegroupRate5",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-5-resource-4",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-5-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-5-resource-5/test-valuegroup-rule-rate-5-component",
+    "depends": ["test-valuegroup-rule-rate-5-connector/test-valuegroup-rule-rate-5-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-5-component"],
+    "infos": {
+      "valuegroupRate5": {
+        "name": "valuegroupRate5",
+        "description": "valuegroupRate5",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-5-resource-5",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-5-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-6-connector/test-valuegroup-rule-rate-6-connectorname",
+    "depends": ["test-valuegroup-rule-rate-6-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-valuegroup-rule-rate-6-resource-1/test-valuegroup-rule-rate-6-component",
+      "test-valuegroup-rule-rate-6-resource-2/test-valuegroup-rule-rate-6-component",
+      "test-valuegroup-rule-rate-6-resource-3/test-valuegroup-rule-rate-6-component",
+      "test-valuegroup-rule-rate-6-resource-4/test-valuegroup-rule-rate-6-component",
+      "test-valuegroup-rule-rate-6-resource-5/test-valuegroup-rule-rate-6-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-6-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-6-component",
+    "depends": [
+      "test-valuegroup-rule-rate-6-resource-1/test-valuegroup-rule-rate-6-component",
+      "test-valuegroup-rule-rate-6-resource-2/test-valuegroup-rule-rate-6-component",
+      "test-valuegroup-rule-rate-6-resource-3/test-valuegroup-rule-rate-6-component",
+      "test-valuegroup-rule-rate-6-resource-4/test-valuegroup-rule-rate-6-component",
+      "test-valuegroup-rule-rate-6-resource-5/test-valuegroup-rule-rate-6-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-6-connector/test-valuegroup-rule-rate-6-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-6-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-6-resource-1/test-valuegroup-rule-rate-6-component",
+    "depends": ["test-valuegroup-rule-rate-6-connector/test-valuegroup-rule-rate-6-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-6-component"],
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-6-resource-1",
+    "infos": {
+      "valuegroupRate6And7": {
+        "name": "valuegroupRate6And7",
+        "description": "valuegroupRate6And7",
+        "value": "1"
+      }
+    },
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-6-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-6-resource-2/test-valuegroup-rule-rate-6-component",
+    "depends": ["test-valuegroup-rule-rate-6-connector/test-valuegroup-rule-rate-6-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-6-component"],
+    "infos": {
+      "valuegroupRate6And7": {
+        "name": "valuegroupRate6And7",
+        "description": "valuegroupRate6And7",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-6-resource-2",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-6-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-6-resource-3/test-valuegroup-rule-rate-6-component",
+    "depends": ["test-valuegroup-rule-rate-6-connector/test-valuegroup-rule-rate-6-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-6-component"],
+    "infos": {
+      "valuegroupRate6And7": {
+        "name": "valuegroupRate6And7",
+        "description": "valuegroupRate6And7",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-6-resource-3",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-6-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-6-resource-4/test-valuegroup-rule-rate-6-component",
+    "depends": ["test-valuegroup-rule-rate-6-connector/test-valuegroup-rule-rate-6-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-6-component"],
+    "infos": {
+      "valuegroupRate6And7": {
+        "name": "valuegroupRate6And7",
+        "description": "valuegroupRate6And7",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-6-resource-4",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-6-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-6-resource-5/test-valuegroup-rule-rate-6-component",
+    "depends": ["test-valuegroup-rule-rate-6-connector/test-valuegroup-rule-rate-6-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-6-component"],
+    "infos": {
+      "valuegroupRate6And7": {
+        "name": "valuegroupRate6And7",
+        "description": "valuegroupRate6And7",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-6-resource-5",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-6-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-7-connector/test-valuegroup-rule-rate-7-connectorname",
+    "depends": ["test-valuegroup-rule-rate-7-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-valuegroup-rule-rate-7-resource-1/test-valuegroup-rule-rate-7-component",
+      "test-valuegroup-rule-rate-7-resource-2/test-valuegroup-rule-rate-7-component",
+      "test-valuegroup-rule-rate-7-resource-3/test-valuegroup-rule-rate-7-component",
+      "test-valuegroup-rule-rate-7-resource-4/test-valuegroup-rule-rate-7-component",
+      "test-valuegroup-rule-rate-7-resource-5/test-valuegroup-rule-rate-7-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-7-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-7-component",
+    "depends": [
+      "test-valuegroup-rule-rate-7-resource-1/test-valuegroup-rule-rate-7-component",
+      "test-valuegroup-rule-rate-7-resource-2/test-valuegroup-rule-rate-7-component",
+      "test-valuegroup-rule-rate-7-resource-3/test-valuegroup-rule-rate-7-component",
+      "test-valuegroup-rule-rate-7-resource-4/test-valuegroup-rule-rate-7-component",
+      "test-valuegroup-rule-rate-7-resource-5/test-valuegroup-rule-rate-7-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-7-connector/test-valuegroup-rule-rate-7-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-7-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-7-resource-1/test-valuegroup-rule-rate-7-component",
+    "depends": ["test-valuegroup-rule-rate-7-connector/test-valuegroup-rule-rate-7-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-7-component"],
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-7-resource-1",
+    "infos": {
+      "valuegroupRate6And7": {
+        "name": "valuegroupRate6And7",
+        "description": "valuegroupRate6And7",
+        "value": "1"
+      }
+    },
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-7-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-7-resource-2/test-valuegroup-rule-rate-7-component",
+    "depends": ["test-valuegroup-rule-rate-7-connector/test-valuegroup-rule-rate-7-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-7-component"],
+    "infos": {
+      "valuegroupRate6And7": {
+        "name": "valuegroupRate6And7",
+        "description": "valuegroupRate6And7",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-7-resource-2",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-7-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-7-resource-3/test-valuegroup-rule-rate-7-component",
+    "depends": ["test-valuegroup-rule-rate-7-connector/test-valuegroup-rule-rate-7-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-7-component"],
+    "infos": {
+      "valuegroupRate6And7": {
+        "name": "valuegroupRate6And7",
+        "description": "valuegroupRate6And7",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-7-resource-3",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-7-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-7-resource-4/test-valuegroup-rule-rate-7-component",
+    "depends": ["test-valuegroup-rule-rate-7-connector/test-valuegroup-rule-rate-7-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-7-component"],
+    "infos": {
+      "valuegroupRate6And7": {
+        "name": "valuegroupRate6And7",
+        "description": "valuegroupRate6And7",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-7-resource-4",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-7-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-7-resource-5/test-valuegroup-rule-rate-7-component",
+    "depends": ["test-valuegroup-rule-rate-7-connector/test-valuegroup-rule-rate-7-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-7-component"],
+    "infos": {
+      "valuegroupRate6And7": {
+        "name": "valuegroupRate6And7",
+        "description": "valuegroupRate6And7",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-7-resource-5",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-7-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname",
+    "depends": ["test-valuegroup-rule-rate-8-component"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": [
+      "test-valuegroup-rule-rate-8-resource-1/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-2/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-3/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-4/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-5/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-6/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-7/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-8/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-9/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-10/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-11/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-12/test-valuegroup-rule-rate-8-component"
+    ],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-component",
+    "depends": [
+      "test-valuegroup-rule-rate-8-resource-1/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-2/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-3/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-4/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-5/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-6/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-7/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-8/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-9/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-10/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-11/test-valuegroup-rule-rate-8-component",
+      "test-valuegroup-rule-rate-8-resource-12/test-valuegroup-rule-rate-8-component"
+    ],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-component",
+    "type": "component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-resource-1/test-valuegroup-rule-rate-8-component",
+    "depends": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-component"],
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-resource-1",
+    "infos": {
+      "valuegroupRate81": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "1"
+      },
+      "valuegroupRate82": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "1"
+      }
+    },
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-8-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-resource-2/test-valuegroup-rule-rate-8-component",
+    "depends": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-component"],
+    "infos": {
+      "valuegroupRate81": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "1"
+      },
+      "valuegroupRate82": {
+        "name": "valuegroupRate82",
+        "description": "valuegroupRate82",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-resource-2",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-8-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-resource-3/test-valuegroup-rule-rate-8-component",
+    "depends": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-component"],
+    "infos": {
+      "valuegroupRate81": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "1"
+      },
+      "valuegroupRate82": {
+        "name": "valuegroupRate82",
+        "description": "valuegroupRate82",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-resource-3",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-8-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-resource-4/test-valuegroup-rule-rate-8-component",
+    "depends": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-component"],
+    "infos": {
+      "valuegroupRate81": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "1"
+      },
+      "valuegroupRate82": {
+        "name": "valuegroupRate82",
+        "description": "valuegroupRate82",
+        "value": "2"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-resource-4",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-8-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-resource-5/test-valuegroup-rule-rate-8-component",
+    "depends": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-component"],
+    "infos": {
+      "valuegroupRate81": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "1"
+      },
+      "valuegroupRate82": {
+        "name": "valuegroupRate82",
+        "description": "valuegroupRate82",
+        "value": "2"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-resource-5",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-8-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-resource-6/test-valuegroup-rule-rate-8-component",
+    "depends": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-component"],
+    "infos": {
+      "valuegroupRate81": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "1"
+      },
+      "valuegroupRate82": {
+        "name": "valuegroupRate82",
+        "description": "valuegroupRate82",
+        "value": "2"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-resource-6",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-8-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-resource-7/test-valuegroup-rule-rate-8-component",
+    "depends": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-component"],
+    "infos": {
+      "valuegroupRate81": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "2"
+      },
+      "valuegroupRate82": {
+        "name": "valuegroupRate82",
+        "description": "valuegroupRate82",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-resource-7",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-8-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-resource-8/test-valuegroup-rule-rate-8-component",
+    "depends": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-component"],
+    "infos": {
+      "valuegroupRate81": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "2"
+      },
+      "valuegroupRate82": {
+        "name": "valuegroupRate82",
+        "description": "valuegroupRate82",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-resource-8",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-8-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-resource-9/test-valuegroup-rule-rate-8-component",
+    "depends": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-component"],
+    "infos": {
+      "valuegroupRate81": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "2"
+      },
+      "valuegroupRate82": {
+        "name": "valuegroupRate82",
+        "description": "valuegroupRate82",
+        "value": "1"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-resource-9",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-8-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-resource-10/test-valuegroup-rule-rate-8-component",
+    "depends": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-component"],
+    "infos": {
+      "valuegroupRate81": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "2"
+      },
+      "valuegroupRate82": {
+        "name": "valuegroupRate82",
+        "description": "valuegroupRate82",
+        "value": "2"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-resource-10",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-8-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-resource-11/test-valuegroup-rule-rate-8-component",
+    "depends": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-component"],
+    "infos": {
+      "valuegroupRate81": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "2"
+      },
+      "valuegroupRate82": {
+        "name": "valuegroupRate82",
+        "description": "valuegroupRate82",
+        "value": "2"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-resource-11",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-8-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-valuegroup-rule-rate-8-resource-12/test-valuegroup-rule-rate-8-component",
+    "depends": ["test-valuegroup-rule-rate-8-connector/test-valuegroup-rule-rate-8-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-valuegroup-rule-rate-8-component"],
+    "infos": {
+      "valuegroupRate81": {
+        "name": "valuegroupRate81",
+        "description": "valuegroupRate81",
+        "value": "2"
+      },
+      "valuegroupRate82": {
+        "name": "valuegroupRate82",
+        "description": "valuegroupRate82",
+        "value": "2"
+      }
+    },
+    "measurements": null,
+    "name": "test-valuegroup-rule-rate-8-resource-12",
+    "type": "resource",
+    "component": "test-valuegroup-rule-rate-8-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-1/metaalarm",
+    "depends": [],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": [],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-1",
+    "type": "metaalarm",
+    "component": "metaalarm",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-2/metaalarm",
+    "depends": [],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": [],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-2",
+    "type": "metaalarm",
+    "component": "metaalarm",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-3/metaalarm",
+    "depends": [],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": [],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-3",
+    "type": "metaalarm",
+    "component": "metaalarm",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-1",
+    "depends": ["test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-alarm-meta-children-with-instructions-component-1"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-resource-1",
+    "type": "resource",
+    "component": "test-alarm-meta-children-with-instructions-component-1",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-1",
+    "depends": ["test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-alarm-meta-children-with-instructions-component-1"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-resource-2",
+    "type": "resource",
+    "component": "test-alarm-meta-children-with-instructions-component-1",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-2",
+    "depends": ["test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-alarm-meta-children-with-instructions-component-2"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-resource-1",
+    "type": "resource",
+    "component": "test-alarm-meta-children-with-instructions-component-2",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-2",
+    "depends": ["test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname"],
+    "enable_history": [1620915951],
+    "enabled": true,
+    "impact": ["test-alarm-meta-children-with-instructions-component-2"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-meta-children-with-instructions-resource-2",
+    "type": "resource",
+    "component": "test-alarm-meta-children-with-instructions-component-2",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarm-get-resource-resolved-collection/test-alarm-get-resolved-collection-component",
+    "depends": ["test-alarm-get-resolved-collection-connector/test-alarm-get-resolved-collection-connectorname"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-alarm-get-resolved-collection-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarm-get-resource-resolved-collection",
+    "type": "resource",
+    "component": "test-alarm-get-resolved-collection-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-alarmcounter-get-resolved-resource-1/test-alarmcounter-get-resolved-component",
+    "depends": ["test-alarmcounter-get-resolved-connector/test-alarmcounter-get-resolved-connectorname"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-alarmcounter-get-resolved-component"],
+    "infos": {},
+    "measurements": null,
+    "name": "test-alarmcounter-get-resolved-resource-1",
+    "type": "resource",
+    "component": "test-alarmcounter-get-resolved-component",
     "impact_level": 1
   },
   {

@@ -1,6 +1,7 @@
 package httpprovider
 
 import (
+	"context"
 	"encoding/xml"
 	"fmt"
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
@@ -71,26 +72,27 @@ func (p *casProvider) Auth(request *http.Request) (*security.User, error, bool) 
 	serviceUrl.RawQuery = serviceQuery.Encode()
 	service = serviceUrl.String()
 
-	config, err := p.configProvider.LoadCasConfig()
+	config, err := p.configProvider.LoadCasConfig(request.Context())
 	if err != nil {
 		return nil, fmt.Errorf("cannot find cas config: %v", err), true
 	}
 
-	username, err := p.validateTicket(config, ticket, service)
+	username, err := p.validateTicket(request.Context(), config, ticket, service)
 	if err != nil || username == "" {
 		return nil, err, true
 	}
 
-	user, err := p.saveUser(username, config)
+	user, err := p.saveUser(request.Context(), username, config)
 	return user, err, true
 }
 
 // validateTicket calls CAS server to validate ticket.
 func (p *casProvider) validateTicket(
+	ctx context.Context,
 	config *security.CasConfig,
 	ticket, service string,
 ) (string, error) {
-	req, err := http.NewRequest("GET", config.ValidateUrl, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", config.ValidateUrl, nil)
 	if err != nil {
 		return "", err
 	}
@@ -127,8 +129,8 @@ func (p *casProvider) validateTicket(
 }
 
 // saveUser adds user data to storage.
-func (p *casProvider) saveUser(username string, config *security.CasConfig) (*security.User, error) {
-	user, err := p.userProvider.FindByExternalSource(username, security.SourceCas)
+func (p *casProvider) saveUser(ctx context.Context, username string, config *security.CasConfig) (*security.User, error) {
+	user, err := p.userProvider.FindByExternalSource(ctx, username, security.SourceCas)
 	if err != nil {
 		return nil, fmt.Errorf("cannot find user: %v", err)
 	}
@@ -141,7 +143,7 @@ func (p *casProvider) saveUser(username string, config *security.CasConfig) (*se
 			ExternalID: username,
 			Source:     security.SourceCas,
 		}
-		err = p.userProvider.Save(user)
+		err = p.userProvider.Save(ctx, user)
 		if err != nil {
 			return nil, fmt.Errorf("cannot save user: %v", err)
 		}

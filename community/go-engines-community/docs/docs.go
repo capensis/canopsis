@@ -124,8 +124,44 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "exclude_instruction_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "exclude_instructions",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "include_instruction_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "include_instructions",
                         "in": "query"
                     },
                     {
@@ -136,11 +172,6 @@ var doc = `{
                     {
                         "type": "boolean",
                         "name": "opened",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "resolved",
                         "in": "query"
                     },
                     {
@@ -156,16 +187,6 @@ var doc = `{
                     {
                         "type": "integer",
                         "name": "tstop",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "with_instructions",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "without_instructions",
                         "in": "query"
                     }
                 ],
@@ -206,106 +227,13 @@ var doc = `{
                 "operationId": "alarms-export-start",
                 "parameters": [
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "active_columns[]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "category",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "correlation",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "filter",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "manual",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "name": "multi_sort[]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "opened",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "resolved",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "separator",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort_dir",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort_key",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "time_format",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "tstart",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "tstop",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "with_consequences",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "with_instructions",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "with_steps",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "without_instructions",
-                        "in": "query"
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/alarm.ExportRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -467,8 +395,44 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "exclude_instruction_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "exclude_instructions",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "include_instruction_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "include_instructions",
                         "in": "query"
                     },
                     {
@@ -486,6 +450,7 @@ var doc = `{
                         "items": {
                             "type": "string"
                         },
+                        "collectionFormat": "multi",
                         "name": "multi_sort[]",
                         "in": "query"
                     },
@@ -502,11 +467,6 @@ var doc = `{
                     {
                         "type": "boolean",
                         "name": "paginate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "resolved",
                         "in": "query"
                     },
                     {
@@ -540,18 +500,13 @@ var doc = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "boolean",
                         "name": "with_instructions",
                         "in": "query"
                     },
                     {
                         "type": "boolean",
                         "name": "with_steps",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "without_instructions",
                         "in": "query"
                     }
                 ],
@@ -701,9 +656,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -913,7 +866,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/broadcastmessage.BroadcastMessage"
+                            "$ref": "#/definitions/broadcastmessage.Payload"
                         }
                     }
                 ],
@@ -963,162 +916,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/bulk/heartbeats": {
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk update heartbeats by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Bulk update heartbeats by id",
-                "operationId": "heartbeats-bulk-update-by-id",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/heartbeat.BulkUpdateRequestItem"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/heartbeat.Heartbeat"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk create heartbeats",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Bulk create heartbeats",
-                "operationId": "heartbeats-bulk-create",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/heartbeat.CreateRequest"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/heartbeat.Heartbeat"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk delete heartbeats by id",
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Bulk delete heartbeats by id",
-                "operationId": "heartbeats-bulk-delete-by-id",
-                "parameters": [
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "ids",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1269,9 +1067,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1422,9 +1218,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1637,6 +1431,26 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "no_events",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "paginate",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "search",
                         "in": "query"
@@ -1649,6 +1463,11 @@ var doc = `{
                     {
                         "type": "string",
                         "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "with_flags",
                         "in": "query"
                     }
                 ],
@@ -1678,6 +1497,52 @@ var doc = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/entities/clean": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Clean disabled entities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Clean disabled entities",
+                "operationId": "entities-clean",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "name": "archive",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "archive_dependencies",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "202": {},
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
                         }
                     }
                 }
@@ -1720,7 +1585,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pbehavior.PBehavior"
+                                "$ref": "#/definitions/pbehavior.Response"
                             }
                         }
                     },
@@ -1995,9 +1860,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2028,43 +1891,13 @@ var doc = `{
                 "operationId": "entities-export-start",
                 "parameters": [
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "active_columns[]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "category",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "filter",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "separator",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort_by",
-                        "in": "query"
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.ExportRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -2311,9 +2144,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -2512,7 +2343,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "400": {
@@ -2556,7 +2387,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "404": {
@@ -2610,7 +2441,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entityservice.EntityService"
+                            "$ref": "#/definitions/entityservice.Response"
                         }
                     },
                     "400": {
@@ -2652,9 +2483,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2963,283 +2792,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/heartbeats": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Get paginated list of heartbeats",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Find heartbeats",
-                "operationId": "heartbeats-find-all",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "current page",
-                        "name": "page",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "items per page",
-                        "name": "limit",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "search query",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "sort query",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "sort query",
-                        "name": "sort_by",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/common.PaginatedListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/heartbeat.Heartbeat"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Create heartbeat",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Create heartbeat",
-                "operationId": "heartbeats-create",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/heartbeat.CreateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/heartbeats/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Get heartbeat by id",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Get heartbeat by id",
-                "operationId": "heartbeats-get-by-id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "heartbeat id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Update heartbeat by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Update heartbeat by id",
-                "operationId": "heartbeats-update-by-id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "heartbeat id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/heartbeat.UpdateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/heartbeat.Heartbeat"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Delete heartbeat by id",
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Delete heartbeat by id",
-                "operationId": "heartbeats-delete-by-id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "heartbeat id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3566,9 +3119,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3692,8 +3243,227 @@ var doc = `{
                 "summary": "delete user interface",
                 "operationId": "internal-delete-user-interface",
                 "responses": {
-                    "204": {
-                        "description": ""
+                    "204": {}
+                }
+            }
+        },
+        "/message-rate-stats": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of stats",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "message-rate-stats"
+                ],
+                "summary": "Find message rate stats",
+                "operationId": "message-rate-stats-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "interval",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "paginate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/messageratestats.StatsResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/notification": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get notification settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Get notification settings",
+                "operationId": "notification-get",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/notification.Notification"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update notification settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Update notification settings",
+                "operationId": "notification-update",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/notification.Notification"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/notification.Notification"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -3773,9 +3543,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4053,9 +3821,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4100,9 +3866,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": ""
-                    },
+                    "200": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4380,9 +4144,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4710,9 +4472,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4798,7 +4558,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/pbehavior.PBehavior"
+                                                "$ref": "#/definitions/pbehavior.Response"
                                             }
                                         }
                                     }
@@ -4850,7 +4610,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "400": {
@@ -4949,7 +4709,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "404": {
@@ -5003,7 +4763,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.PBehavior"
+                            "$ref": "#/definitions/pbehavior.Response"
                         }
                     },
                     "400": {
@@ -5045,9 +4805,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5057,7 +4815,7 @@ var doc = `{
                 }
             }
         },
-        "/pbehaviors/{id}/eids": {
+        "/pbehaviors/{id}/entities": {
             "get": {
                 "security": [
                     {
@@ -5067,15 +4825,15 @@ var doc = `{
                         "BasicAuth": []
                     }
                 ],
-                "description": "Get pbehavior eids list",
+                "description": "Find entities by pbehavior id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "pbehaviors"
                 ],
-                "summary": "Get pbehavior eids list",
-                "operationId": "pbehaviors-get-eids",
+                "summary": "Find entities by pbehavior id",
+                "operationId": "pbehaviors-find-entities",
                 "parameters": [
                     {
                         "type": "string",
@@ -5131,7 +4889,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/pbehavior.EID"
+                                                "$ref": "#/definitions/entity.Entity"
                                             }
                                         }
                                     }
@@ -5503,9 +5261,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5777,9 +5533,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6051,9 +5805,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6277,6 +6029,12 @@ var doc = `{
                     },
                     {
                         "type": "string",
+                        "description": "role permission",
+                        "name": "permission",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "sort query",
                         "name": "sort_by",
                         "in": "query"
@@ -6488,9 +6246,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6762,9 +6518,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -6817,9 +6571,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7091,9 +6843,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7360,6 +7110,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/alarm.Causes"
                 },
+                "children_instructions": {
+                    "type": "boolean"
+                },
                 "consequences": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.Children"
@@ -7383,6 +7136,15 @@ var doc = `{
                         "type": "object",
                         "additionalProperties": true
                     }
+                },
+                "is_all_auto_instructions_completed": {
+                    "type": "boolean"
+                },
+                "is_auto_instruction_running": {
+                    "type": "boolean"
+                },
+                "is_manual_instruction_waiting_result": {
+                    "type": "boolean"
                 },
                 "links": {
                     "type": "object",
@@ -7670,46 +7432,53 @@ var doc = `{
         "alarm.ExportRequest": {
             "type": "object",
             "properties": {
-                "active_columns[]": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "category": {
                     "type": "string"
                 },
                 "correlation": {
                     "type": "boolean"
                 },
-                "filter": {
-                    "type": "string"
+                "exclude_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
-                "manual": {
-                    "type": "boolean"
-                },
-                "multi_sort[]": {
+                "exclude_instructions": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
-                "opened": {
+                "fields": {
+                    "type": "object",
+                    "$ref": "#/definitions/export.Fields"
+                },
+                "filter": {
+                    "type": "string"
+                },
+                "include_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "include_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "manual": {
                     "type": "boolean"
                 },
-                "resolved": {
+                "opened": {
                     "type": "boolean"
                 },
                 "search": {
                     "type": "string"
                 },
                 "separator": {
-                    "type": "string"
-                },
-                "sort_dir": {
-                    "type": "string"
-                },
-                "sort_key": {
                     "type": "string"
                 },
                 "time_format": {
@@ -7724,14 +7493,8 @@ var doc = `{
                 "with_consequences": {
                     "type": "boolean"
                 },
-                "with_instructions": {
-                    "type": "string"
-                },
                 "with_steps": {
                     "type": "boolean"
-                },
-                "without_instructions": {
-                    "type": "string"
                 }
             }
         },
@@ -7761,16 +7524,37 @@ var doc = `{
                 "correlation": {
                     "type": "boolean"
                 },
+                "exclude_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "exclude_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "filter": {
                     "type": "string"
+                },
+                "include_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "include_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "manual": {
                     "type": "boolean"
                 },
                 "opened": {
-                    "type": "boolean"
-                },
-                "resolved": {
                     "type": "boolean"
                 },
                 "search": {
@@ -7781,12 +7565,6 @@ var doc = `{
                 },
                 "tstop": {
                     "type": "integer"
-                },
-                "with_instructions": {
-                    "type": "string"
-                },
-                "without_instructions": {
-                    "type": "string"
                 }
             }
         },
@@ -7832,8 +7610,32 @@ var doc = `{
                 "correlation": {
                     "type": "boolean"
                 },
+                "exclude_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "exclude_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "filter": {
                     "type": "string"
+                },
+                "include_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "include_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "limit": {
                     "type": "integer"
@@ -7856,9 +7658,6 @@ var doc = `{
                 "paginate": {
                     "type": "boolean"
                 },
-                "resolved": {
-                    "type": "boolean"
-                },
                 "search": {
                     "type": "string"
                 },
@@ -7878,13 +7677,10 @@ var doc = `{
                     "type": "boolean"
                 },
                 "with_instructions": {
-                    "type": "string"
+                    "type": "boolean"
                 },
                 "with_steps": {
                     "type": "boolean"
-                },
-                "without_instructions": {
-                    "type": "string"
                 }
             }
         },
@@ -7935,14 +7731,14 @@ var doc = `{
                 "app_title": {
                     "type": "string"
                 },
+                "check_count_request_timeout": {
+                    "type": "integer"
+                },
                 "edition": {
                     "type": "string"
                 },
                 "footer": {
                     "type": "string"
-                },
-                "jobexecutorfetchtimeoutseconds": {
-                    "type": "integer"
                 },
                 "language": {
                     "type": "string"
@@ -7953,9 +7749,16 @@ var doc = `{
                 "logo": {
                     "type": "string"
                 },
+                "max_matched_items": {
+                    "type": "integer"
+                },
                 "popup_timeout": {
                     "type": "object",
                     "$ref": "#/definitions/appinfo.PopupTimeout"
+                },
+                "remediation": {
+                    "type": "object",
+                    "$ref": "#/definitions/appinfo.RemediationConf"
                 },
                 "stack": {
                     "type": "string"
@@ -7979,25 +7782,42 @@ var doc = `{
                 }
             }
         },
+        "appinfo.JobConfigType": {
+            "type": "object",
+            "properties": {
+                "auth_type": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "appinfo.LoginConfig": {
             "type": "object",
             "properties": {
                 "casconfig": {
-                    "type": "object"
+                    "type": "object",
+                    "$ref": "#/definitions/appinfo.LoginConfigMethod"
                 },
                 "ldapconfig": {
                     "type": "object",
-                    "properties": {
-                        "enable": {
-                            "type": "boolean"
-                        }
-                    }
+                    "$ref": "#/definitions/appinfo.LoginConfigMethod"
                 },
-                "providers": {
+                "saml2config": {
                     "type": "object",
-                    "additionalProperties": {
-                        "type": "integer"
-                    }
+                    "$ref": "#/definitions/appinfo.LoginConfigMethod"
+                }
+            }
+        },
+        "appinfo.LoginConfigMethod": {
+            "type": "object",
+            "properties": {
+                "enable": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },
@@ -8036,6 +7856,21 @@ var doc = `{
                 }
             }
         },
+        "appinfo.RemediationConf": {
+            "type": "object",
+            "properties": {
+                "job_config_types": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/appinfo.JobConfigType"
+                    }
+                },
+                "pause_manual_instruction_interval": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                }
+            }
+        },
         "appinfo.UserInterfaceConf": {
             "type": "object",
             "properties": {
@@ -8044,6 +7879,9 @@ var doc = `{
                 },
                 "app_title": {
                     "type": "string"
+                },
+                "check_count_request_timeout": {
+                    "type": "integer"
                 },
                 "footer": {
                     "type": "string"
@@ -8056,6 +7894,9 @@ var doc = `{
                 },
                 "logo": {
                     "type": "string"
+                },
+                "max_matched_items": {
+                    "type": "integer"
                 },
                 "popup_timeout": {
                     "type": "object",
@@ -8102,6 +7943,35 @@ var doc = `{
                 "_id": {
                     "type": "string"
                 },
+                "color": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "end": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "broadcastmessage.Payload": {
+            "type": "object",
+            "required": [
+                "color",
+                "end",
+                "message",
+                "start"
+            ],
+            "properties": {
                 "color": {
                     "type": "string"
                 },
@@ -8311,9 +8181,44 @@ var doc = `{
         "datastorage.Config": {
             "type": "object",
             "properties": {
+                "alarm": {
+                    "type": "object",
+                    "properties": {
+                        "archive_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        },
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
                 "junit": {
                     "type": "object",
                     "properties": {
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
+                "pbehavior": {
+                    "type": "object",
+                    "properties": {
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
+                "remediation": {
+                    "type": "object",
+                    "properties": {
+                        "accumulate_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        },
                         "delete_after": {
                             "type": "object",
                             "$ref": "#/definitions/types.DurationWithEnabled"
@@ -8338,8 +8243,50 @@ var doc = `{
         "datastorage.History": {
             "type": "object",
             "properties": {
+                "alarm": {
+                    "type": "object",
+                    "$ref": "#/definitions/datastorage.HistoryWithCount"
+                },
+                "entity": {
+                    "type": "object",
+                    "$ref": "#/definitions/datastorage.HistoryWithCount"
+                },
                 "junit": {
                     "type": "integer"
+                },
+                "pbehavior": {
+                    "type": "integer"
+                },
+                "remediation": {
+                    "type": "integer"
+                }
+            }
+        },
+        "datastorage.HistoryWithCount": {
+            "type": "object",
+            "properties": {
+                "archived": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.CleanRequest": {
+            "type": "object",
+            "required": [
+                "archive"
+            ],
+            "properties": {
+                "archive": {
+                    "type": "boolean"
+                },
+                "archive_dependencies": {
+                    "type": "boolean"
                 }
             }
         },
@@ -8408,14 +8355,12 @@ var doc = `{
         "entity.ExportRequest": {
             "type": "object",
             "properties": {
-                "active_columns[]": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "category": {
                     "type": "string"
+                },
+                "fields": {
+                    "type": "object",
+                    "$ref": "#/definitions/export.Fields"
                 },
                 "filter": {
                     "type": "string"
@@ -8424,12 +8369,6 @@ var doc = `{
                     "type": "string"
                 },
                 "separator": {
-                    "type": "string"
-                },
-                "sort": {
-                    "type": "string"
-                },
-                "sort_by": {
                     "type": "string"
                 }
             }
@@ -8465,7 +8404,7 @@ var doc = `{
                 "$ref": "#/definitions/entity.Info"
             }
         },
-        "entity.ListRequest": {
+        "entity.ListRequestWithPagination": {
             "type": "object",
             "properties": {
                 "active_columns[]": {
@@ -8480,6 +8419,18 @@ var doc = `{
                 "filter": {
                     "type": "string"
                 },
+                "limit": {
+                    "type": "integer"
+                },
+                "no_events": {
+                    "type": "boolean"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginate": {
+                    "type": "boolean"
+                },
                 "search": {
                     "type": "string"
                 },
@@ -8488,6 +8439,9 @@ var doc = `{
                 },
                 "sort_by": {
                     "type": "string"
+                },
+                "with_flags": {
+                    "type": "boolean"
                 }
             }
         },
@@ -8713,7 +8667,7 @@ var doc = `{
                 }
             }
         },
-        "entityservice.EntityService": {
+        "entityservice.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -8899,147 +8853,21 @@ var doc = `{
                 }
             }
         },
-        "heartbeat.BulkDeleteRequest": {
+        "export.Field": {
             "type": "object",
-            "required": [
-                "ids"
-            ],
             "properties": {
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "heartbeat.BulkUpdateRequestItem": {
-            "type": "object",
-            "required": [
-                "_id",
-                "description",
-                "expected_interval",
-                "name",
-                "pattern"
-            ],
-            "properties": {
-                "_id": {
+                "label": {
                     "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "expected_interval": {
-                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
-                },
-                "output": {
-                    "type": "string"
-                },
-                "pattern": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
                 }
             }
         },
-        "heartbeat.CreateRequest": {
-            "type": "object",
-            "required": [
-                "description",
-                "expected_interval",
-                "name",
-                "pattern"
-            ],
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "expected_interval": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output": {
-                    "type": "string"
-                },
-                "pattern": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "heartbeat.Heartbeat": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "created": {
-                    "type": "integer"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "expected_interval": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output": {
-                    "type": "string"
-                },
-                "pattern": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "updated": {
-                    "type": "integer"
-                }
-            }
-        },
-        "heartbeat.UpdateRequest": {
-            "type": "object",
-            "required": [
-                "description",
-                "expected_interval",
-                "name",
-                "pattern"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "expected_interval": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output": {
-                    "type": "string"
-                },
-                "pattern": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                }
+        "export.Fields": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/export.Field"
             }
         },
         "http.Response": {
@@ -9122,7 +8950,6 @@ var doc = `{
         "idlerule.EditRequest": {
             "type": "object",
             "required": [
-                "author",
                 "duration",
                 "enabled",
                 "name",
@@ -9136,9 +8963,6 @@ var doc = `{
                 "alarm_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmPatternList"
-                },
-                "author": {
-                    "type": "string"
                 },
                 "description": {
                     "type": "string"
@@ -9258,6 +9082,76 @@ var doc = `{
                 "updated": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                }
+            }
+        },
+        "messageratestats.ListRequest": {
+            "type": "object",
+            "required": [
+                "from",
+                "interval",
+                "to"
+            ],
+            "properties": {
+                "from": {
+                    "type": "integer"
+                },
+                "interval": {
+                    "type": "string"
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginate": {
+                    "type": "boolean"
+                },
+                "sort": {
+                    "type": "string"
+                },
+                "sort_by": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "integer"
+                }
+            }
+        },
+        "messageratestats.StatsResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "integer"
+                },
+                "received": {
+                    "type": "integer"
+                }
+            }
+        },
+        "notification.InstructionNotification": {
+            "type": "object",
+            "required": [
+                "rate",
+                "rate_frequency"
+            ],
+            "properties": {
+                "rate": {
+                    "type": "boolean"
+                },
+                "rate_frequency": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                }
+            }
+        },
+        "notification.Notification": {
+            "type": "object",
+            "properties": {
+                "instruction": {
+                    "type": "object",
+                    "$ref": "#/definitions/notification.InstructionNotification"
                 }
             }
         },
@@ -9412,6 +9306,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmStepRefPattern"
                 },
+                "children": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringArrayPattern"
+                },
                 "component": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
@@ -9469,6 +9367,10 @@ var doc = `{
                 "output": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "parents": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringArrayPattern"
                 },
                 "resolved": {
                     "type": "object",
@@ -9739,27 +9641,27 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -9774,7 +9676,7 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "equalNil": {
                     "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
@@ -9783,22 +9685,22 @@ var doc = `{
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -9813,7 +9715,7 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalString"
+                    "$ref": "#/definitions/types.OptionalString"
                 },
                 "equalNil": {
                     "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
@@ -9822,39 +9724,68 @@ var doc = `{
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "hasEvery": {
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalStringArray"
+                    "$ref": "#/definitions/types.OptionalStringArray"
                 },
                 "hasNot": {
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalStringArray"
+                    "$ref": "#/definitions/types.OptionalStringArray"
                 },
                 "hasOneOf": {
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalStringArray"
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "isEmpty": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalBool"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "regexMatch": {
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalRegexp"
+                    "$ref": "#/definitions/types.OptionalRegexp"
+                },
+                "unexpectedFields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.StringArrayPattern": {
+            "type": "object",
+            "properties": {
+                "hasEvery": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "hasNot": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "hasOneOf": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "isEmpty": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalBool"
                 },
                 "unexpectedFields": {
                     "type": "object",
@@ -9868,12 +9799,12 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalString"
+                    "$ref": "#/definitions/types.OptionalString"
                 },
                 "regexMatch": {
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalRegexp"
+                    "$ref": "#/definitions/types.OptionalRegexp"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -9888,7 +9819,7 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalString"
+                    "$ref": "#/definitions/types.OptionalString"
                 },
                 "equalNil": {
                     "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
@@ -9897,7 +9828,7 @@ var doc = `{
                 "regexMatch": {
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalRegexp"
+                    "$ref": "#/definitions/types.OptionalRegexp"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -9912,27 +9843,27 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -9947,7 +9878,7 @@ var doc = `{
                 "equal": {
                     "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "equalNil": {
                     "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
@@ -9956,22 +9887,22 @@ var doc = `{
                 "gt": {
                     "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "gte": {
                     "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "lte": {
                     "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
                     "type": "object",
-                    "$ref": "#/definitions/utils.OptionalInt64"
+                    "$ref": "#/definitions/types.OptionalInt64"
                 },
                 "unexpectedFields": {
                     "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
@@ -10012,14 +9943,6 @@ var doc = `{
                 },
                 "total_count": {
                     "type": "integer"
-                }
-            }
-        },
-        "pbehavior.EID": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
                 }
             }
         },
@@ -10086,7 +10009,7 @@ var doc = `{
                 }
             }
         },
-        "pbehavior.PBehavior": {
+        "pbehavior.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -10852,7 +10775,7 @@ var doc = `{
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.PBehavior"
+                        "$ref": "#/definitions/pbehavior.Response"
                     }
                 },
                 "resource": {
@@ -10973,7 +10896,7 @@ var doc = `{
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.PBehavior"
+                        "$ref": "#/definitions/pbehavior.Response"
                     }
                 },
                 "resource": {
@@ -11134,13 +11057,17 @@ var doc = `{
                 "a": {
                     "type": "string"
                 },
+                "exec": {
+                    "description": "Execution contains id if instruction execution for instruction steps only.",
+                    "type": "string"
+                },
                 "initiator": {
                     "type": "string"
                 },
                 "m": {
                     "type": "string"
                 },
-                "pbehaviorCanonicalType": {
+                "pbehavior_canonical_type": {
                     "type": "string"
                 },
                 "role": {
@@ -11296,6 +11223,12 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "related_parents": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "resolved": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
@@ -11404,6 +11337,73 @@ var doc = `{
                 },
                 "unit": {
                     "type": "string"
+                }
+            }
+        },
+        "types.OptionalBool": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the bool. It should only be taken into\naccount if Set is true.",
+                    "type": "boolean"
+                }
+            }
+        },
+        "types.OptionalInt64": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the int64. It should only be taken into\naccount if Set is true.",
+                    "type": "integer"
+                }
+            }
+        },
+        "types.OptionalRegexp": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the regular expression. It should only be\ntaken into account if Set is true.",
+                    "type": "object",
+                    "$ref": "#/definitions/utils.RegexExpression"
+                }
+            }
+        },
+        "types.OptionalString": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the string. It should only be taken into\naccount if Set is true.",
+                    "type": "string"
+                }
+            }
+        },
+        "types.OptionalStringArray": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "type": "boolean"
+                },
+                "value": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -11554,60 +11554,6 @@ var doc = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "utils.OptionalInt64": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the int64. It should only be taken into\naccount if Set is true.",
-                    "type": "integer"
-                }
-            }
-        },
-        "utils.OptionalRegexp": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the regular expression. It should only be\ntaken into account if Set is true.",
-                    "type": "object",
-                    "$ref": "#/definitions/utils.RegexExpression"
-                }
-            }
-        },
-        "utils.OptionalString": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the string. It should only be taken into\naccount if Set is true.",
-                    "type": "string"
-                }
-            }
-        },
-        "utils.OptionalStringArray": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "type": "boolean"
-                },
-                "value": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         },

@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorreason"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	mongobson "go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 )
@@ -18,9 +20,9 @@ type ListRequest struct {
 	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author enabled tstart tstop type.name reason.name created updated rrule type.icon_name"`
 }
 
-type EIDsListRequest struct {
+type EntitiesListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=id"`
+	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=_id name type"`
 }
 
 type EditRequest struct {
@@ -55,7 +57,7 @@ type FindByEntityIDRequest struct {
 	ID string `form:"id" binding:"required"`
 }
 
-type PBehavior struct {
+type Response struct {
 	ID         string                         `bson:"_id" json:"_id"`
 	Author     string                         `bson:"author" json:"author"`
 	Comments   pbehavior.Comments             `bson:"comments" json:"comments"`
@@ -97,9 +99,13 @@ func (f *Filter) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
 	return err
 }
 
+func (f Filter) MarshalBSONValue() (bsontype.Type, []byte, error) {
+	return mongobson.MarshalValue(f.v)
+}
+
 type AggregationResult struct {
-	Data       []PBehavior `bson:"data" json:"data"`
-	TotalCount int64       `bson:"total_count" json:"total_count"`
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
 func (r *AggregationResult) GetData() interface{} {
@@ -110,20 +116,16 @@ func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
 
-type EID struct {
-	ID string `bson:"id" json:"id"`
+type AggregationEntitiesResult struct {
+	Data       []entity.Entity `bson:"data" json:"data"`
+	TotalCount int64           `bson:"total_count" json:"total_count"`
 }
 
-type AggregationEIDsResult struct {
-	Data       []EID `bson:"data" json:"data"`
-	TotalCount int64 `bson:"total_count" json:"total_count"`
-}
-
-func (r *AggregationEIDsResult) GetData() interface{} {
+func (r *AggregationEntitiesResult) GetData() interface{} {
 	return r.Data
 }
 
-func (r *AggregationEIDsResult) GetTotal() int64 {
+func (r *AggregationEntitiesResult) GetTotal() int64 {
 	return r.TotalCount
 }
 

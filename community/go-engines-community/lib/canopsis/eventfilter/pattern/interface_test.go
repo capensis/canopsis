@@ -4,6 +4,8 @@ import (
 	"reflect"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
@@ -68,12 +70,14 @@ func TestStringArrayInterfacePatternToMongoDriverQuery(t *testing.T) {
 				"has_every":  []string{"test1"},
 				"has_one_of": []string{"test2"},
 				"has_not":    []string{"test3"},
+				"is_empty":   false,
 			},
 		}
 		mongoFilter := bson.M{
-			"$all": []string{"test1"},
-			"$in":  []string{"test2"},
-			"$nin": []string{"test3"},
+			"$all":    []string{"test1"},
+			"$in":     []string{"test2"},
+			"$nin":    []string{"test3"},
+			"$exists": true, "$ne": bson.A{},
 		}
 		bsonPattern, err := bson.Marshal(mapPattern)
 		So(err, ShouldBeNil)
@@ -543,7 +547,7 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.InterfacePattern{
 				StringConditions: pattern.StringConditions{
-					Equal: utils.OptionalString{
+					Equal: types.OptionalString{
 						Set:   true,
 						Value: "value",
 					},
@@ -557,7 +561,7 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.InterfacePattern{
 				StringConditions: pattern.StringConditions{
-					RegexMatch: utils.OptionalRegexp{
+					RegexMatch: types.OptionalRegexp{
 						Set:   true,
 						Value: testRegexp,
 					},
@@ -571,21 +575,26 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 					"has_every":  bson.A{"test1"},
 					"has_one_of": bson.A{"test2"},
 					"has_not":    bson.A{"test3"},
+					"is_empty":   false,
 				},
 			},
 			Pattern: pattern.InterfacePattern{
 				StringArrayConditions: pattern.StringArrayConditions{
-					HasEvery: utils.OptionalStringArray{
+					HasEvery: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test1"},
 					},
-					HasOneOf: utils.OptionalStringArray{
+					HasOneOf: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test2"},
 					},
-					HasNot: utils.OptionalStringArray{
+					HasNot: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test3"},
+					},
+					IsEmpty: types.OptionalBool{
+						Set:   true,
+						Value: false,
 					},
 				},
 			},
@@ -597,7 +606,7 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.InterfacePattern{
 				IntegerConditions: pattern.IntegerConditions{
-					Equal: utils.OptionalInt64{
+					Equal: types.OptionalInt64{
 						Set:   true,
 						Value: 5,
 					},
@@ -614,11 +623,11 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.InterfacePattern{
 				IntegerConditions: pattern.IntegerConditions{
-					Gte: utils.OptionalInt64{
+					Gte: types.OptionalInt64{
 						Set:   true,
 						Value: 0,
 					},
-					Lte: utils.OptionalInt64{
+					Lte: types.OptionalInt64{
 						Set:   true,
 						Value: 2,
 					},

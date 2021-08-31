@@ -1,30 +1,22 @@
 package appinfo
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
 )
 
-var defaultInterval = IntervalUnit{
-	Interval: 3,
-	Unit:     "s",
-}
-
 type api struct {
-	store  Store
-	Config libsecurity.Config
+	store Store
 }
 
 func NewApi(
 	store Store,
-	config libsecurity.Config,
 ) *api {
 	return &api{
-		store:  store,
-		Config: config,
+		store: store,
 	}
 }
 
@@ -39,27 +31,27 @@ func NewApi(
 // @Success 200 {object} AppInfoResponse
 // @Router /internal/app_info [get]
 func (a *api) GetAppInfo(c *gin.Context) {
-	userInterface, err := a.store.RetrieveUserInterfaceConfig()
+	userInterface, err := a.store.RetrieveUserInterfaceConfig(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
-	tz, err := a.store.RetrieveTimezoneConf()
+	tz, err := a.store.RetrieveTimezoneConf(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
-	remediationConf, err := a.store.RetrieveRemediationConf()
+	version, err := a.store.RetrieveVersionConfig(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
-	version, err := a.store.RetrieveCanopsisVersionConfig()
+	remediation, err := a.store.RetrieveRemediationConfig(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
 	c.JSON(http.StatusOK, AppInfoResponse{
-		UserInterfaceConf:   userInterface,
-		TimezoneConf:        tz,
-		CanopsisVersionConf: version,
-		RemediationConf:     remediationConf,
+		UserInterfaceConf: userInterface,
+		TimezoneConf:      tz,
+		VersionConf:       version,
+		Remediation:       remediation,
 	})
 }
 
@@ -72,46 +64,25 @@ func (a *api) GetAppInfo(c *gin.Context) {
 // @Success 200 {object} LoginConfigResponse
 // @Router /internal/login_info [get]
 func (a *api) LoginInfo(c *gin.Context) {
-	var config = LoginConfig{
-		Providers:  make(map[string]int),
-		Casconfig:  nil,
-		Ldapconfig: nil,
-	}
-	for _, p := range a.Config.Security.AuthProviders {
-		config.Providers[p] = 1
-	}
-
-	loginServices, err := a.store.RetrieveObjectConfig()
+	login, err := a.store.RetrieveLoginConfig(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
 
-	for _, ser := range loginServices {
-		switch ser.CrecordName {
-		case Casconfig:
-			ser.Fields[CrecordName] = ser.CrecordName
-			config.Casconfig = ser.Fields
-		case Ldapconfig:
-			config.Ldapconfig = &struct {
-				Enable bool `json:"enable"`
-			}{Enable: ser.Enable}
-		}
-	}
-
-	userInterface, err := a.store.RetrieveUserInterfaceConfig()
+	userInterface, err := a.store.RetrieveUserInterfaceConfig(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
 
-	version, err := a.store.RetrieveCanopsisVersionConfig()
+	version, err := a.store.RetrieveVersionConfig(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
 
 	c.JSON(http.StatusOK, LoginConfigResponse{
-		LoginConfig:         config,
-		UserInterfaceConf:   userInterface,
-		CanopsisVersionConf: version,
+		LoginConfig:       login,
+		UserInterfaceConf: userInterface,
+		VersionConf:       version,
 	})
 }
 
@@ -130,23 +101,17 @@ func (a *api) LoginInfo(c *gin.Context) {
 // @Router /internal/user_interface [post]
 // @Router /internal/user_interface [put]
 func (a *api) UpdateUserInterface(c *gin.Context) {
-	var request UserInterfaceConf
+	request := UserInterfaceConf{
+		MaxMatchedItems:           config.DefaultMaxMatchedItems,
+		CheckCountRequestTimeout:  config.DefaultCheckCountRequestTimeout,
+	}
+
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
-	if request.PopupTimeout == nil {
-		request.PopupTimeout = &PopupTimeout{
-			Info:  &defaultInterval,
-			Error: &defaultInterval,
-		}
-	} else if request.PopupTimeout.Error == nil {
-		request.PopupTimeout.Error = &defaultInterval
-	} else if request.PopupTimeout.Info == nil {
-		request.PopupTimeout.Info = &defaultInterval
-	}
 
-	err := a.store.UpdateUserInterfaceConfig(&request)
+	err := a.store.UpdateUserInterfaceConfig(c.Request.Context(), &request)
 	if err != nil {
 		panic(err)
 	}
@@ -163,7 +128,7 @@ func (a *api) UpdateUserInterface(c *gin.Context) {
 // @Success 204
 // @Router /internal/user_interface [delete]
 func (a *api) DeleteUserInterface(c *gin.Context) {
-	err := a.store.DeleteUserInterfaceConfig()
+	err := a.store.DeleteUserInterfaceConfig(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}

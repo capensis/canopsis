@@ -1,4 +1,4 @@
-FROM node:8.12-alpine
+FROM node:8.17-alpine
 
 WORKDIR /canopsis-next
 ADD ./sources/webcore/src/canopsis-next/ /canopsis-next/

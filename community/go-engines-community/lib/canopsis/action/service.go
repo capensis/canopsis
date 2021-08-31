@@ -2,6 +2,7 @@ package action
 
 import (
 	"context"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -76,37 +77,42 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 				s.logger.Debug().Msgf("scenario for alarm_id = %s finished", result.Alarm.ID)
 				// Fetch updated alarm from storage since task manager returns
 				// updated alarm after one scenario and not after all scenarios.
-				alarm, err := s.alarmAdapter.GetOpenedAlarmByAlarmId(result.Alarm.ID)
+				alarm, err := s.alarmAdapter.GetOpenedAlarmByAlarmId(ctx, result.Alarm.ID)
 				if err != nil {
 					s.logger.Error().Err(err).Msg("failed to fetch alarm")
 					break
 				}
 
-				if result.Err != nil {
-					s.sendEventToFifoAck(&types.Event{
-						Connector:     alarm.Value.Connector,
-						ConnectorName: alarm.Value.ConnectorName,
-						Component:     alarm.Value.Component,
-						Resource:      alarm.Value.Resource,
-						Alarm:         &alarm,
-					})
-					break
+				event := &types.Event{
+					Connector:               alarm.Value.Connector,
+					ConnectorName:           alarm.Value.ConnectorName,
+					Component:               alarm.Value.Component,
+					Resource:                alarm.Value.Resource,
+					Alarm:                   &alarm,
+					MetaAlarmParents:        &alarm.Value.Parents,
+					MetaAlarmChildren:       &alarm.Value.Children,
+					// need it for fifo metaalarm lock
+					MetaAlarmRelatedParents: result.Alarm.Value.RelatedParents,
 				}
 
-				ok, err = s.activationService.Process(&alarm)
-				if err != nil {
-					s.logger.Error().Err(err).Msg("failed to send activation")
-					break
+				activationSent := false
+				if result.Err == nil ||
+					(result.Err != nil && len(result.ActionExecutions) > 0 &&
+						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook) {
+					// Send activation event
+					ok, err = s.activationService.Process(&alarm)
+					if err != nil {
+						s.logger.Error().Err(err).Msg("failed to send activation")
+						break
+					}
+
+					if ok {
+						activationSent = true
+					}
 				}
 
-				if !ok {
-					s.sendEventToFifoAck(&types.Event{
-						Connector:     alarm.Value.Connector,
-						ConnectorName: alarm.Value.ConnectorName,
-						Component:     alarm.Value.Component,
-						Resource:      alarm.Value.Resource,
-						Alarm:         &alarm,
-					})
+				if !activationSent {
+					s.sendEventToFifoAck(event)
 				}
 			}
 		}
@@ -122,6 +128,9 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 
 	alarm := *event.Alarm
 	entity := *event.Entity
+
+	// need it for fifo metaalarm lock
+	alarm.Value.RelatedParents = event.MetaAlarmRelatedParents
 
 	switch event.AlarmChange.Type {
 	case types.AlarmChangeTypePbhEnter, types.AlarmChangeTypePbhLeave,
@@ -164,7 +173,7 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 	}
 
 	for _, execution := range abandonedExecutions {
-		alarm, err := s.alarmAdapter.GetOpenedAlarmByAlarmId(execution.AlarmID)
+		alarm, err := s.alarmAdapter.GetOpenedAlarmByAlarmId(ctx, execution.AlarmID)
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
 				s.logger.Warn().Str("execution_id", execution.ID).Msg("Alarm for scenario execution doesn't exist or resolved. Execution will be removed")

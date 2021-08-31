@@ -2,15 +2,18 @@ package main
 
 import (
 	"context"
-	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
+	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
+	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
+	"time"
 )
 
 type Options struct {
@@ -20,75 +23,144 @@ type Options struct {
 	PublishToQueue            string
 	LockTtl                   int
 	EnableMetaAlarmProcessing bool
+	EventsStatsFlushInterval  time.Duration
 }
 
-type References struct {
-	Scheduler      scheduler.Scheduler
-	RunInfoManager engine.RunInfoManager
-	ChannelPub     libamqp.Channel
-	ChannelSub     libamqp.Channel
-	AckChanSub     libamqp.Channel
-	AckChanPub     libamqp.Channel
-	JSONDecoder    encoding.Decoder
-	Logger         zerolog.Logger
-}
-
+// DependencyMaker can be created with DependencyMaker{}
 type DependencyMaker struct {
 	depmake.DependencyMaker
 }
 
-func (m DependencyMaker) GetDefaultReferences(ctx context.Context, options Options, logger zerolog.Logger) References {
+func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libengine.Engine {
 	defer depmake.Catch(logger)
 
-	cfg := m.DepConfig()
-
-	channelSub := m.DepAMQPChannelSub(m.DepAmqpConnection(logger, cfg), cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
-	ackChanSub := m.DepAMQPChannelSub(m.DepAmqpConnection(logger, cfg), cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
-	channelPub := m.DepAMQPChannelPub(m.DepAmqpConnection(logger, cfg))
-	ackChanPub := m.DepAMQPChannelPub(m.DepAmqpConnection(logger, cfg))
-
-	redisLockStorage := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
-	redisQueueStorage := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
-
-	jsonDecoder := json.NewDecoder()
-
-	eventScheduler := scheduler.NewSchedulerService(
-		redisLockStorage,
-		redisQueueStorage,
-		channelPub, options.PublishToQueue,
+	m := DependencyMaker{}
+	mongoClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, mongoClient)
+	config.SetDbClientRetry(mongoClient, cfg)
+	amqpConnection := m.DepAmqpConnection(logger, cfg)
+	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
+	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
+	statsRedisClient := m.DepRedisSession(ctx, redis.FIFOMessageStatisticsStorage, logger, cfg)
+	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
+	scheduler := libscheduler.NewSchedulerService(
+		lockRedisClient,
+		queueRedisClient,
+		m.DepAMQPChannelPub(m.DepAmqpConnection(logger, cfg)),
+		options.PublishToQueue,
 		logger,
 		options.LockTtl,
-		jsonDecoder,
+		json.NewDecoder(),
+		json.NewEncoder(),
 		options.EnableMetaAlarmProcessing,
 	)
-
-	return References{
-		Scheduler:      eventScheduler,
-		RunInfoManager: engine.NewRunInfoManager(m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)),
-		ChannelSub:     channelSub,
-		ChannelPub:     channelPub,
-		AckChanSub:     ackChanSub,
-		AckChanPub:     ackChanPub,
-		JSONDecoder:    jsonDecoder,
-		Logger:         logger,
-	}
-}
-
-func NewEngineFIFO(options Options, references References) *EngineFIFO {
-	defaultEngine := canopsis.NewDefaultEngine(
-		canopsis.PeriodicalWaitTime,
-		true,
-		true,
-		references.ChannelSub,
-		references.Logger,
-		references.RunInfoManager,
+	statsCh := make(chan statistics.Message)
+	statsSender := ratelimit.NewStatsSender(statsCh, logger)
+	statsListener := statistics.NewStatsListener(
+		mongoClient,
+		statsRedisClient,
+		options.EventsStatsFlushInterval,
+		map[string]int64{
+			mongo.MessageRateStatsMinuteCollectionName: 1,  // 1 minute
+			mongo.MessageRateStatsHourCollectionName:   60, // 60 minutes
+		},
+		logger,
 	)
 
-	defaultEngine.Debug = options.ModeDebug
+	engine := libengine.New(
+		func(ctx context.Context) error {
+			scheduler.Start(ctx)
 
-	return &EngineFIFO{
-		DefaultEngine: defaultEngine,
-		Options:       options,
-		References:    references,
-	}
+			go statsListener.Listen(ctx, statsCh)
+
+			return nil
+		},
+		func(ctx context.Context) {
+			close(statsCh)
+
+			scheduler.Stop(ctx)
+			err := mongoClient.Disconnect(ctx)
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close mongo connection")
+			}
+
+			err = amqpConnection.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = lockRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = queueRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = statsRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = runInfoRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+		},
+		logger,
+	)
+
+	engine.AddConsumer(libengine.NewDefaultConsumer(
+		canopsis.FIFOConsumerName,
+		options.ConsumeFromQueue,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		false,
+		"",
+		"",
+		"",
+		"",
+		amqpConnection,
+		&messageProcessor{
+			FeaturePrintEventOnError: options.PrintEventOnError,
+			Scheduler:                scheduler,
+			StatsSender:              statsSender,
+			Decoder:                  json.NewDecoder(),
+			Logger:                   logger,
+		},
+		logger,
+	))
+	engine.AddConsumer(libengine.NewDefaultConsumer(
+		canopsis.FIFOAckConsumerName,
+		canopsis.FIFOAckQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		false,
+		"",
+		"",
+		"",
+		"",
+		amqpConnection,
+		&ackMessageProcessor{
+			FeaturePrintEventOnError: options.PrintEventOnError,
+			Scheduler:                scheduler,
+			Decoder:                  json.NewDecoder(),
+			Logger:                   logger,
+		},
+		logger,
+	))
+	engine.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
+		canopsis.PeriodicalWaitTime,
+		libengine.NewRunInfoManager(runInfoRedisClient),
+		libengine.RunInfo{
+			Name:         canopsis.FIFOEngineName,
+			ConsumeQueue: options.ConsumeFromQueue,
+			PublishQueue: options.PublishToQueue,
+		},
+		logger,
+	))
+
+	return engine
 }

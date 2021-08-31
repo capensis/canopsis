@@ -35,13 +35,13 @@ type Service struct {
 	Icon           string              `json:"icon" bson:"icon"`
 	SecondaryIcon  string              `json:"secondary_icon" bson:"secondary_icon"`
 	Output         string              `json:"output" bson:"output"`
-	LastUpdateDate types.CpsTime       `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
+	LastUpdateDate *types.CpsTime      `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
 	AlarmCounters  []AlarmCounter      `json:"alarm_counters" bson:"alarm_counters"`
 	Links          []struct {
 		Name  string      `json:"cat_name" bson:"cat_name"`
 		Links interface{} `json:"links" bson:"links"`
 	} `json:"linklist" bson:"links"`
-	Pbehaviors  []pbehavior.PBehavior    `json:"pbehaviors" bson:"-"`
+	Pbehaviors  []pbehavior.Response     `json:"pbehaviors" bson:"-"`
 	PbehaviorID string                   `json:"-" bson:"pbehavior_id"`
 	ImpactLevel int                      `json:"impact_level" bson:"impact_level"`
 	ImpactState int                      `json:"impact_state" bson:"impact_state"`
@@ -88,11 +88,11 @@ type Entity struct {
 	Snooze         *alarmapi.AlarmStep      `json:"snooze" bson:"snooze"`
 	Ack            *alarmapi.AlarmStep      `json:"ack" bson:"ack"`
 	Ticket         *alarmapi.AlarmTicket    `json:"ticket" bson:"ticket"`
-	LastUpdateDate types.CpsTime            `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
-	CreationDate   types.CpsTime            `json:"alarm_creation_date" bson:"creation_date" swaggertype:"integer"`
+	LastUpdateDate *types.CpsTime           `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
+	CreationDate   *types.CpsTime           `json:"alarm_creation_date" bson:"creation_date" swaggertype:"integer"`
 	DisplayName    string                   `json:"alarm_display_name" bson:"display_name"`
 	Icon           string                   `json:"icon" bson:"icon"`
-	Pbehaviors     []pbehavior.PBehavior    `json:"pbehaviors" bson:"-"`
+	Pbehaviors     []pbehavior.Response     `json:"pbehaviors" bson:"-"`
 	PbehaviorInfo  types.PbehaviorInfo      `json:"-" bson:"pbehavior_info"`
 	Links          []WeatherLink            `json:"linklist" bson:"-"`
 	Stats          Stats                    `json:"stats" bson:"-"`

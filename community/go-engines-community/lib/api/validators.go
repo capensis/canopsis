@@ -2,17 +2,18 @@ package api
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/heartbeat"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
@@ -27,6 +28,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
+	libdatastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
@@ -120,31 +122,23 @@ func RegisterValidators(client mongo.DbClient) {
 	v.RegisterStructValidation(pbehaviortimespan.ValidateTimespansRequest, pbehaviortimespan.TimespansRequest{})
 	v.RegisterStructValidation(pbehaviortimespan.ValidateExdateRequest, pbehaviortimespan.ExdateRequest{})
 
-	heartbeatUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.HeartbeatMongoCollection, "ID")
-	heartbeatUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.HeartbeatMongoCollection, "Name")
-	heartbeatBulkUniqueIDValidator := common.NewUniqueBulkFieldValidator("ID")
-	heartbeatBulkUniqueNameValidator := common.NewUniqueBulkFieldValidator("Name")
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		heartbeatUniqueIDValidator.Validate(ctx, sl)
-		heartbeatUniqueNameValidator.Validate(ctx, sl)
-	}, heartbeat.CreateRequest{})
-	v.RegisterStructValidationCtx(heartbeatUniqueNameValidator.Validate, heartbeat.UpdateRequest{})
-	v.RegisterStructValidationCtx(heartbeatUniqueNameValidator.Validate, heartbeat.BulkUpdateRequestItem{})
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		heartbeatBulkUniqueIDValidator.Validate(ctx, sl)
-		heartbeatBulkUniqueNameValidator.Validate(ctx, sl)
-	}, heartbeat.BulkCreateRequest{})
-	v.RegisterStructValidationCtx(heartbeatBulkUniqueNameValidator.Validate, heartbeat.BulkUpdateRequest{})
-
 	scenarioUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "Name")
 	scenarioUniquePriorityValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "Priority")
 	scenarioExistReasonValidator := common.NewExistFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Reason")
 	scenarioExistTypeValidator := common.NewExistFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Type")
+	scenarioExistIdValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "ID")
+
+	v.RegisterStructValidation(scenario.ValidateEditRequest, scenario.EditRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		scenario.ValidateEditRequest(sl)
 		scenarioUniqueNameValidator.Validate(ctx, sl)
 		scenarioUniquePriorityValidator.Validate(ctx, sl)
-	}, scenario.EditRequest{})
+		scenarioExistIdValidator.Validate(ctx, sl)
+	}, scenario.CreateRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		scenarioUniqueNameValidator.Validate(ctx, sl)
+		scenarioUniquePriorityValidator.Validate(ctx, sl)
+	}, scenario.UpdateRequest{})
+
 	v.RegisterStructValidation(scenario.ValidateActionRequest, scenario.ActionRequest{})
 	v.RegisterStructValidation(scenario.ValidateChangeStateParametersRequest, scenario.ChangeStateParametersRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
@@ -221,6 +215,8 @@ func RegisterValidators(client mongo.DbClient) {
 	broadcastmessageValidator := broadcastmessage.NewValidator(client)
 	v.RegisterStructValidationCtx(broadcastmessageValidator.Validate, broadcastmessage.BroadcastMessage{})
 
+	v.RegisterStructValidation(messageratestats.ValidateListRequest, messageratestats.ListRequest{})
+
 	idleRuleUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.IdleRuleMongoCollection, "Name")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		idleRuleUniqueNameValidator.Validate(ctx, sl)
@@ -229,4 +225,5 @@ func RegisterValidators(client mongo.DbClient) {
 	v.RegisterStructValidation(idlerule.ValidateCountPatternRequest, idlerule.CountByPatternRequest{})
 
 	v.RegisterStructValidation(alarm.ValidateListRequest, alarm.ListRequest{})
+	v.RegisterStructValidation(datastorage.ValidateConfig, libdatastorage.Config{})
 }

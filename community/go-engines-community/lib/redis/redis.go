@@ -32,6 +32,8 @@ const (
 	PBehaviorLockStorage
 	ActionScenarioStorage
 	EntityServiceStorage
+	FIFOMessageStatisticsStorage
+	// EngineLockStorage is used for all redis locks. It should be used by all engines.
 	EngineLockStorage
 )
 

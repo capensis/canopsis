@@ -50,6 +50,8 @@ definitions:
       causes:
         $ref: '#/definitions/alarm.Causes'
         type: object
+      children_instructions:
+        type: boolean
       consequences:
         $ref: '#/definitions/alarm.Children'
         type: object
@@ -67,6 +69,12 @@ definitions:
           additionalProperties: true
           type: object
         type: object
+      is_all_auto_instructions_completed:
+        type: boolean
+      is_auto_instruction_running:
+        type: boolean
+      is_manual_instruction_waiting_result:
+        type: boolean
       links:
         additionalProperties: true
         type: object
@@ -260,33 +268,38 @@ definitions:
     type: object
   alarm.ExportRequest:
     properties:
-      active_columns[]:
-        items:
-          type: string
-        type: array
       category:
         type: string
       correlation:
         type: boolean
-      filter:
-        type: string
-      manual:
-        type: boolean
-      multi_sort[]:
+      exclude_instruction_types:
+        items:
+          type: integer
+        type: array
+      exclude_instructions:
         items:
           type: string
         type: array
-      opened:
+      fields:
+        $ref: '#/definitions/export.Fields'
+        type: object
+      filter:
+        type: string
+      include_instruction_types:
+        items:
+          type: integer
+        type: array
+      include_instructions:
+        items:
+          type: string
+        type: array
+      manual:
         type: boolean
-      resolved:
+      opened:
         type: boolean
       search:
         type: string
       separator:
-        type: string
-      sort_dir:
-        type: string
-      sort_key:
         type: string
       time_format:
         type: string
@@ -296,12 +309,8 @@ definitions:
         type: integer
       with_consequences:
         type: boolean
-      with_instructions:
-        type: string
       with_steps:
         type: boolean
-      without_instructions:
-        type: string
     type: object
   alarm.ExportResponse:
     properties:
@@ -320,13 +329,27 @@ definitions:
         type: string
       correlation:
         type: boolean
+      exclude_instruction_types:
+        items:
+          type: integer
+        type: array
+      exclude_instructions:
+        items:
+          type: string
+        type: array
       filter:
         type: string
+      include_instruction_types:
+        items:
+          type: integer
+        type: array
+      include_instructions:
+        items:
+          type: string
+        type: array
       manual:
         type: boolean
       opened:
-        type: boolean
-      resolved:
         type: boolean
       search:
         type: string
@@ -334,10 +357,6 @@ definitions:
         type: integer
       tstop:
         type: integer
-      with_instructions:
-        type: string
-      without_instructions:
-        type: string
     type: object
   alarm.InstructionWithAlarms:
     properties:
@@ -367,8 +386,24 @@ definitions:
         type: string
       correlation:
         type: boolean
+      exclude_instruction_types:
+        items:
+          type: integer
+        type: array
+      exclude_instructions:
+        items:
+          type: string
+        type: array
       filter:
         type: string
+      include_instruction_types:
+        items:
+          type: integer
+        type: array
+      include_instructions:
+        items:
+          type: string
+        type: array
       limit:
         type: integer
       manual:
@@ -383,8 +418,6 @@ definitions:
         type: integer
       paginate:
         type: boolean
-      resolved:
-        type: boolean
       search:
         type: string
       sort_dir:
@@ -398,11 +431,9 @@ definitions:
       with_consequences:
         type: boolean
       with_instructions:
-        type: string
+        type: boolean
       with_steps:
         type: boolean
-      without_instructions:
-        type: string
     type: object
   alarm.MetaAlarmRule:
     properties:
@@ -435,20 +466,25 @@ definitions:
         type: boolean
       app_title:
         type: string
+      check_count_request_timeout:
+        type: integer
       edition:
         type: string
       footer:
         type: string
-      jobexecutorfetchtimeoutseconds:
-        type: integer
       language:
         type: string
       login_page_description:
         type: string
       logo:
         type: string
+      max_matched_items:
+        type: integer
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
+        type: object
+      remediation:
+        $ref: '#/definitions/appinfo.RemediationConf'
         type: object
       stack:
         type: string
@@ -464,19 +500,31 @@ definitions:
       unit:
         type: string
     type: object
+  appinfo.JobConfigType:
+    properties:
+      auth_type:
+        type: string
+      name:
+        type: string
+    type: object
   appinfo.LoginConfig:
     properties:
       casconfig:
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
         type: object
       ldapconfig:
-        properties:
-          enable:
-            type: boolean
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
         type: object
-      providers:
-        additionalProperties:
-          type: integer
+      saml2config:
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
         type: object
+    type: object
+  appinfo.LoginConfigMethod:
+    properties:
+      enable:
+        type: boolean
+      title:
+        type: string
     type: object
   appinfo.LoginConfigResponse:
     properties:
@@ -502,12 +550,24 @@ definitions:
         $ref: '#/definitions/appinfo.IntervalUnit'
         type: object
     type: object
+  appinfo.RemediationConf:
+    properties:
+      job_config_types:
+        items:
+          $ref: '#/definitions/appinfo.JobConfigType'
+        type: array
+      pause_manual_instruction_interval:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+    type: object
   appinfo.UserInterfaceConf:
     properties:
       allow_change_severity_to_info:
         type: boolean
       app_title:
         type: string
+      check_count_request_timeout:
+        type: integer
       footer:
         type: string
       language:
@@ -516,6 +576,8 @@ definitions:
         type: string
       logo:
         type: string
+      max_matched_items:
+        type: integer
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
         type: object
@@ -542,6 +604,26 @@ definitions:
     properties:
       _id:
         type: string
+      color:
+        type: string
+      created:
+        type: integer
+      end:
+        type: integer
+      message:
+        type: string
+      start:
+        type: integer
+      updated:
+        type: integer
+    required:
+    - color
+    - end
+    - message
+    - start
+    type: object
+  broadcastmessage.Payload:
+    properties:
       color:
         type: string
       created:
@@ -684,8 +766,32 @@ definitions:
     type: object
   datastorage.Config:
     properties:
+      alarm:
+        properties:
+          archive_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+        type: object
       junit:
         properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+        type: object
+      pbehavior:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+        type: object
+      remediation:
+        properties:
+          accumulate_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
             type: object
@@ -702,8 +808,36 @@ definitions:
     type: object
   datastorage.History:
     properties:
+      alarm:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+        type: object
+      entity:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+        type: object
       junit:
         type: integer
+      pbehavior:
+        type: integer
+      remediation:
+        type: integer
+    type: object
+  datastorage.HistoryWithCount:
+    properties:
+      archived:
+        type: integer
+      deleted:
+        type: integer
+      time:
+        type: integer
+    type: object
+  entity.CleanRequest:
+    properties:
+      archive:
+        type: boolean
+      archive_dependencies:
+        type: boolean
+    required:
+    - archive
     type: object
   entity.Entity:
     properties:
@@ -749,21 +883,16 @@ definitions:
     type: object
   entity.ExportRequest:
     properties:
-      active_columns[]:
-        items:
-          type: string
-        type: array
       category:
         type: string
+      fields:
+        $ref: '#/definitions/export.Fields'
+        type: object
       filter:
         type: string
       search:
         type: string
       separator:
-        type: string
-      sort:
-        type: string
-      sort_by:
         type: string
     type: object
   entity.ExportResponse:
@@ -786,7 +915,7 @@ definitions:
     additionalProperties:
       $ref: '#/definitions/entity.Info'
     type: object
-  entity.ListRequest:
+  entity.ListRequestWithPagination:
     properties:
       active_columns[]:
         items:
@@ -796,12 +925,22 @@ definitions:
         type: string
       filter:
         type: string
+      limit:
+        type: integer
+      no_events:
+        type: boolean
+      page:
+        type: integer
+      paginate:
+        type: boolean
       search:
         type: string
       sort:
         type: string
       sort_by:
         type: string
+      with_flags:
+        type: boolean
     type: object
   entitybasic.EditRequest:
     properties:
@@ -952,7 +1091,7 @@ definitions:
     - name
     - output_template
     type: object
-  entityservice.EntityService:
+  entityservice.Response:
     properties:
       _id:
         type: string
@@ -1082,103 +1221,17 @@ definitions:
     - enabled
     - type
     type: object
-  heartbeat.BulkDeleteRequest:
+  export.Field:
     properties:
-      ids:
-        items:
-          type: string
-        type: array
-    required:
-    - ids
-    type: object
-  heartbeat.BulkUpdateRequestItem:
-    properties:
-      _id:
+      label:
         type: string
-      description:
-        type: string
-      expected_interval:
-        type: integer
       name:
         type: string
-      output:
-        type: string
-      pattern:
-        additionalProperties:
-          type: string
-        type: object
-    required:
-    - _id
-    - description
-    - expected_interval
-    - name
-    - pattern
     type: object
-  heartbeat.CreateRequest:
-    properties:
-      _id:
-        type: string
-      description:
-        type: string
-      expected_interval:
-        type: integer
-      name:
-        type: string
-      output:
-        type: string
-      pattern:
-        additionalProperties:
-          type: string
-        type: object
-    required:
-    - description
-    - expected_interval
-    - name
-    - pattern
-    type: object
-  heartbeat.Heartbeat:
-    properties:
-      _id:
-        type: string
-      author:
-        type: string
-      created:
-        type: integer
-      description:
-        type: string
-      expected_interval:
-        type: integer
-      name:
-        type: string
-      output:
-        type: string
-      pattern:
-        additionalProperties:
-          type: string
-        type: object
-      updated:
-        type: integer
-    type: object
-  heartbeat.UpdateRequest:
-    properties:
-      description:
-        type: string
-      expected_interval:
-        type: integer
-      name:
-        type: string
-      output:
-        type: string
-      pattern:
-        additionalProperties:
-          type: string
-        type: object
-    required:
-    - description
-    - expected_interval
-    - name
-    - pattern
-    type: object
+  export.Fields:
+    items:
+      $ref: '#/definitions/export.Field'
+    type: array
   http.Response:
     properties:
       body:
@@ -1237,8 +1290,6 @@ definitions:
       alarm_patterns:
         $ref: '#/definitions/pattern.AlarmPatternList'
         type: object
-      author:
-        type: string
       description:
         type: string
       disable_during_periods:
@@ -1263,7 +1314,6 @@ definitions:
       type:
         type: string
     required:
-    - author
     - duration
     - enabled
     - name
@@ -1329,6 +1379,53 @@ definitions:
         type: string
       updated:
         $ref: '#/definitions/types.CpsTime'
+        type: object
+    type: object
+  messageratestats.ListRequest:
+    properties:
+      from:
+        type: integer
+      interval:
+        type: string
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      sort:
+        type: string
+      sort_by:
+        type: string
+      to:
+        type: integer
+    required:
+    - from
+    - interval
+    - to
+    type: object
+  messageratestats.StatsResponse:
+    properties:
+      _id:
+        type: integer
+      received:
+        type: integer
+    type: object
+  notification.InstructionNotification:
+    properties:
+      rate:
+        type: boolean
+      rate_frequency:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+    required:
+    - rate
+    - rate_frequency
+    type: object
+  notification.Notification:
+    properties:
+      instruction:
+        $ref: '#/definitions/notification.InstructionNotification'
         type: object
     type: object
   pattern.AlarmPattern:
@@ -1474,6 +1571,9 @@ definitions:
       canceled:
         $ref: '#/definitions/pattern.AlarmStepRefPattern'
         type: object
+      children:
+        $ref: '#/definitions/pattern.StringArrayPattern'
+        type: object
       component:
         $ref: '#/definitions/pattern.StringPattern'
         type: object
@@ -1516,6 +1616,9 @@ definitions:
         type: object
       output:
         $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      parents:
+        $ref: '#/definitions/pattern.StringArrayPattern'
         type: object
       resolved:
         $ref: '#/definitions/pattern.TimeRefPattern'
@@ -1736,31 +1839,31 @@ definitions:
   pattern.IntegerPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
         type: object
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
@@ -1776,7 +1879,7 @@ definitions:
   pattern.IntegerRefPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
@@ -1787,25 +1890,25 @@ definitions:
           by the pattern.
         type: boolean
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
@@ -1821,7 +1924,7 @@ definitions:
   pattern.InterfacePattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalString'
+        $ref: '#/definitions/types.OptionalString'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
@@ -1832,40 +1935,43 @@ definitions:
           by the pattern.
         type: boolean
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       hasEvery:
-        $ref: '#/definitions/utils.OptionalStringArray'
+        $ref: '#/definitions/types.OptionalStringArray'
         type: object
       hasNot:
-        $ref: '#/definitions/utils.OptionalStringArray'
+        $ref: '#/definitions/types.OptionalStringArray'
         type: object
       hasOneOf:
-        $ref: '#/definitions/utils.OptionalStringArray'
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      isEmpty:
+        $ref: '#/definitions/types.OptionalBool'
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
         type: object
       regexMatch:
-        $ref: '#/definitions/utils.OptionalRegexp'
+        $ref: '#/definitions/types.OptionalRegexp'
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
@@ -1874,16 +1980,34 @@ definitions:
         additionalProperties: true
         type: object
     type: object
+  pattern.StringArrayPattern:
+    properties:
+      hasEvery:
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      hasNot:
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      hasOneOf:
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      isEmpty:
+        $ref: '#/definitions/types.OptionalBool'
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        type: object
+    type: object
   pattern.StringPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalString'
+        $ref: '#/definitions/types.OptionalString'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
         type: object
       regexMatch:
-        $ref: '#/definitions/utils.OptionalRegexp'
+        $ref: '#/definitions/types.OptionalRegexp'
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
@@ -1899,7 +2023,7 @@ definitions:
   pattern.StringRefPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalString'
+        $ref: '#/definitions/types.OptionalString'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
@@ -1910,7 +2034,7 @@ definitions:
           by the pattern.
         type: boolean
       regexMatch:
-        $ref: '#/definitions/utils.OptionalRegexp'
+        $ref: '#/definitions/types.OptionalRegexp'
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
@@ -1926,31 +2050,31 @@ definitions:
   pattern.TimePattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
         type: object
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
@@ -1966,7 +2090,7 @@ definitions:
   pattern.TimeRefPattern:
     properties:
       equal:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Equal is set, the value of a field has to be equal to the value of
           Equal to be matched by the pattern.
@@ -1977,25 +2101,25 @@ definitions:
           by the pattern.
         type: boolean
       gt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gt is set, the value of a field has to be greater than the value
           of Gt to be matched by the pattern.
         type: object
       gte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Gte is set, the value of a field has to be greater than the value
           of Gte to be matched by the pattern.
         type: object
       lt:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lt is set, the value of a field has to be greater than the value
           of Lt to be matched by the pattern.
         type: object
       lte:
-        $ref: '#/definitions/utils.OptionalInt64'
+        $ref: '#/definitions/types.OptionalInt64'
         description: |-
           If Lte is set, the value of a field has to be greater than the value
           of Lte to be matched by the pattern.
@@ -2030,11 +2154,6 @@ definitions:
         type: boolean
       total_count:
         type: integer
-    type: object
-  pbehavior.EID:
-    properties:
-      id:
-        type: string
     type: object
   pbehavior.EditRequest:
     properties:
@@ -2079,7 +2198,7 @@ definitions:
     required:
     - filter
     type: object
-  pbehavior.PBehavior:
+  pbehavior.Response:
     properties:
       _id:
         type: string
@@ -2596,7 +2715,7 @@ definitions:
         type: string
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.PBehavior'
+          $ref: '#/definitions/pbehavior.Response'
         type: array
       resource:
         type: string
@@ -2678,7 +2797,7 @@ definitions:
         type: string
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.PBehavior'
+          $ref: '#/definitions/pbehavior.Response'
         type: array
       resource:
         type: string
@@ -2788,11 +2907,15 @@ definitions:
         type: string
       a:
         type: string
+      exec:
+        description: Execution contains id if instruction execution for instruction
+          steps only.
+        type: string
       initiator:
         type: string
       m:
         type: string
-      pbehaviorCanonicalType:
+      pbehavior_canonical_type:
         type: string
       role:
         type: string
@@ -2900,6 +3023,10 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      related_parents:
+        items:
+          type: string
+        type: array
       resolved:
         $ref: '#/definitions/types.CpsTime'
         type: object
@@ -2975,6 +3102,60 @@ definitions:
     required:
     - seconds
     - unit
+    type: object
+  types.OptionalBool:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the bool. It should only be taken into
+          account if Set is true.
+        type: boolean
+    type: object
+  types.OptionalInt64:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the int64. It should only be taken into
+          account if Set is true.
+        type: integer
+    type: object
+  types.OptionalRegexp:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        $ref: '#/definitions/utils.RegexExpression'
+        description: |-
+          Value contains the value of the regular expression. It should only be
+          taken into account if Set is true.
+        type: object
+    type: object
+  types.OptionalString:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the string. It should only be taken into
+          account if Set is true.
+        type: string
+    type: object
+  types.OptionalStringArray:
+    properties:
+      set:
+        type: boolean
+      value:
+        items:
+          type: string
+        type: array
     type: object
   types.PbehaviorInfo:
     properties:
@@ -3077,49 +3258,6 @@ definitions:
         type: string
       title:
         type: string
-    type: object
-  utils.OptionalInt64:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        description: |-
-          Value contains the value of the int64. It should only be taken into
-          account if Set is true.
-        type: integer
-    type: object
-  utils.OptionalRegexp:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        $ref: '#/definitions/utils.RegexExpression'
-        description: |-
-          Value contains the value of the regular expression. It should only be
-          taken into account if Set is true.
-        type: object
-    type: object
-  utils.OptionalString:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        description: |-
-          Value contains the value of the string. It should only be taken into
-          account if Set is true.
-        type: string
-    type: object
-  utils.OptionalStringArray:
-    properties:
-      set:
-        type: boolean
-      value:
-        items:
-          type: string
-        type: array
     type: object
   utils.RegexExpression:
     type: object
@@ -3393,17 +3531,38 @@ paths:
       - in: query
         name: correlation
         type: boolean
+      - collectionFormat: multi
+        in: query
+        items:
+          type: integer
+        name: exclude_instruction_types
+        type: array
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: exclude_instructions
+        type: array
       - in: query
         name: filter
         type: string
+      - collectionFormat: multi
+        in: query
+        items:
+          type: integer
+        name: include_instruction_types
+        type: array
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: include_instructions
+        type: array
       - in: query
         name: manual
         type: boolean
       - in: query
         name: opened
-        type: boolean
-      - in: query
-        name: resolved
         type: boolean
       - in: query
         name: search
@@ -3414,12 +3573,6 @@ paths:
       - in: query
         name: tstop
         type: integer
-      - in: query
-        name: with_instructions
-        type: string
-      - in: query
-        name: without_instructions
-        type: string
       produces:
       - application/json
       responses:
@@ -3442,68 +3595,12 @@ paths:
       description: Start export alarms
       operationId: alarms-export-start
       parameters:
-      - collectionFormat: multi
-        in: query
-        items:
-          type: string
-        name: active_columns[]
-        type: array
-      - in: query
-        name: category
-        type: string
-      - in: query
-        name: correlation
-        type: boolean
-      - in: query
-        name: filter
-        type: string
-      - in: query
-        name: manual
-        type: boolean
-      - in: query
-        items:
-          type: string
-        name: multi_sort[]
-        type: array
-      - in: query
-        name: opened
-        type: boolean
-      - in: query
-        name: resolved
-        type: boolean
-      - in: query
-        name: search
-        type: string
-      - in: query
-        name: separator
-        type: string
-      - in: query
-        name: sort_dir
-        type: string
-      - in: query
-        name: sort_key
-        type: string
-      - in: query
-        name: time_format
-        type: string
-      - in: query
-        name: tstart
-        type: integer
-      - in: query
-        name: tstop
-        type: integer
-      - in: query
-        name: with_consequences
-        type: boolean
-      - in: query
-        name: with_instructions
-        type: string
-      - in: query
-        name: with_steps
-        type: boolean
-      - in: query
-        name: without_instructions
-        type: string
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/alarm.ExportRequest'
       produces:
       - application/json
       responses:
@@ -3602,16 +3699,41 @@ paths:
       - in: query
         name: correlation
         type: boolean
+      - collectionFormat: multi
+        in: query
+        items:
+          type: integer
+        name: exclude_instruction_types
+        type: array
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: exclude_instructions
+        type: array
       - in: query
         name: filter
         type: string
+      - collectionFormat: multi
+        in: query
+        items:
+          type: integer
+        name: include_instruction_types
+        type: array
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: include_instructions
+        type: array
       - in: query
         name: limit
         type: integer
       - in: query
         name: manual
         type: boolean
-      - in: query
+      - collectionFormat: multi
+        in: query
         items:
           type: string
         name: multi_sort[]
@@ -3624,9 +3746,6 @@ paths:
         type: integer
       - in: query
         name: paginate
-        type: boolean
-      - in: query
-        name: resolved
         type: boolean
       - in: query
         name: search
@@ -3648,13 +3767,10 @@ paths:
         type: boolean
       - in: query
         name: with_instructions
-        type: string
+        type: boolean
       - in: query
         name: with_steps
         type: boolean
-      - in: query
-        name: without_instructions
-        type: string
       produces:
       - application/json
       responses:
@@ -3690,8 +3806,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -3842,8 +3957,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -3896,7 +4010,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/broadcastmessage.BroadcastMessage'
+          $ref: '#/definitions/broadcastmessage.Payload'
       produces:
       - application/json
       responses:
@@ -3918,101 +4032,6 @@ paths:
       summary: Update broadcast-message by id
       tags:
       - broadcast-messages
-  /bulk/heartbeats:
-    delete:
-      description: Bulk delete heartbeats by id
-      operationId: heartbeats-bulk-delete-by-id
-      parameters:
-      - collectionFormat: multi
-        in: query
-        items:
-          type: string
-        name: ids
-        required: true
-        type: array
-      responses:
-        "204":
-          description: ""
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Bulk delete heartbeats by id
-      tags:
-      - heartbeats
-    post:
-      consumes:
-      - application/json
-      description: Bulk create heartbeats
-      operationId: heartbeats-bulk-create
-      parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/heartbeat.CreateRequest'
-          type: array
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            items:
-              $ref: '#/definitions/heartbeat.Heartbeat'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Bulk create heartbeats
-      tags:
-      - heartbeats
-    put:
-      consumes:
-      - application/json
-      description: Bulk update heartbeats by id
-      operationId: heartbeats-bulk-update-by-id
-      parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/heartbeat.BulkUpdateRequestItem'
-          type: array
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/heartbeat.Heartbeat'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Bulk update heartbeats by id
-      tags:
-      - heartbeats
   /bulk/view-groups:
     delete:
       description: Bulk delete view groups by id
@@ -4026,8 +4045,7 @@ paths:
         required: true
         type: array
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -4121,8 +4139,7 @@ paths:
         required: true
         type: array
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -4320,6 +4337,18 @@ paths:
         name: filter
         type: string
       - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: no_events
+        type: boolean
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
         name: search
         type: string
       - in: query
@@ -4328,6 +4357,9 @@ paths:
       - in: query
         name: sort_by
         type: string
+      - in: query
+        name: with_flags
+        type: boolean
       produces:
       - application/json
       responses:
@@ -4352,6 +4384,34 @@ paths:
       summary: Find entities
       tags:
       - entities
+  /entities/clean:
+    post:
+      consumes:
+      - application/json
+      description: Clean disabled entities
+      operationId: entities-clean
+      parameters:
+      - in: query
+        name: archive
+        required: true
+        type: boolean
+      - in: query
+        name: archive_dependencies
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "202": {}
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Clean disabled entities
+      tags:
+      - entities
   /entities/pbehaviors:
     get:
       consumes:
@@ -4371,7 +4431,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/pbehavior.PBehavior'
+              $ref: '#/definitions/pbehavior.Response'
             type: array
         "400":
           description: Bad Request
@@ -4476,8 +4536,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -4557,30 +4616,12 @@ paths:
       description: Start export entities
       operationId: entities-export-start
       parameters:
-      - collectionFormat: multi
-        in: query
-        items:
-          type: string
-        name: active_columns[]
-        type: array
-      - in: query
-        name: category
-        type: string
-      - in: query
-        name: filter
-        type: string
-      - in: query
-        name: search
-        type: string
-      - in: query
-        name: separator
-        type: string
-      - in: query
-        name: sort
-        type: string
-      - in: query
-        name: sort_by
-        type: string
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.ExportRequest'
       produces:
       - application/json
       responses:
@@ -4671,8 +4712,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -4858,7 +4898,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/entityservice.EntityService'
+            $ref: '#/definitions/entityservice.Response'
         "400":
           description: Bad Request
           schema:
@@ -4880,8 +4920,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -4907,7 +4946,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entityservice.EntityService'
+            $ref: '#/definitions/entityservice.Response'
         "404":
           description: Not Found
           schema:
@@ -4941,7 +4980,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entityservice.EntityService'
+            $ref: '#/definitions/entityservice.Response'
         "400":
           description: Bad Request
           schema:
@@ -5071,8 +5110,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -5147,175 +5185,6 @@ paths:
       summary: Update eventfilter by id
       tags:
       - eventfilters
-  /heartbeats:
-    get:
-      consumes:
-      - application/json
-      description: Get paginated list of heartbeats
-      operationId: heartbeats-find-all
-      parameters:
-      - description: current page
-        in: query
-        name: page
-        required: true
-        type: integer
-      - description: items per page
-        in: query
-        name: limit
-        required: true
-        type: integer
-      - description: search query
-        in: query
-        name: search
-        type: string
-      - description: sort query
-        in: query
-        name: sort
-        type: string
-      - description: sort query
-        in: query
-        name: sort_by
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/common.PaginatedListResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/heartbeat.Heartbeat'
-                  type: array
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Find heartbeats
-      tags:
-      - heartbeats
-    post:
-      consumes:
-      - application/json
-      description: Create heartbeat
-      operationId: heartbeats-create
-      parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/heartbeat.CreateRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/heartbeat.Heartbeat'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Create heartbeat
-      tags:
-      - heartbeats
-  /heartbeats/{id}:
-    delete:
-      description: Delete heartbeat by id
-      operationId: heartbeats-delete-by-id
-      parameters:
-      - description: heartbeat id
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "204":
-          description: ""
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Delete heartbeat by id
-      tags:
-      - heartbeats
-    get:
-      description: Get heartbeat by id
-      operationId: heartbeats-get-by-id
-      parameters:
-      - description: heartbeat id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/heartbeat.Heartbeat'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Get heartbeat by id
-      tags:
-      - heartbeats
-    put:
-      consumes:
-      - application/json
-      description: Update heartbeat by id
-      operationId: heartbeats-update-by-id
-      parameters:
-      - description: heartbeat id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/heartbeat.UpdateRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/heartbeat.Heartbeat'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Update heartbeat by id
-      tags:
-      - heartbeats
   /idle-rules:
     get:
       consumes:
@@ -5409,8 +5278,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -5555,8 +5423,7 @@ paths:
       description: delete user interface
       operationId: internal-delete-user-interface
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -5592,6 +5459,139 @@ paths:
       summary: update user interface
       tags:
       - internal
+  /message-rate-stats:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of stats
+      operationId: message-rate-stats-find-all
+      parameters:
+      - in: query
+        name: from
+        required: true
+        type: integer
+      - in: query
+        name: interval
+        required: true
+        type: string
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sort_by
+        type: string
+      - in: query
+        name: to
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/messageratestats.StatsResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find message rate stats
+      tags:
+      - message-rate-stats
+  /notification:
+    get:
+      consumes:
+      - application/json
+      description: Get notification settings
+      operationId: notification-get
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/notification.Notification'
+                  type: array
+              type: object
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get notification settings
+      tags:
+      - notification
+    put:
+      consumes:
+      - application/json
+      description: Update notification settings
+      operationId: notification-update
+      parameters:
+      - description: type id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/notification.Notification'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/notification.Notification'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Update notification settings
+      tags:
+      - notification
   /pbehavior-comments:
     post:
       consumes:
@@ -5633,8 +5633,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -5742,8 +5741,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -5835,8 +5833,7 @@ paths:
       produces:
       - application/octet-stream
       responses:
-        "200":
-          description: ""
+        "200": {}
         "404":
           description: Not Found
           schema:
@@ -5944,8 +5941,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -6152,8 +6148,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -6272,7 +6267,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/pbehavior.PBehavior'
+                    $ref: '#/definitions/pbehavior.Response'
                   type: array
               type: object
         "400":
@@ -6303,7 +6298,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/pbehavior.PBehavior'
+            $ref: '#/definitions/pbehavior.Response'
         "400":
           description: Bad Request
           schema:
@@ -6325,8 +6320,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6352,7 +6346,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pbehavior.PBehavior'
+            $ref: '#/definitions/pbehavior.Response'
         "404":
           description: Not Found
           schema:
@@ -6386,7 +6380,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pbehavior.PBehavior'
+            $ref: '#/definitions/pbehavior.Response'
         "400":
           description: Bad Request
           schema:
@@ -6401,10 +6395,10 @@ paths:
       summary: Update behavior by id
       tags:
       - pbehaviors
-  /pbehaviors/{id}/eids:
+  /pbehaviors/{id}/entities:
     get:
-      description: Get pbehavior eids list
-      operationId: pbehaviors-get-eids
+      description: Find entities by pbehavior id
+      operationId: pbehaviors-find-entities
       parameters:
       - description: pbehavior id
         in: path
@@ -6444,7 +6438,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/pbehavior.EID'
+                    $ref: '#/definitions/entity.Entity'
                   type: array
               type: object
         "400":
@@ -6458,7 +6452,7 @@ paths:
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
-      summary: Get pbehavior eids list
+      summary: Find entities by pbehavior id
       tags:
       - pbehaviors
   /pbehaviors/count:
@@ -6641,8 +6635,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6810,8 +6803,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6979,8 +6971,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -7179,6 +7170,10 @@ paths:
         in: query
         name: sort
         type: string
+      - description: role permission
+        in: query
+        name: permission
+        type: string
       - description: sort query
         in: query
         name: sort_by
@@ -7247,8 +7242,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -7416,8 +7410,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -7514,8 +7507,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -7619,8 +7611,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -7806,4 +7797,11 @@ paths:
       summary: Find all entity by service id
       tags:
       - weather-services
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: x-canopsis-authkey
+    type: apiKey
+  BasicAuth:
+    type: basic
 swagger: "2.0"

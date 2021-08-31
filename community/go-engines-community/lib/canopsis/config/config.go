@@ -8,6 +8,8 @@ import (
 const (
 	ConfigKeyName        = "global_config"
 	UserInterfaceKeyName = "user_interface"
+	VersionKeyName       = "canopsis_version"
+	RemediationKeyName   = "remediation"
 )
 
 // SectionAlarm ...
@@ -22,6 +24,8 @@ type SectionAlarm struct {
 	OutputLength         int    `toml:"OutputLength"`
 	// DisableActionSnoozeDelayOnPbh ignores Pbh state to resolve snoozed with Action alarm while is True
 	DisableActionSnoozeDelayOnPbh bool `toml:"DisableActionSnoozeDelayOnPbh"`
+	// TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
+	TimeToKeepResolvedAlarms string `toml:"TimeToKeepResolvedAlarms"`
 }
 
 // SectionGlobal ...
@@ -38,10 +42,6 @@ func (s *SectionGlobal) GetReconnectTimeout() time.Duration {
 
 type SectionTimezone struct {
 	Timezone string `toml:"Timezone"`
-}
-
-type SectionRemediation struct {
-	JobExecutorFetchTimeoutSeconds int64 `toml:"JobExecutorFetchTimeoutSeconds"`
 }
 
 type SectionImportCtx struct {
@@ -66,7 +66,6 @@ type CanopsisConf struct {
 	Global      SectionGlobal      `bson:"global" toml:"global"`
 	Alarm       SectionAlarm       `bson:"alarm" toml:"alarm"`
 	Timezone    SectionTimezone    `bson:"timezone" toml:"timezone"`
-	Remediation SectionRemediation `bson:"remediation" toml:"remediation"`
 	ImportCtx   SectionImportCtx   `bson:"import_ctx" toml:"import_ctx"`
 	File        SectionFile        `bson:"file" toml:"file"`
 	DataStorage SectionDataStorage `bson:"data_storage" toml:"data_storage"`
@@ -76,6 +75,6 @@ type CanopsisConf struct {
 type UserInterfaceConf struct {
 	IsAllowChangeSeverityToInfo bool `bson:"allow_change_severity_to_info"`
 	// MaxMatchedItems need to warn user when number of items that match patterns is above this value
-	MaxMatchedItems int `bson:"max_matched_items"`
-	CheckCountRequestTimeout    int  `bson:"check_count_request_timeout"`
+	MaxMatchedItems          int `bson:"max_matched_items"`
+	CheckCountRequestTimeout int `bson:"check_count_request_timeout"`
 }

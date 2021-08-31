@@ -74,8 +74,16 @@ func getParseDataSets() []dateSet {
 			Expected:   bson.M{"name": bson.M{"$regex": "criticité"}},
 		},
 		{
+			Expression: "name LIKE 10",
+			Expected:   bson.M{"name": bson.M{"$regex": "10"}},
+		},
+		{
 			Expression: "connector NOT LIKE \"test_connector\"",
 			Expected:   bson.M{"connector": bson.M{"$not": bson.M{"$regex": "test_connector"}}},
+		},
+		{
+			Expression: "connector NOT LIKE 10",
+			Expected:   bson.M{"connector": bson.M{"$not": bson.M{"$regex": "10"}}},
 		},
 		{
 			Expression: "children CONTAINS \"test_connector\"",
@@ -87,7 +95,7 @@ func getParseDataSets() []dateSet {
 		},
 		{
 			Expression: "NOT connector=\"test_connector1\"",
-			Expected:   bson.M{"$not": bson.M{"connector": bson.M{"$eq": "test_connector1"}}},
+			Expected:   bson.M{"connector": bson.M{"$not": bson.M{"$eq": "test_connector1"}}},
 		},
 		{
 			Expression: "connector=\"test_connector1\" AND connector=\"test_connector2\"",
@@ -158,7 +166,7 @@ func getParseDataSets() []dateSet {
 		{
 			Expression: "NOT connector=\"test_connector1\" OR connector=\"test_connector2\" AND connector LIKE \"test_connector3\"",
 			Expected: bson.M{"$or": []bson.M{
-				{"$not": bson.M{"connector": bson.M{"$eq": "test_connector1"}}},
+				{"connector": bson.M{"$not": bson.M{"$eq": "test_connector1"}}},
 				{"$and": []bson.M{
 					{"connector": bson.M{"$eq": "test_connector2"}},
 					{"connector": bson.M{"$regex": "test_connector3"}},

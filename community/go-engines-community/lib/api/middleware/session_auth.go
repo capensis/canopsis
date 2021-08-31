@@ -34,7 +34,7 @@ func SessionAuth(db mongo.DbClient, store sessions.Store) gin.HandlerFunc {
 		if val, ok := session.Values["user"]; ok {
 			if userId, ok := val.(string); ok {
 				provider := userprovider.NewMongoProvider(db)
-				user, err := provider.FindByID(userId)
+				user, err := provider.FindByID(c.Request.Context(), userId)
 
 				if err != nil {
 					panic(err)

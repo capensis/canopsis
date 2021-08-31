@@ -1,18 +1,8 @@
 package appinfo
 
-const (
-	Casconfig   = "casconfig"
-	Ldapconfig  = "ldapconfig"
-	CrecordName = "crecord_name"
-)
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 
-type LoginServiceConf struct {
-	CrecordName string                 `json:"crecord_name" bson:"crecord_name"`
-	Enable      bool                   `json:"enable" bson:"enable"`
-	Fields      map[string]interface{} `bson:",inline"`
-}
-
-type CanopsisVersionConf struct {
+type VersionConf struct {
 	Edition string `json:"edition" bson:"edition"`
 	Stack   string `json:"stack" bson:"stack"`
 	Version string `json:"version" bson:"version"`
@@ -36,8 +26,8 @@ type UserInterfaceConf struct {
 	Language                  string        `json:"language,omitempty" bson:"language,omitempty" binding:"oneoforempty=fr en"`
 	PopupTimeout              *PopupTimeout `json:"popup_timeout,omitempty" bson:"popup_timeout,omitempty"`
 	AllowChangeSeverityToInfo bool          `json:"allow_change_severity_to_info" bson:"allow_change_severity_to_info"`
-	MaxMatchedItems           int64         `json:"max_matched_items" bson:"max_matched_items"`
-	CheckCountRequestTimeout  int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout"`
+	MaxMatchedItems           int64         `json:"max_matched_items" bson:"max_matched_items" binding:"gt=0"`
+	CheckCountRequestTimeout  int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout" binding:"gt=0"`
 }
 
 type TimezoneConf struct {
@@ -45,29 +35,35 @@ type TimezoneConf struct {
 }
 
 type RemediationConf struct {
-	JobExecutorFetchTimeoutSeconds int64 `json:"jobexecutorfetchtimeoutseconds,omitempty" bson:"jobexecutorfetchtimeoutseconds"`
+	PauseManualInstructionInterval types.DurationWithUnit `json:"pause_manual_instruction_interval"`
+	JobConfigTypes                 []JobConfigType        `json:"job_config_types"`
+}
+
+type JobConfigType struct {
+	Name     string `json:"name"`
+	AuthType string `json:"auth_type"`
 }
 
 type AppInfoResponse struct {
 	UserInterfaceConf
 	TimezoneConf
-	CanopsisVersionConf
-	RemediationConf
-}
-
-type LogInProvider struct {
+	VersionConf
+	Remediation RemediationConf `json:"remediation"`
 }
 
 type LoginConfig struct {
-	Providers  map[string]int `json:"providers,omitempty"`
-	Casconfig  interface{}    `json:"casconfig,omitempty"`
-	Ldapconfig *struct {
-		Enable bool `json:"enable"`
-	} `json:"ldapconfig,omitempty"`
+	CasConfig  LoginConfigMethod `json:"casconfig,omitempty"`
+	LdapConfig LoginConfigMethod `json:"ldapconfig,omitempty"`
+	SamlConfig LoginConfigMethod `json:"saml2config,omitempty"`
+}
+
+type LoginConfigMethod struct {
+	Title  string `json:"title,omitempty"`
+	Enable bool   `json:"enable"`
 }
 
 type LoginConfigResponse struct {
 	LoginConfig       LoginConfig       `json:"login_config"`
 	UserInterfaceConf UserInterfaceConf `json:"user_interface"`
-	CanopsisVersionConf
+	VersionConf
 }

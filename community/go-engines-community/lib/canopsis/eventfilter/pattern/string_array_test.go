@@ -1,13 +1,14 @@
 package pattern_test
 
 import (
+	"reflect"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"reflect"
-	"testing"
 )
 
 type stringArrayPatternWrapper struct {
@@ -36,6 +37,8 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 				So(p.HasOneOf.Value, ShouldBeEmpty)
 				So(p.HasNot.Set, ShouldBeFalse)
 				So(p.HasNot.Value, ShouldBeEmpty)
+				So(p.IsEmpty.Set, ShouldBeFalse)
+				So(p.IsEmpty.Value, ShouldBeFalse)
 			})
 
 			Convey("The pattern should accept the value of the string", func() {
@@ -69,6 +72,8 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 				So(p.HasOneOf.Value, ShouldBeEmpty)
 				So(p.HasNot.Set, ShouldBeFalse)
 				So(p.HasNot.Value, ShouldBeEmpty)
+				So(p.IsEmpty.Set, ShouldBeFalse)
+				So(p.IsEmpty.Value, ShouldBeFalse)
 			})
 
 			Convey("The pattern should accept the value of the string", func() {
@@ -101,6 +106,8 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 				So(p.HasOneOf.Value, ShouldBeEmpty)
 				So(p.HasNot.Set, ShouldBeTrue)
 				So(p.HasNot.Value, ShouldContain, "test2")
+				So(p.IsEmpty.Set, ShouldBeFalse)
+				So(p.IsEmpty.Value, ShouldBeFalse)
 			})
 
 			Convey("The pattern should accept the value of the string", func() {
@@ -134,6 +141,8 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 				So(p.HasNot.Set, ShouldBeTrue)
 				So(p.HasNot.Value, ShouldContain, "test1")
 				So(p.HasNot.Value, ShouldContain, "test2")
+				So(p.IsEmpty.Set, ShouldBeFalse)
+				So(p.IsEmpty.Value, ShouldBeFalse)
 			})
 
 			Convey("The pattern should accept the value of the string", func() {
@@ -166,6 +175,8 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 				So(p.HasEvery.Value, ShouldBeEmpty)
 				So(p.HasNot.Set, ShouldBeFalse)
 				So(p.HasNot.Value, ShouldBeEmpty)
+				So(p.IsEmpty.Set, ShouldBeFalse)
+				So(p.IsEmpty.Value, ShouldBeFalse)
 			})
 
 			Convey("The pattern should accept the value of the string", func() {
@@ -199,6 +210,8 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 				So(p.HasEvery.Value, ShouldBeEmpty)
 				So(p.HasNot.Set, ShouldBeFalse)
 				So(p.HasNot.Value, ShouldBeEmpty)
+				So(p.IsEmpty.Set, ShouldBeFalse)
+				So(p.IsEmpty.Value, ShouldBeFalse)
 			})
 
 			Convey("The pattern should accept the value of the string", func() {
@@ -233,6 +246,8 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 				So(p.HasNot.Set, ShouldBeTrue)
 				So(p.HasNot.Value, ShouldContain, "test1")
 				So(p.HasNot.Value, ShouldContain, "test2")
+				So(p.IsEmpty.Set, ShouldBeFalse)
+				So(p.IsEmpty.Value, ShouldBeFalse)
 			})
 
 			Convey("The pattern should accept the value of the string", func() {
@@ -267,6 +282,8 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 				So(p.HasOneOf.Value, ShouldContain, "test2")
 				So(p.HasNot.Set, ShouldBeTrue)
 				So(p.HasNot.Value, ShouldContain, "test1")
+				So(p.IsEmpty.Set, ShouldBeFalse)
+				So(p.IsEmpty.Value, ShouldBeFalse)
 			})
 
 			Convey("The pattern should accept the value of the string", func() {
@@ -301,6 +318,8 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 				So(p.HasNot.Set, ShouldBeTrue)
 				So(p.HasNot.Value, ShouldContain, "test1")
 				So(p.HasNot.Value, ShouldContain, "test2")
+				So(p.IsEmpty.Set, ShouldBeFalse)
+				So(p.IsEmpty.Value, ShouldBeFalse)
 			})
 
 			Convey("The pattern should accept the value of the string", func() {
@@ -334,6 +353,8 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 				So(p.HasNot.Value, ShouldBeEmpty)
 				So(p.HasOneOf.Set, ShouldBeFalse)
 				So(p.HasOneOf.Value, ShouldBeEmpty)
+				So(p.IsEmpty.Set, ShouldBeFalse)
+				So(p.IsEmpty.Value, ShouldBeFalse)
 			})
 
 			Convey("The pattern should accept the value of the string", func() {
@@ -399,39 +420,8 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 				So(p.HasNot.Value, ShouldBeEmpty)
 				So(p.HasOneOf.Set, ShouldBeFalse)
 				So(p.HasOneOf.Value, ShouldBeEmpty)
-			})
-
-			Convey("The pattern should accept the value of the string", func() {
-				So(p.Matches([]string{"test1", "test2", "test3"}), ShouldBeTrue)
-				So(p.Matches([]string{"test2", "test3"}), ShouldBeTrue)
-				So(p.Matches([]string{"test3"}), ShouldBeTrue)
-				So(p.Matches([]string{}), ShouldBeTrue)
-			})
-		})
-	})
-
-	Convey("Given a valid BSON patterns representing both has and has_not string array empty patterns", t, func() {
-		mapPattern := bson.M{
-			"pattern": bson.M{
-				"has_every": []string{},
-				"has_not":   []string{},
-			},
-		}
-		bsonPattern, err := bson.Marshal(mapPattern)
-		So(err, ShouldBeNil)
-
-		Convey("The pattern should be decoded without errors", func() {
-			var w stringArrayPatternWrapper
-			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
-			p := w.Pattern
-
-			Convey("The decoded values should be correct", func() {
-				So(p.HasEvery.Set, ShouldBeFalse)
-				So(p.HasEvery.Value, ShouldBeEmpty)
-				So(p.HasNot.Set, ShouldBeFalse)
-				So(p.HasNot.Value, ShouldBeEmpty)
-				So(p.HasOneOf.Set, ShouldBeFalse)
-				So(p.HasOneOf.Value, ShouldBeEmpty)
+				So(p.IsEmpty.Set, ShouldBeFalse)
+				So(p.IsEmpty.Value, ShouldBeFalse)
 			})
 
 			Convey("The pattern should accept the value of the string", func() {
@@ -462,6 +452,8 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 				So(p.HasNot.Value, ShouldBeEmpty)
 				So(p.HasOneOf.Set, ShouldBeFalse)
 				So(p.HasOneOf.Value, ShouldBeEmpty)
+				So(p.IsEmpty.Set, ShouldBeFalse)
+				So(p.IsEmpty.Value, ShouldBeFalse)
 			})
 
 			Convey("The pattern should accept the value of the string", func() {
@@ -488,6 +480,75 @@ func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldNotBeNil)
 		})
 	})
+
+	/// -----------------------------------------------------------------------
+	Convey("Given a valid BSON patterns representing is empty:true array pattern", t, func() {
+		mapPattern := bson.M{
+			"pattern": bson.M{
+				"is_empty": true,
+			},
+		}
+		bsonPattern, err := bson.Marshal(mapPattern)
+		So(err, ShouldBeNil)
+
+		Convey("The pattern should be decoded without errors", func() {
+			var w stringArrayPatternWrapper
+			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
+			p := w.Pattern
+
+			Convey("The decoded values should be correct", func() {
+				So(p.HasEvery.Set, ShouldBeFalse)
+				So(p.HasEvery.Value, ShouldBeEmpty)
+				So(p.HasOneOf.Set, ShouldBeFalse)
+				So(p.HasOneOf.Value, ShouldBeEmpty)
+				So(p.HasNot.Set, ShouldBeFalse)
+				So(p.HasNot.Value, ShouldBeEmpty)
+				So(p.IsEmpty.Set, ShouldBeTrue)
+				So(p.IsEmpty.Value, ShouldBeTrue)
+			})
+
+			Convey("The pattern should accept the value of the string", func() {
+				So(p.Matches([]string{"test1", "test2", "test3"}), ShouldBeFalse)
+				So(p.Matches([]string{"test2", "test3"}), ShouldBeFalse)
+				So(p.Matches([]string{"test3"}), ShouldBeFalse)
+				So(p.Matches([]string{}), ShouldBeTrue)
+			})
+		})
+	})
+
+	Convey("Given a valid BSON patterns representing is empty:false array pattern", t, func() {
+		mapPattern := bson.M{
+			"pattern": bson.M{
+				"is_empty": false,
+			},
+		}
+		bsonPattern, err := bson.Marshal(mapPattern)
+		So(err, ShouldBeNil)
+
+		Convey("The pattern should be decoded without errors", func() {
+			var w stringArrayPatternWrapper
+			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
+			p := w.Pattern
+
+			Convey("The decoded values should be correct", func() {
+				So(p.HasEvery.Set, ShouldBeFalse)
+				So(p.HasEvery.Value, ShouldBeEmpty)
+				So(p.HasOneOf.Set, ShouldBeFalse)
+				So(p.HasOneOf.Value, ShouldBeEmpty)
+				So(p.HasNot.Set, ShouldBeFalse)
+				So(p.HasNot.Value, ShouldBeEmpty)
+				So(p.IsEmpty.Set, ShouldBeTrue)
+				So(p.IsEmpty.Value, ShouldBeFalse)
+			})
+
+			Convey("The pattern should accept the value of the string", func() {
+				So(p.Matches([]string{"test1", "test2", "test3"}), ShouldBeTrue)
+				So(p.Matches([]string{"test2", "test3"}), ShouldBeTrue)
+				So(p.Matches([]string{"test3"}), ShouldBeTrue)
+				So(p.Matches([]string{}), ShouldBeFalse)
+			})
+		})
+	})
 }
 
 func TestStringArrayPatternToMongoDriverQuery(t *testing.T) {
@@ -497,12 +558,14 @@ func TestStringArrayPatternToMongoDriverQuery(t *testing.T) {
 				"has_every":  []string{"test1"},
 				"has_one_of": []string{"test2"},
 				"has_not":    []string{"test3"},
+				"is_empty":   false,
 			},
 		}
 		mongoFilter := bson.M{
-			"$all": []string{"test1"},
-			"$in":  []string{"test2"},
-			"$nin": []string{"test3"},
+			"$all":    []string{"test1"},
+			"$in":     []string{"test2"},
+			"$nin":    []string{"test3"},
+			"$exists": true, "$ne": bson.A{},
 		}
 		bsonPattern, err := bson.Marshal(mapPattern)
 		So(err, ShouldBeNil)
@@ -532,7 +595,7 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.StringArrayPattern{
 				StringArrayConditions: pattern.StringArrayConditions{
-					HasEvery: utils.OptionalStringArray{
+					HasEvery: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test2"},
 					},
@@ -548,7 +611,7 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.StringArrayPattern{
 				StringArrayConditions: pattern.StringArrayConditions{
-					HasEvery: utils.OptionalStringArray{
+					HasEvery: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test1", "test2"},
 					},
@@ -564,7 +627,7 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.StringArrayPattern{
 				StringArrayConditions: pattern.StringArrayConditions{
-					HasNot: utils.OptionalStringArray{
+					HasNot: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test2"},
 					},
@@ -580,7 +643,7 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.StringArrayPattern{
 				StringArrayConditions: pattern.StringArrayConditions{
-					HasNot: utils.OptionalStringArray{
+					HasNot: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test1", "test2"},
 					},
@@ -596,7 +659,7 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.StringArrayPattern{
 				StringArrayConditions: pattern.StringArrayConditions{
-					HasNot: utils.OptionalStringArray{
+					HasNot: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test1", "test2"},
 					},
@@ -612,7 +675,7 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.StringArrayPattern{
 				StringArrayConditions: pattern.StringArrayConditions{
-					HasOneOf: utils.OptionalStringArray{
+					HasOneOf: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test2"},
 					},
@@ -628,7 +691,7 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.StringArrayPattern{
 				StringArrayConditions: pattern.StringArrayConditions{
-					HasOneOf: utils.OptionalStringArray{
+					HasOneOf: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test1", "test2"},
 					},
@@ -645,13 +708,45 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 			},
 			Pattern: pattern.StringArrayPattern{
 				StringArrayConditions: pattern.StringArrayConditions{
-					HasEvery: utils.OptionalStringArray{
+					HasEvery: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test3"},
 					},
-					HasNot: utils.OptionalStringArray{
+					HasNot: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test1", "test2"},
+					},
+				},
+			},
+		},
+		{
+			TestName: "test for is_empty:true value",
+			ExpectedUnmarshalled: bson.M{
+				"pattern": bson.M{
+					"is_empty": true,
+				},
+			},
+			Pattern: pattern.StringArrayPattern{
+				StringArrayConditions: pattern.StringArrayConditions{
+					IsEmpty: types.OptionalBool{
+						Set:   true,
+						Value: true,
+					},
+				},
+			},
+		},
+		{
+			TestName: "test for is_empty:false value",
+			ExpectedUnmarshalled: bson.M{
+				"pattern": bson.M{
+					"is_empty": false,
+				},
+			},
+			Pattern: pattern.StringArrayPattern{
+				StringArrayConditions: pattern.StringArrayConditions{
+					IsEmpty: types.OptionalBool{
+						Set:   true,
+						Value: false,
 					},
 				},
 			},

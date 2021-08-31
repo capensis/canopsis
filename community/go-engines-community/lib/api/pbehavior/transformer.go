@@ -12,8 +12,8 @@ import (
 )
 
 type ModelTransformer interface {
-	TransformCreateRequestToModel(request CreateRequest) (*PBehavior, error)
-	TransformUpdateRequestToModel(request UpdateRequest) (*PBehavior, error)
+	TransformCreateRequestToModel(ctx context.Context, request CreateRequest) (*Response, error)
+	TransformUpdateRequestToModel(ctx context.Context, request UpdateRequest) (*Response, error)
 }
 
 type modelTransformer struct {
@@ -40,28 +40,28 @@ func NewModelTransformer(
 	}
 }
 
-func (t *modelTransformer) TransformCreateRequestToModel(request CreateRequest) (*PBehavior, error) {
-	reason, err := t.transformReasonToModel(request.Reason)
+func (t *modelTransformer) TransformCreateRequestToModel(ctx context.Context, request CreateRequest) (*Response, error) {
+	reason, err := t.transformReasonToModel(ctx, request.Reason)
 	if err != nil {
 		return nil, err
 	}
 
-	pbhType, err := t.transformTypeToModel(request.Type)
+	pbhType, err := t.transformTypeToModel(ctx, request.Type)
 	if err != nil {
 		return nil, err
 	}
 
-	exdates, err := t.exceptionTransformer.TransformExdatesRequestToModel(request.Exdates)
+	exdates, err := t.exceptionTransformer.TransformExdatesRequestToModel(ctx, request.Exdates)
 	if err != nil {
 		return nil, err
 	}
 
-	exceptions, err := t.transformExceptionsToModel(request.Exceptions)
+	exceptions, err := t.transformExceptionsToModel(ctx, request.Exceptions)
 	if err != nil {
 		return nil, err
 	}
 
-	return &PBehavior{
+	return &Response{
 		ID:         request.ID,
 		Author:     request.Author,
 		Enabled:    *request.Enabled,
@@ -77,13 +77,11 @@ func (t *modelTransformer) TransformCreateRequestToModel(request CreateRequest) 
 	}, nil
 }
 
-func (t *modelTransformer) TransformUpdateRequestToModel(request UpdateRequest) (*PBehavior, error) {
-	return t.TransformCreateRequestToModel(CreateRequest(request))
+func (t *modelTransformer) TransformUpdateRequestToModel(ctx context.Context, request UpdateRequest) (*Response, error) {
+	return t.TransformCreateRequestToModel(ctx, CreateRequest(request))
 }
 
-func (t *modelTransformer) transformReasonToModel(id string) (*apireason.Reason, error) {
-	ctx, cancel := context.WithCancel(context.TODO())
-	defer cancel()
+func (t *modelTransformer) transformReasonToModel(ctx context.Context, id string) (*apireason.Reason, error) {
 	var reason apireason.Reason
 
 	err := t.reasonCollection.
@@ -100,9 +98,7 @@ func (t *modelTransformer) transformReasonToModel(id string) (*apireason.Reason,
 	return &reason, nil
 }
 
-func (t *modelTransformer) transformTypeToModel(id string) (*pbehavior.Type, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (t *modelTransformer) transformTypeToModel(ctx context.Context, id string) (*pbehavior.Type, error) {
 	var pbhType pbehavior.Type
 
 	err := t.typeCollection.
@@ -119,13 +115,11 @@ func (t *modelTransformer) transformTypeToModel(id string) (*pbehavior.Type, err
 	return &pbhType, nil
 }
 
-func (t *modelTransformer) transformExceptionsToModel(ids []string) ([]pbehaviorexception.Exception, error) {
+func (t *modelTransformer) transformExceptionsToModel(ctx context.Context, ids []string) ([]pbehaviorexception.Exception, error) {
 	if len(ids) == 0 {
 		return []pbehaviorexception.Exception{}, nil
 	}
 
-	ctx, cancel := context.WithCancel(context.TODO())
-	defer cancel()
 	cursor, err := t.exceptionCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": bson.M{"$in": ids}}},
 		{"$unwind": "$exdates"},
@@ -144,7 +138,7 @@ func (t *modelTransformer) transformExceptionsToModel(ids []string) ([]pbehavior
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$data",
-				bson.D{{"exdates", "$exdates"}}}},
+				bson.D{{Key: "exdates", Value: "$exdates"}}}},
 		}},
 	})
 	if err != nil {

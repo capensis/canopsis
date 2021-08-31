@@ -56,7 +56,7 @@ func (a *api) List(c *gin.Context) {
 		r.Ids = ids.([]string)
 	}
 
-	playlists, err := a.store.Find(r)
+	playlists, err := a.store.Find(c.Request.Context(), r)
 	if err != nil {
 		panic(err)
 	}
@@ -83,7 +83,7 @@ func (a *api) List(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /playlists/{id} [get]
 func (a *api) Get(c *gin.Context) {
-	playlist, err := a.store.GetById(c.Param("id"))
+	playlist, err := a.store.GetById(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -121,7 +121,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	playlist, err := a.store.Insert(userID.(string), request)
+	playlist, err := a.store.Insert(c.Request.Context(), userID.(string), request)
 	if err != nil {
 		panic(err)
 	}
@@ -163,7 +163,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	playlist, err := a.store.Update(request)
+	playlist, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -198,7 +198,7 @@ func (a *api) Update(c *gin.Context) {
 // @Router /playlists/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(id)
+	ok, err := a.store.Delete(c.Request.Context(), id)
 	if err != nil {
 		panic(err)
 	}

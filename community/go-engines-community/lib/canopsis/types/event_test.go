@@ -2,12 +2,9 @@ package types_test
 
 import (
 	"encoding/json"
-	"testing"
-	"time"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/heartbeat"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
+	"testing"
 )
 
 func getEvent() types.Event {
@@ -63,110 +60,6 @@ func GetBadEvent2() types.Event {
 	evt := GetBadEvent()
 	evt.EventType = ""
 	return evt
-}
-
-func TestPartialID(t *testing.T) {
-	Convey("HeartBeatItem and Event", t, func() {
-		li := heartbeat.NewItem(time.Second * 2)
-		li.AddMapping("connector", "test")
-		li.AddMapping("component", "testc")
-
-		bevent := []byte(`{"connector": "test", "component": "testc"}`)
-		var ievent types.GenericEvent
-
-		Convey("GenericEvent can JSONUnmarshal", func() {
-			So(ievent.JSONUnmarshal(bevent), ShouldBeNil)
-
-			Convey("I must have a valid PartialID without error", func() {
-				id, err := ievent.PartialID(li)
-				So(id, ShouldEqual, "component:testc.connector:test")
-				So(err, ShouldBeNil)
-			})
-		})
-	})
-}
-
-func TestEmptyPartialID(t *testing.T) {
-	Convey("Empty PartialID", t, func() {
-		li := heartbeat.NewItem(0)
-		bevent := []byte(`{"connector":"test"}`)
-		var ievent types.GenericEvent
-
-		Convey("GenericEvent can JSONUnmarshal", func() {
-			So(ievent.JSONUnmarshal(bevent), ShouldBeNil)
-
-			Convey("GenericEvent can PartialID", func() {
-				id, err := ievent.PartialID(li)
-				So(id, ShouldEqual, "")
-				So(err, ShouldNotBeNil)
-			})
-		})
-	})
-}
-
-func TestBadJSONPartialID(t *testing.T) {
-	Convey("Bad Partial ID", t, func() {
-		var ievent types.GenericEvent
-		sevent := `"bla"`
-		li := heartbeat.NewItem(0)
-		li.AddMapping("connector", "bla")
-
-		Convey("GenericEvent can JSONUnmarshal", func() {
-			err := ievent.JSONUnmarshal([]byte(sevent))
-			So(err, ShouldBeNil)
-
-			Convey("PartialID raises an error", func() {
-				_, err = ievent.PartialID(li)
-
-				So(err, ShouldNotBeNil)
-				So(err.Error(), ShouldEqual, "cannot fetch data")
-			})
-		})
-
-	})
-}
-
-func TestBadJSON2PartialID(t *testing.T) {
-	Convey("Given a bad json document", t, func() {
-		var ievent types.GenericEvent
-		ev := []byte(`{"bla": ["bla"]}`)
-
-		Convey("I must unmarshal it", func() {
-			err := ievent.JSONUnmarshal(ev)
-			So(err, ShouldBeNil)
-
-			Convey("But i cannot get a partial id from a bad key", func() {
-				li := heartbeat.NewItem(0)
-				li.AddMapping("bla", "vert")
-				id, err := ievent.PartialID(li)
-
-				So(err, ShouldBeNil)
-				So(id, ShouldEqual, "bla:bla")
-				So(li.ID(), ShouldNotEqual, id)
-				So(li.ID(), ShouldEqual, "bla:vert")
-			})
-		})
-	})
-}
-
-func TestNoFieldPartialID(t *testing.T) {
-	var ievent types.GenericEvent
-	ev := []byte(`{"connector": "bla"}`)
-
-	err := ievent.JSONUnmarshal(ev)
-	if err != nil {
-		t.Fatalf("json unmarshal: %v", err)
-	}
-
-	li := heartbeat.NewItem(0)
-	li.AddMapping("ZBLEURRGANRSTUIEBL", "^_^")
-	id, err := ievent.PartialID(li)
-	if err == nil {
-		t.Fatal("no error returned")
-	}
-	if id != "" {
-		t.Fatalf("got non empty id: %s", id)
-	}
 }
 
 func TestEventTypeIsReplaced(t *testing.T) {
