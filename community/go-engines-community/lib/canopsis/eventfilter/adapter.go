@@ -22,10 +22,7 @@ func NewAdapter(dbClient mongo.DbClient) Adapter {
 
 // List returns a list of all the rules that are enabled and valid, sorted by
 // ascending priority.
-func (a *mongoAdapter) List() ([]Rule, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) List(ctx context.Context) ([]Rule, error) {
 	var ruleUnpackers []RuleUnpacker
 
 	// Get the rules that are enabled, or where enabled is not set.

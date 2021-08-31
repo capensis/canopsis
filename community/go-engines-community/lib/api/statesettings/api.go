@@ -43,14 +43,13 @@ func NewApi(
 // @Router /state-settings [get]
 func (a *api) List(c *gin.Context) {
 	var query pagination.Query
-	query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&query); err != nil {
+	if err := pagination.BindQuery(c, &query); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
 		return
 	}
 
-	aggregationResult, err := a.store.Find(query)
+	aggregationResult, err := a.store.Find(c.Request.Context(), query)
 	if err != nil {
 		panic(err)
 	}
@@ -88,7 +87,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	stateSetting, err := a.store.Update(request)
+	stateSetting, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}

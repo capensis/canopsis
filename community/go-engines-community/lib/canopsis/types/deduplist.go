@@ -3,7 +3,6 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/gob"
 )
 
 // DedupList is not to be used directly, use NewDedupList instead.
@@ -108,29 +107,6 @@ func (i *DedupList) UnmarshalJSON(in []byte) error {
 	err := json.Unmarshal(in, &list)
 	if err != nil {
 		return fmt.Errorf("DedupList.UnmarshalJSON: %v", err)
-	}
-	i.Add(list...)
-	return err
-}
-
-// MarshalBinary ...
-func (i DedupList) MarshalBinary() ([]byte, error) {
-	enc := gob.NewEncoder()
-	b, err := enc.Encode(i.List())
-	if err != nil {
-		return b, fmt.Errorf("DedupList.MarshalBinary: %v", err)
-	}
-	return b, err
-}
-
-// UnmarshalBinary ...
-func (i *DedupList) UnmarshalBinary(in []byte) error {
-	var list []string
-	dec := gob.NewDecoder()
-	i.reset()
-	err := dec.Decode(in, &list)
-	if err != nil {
-		return fmt.Errorf("DedupList.UnmarshalBinary: %v", err)
 	}
 	i.Add(list...)
 	return err

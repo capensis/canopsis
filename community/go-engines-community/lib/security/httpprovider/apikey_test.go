@@ -37,7 +37,7 @@ func TestApikeyProvider_Auth_GivenApiKeyByQueryParam_ShouldAuthUser(t *testing.T
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByAuthApiKey(gomock.Eq(apiKey)).
+		FindByAuthApiKey(gomock.Any(), gomock.Eq(apiKey)).
 		Return(expectedUser, nil)
 
 	p := NewApikeyProvider(mockUserProvider)
@@ -71,7 +71,7 @@ func TestApikeyProvider_Auth_GivenApiKeyByHeader_ShouldAuthUser(t *testing.T) {
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByAuthApiKey(gomock.Eq(apiKey)).
+		FindByAuthApiKey(gomock.Any(), gomock.Eq(apiKey)).
 		Return(expectedUser, nil)
 
 	p := NewApikeyProvider(mockUserProvider)
@@ -98,7 +98,7 @@ func TestApikeyProvider_Auth_GivenNoQueryParamAndNoHeader_ShouldReturnNil(t *tes
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByAuthApiKey(gomock.Any()).
+		FindByAuthApiKey(gomock.Any(), gomock.Any()).
 		Times(0)
 
 	p := NewApikeyProvider(mockUserProvider)
@@ -125,7 +125,7 @@ func TestApikeyProvider_Auth_GivenInvalidApiKeyInQueryParam_ShouldReturnNil(t *t
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByAuthApiKey(gomock.Eq(apiKey)).
+		FindByAuthApiKey(gomock.Any(), gomock.Eq(apiKey)).
 		Return(nil, nil)
 
 	p := NewApikeyProvider(mockUserProvider)
@@ -153,7 +153,7 @@ func TestApikeyProvider_Auth_GivenInvalidApiKeyInHeader_ShouldReturnNil(t *testi
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
-		FindByAuthApiKey(gomock.Eq(apiKey)).
+		FindByAuthApiKey(gomock.Any(), gomock.Eq(apiKey)).
 		Return(nil, nil)
 
 	p := NewApikeyProvider(mockUserProvider)

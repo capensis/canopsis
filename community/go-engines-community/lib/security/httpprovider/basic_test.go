@@ -22,7 +22,7 @@ func TestBasicProvider_Auth_GivenAuthorizationHeader_ShouldAuthUser(t *testing.T
 	mockProvider := mock_security.NewMockProvider(ctrl)
 	mockProvider.
 		EXPECT().
-		Auth(gomock.Eq(username), gomock.Eq(password)).
+		Auth(gomock.Any(), gomock.Eq(username), gomock.Eq(password)).
 		Return(expectedUser, nil)
 
 	p := NewBasicProvider(mockProvider)
@@ -50,7 +50,7 @@ func TestBasicProvider_Auth_GivenNoHeader_ShouldReturnNil(t *testing.T) {
 	mockProvider := mock_security.NewMockProvider(ctrl)
 	mockProvider.
 		EXPECT().
-		Auth(gomock.Any(), gomock.Any()).
+		Auth(gomock.Any(), gomock.Any(), gomock.Any()).
 		Times(0)
 
 	p := NewBasicProvider(mockProvider)
@@ -78,7 +78,7 @@ func TestBasicProvider_Auth_GivenInvalidCredentials_ShouldReturnNil(t *testing.T
 	mockProvider := mock_security.NewMockProvider(ctrl)
 	mockProvider.
 		EXPECT().
-		Auth(gomock.Eq(username), gomock.Eq(password)).
+		Auth(gomock.Any(), gomock.Eq(username), gomock.Eq(password)).
 		Return(nil, nil)
 
 	p := NewBasicProvider(mockProvider)
@@ -106,7 +106,7 @@ func TestBasicProvider_Auth_GivenInvalidHeader_ShouldReturnNil(t *testing.T) {
 	mockProvider := mock_security.NewMockProvider(ctrl)
 	mockProvider.
 		EXPECT().
-		Auth(gomock.Any(), gomock.Any()).
+		Auth(gomock.Any(), gomock.Any(), gomock.Any()).
 		Times(0)
 
 	p := NewBasicProvider(mockProvider)

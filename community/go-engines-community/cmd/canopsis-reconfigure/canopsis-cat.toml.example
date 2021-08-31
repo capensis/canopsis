@@ -135,11 +135,11 @@ autoDelete = false
 exclusive = false
 noWait = false
 # args =
-  [RabbitMQ.queues.bind]
-  key = "#"
-  exchange = "canopsis.events"
-  noWait = false
-  # args =
+[RabbitMQ.queues.bind]
+key = "#"
+exchange = "canopsis.events"
+noWait = false
+# args =
 
 [[RabbitMQ.queues]]
 name = "FIFO_ack"
@@ -150,30 +150,17 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_heartbeat"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-  [RabbitMQ.queues.bind]
-  key = "#"
-  exchange = "canopsis.events"
-  noWait = false
-  # args =
-
-[[RabbitMQ.queues]]
 name = "Engine_service"
 durable = true
 autoDelete = false
 exclusive = false
 noWait = false
 # args =
-  [RabbitMQ.queues.bind]
-  key = "Engine_service"
-  exchange = "amq.direct"
-  noWait = false
-  # args =
+[RabbitMQ.queues.bind]
+key = "Engine_service"
+exchange = "amq.direct"
+noWait = false
+# args =
 
 [[RabbitMQ.queues]]
 name = "Engine_service_rpc_server"
@@ -190,11 +177,11 @@ autoDelete = false
 exclusive = false
 noWait = false
 # args =
-  [RabbitMQ.queues.bind]
-  key = "Engine_webhook"
-  exchange = "amq.direct"
-  noWait = false
-  # args =
+[RabbitMQ.queues.bind]
+key = "Engine_webhook"
+exchange = "amq.direct"
+noWait = false
+# args =
 
 [[RabbitMQ.queues]]
 name = "Engine_dynamic_infos"
@@ -203,11 +190,11 @@ autoDelete = false
 exclusive = false
 noWait = false
 # args =
-  [RabbitMQ.queues.bind]
-  key = "Engine_dynamic_infos"
-  exchange = "amq.direct"
-  noWait = false
-  # args =
+[RabbitMQ.queues.bind]
+key = "Engine_dynamic_infos"
+exchange = "amq.direct"
+noWait = false
+# args =
 
 [[RabbitMQ.queues]]
 name = "Engine_correlation"
@@ -216,11 +203,27 @@ autoDelete = false
 exclusive = false
 noWait = false
 # args =
-  [RabbitMQ.queues.bind]
-  key = "Engine_correlation"
-  exchange = "amq.direct"
-  noWait = false
-  # args =
+[RabbitMQ.queues.bind]
+key = "Engine_correlation"
+exchange = "amq.direct"
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
+name = "Engine_remediation_rpc_server"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
+name = "Engine_remediation_rpc_server_job"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
 
 [[RabbitMQ.queues]]
 name = "Engine_kpi"
@@ -229,11 +232,11 @@ autoDelete = false
 exclusive = false
 noWait = false
 # args =
-  [RabbitMQ.queues.bind]
-  key = "*.*.initkpi.#"
-  exchange = "canopsis.events"
-  noWait = false
-  # args =
+[RabbitMQ.queues.bind]
+key = "*.*.initkpi.#"
+exchange = "canopsis.events"
+noWait = false
+# args =
 
 [[RabbitMQ.queues]]
 name = "Engine_pbehavior"
@@ -242,11 +245,11 @@ autoDelete = false
 exclusive = false
 noWait = false
 # args =
-  [RabbitMQ.queues.bind]
-  key = "Engine_pbehavior"
-  exchange = "amq.direct"
-  noWait = false
-  # args =
+[RabbitMQ.queues.bind]
+key = "Engine_pbehavior"
+exchange = "amq.direct"
+noWait = false
+# args =
 
 [[RabbitMQ.queues]]
 name = "Engine_pbehavior_rpc_server"
@@ -284,14 +287,12 @@ CancelAutosolveDelay = "1h"
 DisplayNameScheme = "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}"
 OutputLength = 255
 DisableActionSnoozeDelayOnPbh = false
+# TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
+TimeToKeepResolvedAlarms = "720h"
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.timezone]
 Timezone = "Europe/Paris"
-
-# Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
-[Canopsis.remediation]
-JobExecutorFetchTimeoutSeconds = 30
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.data_storage]
@@ -304,3 +305,131 @@ TimeToExecute = "Sunday,23"
 ThdWarnMinPerImport = "30m"
 ThdCritMinPerImport = "60m"
 FilePattern = "/tmp/import_%s.json"
+
+# Remediation parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
+[Remediation]
+
+http_timeout = "1m"
+# launch_job_retries_amount is used for request retries.
+launch_job_retries_amount = 3
+# launch_job_retries_interval is used for request retries.
+launch_job_retries_interval = "5s"
+# wait_job_complete_retries_interval is used during polling execution status and for request retries.
+wait_job_complete_retries_interval = "5s"
+# wait_job_complete_retries_amount is used for polling execution status.
+wait_job_complete_retries_amount = 12
+# pause_manual_instruction_interval is used to pause instruction if user lost connection.
+pause_manual_instruction_interval = "15s"
+
+[Remediation.external_api.rundeck]
+# Field from error API response to resolve error message.
+response_err_msg_key = "message"
+
+# Authorization method of external API
+[Remediation.external_api.rundeck.auth]
+# type defines auth method. Possible values: header-token, bearer-token, basic-auth.
+type = "header-token"
+# header defines header for header-token type.
+header = "X-Rundeck-Auth-Token"
+
+# API endpoint to launch job
+[Remediation.external_api.rundeck.launch_endpoint]
+# url_tpl defines url template. Format is Golang text template.
+# Template must contain host and jobID variables.
+url_tpl = "{{ .host }}/api/35/job/{{ .jobID }}/run"
+# url_tpl_with_params defines url template if job requires body or query parameters.
+# If emtpty url_tpl is used.
+url_tpl_with_params = ""
+# Http method of endpoint.
+method = "POST"
+# Http headers.
+headers = { Content-Type = "application/json", Accept = "application/json" }
+# Field from API response body to resolve get status API endpoint.
+response_status_url_key = "href"
+# Header from API response to resolve get status API endpoint.
+response_status_header_key = ""
+# Field from API response to resolve job url in admin panel.
+response_external_url_key = "permalink"
+
+# API endpoint to get job execution. Required only if job is launched by queue.
+[Remediation.external_api.rundeck.queue_endpoint]
+# url_tpl defines url template. Format is Golang text template.
+# Template must contain host and responseUrl variables.
+url_tpl = ""
+# Http method of endpoint.
+method = ""
+# Header from API response to resolve get status API endpoint.
+response_status_url_key = ""
+# Http headers.
+headers = {}
+
+# API endpoint to get job status
+[Remediation.external_api.rundeck.status_endpoint]
+# url_tpl defines url template. Format is Golang text template.
+# Template must contain host and responseUrl variables.
+url_tpl = ""
+# Http method of endpoint.
+method = "GET"
+# Http headers.
+headers = { Content-Type = "application/json", Accept = "application/json" }
+# Field from API response to resolve job execution id.
+response_id_key = "id"
+# Field from API response to resolve job status.
+response_status_key = "status"
+# Statuses defines map from external service job statuses to application statuses.
+statuses = { running = "running", succeeded = "succeeded", failed = "failed", aborted = "aborted" }
+
+# API endpoint to get job output
+[Remediation.external_api.rundeck.output_endpoint]
+# url_tpl defines url template. Format is Golang text template.
+# Template must contain host and executionID variables.
+url_tpl = "{{ .host }}/api/35/execution/{{ .executionID }}/output"
+# Http method of endpoint.
+method = "GET"
+# Http headers.
+headers = { Accept = "text/plain" }
+
+[Remediation.external_api.awx]
+response_err_msg_key = "detail"
+[Remediation.external_api.awx.auth]
+type = "bearer-token"
+[Remediation.external_api.awx.launch_endpoint]
+url_tpl = "{{ .host }}/api/v2/job_templates/{{ .jobID }}/launch/"
+method = "POST"
+headers = { Content-Type = "application/json", Accept = "application/json" }
+response_status_url_key = "url"
+[Remediation.external_api.awx.status_endpoint]
+url_tpl = "{{ .host }}{{ .responseUrl }}"
+method = "GET"
+headers = { Content-Type = "application/json", Accept = "application/json" }
+response_id_key = "id"
+response_status_key = "status"
+statuses = { pending = "running", running = "running", waiting = "running", successful = "succeeded", failed = "failed", canceled = "aborted" }
+[Remediation.external_api.awx.output_endpoint]
+url_tpl = "{{ .host }}/api/v2/jobs/{{ .executionID }}/stdout"
+method = "GET"
+headers = { Accept = "text/plain" }
+
+[Remediation.external_api.jenkins]
+response_err_msg_key = "message"
+[Remediation.external_api.jenkins.auth]
+type = "basic-auth"
+[Remediation.external_api.jenkins.launch_endpoint]
+url_tpl = "{{ .host }}/job/{{ .jobID }}/build"
+url_tpl_with_params = "{{ .host }}/job/{{ .jobID }}/buildWithParameters"
+method = "POST"
+headers = { Accept = "application/json" }
+response_status_header_url_key = "Location"
+[Remediation.external_api.jenkins.queue_endpoint]
+url_tpl = "{{ .responseUrl }}/api/json"
+method = "GET"
+response_status_url_key = "executable.url"
+[Remediation.external_api.jenkins.status_endpoint]
+url_tpl = "{{ .responseUrl }}/api/json"
+method = "GET"
+response_id_key = "id"
+response_status_key = "result"
+statuses = { SUCCESS = "succeeded", FAIL = "failed", ERROR = "failed", FIXED = "failed", PASSED = "failed", REGRESSION = "failed", ABORTED = "aborted" }
+[Remediation.external_api.jenkins.output_endpoint]
+url_tpl = "{{ .host }}/job/{{ .jobID }}/{{ .executionID }}/consoleText"
+method = "GET"

@@ -31,7 +31,7 @@ func (p *basicProvider) Auth(r *http.Request) (*security.User, error, bool) {
 		return nil, nil, true
 	}
 
-	u, err := p.provider.Auth(username, password)
+	u, err := p.provider.Auth(r.Context(), username, password)
 
 	return u, err, true
 }

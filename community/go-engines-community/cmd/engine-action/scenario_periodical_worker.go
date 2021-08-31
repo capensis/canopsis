@@ -1,0 +1,27 @@
+package main
+
+import (
+	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"github.com/rs/zerolog"
+	"time"
+)
+
+type scenarioPeriodicalWorker struct {
+	PeriodicalInterval time.Duration
+	ActionService      action.Service
+	Logger             zerolog.Logger
+}
+
+func (w *scenarioPeriodicalWorker) GetInterval() time.Duration {
+	return w.PeriodicalInterval
+}
+
+func (w *scenarioPeriodicalWorker) Work(ctx context.Context) error {
+	err := w.ActionService.ProcessAbandonedExecutions(ctx)
+	if err != nil {
+		w.Logger.Error().Err(err).Msg("Periodical process: failed to process abandoned scenarios.")
+	}
+
+	return nil
+}

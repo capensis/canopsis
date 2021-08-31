@@ -1,4 +1,4 @@
-// bdd contains feature context utils.
+// Package bdd contains feature context utils.
 package bdd
 
 import (
@@ -18,11 +18,10 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/gin-gonic/gin/binding"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
-	"github.com/cucumber/messages-go/v10"
+	"github.com/cucumber/godog"
+	"github.com/gin-gonic/gin/binding"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -60,13 +59,8 @@ type basicAuth struct {
 }
 
 // NewApiClient creates new API client.
-func NewApiClient() (*ApiClient, error) {
+func NewApiClient(db mongo.DbClient) (*ApiClient, error) {
 	apiUrl, err := GetApiURL()
-	if err != nil {
-		return nil, err
-	}
-
-	db, err := mongo.NewClient(0, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +92,7 @@ func GetApiURL() (*url.URL, error) {
 }
 
 // ResetResponse clears all saved response data.
-func (a *ApiClient) ResetResponse(_ *messages.Pickle) {
+func (a *ApiClient) ResetResponse(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	a.response = nil
 	a.responseBody = nil
 	a.responseBodyOutput = ""
@@ -107,6 +101,8 @@ func (a *ApiClient) ResetResponse(_ *messages.Pickle) {
 	a.cookies = nil
 	a.vars = nil
 	a.contentType = binding.MIMEJSON
+
+	return ctx, nil
 }
 
 /**
@@ -140,19 +136,19 @@ Step example:
 	}
 	"""
 */
-func (a *ApiClient) TheResponseBodyShouldBe(doc *messages.PickleStepArgument_PickleDocString) error {
+func (a *ApiClient) TheResponseBodyShouldBe(doc string) error {
 	if a.responseBody == nil {
 		return fmt.Errorf("response is nil")
 	}
 
 	// Try execute template on expected body
-	b, err := a.executeTemplate(doc.Content)
+	b, err := a.executeTemplate(doc)
 	if err != nil {
 		return err
 	}
 
 	content := b.Bytes()
-	// Try to umarshal expected body as json
+	// Try to unmarshal expected body as json
 	var expectedBody interface{}
 	err = json.Unmarshal(content, &expectedBody)
 	if err != nil {
@@ -175,9 +171,9 @@ Step example:
 	Test
 	"""
 */
-func (a *ApiClient) TheResponseRawBodyShouldBe(doc *messages.PickleStepArgument_PickleDocString) error {
+func (a *ApiClient) TheResponseRawBodyShouldBe(doc string) error {
 	// Try execute template on expected body
-	b, err := a.executeTemplate(doc.Content)
+	b, err := a.executeTemplate(doc)
 	if err != nil {
 		return err
 	}
@@ -202,13 +198,13 @@ Step example:
 	}
 	"""
 */
-func (a *ApiClient) TheResponseBodyShouldContain(doc *messages.PickleStepArgument_PickleDocString) error {
+func (a *ApiClient) TheResponseBodyShouldContain(doc string) error {
 	if a.responseBody == nil {
 		return fmt.Errorf("response is nil")
 	}
 
 	// Try execute template on expected body
-	b, err := a.executeTemplate(doc.Content)
+	b, err := a.executeTemplate(doc)
 	if err != nil {
 		return err
 	}
@@ -325,10 +321,8 @@ func getNestedJsonVal(v interface{}, path []string) (interface{}, bool) {
 Step example:
 	Given I am admin
 */
-func (a *ApiClient) IAm(role string) error {
+func (a *ApiClient) IAm(ctx context.Context, role string) error {
 	var line model.Rbac
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	res := a.db.Collection(mongo.RightsMongoCollection).FindOne(ctx, bson.M{
 		"crecord_type": model.LineTypeRole,
 		"crecord_name": role,
@@ -356,6 +350,8 @@ func (a *ApiClient) IAm(role string) error {
 	}
 
 	a.authApiKey = line.AuthApiKey
+	a.basicAuth = nil
+
 	return nil
 }
 
@@ -368,6 +364,7 @@ func (a *ApiClient) IAmAuthenticatedByBasicAuth(username, password string) error
 		username: username,
 		password: password,
 	}
+	a.authApiKey = ""
 
 	return nil
 }
@@ -383,6 +380,7 @@ func (a *ApiClient) IAmAuthenticatedByApiKey(apiKey string) error {
 	}
 
 	a.authApiKey = b.String()
+	a.basicAuth = nil
 
 	return nil
 }
@@ -403,9 +401,9 @@ Step example:
 	  }
 	"""
 */
-func (a *ApiClient) ISendAnEvent(doc *messages.PickleStepArgument_PickleDocString) (err error) {
+func (a *ApiClient) ISendAnEvent(doc string) (err error) {
 	uri := fmt.Sprintf("%s/api/v4/event", a.url)
-	body, err := a.executeTemplate(doc.Content)
+	body, err := a.executeTemplate(doc)
 	if err != nil {
 		return err
 	}
@@ -431,9 +429,7 @@ func (a *ApiClient) ISendAnEvent(doc *messages.PickleStepArgument_PickleDocStrin
 		return err
 	}
 
-	return a.TheResponseBodyShouldContain(&messages.PickleStepArgument_PickleDocString{
-		Content: fmt.Sprintf("{\"sent_events\":%s}", responseStr),
-	})
+	return a.TheResponseBodyShouldContain(fmt.Sprintf("{\"sent_events\":%s}", responseStr))
 }
 
 /**
@@ -477,13 +473,13 @@ Step example:
 	  }
 	"""
 */
-func (a *ApiClient) IDoRequestWithBody(method, uri string, doc *messages.PickleStepArgument_PickleDocString) error {
+func (a *ApiClient) IDoRequestWithBody(method, uri string, doc string) error {
 	uri, err := a.getRequestURL(uri)
 	if err != nil {
 		return err
 	}
 
-	body, err := a.getRequestBody(doc.Content)
+	body, err := a.getRequestBody(doc)
 	if err != nil {
 		return err
 	}

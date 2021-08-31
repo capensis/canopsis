@@ -21,7 +21,7 @@ func TestQueryProvider_Auth_GivenUsernameAndPasswordByQueryParam_ShouldAuthUser(
 	mockProvider := mock_security.NewMockProvider(ctrl)
 	mockProvider.
 		EXPECT().
-		Auth(gomock.Eq(username), gomock.Eq(password)).
+		Auth(gomock.Any(), gomock.Eq(username), gomock.Eq(password)).
 		Return(expectedUser, nil)
 
 	p := NewQueryProvider(mockProvider)
@@ -51,7 +51,7 @@ func TestQueryProvider_Auth_GivenNoQueryParam_ShouldReturnNil(t *testing.T) {
 	mockProvider := mock_security.NewMockProvider(ctrl)
 	mockProvider.
 		EXPECT().
-		Auth(gomock.Any(), gomock.Any()).
+		Auth(gomock.Any(), gomock.Any(), gomock.Any()).
 		Times(0)
 
 	p := NewQueryProvider(mockProvider)
@@ -79,7 +79,7 @@ func TestQueryProvider_Auth_GivenInvalidCredentials_ShouldReturnNil(t *testing.T
 	mockProvider := mock_security.NewMockProvider(ctrl)
 	mockProvider.
 		EXPECT().
-		Auth(gomock.Eq(username), gomock.Eq(password)).
+		Auth(gomock.Any(), gomock.Eq(username), gomock.Eq(password)).
 		Return(nil, nil)
 
 	p := NewQueryProvider(mockProvider)

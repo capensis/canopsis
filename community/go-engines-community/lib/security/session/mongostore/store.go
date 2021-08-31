@@ -81,7 +81,7 @@ func (s *MongoStore) New(r *http.Request, name string) (*sessions.Session, error
 	if c, errCookie := r.Cookie(name); errCookie == nil {
 		err = securecookie.DecodeMulti(name, c.Value, &session.ID, s.Codecs...)
 		if err == nil {
-			err = s.load(session)
+			err = s.load(r.Context(), session)
 			session.IsNew = false
 		}
 	}
@@ -94,10 +94,10 @@ func (s *MongoStore) New(r *http.Request, name string) (*sessions.Session, error
 // deleted from the store path. With this process it enforces the properly
 // session cookie handling so no need to trust in the cookie management in the
 // web browser.
-func (s *MongoStore) Save(_ *http.Request, w http.ResponseWriter, session *sessions.Session) error {
+func (s *MongoStore) Save(r *http.Request, w http.ResponseWriter, session *sessions.Session) error {
 	// Delete if max-age is <= 0
 	if session.Options.MaxAge <= 0 {
-		if err := s.erase(session); err != nil {
+		if err := s.erase(r.Context(), session); err != nil {
 			return err
 		}
 		http.SetCookie(w, sessions.NewCookie(session.Name(), "", session.Options))
@@ -107,7 +107,7 @@ func (s *MongoStore) Save(_ *http.Request, w http.ResponseWriter, session *sessi
 	d := time.Duration(session.Options.MaxAge) * time.Second
 	expires := time.Now().Add(d)
 
-	if err := s.save(session, expires); err != nil {
+	if err := s.save(r.Context(), session, expires); err != nil {
 		return err
 	}
 
@@ -136,30 +136,25 @@ func (s *MongoStore) StartAutoClean(ctx context.Context, timeout time.Duration) 
 	for {
 		select {
 		case <-ticker.C:
-			_ = s.clean()
+			_ = s.clean(ctx)
 		case <-ctx.Done():
 			return
 		}
 	}
 }
 
-func (s *MongoStore) GetActiveSessionsCount() (int64, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *MongoStore) GetActiveSessionsCount(ctx context.Context) (int64, error) {
 	return s.collection.CountDocuments(ctx, bson.M{
 		"expires": bson.M{"$gt": time.Now().Unix()},
 	})
 }
 
 // load finds session in mongo collection and decodes its content into session.Values.
-func (s *MongoStore) load(session *sessions.Session) error {
+func (s *MongoStore) load(ctx context.Context, session *sessions.Session) error {
 	if session.ID == "" {
 		return nil
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	id, err := primitive.ObjectIDFromHex(session.ID)
 	if err != nil {
 		return err
@@ -196,13 +191,11 @@ func (s *MongoStore) load(session *sessions.Session) error {
 }
 
 // erase deletes session from mongo collection.
-func (s *MongoStore) erase(session *sessions.Session) error {
+func (s *MongoStore) erase(ctx context.Context, session *sessions.Session) error {
 	if session.ID == "" {
 		return nil
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	id, err := primitive.ObjectIDFromHex(session.ID)
 	if err != nil {
 		return err
@@ -213,23 +206,18 @@ func (s *MongoStore) erase(session *sessions.Session) error {
 	return err
 }
 
-func (s *MongoStore) ExpireSessions(user string, provider string) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *MongoStore) ExpireSessions(ctx context.Context, user string, provider string) error {
 	_, err := s.collection.DeleteMany(ctx, bson.M{"user": user, "provider": provider})
 	return err
 }
 
 // save writes encoded session.Values to mongo collection.
-func (s *MongoStore) save(session *sessions.Session, expires time.Time) error {
+func (s *MongoStore) save(ctx context.Context, session *sessions.Session, expires time.Time) error {
 	encoded, err := securecookie.EncodeMulti(session.Name(), session.Values, s.Codecs...)
 	if err != nil {
 		return err
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	doc := bson.M{
 		"data":    encoded,
 		"expires": expires.Unix(),
@@ -278,9 +266,7 @@ func (s *MongoStore) save(session *sessions.Session, expires time.Time) error {
 }
 
 // clean deletes all expired sessions from mongo collection.
-func (s *MongoStore) clean() error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s *MongoStore) clean(ctx context.Context) error {
 	_, err := s.collection.DeleteMany(ctx, bson.M{"expires": bson.M{"$lte": time.Now().Unix()}})
 
 	return err

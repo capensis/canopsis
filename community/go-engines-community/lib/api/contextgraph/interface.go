@@ -13,11 +13,11 @@ type EventPublisher interface {
 }
 
 type StatusReporter interface {
-	GetStatus(id string) (ImportJob, error)
-	ReportCreate(job *ImportJob) error
-	ReportOngoing(job ImportJob) error
-	ReportDone(job ImportJob, stats JobStats) error
-	ReportError(job ImportJob, execDuration time.Duration, err error) error
+	GetStatus(ctx context.Context, id string) (ImportJob, error)
+	ReportCreate(ctx context.Context, job *ImportJob) error
+	ReportOngoing(ctx context.Context, job ImportJob) error
+	ReportDone(ctx context.Context, job ImportJob, stats JobStats) error
+	ReportError(ctx context.Context, job ImportJob, execDuration time.Duration, err error) error
 }
 
 type ImportWorker interface {
