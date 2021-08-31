@@ -34,6 +34,7 @@ import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/const
 import { findRange, dateParse } from '@/helpers/date/date-intervals';
 
 import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
+import { getNowTimestamp } from '@/helpers/date/date';
 
 export default {
   components: {
@@ -121,7 +122,7 @@ export default {
       const startMoment = this.convertIntervalFromFieldToMoment(start);
       const stopMoment = this.convertIntervalToFieldToMoment(stop);
 
-      return this.isAllowedAccumulatedFromDate(startMoment) && this.isAllowedAccumulatedToDate(stopMoment);
+      return this.isAllowedFromDate(startMoment) && this.isAllowedToDate(stopMoment);
     },
 
     isAllowedAccumulatedFromDate(dateMoment) {
@@ -163,7 +164,7 @@ export default {
     isAllowedToDate(date) {
       const dateMoment = moment(date);
       const dateTimestamp = dateMoment.unix();
-      const nowTimestamp = moment().unix();
+      const nowTimestamp = getNowTimestamp();
       const fromTimestamp = this.intervalFromAsMoment.unix();
 
       if (dateTimestamp < fromTimestamp || nowTimestamp < dateTimestamp) {

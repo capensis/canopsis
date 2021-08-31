@@ -1982,6 +1982,7 @@ export default {
     numberOfInstances: 'Number of instances',
     notifyUsersNumberOfInstances: 'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
     messagesHistory: 'FIFO messages processing history',
+    messagesLastHour: 'FIFO messages processing for the last hour',
     messagesPerHour: 'messages/hour',
     unknown: 'This system state is unavailable',
     systemStatusChipError: 'The system is not operational',

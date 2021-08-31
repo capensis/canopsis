@@ -1,12 +1,13 @@
 <script>
 import { merge } from 'lodash';
 
-import { Line } from '@/externals/vue-chart/components';
+import { DATETIME_FORMATS } from '@/constants';
 
 import { chartAnnotationMixin } from '@/mixins/chart/annotation';
 import { chartLimitedSegmentMixin } from '@/mixins/chart/limited-segment';
 import { chartZoomMixin } from '@/mixins/chart/zoom';
-import { DATETIME_FORMATS } from '@/constants';
+
+import { Line } from '@/externals/vue-chart/components';
 
 export default {
   extends: Line,
@@ -71,10 +72,6 @@ export default {
               },
             },
             ticks: {
-              /**
-               * NOTE: Remove the first tick to get rid of the offset to the left during swipe and zoom.
-               */
-              callback: (label, index) => (index !== 0 ? label : ' '),
               max: Date.now(),
               fontSize: 11,
               autoSkip: true,

@@ -51,12 +51,11 @@ import moment from 'moment';
 import { get, omit, uniqBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op } from 'dayspan';
-import tinycolor from 'tinycolor2';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { getMostReadableTextColor } from '@/helpers/color';
+import { getMostReadableTextColor, getRandomHexColor } from '@/helpers/color';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
 import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
 import { convertDateToTimestampByTimezone } from '@/helpers/date/date';
@@ -201,10 +200,10 @@ export default {
      * Get color for type and save that into data for correct displaying
      *
      * @param {Object} [type = {}]
-     * @param {string} [color = tinycolor.random().toHexString()]
+     * @param {string} [color = getRandomHexColor()]
      * @returns {string}
      */
-    getColorForType(type = {}, color = tinycolor.random().toHexString()) {
+    getColorForType(type = {}, color = getRandomHexColor()) {
       if (type.color) {
         return type.color;
       }

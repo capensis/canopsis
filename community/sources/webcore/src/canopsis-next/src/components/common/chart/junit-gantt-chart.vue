@@ -25,6 +25,8 @@ import { get } from 'lodash';
 
 import { TEST_SUITE_COLORS, TEST_SUITE_STATUSES } from '@/constants';
 
+import { colorToRgba } from '@/helpers/color';
+
 import HorizontalBar from './horizontal-bar.vue';
 
 /**
@@ -127,7 +129,7 @@ export default {
         datasets.unshift({
           ...defaultDatasetParameters,
 
-          backgroundColor: 'rgba(0, 0, 0, .2)',
+          backgroundColor: colorToRgba('#000', 0.2),
           data: items.map(({ from, avg_to: avgTo }) => [from, avgTo]),
         });
       }

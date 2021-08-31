@@ -14,12 +14,23 @@ export const limitedSegmentPlugin = {
     return isObject(point) ? point.y : point;
   },
 
+  clipArea(ctx, area) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(area.left, area.top, area.right - area.left, area.bottom - area.top);
+    ctx.clip();
+  },
+
+  unclipArea(ctx) {
+    ctx.restore();
+  },
+
   /**
    * Function for draw limited segments
    * @param chart
    */
   afterDatasetsDraw(chart) {
-    const { ctx } = chart;
+    const { ctx, chartArea } = chart;
     const { datasets } = chart.data;
     const { limit = {} } = chart.options.plugins || {};
 
@@ -27,7 +38,7 @@ export const limitedSegmentPlugin = {
       return;
     }
 
-    ctx.save();
+    this.clipArea(ctx, chartArea);
 
     datasets.forEach((dataset, datasetIndex) => {
       const meta = chart.getDatasetMeta(datasetIndex);
@@ -40,11 +51,24 @@ export const limitedSegmentPlugin = {
           const point = meta.data[dataIndex];
           const nextPoint = meta.data[dataIndex + 1];
 
-          if (!point || !nextPoint) {
+          if (!point) {
             return;
           }
 
           const pointValue = this.getPointValue(pointData);
+
+          if (openedPath && (pointValue < limit.value || !nextPoint)) {
+            /* right bottom corner */
+            ctx.lineTo(point.x, xAxis.top);
+
+            ctx.closePath();
+            ctx.fillStyle = limit.backgroundColor;
+            ctx.fill();
+
+            openedPath = false;
+            return;
+          }
+
           const nextPointValue = this.getPointValue(points[dataIndex + 1]);
 
           if (pointValue > limit.value || nextPointValue > limit.value) {
@@ -76,19 +100,10 @@ export const limitedSegmentPlugin = {
                 nextPoint.y,
               );
             }
-          } else if (openedPath && pointValue < limit.value) {
-            /* right bottom corner */
-            ctx.lineTo(point.x, xAxis.top);
-
-            ctx.closePath();
-            ctx.fillStyle = limit.backgroundColor;
-            ctx.fill();
-
-            openedPath = false;
           }
         });
 
-        ctx.restore();
+        this.unclipArea(ctx);
       }
     });
   },
