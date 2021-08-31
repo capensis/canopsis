@@ -31,10 +31,10 @@ import moment from 'moment';
 
 import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
 
+import { getNowTimestamp } from '@/helpers/date/date';
 import { findRange, dateParse } from '@/helpers/date/date-intervals';
 
 import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
-import { getNowTimestamp } from '@/helpers/date/date';
 
 export default {
   components: {
