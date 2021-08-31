@@ -7,6 +7,7 @@ Feature: move a instruction execution to next operation
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-next-1-name",
       "alarm_patterns": [
         {
@@ -15,6 +16,10 @@ Feature: move a instruction execution to next operation
       ],
       "description": "test-instruction-execution-next-1-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-next-1-step-1",
@@ -116,6 +121,7 @@ Feature: move a instruction execution to next operation
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-next-2-name",
       "alarm_patterns": [
         {
@@ -124,6 +130,10 @@ Feature: move a instruction execution to next operation
       ],
       "description": "test-instruction-execution-next-2-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-next-2-step-1",
@@ -178,10 +188,10 @@ Feature: move a instruction execution to next operation
     """
 
   Scenario: given unauth request should not allow access
-    When I do PUT /api/v4/cat/executions/test-instruction-execution-running/next
+    When I do PUT /api/v4/cat/executions/notexist/next
     Then the response code should be 401
 
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
-    When I do PUT /api/v4/cat/executions/test-instruction-execution-running/next
+    When I do PUT /api/v4/cat/executions/notexist/next
     Then the response code should be 403

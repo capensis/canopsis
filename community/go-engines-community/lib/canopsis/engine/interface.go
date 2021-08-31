@@ -36,7 +36,7 @@ type MessageProcessor interface {
 // If Work returns error engine will be stopped.
 type PeriodicalWorker interface {
 	GetInterval() time.Duration
-	Work(ctx context.Context) error
+	Work(context.Context) error
 }
 
 // RPCClient interface is used to implement AMQP RPC client.
@@ -50,7 +50,7 @@ type RPCClient interface {
 // RPCMessageProcessor interface is used to implement AMQP RPC response processor of consumer.
 // If Process returns error engine will be stopped.
 type RPCMessageProcessor interface {
-	Process(RPCMessage) error
+	Process(ctx context.Context, msg RPCMessage) error
 }
 
 // RPCMessage is AMQP RPC request or response.

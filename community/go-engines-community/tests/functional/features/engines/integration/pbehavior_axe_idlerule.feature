@@ -7,7 +7,6 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-pbehavior-axe-idlerule-1-name",
-      "author": "test-idlerule-pbehavior-axe-idlerule-1-author",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -25,7 +24,6 @@ Feature: update alarm on idle rule
         "type": "pbehavior",
         "parameters": {
           "name": "test-pbehavior-pbehavior-axe-idlerule-1",
-          "author": "test-pbehavior-pbehavior-axe-idlerule-1-author",
           "start_on_trigger": true,
           "duration": {
             "seconds": 600,
@@ -49,9 +47,7 @@ Feature: update alarm on idle rule
       "component" :  "test-component-pbehavior-axe-idlerule-1",
       "resource" : "test-resource-pbehavior-axe-idlerule-1",
       "state" : 2,
-      "output" : "test-output-pbehavior-axe-idlerule-1",
-      "long_output" : "test-long-output-pbehavior-axe-idlerule-1",
-      "author" : "test-author-pbehavior-axe-idlerule-1"
+      "output" : "test-output-pbehavior-axe-idlerule-1"
     }
     """
     When I wait the end of 3 events processing
@@ -134,7 +130,6 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-pbehavior-axe-idlerule-2-name",
-      "author": "test-idlerule-pbehavior-axe-idlerule-2-author",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -151,7 +146,6 @@ Feature: update alarm on idle rule
       "operation": {
         "type": "ack",
         "parameters": {
-          "author": "test-pbehavior-pbehavior-axe-idlerule-2-author",
           "output": "test-pbehavior-pbehavior-axe-idlerule-2-output"
         }
       },
@@ -163,7 +157,6 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-pbehavior-pbehavior-axe-idlerule-2-name",
-      "author": "test-pbehavior-pbehavior-axe-idlerule-2-author",
       "enabled": true,
       "tstart": {{ now.UTC.Unix }},
       "tstop": {{ (now.UTC.Add (parseDuration "7s")).Unix }},
@@ -190,9 +183,7 @@ Feature: update alarm on idle rule
       "component" :  "test-component-pbehavior-axe-idlerule-2",
       "resource" : "test-resource-pbehavior-axe-idlerule-2",
       "state" : 2,
-      "output" : "test-output-pbehavior-axe-idlerule-2",
-      "long_output" : "test-long-output-pbehavior-axe-idlerule-2",
-      "author" : "test-author-pbehavior-axe-idlerule-2"
+      "output" : "test-output-pbehavior-axe-idlerule-2"
     }
     """
     When I wait the end of event processing
@@ -233,7 +224,7 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "pbhenter",
-                "a": "test-author-pbehavior-axe-idlerule-2",
+                "a": "root",
                 "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-2-name. Type: Engine maintenance. Reason: Test Engine"
               }
             ]
@@ -278,7 +269,7 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "pbhenter",
-                "a": "test-author-pbehavior-axe-idlerule-2",
+                "a": "root",
                 "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-2-name. Type: Engine maintenance. Reason: Test Engine"
               },
               {
@@ -288,7 +279,7 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "ack",
-                "a": "test-pbehavior-pbehavior-axe-idlerule-2-author",
+                "a": "root",
                 "m": "test-pbehavior-pbehavior-axe-idlerule-2-output"
               }
             ]
@@ -310,7 +301,6 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-pbehavior-axe-idlerule-3-name",
-      "author": "test-idlerule-pbehavior-axe-idlerule-3-author",
       "type": "entity",
       "enabled": true,
       "priority": 51,
@@ -331,7 +321,6 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-pbehavior-pbehavior-axe-idlerule-3-name",
-      "author": "test-pbehavior-pbehavior-axe-idlerule-3-author",
       "enabled": true,
       "tstart": {{ now.UTC.Unix }},
       "tstop": {{ (now.UTC.Add (parseDuration "7s")).Unix }},
@@ -358,9 +347,7 @@ Feature: update alarm on idle rule
       "component" :  "test-component-pbehavior-axe-idlerule-3",
       "resource" : "test-resource-pbehavior-axe-idlerule-3",
       "state" : 0,
-      "output" : "test-output-pbehavior-axe-idlerule-3",
-      "long_output" : "test-long-output-pbehavior-axe-idlerule-3",
-      "author" : "test-author-pbehavior-axe-idlerule-3"
+      "output" : "test-output-pbehavior-axe-idlerule-3"
     }
     """
     When I wait the end of event processing
@@ -426,7 +413,6 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-pbehavior-axe-idlerule-4-name",
-      "author": "test-idlerule-pbehavior-axe-idlerule-4-author",
       "type": "entity",
       "enabled": true,
       "priority": 52,
@@ -447,7 +433,6 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-pbehavior-pbehavior-axe-idlerule-4-name",
-      "author": "test-pbehavior-pbehavior-axe-idlerule-4-author",
       "enabled": true,
       "tstart": {{ now.UTC.Unix }},
       "tstop": {{ (now.UTC.Add (parseDuration "7s")).Unix }},
@@ -474,9 +459,7 @@ Feature: update alarm on idle rule
       "component" :  "test-component-pbehavior-axe-idlerule-4",
       "resource" : "test-resource-pbehavior-axe-idlerule-4",
       "state" : 3,
-      "output" : "test-output-pbehavior-axe-idlerule-4",
-      "long_output" : "test-long-output-pbehavior-axe-idlerule-4",
-      "author" : "test-author-pbehavior-axe-idlerule-4"
+      "output" : "test-output-pbehavior-axe-idlerule-4"
     }
     """
     When I wait the end of event processing

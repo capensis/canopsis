@@ -37,19 +37,28 @@ const (
 	// AlarmChangeTypeDeclareTicketWebhook is triggered after declare ticket creation by webhook.
 	AlarmChangeTypeDeclareTicketWebhook AlarmChangeType = "declareticketwebhook"
 
-	// Following consts are used for instruction.
-	AlarmChangeTypeInstructionStart       AlarmChangeType = "instructionstart"
-	AlarmChangeTypeInstructionPause       AlarmChangeType = "instructionpause"
-	AlarmChangeTypeInstructionResume      AlarmChangeType = "instructionresume"
-	AlarmChangeTypeInstructionComplete    AlarmChangeType = "instructioncomplete"
-	AlarmChangeTypeInstructionAbort       AlarmChangeType = "instructionabort"
-	AlarmChangeTypeInstructionFail        AlarmChangeType = "instructionfail"
+	// Following change types are used for manual instruction execution.
+	AlarmChangeTypeInstructionStart    AlarmChangeType = "instructionstart"
+	AlarmChangeTypeInstructionPause    AlarmChangeType = "instructionpause"
+	AlarmChangeTypeInstructionResume   AlarmChangeType = "instructionresume"
+	AlarmChangeTypeInstructionComplete AlarmChangeType = "instructioncomplete"
+	AlarmChangeTypeInstructionFail     AlarmChangeType = "instructionfail"
+	// AlarmChangeTypeInstructionAbort is used for manual and auto instruction execution.
+	AlarmChangeTypeInstructionAbort AlarmChangeType = "instructionabort"
+	// Following change types are used for auto instruction execution.
+	AlarmChangeTypeAutoInstructionStart          AlarmChangeType = "autoinstructionstart"
+	AlarmChangeTypeAutoInstructionComplete       AlarmChangeType = "autoinstructioncomplete"
+	AlarmChangeTypeAutoInstructionFail           AlarmChangeType = "autoinstructionfail"
+	AlarmChangeTypeAutoInstructionAlreadyRunning AlarmChangeType = "autoinstructionalreadyrunning"
+	// Following change types are used for job execution.
 	AlarmChangeTypeInstructionJobStart    AlarmChangeType = "instructionjobstart"
 	AlarmChangeTypeInstructionJobComplete AlarmChangeType = "instructionjobcomplete"
 	AlarmChangeTypeInstructionJobAbort    AlarmChangeType = "instructionjobabort"
 	AlarmChangeTypeInstructionJobFail     AlarmChangeType = "instructionjobfail"
-	AlarmChangeTypeJunitTestSuiteUpdate   AlarmChangeType = "junittestsuiteupdate"
-	AlarmChangeTypeJunitTestCaseUpdate    AlarmChangeType = "junittestcaseupdate"
+
+	// Following change types are used for junit.
+	AlarmChangeTypeJunitTestSuiteUpdate AlarmChangeType = "junittestsuiteupdate"
+	AlarmChangeTypeJunitTestCaseUpdate  AlarmChangeType = "junittestcaseupdate"
 )
 
 // AlarmChange is a struct containing the type of change that occured on an
