@@ -1401,16 +1401,6 @@ definitions:
         type: integer
       interval:
         type: string
-      limit:
-        type: integer
-      page:
-        type: integer
-      paginate:
-        type: boolean
-      sort:
-        type: string
-      sort_by:
-        type: string
       to:
         type: integer
     required:
@@ -1428,21 +1418,13 @@ definitions:
         properties:
           deleted_before:
             type: integer
-          page:
-            type: integer
-          page_count:
-            type: integer
-          per_page:
-            type: integer
-          total_count:
-            type: integer
         type: object
     type: object
   messageratestats.StatsResponse:
     properties:
-      _id:
+      rate:
         type: integer
-      received:
+      time:
         type: integer
     type: object
   notification.InstructionNotification:
@@ -5643,21 +5625,6 @@ paths:
         required: true
         type: string
       - in: query
-        name: limit
-        type: integer
-      - in: query
-        name: page
-        type: integer
-      - in: query
-        name: paginate
-        type: boolean
-      - in: query
-        name: sort
-        type: string
-      - in: query
-        name: sort_by
-        type: string
-      - in: query
         name: to
         required: true
         type: integer
@@ -5667,14 +5634,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/common.PaginatedListResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/messageratestats.StatsListResponse'
-                  type: array
-              type: object
+            $ref: '#/definitions/messageratestats.StatsListResponse'
         "400":
           description: Bad Request
           schema:

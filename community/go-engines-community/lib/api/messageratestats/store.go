@@ -3,8 +3,8 @@ package messageratestats
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,8 +12,8 @@ import (
 )
 
 type Store interface {
-	Find(context.Context, ListRequest) (*AggregationResult, error)
-	// get the lower bound time value for hourly /message-rate-stats request.
+	Find(context.Context, ListRequest) ([]StatsResponse, error)
+	// GetDeletedBeforeForHours gets the lower bound time value for hourly request.
 	GetDeletedBeforeForHours(ctx context.Context) (*types.CpsTime, error)
 }
 
@@ -28,47 +28,47 @@ func NewStore(db mongo.DbClient) Store {
 	}
 }
 
-func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
-	filter := bson.M{"$and": []bson.M{
-		{"_id": bson.M{"$gte": r.From}},
-		{"_id": bson.M{"$lte": r.To}},
-	}}
-
-	sortBy := "_id"
-	if r.SortBy != "" {
-		sortBy = r.SortBy
-	}
-
-	collectionNames := map[string]string{
-		IntervalMinute: mongo.MessageRateStatsMinuteCollectionName,
-		IntervalHour:   mongo.MessageRateStatsHourCollectionName,
-	}
-	collectionName, ok := collectionNames[r.Interval]
-	if !ok {
+func (s *store) Find(ctx context.Context, r ListRequest) ([]StatsResponse, error) {
+	collectionName := ""
+	var interval int64
+	switch r.Interval {
+	case IntervalMinute:
+		collectionName = mongo.MessageRateStatsMinuteCollectionName
+		interval = int64(time.Minute.Seconds())
+	case IntervalHour:
+		collectionName = mongo.MessageRateStatsHourCollectionName
+		interval = int64(time.Hour.Seconds())
+	default:
 		return nil, fmt.Errorf("unknown interval %v", r.Interval)
 	}
 
+	l := 1 + (r.To.Unix()-r.From.Unix())/interval
+	rates := make([]StatsResponse, l)
+	from := r.From.Unix()
+
+	for i := int64(0); i < l; i++ {
+		rates[i].ID = i*interval + from
+		rates[i].Received = 0
+	}
+
 	collection := s.db.Collection(collectionName)
-	cursor, err := collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
-		r.Query,
-		[]bson.M{{"$match": filter}},
-		common.GetSortQuery(sortBy, r.Sort),
-	))
+	cursor, err := collection.Find(ctx, bson.M{"_id": bson.M{"$gte": r.From, "$lte": r.To}})
 	if err != nil {
 		return nil, err
 	}
 
 	defer cursor.Close(ctx)
-	res := AggregationResult{}
-
-	if cursor.Next(ctx) {
-		err := cursor.Decode(&res)
+	for cursor.Next(ctx) {
+		var rate StatsResponse
+		err = cursor.Decode(&rate)
 		if err != nil {
 			return nil, err
 		}
+
+		rates[(rate.ID-from)/interval].Received = rate.Received
 	}
 
-	return &res, nil
+	return rates, nil
 }
 
 func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*types.CpsTime, error) {
