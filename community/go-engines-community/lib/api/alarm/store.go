@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"reflect"
 	"regexp"
 	"sort"
@@ -15,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -324,12 +324,12 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	}}})
 	s.addNestedObjects(r.FilterRequest, &pipeline)
 
-	sort, err := s.getSort(r)
+	sortExpr, err := s.getSort(r)
 	if err != nil {
 		return err
 	}
 
-	pipeline = append(pipeline, sort)
+	pipeline = append(pipeline, sortExpr)
 	pipeline = append(pipeline, s.getProject(r, false)...)
 	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
