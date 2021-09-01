@@ -17,7 +17,7 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author enabled tstart tstop type.name reason.name created updated rrule type.icon_name"`
+	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author enabled tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
 }
 
 type EntitiesListRequest struct {
