@@ -7,6 +7,7 @@ Feature: run a instruction
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-start-1-name",
       "alarm_patterns": [
         {
@@ -15,6 +16,10 @@ Feature: run a instruction
       ],
       "description": "test-instruction-execution-start-1-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-start-1-step-1",
@@ -154,6 +159,17 @@ Feature: run a instruction
       }
     }
     """
+
+  Scenario: given auto instruction should return errors
+    When I am admin
+    When I do POST /api/v4/cat/executions:
+    """
+    {
+      "alarm": "test-alarm-to-not-run-auto-instruction-manually",
+      "instruction": "test-instruction-to-not-run-auto-instruction-manually"
+    }
+    """
+    Then the response code should be 404
 
   Scenario: given unauth request should not allow access
     When I do POST /api/v4/cat/executions:

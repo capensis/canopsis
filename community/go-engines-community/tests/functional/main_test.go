@@ -3,6 +3,7 @@ package functional
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -16,22 +17,27 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/fixtures"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/bdd"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libjson "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/cucumber/godog"
+	redismod "github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 )
 
 type Flags struct {
-	paths              arrayFlag
-	fixtures           arrayFlag
-	periodicalWaitTime time.Duration
-	eventWaitKey       string
-	eventWaitExchange  string
-	eventLogs          string
+	paths               arrayFlag
+	fixtures            arrayFlag
+	periodicalWaitTime  time.Duration
+	dummyHttpPort       int64
+	eventWaitKey        string
+	eventWaitExchange   string
+	eventLogs           string
+	checkUncaughtEvents bool
 }
 
 type arrayFlag []string
@@ -46,7 +52,8 @@ func (f *arrayFlag) Set(value string) error {
 }
 
 func TestMain(m *testing.M) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// Test allowed only with "API_URL" environment variable
 	if _, err := bdd.GetApiURL(); err != nil {
@@ -60,6 +67,8 @@ func TestMain(m *testing.M) {
 	flag.StringVar(&flags.eventWaitExchange, "ewe", "amq.direct", "Consume from exchange to detect the end of event processing.")
 	flag.StringVar(&flags.eventWaitKey, "ewk", canopsis.FIFOAckQueueName, "Consume by routing key to detect the end of event processing.")
 	flag.StringVar(&flags.eventLogs, "eventlogs", "", "Log all received events.")
+	flag.Int64Var(&flags.dummyHttpPort, "dummyHttpPort", 3000, "Port for dummy http server.")
+	flag.BoolVar(&flags.checkUncaughtEvents, "checkUncaughtEvents", false, "Enable catching event after each scenario.")
 	flag.Parse()
 
 	if len(flags.paths) == 0 {
@@ -97,13 +106,51 @@ func TestMain(m *testing.M) {
 			paths = append(paths, p)
 		}
 	}
-	opts := godog.Options{
-		StopOnFailure: true,
-		Format:        "pretty",
-		Paths:         paths,
+	err := bdd.RunDummyHttpServer(ctx, fmt.Sprintf("localhost:%d", flags.dummyHttpPort))
+	if err != nil {
+		log.Fatal(err)
 	}
-	testSuiteInitializer := InitializeTestSuite(ctx, flags)
-	scenarioInitializer, err := InitializeScenario(flags, eventLogger)
+
+	dbClient, err := mongo.NewClient(ctx, 0, 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		err = dbClient.Disconnect(context.Background())
+		if err != nil {
+			log.Print(err)
+		}
+	}()
+
+	amqpConnection, err := amqp.NewConnection(liblog.NewLogger(false), 0, 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		err = amqpConnection.Close()
+		if err != nil {
+			log.Print(err)
+		}
+	}()
+	redisClient, err := redis.NewSession(ctx, 0, liblog.NewLogger(false), 0, 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		err = redisClient.Close()
+		if err != nil {
+			log.Print(err)
+		}
+	}()
+
+	opts := godog.Options{
+		StopOnFailure:  true,
+		Format:         "pretty",
+		Paths:          paths,
+		DefaultContext: ctx,
+	}
+	testSuiteInitializer := InitializeTestSuite(ctx, flags, dbClient, redisClient)
+	scenarioInitializer, err := InitializeScenario(flags, dbClient, amqpConnection, eventLogger)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -122,17 +169,17 @@ func TestMain(m *testing.M) {
 	os.Exit(status)
 }
 
-func InitializeTestSuite(ctx context.Context, flags Flags) func(*godog.TestSuiteContext) {
+func InitializeTestSuite(ctx context.Context, flags Flags, dbClient mongo.DbClient, redisClient redismod.Cmdable) func(*godog.TestSuiteContext) {
 	return func(godogCtx *godog.TestSuiteContext) {
 		godogCtx.BeforeSuite(func() {
-			err := clearStores(ctx, flags)
+			err := clearStores(ctx, flags, dbClient, redisClient)
 			if err != nil {
 				panic(err)
 			}
 			time.Sleep(flags.periodicalWaitTime)
 		})
 		godogCtx.AfterSuite(func() {
-			err := clearStores(ctx, flags)
+			err := clearStores(ctx, flags, dbClient, redisClient)
 			if err != nil {
 				panic(err)
 			}
@@ -140,29 +187,44 @@ func InitializeTestSuite(ctx context.Context, flags Flags) func(*godog.TestSuite
 	}
 }
 
-func InitializeScenario(flags Flags, eventLogger zerolog.Logger) (func(*godog.ScenarioContext), error) {
-	apiClient, err := bdd.NewApiClient()
+func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amqp.Connection,
+	eventLogger zerolog.Logger) (func(*godog.ScenarioContext), error) {
+	apiClient, err := bdd.NewApiClient(dbClient)
 	if err != nil {
 		return nil, err
 	}
 
-	mongoClient, err := bdd.NewMongoClient()
+	mongoClient, err := bdd.NewMongoClient(dbClient)
 	if err != nil {
 		return nil, err
 	}
 
-	amqpClient, err := bdd.NewAmqpClient(flags.eventWaitExchange, flags.eventWaitKey,
+	amqpClient, err := bdd.NewAmqpClient(dbClient, amqpConnection,
+		flags.eventWaitExchange, flags.eventWaitKey,
 		libjson.NewEncoder(), libjson.NewDecoder(), eventLogger)
 	if err != nil {
 		return nil, err
 	}
 
 	return func(ctx *godog.ScenarioContext) {
-		ctx.BeforeScenario(apiClient.ResetResponse)
-		ctx.BeforeScenario(amqpClient.Reset)
-		ctx.BeforeScenario(func(sc *godog.Scenario) {
+		ctx.Before(apiClient.ResetResponse)
+		ctx.Before(amqpClient.Reset)
+		ctx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 			eventLogger.Info().Str("file", sc.Uri).Msgf("%s", sc.Name)
+			return ctx, nil
 		})
+		if flags.checkUncaughtEvents {
+			ctx.After(func(ctx context.Context, sc *godog.Scenario, scErr error) (context.Context, error) {
+				if scErr == nil {
+					err := amqpClient.IWaitTheEndOfEventProcessing()
+					if err == nil {
+						return ctx, errors.New("caught event")
+					}
+				}
+
+				return ctx, scErr
+			})
+		}
 
 		ctx.Step(`^I am ([\w-]+)$`, apiClient.IAm)
 		ctx.Step(`^I am authenticated with username "([^"]+)" and password "([^"]+)"$`, apiClient.IAmAuthenticatedByBasicAuth)
@@ -199,23 +261,18 @@ func InitializeScenario(flags Flags, eventLogger zerolog.Logger) (func(*godog.Sc
 	}, nil
 }
 
-func clearStores(ctx context.Context, flags Flags) error {
+func clearStores(ctx context.Context, flags Flags, dbClient mongo.DbClient, redisClient redismod.Cmdable) error {
 	configs, err := getFixtureConfigs(flags.fixtures)
 	if err != nil {
 		return err
 	}
 
-	err = fixtures.LoadFixtures(configs...)
+	err = fixtures.LoadFixtures(ctx, dbClient, configs...)
 	if err != nil {
 		return err
 	}
 
-	client, err := redis.NewSession(ctx, 0, liblog.NewLogger(false), 0, 0)
-	if err != nil {
-		return err
-	}
-
-	err = client.FlushAll(ctx).Err()
+	err = redisClient.FlushAll(ctx).Err()
 	if err != nil {
 		return err
 	}

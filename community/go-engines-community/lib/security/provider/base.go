@@ -2,6 +2,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
@@ -22,8 +23,8 @@ func NewBaseProvider(p security.UserProvider, e password.Encoder) security.Provi
 	}
 }
 
-func (p *baseProvider) Auth(username, password string) (*security.User, error) {
-	user, err := p.userProvider.FindByUsername(username)
+func (p *baseProvider) Auth(ctx context.Context, username, password string) (*security.User, error) {
+	user, err := p.userProvider.FindByUsername(ctx, username)
 	if err != nil {
 		return nil, fmt.Errorf("cannot find user: %v", err)
 	}

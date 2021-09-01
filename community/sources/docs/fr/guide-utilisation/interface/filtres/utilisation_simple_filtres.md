@@ -14,11 +14,11 @@ Donnez un titre à votre filtre. Il existe deux méthodes de création, une pour
 
 ## AND / OR
 
-Il faut maintenant choisir quel filtre prendre. Deux choix principaux s'offrent à vous sous forme d'opérateurs booléens **ET** et **OU** (AND et OR). En choisir un, puis appuyer sur "Add a rule".
+Il faut maintenant choisir quel filtre prendre. Deux possibilités s'offrent à vous sous forme d'opérateurs booléens **ET** et **OU** (AND et OR). En choisir un, puis appuyer sur "Add a rule".
 
 ![adarule](img/adarule.png)
 
-Dans la première colonne, choisir de quel type sera l'objet filtré. Quatre choix :
+Dans la première colonne, choisir de quel type sera l'objet filtré. Quatre possibilités :
 
 *  component\_name
 *  connector\_name
