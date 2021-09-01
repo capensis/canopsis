@@ -49,7 +49,7 @@ require (
 	github.com/valyala/fastjson v1.6.3
 	go.mongodb.org/mongo-driver v1.7.1
 	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d
-	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/text v0.3.7
 	gopkg.in/yaml.v2 v2.4.0
 )

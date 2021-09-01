@@ -47,9 +47,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhLockerClient := redis.NewLockClient(pbhRedisSession)
 
-	entityMatcher := pbehavior.NewComputedEntityMatcher(dbClient, redisClient,
+	entityMatcher := pbehavior.NewComputedEntityMatcher(dbClient, pbhRedisSession,
 		json.NewEncoder(), json.NewDecoder())
-	pbhStore := pbehavior.NewStore(redisClient, json.NewEncoder(), json.NewDecoder())
+	pbhStore := pbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
 
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
 	eventManager := pbehavior.NewEventManager()
@@ -123,7 +123,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			CreatePbehaviorProcessor: createPbehaviorMessageProcessor{
 				FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 				DbClient:                 dbClient,
-				PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), entityMatcher, pbhStore, lockerClient),
+				PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), entityMatcher, pbhStore, pbhLockerClient),
 				EventManager:             pbehavior.NewEventManager(),
 				AlarmAdapter:             alarm.NewAdapter(dbClient),
 				TimezoneConfigProvider:   timezoneConfigProvider,
@@ -145,7 +145,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			Processor: createPbehaviorMessageProcessor{
 				FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 				DbClient:                 dbClient,
-				PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), entityMatcher, pbhStore, lockerClient),
+				PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), entityMatcher, pbhStore, pbhLockerClient),
 				EventManager:             pbehavior.NewEventManager(),
 				AlarmAdapter:             alarm.NewAdapter(dbClient),
 				TimezoneConfigProvider:   timezoneConfigProvider,
@@ -173,7 +173,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		&periodicalWorker{
 			ChannelPub:             amqpChannel,
 			PeriodicalInterval:     options.PeriodicalWaitTime,
-			LockerClient:           pbhLockerClient,
 			PbhService:             pbehavior.NewService(pbehavior.NewModelProvider(dbClient), entityMatcher, pbhStore, pbhLockerClient),
 			DbClient:               dbClient,
 			EventManager:           eventManager,
