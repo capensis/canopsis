@@ -2027,3 +2027,7 @@ export const MESSAGE_STATS_INTERVALS = {
   hour: 'hour',
   minute: 'minute',
 };
+
+export const SOCKET_ROOMS = {
+  healthcheckStatus: 'healthcheck-status',
+};

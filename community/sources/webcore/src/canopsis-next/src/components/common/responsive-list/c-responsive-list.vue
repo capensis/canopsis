@@ -125,11 +125,15 @@ export default {
     },
 
     setItemsWidth() {
+      this.setContainerWidth();
+
       this.visible = false;
 
-      this.itemsWidthByKey = this.getItemsWidthByKey(this.items);
+      this.$nextTick(() => {
+        this.itemsWidthByKey = this.getItemsWidthByKey(this.items);
 
-      this.visible = true;
+        this.visible = true;
+      });
     },
 
     setContainerWidth() {

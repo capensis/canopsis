@@ -1,6 +1,20 @@
 export const healthcheckNodesMixin = {
   methods: {
     /**
+     * Check is valid healthcheck node
+     *
+     * @param {HealthcheckNode} engine
+     * @return {boolean}
+     */
+    isWrongEngine(engine) {
+      return !engine.is_running
+        || engine.is_queue_overflown
+        || engine.is_too_few_instances
+        || engine.is_diff_instances_config
+        || engine.is_unknown;
+    },
+
+    /**
      * Get texts by node values
      *
      * @param {HealthcheckNode} data
@@ -37,7 +51,7 @@ export const healthcheckNodesMixin = {
       }
 
       return statusKeys
-        .map(stateKey => this.$t(stateKey, { name: this.getNodeName(data.id) }))
+        .map(stateKey => this.$t(stateKey, { name: this.getNodeName(data.name) }))
         .join('\n');
     },
 

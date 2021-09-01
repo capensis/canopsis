@@ -1986,6 +1986,7 @@ export default {
     unknown: 'Cet état du système n\'est pas disponible',
     systemStatusChipError: 'Le système n\'est pas opérationnel',
     systemStatusServerError: 'La configuration du système n\'est pas valide, veuillez contacter l\'administrateur',
+    systemsOperational: 'Tous les systèmes sont opérationnels',
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
@@ -2053,10 +2054,6 @@ export default {
 
       [HEALTHCHECK_ENGINES_NAMES.correlation]: {
         name: 'Correlation',
-      },
-
-      [HEALTHCHECK_ENGINES_NAMES.heartbeat]: {
-        name: 'Heartbeat',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.remediation]: {
