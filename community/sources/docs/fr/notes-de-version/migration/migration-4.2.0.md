@@ -24,11 +24,11 @@ Les deux seules méthodes d'installation officiellement prises en charge (sauf d
 
 ### Note auprès des utilisateurs de Dockerhub
 
-Canopsis 4.3.0 migrera ses images Docker de Dockerhub vers le nouveau registre `registry.canopsis.net`.
+Canopsis 4.4.0 migrera ses images Docker de Dockerhub vers le nouveau registre `registry.canopsis.net`.
 
 Si vous bénéficiez de Canopsis Pro, et que vous utilisez Canopsis au travers des images Docker, vous avez dû recevoir une communication vous invitant à nous transmettre une adresse e-mail à utiliser afin de mettre en place ce nouvel accès. Si ce n'est pas le cas, veuillez vous rapprocher de votre contact habituel chez Capensis.
 
-Les détails de cette migration seront publiés lors de la sortie de Canopsis 4.3.0. Canopsis reste encore disponible sur Dockerhub sans changement particulier pour le moment.
+Les détails de cette migration seront publiés après la sortie de Canopsis 4.3.0. Canopsis reste encore disponible sur Dockerhub sans changement particulier pour le moment.
 
 ### Suppression du moteur `engine-stat`
 
