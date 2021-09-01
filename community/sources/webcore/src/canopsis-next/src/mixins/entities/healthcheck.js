@@ -1,21 +1,12 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('healthcheck');
+const { mapActions } = createNamespacedHelpers('healthcheckParameters');
 
-export const entitiesHealthcheckMixin = {
-  computed: {
-    ...mapGetters({
-      healthcheckPending: 'pending',
-      services: 'services',
-      engines: 'engines',
-      maxQueueLength: 'maxQueueLength',
-      hasInvalidEnginesOrder: 'hasInvalidEnginesOrder',
-      healthcheckError: 'error',
-    }),
-  },
+export const entitiesHealthcheckParametersMixin = {
   methods: {
     ...mapActions({
-      fetchHealthcheckStatus: 'fetchStatus',
+      fetchHealthcheckParametersWithoutStore: 'fetchItemWithoutStore',
+      updateHealthcheckParameters: 'update',
     }),
   },
 };

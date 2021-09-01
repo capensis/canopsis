@@ -58,7 +58,7 @@ export default {
     no: 'Non',
     default: 'Défaut',
     confirmation: 'Êtes-vous sûr(e) ?',
-    parameters: 'Paramètres',
+    parameter: 'Paramètre | Paramètres',
     by: 'Par',
     date: 'Date',
     comment: 'Commentaire | Commentaires',
@@ -192,6 +192,10 @@ export default {
     summary: 'Résumé',
     statistics: 'Statistiques',
     action: 'Action',
+    minimal: 'Minimal',
+    optimal: 'Optimal',
+    graph: 'Graphique | Graphiques',
+    systemStatus: 'État du système',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1743,7 +1747,7 @@ export default {
         create: 'Créer une vue',
         settings: 'Paramètres',
       },
-      activeSessions: 'Sessions actives',
+      loggedUsersCount: 'Sessions actives',
       ordering: {
         popups: {
           success: 'Les groupes ont été réorganisés',
@@ -1959,94 +1963,104 @@ export default {
   },
 
   healthcheck: {
-    queueLength: 'Queue length {queueLength}/{maxQueueLength}',
-    instances: 'Instances {instances}/{minInstances}',
-    statuses: {
-      notRunning: '{engine} is unavailable',
-      queueOverflow: 'Queue overflow',
-      tooFewInstances: 'Lack of instances',
-      diffInstancesConfig: 'Invalid instances configuration',
-    },
-    services: {
+    notRunning: '{name} n\'est pas disponible',
+    queueOverflow: 'Débordement de file d\'attente',
+    lackOfInstances: 'Manque d\'instances',
+    diffInstancesConfig: 'Configuration des instances non valide',
+    queueLength: 'Longueur de la file d\'attente {queueLength}/{maxQueueLength}',
+    instancesCount: 'Instances {instances}/{minInstances}',
+    activeInstances: 'Seules {instances} sont actives sur {minInstances}. Le nombre optimal d\'instances est de {optimalInstances}.',
+    queueOverflowed: 'La file d\'attente est débordée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
+    engineDown: '{name} est en panne, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer le service.',
+    engineDownOrSlow: '{name} est en panne ou répond trop lentement, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
+    invalidEnginesOrder: 'Configuration des moteurs non valide',
+    invalidInstancesConfiguration: 'Configuration des instances non valide : les instances du moteur lisent ou écrivent dans différentes files d\'attente.\nVeuillez vérifier les instances.',
+    chainConfigurationInvalid: 'La configuration de la chaîne des moteurs n\'est pas valide.\nReportez-vous ci-dessous pour la séquence correcte des moteurs :',
+    queueLimit: 'Limite de longueur de file d\'attente',
+    defineQueueLimit: 'Définir la limite de longueur de file d\'attente des moteurs',
+    notifyUsersQueueLimit: 'Les utilisateurs peuvent être avertis lorsque la limite de longueur de file d\'attente est dépassée',
+    numberOfInstances: 'Nombre d\'instances',
+    notifyUsersNumberOfInstances: 'Les utilisateurs peuvent être avertis lorsque le nombre d\'instances actives est inférieur à la valeur minimale. Le nombre optimal d\'instances est affiché lorsque l\'état du moteur n\'est pas disponible.',
+    messagesHistory: 'Historique de traitement des messages FIFO',
+    messagesPerHour: 'messages/heure',
+    unknown: 'Cet état du système n\'est pas disponible',
+    systemStatusChipError: 'Le système n\'est pas opérationnel',
+    systemStatusServerError: 'La configuration du système n\'est pas valide, veuillez contacter l\'administrateur',
+    nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
-        label: 'MongoDB',
-        edgeLabel: 'Status check',
+        name: 'MongoDB',
+        edgeLabel: 'Vérification de l\'état',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.rabbit]: {
-        label: 'RabbitMQ',
-        edgeLabel: 'Status check',
+        name: 'RabbitMQ',
+        edgeLabel: 'Vérification de l\'état',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.redis]: {
-        label: 'Redis',
-        edgeLabel: 'FIFO data\nRedis check',
+        name: 'Redis',
+        edgeLabel: 'Données FIFO\nRedis vérifier',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.events]: {
-        label: 'Events',
+        name: 'Events',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.api]: {
-        label: 'Canopsis API',
+        name: 'Canopsis API',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.enginesChain]: {
-        label: 'Engines chain',
+        name: 'Engines chain',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.healthcheck]: {
-        label: 'Healthcheck',
-      },
-    },
-    engines: {
-      [HEALTHCHECK_ENGINES_NAMES.event]: {
-        label: 'Event',
+        name: 'Healthcheck',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.webhook]: {
-        label: 'Webhook',
+        name: 'Webhook',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.fifo]: {
-        label: 'FIFO',
+        name: 'FIFO',
         edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.axe]: {
-        label: 'AXE',
+        name: 'AXE',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.che]: {
-        label: 'CHE',
+        name: 'CHE',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
-        label: 'Pbehavior',
+        name: 'Pbehavior',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.action]: {
-        label: 'Action',
+        name: 'Action',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.service]: {
-        label: 'Service',
+        name: 'Service',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
-        label: 'Dynamic infos',
+        name: 'Dynamic infos',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.correlation]: {
-        label: 'Correlation',
+        name: 'Correlation',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.heartbeat]: {
-        label: 'Heartbeat',
+        name: 'Heartbeat',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.remediation]: {
-        label: 'Remediation',
+        name: 'Remediation',
       },
     },
   },
@@ -2391,6 +2405,10 @@ export default {
       deleteAfter: 'Supprimer les données PBehavior après',
       deleteAfterHelpText: 'Lorsqu\'il est activé, les PBehaviors inactifs seront supprimés après la période de temps définie à partir du dernier événement.',
     },
+    healthCheck: {
+      title: 'Stockage des données du bilan de santé',
+      deleteAfter: 'Supprimer les données de flux entrant FIFO après',
+    },
     history: {
       scriptLaunched: 'Script lancé à {launchedAt}.',
       alarm: {
@@ -2528,7 +2546,7 @@ export default {
     },
     [USERS_PERMISSIONS.technical.healthcheck]: {
       title: 'Bilan de santé',
-      message: '',
+      message: 'La fonction Healthcheck est le tableau de bord avec des indications d\'états et d\'erreurs de tous les systèmes inclus dans Canopsis.',
     },
 
     /**

@@ -58,7 +58,7 @@ export default {
     no: 'No',
     default: 'Default',
     confirmation: 'Are you sure?',
-    parameters: 'Parameters',
+    parameter: 'Parameter | Parameters',
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
@@ -192,6 +192,10 @@ export default {
     summary: 'Summary',
     statistics: 'Statistics',
     action: 'Action',
+    minimal: 'Minimal',
+    optimal: 'Optimal',
+    graph: 'Graph | Graphs',
+    systemStatus: 'System status',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1743,7 +1747,7 @@ export default {
         create: 'Create view',
         settings: 'Settings',
       },
-      activeSessions: 'Active sessions',
+      loggedUsersCount: 'Active sessions',
       ordering: {
         popups: {
           success: 'The groups was reordered',
@@ -1959,94 +1963,104 @@ export default {
   },
 
   healthcheck: {
+    notRunning: '{name} is unavailable',
+    queueOverflow: 'Queue overflow',
+    lackOfInstances: 'Lack of instances',
+    diffInstancesConfig: 'Invalid instances configuration',
     queueLength: 'Queue length {queueLength}/{maxQueueLength}',
-    instances: 'Instances {instances}/{minInstances}',
-    statuses: {
-      notRunning: '{engine} is unavailable',
-      queueOverflow: 'Queue overflow',
-      tooFewInstances: 'Lack of instances',
-      diffInstancesConfig: 'Invalid instances configuration',
-    },
-    services: {
+    instancesCount: 'Instances {instances}/{minInstances}',
+    activeInstances: 'Only {instances} is active out of {minInstances}. The optimal number of instances is {optimalInstances}.',
+    queueOverflowed: 'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
+    engineDown: '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
+    engineDownOrSlow: '{name} is down or responds too slow, the system is not operational.\nPlease check the log or restart the instance.',
+    invalidEnginesOrder: 'Invalid engines configuration',
+    invalidInstancesConfiguration: 'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
+    chainConfigurationInvalid: 'Engines chain configuration is invalid.\nRefer below for the correct sequence of engines:',
+    queueLimit: 'Queue length limit',
+    defineQueueLimit: 'Define the engines queue length limit',
+    notifyUsersQueueLimit: 'Users can be notified when the queue length limit is exceeded',
+    numberOfInstances: 'Number of instances',
+    notifyUsersNumberOfInstances: 'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
+    messagesHistory: 'FIFO messages processing history',
+    messagesPerHour: 'messages/hour',
+    unknown: 'This system state is unavailable',
+    systemStatusChipError: 'The system is not operational',
+    systemStatusServerError: 'System configuration is invalid, please contact the administrator',
+    nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
-        label: 'MongoDB',
+        name: 'MongoDB',
         edgeLabel: 'Status check',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.rabbit]: {
-        label: 'RabbitMQ',
+        name: 'RabbitMQ',
         edgeLabel: 'Status check',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.redis]: {
-        label: 'Redis',
+        name: 'Redis',
         edgeLabel: 'FIFO data\nRedis check',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.events]: {
-        label: 'Events',
+        name: 'Events',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.api]: {
-        label: 'Canopsis API',
+        name: 'Canopsis API',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.enginesChain]: {
-        label: 'Engines chain',
+        name: 'Engines chain',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.healthcheck]: {
-        label: 'Healthcheck',
-      },
-    },
-    engines: {
-      [HEALTHCHECK_ENGINES_NAMES.event]: {
-        label: 'Event',
+        name: 'Healthcheck',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.webhook]: {
-        label: 'Webhook',
+        name: 'Webhook',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.fifo]: {
-        label: 'FIFO',
+        name: 'FIFO',
         edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.axe]: {
-        label: 'AXE',
+        name: 'AXE',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.che]: {
-        label: 'CHE',
+        name: 'CHE',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
-        label: 'Pbehavior',
+        name: 'Pbehavior',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.action]: {
-        label: 'Action',
+        name: 'Action',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.service]: {
-        label: 'Service',
+        name: 'Service',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
-        label: 'Dynamic infos',
+        name: 'Dynamic infos',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.correlation]: {
-        label: 'Correlation',
+        name: 'Correlation',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.heartbeat]: {
-        label: 'Heartbeat',
+        name: 'Heartbeat',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.remediation]: {
-        label: 'Remediation',
+        name: 'Remediation',
       },
     },
   },
@@ -2391,6 +2405,10 @@ export default {
       deleteAfter: 'Delete PBehavior data after',
       deleteAfterHelpText: 'When switched on, inactive PBehaviors will be deleted after the defined time period from the last event.',
     },
+    healthCheck: {
+      title: 'Healthcheck data storage',
+      deleteAfter: 'Delete FIFO incoming flow data after',
+    },
     history: {
       scriptLaunched: 'Script launched at {launchedAt}.',
       alarm: {
@@ -2528,7 +2546,7 @@ export default {
     },
     [USERS_PERMISSIONS.technical.healthcheck]: {
       title: 'Healthcheck',
-      message: '',
+      message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
     },
 
     /**

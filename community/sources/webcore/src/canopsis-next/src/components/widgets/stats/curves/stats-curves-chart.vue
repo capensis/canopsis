@@ -2,7 +2,7 @@
 import { merge } from 'lodash';
 import { Line } from 'vue-chartjs';
 
-import chartAnnotationMixin from '@/mixins/chart/annotation';
+import { chartAnnotationMixin } from '@/mixins/chart/annotation';
 
 export default {
   extends: Line,

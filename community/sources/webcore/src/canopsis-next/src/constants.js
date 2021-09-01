@@ -128,6 +128,8 @@ export const MODALS = {
   stateSetting: 'state-setting',
   testSuite: 'test-suite',
   createIdleRule: 'create-idle-rule',
+  healthcheckEngine: 'healthcheck-engine',
+  healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -563,8 +565,10 @@ export const FILTER_DEFAULT_VALUES = {
 
 export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
+  longWithDayOfWeek: 'ddd DD/MM/YYYY H:mm:ss',
   medium: 'DD/MM H:mm',
   short: 'DD/MM/YYYY',
+  shortWithDayOfWeek: 'ddd DD/MM/YYYY',
   time: 'H:mm:ss',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
   dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
@@ -854,7 +858,7 @@ export const USERS_PERMISSIONS = {
     remediationInstruction: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstruction`,
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
-    healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_engine`, // TODO: change to '_healthcheck'
+    healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -1913,7 +1917,6 @@ export const HEALTHCHECK_SERVICES_NAMES = {
 };
 
 export const HEALTHCHECK_ENGINES_NAMES = {
-  event: 'event',
   webhook: 'engine-webhook',
   fifo: 'engine-fifo',
   axe: 'engine-axe',
@@ -1923,9 +1926,74 @@ export const HEALTHCHECK_ENGINES_NAMES = {
   service: 'engine-service',
   dynamicInfos: 'engine-dynamic-infos',
   correlation: 'engine-correlation',
-  heartbeat: 'engine-heartbeat',
   remediation: 'engine-remediation',
 };
+
+export const HEALTHCHECK_ENGINES_REFERENCE_EDGES = [
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.fifo,
+    to: HEALTHCHECK_ENGINES_NAMES.che,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.che,
+    to: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+    to: HEALTHCHECK_ENGINES_NAMES.axe,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.axe,
+    to: HEALTHCHECK_ENGINES_NAMES.remediation,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.axe,
+    to: HEALTHCHECK_ENGINES_NAMES.service,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.service,
+    to: HEALTHCHECK_ENGINES_NAMES.action,
+  },
+];
+
+export const HEALTHCHECK_ENGINES_CAT_REFERENCE_EDGES = [
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.fifo,
+    to: HEALTHCHECK_ENGINES_NAMES.che,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.che,
+    to: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+    to: HEALTHCHECK_ENGINES_NAMES.axe,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.axe,
+    to: HEALTHCHECK_ENGINES_NAMES.remediation,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.axe,
+    to: HEALTHCHECK_ENGINES_NAMES.correlation,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.correlation,
+    to: HEALTHCHECK_ENGINES_NAMES.service,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.service,
+    to: HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
+    to: HEALTHCHECK_ENGINES_NAMES.action,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.action,
+    to: HEALTHCHECK_ENGINES_NAMES.webhook,
+  },
+];
 
 export const CAT_ENGINES = [
   HEALTHCHECK_ENGINES_NAMES.correlation,
@@ -1951,4 +2019,11 @@ export const HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS = {
   [HEALTHCHECK_SERVICES_NAMES.healthcheck]: { x: -2, y: -0.5 },
   [HEALTHCHECK_SERVICES_NAMES.redis]: { x: -1, y: 0 },
   [HEALTHCHECK_SERVICES_NAMES.enginesChain]: { x: 0, y: -0.5 },
+};
+
+export const HEALTHCHECK_FIFO_UNKNOWN_SERVICE = { name: HEALTHCHECK_ENGINES_NAMES.fifo, is_unknown: true };
+
+export const MESSAGE_STATS_INTERVALS = {
+  hour: 'hour',
+  minute: 'minute',
 };

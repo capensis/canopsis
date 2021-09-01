@@ -7,6 +7,7 @@ export const healthcheckNodesMixin = {
      * @return {string}
      */
     getTooltipText(data) {
+      const statusKeys = [];
       const itemWithDefaultFlags = {
         is_running: true,
         is_queue_overflown: false,
@@ -14,26 +15,29 @@ export const healthcheckNodesMixin = {
         is_diff_instances_config: false,
         ...data,
       };
-      const statusKeys = [];
 
       if (!itemWithDefaultFlags.is_running) {
-        statusKeys.push('healthcheck.statuses.notRunning');
+        statusKeys.push('healthcheck.notRunning');
       }
 
       if (itemWithDefaultFlags.is_queue_overflown) {
-        statusKeys.push('healthcheck.statuses.queueOverflow');
+        statusKeys.push('healthcheck.queueOverflow');
       }
 
       if (itemWithDefaultFlags.is_too_few_instances) {
-        statusKeys.push('healthcheck.statuses.tooFewInstances');
+        statusKeys.push('healthcheck.lackOfInstances');
       }
 
       if (itemWithDefaultFlags.is_diff_instances_config) {
-        statusKeys.push('healthcheck.statuses.diffInstancesConfig');
+        statusKeys.push('healthcheck.diffInstancesConfig');
+      }
+
+      if (itemWithDefaultFlags.is_unknown) {
+        statusKeys.push('healthcheck.unknown');
       }
 
       return statusKeys
-        .map(stateKey => this.$t(stateKey, { engine: this.getNodeLabel(data.id) }))
+        .map(stateKey => this.$t(stateKey, { name: this.getNodeName(data.id) }))
         .join('\n');
     },
 
@@ -43,15 +47,10 @@ export const healthcheckNodesMixin = {
      * @param {string} nodeName
      * @return {string}
      */
-    getEdgeLabel(nodeName) {
-      const engineEdgeLabelKey = `healthcheck.engines.${nodeName}.edgeLabel`;
-      const serviceEdgeLabelKey = `healthcheck.services.${nodeName}.edgeLabel`;
+    getNodeEdgeLabel(nodeName) {
+      const nodeEdgeLabelKey = `healthcheck.nodes.${nodeName}.edgeLabel`;
 
-      if (this.$te(engineEdgeLabelKey)) {
-        return this.$t(engineEdgeLabelKey);
-      }
-
-      return this.$te(serviceEdgeLabelKey) ? this.$t(serviceEdgeLabelKey) : nodeName;
+      return this.$te(nodeEdgeLabelKey) ? this.$t(nodeEdgeLabelKey) : nodeName;
     },
 
 
@@ -61,15 +60,10 @@ export const healthcheckNodesMixin = {
      * @param {string} nodeName
      * @return {string}
      */
-    getNodeLabel(nodeName) {
-      const engineLabelKey = `healthcheck.engines.${nodeName}.label`;
-      const serviceLabelKey = `healthcheck.services.${nodeName}.label`;
+    getNodeName(nodeName) {
+      const nodeLabelKey = `healthcheck.nodes.${nodeName}.name`;
 
-      if (this.$te(engineLabelKey)) {
-        return this.$t(engineLabelKey);
-      }
-
-      return this.$te(serviceLabelKey) ? this.$t(serviceLabelKey) : nodeName;
+      return this.$te(nodeLabelKey) ? this.$t(nodeLabelKey) : nodeName;
     },
   },
 };

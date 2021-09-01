@@ -17,9 +17,29 @@ import { Jodit } from 'jodit';
 
 import 'jodit/build/jodit.min.css';
 
-import { BASE_URL, FILE_BASE_URL } from '@/config';
+import { BASE_URL, FILE_BASE_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 
-const { modules: { Dom, Widget: { FileSelectorWidget } } } = Jodit;
+import localStorageService from '@/services/local-storage';
+
+const {
+  modules: {
+    Dom,
+    Ajax,
+    Widget: { FileSelectorWidget },
+  },
+} = Jodit;
+
+/**
+ * We need to replace this method to avoid the problem with CORS
+ */
+const originalSend = Ajax.prototype.send;
+
+Ajax.prototype.send = function send(...args) {
+  delete this.options.headers['X-REQUESTED-WITH'];
+  this.options.withCredentials = false;
+
+  return originalSend.call(this, ...args);
+};
 
 export default {
   props: {
@@ -95,6 +115,7 @@ export default {
         format: 'json',
         filesVariableName: 'files',
         url: FILE_BASE_URL,
+        headers: { Authorization: `Bearer ${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}` },
         prepareData: this.uploaderPrepareData,
         isSuccess: this.uploaderIsSuccess,
         process: this.uploaderProcess,

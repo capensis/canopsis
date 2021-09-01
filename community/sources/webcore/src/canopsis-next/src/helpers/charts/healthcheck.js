@@ -7,6 +7,7 @@ import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
  * @property {boolean} [is_queue_overflown]
  * @property {boolean} [is_too_few_instances]
  * @property {boolean} [is_diff_instances_config]
+ * @property {boolean} [is_unknown]
  */
 
 /**

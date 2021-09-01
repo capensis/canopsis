@@ -9,7 +9,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('info');
 /**
  * @mixin
  */
-export default {
+export const entitiesInfoMixin = {
   computed: {
     ...mapGetters({
       version: 'version',

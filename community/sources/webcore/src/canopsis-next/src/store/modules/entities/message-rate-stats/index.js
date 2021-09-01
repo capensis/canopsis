@@ -5,8 +5,8 @@ import request from '@/services/request';
 export default {
   namespaced: true,
   actions: {
-    fetchItemWithoutStore() {
-      return request.get(API_ROUTES.sessionsCount);
+    fetchMessageRateStatsWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.messageRateStats, { params });
     },
   },
 };
