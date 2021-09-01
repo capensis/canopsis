@@ -3,7 +3,7 @@
 Ce guide donne des instructions vous permettant de mettre à jour un Canopsis 4.1.0 ou 4.1.1 vers la version 4.2.0.
 
 !!! note
-    **18/05/2021 :** Mise à jour des [scripts de migrations](#migration-des-actions-webhooks-et-idlerules-existants).
+    **18/05/2021 :** Mise à jour des [scripts de migration](#migration-des-actions-webhooks-et-idlerules-existants).
 
 ## Prérequis
 
@@ -35,6 +35,22 @@ Les détails de cette migration seront publiés après la sortie de Canopsis 4.
 Le moteur `engine-stat`, désactivé et déprécié depuis [Canopsis 3.31.0](../3.31.0.md), a été complètement supprimé.
 
 ## Procédure de mise à jour
+
+### Arrêt de l'environnement en cours de lancement
+
+Vous devez prévoir une interruption du service afin de procéder à la mise à jour qui va suivre.
+
+=== "Paquets CentOS 7"
+
+    ```sh
+    canoctl stop
+    ```
+
+=== "Docker Compose"
+
+    ```sh
+    docker-compose down
+    ```
 
 ### Déclenchement des webhooks par le moteur `engine-action` (Pro)
 
@@ -99,4 +115,4 @@ Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fic
 
 ### Fin de la mise à jour
 
-Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md).
+Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md) et redémarrez l'environnement.
