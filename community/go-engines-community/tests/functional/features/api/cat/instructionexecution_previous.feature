@@ -7,6 +7,7 @@ Feature: move a instruction execution to previous operation
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-previous-1-name",
       "alarm_patterns": [
         {
@@ -15,6 +16,10 @@ Feature: move a instruction execution to previous operation
       ],
       "description": "test-instruction-execution-previous-1-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-previous-1-step-1",
@@ -118,6 +123,7 @@ Feature: move a instruction execution to previous operation
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-previous-2-name",
       "alarm_patterns": [
         {
@@ -126,6 +132,10 @@ Feature: move a instruction execution to previous operation
       ],
       "description": "test-instruction-execution-previous-2-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-previous-2-step-1",
@@ -176,6 +186,7 @@ Feature: move a instruction execution to previous operation
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-previous-3-name",
       "alarm_patterns": [
         {
@@ -184,6 +195,10 @@ Feature: move a instruction execution to previous operation
       ],
       "description": "test-instruction-execution-previous-3-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-previous-3-step-1",
@@ -289,6 +304,7 @@ Feature: move a instruction execution to previous operation
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-previous-4-name",
       "alarm_patterns": [
         {
@@ -297,6 +313,10 @@ Feature: move a instruction execution to previous operation
       ],
       "description": "test-instruction-execution-previous-4-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-previous-4-step-1",
@@ -360,7 +380,7 @@ Feature: move a instruction execution to previous operation
     Then the response body should contain:
     """
     {
-      "status": 2,
+      "status": 5,
       "name": "test-instruction-execution-previous-4-name",
       "description": "test-instruction-execution-previous-4-description",
       "steps": [
@@ -406,10 +426,10 @@ Feature: move a instruction execution to previous operation
     Then the response key "steps.1.operations.0.completed_at" should not be "0"
 
   Scenario: given unauth request should not allow access
-    When I do PUT /api/v4/cat/executions/test-instruction-execution-running/previous
+    When I do PUT /api/v4/cat/executions/notexist/previous
     Then the response code should be 401
 
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
-    When I do PUT /api/v4/cat/executions/test-instruction-execution-running/previous
+    When I do PUT /api/v4/cat/executions/notexist/previous
     Then the response code should be 403

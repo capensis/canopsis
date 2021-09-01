@@ -382,7 +382,6 @@ Feature: get service entities
     """
     {
       "enabled": true,
-      "author": "root",
       "name": "test-pbehavior-weather-service-entity-5-1",
       "comments":[{"author":"root","message":"pause test-pbehavior-weather-service-entity-5"}],
       "tstart": {{ now.Unix }},

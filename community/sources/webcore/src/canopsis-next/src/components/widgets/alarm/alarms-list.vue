@@ -204,6 +204,14 @@ export default {
     },
   },
   methods: {
+    refreshExpanded() {
+      Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
+        if (expanded && !this.alarms.some(alarm => alarm._id === id)) {
+          this.$set(this.$refs.alarmsTable.expanded, id, false);
+        }
+      });
+    },
+
     updateCorrelation(correlation) {
       this.updateWidgetPreferencesInUserPreference({
         ...this.userPreference.widget_preferences,
@@ -282,34 +290,44 @@ export default {
       });
     },
 
-    fetchList({ isPeriodicRefresh } = {}) {
+    async fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
       if (this.hasColumns) {
         const query = this.getQuery();
 
-        if (isPeriodicRefresh && !isEmpty(this.$refs.alarmsTable.expanded)) {
+        if ((isPeriodicRefresh || isQueryNonceUpdate) && !isEmpty(this.$refs.alarmsTable.expanded)) {
           query.with_steps = true;
         }
 
-        this.fetchAlarmsList({
+        await this.fetchAlarmsList({
           widgetId: this.widget._id,
           params: query,
         });
+
+        this.refreshExpanded();
       }
     },
 
     exportAlarmsList() {
       const query = this.getQuery();
-      const fields = this.widget.parameters.widgetColumns.map(({ label, value }) => ({ label, name: value }));
+      const {
+        widgetExportColumns,
+        widgetColumns,
+        exportCsvSeparator,
+        exportCsvDatetimeFormat,
+      } = this.widget.parameters;
+      const columns = widgetExportColumns && widgetExportColumns.length
+        ? widgetExportColumns
+        : widgetColumns;
 
       this.exportWidgetAsCsv({
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
         data: {
           ...pick(query, ['search', 'category', 'correlation', 'opened', 'resolved']),
 
-          fields,
+          fields: columns.map(({ label, value }) => ({ label, name: value })),
           filter: JSON.stringify(query.filter),
-          separator: this.widget.parameters.exportCsvSeparator,
-          time_format: this.widget.parameters.exportCsvDatetimeFormat,
+          separator: exportCsvSeparator,
+          time_format: exportCsvDatetimeFormat,
         },
       });
     },

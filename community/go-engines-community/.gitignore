@@ -1,7 +1,6 @@
 build/
 cmd/engine-action/engine-action
 cmd/engine-axe/engine-axe
-cmd/engine-heartbeat/engine-heartbeat
 cmd/engine-che/engine-che
 cmd/engine-lifeline/engine-lifeline
 cmd/engine-service/engine-service

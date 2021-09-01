@@ -12,7 +12,7 @@ import (
 type Service interface {
 	// LoadRules loads the event filter rules from the database, and adds them
 	// to the service.
-	LoadRules() error
+	LoadRules(ctx context.Context) error
 
 	// LoadDataSourceFactories loads the data source factories and adds them to
 	// the service.
@@ -26,5 +26,5 @@ type Service interface {
 // Adapter is a type that provides access to the MongoDB collection containing
 // the event filter's rules
 type Adapter interface {
-	List() ([]Rule, error)
+	List(ctx context.Context) ([]Rule, error)
 }

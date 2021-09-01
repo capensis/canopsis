@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"go.mongodb.org/mongo-driver/bson"
 	"testing"
 	"time"
 
@@ -600,6 +601,252 @@ func TestHasSingleAck(t *testing.T) {
 			So(alarm.HasSingleAck(), ShouldBeFalse)
 		})
 	})
+}
+
+func TestAddChild(t *testing.T) {
+	expectedAllChildren := []string{"exited-child", "child-1", "child-2"}
+	expectedNewChildren := []string{"child-1", "child-2"}
+
+	alarm := types.Alarm{}
+	alarm.Value.Children = []string{"exited-child"}
+	alarm.AddChild(expectedNewChildren[0])
+	alarm.AddChild(expectedNewChildren[1])
+
+	if len(alarm.Value.Children) != len(expectedAllChildren) {
+		t.Fatalf("expected chilren length = %d, got %d", len(alarm.Value.Children), len(expectedAllChildren))
+	}
+
+	for idx, child := range alarm.Value.Children {
+		if child != expectedAllChildren[idx] {
+			t.Errorf("expected %s, got %s", expectedAllChildren[idx], child)
+		}
+	}
+
+	update := alarm.GetUpdate()
+	addToSetInterface, ok := update["$addToSet"]
+	if !ok {
+		t.Fatalf("Update bson should contain $addToSet")
+	}
+
+	addToSet, ok := addToSetInterface.(bson.M)
+	if !ok {
+		t.Fatalf("$addToSet should be bson.M")
+	}
+
+	vChildrenInterface, ok := addToSet["v.children"]
+	if !ok {
+		t.Fatalf("$addToSet bson should contain v.children")
+	}
+
+	vChildren, ok := vChildrenInterface.(bson.M)
+	if !ok {
+		t.Fatalf("v.children should be bson.M")
+	}
+
+	eachInterface, ok := vChildren["$each"]
+	if !ok {
+		t.Fatalf("v.children bson should contain $each")
+	}
+
+	each, ok := eachInterface.([]string)
+	if !ok {
+		t.Fatalf("$each should be []string")
+	}
+
+	if len(each) != len(expectedNewChildren) {
+		t.Fatalf("expected $addToSet v.children length = %d, got %d", len(expectedNewChildren), len(each))
+	}
+
+	for idx, child := range each {
+		if child != expectedNewChildren[idx] {
+			t.Errorf("expected %s, got %s", expectedNewChildren[idx], child)
+		}
+	}
+}
+
+func TestRemoveChild(t *testing.T) {
+	beforeChildren := []string{"child-1", "child-2", "child-3", "child-4"}
+	afterChildren := []string{"child-1", "child-4"}
+	removedChildren := []string{"child-2", "child-3"}
+
+	alarm := types.Alarm{}
+	alarm.Value.Children = beforeChildren
+	alarm.RemoveChild("child-2")
+	alarm.RemoveChild("child-3")
+
+	if len(alarm.Value.Children) != len(afterChildren) {
+		t.Fatalf("expected chilren length = %d, got %d", len(alarm.Value.Children), len(afterChildren))
+	}
+
+	for idx, child := range alarm.Value.Children {
+		if child != afterChildren[idx] {
+			t.Errorf("expected %s, got %s", afterChildren[idx], child)
+		}
+	}
+
+	update := alarm.GetUpdate()
+	pullInterface, ok := update["$pull"]
+	if !ok {
+		t.Fatalf("Update bson should contain $pull")
+	}
+
+	pull, ok := pullInterface.(bson.M)
+	if !ok {
+		t.Fatalf("$pull should be bson.M")
+	}
+
+	vChildrenInterface, ok := pull["v.children"]
+	if !ok {
+		t.Fatalf("$pull bson should contain v.children")
+	}
+
+	vChildren, ok := vChildrenInterface.(bson.M)
+	if !ok {
+		t.Fatalf("v.children should be bson.M")
+	}
+
+	inInterface, ok := vChildren["$in"]
+	if !ok {
+		t.Fatalf("v.children bson should contain $each")
+	}
+
+	in, ok := inInterface.([]string)
+	if !ok {
+		t.Fatalf("$each should be []string")
+	}
+
+	if len(in) != len(removedChildren) {
+		t.Fatalf("expected $addToSet v.children length = %d, got %d", len(removedChildren), len(in))
+	}
+
+	for idx, child := range in {
+		if child != removedChildren[idx] {
+			t.Errorf("expected %s, got %s", removedChildren[idx], child)
+		}
+	}
+}
+
+func TestAddParent(t *testing.T) {
+	expectedAllParents := []string{"exited-parent", "parent-1", "parent-2"}
+	expectedNewParents := []string{"parent-1", "parent-2"}
+
+	alarm := types.Alarm{}
+	alarm.Value.Parents = []string{"exited-parent"}
+	alarm.AddParent(expectedNewParents[0])
+	alarm.AddParent(expectedNewParents[1])
+
+	if len(alarm.Value.Parents) != len(expectedAllParents) {
+		t.Fatalf("expected parents length = %d, got %d", len(alarm.Value.Parents), len(expectedAllParents))
+	}
+
+	for idx, parent := range alarm.Value.Parents {
+		if parent != expectedAllParents[idx] {
+			t.Errorf("expected %s, got %s", expectedAllParents[idx], parent)
+		}
+	}
+
+	update := alarm.GetUpdate()
+	addToSetInterface, ok := update["$addToSet"]
+	if !ok {
+		t.Fatalf("Update bson should contain $addToSet")
+	}
+
+	addToSet, ok := addToSetInterface.(bson.M)
+	if !ok {
+		t.Fatalf("$addToSet should be bson.M")
+	}
+
+	vParentsInterface, ok := addToSet["v.parents"]
+	if !ok {
+		t.Fatalf("$addToSet bson should contain v.parents")
+	}
+
+	vParents, ok := vParentsInterface.(bson.M)
+	if !ok {
+		t.Fatalf("v.parents should be bson.M")
+	}
+
+	eachInterface, ok := vParents["$each"]
+	if !ok {
+		t.Fatalf("v.parents bson should contain $each")
+	}
+
+	each, ok := eachInterface.([]string)
+	if !ok {
+		t.Fatalf("$each should be []string")
+	}
+
+	if len(each) != len(expectedNewParents) {
+		t.Fatalf("expected $addToSet v.parents length = %d, got %d", len(expectedNewParents), len(each))
+	}
+
+	for idx, parent := range each {
+		if parent != expectedNewParents[idx] {
+			t.Errorf("expected %s, got %s", expectedNewParents[idx], parent)
+		}
+	}
+}
+
+func TestRemoveParent(t *testing.T) {
+	beforeParents := []string{"parent-1", "parent-2", "parent-3", "parent-4"}
+	afterParents := []string{"parent-1", "parent-4"}
+	removedParents := []string{"parent-2", "parent-3"}
+
+	alarm := types.Alarm{}
+	alarm.Value.Parents = beforeParents
+	alarm.RemoveParent("parent-2")
+	alarm.RemoveParent("parent-3")
+
+	if len(alarm.Value.Parents) != len(afterParents) {
+		t.Fatalf("expected parents length = %d, got %d", len(alarm.Value.Parents), len(afterParents))
+	}
+
+	for idx, parent := range alarm.Value.Parents {
+		if parent != afterParents[idx] {
+			t.Errorf("expected %s, got %s", afterParents[idx], parent)
+		}
+	}
+
+	update := alarm.GetUpdate()
+	pullInterface, ok := update["$pull"]
+	if !ok {
+		t.Fatalf("Update bson should contain $pull")
+	}
+
+	pull, ok := pullInterface.(bson.M)
+	if !ok {
+		t.Fatalf("$pull should be bson.M")
+	}
+
+	vParentsInterface, ok := pull["v.parents"]
+	if !ok {
+		t.Fatalf("$pull bson should contain v.parents")
+	}
+
+	vParents, ok := vParentsInterface.(bson.M)
+	if !ok {
+		t.Fatalf("v.parents should be bson.M")
+	}
+
+	inInterface, ok := vParents["$in"]
+	if !ok {
+		t.Fatalf("v.parents bson should contain $each")
+	}
+
+	in, ok := inInterface.([]string)
+	if !ok {
+		t.Fatalf("$each should be []string")
+	}
+
+	if len(in) != len(removedParents) {
+		t.Fatalf("expected $addToSet v.parents length = %d, got %d", len(removedParents), len(in))
+	}
+
+	for idx, parent := range in {
+		if parent != removedParents[idx] {
+			t.Errorf("expected %s, got %s", removedParents[idx], parent)
+		}
+	}
 }
 
 func getTestAlarmConfig() config.AlarmConfig {

@@ -103,7 +103,7 @@ func TestService_ResolveDone(t *testing.T) {
 			alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
 			alarmAdapterMock.
 				EXPECT().
-				GetAlarmsWithDoneMark().
+				GetAlarmsWithDoneMark(gomock.Any()).
 				Return(dataset.findAlarms, dataset.findError)
 
 			service := alarm.NewService(
@@ -213,7 +213,7 @@ func TestService_ResolveCancels(t *testing.T) {
 			alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
 			alarmAdapterMock.
 				EXPECT().
-				GetAlarmsWithCancelMark().
+				GetAlarmsWithCancelMark(gomock.Any()).
 				Return(dataset.findAlarms, dataset.findError)
 
 			service := alarm.NewService(
@@ -328,7 +328,7 @@ func TestService_ResolveAlarms(t *testing.T) {
 			alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
 			alarmAdapterMock.
 				EXPECT().
-				GetUnresolved().
+				GetUnresolved(gomock.Any()).
 				Return(dataset.findAlarms, dataset.findError)
 
 			service := alarm.NewService(
@@ -438,7 +438,7 @@ func TestService_ResolveSnoozes(t *testing.T) {
 			alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
 			alarmAdapterMock.
 				EXPECT().
-				GetAlarmsWithSnoozeMark().
+				GetAlarmsWithSnoozeMark(gomock.Any()).
 				Return(dataset.findAlarms, dataset.findError)
 
 			service := alarm.NewService(

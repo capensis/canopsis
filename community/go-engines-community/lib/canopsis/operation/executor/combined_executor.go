@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -16,6 +17,7 @@ type combinedExecutor struct {
 
 // Exec finds executor by operation and calls it.
 func (e *combinedExecutor) Exec(
+	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
@@ -26,5 +28,5 @@ func (e *combinedExecutor) Exec(
 		return "", nil
 	}
 
-	return executor.Exec(operation, alarm, time, role, initiator)
+	return executor.Exec(ctx, operation, alarm, time, role, initiator)
 }

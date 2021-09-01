@@ -1,26 +1,42 @@
 [
   {
-    "_id": "rating-1-for-test-instruction-to-rate-2",
-    "execution": "execution-for-test-instruction-to-rate-2",
-    "instruction": "test-instruction-to-rate-2",
-    "user": "root",
+    "_id": "test-rating-to-comments-get-1",
+    "instruction": "test-instruction-to-comments-get-1",
+    "user": "test-user-author-1-id",
     "rating": 4.5,
-    "comment": "test"
+    "comment": "test-rating-to-comments-get-1-comment",
+    "created": 1596550518
   },
   {
-    "_id": "rating-1-for-test-instruction-to-rate-4",
-    "execution": "execution-for-test-instruction-to-rate-4",
-    "instruction": "test-instruction-to-rate-4",
-    "user": "test_user_1",
+    "_id": "test-rating-to-comments-get-2",
+    "instruction": "test-instruction-to-comments-get-1",
+    "user": "test-user-author-1-id",
+    "rating": 2,
+    "comment": "test-rating-to-comments-get-2-comment",
+    "created": 1596550518
+  },
+  {
+    "_id": "test-instruction-to-check-rate-notify-rating-1",
+    "instruction": "test-instruction-to-check-rate-notify",
+    "user": "root",
     "rating": 5,
-    "comment": "test_user_1_comment"
+    "comment": "test-instruction-to-check-rate-notify-rating-1-comment",
+    "created": 1000000000
   },
   {
-    "_id": "rating-2-for-test-instruction-to-rate-4",
-    "execution": "execution-for-test-instruction-to-rate-4",
-    "instruction": "test-instruction-to-rate-4",
-    "user": "test_user_2",
-    "rating": 1,
-    "comment": "test_user_2_comment"
+    "_id": "test-instruction-to-check-rate-notify-rating-2",
+    "instruction": "test-instruction-to-check-rate-notify",
+    "user": "manageruser",
+    "rating": 5,
+    "comment": "test-instruction-to-check-rate-notify-rating-2-comment",
+    "created": 2000000000
+  },
+  {
+    "_id": "test-rating-to-instruction-stats-get-1",
+    "instruction": "test-instruction-to-stats-get-1",
+    "user": "root",
+    "rating": 3.2,
+    "comment": "test-rating-to-instruction-stats-get-1",
+    "created": 1618280210
   }
 ]

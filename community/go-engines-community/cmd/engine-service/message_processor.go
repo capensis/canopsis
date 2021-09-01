@@ -20,7 +20,7 @@ type messageProcessor struct {
 }
 
 func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
-	ctx, task := trace.NewTask(context.Background(), "service.MessageProcessor")
+	ctx, task := trace.NewTask(ctx, "service.MessageProcessor")
 	defer task.End()
 
 	msg := d.Body

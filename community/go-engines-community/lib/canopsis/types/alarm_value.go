@@ -22,8 +22,10 @@ type AlarmStep struct {
 	Role                   string      `bson:"role,omitempty" json:"role,omitempty"`
 	Value                  CpsNumber   `bson:"val" json:"val"`
 	StateCounter           CropCounter `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
-	PbehaviorCanonicalType string      `bson:"pbehavior_canonical_type,omitempty"`
-	Initiator              string      `bson:"initiator,omitempty"`
+	PbehaviorCanonicalType string      `bson:"pbehavior_canonical_type,omitempty" json:"pbehavior_canonical_type,omitempty"`
+	Initiator              string      `bson:"initiator,omitempty" json:"initiator,omitempty"`
+	// Execution contains id if instruction execution for instruction steps only.
+	Execution string `bson:"exec,omitempty" json:"exec,omitempty"`
 }
 
 // NewAlarmStep returns an AlarmStep.
@@ -335,8 +337,9 @@ type AlarmValue struct {
 	Meta              string        `bson:"meta,omitempty" json:"meta,omitempty"`
 	MetaValuePath     string        `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
 
-	Parents  []string `bson:"parents" json:"parents"`
-	Children []string `bson:"children" json:"children"`
+	RelatedParents []string `bson:"-" json:"related_parents"`
+	Parents        []string `bson:"parents" json:"parents"`
+	Children       []string `bson:"children" json:"children"`
 
 	StateChangesSinceStatusUpdate CpsNumber `bson:"state_changes_since_status_update,omitempty" json:"state_changes_since_status_update,omitempty"`
 	TotalStateChanges             CpsNumber `bson:"total_state_changes,omitempty" json:"total_state_changes,omitempty"`

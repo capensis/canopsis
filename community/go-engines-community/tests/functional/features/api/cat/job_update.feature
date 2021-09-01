@@ -2,10 +2,10 @@ Feature: Job update
 
   Scenario: PUT as unauthorized
     When I do PUT /api/v4/cat/jobs/test-job-to-update:
-    """
+    """json
     {
       "name": "test-job-name-to-update",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
     }
@@ -15,10 +15,10 @@ Feature: Job update
   Scenario: PUT without permissions
     When I am noperms
     When I do PUT /api/v4/cat/jobs/test-job-to-update:
-    """
+    """json
     {
       "name": "test-job-name-to-update",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
     }
@@ -28,72 +28,88 @@ Feature: Job update
   Scenario: PUT a valid job without any changes
     When I am admin
     When I do PUT /api/v4/cat/jobs/test-job-to-update:
-    """
+    """json
     {
       "name": "test-job-name-to-update",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
     }
     """
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-job-to-update",
       "name": "test-job-name-to-update",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "config": {
-        "_id": "test-job-config-to-link",
-        "name": "test-job-config-name-to-link",
+        "_id": "test-job-config-to-edit-job",
+        "name": "test-job-config-to-edit-job-name",
         "type": "rundeck",
         "host": "http://example.com",
-        "author": "test-author",
+        "author": {
+          "_id": "test-user-author-1-id",
+          "name": "test-user-author-1-username"
+        },
+        "auth_username": "",
         "auth_token": "test-auth-token"
       },
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "query": null
     }
     """
 
   Scenario: PUT a valid job
     When I am admin
     When I do PUT /api/v4/cat/jobs/test-job-to-update:
-    """
+    """json
     {
       "name": "test-job-name-to-update",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
     }
     """
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-job-to-update",
       "name": "test-job-name-to-update",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "config": {
-        "_id": "test-job-config-to-link",
-        "name": "test-job-config-name-to-link",
+        "_id": "test-job-config-to-edit-job",
+        "name": "test-job-config-to-edit-job-name",
         "type": "rundeck",
         "host": "http://example.com",
-        "author": "test-author",
+        "author": {
+          "_id": "test-user-author-1-id",
+          "name": "test-user-author-1-username"
+        },
+        "auth_username": "",
         "auth_token": "test-auth-token"
       },
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "query": null
     }
     """
 
   Scenario: PUT a valid job that doesn't exist
     When I am admin
     When I do PUT /api/v4/cat/jobs/test-job-to-update-do-not-exists:
-    """
+    """json
     {
       "name": "test-job-name-do-not-exists",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
     }
@@ -103,17 +119,17 @@ Feature: Job update
   Scenario: PUT an invalid job where name already exists
     When I am admin
     When I do PUT /api/v4/cat/jobs/test-job-to-update:
-    """
+    """json
     {
       "name": "test-job-name-to-get",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
     }
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "name": "Name already exists."
@@ -124,7 +140,7 @@ Feature: Job update
   Scenario: PUT an invalid job where config doesn't exist
     When I am admin
     When I do PUT /api/v4/cat/jobs/test-job-to-update:
-    """
+    """json
     {
       "name": "test-job-name-to-update",
       "config": "test-job-config-not-exist",
@@ -134,8 +150,10 @@ Feature: Job update
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
-      "error": "job's config doesn't exist"
+      "errors": {
+        "config": "Config doesn't exist."
+      }
     }
     """

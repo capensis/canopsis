@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"io/ioutil"
 	"math"
 	"os"
@@ -15,6 +14,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 const pageLimit = 5000
@@ -247,6 +248,10 @@ func getNestedMapValAsString(
 	switch val.Kind() {
 	case reflect.Map:
 		val = val.MapIndex(reflect.ValueOf(k))
+		if !val.IsValid() || val.IsZero() {
+			return "", nil
+		}
+
 		if len(keys) > 1 {
 			return getNestedMapValAsString(val, keys[1:], timeFormat, location)
 		}

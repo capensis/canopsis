@@ -59,12 +59,13 @@ func testNewService(ctrl *gomock.Controller, data ...bson.M) eventfilter.Service
 		return rules[i].Priority < rules[j].Priority
 	})
 
-	adapter.EXPECT().List().Return(rules, nil)
+	adapter.EXPECT().List(gomock.Any()).Return(rules, nil)
 	return eventfilter.NewService(adapter, log.NewTestLogger())
 }
 
 func TestProcessEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 	ctx := context.Background()
 
 	Convey("Given an event filter service with (in order of priority) a break rule, and enrichment rule and a drop rule", t, func() {
@@ -75,13 +76,11 @@ func TestProcessEvent(t *testing.T) {
 			enrichmentRule,
 		)
 
-		entity := types.NewEntity("component", "name", types.EntityTypeComponent, nil, nil, nil)
 		enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
-		enrichmentCenter.EXPECT().Handle(gomock.Any(), gomock.Any(), gomock.Any()).Return(&entity, libcontext.UpdatedEntityServices{}, nil)
 		enrichFields := libcontext.NewEnrichFields("", "")
 
 		So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
-		err := service.LoadRules()
+		err := service.LoadRules(ctx)
 		So(err, ShouldBeNil)
 
 		Convey("An event that is matched only by the first rule (break) is left unchanged", func() {
@@ -110,6 +109,7 @@ func TestProcessEvent(t *testing.T) {
 
 func TestEntityEnrichment(t *testing.T) {
 	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 	ctx := context.Background()
 
 	Convey("Given an event filter service with an entity enrichment rule", t, func() {
@@ -121,15 +121,14 @@ func TestEntityEnrichment(t *testing.T) {
 		enrichmentCenterEntity := types.NewEntity("component", "name1", types.EntityTypeComponent, nil, nil, nil)
 		eventEntity := types.NewEntity("component", "name2", types.EntityTypeComponent, nil, nil, nil)
 
-		enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
-		enrichmentCenter.EXPECT().Handle(gomock.Any(), gomock.Any(), gomock.Any()).Return(&enrichmentCenterEntity, libcontext.UpdatedEntityServices{}, nil)
-		enrichFields := libcontext.NewEnrichFields("", "")
-
-		So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
-		err := service.LoadRules()
-		So(err, ShouldBeNil)
-
 		Convey("An event with an entity is not modified", func() {
+			enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
+			enrichFields := libcontext.NewEnrichFields("", "")
+
+			So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
+			err := service.LoadRules(ctx)
+			So(err, ShouldBeNil)
+
 			event := types.Event{
 				EventType:     types.EventTypeCheck,
 				SourceType:    types.SourceTypeComponent,
@@ -149,6 +148,14 @@ func TestEntityEnrichment(t *testing.T) {
 		})
 
 		Convey("An event without an entity is enriched", func() {
+			enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
+			enrichmentCenter.EXPECT().Handle(gomock.Any(), gomock.Any(), gomock.Any()).Return(&enrichmentCenterEntity, libcontext.UpdatedEntityServices{}, nil)
+			enrichFields := libcontext.NewEnrichFields("", "")
+
+			So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
+			err := service.LoadRules(ctx)
+			So(err, ShouldBeNil)
+
 			event := types.Event{
 				EventType:     types.EventTypeCheck,
 				SourceType:    types.SourceTypeComponent,

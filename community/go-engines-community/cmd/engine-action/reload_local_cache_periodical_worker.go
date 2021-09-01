@@ -1,0 +1,27 @@
+package main
+
+import (
+	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"github.com/rs/zerolog"
+	"time"
+)
+
+type reloadLocalCachePeriodicalWorker struct {
+	PeriodicalInterval    time.Duration
+	ActionScenarioStorage action.ScenarioStorage
+	Logger                zerolog.Logger
+}
+
+func (w *reloadLocalCachePeriodicalWorker) GetInterval() time.Duration {
+	return w.PeriodicalInterval
+}
+
+func (w *reloadLocalCachePeriodicalWorker) Work(ctx context.Context) error {
+	err := w.ActionScenarioStorage.ReloadScenarios(ctx)
+	if err != nil {
+		w.Logger.Error().Err(err).Msg("Periodical process: failed to reload actions")
+	}
+
+	return nil
+}
