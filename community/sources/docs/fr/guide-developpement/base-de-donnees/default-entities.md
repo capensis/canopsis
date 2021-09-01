@@ -28,7 +28,7 @@ Voici la structure d'une [entité](../../guide-utilisation/vocabulaire/index.md#
 
 ## Context-graph
 
-À la création et la mise-à-jour d'une entité, son contexte est graphé via le [context-graph](../../guide-utilisation/vocabulaire/index.md#context-graph).
+À la création et la mise à jour d'une entité, son contexte est graphé via le [context-graph](../../guide-utilisation/vocabulaire/index.md#context-graph).
 
 Les champs `impact` et `depends` contiennent chacun un tableau constitué des `_id` d'entités auxquelles l'entité courante est liée.
 
