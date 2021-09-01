@@ -36,48 +36,48 @@ func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 }
 
 // GetEnabled mocks base method
-func (m *MockAdapter) GetEnabled() ([]action.Scenario, error) {
+func (m *MockAdapter) GetEnabled(arg0 context.Context) ([]action.Scenario, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEnabled")
+	ret := m.ctrl.Call(m, "GetEnabled", arg0)
 	ret0, _ := ret[0].([]action.Scenario)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetEnabled indicates an expected call of GetEnabled
-func (mr *MockAdapterMockRecorder) GetEnabled() *gomock.Call {
+func (mr *MockAdapterMockRecorder) GetEnabled(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabled", reflect.TypeOf((*MockAdapter)(nil).GetEnabled))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabled", reflect.TypeOf((*MockAdapter)(nil).GetEnabled), arg0)
 }
 
 // GetEnabledByIDs mocks base method
-func (m *MockAdapter) GetEnabledByIDs(arg0 []string) ([]action.Scenario, error) {
+func (m *MockAdapter) GetEnabledByIDs(arg0 context.Context, arg1 []string) ([]action.Scenario, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEnabledByIDs", arg0)
+	ret := m.ctrl.Call(m, "GetEnabledByIDs", arg0, arg1)
 	ret0, _ := ret[0].([]action.Scenario)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetEnabledByIDs indicates an expected call of GetEnabledByIDs
-func (mr *MockAdapterMockRecorder) GetEnabledByIDs(arg0 interface{}) *gomock.Call {
+func (mr *MockAdapterMockRecorder) GetEnabledByIDs(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabledByIDs", reflect.TypeOf((*MockAdapter)(nil).GetEnabledByIDs), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabledByIDs", reflect.TypeOf((*MockAdapter)(nil).GetEnabledByIDs), arg0, arg1)
 }
 
 // GetEnabledById mocks base method
-func (m *MockAdapter) GetEnabledById(arg0 string) (action.Scenario, error) {
+func (m *MockAdapter) GetEnabledById(arg0 context.Context, arg1 string) (action.Scenario, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEnabledById", arg0)
+	ret := m.ctrl.Call(m, "GetEnabledById", arg0, arg1)
 	ret0, _ := ret[0].(action.Scenario)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetEnabledById indicates an expected call of GetEnabledById
-func (mr *MockAdapterMockRecorder) GetEnabledById(arg0 interface{}) *gomock.Call {
+func (mr *MockAdapterMockRecorder) GetEnabledById(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabledById", reflect.TypeOf((*MockAdapter)(nil).GetEnabledById), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabledById", reflect.TypeOf((*MockAdapter)(nil).GetEnabledById), arg0, arg1)
 }
 
 // MockDelayedScenarioManager is a mock of DelayedScenarioManager interface
@@ -422,17 +422,17 @@ func (mr *MockScenarioStorageMockRecorder) GetTriggeredScenarios(arg0, arg1 inte
 }
 
 // ReloadScenarios mocks base method
-func (m *MockScenarioStorage) ReloadScenarios() error {
+func (m *MockScenarioStorage) ReloadScenarios(arg0 context.Context) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ReloadScenarios")
+	ret := m.ctrl.Call(m, "ReloadScenarios", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ReloadScenarios indicates an expected call of ReloadScenarios
-func (mr *MockScenarioStorageMockRecorder) ReloadScenarios() *gomock.Call {
+func (mr *MockScenarioStorageMockRecorder) ReloadScenarios(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReloadScenarios", reflect.TypeOf((*MockScenarioStorage)(nil).ReloadScenarios))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReloadScenarios", reflect.TypeOf((*MockScenarioStorage)(nil).ReloadScenarios), arg0)
 }
 
 // RunDelayedScenarios mocks base method

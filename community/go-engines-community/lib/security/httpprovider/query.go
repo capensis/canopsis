@@ -24,7 +24,7 @@ func (p *queryProvider) Auth(r *http.Request) (*security.User, error, bool) {
 		return nil, nil, false
 	}
 
-	u, err := p.provider.Auth(username, password)
+	u, err := p.provider.Auth(r.Context(), username, password)
 
 	return u, err, true
 }

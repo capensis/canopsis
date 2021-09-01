@@ -63,6 +63,19 @@ func (e *RPCAxeEvent) UnmarshalJSON(b []byte) error {
 			return fmt.Errorf("cannot decode map struct : %v", err)
 		}
 		e.Parameters = params
+	case EventTypeInstructionStarted, EventTypeInstructionPaused,
+		EventTypeInstructionResumed, EventTypeInstructionCompleted,
+		EventTypeInstructionFailed, EventTypeInstructionAborted,
+		EventTypeAutoInstructionStarted, EventTypeAutoInstructionCompleted,
+		EventTypeAutoInstructionFailed, EventTypeAutoInstructionAlreadyRunning,
+		EventTypeInstructionJobStarted, EventTypeInstructionJobCompleted,
+		EventTypeInstructionJobAborted, EventTypeInstructionJobFailed:
+		var params OperationInstructionParameters
+		err := mapstructure.Decode(e.Parameters, &params)
+		if err != nil {
+			return fmt.Errorf("cannot decode map struct : %v", err)
+		}
+		e.Parameters = params
 	default:
 		var params OperationParameters
 		err := mapstructure.Decode(e.Parameters, &params)
@@ -138,4 +151,18 @@ type RPCWebhookResultEvent struct {
 	Header          map[string]string      `json:"header,omitempty"`
 	Response        map[string]interface{} `json:"response,omitempty"`
 	Error           *RPCError              `json:"error"`
+}
+
+type RPCRemediationEvent struct {
+	Alarm  *Alarm  `json:"alarm"`
+	Entity *Entity `json:"entity"`
+}
+
+type RPCRemediationJobEvent struct {
+	Alarm          *Alarm  `json:"alarm"`
+	Entity         *Entity `json:"entity"`
+	JobExecutionID string  `json:"job_execution_id"`
+	Output         string  `json:"output"`
+	Author         string  `json:"author"`
+	ExecutionID    string  `json:"execution"`
 }

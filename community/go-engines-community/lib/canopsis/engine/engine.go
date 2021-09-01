@@ -9,9 +9,11 @@ import (
 	"time"
 )
 
+const shutdownTimout = 5 * time.Second
+
 func New(
 	init func(ctx context.Context) error,
-	deferFunc func(),
+	deferFunc func(ctx context.Context),
 	logger zerolog.Logger,
 ) Engine {
 	return &engine{
@@ -23,7 +25,7 @@ func New(
 
 type engine struct {
 	init              func(ctx context.Context) error
-	deferFunc         func()
+	deferFunc         func(ctx context.Context)
 	consumers         []Consumer
 	periodicalWorkers []PeriodicalWorker
 	logger            zerolog.Logger
@@ -38,11 +40,16 @@ func (e *engine) AddPeriodicalWorker(worker PeriodicalWorker) {
 }
 
 func (e *engine) Run(parentCtx context.Context) error {
-	e.logger.Info().Msg("engine started")
+	e.logger.Info().
+		Int("consumers", len(e.consumers)).
+		Int("periodical workers", len(e.periodicalWorkers)).
+		Msg("engine started")
 	defer e.logger.Info().Msg("engine stopped")
 	defer func() {
 		if e.deferFunc != nil {
-			e.deferFunc()
+			deferCtx, deferCancel := context.WithTimeout(context.Background(), shutdownTimout)
+			defer deferCancel()
+			e.deferFunc(deferCtx)
 		}
 	}()
 
@@ -52,8 +59,7 @@ func (e *engine) Run(parentCtx context.Context) error {
 	if e.init != nil {
 		err := e.init(ctx)
 		if err != nil {
-			e.logger.Err(err).Msg("cannot init engine")
-			return err
+			return fmt.Errorf("cannot init engine: %w", err)
 		}
 	}
 
@@ -64,20 +70,24 @@ func (e *engine) Run(parentCtx context.Context) error {
 	for _, c := range e.consumers {
 		wg.Add(1)
 		go func(consumer Consumer) {
-			e.logger.Debug().Msg("consumer started")
-			defer e.logger.Debug().Msg("consumer stopped")
+			defer func() {
+				if r := recover(); r != nil {
+					var err error
+					var ok bool
+					if err, ok = r.(error); !ok {
+						err = fmt.Errorf("%v", r)
+					}
 
-			defer wg.Done()
+					e.logger.Err(err).Msgf("consumer recovered from panic\n%s\n", debug.Stack())
+					exitCh <- fmt.Errorf("consumer recovered from panic: %w", err)
+				}
 
-			if r := recover(); r != nil {
-				e.logger.Error().Msgf("worker recovered from panic: %v", r)
-				debug.PrintStack()
-				exitCh <- fmt.Errorf("from panic: %v", r)
-			}
+				wg.Done()
+			}()
 
 			err := consumer.Consume(ctx)
 			if err != nil {
-				exitCh <- err
+				exitCh <- fmt.Errorf("consumer failed: %w", err)
 			}
 		}(c)
 	}
@@ -107,19 +117,22 @@ func (e *engine) runPeriodicalWorker(
 	worker PeriodicalWorker,
 	exitCh chan<- error,
 ) {
-	e.logger.Debug().Msg("periodical process started")
-	defer e.logger.Debug().Msg("periodical process stopped")
-
 	defer wg.Done()
 	defer func() {
 		if r := recover(); r != nil {
-			e.logger.Error().Msgf("periodical recovered from panic: %v", r)
-			debug.PrintStack()
-			exitCh <- fmt.Errorf("from panic: %v", r)
+			var err error
+			var ok bool
+			if err, ok = r.(error); !ok {
+				err = fmt.Errorf("%v", r)
+			}
+
+			e.logger.Err(err).Msgf("periodical worker recovered from panic\n%s\n", debug.Stack())
+			exitCh <- fmt.Errorf("periodical worker recovered from panic: %w", err)
 		}
 	}()
 
-	ticker := time.NewTicker(worker.GetInterval())
+	interval := worker.GetInterval()
+	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
 	for {
@@ -127,9 +140,15 @@ func (e *engine) runPeriodicalWorker(
 		case <-ticker.C:
 			err := worker.Work(ctx)
 			if err != nil {
-				e.logger.Err(err).Msg("periodical process has been failed")
-				exitCh <- err
+				exitCh <- fmt.Errorf("periodical worker failed: %w", err)
 				return
+			}
+
+			newInterval := worker.GetInterval()
+			if newInterval != interval {
+				ticker.Stop()
+				interval = newInterval
+				ticker = time.NewTicker(interval)
 			}
 		case <-ctx.Done():
 			return

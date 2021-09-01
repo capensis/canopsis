@@ -3,12 +3,26 @@ package redis
 import "time"
 
 const (
-	PeriodicalLockKey     = "pbehavior-periodical-lock-key"
-	RecomputeLockKey      = "pbehavior-recompute-lock-key"
-	RecomputeLockDuration = 10 * time.Second
+	PbehaviorPeriodicalLockKey      = "pbehavior-periodical-lock-key"
+	PbehaviorCleanPeriodicalLockKey = "pbehavior-clean-periodical-lock-key"
+	RecomputeLockKey                = "pbehavior-recompute-lock-key"
+	RecomputeLockDuration           = 10 * time.Second
 
-	DelayedScenarioKey   = "delayed-scenario"
-	ScenarioExecutionKey = "scenario-execution"
+	ActionPeriodicalLockKey = "action-periodical-lock-key"
+	DelayedScenarioKey      = "delayed-scenario"
+	ScenarioExecutionKey    = "scenario-execution"
+
+	AxePeriodicalLockKey                 = "axe-periodical-lock-key"
+	AxeResolvedArchiverPeriodicalLockKey = "axe-resolved-archiver-periodical-lock-key"
+
+	ChePeriodicalLockKey = "che-periodical-lock-key"
+
+	ServicePeriodicalLockKey          = "service-periodical-lock"
+	ServiceIdleSincePeriodicalLockKey = "service-periodical-idle-since-lock"
+
+	RemediationPeriodicalLockKey      = "remediation-periodical-lock-key"
+	RemediationStatsPeriodicalLockKey = "remediation-stats-periodical-lock-key"
+	RemediationAutoInstructionLockKey = "remediation-auto-instruction-lock-key"
 
 	PbehaviorSpanKey              = "pbehavior-span"
 	PbehaviorTypesKey             = "pbehavior-types"

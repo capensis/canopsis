@@ -5,8 +5,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
-	"github.com/influxdata/influxdb/pkg/deep"
 	"go.mongodb.org/mongo-driver/bson"
+	"reflect"
 	"testing"
 )
 
@@ -141,7 +141,7 @@ func TestEntityMatcher_MatchAll(t *testing.T) {
 		t.Errorf("expected not error but got %v", err)
 	}
 
-	if deep.Equal(expected, res) {
+	if reflect.DeepEqual(expected, res) {
 		t.Errorf("expected %v but got %v", expected, res)
 	}
 }

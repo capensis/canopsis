@@ -1,10 +1,13 @@
 package security
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+)
 
 // Provider interface is used to implement user authentication by username and password.
 type Provider interface {
-	Auth(username, password string) (*User, error)
+	Auth(ctx context.Context, username, password string) (*User, error)
 }
 
 // HttpProvider interface is used to implement user authentication
@@ -16,21 +19,21 @@ type HttpProvider interface {
 // UserProvider is decorator for requests to user storage.
 type UserProvider interface {
 	// FindByUsername returns user with username or nil.
-	FindByUsername(string) (*User, error)
+	FindByUsername(ctx context.Context, username string) (*User, error)
 	// FindByAuthApiKey returns user with api key or nil.
-	FindByAuthApiKey(string) (*User, error)
+	FindByAuthApiKey(ctx context.Context, apiKey string) (*User, error)
 	// FindByID returns user with ID or nil.
-	FindByID(string) (*User, error)
+	FindByID(ctx context.Context, id string) (*User, error)
 	// FindByExternalSource returns user with ID from source or nil.
-	FindByExternalSource(externalID string, source Source) (*User, error)
+	FindByExternalSource(ctx context.Context, externalID string, source Source) (*User, error)
 	// Save updates user or inserts user if not exist.
-	Save(user *User) error
+	Save(ctx context.Context, user *User) error
 }
 
 // ConfigProvider provides config from storage.
 type ConfigProvider interface {
-	LoadLdapConfig() (*LdapConfig, error)
-	LoadCasConfig() (*CasConfig, error)
+	LoadLdapConfig(ctx context.Context) (*LdapConfig, error)
+	LoadCasConfig(ctx context.Context) (*CasConfig, error)
 }
 
 type LdapConfig struct {

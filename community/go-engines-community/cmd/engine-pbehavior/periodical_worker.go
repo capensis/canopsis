@@ -24,7 +24,6 @@ import (
 type periodicalWorker struct {
 	ChannelPub             libamqp.Channel
 	PeriodicalInterval     time.Duration
-	LockerClient           redis.LockClient
 	PbhService             pbehavior.Service
 	DbClient               mongo.DbClient
 	EventManager           pbehavior.EventManager
@@ -39,14 +38,6 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *periodicalWorker) Work(ctx context.Context) error {
-	_, err := w.LockerClient.Obtain(ctx, redis.PeriodicalLockKey, w.GetInterval()-100*time.Millisecond, nil)
-	if err == redislock.ErrNotObtained {
-		w.Logger.Debug().Msg("Could not obtain periodical lock! Skip periodical process")
-		return nil
-	} else if err != nil {
-		w.Logger.Error().Err(err).Msg("obtain redis lock - unexpected error")
-		return nil
-	}
 	now := time.Now().In(w.TimezoneConfigProvider.Get().Location)
 	w.compute(ctx, now)
 	w.processAlarms(ctx, now)

@@ -10,8 +10,8 @@ import (
 )
 
 type Store interface {
-	Find(query pagination.Query) (AggregationResult, error)
-	Update(request StateSettingRequest) (*StateSetting, error)
+	Find(ctx context.Context, query pagination.Query) (AggregationResult, error)
+	Update(ctx context.Context, request StateSettingRequest) (*StateSetting, error)
 }
 
 type store struct {
@@ -26,10 +26,7 @@ func NewStore(
 	}
 }
 
-func (s *store) Find(query pagination.Query) (AggregationResult, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Find(ctx context.Context, query pagination.Query) (AggregationResult, error) {
 	result := AggregationResult{
 		Data:       make([]StateSetting, 0),
 		TotalCount: 0,
@@ -60,10 +57,7 @@ func (s *store) Find(query pagination.Query) (AggregationResult, error) {
 	return result, nil
 }
 
-func (s *store) Update(r StateSettingRequest) (*StateSetting, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Update(ctx context.Context, r StateSettingRequest) (*StateSetting, error) {
 	res := s.dbCollection.FindOneAndUpdate(
 		ctx,
 		bson.M{"_id": r.ID},

@@ -64,7 +64,8 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 }
 
 func TestCancelableComputer_Compute_GivenEmptyPbehaviorID_ShouldRecomputeAllPbehaviors(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockService := mock_pbehavior.NewMockService(ctrl)
@@ -79,8 +80,6 @@ func TestCancelableComputer_Compute_GivenEmptyPbehaviorID_ShouldRecomputeAllPbeh
 		mockDbClient, mockPublisher, mockEventManager, mockEncoder, "test-queue",
 		zerolog.Logger{})
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{}
 	defer close(ch)

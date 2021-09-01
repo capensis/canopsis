@@ -98,7 +98,7 @@ func (p *createPbehaviorMessageProcessor) Process(
 
 	if alarm == nil {
 		alarms := make([]types.Alarm, 0)
-		err := p.AlarmAdapter.GetOpenedAlarmsByIDs([]string{entity.ID}, &alarms)
+		err := p.AlarmAdapter.GetOpenedAlarmsByIDs(ctx, []string{entity.ID}, &alarms)
 		if err != nil {
 			return nil, fmt.Errorf("failed to find alarm: %w", err)
 		}
