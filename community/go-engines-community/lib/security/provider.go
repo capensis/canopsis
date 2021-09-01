@@ -45,6 +45,7 @@ type LdapConfig struct {
 	Filter             string            `bson:"ufilter"`
 	DefaultRole        string            `bson:"default_role"`
 	InsecureSkipVerify bool              `bson:"skip_verify"`
+	MaxTLSVersion      string            `bson:"max_tls_ver"`
 }
 
 type CasConfig struct {
