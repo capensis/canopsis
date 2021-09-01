@@ -70,11 +70,11 @@ export default {
   },
   watch: {
     items() {
-      this.$nextTick(this.setItemsWidth);
+      this.setItemsWidth();
     },
 
     $route() {
-      this.$nextTick(this.setItemsWidth);
+      this.setItemsWidth();
     },
   },
   mounted() {

@@ -12,6 +12,7 @@ import { COLORS } from '@/config';
 import { HEALTHCHECK_SERVICES_NAMES, SOCKET_ROOMS } from '@/constants';
 
 import { getHealthcheckNodeColor } from '@/helpers/color';
+
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
 
 const { mapActions } = createNamespacedHelpers('healthcheck');
