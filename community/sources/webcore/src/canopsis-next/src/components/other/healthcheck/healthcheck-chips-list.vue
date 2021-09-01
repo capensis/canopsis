@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import { sortBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { COLORS } from '@/config';
@@ -49,7 +50,7 @@ export default {
         }];
       }
 
-      return wrongNodes.map(engine => ({
+      return sortBy(wrongNodes, ['name']).map(engine => ({
         ...engine,
         color: getHealthcheckNodeColor(engine),
         tooltip: this.getTooltipText(engine),
