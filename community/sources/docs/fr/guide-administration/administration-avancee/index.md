@@ -27,4 +27,4 @@ Cette section vous accompagne dans l'administration avancée des composants de C
 - [Configuration avancée du serveur de cache Redis](configuration-composants/serveur-cache-redis.md)
 - [Configuration avancée du reverse proxy HTTP Nginx](configuration-composants/reverse-proxy-nginx.md)
 - [Liste des variables d'environnement liées à Canopsis](variables-environnement.md)
-- [Reconnexion automatique des composants](reconnexion-automatique.md)
+- [Reconnexion automatique des services et des moteurs](reconnexion-automatique.md)
