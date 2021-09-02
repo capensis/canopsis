@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"context"
 	"fmt"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -16,6 +17,7 @@ type assocTicketExecutor struct {
 
 // Exec creates new assoc ticket step for alarm.
 func (e *assocTicketExecutor) Exec(
+	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
@@ -29,6 +31,7 @@ func (e *assocTicketExecutor) Exec(
 
 	err := alarm.PartialUpdateAssocTicket(
 		time,
+		nil,
 		params.Author,
 		params.Ticket,
 		role,

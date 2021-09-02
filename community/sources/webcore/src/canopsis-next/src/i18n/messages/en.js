@@ -221,6 +221,7 @@ export default {
     number: 'Number',
     boolean: 'Boolean',
     null: 'Null',
+    array: 'Array',
   },
   user: {
     role: 'Role',
@@ -257,6 +258,10 @@ export default {
     },
     entityInfo: {
       valueAsList: 'Change value type to list',
+    },
+    fab: {
+      common: 'Add a new entity',
+      addService: 'Add a new service entity',
     },
   },
   search: {
@@ -2160,6 +2165,7 @@ export default {
       number: '@:variableTypes.number',
       boolean: '@:variableTypes.boolean',
       null: '@:variableTypes.null',
+      array: '@:variableTypes.array',
     },
   },
 

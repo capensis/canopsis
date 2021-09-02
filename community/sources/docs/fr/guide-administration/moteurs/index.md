@@ -77,6 +77,14 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | `watcher` (Python) | `engine-watcher` (Go) |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
+## Gestion des erreurs
+
+En cas d'erreur fatale, telle qu'une perte prolongée de la connexion à un service externe (tel que la base de données), les moteurs s'arrêtent avec un code d'erreur.
+
+Les unités systemd (en installation paquets) et les lignes `restart: unless-stopped` (avec Docker Compose) sont configurées de manière à ce que les moteurs soient automatiquement relancés après une erreur fatale.
+
+Ceci est une partie essentielle de l'architecture de Canopsis et de la disponibilité du service. Il ne doit en aucun cas être modifié.
+
 ## Variables d'environnement liées aux moteurs
 
 Certains comportements des moteurs de Canopsis peuvent être ajustés à l'aide de variables.

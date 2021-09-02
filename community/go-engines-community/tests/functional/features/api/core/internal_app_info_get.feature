@@ -7,7 +7,7 @@ Feature: Get application information
     When I do GET /api/v4/internal/app_info
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "allow_change_severity_to_info": false,
       "app_title": "Canopsis Test",
@@ -15,9 +15,28 @@ Feature: Get application information
       "footer": "Test footer",
       "language": "en",
       "login_page_description": "Test login",
+      "remediation": {
+        "pause_manual_instruction_interval": {
+          "seconds": 4
+        },
+        "job_config_types": [
+          {
+            "auth_type": "bearer-token",
+            "name": "awx"
+          },
+          {
+            "auth_type": "basic-auth",
+            "name": "jenkins"
+          },
+          {
+            "auth_type": "header-token",
+            "name": "rundeck"
+          }
+        ]
+      },
       "stack": "go",
-      "version": "3.42.0",
-      "jobexecutorfetchtimeoutseconds": 5
+      "timezone": "Europe/Paris",
+      "version": "3.42.0"
     }
     """
 

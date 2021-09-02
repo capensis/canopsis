@@ -14,8 +14,8 @@ const DefaultCategory = "default"
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
-	WithFlags bool `form:"with_flags"`
-	NoEvents  bool `form:"no_events"`
+	WithFlags bool `form:"with_flags" json:"with_flags"`
+	NoEvents  bool `form:"no_events" json:"no_events"`
 }
 
 type ListRequest struct {
@@ -35,6 +35,17 @@ type ExportRequest struct {
 	BaseFilterRequest
 	Fields    export.Fields `json:"fields"`
 	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
+}
+
+type CleanRequest struct {
+	Archive             *bool `json:"archive" bson:"archive" binding:"required"`
+	ArchiveDependencies bool  `json:"archive_dependencies" bson:"archive_dependencies"`
+}
+
+type CleanTask struct {
+	Archive             *bool
+	ArchiveDependencies bool
+	UserID              string
 }
 
 type ExportResponse struct {

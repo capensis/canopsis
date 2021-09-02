@@ -7,6 +7,7 @@ Feature: cancel a instruction execution
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-cancel-1-name",
       "alarm_patterns": [
         {
@@ -15,6 +16,10 @@ Feature: cancel a instruction execution
       ],
       "description": "test-instruction-execution-cancel-1-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-cancel-1-step-1",
@@ -53,6 +58,7 @@ Feature: cancel a instruction execution
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-cancel-2-name",
       "alarm_patterns": [
         {
@@ -61,6 +67,10 @@ Feature: cancel a instruction execution
       ],
       "description": "test-instruction-execution-cancel-2-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-cancel-2-step-1",
@@ -119,6 +129,10 @@ Feature: cancel a instruction execution
       ],
       "description": "test-instruction-cancel-execution-running-1-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-cancel-execution-running-1-step-1",
@@ -145,10 +159,32 @@ Feature: cancel a instruction execution
     Then the response code should be 410
 
   Scenario: given unauth request should not allow access
-    When I do PUT /api/v4/cat/executions/test-instruction-execution-running/cancel
+    When I do PUT /api/v4/cat/executions/notexist/cancel
     Then the response code should be 401
 
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
-    When I do PUT /api/v4/cat/executions/test-instruction-execution-running/cancel
+    When I do PUT /api/v4/cat/executions/notexist/cancel
     Then the response code should be 403
+
+  Scenario: given instruction approval should cancel running executions
+    When I am admin
+    When I do GET /api/v4/cat/executions/test-instruction-to-update-w-approval-should-cancel-execution-running-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "status": 0
+    }
+    """
+    When I am authenticated with username "approveruser" and password "test"
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-w-approval-should-cancel-execution/approval:
+    """
+    {
+      "approve": true
+    }
+    """
+    Then the response code should be 200
+    Then I am admin
+    When I do GET /api/v4/cat/executions/test-instruction-to-update-w-approval-should-cancel-execution-running-1
+    Then the response code should be 410

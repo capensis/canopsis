@@ -29,14 +29,16 @@ type ServiceChanges struct {
 }
 
 type store struct {
-	db           mongo.DbClient
-	dbCollection mongo.DbCollection
+	dbCollection              mongo.DbCollection
+	alarmDbCollection         mongo.DbCollection
+	resolvedAlarmDbCollection mongo.DbCollection
 }
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		db:           db,
-		dbCollection: db.Collection(mongo.EntityMongoCollection),
+		dbCollection:              db.Collection(mongo.EntityMongoCollection),
+		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
+		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
 	}
 }
 
@@ -118,7 +120,7 @@ func (s *store) GetDependencies(ctx context.Context, id string, q pagination.Que
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		q,
 		pipeline,
-		bson.M{"$sort": bson.D{{"impact_state", -1}, {"entity._id", 1}}},
+		bson.M{"$sort": bson.D{{Key: "impact_state", Value: -1}, {Key: "entity._id", Value: 1}}},
 		projectPipeline,
 	))
 	if err != nil {
@@ -197,7 +199,7 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		q,
 		pipeline,
-		bson.M{"$sort": bson.D{{"impact_state", -1}, {"entity._id", 1}}},
+		bson.M{"$sort": bson.D{{Key: "impact_state", Value: -1}, {Key: "entity._id", Value: 1}}},
 		projectPipeline,
 	))
 	if err != nil {
@@ -304,18 +306,24 @@ func (s *store) Delete(ctx context.Context, id string) (bool, *types.Alarm, erro
 		return false, nil, err
 	}
 
-	collection := s.db.Collection(mongo.AlarmMongoCollection)
-	res := collection.FindOneAndDelete(ctx, bson.M{"d": id})
-	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return true, nil, nil
+	// Delete open alarm.
+	var alarm *types.Alarm
+	res := s.alarmDbCollection.FindOneAndDelete(ctx, bson.M{"d": id, "v.resolved": nil})
+	if err := res.Err(); err == nil {
+		alarm = &types.Alarm{}
+		err := res.Decode(alarm)
+		if err != nil {
+			return false, nil, err
 		}
-
+	} else if err != mongodriver.ErrNoDocuments {
 		return false, nil, err
 	}
-
-	alarm := &types.Alarm{}
-	err = res.Decode(alarm)
+	// Delete resolved alarms.
+	_, err = s.alarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
+	if err != nil {
+		return false, nil, err
+	}
+	_, err = s.resolvedAlarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
 	if err != nil {
 		return false, nil, err
 	}

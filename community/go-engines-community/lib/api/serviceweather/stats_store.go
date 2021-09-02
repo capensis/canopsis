@@ -35,9 +35,6 @@ type statsStore struct {
 
 // GetStats fetches entity stats by its ID. Returns zero stats when last event has before current date
 func (s *statsStore) GetStats(ctx context.Context, eid string, location *time.Location) (result Stats, err error) {
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
 	entityStats := s.dbCollection.FindOne(ctx, bson.M{"_id": eid})
 	if err = entityStats.Err(); err != nil {
 		if err == mongodriver.ErrNoDocuments {
@@ -61,12 +58,9 @@ func (s *statsStore) GetStats(ctx context.Context, eid string, location *time.Lo
 	return result, nil
 }
 
-// SetStats updates or innsert entity stats by Entity ID when last saved event has same date.
+// SetStats updates or insert entity stats by Entity ID when last saved event has same date.
 // The new day's stats starts from zero counters. It replaces stats when lastevevent's date was before the current date
 func (s *statsStore) SetStats(ctx context.Context, eid string, st Stats, location *time.Location) error {
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
 	lastEventTime := time.Time{}
 	if st.LastEvent == nil {
 		lastEventTime = time.Now()
@@ -116,9 +110,6 @@ func (s *statsStore) SetStats(ctx context.Context, eid string, st Stats, locatio
 
 // ResetStats saves empty stats
 func (s *statsStore) ResetStats(ctx context.Context, eid string) error {
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
 	res := s.dbCollection.FindOneAndReplace(ctx, bson.M{"_id": eid}, Stats{})
 	if err := res.Err(); err != nil && err != mongodriver.ErrNoDocuments {
 		return err
