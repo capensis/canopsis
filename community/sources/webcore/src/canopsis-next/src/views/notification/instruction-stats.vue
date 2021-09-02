@@ -16,7 +16,11 @@
 import { MODALS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
 
 import { dateParse } from '@/helpers/date/date-intervals';
-import { convertDateToTimestampByTimezone } from '@/helpers/date/date';
+import {
+  convertDateToEndOfDayMoment,
+  convertDateToStartOfDayMoment,
+  convertDateToTimestampByTimezone,
+} from '@/helpers/date/date';
 
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
@@ -68,16 +72,20 @@ export default {
       const params = this.getQuery();
       params.with_flags = true;
 
-      params.from = convertDateToTimestampByTimezone(dateParse(
+      const from = convertDateToTimestampByTimezone(dateParse(
         this.pagination.interval.from,
         DATETIME_INTERVAL_TYPES.start,
         DATETIME_FORMATS.datePicker,
       ), this.$system.timezone);
-      params.to = convertDateToTimestampByTimezone(dateParse(
+
+      const to = convertDateToTimestampByTimezone(dateParse(
         this.pagination.interval.to,
         DATETIME_INTERVAL_TYPES.stop,
         DATETIME_FORMATS.datePicker,
       ), this.$system.timezone);
+
+      params.from = convertDateToStartOfDayMoment(from).unix();
+      params.to = convertDateToEndOfDayMoment(to).unix();
 
       this.fetchRemediationInstructionStatsList({ params });
     },

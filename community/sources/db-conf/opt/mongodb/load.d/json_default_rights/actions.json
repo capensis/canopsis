@@ -473,12 +473,12 @@
         "type": "CRUD"
     },
     {
-      "_id": "models_exploitation_metaAlarmRule",
-      "loader_id": "models_exploitation_metaAlarmRule",
-      "crecord_name": "models_exploitation_metaAlarmRule",
-      "crecord_type": "action",
-      "desc": "Exploitation: Meta alarm rule",
-      "type": "CRUD"
+        "_id": "models_exploitation_metaAlarmRule",
+        "loader_id": "models_exploitation_metaAlarmRule",
+        "crecord_name": "models_exploitation_metaAlarmRule",
+        "crecord_type": "action",
+        "desc": "Exploitation: Meta alarm rule",
+        "type": "CRUD"
     },
     {
         "_id": "models_exploitation_scenario",
