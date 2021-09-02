@@ -1,7 +1,7 @@
 # Reconfigure.
 
 The *canopsis-reconfigure* command is used to initialize the RabbitMQ queues and exchanges to using a configuration and
-initialize the Mongo database
+initialize the Mongo database.
 
 - [Run](#run)
     - [Arguments](#arguments)
@@ -44,7 +44,7 @@ Rerun *canopsis-reconfigure* after configuration modification. Rerun API or engi
 ## Migrations
 
 Migrations are used for versioning database schema. Migrations provide easy and safe way to deploy database schema changes.
-Migration scripts contain Javascript code which is implemented in Mongo console.  
+Migration scripts contain Javascript code which is executed in Mongo console.  
 
 Cmd *canopsis-reconfigure* automatically migrates new migrations from [database/migrations](../../database/migrations) directory.
 
@@ -57,7 +57,7 @@ Fixtures are YAML files which content is inserted to database collections.
 
 If Canopsis database is empty *canopsis-reconfigure* automatically applies fixtures from [database/fixtures/prod](../../database/fixtures/prod) directory.
 
-#### Creating Fixtures
+#### Creating fixtures
 
 Many documents of different collections can be defined in one file.
 
@@ -93,7 +93,7 @@ users:
 
 Following functions are available
 
-- `<Password(pass)>` returns hashed password
+- `<Password(pass)>` returns hashed password.
 - `<NowUnix()>` returns Unix timestamp for current time.
 - `<DateUnix()>` returns Unix timestamp for random time.
 - `<Index>` returns index of current document in all documents which are defined under collection name.
