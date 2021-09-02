@@ -83,7 +83,7 @@ docker-compose_rabbitmq_1        docker-entrypoint.sh rabbi ...   Up       15671
 docker-compose_redis_1           docker-entrypoint.sh redis ...   Up       0.0.0.0:6379->6379/tcp
 docker-compose_scheduler_1       /bin/sh -c /entrypoint.sh        Up       8082/tcp
 docker-compose_task_importctx_1  /bin/sh -c /entrypoint.sh        Up       8082/tcp
-docker-compose_watcher_1         /bin/sh -c /${_BINARY_NAME}      Up
+docker-compose_service_1         /bin/sh -c /${_BINARY_NAME}      Up
 docker-compose_webserver_1       /bin/sh -c /entrypoint.sh        Up       0.0.0.0:8082->8082/tcp
 ```
 
@@ -110,7 +110,7 @@ Stopping docker-compose_che_1            ... done
 Stopping docker-compose_influxdb_1       ... done
 Stopping docker-compose_heartbeat_1      ... done
 Stopping docker-compose_rabbitmq_1       ... done
-Stopping docker-compose_watcher_1        ... done
+Stopping docker-compose_service_1        ... done
 Removing docker-compose_nginx_1          ... done
 Removing docker-compose_webserver_1      ... done
 Removing docker-compose_provisioning_1   ... done
@@ -127,7 +127,7 @@ Removing docker-compose_che_1            ... done
 Removing docker-compose_influxdb_1       ... done
 Removing docker-compose_heartbeat_1      ... done
 Removing docker-compose_rabbitmq_1       ... done
-Removing docker-compose_watcher_1        ... done
+Removing docker-compose_service_1        ... done
 Removing network docker-compose_default
 ```
 

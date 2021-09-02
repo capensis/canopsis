@@ -115,7 +115,7 @@ l'heure en utilisant le seul fuseau horaire local.
 | id      | varchar(200) | PK          | Id de l'entité                                          |
 | name    | varchar(200) | not null    | Nom de l'entité                                         |
 | enabled | boolean      | not null    | L'entité est-elle activée ?                             |
-| type    | varchar(100) | not null    | Type d'entité (connector, component, resource, watcher) |
+| type    | varchar(100) | not null    | Type d'entité (connector, component, resource, service) |
 
 !!! Note
     Une entité arbitraire « [NOT FOUND] » est créée dans cette table par le

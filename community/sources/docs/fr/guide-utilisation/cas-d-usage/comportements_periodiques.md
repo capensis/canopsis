@@ -19,7 +19,7 @@ Les cas d'usage détaillés dans cette documentation vous permettront de :
 
 ## Contexte
 
-Considérons l'application `ERP` (sous forme d'observateur) composée de différentes entités.
+Considérons l'application `ERP` composée de différentes entités.
 
 ![Situation initiale](./img/pbh_situation_initiale.png)
 
@@ -27,7 +27,7 @@ Vous aurez également créé une ou plusieurs raisons personnalisées par le bia
 
 ## Définition de la plage de service
 
-Rendez-vous dans l'explorateur de contexte et recherchez votre observateur `ERP`.
+Rendez-vous dans l'explorateur de contexte et recherchez votre service `ERP`.
 
 Ajoutez-lui ensuite un comportement périodique en cliquant sur ce bouton.
 

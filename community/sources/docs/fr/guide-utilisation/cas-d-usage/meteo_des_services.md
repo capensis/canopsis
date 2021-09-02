@@ -1,10 +1,10 @@
-# Météo des Services
+# Météo des services
 
-La météo des services permet de représenter des états agrégés de services selon différentes règles.  
+La Météo des services permet de représenter des états agrégés de services selon différentes règles.  
 La documentation complète est disponible [ici](../../guide-utilisation/interface/widgets/meteo-des-services/index.md)
 
 L'interface Canopsis utilise des *tuiles* pour représenter ces états.  
-Une tuile correspond à l'état d'un *observateur*, qui est calculé selon des règles.  
+Une tuile correspond à l'état d'un *service*, qui est calculé selon des règles.  
 
 !!! note
     Nous souhaitons représenter l'état de l'application *E-Commerce* sur une météo des services.
@@ -16,37 +16,37 @@ Une tuile correspond à l'état d'un *observateur*, qui est calculé selon des r
 
 ## Entités à prendre en compte
 
-La première étape consiste à créer un observateur E-Commerce qui va regrouper les sous-éléments constituants.  
-D'un point de vue "structuration de données", nous allons utiliser un critère de parentalité entre les sous-éléments constituants et l'observateur.  
+La première étape consiste à créer un service E-Commerce qui va regrouper les sous-éléments constituants.  
+D'un point de vue "structuration de données", nous allons utiliser un critère de parentalité entre les sous-éléments constituants et le service.
 
-L'observateur est une entité du contexte de Canopsis qui porte un filtre de sélection d'éléments.  
+Le service est une entité du contexte de Canopsis qui porte un filtre de sélection d'éléments.  
 Dans notre cas il s'agit de :
 
 ```
 "entity.infos.app.value" : "E-Commerce"
 ```
 
-Autrement dit, chaque entité de Canopsis qui portera un attribut **infos.app.value = E-Commerce** sera incluse dans l'observateur E-Commerce.  
+Autrement dit, chaque entité de Canopsis qui portera un attribut **infos.app.value = E-Commerce** sera incluse dans le service E-Commerce.  
 Le critère de sélection est laissé à votre discrétion, vos manières de représenter les données, les modèles utilisés dans vos référentiels.
 
 !!! attention
     La réflexion autour de ce sujet est extrêmement importante, ne la négligez pas.
 
-Voici les étapes de création de l'observateur.  
+Voici les étapes de création du service.
 Utilisez un widget **Explorateur de contexte**.  
 
-![Création observateur](./img/mds_observateur_creation1.png "Création de l'observateur")  
+![Création service](./img/mds_observateur_creation1.png "Création du service")  
 
-On nomme l'observateur et on configure son filtre de sélection.  
+On nomme le service et on configure son filtre de sélection.  
 
-![Définition de l'observateur](./img/mds_observateur_creation2.png "Définition de l'observateur")  
+![Définition du service](./img/mds_observateur_creation2.png "Définition du service")  
 
-On crée un attribut qui nous servira plus tard sur le widget météo. Ici, on a choisi de le nommer affichage_tv et d'en faire une valeur.  
-On crée un attribut application_label qui nous servira plus tard à mieux repérer notre observateur. Ici, on a choisi de lui donner "Plateforme E-Commerce" comme valeur.
+On crée un attribut qui nous servira plus tard sur le widget météo. Ici, on a choisi de le nommer `affichage_tv` et d'en faire une valeur.  
+On crée un attribut application_label qui nous servira plus tard à mieux repérer notre service. Ici, on a choisi de lui donner "Plateforme E-Commerce" comme valeur.
 
-![Définition de l'observateur](./img/mds_observateur_creation3.png "Définition de l'observateur")  
+![Définition du service](./img/mds_observateur_creation3.png "Définition du service")  
 
-À ce stade, une alarme portant le critère app.value = "E-Commerce" aura un impact sur l'observateur.
+À ce stade, une alarme portant le critère app.value = "E-Commerce" aura un impact sur le service.
 
 ## Widget ServiceWeather
 
@@ -74,7 +74,7 @@ La modale :
 ![Template modale](./img/mds_widget_template_modale.png "Widget template modale")  
 
 !!! note
-    Notez le helper *entities* qui est fourni directement par Canopsis et qui vous permet d'itérer sur l'ensemble des sous-éléments de l'observateur.
+    Notez le helper *entities* qui est fourni directement par Canopsis et qui vous permet d'itérer sur l'ensemble des sous-éléments du service.
 
 Le rendu final sera
 
@@ -93,7 +93,7 @@ Pour rappel, voici les éléments constituants :
 * mon-compte-utilisateur
 * workflow-commande
 
-Le filtre de l'observateur concerne l'attribut *app* qui doit valoir "E-Commerce".  
+Le filtre du service concerne l'attribut *app* qui doit valoir "E-Commerce".  
 
 ![Constituants](./img/mds_constituants1.png "Constituants")  
 

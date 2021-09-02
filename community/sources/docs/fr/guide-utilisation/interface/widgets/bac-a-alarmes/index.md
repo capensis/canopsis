@@ -97,16 +97,16 @@ Afin de supprimer ce filtre, cliquez sur le bouton de fermeture présent sur le 
 Vous pouvez accéder à une alarme en particulier grâce à une URL directe.  
 Cette URL est de la forme : `http(s)://URL_CANOPSIS/alarms/<alarmID>[?widgetId=<widgetID>]`.  
 
-* `<alarmID>` **(requis)** : correspond à l'attribut `_id` de l'alarme.  
-* `<widgetID>` **(optionnel)** : correspond à l'identifiant d'un widget. Lorsque cet identifiant est précisé, la configuration du widget s'applique (colonnes, plus d'infos, etc.)  
+* `<alarmID>` **(requis)** : correspond à l'attribut `_id` de l'alarme.
+* `<widgetID>` **(optionnel)** : correspond à l'identifiant d'un widget. Lorsque cet identifiant est précisé, la configuration du widget s'applique (colonnes, plus d'infos, etc.)
 
-L'identifiant d'un widget est disponible pour copie dans le mode **édition** d'une vue en bas d'un widget.  
+L'identifiant d'un widget est disponible pour copie dans le mode **édition** d'une vue en bas d'un widget.
 
 ### Actions
 
 Pour chaque alarme, des actions sont disponibles.
 
-Pour le détail de chacune des actions, voir la [liste des actions du Bac à alarmes](./actions.md).
+Pour le détail de chacune des actions, voir la [liste des actions](actions.md) du Bac à alarmes.
 
 ### Éléments par page
 
@@ -188,7 +188,7 @@ Voici quelques exemples pratiques de colonnes :
 
 ###### Champs basiques
 
-Label  | Valeur  
+Label  | Valeur
 --|--
 Type de connecteur | `alarm.v.connector `
 Nom du connecteur | `alarm.v.connector_name`
@@ -200,7 +200,7 @@ Statut | `alarm.v.status.val`
 
 ###### Champs enrichis
 
-Label  | Valeur  
+Label  | Valeur
 --|--
 Nom du champ enrichi	| `infos.NOM_DU_CHAMP_ENRICHI`
 
@@ -366,12 +366,12 @@ Description  | 1° colonne  | 2° colonne | 3° colonne
 Exclure les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `not equal` | `changestate` (valeur string)
 Uniquement les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `equal` | `changestate` (valeur string)
 
-###### Observateurs
+###### Services
 
 Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
-Exclure les alarmes liées à des observateurs | `entity.type`  | `not equal` | `watcher` (valeur string)
-Uniquement les alarmes des observateurs | `entity.type`  | `equal` | `watcher` (valeur string)
+Exclure les alarmes liées à des services | `entity.type`  | `not equal` | `service` (valeur string)
+Uniquement les alarmes des services | `entity.type`  | `equal` | `service` (valeur string)
 
 ##### Info popup
 

@@ -30,7 +30,7 @@ Pour les informations concernant le paramètrage du Bac à alarmes, voir la part
 
 ### [Explorateur de contexte](contexte/index.md)
 
-Le widget **Explorateur de contexte** permet de lister les entités (composants, connecteurs, ressources et observateurs).
+Le widget **Explorateur de contexte** permet de lister les entités (composants, connecteurs, ressources et services).
 
 Il permet de voir les informations concernant chaque entité, de créer de nouvelles entités, d'en supprimer, ainsi que de les éditer.
 Il permet également d'accéder à la liste des comportements périodiques de chaque entité, d'en ajouter, et d'en supprimer.

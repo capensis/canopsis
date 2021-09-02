@@ -51,12 +51,6 @@ Voici comment sont graphées les entités d'un [évènement](../../guide-utilisa
 - `impact` : `_id` du `component`
 - `depends` : `_id` du `connector`
 
-### Observateur
-
-Un [observateur](../../guide-utilisation/vocabulaire/index.md#observateur) (ou « watcher » ) est conçu pour que les `depends` de son `context-graph` incluent les entités correspondant à son ou ses patterns.
-
-En retour, il est automatiquement ajouté aux `impact` des entités en question.
-
 ## `_id` des entités
 
 ### Composant

@@ -25,33 +25,33 @@ La météo de services est composée de tuiles.
 
 Exemple d'une tuile : ![Exemple d'une tuile - Météo de services](./img/tuile-weather.png  "Exemple d'une tuile - Météo de services")
 
-Chaque tuile correspond à un observateur.
+Chaque tuile correspond à un service.
 
-Le contenu de texte de cette tuile est personnalisable (*Cf: [Guide exploitant](#guide-exploitant_1)*). Il permet de présenter des informations sur l'observateur.
+Le contenu de texte de cette tuile est personnalisable (*Cf: [Guide exploitant](#guide-exploitant_1)*). Il permet de présenter des informations sur le service.
 
-La couleur de la tuile et l'icône présente sur celle-ci permettent d'obtenir des informations sur **la criticité** de l'observateur:
+La couleur de la tuile et l'icône présente sur celle-ci permettent d'obtenir des informations sur **la criticité** de le service:
 
 #### La couleur
 
-La couleur de la tuile correspond à la criticité de l'observateur. Elle est calculée en prenant en compte la pire criticité parmi les entités surveillées par cet observateur.
+La couleur de la tuile correspond à la criticité de le service. Elle est calculée en prenant en compte la pire criticité parmi les entités surveillées par ce service.
 
 Exemple :
-Un observateur surveille deux entités, A et B. A a un criticité de 1. B a une criticité de 3. La criticité de l'observateur sera alors égale à 3.
+Un service surveille deux entités, A et B. A a un criticité de 1. B a une criticité de 3. La criticité de le service sera alors égale à 3.
 
 - Vert: Criticité = 0 => Ok
 - Jaune: Criticité = 1 => Mineur
 - Orange: Criticité = 2 => Majeur
 - Rouge: Criticité = 3 => Critique
-- Gris: L'observateur (ou toutes les entités de l'observateur) possède un comportement périodique actif (pause, maintenance…).
+- Gris: Le service (ou toutes les entités de le service) possède un comportement périodique actif (pause, maintenance…).
 
 #### L'icone
 
-- Soleil: L'observateur possède une criticité "Ok" (égale à 0)
-- Personne: L'observateur possède une criticité "Mineure" (égale à 1) ou "Majeure" (égale à 2)
-- Nuage: L'observateur possède une criticité "Critique" (égale à 3)
-- Clé: L'observateur possède un comportement périodique actif, de type "Maintenance"
-- Lune: L'observateur possède un comportement périodique actif, de type "Hors plage de surveillance"
-- Pause: L'observateur ne possède pas de comportement périodique, mais toutes les entités liées à cet observateur possèdent un comportement périodique actif.
+- Soleil: Le service possède une criticité "Ok" (égale à 0)
+- Personne: Le service possède une criticité "Mineure" (égale à 1) ou "Majeure" (égale à 2)
+- Nuage: Le service possède une criticité "Critique" (égale à 3)
+- Clé: Le service possède un comportement périodique actif, de type "Maintenance"
+- Lune: Le service possède un comportement périodique actif, de type "Hors plage de surveillance"
+- Pause: Le service ne possède pas de comportement périodique, mais toutes les entités liées à ce service possèdent un comportement périodique actif.
 
 #### Le clignotement
 
@@ -65,17 +65,17 @@ Le contenu de cette fenêtre est configurable depuis les paramètres du widget.
 
 Celle-ci contient, au choix :
 
-- "Plus d'infos": Cette fenêtre présente des informations supplémentaires concernant l'observateur sur lequel vous avez cliqué. Celle-ci peut, notamment, contenir la liste des entités concernées par l'observateur. Le template de cette fenêtre est configurable depuis les paramètres du widget.
+- "Plus d'infos": Cette fenêtre présente des informations supplémentaires concernant le service sur lequel vous avez cliqué. Celle-ci peut, notamment, contenir la liste des entités concernées par le service. Le template de cette fenêtre est configurable depuis les paramètres du widget.
 
 ![modale - Plus d'infos](./img/modal_more_infos.png "modale - Plus d'infos")
 
-- "Bac à alarmes": Cette fenêtre contient un widget Bac à alarmes. Ce Bac à alarmes regroupe toutes les alarmes dans le spectre de l'observateur. Celui-ci est configurable depuis les paramètres du widget.
+- "Bac à alarmes": Cette fenêtre contient un widget Bac à alarmes. Ce Bac à alarmes regroupe toutes les alarmes dans le spectre de le service. Celui-ci est configurable depuis les paramètres du widget.
 
 ![modale - Bac à alarmes](./img/modal_alarmlist.png "modale - Bac à alarmes")
 
 ### Les actions
 
-Dans [la modale "Plus d'infos"](#la-modale), il vous est possible d'afficher la liste des entités concernées par l'observateur (*Cf: [Template - modale](#template-modale)*).
+Dans [la modale "Plus d'infos"](#la-modale), il vous est possible d'afficher la liste des entités concernées par le service (*Cf: [Template - modale](#template-modale)*).
 
 Si la liste d'entités est affichée, des actions sont disponibles sur chacune d'entre elles. Les actions disponibles dépendent de la criticité de l'entité.
 
@@ -92,9 +92,9 @@ Au clic sur les icônes d'actions, celles-ci sont mises en attente. Elles ne son
 
 ### Aide - Variables
 
-Durant la configuration de votre widget Météo de services, notamment les Templates, il vous sera possible d'accéder à des variables concernant les observateurs.
+Durant la configuration de votre widget Météo de services, notamment les Templates, il vous sera possible d'accéder à des variables concernant les services.
 
-Exemple: Il vous sera possible d'afficher, pour chacune des tuiles de la météo de services, le nom de l'observateur, ou son identifiant, etc.
+Exemple : Il vous sera possible d'afficher, pour chacune des tuiles de la météo de services, le nom de le service, ou son identifiant, etc.
 
 Afin de connaitre les variables disponibles, une modale d'aide est disponible.
 
@@ -141,7 +141,7 @@ Un champ de texte vous permet de définir ce titre.
 #### Editeur de filtre (*optionnel*)
 
 Ce paramètre permet de définir le filtre à appliquer à la météo de services.
-Ce filtre permet de n'afficher qu'une partie des observateurs.
+Ce filtre permet de n'afficher qu'une partie des services.
 Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../filtres/index.md).
 
 Pour créer un filtre, ou éditer celui actuellement actif, cliquez sur le bouton 'Créer/Editer'. Une fenêtre de création de filtre s'ouvre alors.
@@ -149,7 +149,7 @@ Pour créer un filtre, ou éditer celui actuellement actif, cliquez sur le bouto
 Pour supprimer le filtre actuellement actif, cliquez sur l'icone de suppression se trouvant à droite du bouton 'Créer/Editer'. Une fenêtre vous demande alors de confirmer la suppression.
 
 !!! warning "Champs utilisables dans le filtre"
-    Le filtre utilise les champs des entités (qui sont différents des champs utilisables dans les templates). Par exemple, pour filtrer sur le nom d'un observateur, il faut utiliser `name`, et non `display_name`.
+    Le filtre utilise les champs des entités (qui sont différents des champs utilisables dans les templates). Par exemple, pour filtrer sur le nom d'un service, il faut utiliser `name`, et non `display_name`.
 
 #### Paramètres avancés
 
@@ -179,15 +179,15 @@ Le langage utilisé ici est le Handlebars.
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entre le texte souhaité pour le template des tuiles, puis cliquez sur 'Envoyer'.
 
-Une variable est disponible ici pour vous permettre d'afficher les détails de l'observateur : `entity`.
-Exemple : Pour afficher le champ `display_name` de l'observateur (qui correspond au nom de l'observateur), il vous faut écrire dans le template : `{{ entity.display_name }}`.
-Tous les champs disponibles dans l'observateur sont disponibles ici.
+Une variable est disponible ici pour vous permettre d'afficher les détails de le service : `entity`.
+Exemple : Pour afficher le champ `display_name` de le service (qui correspond au nom de le service), il vous faut écrire dans le template : `{{ entity.display_name }}`.
+Tous les champs disponibles dans le service sont disponibles ici.
 
 ##### Template - Modale
 
 Ce paramètre permet de personnaliser les informations affichées dans la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
 
-Il vous est possible ici d'afficher, à n'importe quel endroit de la modale, la liste des entités concernées par l'observateur sur lequel vous avez cliqué. Pour ce faire, insérez dans le template:
+Il vous est possible ici d'afficher, à n'importe quel endroit de la modale, la liste des entités concernées par le service sur lequel vous avez cliqué. Pour ce faire, insérez dans le template:
 
 ```
 {{ entities }}
@@ -267,5 +267,5 @@ Ce paramètre vous permet de sélectionner le type de modale que vous souhaitez 
 
 Les types de modales disponibles sont :
 
-- "Plus d'infos": Cette modale vous permet d'afficher (grâce à un template configurable) des détails supplémentaires sur l'observateur sur lequel vous cliquez.
-- "Bac à alarmes": Cette modale vous permet d'afficher un widget Bac à alarmes, regroupant les alarmes liées à l'observateur. Ce widget est configurable grace aux [Paramètres du bac à alarmes](#parametres-du-bac-a-alarmes).
+- "Plus d'infos": Cette modale vous permet d'afficher (grâce à un template configurable) des détails supplémentaires sur le service sur lequel vous cliquez.
+- "Bac à alarmes": Cette modale vous permet d'afficher un widget Bac à alarmes, regroupant les alarmes liées à le service. Ce widget est configurable grace aux [Paramètres du bac à alarmes](#parametres-du-bac-a-alarmes).

@@ -3,7 +3,7 @@
 Dans l'interface graphique de Canopsis, il est possible en de multiples endroits de personnaliser les affichages en utilisant un éditeur HTML couplé à des variables.  
 Pour faciliter les tâches de l'administrateur, Canopsis met à disposition :
 
-* les helpers *built in* [handlebars](https://handlebarsjs.com/)
+* les helpers officiels [Handlebars](https://handlebarsjs.com/)
 * des helpers handlebars spécifiques à Canopsis
 
 Voici un tour d'horizon des espaces dans lesquels vous pouvez personnaliser les rendus.
@@ -109,7 +109,7 @@ Voici un descriptif des zones correspondantes :
 
 Le templating *handlebars* embarque un langage complet qui vous permet d'aller beaucoup plus loin que le simple affichage de variables.  
 Pour afficher des structures de données complexes, Canopsis met généralement à disposition des helpers.  
-Par exemple, pour afficher l'ensemble des entités d'un observateur de météo, il existe le helper *{{ entities }}*.  
+Par exemple, pour afficher l'ensemble des entités d'un service de météo, il existe le helper *{{ entities }}*.  
 
 Dans d'autres cas, soit le helper n'est pas encore développé, soit il ne le sera pas.  
 Vous avez donc la possibilité d'utiliser *handlebars* pour personnaliser vos affichages.  

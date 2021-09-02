@@ -1,13 +1,13 @@
 # L'enrichissement
 
-Canopsis étant un hyperviseur, une des fonctions attendues concerne l'enrichissement de données.  
+Canopsis étant un hyperviseur, une des fonctions attendues concerne l'enrichissement de données.
 
 Nous pouvons considérer que les informations transmises par les sources de données (et notamment les superviseurs) sont des informations *pauvres*.
 
 Elles sont pauvres dans le sens où elles nous signifient dans la majeure partie des cas qu'il y a une alarme (ou une mise à jour d'alarme) concernant une entité.
 
 !!! note "Une entité ?"
-    Une entité est un composant typé (composant, ressource, observateur).
+    Une entité est un composant typé (composant, ressource, service).
 
 Pour aider les pilotes des centres d'opérations, il est indispensable d'enrichir ces informations et ainsi de qualifier au plus juste les alarmes à traiter.
 
