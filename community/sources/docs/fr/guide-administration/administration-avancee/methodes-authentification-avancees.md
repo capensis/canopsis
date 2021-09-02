@@ -24,7 +24,7 @@ Voici la liste de paramètres nécessaires à la configuration LDAP :
 | username_attr | Attribut portant l'identifiant utilisateur dans l'objet de l'annuaire                                                                           | uid                                                            |
 | attrs         | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
 | default_role  | Rôle Canopsis par défaut au moment de la première connexion                                                                                | Visualisation                                                  |
-| skip_verify  | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur ( auto signé etc ... )                                                                                | true                                                  |
+| skip_verify  | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)                                                                                | true                                                  |
 
 #### Récupération de la configuration courante
 
@@ -58,7 +58,7 @@ La configuration se fait dans un fichier JSON : **ldapconfig.json**
 }
 ```
 
-!!! Note
+!!! note
     Vous pouvez remplacer les attributs `host` et `port` par `ldap_uri`.
 
 La requête suivante permet d'envoyer cette configuration :

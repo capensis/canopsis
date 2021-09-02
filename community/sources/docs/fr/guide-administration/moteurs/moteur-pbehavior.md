@@ -5,13 +5,9 @@ Les comportements périodiques (*pbehaviors*, pour *periodical behaviors*) sont 
 Ils permettent notamment de :
 
 - Déclarer des périodes de maintenance sur des applications.
-- Conditionner l'exécution de règles (ex : cette remédiation doit s'appliquer uniquement la nuit).
-- Conditionner l'affichage d'alarmes (ex: ne pas montrer les alarmes dont l'entité est en maintenance).
+- Conditionner l'exécution de règles (ex : cette remédiation doit s'appliquer uniquement la nuit).
+- Conditionner l'affichage d'alarmes (ex : ne pas montrer les alarmes dont l'entité est en maintenance).
 - Déclarer des périodes de service sur des applications.
-
-!!! Note
-    Avec la v4 de Canopsis le fonctionnement des comportements périodiques à été complètement revu.
-    Les informations qui figurent sur cette page ne sont donc valables que pour cette version.
 
 ## Définitions
 

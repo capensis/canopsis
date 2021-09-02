@@ -122,7 +122,7 @@ Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: 
 
 ## Guide exploitant
 
-Vous pouvez configurer la taille, l'emplacement, le nom, ... des widgets directement dans une vue via le mode édition (*Cf: [Vues - Documentation de la grille d'edition](../../vues/edition-grille.md)*).
+Vous pouvez configurer les widgets (taille, remplacement, nom, etc.) directement dans une vue via le mode édition (*Cf: [Vues - Documentation de la grille d'edition](../../vues/edition-grille.md)*).
 
 ### Aide - Variables
 
@@ -292,7 +292,7 @@ Voici quelques exemples pratiques de filtres :
 
 ###### Champs basiques
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Composant  | `component`  | `equal`  | *VALEUR_DU_COMPOSANT*
 Ressource  | `resource`  | `equal`  | *VALEUR_DE_LA_RESSOURCE*
@@ -302,7 +302,7 @@ Message	| `v.output` | `equal` | *VALEUR_DU_MESSAGE*
 
 ###### Selon la criticité
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Uniquement les alarmes Mineures  | `v.state.val`  | `equal`  | `1` (valeur de type number)
 Uniquement les alarmes Majeures  | `v.state.val`  | `equal`  | `2` (valeur de type number)
@@ -310,19 +310,19 @@ Uniquement les alarmes Critiques  | `v.state.val`  | `equal`  | `3` (valeur de t
 
 ###### Champs enrichis
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Champ enrichi	| `entity.infos.NOM_DU_CHAMP_ENRICHI.value` | equal | *VALEUR_DU_CHAMP_ENRICHI*
 
 ###### En fonction des informations dynamiques
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Les alarmes qui contiennent une information dynamique de type `consignes`	| `v.infos.*.type` | equal | *consigne*
 
 ###### Acquittement
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Exclure les alarmes avec acquittement  | `v.ack._t`  | `not equal` | `ack` (valeur string)
 Uniquement les alarmes avec acquittement  | `v.ack._t`  | `equal` | `ack` (valeur string)
@@ -333,7 +333,7 @@ Message de l'acquittement | `v.ack.m`  |  `equal`  | *CONTENU_DU_MESSAGE_DE_L_AC
 
 ###### Ticket
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Exlure les alarmes avec Ticket (quel que soit le type)  | `v.ticket._t`  | `is null` | *PAS_DE_VALEUR*
 Exclure les alarmes avec Ticket de type `assocticket`  | `v.ticket._t`  | `not equal` | `assocticket` (valeur string)
@@ -343,7 +343,7 @@ Auteur du Ticket  | `v.ticket.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DU_TICKET*
 
 ###### Mise en veille
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Exclure les alarmes mises en veille | `v.snooze._t`  | `not equal` | `snooze` (valeur string)
 Uniquement les alarmes mises en veille | `v.snooze._t`  | `equal` | `snooze` (valeur string)
@@ -351,7 +351,7 @@ Auteur de la mise en veille | `v.snooze.a`  |  `equal`  | *NOM_DE_L_AUTEUR_MISE_
 
 ###### Comportements périodiques
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Uniquement les alarmes qui possèdent un comportement périodique actif (anciennement `has_active_pb`) | `pbehavior` | `exists` | `true` (valeur booléenne)
 Uniquement les alarmes qui ne possèdent pas de comportement périodique actif  (anciennement `has_active_pb`) | `pbehavior` | `exists` | `false` (valeur booléenne)
@@ -361,14 +361,14 @@ Tous les attributs des comportements périodiques peuvent être utilisés à des
 
 ###### Changement de criticité
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Exclure les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `not equal` | `changestate` (valeur string)
 Uniquement les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `equal` | `changestate` (valeur string)
 
 ###### Services
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Exclure les alarmes liées à des services | `entity.type`  | `not equal` | `service` (valeur string)
 Uniquement les alarmes des services | `entity.type`  | `equal` | `service` (valeur string)

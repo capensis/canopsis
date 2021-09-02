@@ -1,6 +1,6 @@
 # Task ackcentreon (Pro)
 
-!!! attention
+!!! info
     Ce moteur n'est disponible que dans l'édition Pro de Canopsis.
 
 Le moteur `task_ackcentreon` permet de *descendre* les acquittements de Canopsis vers Centreon. Ceci est valable aussi bien pour les poses d'acquittement que pour les suppressions d'acquittement.

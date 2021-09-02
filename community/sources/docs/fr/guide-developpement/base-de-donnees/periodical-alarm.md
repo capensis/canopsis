@@ -50,11 +50,11 @@ Voici la structure d'une [alarme](../../guide-utilisation/vocabulaire/index.md#a
 }
 }
 ```
+
 Complément d'information :
 
-`last_update_date`: Correspond à l'horodatage de la dernière modification de l'alarme (changement de criticité, pose d'un acquittement...).
-
-`last_event_date`: Correspond à l'horodatage du dernier événement reçu pour cette alarme même si cela n'a pas généré de changement.
+* `last_update_date`: Correspond à l'horodatage de la dernière modification de l'alarme (changement de criticité, pose d'un acquittement…).
+* `last_event_date`: Correspond à l'horodatage du dernier événement reçu pour cette alarme même si cela n'a pas généré de changement.
 
 Par défaut, la valeur de `last_update_date` est égale à la valeur de `last_event_date`.
 

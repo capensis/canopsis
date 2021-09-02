@@ -51,7 +51,7 @@ Vous avez également la possibilité de récupérer le nom du `trigger` (AlarmCh
 
 | Champ                             | Résultat                                                                  |
 |:--------------------------------- |:------------------------------------------------------------------------- |
-| `{{ .Event.AlarmChange.Type }}`      | Nom du trigger (sous forme de chaîne: ack, stateinc, ...)                                                |
+| `{{ .Event.AlarmChange.Type }}`      | Nom du trigger (sous forme de chaîne : ack, stateinc, etc. |
 
 ## Génération de texte
 
@@ -145,8 +145,8 @@ Cette fonction prend en paramètre une chaîne qui est le format attendu de la d
 | `02`                         | `%m`                                                                                      | Mois                              | 01..12              |
 | `04`                         | `%M`                                                                                      | Minute                            | 01..59              |
 | `05`                         | `%S`                                                                                      | Seconde                           | 01..61              |
-| `2006`                       | `%Y`                                                                                      | Année                             | 1970, 1984, 2019... |
-| `MST`                        | `%Z`                                                                                      | Fuseau horaire                    | CEST, EDT, JST...   |
+| `2006`                       | `%Y`                                                                                      | Année                             | 1970, 1984, 2019… |
+| `MST`                        | `%Z`                                                                                      | Fuseau horaire                    | CEST, EDT, JST…   |
 
 Ainsi, pour afficher transformer un champ en une date au format `heure:minute:seconde`, il faudra utiliser `formattedDate \"15:04:05\"` (même si le champ dans l'alarme ou l'événement ne correspondent pas à cette heure).
 

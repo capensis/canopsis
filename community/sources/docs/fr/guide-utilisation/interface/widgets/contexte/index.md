@@ -139,7 +139,7 @@ Pour ajouter un comportement périodique sur une sélection d'entités, sélecti
 
 ## Guide exploitant
 
-Vous pouvez configurer la taille, l'emplacement, le nom, ... des widgets directement dans une vue via le mode édition (*Cf: [Vues - Documentation de la grille d'edition](../../vues/edition-grille.md)*).
+Vous pouvez configurer les widgets (taille, remplacement, nom, etc.) directement dans une vue via le mode édition (*Cf: [Vues - Documentation de la grille d'edition](../../vues/edition-grille.md)*).
 
 ### Aide - Variables
 
@@ -193,7 +193,7 @@ Afin d'**ajouter une colonne**, cliquez sur le bouton 'Ajouter'.
 Une colonne vide est alors ajoutée. Afin de finaliser l'ajout, il est nécessaire de remplir les champs demandés.
 Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tous les champs de l'entité sont directement disponibles.
 
-Exemple: "name", qui contient le nom de l'entité, ou encore "type", qui contient le type  de l'entité.
+Exemple : "name", qui contient le nom de l'entité, ou encore "type", qui contient le type de l'entité.
 
 Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix rouge présente en haut à droite de la case de la colonne que vous souhaitez effacer.
 

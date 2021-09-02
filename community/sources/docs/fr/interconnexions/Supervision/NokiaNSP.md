@@ -1,6 +1,6 @@
 # Connecteur Nokia NSP `nokiansp2canopsis`
 
-!!! attention
+!!! info
     Ce connecteur n'est disponible que dans l'édition Pro de Canopsis.
 
 ## Description

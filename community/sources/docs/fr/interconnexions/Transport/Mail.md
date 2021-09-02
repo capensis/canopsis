@@ -1,11 +1,11 @@
 # Mail vers Canopsis
 
-!!! attention
+!!! info
     Ce connecteur n'est disponible que dans l'édition Pro de Canopsis.
 
 ## Introduction
 
-Le connecteur email2canopsis permet de lire des emails dans une boîte aux lettres POP3 pour les convertir en événements Canopsis (grâce à un système de template).
+Le connecteur email2canopsis permet de lire des emails dans une boîte aux lettres [POP3](https://fr.wikipedia.org/wiki/Post_Office_Protocol) pour les convertir en événements Canopsis (grâce à un système de template).
 
 ## Fonctionnement
 
@@ -263,7 +263,7 @@ MAIL\_DATE est automatiquement converti en objet date, inutile d'appliquer une a
 !!! attention
     Les numéros de lignes et de mots commencent à partir de 0, non de 1.
 
-Exemple : La séquence à la 1° ligne située entre les 5° et le 18° mots sont donc sélectionnables avec la ligne `line(0).word(4).untilword(17)`.
+Exemple : La séquence à la ligne 1 située entre le 5<sup>e</sup> et le 18<sup>e</sup> mot sont donc sélectionnables avec la ligne `line(0).word(4).untilword(17)`.
 
 Il est possible de faire des templates pour des mails sous forme HTML sans prendre en compte le balisage. Il faut ajouter un `action_template=convert_html2text` au template.
 
