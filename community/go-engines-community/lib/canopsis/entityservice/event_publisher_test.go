@@ -62,7 +62,7 @@ func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T)
 			logger := zerolog.Logger{}
 			body := []byte("test-body")
 			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
-			mockAlarmAdapter.EXPECT().GetAlarmsByID(gomock.Eq(data.Message.ID)).
+			mockAlarmAdapter.EXPECT().GetAlarmsByID(gomock.Any(), gomock.Eq(data.Message.ID)).
 				Return([]types.Alarm{data.Alarm}, nil)
 			mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 			mockEncoder.EXPECT().Encode(gomock.Any()).Do(func(event types.Event) {

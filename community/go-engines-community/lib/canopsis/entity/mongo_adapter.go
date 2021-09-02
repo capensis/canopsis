@@ -2,7 +2,6 @@ package entity
 
 import (
 	"context"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -13,35 +12,25 @@ import (
 
 // mongoAdapter ...
 type mongoAdapter struct {
-	dbClient     mongo.DbClient
 	dbCollection mongo.DbCollection
-
-	bulk []mongodriver.WriteModel
 }
 
 // NewAdapter gives the correct entity adapter. Give nil to the redis client
 // and it will create a new redis.Client with the dedicated redis database for entities.
 func NewAdapter(dbClient mongo.DbClient) Adapter {
 	return &mongoAdapter{
-		dbClient:     dbClient,
 		dbCollection: dbClient.Collection(mongo.EntityMongoCollection),
 	}
 }
 
 // Insert add a new entity.
-func (a *mongoAdapter) Insert(entity types.Entity) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) Insert(ctx context.Context, entity types.Entity) error {
 	_, err := a.dbCollection.InsertOne(ctx, entity)
 	return err
 }
 
 // Update updates an existing entity or creates a new one in db.
-func (a *mongoAdapter) Update(entity types.Entity) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) Update(ctx context.Context, entity types.Entity) error {
 	_, err := a.dbCollection.ReplaceOne(ctx, bson.M{"_id": entity.ID}, entity)
 	return err
 }
@@ -52,71 +41,10 @@ func (a *mongoAdapter) Bulk(ctx context.Context, models []mongodriver.WriteModel
 	return err
 }
 
-func (a *mongoAdapter) Remove(entity types.Entity) error {
-	panic("not implemented")
-}
-
-// BulkInsert insert entities in bulk.
-// Thread safe.
-func (a *mongoAdapter) BulkInsert(entity types.Entity) error {
-	operation := mongodriver.NewInsertOneModel()
-	operation.SetDocument(entity)
-
-	a.bulk = append(a.bulk, operation)
-
-	return nil
-}
-
-func (a *mongoAdapter) AddToBulkUpdate(entityId string, data interface{}) error {
-	operation := mongodriver.NewUpdateOneModel()
-	operation.SetFilter(bson.M{"_id": entityId})
-	operation.SetUpdate(data)
-
-	a.bulk = append(a.bulk, operation)
-
-	return nil
-}
-
-func (a *mongoAdapter) BulkUpsert(entity types.Entity, newImpacts []string, newDepends []string) error {
-	operation := mongodriver.NewUpdateOneModel()
-	operation.SetFilter(bson.M{"_id": entity.ID})
-	operation.SetUpdate(entity.GetUpsertMongoBson(newImpacts, newDepends))
-	operation.SetUpsert(true)
-
-	a.bulk = append(a.bulk, operation)
-
-	return nil
-}
-
-// FlushBulk force all bulk caches to be written.
-func (a *mongoAdapter) FlushBulk() error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	if len(a.bulk) > 0 {
-		_, err := a.dbCollection.BulkWrite(ctx, a.bulk)
-		if err != nil {
-			return fmt.Errorf("entity adapter flushbulk update: %v", err)
-		}
-
-		a.bulk = nil
-	}
-
-	return nil
-}
-
-func (a *mongoAdapter) FlushBulkInsert() error {
-	panic("not implemented")
-}
-
-func (a *mongoAdapter) FlushBulkUpdate() error {
-	panic("not implemented")
-}
-
 // Get is the same as GetEntityByID
 // Return True if the document has been found
-func (a *mongoAdapter) Get(id string) (types.Entity, bool) {
-	entity, err := a.GetEntityByID(id)
+func (a *mongoAdapter) Get(ctx context.Context, id string) (types.Entity, bool) {
+	entity, err := a.GetEntityByID(ctx, id)
 	entity.EnsureInitialized()
 
 	if err == mongodriver.ErrNoDocuments {
@@ -129,10 +57,7 @@ func (a *mongoAdapter) Get(id string) (types.Entity, bool) {
 }
 
 // GetEntityByID finds an Entity from is eid
-func (a *mongoAdapter) GetEntityByID(id string) (types.Entity, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) GetEntityByID(ctx context.Context, id string) (types.Entity, error) {
 	var ent types.Entity
 
 	res := a.dbCollection.FindOne(ctx, bson.M{"_id": id})
@@ -149,18 +74,12 @@ func (a *mongoAdapter) GetEntityByID(id string) (types.Entity, error) {
 	return ent, err
 }
 
-func (a *mongoAdapter) Count() (int, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) Count(ctx context.Context) (int, error) {
 	res, err := a.dbCollection.CountDocuments(ctx, bson.M{})
 	return int(res), err
 }
 
-func (a *mongoAdapter) GetIDs(filter map[string]interface{}, ids *[]interface{}) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) GetIDs(ctx context.Context, filter map[string]interface{}, ids *[]interface{}) error {
 	cursor, err := a.dbCollection.Find(ctx, filter)
 	if err != nil {
 		return err
@@ -174,17 +93,10 @@ func (a *mongoAdapter) GetIDs(filter map[string]interface{}, ids *[]interface{})
 	return cursor.Close(ctx)
 }
 
-func (a *mongoAdapter) RemoveAll() error {
-	panic("not implemented")
-}
-
-func (a *mongoAdapter) UpsertMany(entities []types.Entity) (map[string]bool, error) {
+func (a *mongoAdapter) UpsertMany(ctx context.Context, entities []types.Entity) (map[string]bool, error) {
 	if len(entities) == 0 {
 		return nil, nil
 	}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	insertModels := make([]mongodriver.WriteModel, 0)
 	for _, entity := range entities {
@@ -265,10 +177,7 @@ func (a *mongoAdapter) UpsertMany(entities []types.Entity) (map[string]bool, err
 	return upsertedIDs, nil
 }
 
-func (a *mongoAdapter) AddImpacts(ids []string, impacts []string) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) AddImpacts(ctx context.Context, ids []string, impacts []string) error {
 	writeModels := make([]mongodriver.WriteModel, len(ids))
 	for i, id := range ids {
 		writeModels[i] = mongodriver.NewUpdateOneModel().
@@ -285,10 +194,7 @@ func (a *mongoAdapter) AddImpacts(ids []string, impacts []string) error {
 	return err
 }
 
-func (a *mongoAdapter) RemoveImpacts(ids []string, impacts []string) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) RemoveImpacts(ctx context.Context, ids []string, impacts []string) error {
 	writeModels := make([]mongodriver.WriteModel, len(ids))
 	for i, id := range ids {
 		writeModels[i] = mongodriver.NewUpdateOneModel().
@@ -305,10 +211,7 @@ func (a *mongoAdapter) RemoveImpacts(ids []string, impacts []string) error {
 	return err
 }
 
-func (a *mongoAdapter) AddImpactByQuery(query interface{}, impact string) ([]string, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) AddImpactByQuery(ctx context.Context, query interface{}, impact string) ([]string, error) {
 	res, err := a.dbCollection.Find(
 		ctx,
 		bson.M{"$and": []interface{}{
@@ -346,10 +249,7 @@ func (a *mongoAdapter) AddImpactByQuery(query interface{}, impact string) ([]str
 	return newIDs, nil
 }
 
-func (a *mongoAdapter) RemoveImpactByQuery(query interface{}, impact string) ([]string, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) RemoveImpactByQuery(ctx context.Context, query interface{}, impact string) ([]string, error) {
 	res, err := a.dbCollection.Find(
 		ctx,
 		bson.M{"$and": []interface{}{
@@ -387,10 +287,7 @@ func (a *mongoAdapter) RemoveImpactByQuery(query interface{}, impact string) ([]
 	return removedIDs, nil
 }
 
-func (a *mongoAdapter) AddInfos(id string, infos map[string]types.Info) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) AddInfos(ctx context.Context, id string, infos map[string]types.Info) (bool, error) {
 	set := bson.M{}
 	for k, v := range infos {
 		set["infos."+k] = v
@@ -407,10 +304,7 @@ func (a *mongoAdapter) AddInfos(id string, infos map[string]types.Info) (bool, e
 	return res.ModifiedCount > 0, nil
 }
 
-func (a *mongoAdapter) UpdateComponentInfos(id, componentID string) (map[string]types.Info, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) UpdateComponentInfos(ctx context.Context, id, componentID string) (map[string]types.Info, error) {
 	res := a.dbCollection.FindOne(
 		ctx,
 		bson.M{
@@ -445,10 +339,7 @@ func (a *mongoAdapter) UpdateComponentInfos(id, componentID string) (map[string]
 	return component.Infos, nil
 }
 
-func (a *mongoAdapter) UpdateComponentInfosByComponent(componentID string) ([]string, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) UpdateComponentInfosByComponent(ctx context.Context, componentID string) ([]string, error) {
 	cursor, err := a.dbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"_id":     componentID,
@@ -507,13 +398,11 @@ func (a *mongoAdapter) UpdateComponentInfosByComponent(componentID string) ([]st
 	return nil, nil
 }
 
-func (a *mongoAdapter) UpdateLastEventDate(ids []string, time types.CpsTime) error {
+func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, ids []string, time types.CpsTime) error {
 	if len(ids) == 0 {
 		return nil
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	_, err := a.dbCollection.UpdateMany(
 		ctx,
 		bson.M{"_id": bson.M{"$in": ids}},
@@ -553,10 +442,7 @@ func (a *mongoAdapter) UpdateIdleFields(ctx context.Context, id string,
 	return err
 }
 
-func (a *mongoAdapter) FindByIDs(ids []string) ([]types.Entity, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) FindByIDs(ctx context.Context, ids []string) ([]types.Entity, error) {
 	cursor, err := a.dbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
 	if err != nil {
 		return nil, err
@@ -728,14 +614,14 @@ func (a *mongoAdapter) FindComponentForResource(ctx context.Context, id string) 
 
 func (a *mongoAdapter) GetWithIdleSince(ctx context.Context) (mongo.Cursor, error) {
 	findOptions := options.Find()
-	findOptions.SetSort(bson.D{{"idle_since", 1}})
+	findOptions.SetSort(bson.D{{Key: "idle_since", Value: 1}})
 
 	return a.dbCollection.Find(
 		ctx,
 		bson.M{
 			"idle_since": bson.M{"$gt": 0},
-			"type": bson.M{"$in": []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector}},
-			"enabled": true,
+			"type":       bson.M{"$in": []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector}},
+			"enabled":    true,
 		},
 		findOptions,
 	)
@@ -762,10 +648,10 @@ func (a *mongoAdapter) GetImpactedServicesInfo(ctx context.Context) (mongo.Curso
 		},
 		{
 			"$lookup": bson.M{
-				"from": mongo.EntityMongoCollection,
-				"localField": "dependencies",
+				"from":         mongo.EntityMongoCollection,
+				"localField":   "dependencies",
 				"foreignField": "depends",
-				"as": "impacted_services",
+				"as":           "impacted_services",
 			},
 		},
 		{
@@ -775,7 +661,7 @@ func (a *mongoAdapter) GetImpactedServicesInfo(ctx context.Context) (mongo.Curso
 						"input": bson.M{
 							"$filter": bson.M{
 								"input": "$impacted_services",
-								"cond": bson.M{"$eq": bson.A{"$$this.type", types.EntityTypeService}},
+								"cond":  bson.M{"$eq": bson.A{"$$this.type", types.EntityTypeService}},
 							}},
 						"as": "item",
 						"in": "$$item._id",
@@ -785,7 +671,7 @@ func (a *mongoAdapter) GetImpactedServicesInfo(ctx context.Context) (mongo.Curso
 		},
 		{
 			"$project": bson.M{
-				"_id": 1,
+				"_id":               1,
 				"impacted_services": 1,
 			},
 		},

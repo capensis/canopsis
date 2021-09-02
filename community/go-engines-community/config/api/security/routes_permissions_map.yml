@@ -44,10 +44,6 @@ map:
     GET: [api_dynamicinfos,read]
     PUT: [api_dynamicinfos,update]
     DELETE: [api_dynamicinfos,delete]
-  /api/v2/heartbeat:
-    POST: [api_heartbeat,create]
-    GET: [api_heartbeat,read]
-    DELETE: [api_heartbeat,delete]
   /api/v2/watcherng:
     POST: [api_entityservice,create]
     GET: [api_entityservice,read]

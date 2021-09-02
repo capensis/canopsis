@@ -77,7 +77,7 @@ func TestAlarmStepCropOldData(t *testing.T) {
 	defer cancel()
 
 	Convey("Setup", t, func() {
-		s, err := mongo.NewClient(0, 0)
+		s, err := mongo.NewClient(ctx, 0, 0)
 		So(err, ShouldBeNil)
 
 		c := s.Collection(mongo.AlarmMongoCollection)

@@ -220,6 +220,7 @@ export default {
     number: 'Number',
     boolean: 'Boolean',
     null: 'Null',
+    array: 'Array',
   },
   user: {
     role: 'Role',
@@ -257,6 +258,10 @@ export default {
     },
     entityInfo: {
       valueAsList: 'Change value type to list',
+    },
+    fab: {
+      common: 'Add a new entity',
+      addService: 'Add a new service entity',
     },
   },
   search: {
@@ -432,6 +437,7 @@ export default {
     status: 'Status',
     created: 'Creation date',
     updated: 'Last update date',
+    lastAlarmDate: 'Last alarm date',
     tabs: {
       filter: 'Filter',
       comments: 'Comments',
@@ -2165,6 +2171,7 @@ export default {
       number: '@:variableTypes.number',
       boolean: '@:variableTypes.boolean',
       null: '@:variableTypes.null',
+      array: '@:variableTypes.array',
     },
   },
 

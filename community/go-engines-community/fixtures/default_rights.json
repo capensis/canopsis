@@ -199,11 +199,25 @@
     "crecord_name": "api_message_rate_stats_read"
   },
   {
+    "_id": "api_notification",
+    "crecord_type": "action",
+    "crecord_name": "api_notification"
+  },
+  {
+    "_id": "api_instruction_approve",
+    "crecord_type": "action",
+    "crecord_name": "api_instruction_approve"
+  },
+  {
     "_id": "admin",
     "crecord_type": "role",
     "crecord_name": "admin",
     "rights": {
       "api_event": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_instruction_approve": {
         "checksum": 1,
         "crecord_type": "right"
       },
@@ -304,6 +318,10 @@
         "crecord_type": "right"
       },
       "api_state_settings": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_notification": {
         "checksum": 1,
         "crecord_type": "right"
       },
@@ -416,11 +434,49 @@
     "rights": {}
   },
   {
+    "_id": "approver",
+    "crecord_type": "role",
+    "crecord_name": "approver",
+    "rights": {
+      "api_instruction_approve": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_instruction": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_execution": {
+        "checksum": 1,
+        "crecord_type": "right"
+      }
+    }
+  },
+  {
+    "_id": "approver2",
+    "crecord_type": "role",
+    "crecord_name": "approver2",
+    "rights": {
+      "api_instruction_approve": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_instruction": {
+        "checksum": 15,
+        "crecord_type": "right"
+      }
+    }
+  },
+  {
     "_id": "manager",
     "crecord_type": "role",
     "crecord_name": "manager",
     "rights": {
       "api_event": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_instruction_approve": {
         "checksum": 1,
         "crecord_type": "right"
       },
@@ -475,6 +531,22 @@
       "api_instruction": {
         "checksum": 15,
         "crecord_type": "right"
+      },
+      "api_playlist": {
+        "checksum": 4,
+        "crecord_type": "right"
+      },
+      "api_viewgroup": {
+        "checksum": 4,
+        "crecord_type": "right"
+      },
+      "api_acl": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_app_info_read": {
+        "checksum": 1,
+        "crecord_type": "right"
       }
     }
   },
@@ -493,10 +565,42 @@
     "enable": true
   },
   {
+    "_id": "manageruser",
+    "crecord_type": "user",
+    "crecord_name": "manageruser",
+    "role": "manager",
+    "mail": "manager@canopsis.net",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "2be1d0ee-5e9e-4b1f-9d80-e857e50f4191",
+    "contact": {
+      "name": "John Doe",
+      "address": "30 Rue du Triez 59290 Wasquehal France"
+    },
+    "enable": true
+  },
+  {
     "_id": "nopermsuser",
     "crecord_type": "user",
     "crecord_name": "nopermsuser",
     "role": "noperms",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa",
+    "enable": true
+  },
+  {
+    "_id": "approveruser",
+    "crecord_type": "user",
+    "crecord_name": "approveruser",
+    "role": "approver",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa",
+    "enable": true
+  },
+  {
+    "_id": "approveruser2",
+    "crecord_type": "user",
+    "crecord_name": "approveruser2",
+    "role": "approver2",
     "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "authkey": "b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa",
     "enable": true
@@ -575,9 +679,15 @@
     "crecord_name": "test-role-to-get-1",
     "description": "test-role-to-get-1-description",
     "rights": {
-      "test-permission-to-edit-role-1": {"checksum": 1},
-      "test-permission-to-edit-role-2": {"checksum": 15},
-      "test-permission-to-edit-role-3": {"checksum": 7}
+      "test-permission-to-edit-role-1": {
+        "checksum": 1
+      },
+      "test-permission-to-edit-role-2": {
+        "checksum": 15
+      },
+      "test-permission-to-edit-role-3": {
+        "checksum": 7
+      }
     }
   },
   {
@@ -587,8 +697,12 @@
     "description": "test-role-to-get-2-description",
     "defaultview": "test-view-to-edit-role",
     "rights": {
-      "test-permission-to-edit-role-2": {"checksum": 7},
-      "test-permission-to-edit-role-3": {"checksum": 3}
+      "test-permission-to-edit-role-2": {
+        "checksum": 7
+      },
+      "test-permission-to-edit-role-3": {
+        "checksum": 3
+      }
     }
   },
   {
@@ -597,9 +711,15 @@
     "crecord_name": "test-role-to-update",
     "description": "test-role-to-update-description",
     "rights": {
-      "test-permission-to-edit-role-1": {"checksum": 1},
-      "test-permission-to-edit-role-2": {"checksum": 15},
-      "test-permission-to-edit-role-3": {"checksum": 7}
+      "test-permission-to-edit-role-1": {
+        "checksum": 1
+      },
+      "test-permission-to-edit-role-2": {
+        "checksum": 15
+      },
+      "test-permission-to-edit-role-3": {
+        "checksum": 7
+      }
     }
   },
   {
@@ -628,9 +748,15 @@
     "crecord_name": "test-role-to-edit-user",
     "description": "test-role-to-edit-user-description",
     "rights": {
-      "test-permission-to-edit-user-1": {"checksum":  1},
-      "test-permission-to-edit-user-2": {"checksum":  15},
-      "test-permission-to-edit-user-3": {"checksum":  7}
+      "test-permission-to-edit-user-1": {
+        "checksum": 1
+      },
+      "test-permission-to-edit-user-2": {
+        "checksum": 15
+      },
+      "test-permission-to-edit-user-3": {
+        "checksum": 7
+      }
     }
   },
   {
@@ -859,6 +985,82 @@
     "role": "test-role-to-update-view-position",
     "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fwwww",
     "authkey": "b1f67e3e-wwww-4140-a801-9a05cb683e2c",
+    "enable": true
+  },
+  {
+    "_id": "test-user-author-1-id",
+    "crecord_type": "user",
+    "crecord_name": "test-user-author-1-username",
+    "role": "noperms",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa",
+    "enable": true
+  },
+  {
+    "_id": "test-user-alternate-author-1-id",
+    "crecord_type": "user",
+    "crecord_name": "test-user-alternate-author-1-username",
+    "role": "noperms",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa",
+    "enable": true
+  },
+  {
+    "_id": "test-role-to-rate-instruction",
+    "crecord_type": "role",
+    "crecord_name": "test-role-to-rate-instruction",
+    "rights": {
+      "api_execution": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_notification": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_instruction": {
+        "checksum": 4,
+        "crecord_type": "right"
+      }
+    }
+  },
+  {
+    "_id": "test-user-to-rate-instruction",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-rate-instruction",
+    "role": "test-role-to-rate-instruction",
+    "mail": "test-user-to-rate-instruction@canopsis.net",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982ucms3",
+    "authkey": "2be1d0ee-5e9e-8mdn-9d80-e857e50f4191",
+    "enable": true
+  },
+  {
+    "_id": "test-role-to-stats-instruction-get",
+    "crecord_type": "role",
+    "crecord_name": "test-role-to-stats-instruction-get",
+    "rights": {
+      "api_execution": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_notification": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_instruction": {
+        "checksum": 4,
+        "crecord_type": "right"
+      }
+    }
+  },
+  {
+    "_id": "test-user-to-stats-instruction-get",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-stats-instruction-get",
+    "role": "test-role-to-stats-instruction-get",
+    "mail": "test-user-to-stats-instruction-get@canopsis.net",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982dime3",
+    "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f4191",
     "enable": true
   }
 ]

@@ -542,6 +542,7 @@ export const FILTER_INPUT_TYPES = {
   number: 'number',
   boolean: 'boolean',
   null: 'null',
+  array: 'array',
 };
 
 export const FILTER_DEFAULT_VALUES = {
@@ -953,10 +954,10 @@ export const USERS_PERMISSIONS = {
         alarmsList: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_alarmsList`,
         pbehaviorList: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_pbehaviorList`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.weather}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.weather}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.weather}_addFilter`,
-        userFilter: `${USER_PERMISSIONS_PREFIXES.business.weather}_userFilter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_userFilter`,
 
         category: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_category`,
 

@@ -19,16 +19,16 @@ type mongoAdapter struct {
 	collection mongo.DbCollection
 }
 
-func (a *mongoAdapter) GetAll() ([]EntityService, error) {
-	return a.find(bson.M{"type": types.EntityTypeService})
+func (a *mongoAdapter) GetAll(ctx context.Context) ([]EntityService, error) {
+	return a.find(ctx, bson.M{"type": types.EntityTypeService})
 }
 
-func (a *mongoAdapter) GetEnabled() ([]EntityService, error) {
-	return a.find(bson.M{"type": types.EntityTypeService, "enabled": true})
+func (a *mongoAdapter) GetEnabled(ctx context.Context) ([]EntityService, error) {
+	return a.find(ctx, bson.M{"type": types.EntityTypeService, "enabled": true})
 }
 
-func (a *mongoAdapter) GetValid() ([]EntityService, error) {
-	res, err := a.GetEnabled()
+func (a *mongoAdapter) GetValid(ctx context.Context) ([]EntityService, error) {
+	res, err := a.GetEnabled(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -43,14 +43,11 @@ func (a *mongoAdapter) GetValid() ([]EntityService, error) {
 	return filtered, nil
 }
 
-func (a *mongoAdapter) GetByID(id string) (*EntityService, error) {
-	return a.findOne(bson.M{"type": types.EntityTypeService, "_id": id})
+func (a *mongoAdapter) GetByID(ctx context.Context, id string) (*EntityService, error) {
+	return a.findOne(ctx, bson.M{"type": types.EntityTypeService, "_id": id})
 }
 
-func (a *mongoAdapter) AddDepends(id string, depends []string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) AddDepends(ctx context.Context, id string, depends []string) (bool, error) {
 	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{
 		"$addToSet": bson.M{
 			"depends": bson.M{"$each": depends},
@@ -64,10 +61,7 @@ func (a *mongoAdapter) AddDepends(id string, depends []string) (bool, error) {
 	return res.MatchedCount > 0, nil
 }
 
-func (a *mongoAdapter) RemoveDepends(id string, depends []string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) RemoveDepends(ctx context.Context, id string, depends []string) (bool, error) {
 	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{
 		"$pull": bson.M{
 			"depends": bson.M{"$in": depends},
@@ -80,10 +74,7 @@ func (a *mongoAdapter) RemoveDepends(id string, depends []string) (bool, error) 
 	return res.MatchedCount > 0, nil
 }
 
-func (a *mongoAdapter) RemoveDependByQuery(query interface{}, depend string) ([]string, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) RemoveDependByQuery(ctx context.Context, query interface{}, depend string) ([]string, error) {
 	res, err := a.collection.Find(
 		ctx,
 		bson.M{"$and": []interface{}{
@@ -120,10 +111,7 @@ func (a *mongoAdapter) RemoveDependByQuery(query interface{}, depend string) ([]
 	return removedIDs, nil
 }
 
-func (a *mongoAdapter) UpdateCounters(id string, counters AlarmCounters) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) UpdateCounters(ctx context.Context, id string, counters AlarmCounters) error {
 	_, err := a.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{
 		"alarms_cumulative_data.watched_count":           counters.All,
 		"alarms_cumulative_data.watched_pbehavior_count": counters.PbehaviorCounters,
@@ -140,12 +128,9 @@ func (a *mongoAdapter) UpdateBulk(ctx context.Context, models []mongodriver.Writ
 }
 
 func (a *mongoAdapter) GetCounters(
-	parentCtx context.Context,
+	ctx context.Context,
 	serviceID string,
 ) (mongo.Cursor, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
 	cursor, err := a.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"enabled": true,
@@ -175,10 +160,7 @@ func (a *mongoAdapter) GetCounters(
 	return cursor, nil
 }
 
-func (a *mongoAdapter) find(filter interface{}) ([]EntityService, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) find(ctx context.Context, filter interface{}) ([]EntityService, error) {
 	cursor, err := a.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
@@ -194,9 +176,7 @@ func (a *mongoAdapter) find(filter interface{}) ([]EntityService, error) {
 	return res, nil
 }
 
-func (a *mongoAdapter) findOne(filter interface{}) (*EntityService, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (a *mongoAdapter) findOne(ctx context.Context, filter interface{}) (*EntityService, error) {
 	mongoRes := a.collection.FindOne(ctx, filter)
 	if err := mongoRes.Err(); err != nil {
 		if err == mongodriver.ErrNoDocuments {
