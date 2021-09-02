@@ -7,11 +7,14 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/migration/cli"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/pelletier/go-toml"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
@@ -21,6 +24,7 @@ const (
 	FlagUsageConf  = "The configuration file used to initialize Canopsis."
 
 	DefaultMigrationsPath = "/opt/canopsis/share/database/migrations"
+	DefaultFixturesPath   = "/opt/canopsis/share/database/fixtures/prod"
 )
 
 type Conf struct {
@@ -128,6 +132,17 @@ func main() {
 		}
 	}()
 
+	collections, err := client.ListCollectionNames(ctx, bson.M{})
+	utils.FailOnError(err, "Failed to apply fixtures")
+	if len(collections) == 0 {
+		logger.Info().Msg("Start fixtures")
+		loader := fixtures.NewLoader(client, []string{f.fixtureDirectory}, true,
+			fixtures.NewParser(password.NewSha1Encoder()), logger)
+		err = loader.Load(ctx)
+		utils.FailOnError(err, "Failed to apply fixtures")
+		logger.Info().Msg("Finish fixtures")
+	}
+
 	err = config.NewAdapter(client).UpsertConfig(ctx, conf.Canopsis)
 	utils.FailOnError(err, "Failed to save config into mongo")
 	err = config.NewRemediationAdapter(client).UpsertConfig(ctx, conf.Remediation)
@@ -138,8 +153,6 @@ func main() {
 	logger.Info().Msg("Start migrations")
 	cmd := cli.NewUpCmd(f.migrationDirectory, "", client, mongo.NewScriptExecutor(), logger)
 	err = cmd.Exec(ctx)
-	if err != nil {
-		utils.FailOnError(err, "Failed to migrate")
-	}
+	utils.FailOnError(err, "Failed to migrate")
 	logger.Info().Msg("Finish migrations")
 }

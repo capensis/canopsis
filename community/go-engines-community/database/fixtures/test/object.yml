@@ -1,0 +1,28 @@
+object:
+  object_1:
+    _id: cservice.ldapconfig
+    admin_dn: CN=AppGFICanopsisLdap,OU=Comptes Techniques,OU=GFI,DC=groupe,DC=adsi
+    admin_passwd: pwd4Ldap
+    attrs:
+      firstname: givenName
+      lastname: sn
+      mail: mail
+    crecord_creation_time: 1560442512
+    crecord_name: ldapconfig
+    crecord_type: ldapconfig
+    crecord_write_time: 1571147210
+    default_role: Norights
+    enable: false
+    host: admsvc.groupe.adsi
+    port: 3268
+    ufilter: (&(cn=%s)(|(cn=AppGFISuperviLdap)(cn=AppGFIXiboLdap)(memberof:1.2.840.113556.1.4.1941:=CN=APP_GFI_OutilsTooling_Utilisateurs,OU=Groupes,OU=GFI,DC=groupe,DC=adsi)(memberof=CN=FCT_GFI_CAS_Pilote_AESN,OU=Groupes,OU=GFI,DC=groupe,DC=adsi)(memberof=CN=APP_GFI_Canopsis_Utilisateurs,OU=Groupes,OU=GFI,DC=groupe,DC=adsi)))
+    user_dn: DC=adsi
+  object_2:
+    _id: cservice.casconfig
+    crecord_name: casconfig
+    crecord_type: cservice
+    default_role: Visualisation
+    enable: true
+    login_url: http://localhost:8443/cas/login
+    title: Connexion CAS
+    validate_url: http://10.0.2.2:8443/cas/serviceValidate
