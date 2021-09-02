@@ -10,7 +10,7 @@ Une alarme peut connaître de multiples changements de criticité et de statut, 
 
 Les alarmes peuvent être affichées à l'aide d'un [widget Bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
 
-Vous pouvez consulter la [structure des alarmes](guide-developpement/base-de-donnees/periodical-alarm.md) présente dans le Guide de développement.
+Vous pouvez consulter la [structure des alarmes](../../guide-developpement/base-de-donnees/periodical-alarm.md) présente dans le Guide de développement.
 
 ## Battement
 

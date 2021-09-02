@@ -322,8 +322,8 @@ variables sont passées grâce au payload suivant :
     }
     ```
 
-L'envoi d'un commentaire dans l'alarme nécessite de fabriquer un [évènement de
-type commentaire][event-comment] avec un ensemble de champs (`component`,
+L'envoi d'un commentaire dans l'alarme nécessite de fabriquer un évènement de
+type `comment` avec un ensemble de champs (`component`,
 `resource`, `connector`, `connector_name`) qui identifie l'alarme.
 
 Dans le payload, il faut donc ajouter des options pour arriver à la structure
@@ -415,4 +415,3 @@ paramètres avancés du [widget bac à alarmes][baa].
 [remed-index]: ../../guide-utilisation/remediation/index.md
 [mise-en-oeuvre]: ../../guide-utilisation/remediation/mise-en-oeuvre.md
 [baa]: ../../guide-utilisation/interface/widgets/bac-a-alarmes/#parametres-du-widget
-[event-comment]: ../../guide-developpement/struct-event/#event-comment-structure

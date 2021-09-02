@@ -168,9 +168,9 @@ Un exemple de `routing_key` (rk) :
 
 Lorsque l'on active l'option `stdout { codec => rubydebug }`, les logs traités sont affichés sur la sortie standard, ce qui peut faciliter le debug.
 
-On retrouve la structure de l'évènement avec les champs ainsi que leurs valeurs, mais aussi la *routing key* au niveau des metadata.
+On retrouve la structure de l'évènement avec les champs ainsi que leurs valeurs, mais aussi la *routing key* dans les méta-données.
 
-1.  Vérifier que la *routing key* est correcte et au bon format (voir les exemples ci dessus).
+1.  Vérifier que la *routing key* est correcte et au bon format (voir les exemples ci-dessus).
 2.  Vérifier que l'évènement est au bon format (champs, valeurs…).
-3.  Vérifier que l'évènement remonte bien dans RabbitMQ
+3.  Vérifier que l'évènement remonte bien dans RabbitMQ.
 4.  Vérifier les logs des moteurs Canopsis.

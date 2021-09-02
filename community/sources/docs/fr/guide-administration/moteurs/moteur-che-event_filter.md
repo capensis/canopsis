@@ -1,34 +1,10 @@
 # `engine-che` - Event-filter
 
-!!! note
-    Cette page concerne l'event-filter nouvelle génération, disponible uniquement
-    avec le moteur Go `engine-che`.
-
 L'event-filter est une fonctionnalité du moteur [`engine-che`](moteur-che.md) permettant de définir des règles manipulant les évènements.
 
 Des exemples pratiques d'utilisation de l'event-filter sont disponibles dans la partie [Exemples](#exemples).
 
 ## Règles
-
-!!! important
-    Un changement important est apparu dans cette API à partir de Canopsis 3.48.0 : la liste des `patterns` (au pluriel) peut maintenant contenir plusieurs règles à la fois. Avant Canopsis 3.48.0, il s'agissait d'un champ `pattern` (au singulier) ne pouvant contenir qu'une seule règle.
-
-    Avant Canopsis 3.48.0 :
-    ```js
-    "pattern": {
-        "component": "192.168.0.1", "resource": "foobar"
-    },
-    ```
-
-    À partir de Canopsis 3.48.0 :
-    ```js
-    "patterns": [
-        {"component": "192.168.0.1", "resource": "foobar"},
-        {"resource": "other"}
-    ],
-    ```
-
-    Les exemples suivants utilisent uniquement la nouvelle syntaxe.
 
 Une règle est un document JSON contenant les paramètres suivants :
 
@@ -128,12 +104,11 @@ Il est également possible de créer des patterns basés sur l'absence d'un cham
 ]
 ```
 
-!!! note
-    À partir de Canopsis 3.46.0, de nouveaux opérateurs avancés ont été ajoutés pour tester les éléments d'un tableau.
+Des opérateurs avancés permettent de tester les éléments d'un tableau :
 
- - `has_every` : le tableau doit contenir **tous** les éléments listés dans l'opérateur.
- - `has_one_of` : le tableau doit contenir **au moins un** des éléments listés dans l'opérateur.
- - `has_not` : le tableau ne doit contenir **aucun** des éléments listés dans l'opérateur.
+- `has_every` : le tableau doit contenir **tous** les éléments listés dans l'opérateur.
+- `has_one_of` : le tableau doit contenir **au moins un** des éléments listés dans l'opérateur.
+- `has_not` : le tableau ne doit contenir **aucun** des éléments listés dans l'opérateur.
 
 Par exemple, avec le pattern `has_every` suivant :
 
@@ -177,7 +152,7 @@ Tandis qu'un événement contenant le tableau suivant ne sera pas sélectionné 
 
 ### Types de règles
 
-#### Drop
+#### `drop`
 
 Lorsqu'une règle de type `drop` est appliquée à un évènement, cet évènement est supprimé. Les règles suivantes ne sont pas appliquées à cet évènement, et il est ignoré par Canopsis.
 
@@ -187,15 +162,11 @@ Lorsqu'un évènement provoque le déclenchement d'une règle « drop », le m
 2019/05/02 12:45:19 event dropped by event filter: {"hostgroups":["HG_FOOBAR"],"event_type":"check","execution_time":2.139087200164795,"timestamp":1556793914,"component":"foobar","state_type":0,"source_type":"resource","resource":"PING","current_attempt":1,"connector":"foobar","long_output":"","state":2,"connector_name":"foobar","output":"foo","command_name":"foo","perf_data":"","max_attempts":2}
 ```
 
-#### Break
+#### `break`
 
 Lorsqu'une règle de type `break` est appliquée à un évènement, cet évènement sort de l'event-filter. Les règles suivantes ne sont pas appliquées, et l'évènement est traité par Canopsis.
 
-#### Enrichment
-
-Les règles de types `enrichment` sont des règles d'enrichissement, qui permettent d'appliquer des actions modifiant les évènements.
-
-## Règles d'enrichissement
+#### `enrichment`
 
 Les règles de types `enrichment` sont des règles d'enrichissement, qui permettent d'appliquer des actions modifiant les évènements.
 
@@ -267,7 +238,6 @@ son auteur :
     "value": "{{.Event.Output}} (by {{.Event.Author}})"
 }
 ```
-
 
 #### `set_entity_info_from_template`
 
@@ -447,7 +417,6 @@ Cet événement met à disposition du moteur d'enrichissement plusieurs attribut
 | .Event.ExtraInfos.Meta.Count       |  Nombre d'alarmes conséquences   |
 | .Event.ExtraInfos.Meta.Children    |  Objet représentant la dernière alarme conséquence attachée |
 | .Event.ExtraInfos.Meta.Rule        |  Les informations de la règle méta en elle-même            |
-
 
 Voici un exemple qui permet d'ajouter un attribut texte sur l'entité de la méta alarme et dont le contenu vaut :
 
