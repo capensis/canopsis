@@ -1,6 +1,6 @@
-# État des services Canopsis
+# État des composants de Canopsis
 
-Voici les commandes afin de connaître l'état des services autour de Canopsis.
+Voici les commandes afin de connaître l'état des composants de Canopsis.
 
 ## MongoDB
 
@@ -40,6 +40,6 @@ systemctl status nginx.service
 canoctl status
 ```
 
-## Gestion avancée des services
+## Gestion avancée des composants
 
-[Arrêt et relance des services](../guide-administration/gestion-services/arret-relance-services.md)
+[Arrêt et relance des composants](../guide-administration/gestion-composants/arret-relance-composants.md)

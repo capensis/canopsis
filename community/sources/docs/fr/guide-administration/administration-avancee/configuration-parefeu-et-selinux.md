@@ -1,4 +1,4 @@
-# Sécurisation d'une installation de Canopsis et des services associés
+# Sécurisation d'une installation de Canopsis et de ses composants
 
 ## SELinux
 
@@ -19,17 +19,17 @@ Puis, redémarrer le système.
 
 Cette section décrit les ports utilisés par Canopsis qui doivent être autorisés.
 
-Voir aussi la [matrice des flux entre les services](../installation/pre-requis-parefeu-et-selinux.md).
+Voir aussi la [matrice des flux entre les composants](../installation/pre-requis-parefeu-et-selinux.md).
 
 ### Liste des ports
 
-Service       | Description                                 | Port                  |
+Composant     | Description                                 | Port                  |
 --------------|---------------------------------------------|-----------------------|
 MongoDB       | Base de données                             | 27017/TCP             |
 RabbitMQ      | Passage de messages                         | 5672/TCP              |
 RabbitMQ UI   | Interface web de RabbitMQ (recommandée)     | 15672/TCP             |
-Gunicorn      | Interface web et API REST de Canopsis       | 8082/TCP              |
-Nginx         | Reverse proxy HTTP                          | 80/TCP                |
+API Canopsis  | API REST de Canopsis                        | 8082/TCP              |
+Nginx         | Accès à l'interface web                     | 80/TCP                |
 Redis         | Serveur de cache                            | 6739/TCP              |
 InfluxDB      | Métriques                                   | 8086/TCP              |
 

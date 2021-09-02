@@ -24,7 +24,7 @@ Dans les deux cas, le moteur créé un verrou concernant l'entité en cours de t
 Étant donné que ce moteur est le premier dans la chaîne de traitement des événements, il est nécessaire de pouvoir s'assurer qu'il est toujours disponible. Il est donc possible de démarrer 2 instances en parallèle. La première instance stocke un jeton dans Redis et effectue les tâches décrites ci-dessus. Le moteur `engine-fifo` vérifie périodiquement la présence du jeton dans Redis. Si celui-ci est absent, la deuxième instance prend le relai.
 
 !!! Attention
-    Pour garantir un fonctionnement optimal de ce moteur, il est nécessaire d'appliquer [la configuration avancée de Redis](../administration-avancee/configuration-services/serveur-cache-redis.md).
+    Pour garantir un fonctionnement optimal de ce moteur, il est nécessaire d'appliquer [la configuration avancée de Redis](../administration-avancee/configuration-composants/serveur-cache-redis.md).
 
 Si vous souhaitez obtenir des informations plus techniques sur le fonctionnement de ce moteur vous pouvez consulter la section ci-dessous.
 

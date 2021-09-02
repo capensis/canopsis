@@ -1,6 +1,6 @@
-# Administration avancée des services intégrés à Canopsis
+# Administration avancée des composants de Canopsis
 
-Cette section vous accompagne dans l'administration avancée des services liés à Canopsis.
+Cette section vous accompagne dans l'administration avancée des composants de Canopsis.
 
 ## Sommaire
 
@@ -15,16 +15,16 @@ Cette section vous accompagne dans l'administration avancée des services liés 
 
 ### Sécurisation
 
-- [Sécurisation d'une installation de Canopsis et des services associés](configuration-parefeu-et-selinux.md)
+- [Sécurisation d'une installation de Canopsis et de ses composants](configuration-parefeu-et-selinux.md)
 
 ### Journalisation
 
 - [Journalisation des actions utilisateurs](journalisation-actions.md) 
 
-### Configuration avancée des services
+### Configuration avancée des composants
 
-- [Configuration avancée de la base de données MongoDB](configuration-services/base-de-donnees-mongodb.md)
-- [Configuration avancée du serveur de cache Redis](configuration-services/serveur-cache-redis.md)
-- [Configuration avancée du reverse proxy HTTP Nginx](configuration-services/reverse-proxy-nginx.md)
+- [Configuration avancée de la base de données MongoDB](configuration-composants/base-de-donnees-mongodb.md)
+- [Configuration avancée du serveur de cache Redis](configuration-composants/serveur-cache-redis.md)
+- [Configuration avancée du reverse proxy HTTP Nginx](configuration-composants/reverse-proxy-nginx.md)
 - [Liste des variables d'environnement liées à Canopsis](variables-environnement.md)
-- [Reconnexion automatique des services](reconnexion-automatique.md)
+- [Reconnexion automatique des composants](reconnexion-automatique.md)

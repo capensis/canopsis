@@ -1,12 +1,12 @@
-# Arrêt et relance des services liés à Canopsis
+# Arrêt et relance des composants de Canopsis
 
 L'ensemble des commandes suivantes doit être réalisées avec l'utilisateur `root` du système.
 
-## Gestion des services Canopsis
+## Gestion des composants Canopsis
 
-L'utilitaire `canoctl` permet, entre autres, de redémarrer Canopsis en lui-même. Il ne s'applique pas aux services associés, tels que RabbitMQ ou MongoDB.
+L'utilitaire `canoctl` permet, entre autres, de redémarrer Canopsis en lui-même. Il ne s'applique pas aux composants tiers, tels que RabbitMQ ou MongoDB.
 
-La commande suivante redémarrera Canopsis, ses services et ses moteurs :
+La commande suivante redémarrera Canopsis :
 
 ```sh
 canoctl restart
@@ -14,9 +14,9 @@ canoctl restart
 
 Comme avec `systemctl`, les actions `start` et `stop` sont aussi disponibles, afin de respectivement démarrer et arrêter Canopsis.
 
-## Gestion des services liés à Canopsis
+## Gestion des composants liés à Canopsis
 
-L'ensemble des services liés à Canopsis peuvent être gérés avec la commande `systemctl` usuelle sous Linux.
+L'ensemble des composants liés à Canopsis peuvent être gérés avec la commande `systemctl` usuelle sous Linux.
 
 ### MongoDB
 
@@ -42,6 +42,14 @@ La base de métriques InfluxDB peut être redémarrée avec la commande suivante
 systemctl restart influxdb.service
 ```
 
+### Nginx
+
+La serveur HTTP Nginx peut être redémarré avec la commande suivante :
+
+```sh
+systemctl restart nginx.service
+```
+
 ### Redis
 
 Le serveur de cache Redis peut être redémarré avec la commande suivante :
@@ -54,4 +62,4 @@ Veuillez noter qu'un redémarrage du service n'occasionnera pas une purge du cac
 
 ## Aller plus loin 
 
-Pour connaître l'état de votre service, [rendez-vous ici](../../guide-de-depannage/etat-des-services.md).
+Pour connaître l'état de votre service, [rendez-vous ici](../../guide-de-depannage/etat-des-composants.md).

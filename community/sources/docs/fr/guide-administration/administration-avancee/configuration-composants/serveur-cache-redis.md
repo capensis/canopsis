@@ -22,7 +22,7 @@ maxmemory "512mb"
 
 La valeur par défaut est de 512 Mio. Vous devez ajuster cette valeur de façon raisonnable, en fonction de votre environnement. Une augmentation de plusieurs Gio peut être nécessaire, sur les plus larges périmètres.
 
-Vous devez ensuite [redémarrer le service Redis](../../gestion-services/arret-relance-services.md#redis).
+Vous devez ensuite [redémarrer Redis](../../gestion-composants/arret-relance-composants.md#redis).
 
 !!! attention
     Afin de conserver la cohérence des données en cache, et afin de détecter immédiatement le problème, Redis est configuré avec une politique `noeviction` : les moteurs seront incapables d'ajouter de nouvelles données en cache lorsque la limite `maxmemory` est atteinte, ce qui bloquera les traitements.

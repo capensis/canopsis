@@ -103,7 +103,7 @@ Les fonctionnalités actuellement implémentées permettent l'authentification d
 
 La configuration de l'authentification se fait au moyen d'un requête sur l’API. Vous devez préparer un fichier de configuration et l'envoyer sur l'API.
 
-Voici un listing de paramètres nécessaires à la configuration CAS :
+Voici la liste des paramètres nécessaires à la configuration CAS :
 
 |   Attribut   |                    Description                     |            Exemple             |
 | ------------ | -------------------------------------------------- | ------------------------------ |
