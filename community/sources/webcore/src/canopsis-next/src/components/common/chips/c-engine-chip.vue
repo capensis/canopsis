@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.c-engine-chip.white--text.font-weight-bold(:style="{ background: color }")
+  div.c-engine-chip.white--text.font-weight-bold(:style="{ background: color }", v-on="$listeners")
     slot
 </template>
 

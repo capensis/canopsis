@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchHealthcheckStatusWithoutStore: 'fetchStatusWithoutStore',
+      fetchHealthcheckEnginesWithoutStore: 'fetchEnginesWithoutStore',
     }),
 
     setData(data) {
@@ -74,7 +74,7 @@ export default {
         this.hasServerError = false;
         this.pending = true;
 
-        this.response = await this.fetchHealthcheckStatusWithoutStore();
+        this.response = await this.fetchHealthcheckEnginesWithoutStore();
       } catch (err) {
         this.hasServerError = true;
       } finally {

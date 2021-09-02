@@ -175,6 +175,7 @@ export const API_ROUTES = {
   },
   healthcheck: {
     engines: '/api/v4/cat/healthcheck',
+    status: '/api/v4/cat/healthcheck/status',
     parameters: '/api/v4/cat/healthcheck/parameters',
   },
 };

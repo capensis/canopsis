@@ -1,12 +1,16 @@
 <template lang="pug">
   c-responsive-list.ml-4(:items="preparedEngines", item-key="name", item-value="label")
     v-tooltip(:disabled="!item.tooltip", slot-scope="{ item }", bottom)
-      c-engine-chip.ma-1(slot="activator", :color="item.color") {{ item.label }}
+      c-engine-chip.ma-1.cursor-pointer(
+        slot="activator",
+        :color="item.color",
+        @click="redirectToHealthcheck"
+      ) {{ item.label }}
       span {{ item.tooltip }}
 </template>
 
 <script>
-import { sortBy } from 'lodash';
+import { isEqual, sortBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { COLORS } from '@/config';
@@ -23,21 +27,15 @@ export default {
   data() {
     return {
       hasServerError: false,
-      services: [],
-      engines: [],
+      data: {
+        services: [],
+        engines: [],
+      },
     };
   },
   computed: {
     preparedEngines() {
-      const wrongNodes = [...this.services, ...this.engines];
-
-      if (!wrongNodes.length) {
-        return [{
-          name: 'ok',
-          tooltip: this.$t('healthcheck.systemsOperational'),
-          label: this.$t('common.ok'),
-        }];
-      }
+      const wrongNodes = [...this.data.services, ...this.data.engines];
 
       if (this.hasServerError) {
         return [{
@@ -47,6 +45,14 @@ export default {
             name: this.getNodeName(HEALTHCHECK_SERVICES_NAMES.healthcheck),
           }),
           label: this.$tc('common.error'),
+        }];
+      }
+
+      if (!wrongNodes.length) {
+        return [{
+          name: 'ok',
+          tooltip: this.$t('healthcheck.systemsOperational'),
+          label: this.$t('common.ok'),
         }];
       }
 
@@ -64,10 +70,7 @@ export default {
     this.$socket.join(SOCKET_ROOMS.healthcheckStatus);
     this.$socket
       .getRoom(SOCKET_ROOMS.healthcheckStatus)
-      .addListener(({ engines, services }) => {
-        this.engines = engines;
-        this.services = services;
-      });
+      .addListener(this.setHealthcheckStatus);
   },
   beforeDestroy() {
     this.$socket.leave(SOCKET_ROOMS.healthcheckStatus);
@@ -77,20 +80,23 @@ export default {
       fetchHealthcheckStatusWithoutStore: 'fetchStatusWithoutStore',
     }),
 
+    redirectToHealthcheck() {
+      this.$router.push({
+        name: 'admin-healthcheck',
+      });
+    },
+
+    setHealthcheckStatus(data) {
+      if (!isEqual(data, this.data)) {
+        this.data = data;
+      }
+    },
+
     async fetchList() {
       try {
-        const { services, engines } = await this.fetchHealthcheckStatusWithoutStore();
+        const response = await this.fetchHealthcheckStatusWithoutStore();
 
-        this.services = services.filter(this.isWrongEngine);
-        this.engines = engines.graph.nodes.reduce((acc, name) => {
-          const parameters = engines.parameters[name];
-
-          if (this.isWrongEngine(parameters)) {
-            acc.push({ name, ...parameters });
-          }
-
-          return acc;
-        }, []);
+        this.setHealthcheckStatus(response);
       } catch (err) {
         this.hasServerError = true;
       }
