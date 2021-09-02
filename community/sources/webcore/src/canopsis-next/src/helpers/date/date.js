@@ -140,14 +140,28 @@ export const convertDateToString = (date, format, ignoreTodayChecker, defaultVal
  *
  * @param {Date|number|moment.Moment} date
  */
-export const convertDateToStartOfDayMoment = date => moment(convertTimestampToMoment(date).startOf('day').format());
+export const convertDateToStartOfDayMoment = (date) => {
+  const startOfMoment = convertTimestampToMoment(date).startOf('day');
+  /* Format date to string without time and timezone */
+  const formattedStartOfMoment = startOfMoment.format(DATETIME_FORMATS.long);
+
+  /* Format to moment object */
+  return moment(formattedStartOfMoment, DATETIME_FORMATS.long);
+};
 
 /**
  * Return moment with end of day timestamp
  *
  * @param {Date|number|moment.Moment} date
  */
-export const convertDateToEndOfDayMoment = date => moment(convertTimestampToMoment(date).endOf('day').format());
+export const convertDateToEndOfDayMoment = (date) => {
+  const endOfMoment = convertTimestampToMoment(date).endOf('day');
+  /* Format date to string without time and timezone */
+  const formattedEndOfMoment = endOfMoment.format(DATETIME_FORMATS.long);
+
+  /* Format to moment object */
+  return moment(formattedEndOfMoment, DATETIME_FORMATS.long);
+};
 
 /**
  * Getting a now timestamp

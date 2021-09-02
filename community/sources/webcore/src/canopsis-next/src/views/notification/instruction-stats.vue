@@ -72,20 +72,20 @@ export default {
       const params = this.getQuery();
       params.with_flags = true;
 
-      const from = convertDateToTimestampByTimezone(dateParse(
+      const from = convertDateToStartOfDayMoment(dateParse(
         this.pagination.interval.from,
         DATETIME_INTERVAL_TYPES.start,
         DATETIME_FORMATS.datePicker,
-      ), this.$system.timezone);
+      ));
 
-      const to = convertDateToTimestampByTimezone(dateParse(
+      const to = convertDateToEndOfDayMoment(dateParse(
         this.pagination.interval.to,
         DATETIME_INTERVAL_TYPES.stop,
         DATETIME_FORMATS.datePicker,
-      ), this.$system.timezone);
+      ));
 
-      params.from = convertDateToStartOfDayMoment(from).unix();
-      params.to = convertDateToEndOfDayMoment(to).unix();
+      params.from = convertDateToTimestampByTimezone(from, this.$system.timezone);
+      params.to = convertDateToTimestampByTimezone(to, this.$system.timezone);
 
       this.fetchRemediationInstructionStatsList({ params });
     },
