@@ -96,4 +96,3 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 |:-----:|:---------:|:----------:|:-----------:|
 | [Publication d’évènement](../guide-developpement/index.md#api) | Community | Oui | Version ≥ 3 |
 | [Manipulation de comportements périodiques](../guide-utilisation/interface/pbehaviors/index.md) | Community | Oui | Version ≥ 3 |
-| [Récupération de l’état de Santé de Canopsis](../guide-developpement/api/api-v2-healthcheck.md) | Community | Oui | Version ≥ 3.4 |

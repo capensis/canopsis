@@ -71,10 +71,6 @@ La valeur du champ `_id` du connecteur est la concaténation des champs `connect
 
 La valeur du champ `_id` de la ressource est la concaténation des champs `resource` et `component` présents dans l'[évènement](../../guide-utilisation/vocabulaire/index.md#evenement).
 
-### Watcher
-
-La valeur du champ `_id` de l'observateur est celle indiquée à l'ajout via l'[API watcherng](../api/api-v2-watcherng.md). En l'absence d'`_id` (comme lors de l'ajout via l'[explorateur de contexte](../../guide-utilisation/interface/widgets/contexte/index.md), un `_id` unique est généré automatiquement.
-
 ## Collection MongoDB
 
 Les [entités](../../guide-utilisation/vocabulaire/index.md#entite) sont stockées dans la collection `default_entities` du MongoDB de Canopsis.

@@ -353,11 +353,6 @@ alimentées par le moteur `kpi`) peut être déclenchée en envoyant l'évèneme
 }
 ```
 
-La route d'API Canopsis `POST /api/v2/event` est utilisable pour envoyer cet
-évènement. Se référer à la [documentation de l'API event][api-event].
-
-[api-event]: ../../guide-developpement/api/api-v2-event.md
-
 En conséquence, le moteur exécute sa procédure de purge qui consiste en une
 succession de requêtes SQL `TRUNCATE` sur les tables de statistiques.
 

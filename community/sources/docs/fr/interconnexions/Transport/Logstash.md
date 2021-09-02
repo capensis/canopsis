@@ -27,12 +27,10 @@ Les logs devront donc être formatés d'une certaine manière afin que Canopsis 
 
 ### Structure d'un évènement
 
-Actuellement, un évènement de type `log` doit être remonté dans Canopsis comme un évènement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure).
+Actuellement, un évènement de type `log` doit être remonté dans Canopsis comme un évènement de type `check`.
 
 !!! attention
-    Un événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) entraîne la création ou mise à jour d'une alarme par le [moteur `engine-axe`](../../guide-administration/moteurs/moteur-axe.md#evenements-de-type-check). Il est important de s'assurer qu'elle puisse être également résolue par Logstash. À défaut, il est nécessaire que vous l'annuliez vous-même une fois l'alarme traitée.
-
-Pour plus d'information sur la structure d'un événement, consulter la [page dédiée](../../guide-developpement/struct-event.md) ainsi que sa partie sur un [événement de type `check`](../../guide-developpement/struct-event.md#event-check-structure)
+    Un événement de type `check` entraîne la création ou mise à jour d'une alarme par le [moteur `engine-axe`](../../guide-administration/moteurs/moteur-axe.md#evenements-de-type-check). Il est important de s'assurer qu'elle puisse être également résolue par Logstash. À défaut, il est nécessaire que vous l'annuliez vous-même une fois l'alarme traitée.
 
 ## Exemple de configuration Logstash
 

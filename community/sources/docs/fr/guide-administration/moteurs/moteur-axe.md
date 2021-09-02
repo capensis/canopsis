@@ -97,15 +97,15 @@ Lorsque la multi-instanciation est activée, une seule instance d'`engine-axe` s
 
 ### Gestion des événements de type check
 
-3 possibilités pour un événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) :
+3 possibilités pour un événement de type `check` :
 
 1. Il ne correspond à aucune alarme en cours : l'alarme va alors être créée
 2. Il correspond à une alarme en cours et son champ `state` ne vaut pas `0` : l'alarme va alors être mise à jour
-3. Il correspond à une alarme en cours et son champ `state` vaut `0` : l'alarme va alors passer en `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure), elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajouté avec le timestamp courant.
+3. Il correspond à une alarme en cours et son champ `state` vaut `0` : l'alarme va alors passer en `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement de type `check`, elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajouté avec le timestamp courant.
 
 ### Gestion des autres types d'événements
 
-Si l'événement correspond à une action (comme la mise d'un [acquittement](../../guide-developpement/struct-event.md#event-acknowledgment-structure)), l'alarme va être mise à jour en appliquant l'action.
+Si l'événement correspond à une action (comme la pose d'un acquittement), l'alarme va être mise à jour en appliquant l'action.
 
 ## Collection MongoDB associée
 

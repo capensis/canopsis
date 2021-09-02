@@ -77,9 +77,9 @@ Vous pouvez consulter la [structure d'une entité](../../guide-developpement/bas
 
 Un *évènement* est un message arrivant dans Canopsis.
 
-Il est formaté en JSON et peut être de plusieurs [types](../../guide-developpement/struct-event.md#liste-des-types-devenements), avec leurs propres [structures](../../guide-developpement/struct-event.md).
+Il est formaté en JSON et peut être de plusieurs types, avec leurs propres structures. 
 
-Les évènements de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) peuvent provenir d'une source externe, d'un [connecteur](../../interconnexions/index.md#connecteurs) ([email](../../interconnexions/Transport/Mail.md), [SNMP](../../interconnexions/Supervision/SNMPtrap.md), etc.) ou de Canopsis lui-même. Ils aboutissent à la création ou la mise à jour d'une [alarme](#alarme) dans le [Bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
+Les évènements de type `check` peuvent provenir d'une source externe, d'un [connecteur](../../interconnexions/index.md#connecteurs) ([email](../../interconnexions/Transport/Mail.md), [SNMP](../../interconnexions/Supervision/SNMPtrap.md), etc.) ou de Canopsis lui-même. Ils aboutissent à la création ou la mise à jour d'une [alarme](#alarme) dans le [Bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
 
 ## Météo
 

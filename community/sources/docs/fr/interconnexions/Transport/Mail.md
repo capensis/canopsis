@@ -89,7 +89,7 @@ Il faut donc vérifier que les différents champs sont bien remplis.
 
 Le bloc `[event]` contient la configuration de l'événement envoyé à Canopsis.
 
-On peut y définir les différents champs d'un [événement de type check](../../guide-developpement/struct-event.md#event-check-structure).
+On peut y définir les différents champs d'un événement de type `check`.
 
 On peut définir les champs `component`, `resource` et `output` de manière dynamique en faisant appel aux templates. Pour cela, on utilise `param1`, `param2` ou `paramn`.
 

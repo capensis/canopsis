@@ -6,27 +6,17 @@ Vous trouverez ici toute la documentation nécessaire au développement autour d
 
 Canopsis repose sur un ensemble d'API REST ([voir une définition](https://www.redhat.com/fr/topics/api/what-is-a-rest-api)), pour son fonctionnement interne et pour son interfaçage avec d'autres programmes.
 
-Ces API ont connu 4 versions différentes : l'APIv4 est la version actuelle, mais d'anciennes APIv1 et APIv2 sont encore utilisées à ce jour. L'APIv3 a été totalement abandonnée.
+Ces API ont connu 4 versions différentes. L'APIv4 est la version actuelle.
 
-### Nouvelles APIv4
+### APIv4
 
-La documentation des nouvelles APIv4 est disponible [avec Swagger](./swagger).
+La documentation des nouvelles APIv4 est disponible [par le biais de Swagger](./swagger).
 
 Ces nouvelles API suivent l'[OpenAPI Specification 2.0](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md).
 
 ### Anciennes APIv1 et APIv2
 
-* [`/api/contextgraph/import`](api/api-v2-import.md)
-* [`/api/internal`](api/api-internal.md)
-* [`/api/v2/broadcast-message`](api/api-v2-broadcast-message.md)
-* [`/api/v2/dynamic-infos`](api/api-v2-dynamic-infos.md)
-* [`/api/v2/event`](api/api-v2-event.md) et [structure d'un évènement](struct-event.md)
-* [`/api/v2/eventfilter`](api/api-v2-event-filter.md)
-* [`/api/v2/healthcheck`](api/api-v2-healthcheck.md)
-* [`/api/v2/heartbeat`](api/api-v2-heartbeat.md)
-* [`/api/v2/metaalarmrule`](api/api-v2-meta-alarm-rule.md)
-* [`/api/v2/watcherng`](api/api-v2-watcherng.md)
-* [`/api/v2/weather`](api/api-v2-weather.md)
+Ces anciennes API ne sont plus utilisées par les dernières versions de Canopsis, et n'ont donc plus lieu d'être utilisées ou documentées.
 
 ## Collections de base de données
 

@@ -126,7 +126,7 @@ Sauf cas particulier, ces deux chemins n'ont pas besoin d'être changés.
 
 #### Section `[event]`
 
-Cette section définit l'ensemble des clés et leur contenu pour renseigner les évènements envoyés à Canopsis. Voir la [documentation sur la structure des évènements Canopsis](../../guide-developpement/struct-event.md).
+Cette section définit l'ensemble des clés et leur contenu pour renseigner les évènements envoyés à Canopsis.
 
 Chaque clé notée `<key>.constant` sera renseignée avec la valeur notée dans le fichier de configuration.
 

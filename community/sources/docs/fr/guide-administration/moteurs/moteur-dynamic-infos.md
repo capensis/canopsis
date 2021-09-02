@@ -15,7 +15,7 @@ La commande `engine-dynamic-infos -help` liste toutes les options acceptées par
 
 ### Règles
 
-Les règles sont définies dans la collection MongoDB `dynamic-infos`, et peuvent être ajoutées et modifiées avec l'[API Informations Dynamiques](../../guide-developpement/api/api-v2-dynamic-infos.md).
+Les règles sont définies dans la collection MongoDB `dynamic-infos`.
 
 Une règle est représentée par un document JSON de la forme suivante :
 

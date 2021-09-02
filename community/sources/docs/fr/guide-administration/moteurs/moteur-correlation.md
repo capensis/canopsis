@@ -1,6 +1,6 @@
 # Moteur `engine-correlation` (Pro)
 
-Le moteur `engine-correlation` permet de créer des méta alarmes à partir de `règles de gestion`. Ces règles peuvent être ajoutées via l'[API méta alarmes](../../guide-developpement/api/api-v2-meta-alarm-rule.md).
+Le moteur `engine-correlation` permet de créer des méta alarmes à partir de `règles de gestion`.
 
 Des exemples pratiques d'utilisation de la corrélation sont disponibles dans la partie [types de groupements](#types-de-groupements).
 
@@ -143,7 +143,7 @@ Cette règle s'applique si 3 alarmes ou plus, dont la ressource vaut `check`, on
 #### Groupement complexe avec taux de déclenchement
 
 Comme le précédent il s'agit d'un groupement par attribut et par intervalle de temps. Mais celui-ci calcule le taux d'entités en erreur par rapport à un groupe donné, défini par un [pattern](moteur-che-event_filter.md#patterns).  
-Par exemple, vous avez 5 serveurs situés sur le site de Wasquehal et vous souhaitez grouper les alarmes si au moins 80% de ces serveurs sont en erreur sur une période de 5 minutes. Au préalable, vous aurez pris soin de créer ces entités dans le [référentiel interne](../../guide-developpement/api/api-v2-import.md) de Canopsis et de les enrichir avec `infos.site.value = Wasquehal`.
+Par exemple, vous avez 5 serveurs situés sur le site de Wasquehal et vous souhaitez grouper les alarmes si au moins 80% de ces serveurs sont en erreur sur une période de 5 minutes. Au préalable, vous aurez pris soin de créer ces entités dans le référentiel interne de Canopsis et de les enrichir avec `infos.site.value = Wasquehal`.
 
 Exemple :
 
