@@ -4,6 +4,8 @@ import { VIcon } from 'vuetify/es5/components/VIcon';
 import { VCheckbox } from 'vuetify/es5/components/VCheckbox';
 import { consoleWarn } from 'vuetify/es5/util/console';
 
+import { DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT } from '@/config';
+
 export default {
   extends: VDataTable,
   props: {
@@ -116,6 +118,35 @@ export default {
         }
       };
 
+      const pagination = this.computedPagination;
+
+      /**
+       * Added multi sort support
+       */
+      if (this.multiSort) {
+        const { multiSortBy = [] } = pagination;
+        const sortItemIndex = multiSortBy.findIndex(item => item.sortBy === header.value);
+        const sortItem = multiSortBy[sortItemIndex];
+
+        if (sortItem) {
+          const sortPriority = this.$createElement('span', {
+            class: 'v-data-table-header__sort-badge',
+          }, `${sortItemIndex + 1}`);
+
+          children.push(sortPriority);
+
+          addDataAttributes(sortItem.sortBy, sortItem.descending);
+        } else if (multiSortBy.length >= DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT) {
+          /**
+           * This condition was added for compliance with max multiSort limit
+           */
+          return;
+        }
+      } else {
+        addDataAttributes(pagination.sortBy, pagination.descending);
+      }
+
+
       data.attrs.tabIndex = 0;
       data.on = {
         click: () => {
@@ -143,31 +174,6 @@ export default {
       } else {
         children.unshift(icon);
       }
-
-      const pagination = this.computedPagination;
-
-      /**
-       * Added multi sort support
-       */
-      if (this.multiSort) {
-        const { multiSortBy = [] } = pagination;
-        const sortItemIndex = multiSortBy.findIndex(item => item.sortBy === header.value);
-        const sortItem = multiSortBy[sortItemIndex];
-
-        if (sortItem) {
-          const sortPriority = this.$createElement('span', {
-            class: 'v-data-table-header__sort-badge',
-          }, `${sortItemIndex + 1}`);
-
-          children.push(sortPriority);
-
-          addDataAttributes(sortItem.sortBy, sortItem.descending);
-        }
-
-        return;
-      }
-
-      addDataAttributes(pagination.sortBy, pagination.descending);
     },
     /* eslint-enable no-param-reassign */
 

@@ -18,6 +18,8 @@ export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 
 export const PAGINATION_TOTAL_VISIBLE = 7;
 
+export const DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT = 3;
+
 export const DEFAULT_WEATHER_LIMIT = 120;
 
 export const DEFAULT_LOCALE = 'en';
