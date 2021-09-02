@@ -144,7 +144,7 @@ Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fic
 
 Canopsis 4.3.0 apportant une importante refonte des API, plusieurs scripts de migration ont été écrits afin d'adapter vos données existantes en base de données vers les nouveaux formats attendus.
 
-Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un client MongoDB, exécutez les commandes suivantes, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
+Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un client MongoDB, assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes suivantes, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
 
 ```sh
 git clone --depth 1 --single-branch -b 4.3.0 https://git.canopsis.net/canopsis/canopsis-community.git

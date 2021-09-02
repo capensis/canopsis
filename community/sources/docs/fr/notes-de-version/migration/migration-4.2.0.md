@@ -84,7 +84,7 @@ Notez que le moteur `engine-webhook` est cependant toujours nécessaire et ne do
 
 Toutes vos configurations d'actions, webhooks ou *idle rules* doivent être migrées à l'aide de scripts, afin d'être fonctionnels avec les nouveaux scénarios de Canopsis 4.2.
 
-Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un client MongoDB, exécutez les scripts suivants, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
+Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un client MongoDB, assurez-vous que le service MongoDB soit bien lancé et exécutez les scripts suivants, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
 
 ```sh
 for file in 000_migrate_actions.js 001_migrate_webhook.js 002_migrate_idlerules.js ; do

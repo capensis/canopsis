@@ -326,7 +326,7 @@ Il est aussi recommandé, en parallèle, de [vous rendre sur l'interface web Rab
 
 ## Migration des pbehaviors existants
 
-Le script suivant permet de transformer vos pbehaviors existants, au format attendu par les pbehaviors v4. Il doit être exécuté là où un client `mongo` est disponible et capable d'accéder à la base de données.
+Le script suivant permet de transformer vos pbehaviors existants, au format attendu par les pbehaviors v4. Il doit être exécuté là où un client `mongo` est disponible et capable d'accéder au service MongoDB, qui doit être lancée.
 
 ```sh
 curl -O -L https://git.canopsis.net/canopsis/go-engines/-/raw/4.0.0/database/migrations/planning/003_migrate_pbehaviors.js
