@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
-	"regexp"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -13,7 +12,7 @@ import (
 )
 
 const (
-	fileRegexp = `^([^.]+).yml$`
+	filePattern = "*.yml"
 )
 
 type Loader interface {
@@ -48,9 +47,9 @@ func (l *loader) Load(ctx context.Context) error {
 	deleted := make(map[string]bool)
 
 	for _, dir := range l.dirs {
-		files, err := l.readDir(dir)
+		files, err := filepath.Glob(filepath.Join(dir, filePattern))
 		if err != nil {
-			return err
+			return fmt.Errorf("cannot read dir %q: %w", dir, err)
 		}
 
 		for _, filename := range files {
@@ -84,28 +83,6 @@ func (l *loader) Load(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-func (l *loader) readDir(dir string) ([]string, error) {
-	re := regexp.MustCompile(fileRegexp)
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		return nil, fmt.Errorf("cannot read dir %q: %w", dir, err)
-	}
-
-	res := make([]string, len(files))
-	for i, fileInfo := range files {
-		filename := fileInfo.Name()
-		matches := re.FindStringSubmatch(filename)
-		if len(matches) == 0 {
-			l.logger.Warn().Msgf("invalid fixture file %q", filepath.Join(dir, filename))
-			continue
-		}
-
-		res[i] = filepath.Join(dir, filename)
-	}
-
-	return res, nil
 }
 
 func (l *loader) deleteAll(ctx context.Context, docs map[string][]interface{}, deleted map[string]bool) (map[string]bool, error) {

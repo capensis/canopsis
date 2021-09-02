@@ -17,7 +17,7 @@ func (Faker) NowUnix() interface{} {
 }
 
 func (f Faker) DateUnix() interface{} {
-	return time.Date(f.Number(1970, time.Now().Year()), time.Month(f.Month()), f.Day(), f.Hour(), f.Minute(), f.Second(), 0, time.UTC).Unix()
+	return f.Number(1, int(time.Now().Unix()))
 }
 
 func (f Faker) Password(password string) string {
