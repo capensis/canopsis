@@ -44,6 +44,7 @@ export const ENTITIES_TYPES = {
   testSuite: 'testSuite',
   testSuiteHistory: 'testSuiteHistory',
   stateSetting: 'stateSetting',
+  idleRules: 'idleRules',
 };
 
 export const MODALS = {
@@ -124,6 +125,7 @@ export const MODALS = {
   createScenario: 'create-scenario',
   stateSetting: 'state-setting',
   testSuite: 'test-suite',
+  createIdleRule: 'create-idle-rule',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -197,11 +199,12 @@ export const ENTITIES_STATES = {
 };
 
 export const ENTITIES_STATUSES = {
-  off: 0,
+  closed: 0,
   ongoing: 1,
   stealthy: 2,
   flapping: 3,
   cancelled: 4,
+  noEvents: 5,
 };
 
 export const ENTITIES_STATES_STYLES = {
@@ -267,30 +270,35 @@ export const WEATHER_ICONS = {
 };
 
 export const ENTITY_STATUS_STYLES = {
-  [ENTITIES_STATUSES.off]: {
-    color: COLORS.status.off,
-    text: 'off',
-    icon: 'keyboard_arrow_up',
+  [ENTITIES_STATUSES.closed]: {
+    color: COLORS.status.closed,
+    text: 'closed',
+    icon: 'check_circle_outline',
   },
   [ENTITIES_STATUSES.ongoing]: {
     color: COLORS.status.ongoing,
     text: 'ongoing',
-    icon: 'keyboard_arrow_up',
+    icon: 'warning',
   },
   [ENTITIES_STATUSES.stealthy]: {
     color: COLORS.status.stealthy,
     text: 'stealthy',
-    icon: 'keyboard_arrow_up',
+    icon: 'swap_vert',
   },
   [ENTITIES_STATUSES.flapping]: {
     color: COLORS.status.flapping,
     text: 'flapping',
-    icon: 'keyboard_arrow_up',
+    icon: 'swap_vert',
   },
   [ENTITIES_STATUSES.cancelled]: {
     color: COLORS.status.cancelled,
     text: 'cancelled',
-    icon: 'keyboard_arrow_up',
+    icon: 'highlight_off',
+  },
+  [ENTITIES_STATUSES.noEvents]: {
+    color: COLORS.status.noEvents,
+    text: 'no events',
+    icon: 'sync_problem',
   },
 };
 
@@ -852,6 +860,7 @@ export const USERS_PERMISSIONS = {
       dynamicInfo: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_dynamicInfo`,
       metaAlarmRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_metaAlarmRule`,
       scenario: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_scenario`,
+      idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
@@ -1714,7 +1723,7 @@ export const REQUEST_METHODS = {
 
 export const PAYLOAD_VARIABLE_REGEXP = /[^"]({{\s?(\w|\s|\.){2,}\s?}})[^"]/g;
 
-export const SCENARIO_ACTION_TYPES = {
+export const ACTION_TYPES = {
   ack: 'ack',
   ackremove: 'ackremove',
   assocticket: 'assocticket',
@@ -1725,7 +1734,7 @@ export const SCENARIO_ACTION_TYPES = {
   webhook: 'webhook',
 };
 
-export const CAT_SCENARIO_ACTION_TYPES = [SCENARIO_ACTION_TYPES.webhook];
+export const CAT_ACTION_TYPES = [ACTION_TYPES.webhook];
 
 export const SCENARIO_TRIGGERS = {
   create: 'create',
@@ -1869,5 +1878,48 @@ export const DAYS_IN_MONTH = 30;
 export const MONTHS_IN_YEAR = 12;
 
 export const DAYS_IN_WEEK = 7;
+
+export const IDLE_RULE_TYPES = {
+  alarm: 'alarm',
+  entity: 'entity',
+};
+
+export const IDLE_RULE_ALARM_CONDITIONS = {
+  lastEvent: 'last_event',
+  lastUpdate: 'last_update',
+};
+
+export const PATTERNS_TYPES = {
+  alarm: 'alarm',
+  event: 'event',
+  entity: 'entity',
+  totalEntity: 'totalEntity',
+};
+
+export const DOCUMENTATION_LINKS = {
+  /**
+   * Exploitation
+   */
+  [USERS_PERMISSIONS.technical.exploitation.eventFilter]: 'guide-administration/moteurs/moteur-che-event_filter/',
+  [USERS_PERMISSIONS.technical.exploitation.pbehavior]: 'guide-utilisation/cas-d-usage/comportements_periodiques/',
+  [USERS_PERMISSIONS.technical.exploitation.snmpRule]: 'interconnexions/Supervision/SNMPtrap/',
+  // [USERS_PERMISSIONS.technical.exploitation.idleRules]: '', // TODO: TBD
+  [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: 'guide-administration/moteurs/moteur-dynamic-infos/',
+  [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'guide-administration/moteurs/moteur-correlation/',
+  [USERS_PERMISSIONS.technical.exploitation.scenario]: 'guide-administration/moteurs/moteur-action/',
+
+  /**
+   * Admin
+   */
+  [USERS_PERMISSIONS.technical.broadcastMessage]: 'guide-utilisation/interface/broadcast-messages/',
+  [USERS_PERMISSIONS.technical.playlist]: 'guide-utilisation/interface/playlists/',
+  [USERS_PERMISSIONS.technical.planning]: 'guide-administration/moteurs/moteur-pbehavior/#administration-de-la-planification',
+  [USERS_PERMISSIONS.technical.remediation]: 'guide-utilisation/remediation/',
+
+  /**
+   * Notifications
+   */
+  // [USERS_PERMISSIONS.technical.notification.instructionStats]: '', // TODO: TBD
+};
 
 export const REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME = ['basic-auth'];

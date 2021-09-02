@@ -1,6 +1,6 @@
-import { isUndefined, cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 
-import { infosToArray } from '@/helpers/forms/shared/common';
+import { enabledToForm, infosToArray } from './shared/common';
 
 /**
  * @typedef {Object} ServiceForm
@@ -32,7 +32,7 @@ export const serviceToForm = (service = {}) => ({
   impact_level: service.impact_level,
   name: service.name || '',
   category: service.category || '',
-  enabled: !isUndefined(service.enabled) ? service.enabled : true,
+  enabled: enabledToForm(service.enabled),
   infos: infosToArray(service.infos),
   entity_patterns: service.entity_patterns ? cloneDeep(service.entity_patterns) : [],
   output_template: service.output_template || '',

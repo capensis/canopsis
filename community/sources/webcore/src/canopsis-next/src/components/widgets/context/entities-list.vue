@@ -37,6 +37,13 @@
             @update:condition="updateSelectedCondition",
             @update:filters="updateFilters"
           )
+        v-flex
+          v-checkbox(
+            :input-value="query.no_events",
+            :label="$t('context.noEventsFilter')",
+            color="primary",
+            @change="updateNoEvents"
+          )
         v-flex(v-if="hasAccessToCreateEntity")
           context-fab
         v-flex(v-if="hasAccessToExportAsCsv")
@@ -183,6 +190,20 @@ export default {
     this.columnsFiltersPending = false;
   },
   methods: {
+    updateNoEvents(noEvents) {
+      this.updateWidgetPreferencesInUserPreference({
+        ...this.userPreference.widget_preferences,
+
+        noEvents,
+      });
+
+      this.query = {
+        ...this.query,
+
+        no_events: noEvents,
+      };
+    },
+
     updateCategory(category) {
       const categoryId = category && category._id;
 

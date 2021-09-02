@@ -4,22 +4,16 @@
  * @param {string} method
  * @param {string} [delayField = 'pollingDelay']
  * @returns {{
- *   data(): { timeout: null },
  *   methods: {
  *     polling(): Promise,
- *     stopPolling(): void
- *     stopPolling(): void
+ *     stopPolling(): void,
+ *     stopPolling(): void,
  *   },
- *   mounted(): void
+ *   mounted(): void,
  *   beforeDestroy(): void,
  * }}
  */
 export const pollingMixinCreator = ({ method, delayField = 'pollingDelay' }) => ({
-  data() {
-    return {
-      timeout: null,
-    };
-  },
   mounted() {
     this.startPolling();
   },

@@ -489,6 +489,14 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_exploitation_idleRules",
+        "loader_id": "models_exploitation_idleRules",
+        "crecord_name": "models_exploitation_idleRules",
+        "crecord_type": "action",
+        "desc": "Exploitation: Idle rules",
+        "type": "CRUD"
+    },
+    {
         "_id": "models_notification_instructionStats",
         "loader_id": "models_notification_instructionStats",
         "crecord_name": "models_notification_instructionStats",

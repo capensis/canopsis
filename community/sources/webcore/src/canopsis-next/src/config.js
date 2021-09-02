@@ -129,18 +129,12 @@ export const API_ROUTES = {
   },
   scenarios: '/api/v4/scenarios',
   entityCategories: '/api/v4/entity-categories',
-  junit: {
-    directory: '/api/v4/cat/junit/directory',
-    testSuites: '/api/v4/cat/junit/test-suites',
-    entityGantt: '/api/v4/cat/junit/test-suites-entity-gantt',
-    history: '/api/v4/cat/junit/test-suites-history',
-    widget: '/api/v4/cat/junit/test-suites-widget',
-    file: '/api/v4/cat/junit/test-cases-file',
-  },
   stateSetting: '/api/v4/state-settings/',
   dataStorage: '/api/v4/data-storage',
   notification: '/api/v4/notification/',
   logout: '/logout',
+  idleRules: '/api/v4/idle-rules',
+  idleRulesCount: '/api/v4/idle-rules/count',
 
   /**
    * Cat routes
@@ -158,6 +152,14 @@ export const API_ROUTES = {
     pausedExecutions: '/api/v4/cat/account/paused-executions',
     instructionComments: '/api/v4/cat/instruction-comments',
   },
+  junit: {
+    directory: '/api/v4/cat/junit/directory',
+    testSuites: '/api/v4/cat/junit/test-suites',
+    entityGantt: '/api/v4/cat/junit/test-suites-entity-gantt',
+    history: '/api/v4/cat/junit/test-suites-history',
+    widget: '/api/v4/cat/junit/test-suites-widget',
+    file: '/api/v4/cat/junit/test-cases-file',
+  },
 };
 
 export const COLORS = {
@@ -171,11 +173,12 @@ export const COLORS = {
     pause: '#808080',
   },
   status: {
-    off: 'black',
-    ongoing: 'grey',
-    stealthy: 'gold',
-    flapping: 'orange',
-    cancelled: 'red',
+    closed: '#2fab63',
+    stealthy: '#757575',
+    flapping: '#2b3E4F',
+    ongoing: '#f9A825',
+    cancelled: '#757575',
+    noEvents: '#ff5252',
     unknown: 'black',
   },
   entitiesEvents: {
@@ -232,6 +235,10 @@ export const COLORS = {
 };
 
 export const FILE_BASE_URL = `${API_BASE_URL}${API_ROUTES.file}`;
+
+export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
+
+export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
 
 export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS = 10;
 

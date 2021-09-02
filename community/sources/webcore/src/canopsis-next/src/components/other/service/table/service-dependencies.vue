@@ -39,9 +39,10 @@
         )
           span.px-2.body-2.font-weight-bold {{ props.item.impact_state }}
     tr(slot="items", slot-scope="props")
-      td(v-for="header in headers", :key="header.value")
+      td(v-for="(header, index) in headers", :key="header.value")
+        c-no-events-icon(v-if="!index", :value="props.item.entity | get('idle_since')", top)
         color-indicator-wrapper(
-          v-if="props.item.entity",
+          v-else-if="props.item.entity",
           :entity="props.item.entity",
           :alarm="props.item.alarm",
           :type="header.colorIndicator"
@@ -141,14 +142,19 @@ export default {
 
     headers() {
       const columns = this.columns || defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS);
-
-      return columns.map(({ label, value, colorIndicator }) => ({
+      const headers = columns.map(({ label, value, colorIndicator }) => ({
         colorIndicator,
 
         sortable: false,
         text: label,
         value: value.match(/entity.|alarm./) ? value : `entity.${value}`,
       }));
+
+      return [
+        { sortable: false, text: '', value: 'no-events-icon' },
+
+        ...headers,
+      ];
     },
 
     items() {

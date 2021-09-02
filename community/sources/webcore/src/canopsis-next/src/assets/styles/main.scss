@@ -72,7 +72,7 @@ $mobileBreakpoint: 450px;
   cursor: pointer;
 }
 
-.weather__item {
+.weather-item {
   min-height: unset !important;
 
   &.v-card__with-see-alarms-btn {
@@ -94,18 +94,7 @@ $mobileBreakpoint: 450px;
     }
   }
 
-  .pauseIcon {
-    position: absolute;
-    right: 0;
-    bottom: 1em;
-    cursor: inherit;
-
-    &:hover, &:focus {
-      position: absolute;
-    }
-  }
-
-  .service-name {
+  &__service-name {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -127,7 +116,7 @@ $mobileBreakpoint: 450px;
     }
   }
 
-  &--background {
+  &__background {
     position: absolute;
     top: 0;
     bottom: 0;

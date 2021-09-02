@@ -40,6 +40,9 @@
         "models_exploitation_scenario": {
           "checksum": 15
         },
+        "models_exploitation_idleRules": {
+          "checksum": 15
+        },
         "models_notification_instructionStats": {
           "checksum": 15
         },
