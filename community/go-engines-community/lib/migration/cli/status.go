@@ -3,8 +3,8 @@ package cli
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 	"text/tabwriter"
@@ -30,7 +30,7 @@ type statusCmd struct {
 }
 
 func (c *statusCmd) Exec(ctx context.Context) error {
-	ids, hasUp, hasDown, invalidFile, err := c.findMigrations()
+	ids, hasUp, hasDown, err := c.findMigrations()
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func (c *statusCmd) Exec(ctx context.Context) error {
 	if len(executedIDs) > 0 {
 		current = executedIDs[len(executedIDs)-1]
 		if len(executedIDs) > 1 {
-			next = executedIDs[len(executedIDs)-2]
+			prev = executedIDs[len(executedIDs)-2]
 		}
 	}
 
@@ -110,49 +110,38 @@ func (c *statusCmd) Exec(ctx context.Context) error {
 		}
 	}
 
-	if len(invalidFile) > 0 {
-		fmt.Fprintf(w, "\n== Invalid migration files\n")
-
-		for _, name := range invalidFile {
-			fmt.Fprintln(w, name)
-		}
-	}
-
 	return w.Flush()
 }
 
-func (c *statusCmd) findMigrations() ([]string, map[string]bool, map[string]bool, []string, error) {
-	files, err := ioutil.ReadDir(c.path)
+func (c *statusCmd) findMigrations() ([]string, map[string]bool, map[string]bool, error) {
+	upFiles, err := filepath.Glob(filepath.Join(c.path, fmt.Sprintf("*%s", fileNameSuffixUp)))
 	if err != nil {
-		return nil, nil, nil, nil, fmt.Errorf("cannot read directory %q: %w", c.path, err)
+		return nil, nil, nil, fmt.Errorf("cannot read directory %q: %w", c.path, err)
+	}
+	downFiles, err := filepath.Glob(filepath.Join(c.path, fmt.Sprintf("*%s", fileNameSuffixDown)))
+	if err != nil {
+		return nil, nil, nil, fmt.Errorf("cannot read directory %q: %w", c.path, err)
 	}
 
-	suffixUp := fmt.Sprintf("%s%s%s", fileNameDelimiter, fileNameSuffixUp, fileExtJs)
-	suffixDown := fmt.Sprintf("%s%s%s", fileNameDelimiter, fileNameSuffixDown, fileExtJs)
 	ids := make([]string, 0)
 	hasUp := make(map[string]bool)
 	hasDown := make(map[string]bool)
-	invalidFile := make([]string, 0)
 
-	for _, file := range files {
-		if strings.HasSuffix(file.Name(), suffixUp) {
-			id := strings.TrimSuffix(file.Name(), suffixUp)
-			hasUp[id] = true
-			if !hasDown[id] {
-				ids = append(ids, id)
-			}
-		} else if strings.HasSuffix(file.Name(), suffixDown) {
-			id := strings.TrimSuffix(file.Name(), suffixDown)
-			hasDown[id] = true
-			if !hasUp[id] {
-				ids = append(ids, id)
-			}
-		} else {
-			invalidFile = append(invalidFile, file.Name())
+	for _, file := range upFiles {
+		id := strings.TrimSuffix(filepath.Base(file), fileNameSuffixUp)
+		ids = append(ids, id)
+		hasUp[id] = true
+	}
+
+	for _, file := range downFiles {
+		id := strings.TrimSuffix(filepath.Base(file), fileNameSuffixDown)
+		hasDown[id] = true
+		if !hasUp[id] {
+			ids = append(ids, id)
 		}
 	}
 
-	return ids, hasUp, hasDown, invalidFile, nil
+	return ids, hasUp, hasDown, nil
 }
 
 func (c *statusCmd) findExecutedMigrations(ctx context.Context) ([]string, map[string]bool, error) {

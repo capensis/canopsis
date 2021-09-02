@@ -6,9 +6,9 @@ const (
 	collectionName     = "migration"
 	timeFormat         = "20060102150405"
 	fileNameDelimiter  = "_"
-	fileNameSuffixUp   = "up"
-	fileNameSuffixDown = "down"
 	fileExtJs          = ".js"
+	fileNameSuffixUp   = fileNameDelimiter + "up" + fileExtJs
+	fileNameSuffixDown = fileNameDelimiter + "down" + fileExtJs
 	filePerm           = 0644
 )
 

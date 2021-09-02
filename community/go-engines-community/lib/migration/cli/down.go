@@ -44,9 +44,8 @@ func (c *downCmd) Exec(ctx context.Context) error {
 		return fmt.Errorf("unknown migration %q", c.to)
 	}
 
-	suffix := fmt.Sprintf("%s%s%s", fileNameDelimiter, fileNameSuffixDown, fileExtJs)
 	for _, id := range ids {
-		file := filepath.Join(c.path, id+suffix)
+		file := filepath.Join(c.path, id+fileNameSuffixDown)
 		_, err := os.Stat(file)
 		if err != nil {
 			if os.IsNotExist(err) {

@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"path/filepath"
 	"strings"
 
@@ -34,21 +33,16 @@ type skipCmd struct {
 }
 
 func (c *skipCmd) Exec(ctx context.Context) error {
-	files, err := ioutil.ReadDir(c.path)
+	files, err := filepath.Glob(filepath.Join(c.path, fmt.Sprintf("*%s", fileNameSuffixUp)))
 	if err != nil {
 		return fmt.Errorf("cannot read directory %q: %w", c.path, err)
 	}
 
-	suffix := fmt.Sprintf("%s%s%s", fileNameDelimiter, fileNameSuffixUp, fileExtJs)
 	ids := make([]string, 0)
 	found := false
 
 	for _, file := range files {
-		if !strings.HasSuffix(file.Name(), suffix) {
-			continue
-		}
-
-		id := strings.TrimSuffix(file.Name(), suffix)
+		id := strings.TrimSuffix(filepath.Base(file), fileNameSuffixUp)
 		ids = append(ids, id)
 
 		if c.version != "" && id == c.version {
@@ -76,7 +70,7 @@ func (c *skipCmd) Exec(ctx context.Context) error {
 			continue
 		}
 
-		file := filepath.Join(c.path, id+suffix)
+		file := filepath.Join(c.path, id+fileNameSuffixUp)
 		_, err = c.collection.InsertOne(ctx, bson.M{"_id": id})
 		if err != nil {
 			return fmt.Errorf("cannot update migration history: %w", err)
