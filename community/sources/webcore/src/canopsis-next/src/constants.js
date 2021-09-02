@@ -28,7 +28,6 @@ export const ENTITIES_TYPES = {
   eventFilterRule: 'eventFilterRule',
   metaAlarmRule: 'metaAlarmRule',
   snmpRule: 'snmpRule',
-  heartbeat: 'heartbeat',
   dynamicInfo: 'dynamicInfo',
   broadcastMessage: 'broadcastMessage',
   playlist: 'playlist',
@@ -39,11 +38,13 @@ export const ENTITIES_TYPES = {
   remediationJob: 'remediationJob',
   remediationConfiguration: 'remediationConfiguration',
   remediationInstructionExecution: 'remediationInstructionExecution',
+  remediationInstructionStats: 'remediationInstructionStats',
   scenario: 'scenario',
   entityCategory: 'entityCategory',
   testSuite: 'testSuite',
   testSuiteHistory: 'testSuiteHistory',
   stateSetting: 'stateSetting',
+  idleRules: 'idleRules',
 };
 
 export const MODALS = {
@@ -94,7 +95,6 @@ export const MODALS = {
   filtersList: 'filters-list',
   createSnmpRule: 'create-snmp-rule',
   selectViewTab: 'select-view-tab',
-  createHeartbeat: 'create-heartbeat',
   createDynamicInfo: 'create-dynamic-info',
   createDynamicInfoInformation: 'create-dynamic-info-information',
   importExportViews: 'import-groups-and-views',
@@ -117,6 +117,7 @@ export const MODALS = {
   createRemediationInstructionsFilter: 'create-remediation-instructions-filter',
   executeRemediationInstruction: 'execute-remediation-instruction',
   remediationPatterns: 'remediation-patterns',
+  remediationInstructionApproval: 'remediation-instruction-approval',
   imageViewer: 'image-viewer',
   imagesViewer: 'images-viewer',
   patterns: 'patterns',
@@ -124,6 +125,7 @@ export const MODALS = {
   createScenario: 'create-scenario',
   stateSetting: 'state-setting',
   testSuite: 'test-suite',
+  createIdleRule: 'create-idle-rule',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -168,6 +170,10 @@ export const EVENT_ENTITY_TYPES = {
   instructionJobComplete: 'instructionjobcomplete',
   instructionJobAbort: 'instructionjobabort',
   instructionJobFail: 'instructionjobfail',
+  autoInstructionStart: 'autoinstructionstart',
+  autoInstructionComplete: 'autoinstructioncomplete',
+  autoInstructionFail: 'autoinstructionfail',
+  autoInstructionAlreadyRunning: 'autoinstructionalreadyrunning',
   junitTestSuiteUpdate: 'junittestsuiteupdate',
   junitTestCaseUpdate: 'junittestcaseupdate',
 };
@@ -193,11 +199,12 @@ export const ENTITIES_STATES = {
 };
 
 export const ENTITIES_STATUSES = {
-  off: 0,
+  closed: 0,
   ongoing: 1,
   stealthy: 2,
   flapping: 3,
   cancelled: 4,
+  noEvents: 5,
 };
 
 export const ENTITIES_STATES_STYLES = {
@@ -263,30 +270,35 @@ export const WEATHER_ICONS = {
 };
 
 export const ENTITY_STATUS_STYLES = {
-  [ENTITIES_STATUSES.off]: {
-    color: COLORS.status.off,
-    text: 'off',
-    icon: 'keyboard_arrow_up',
+  [ENTITIES_STATUSES.closed]: {
+    color: COLORS.status.closed,
+    text: 'closed',
+    icon: 'check_circle_outline',
   },
   [ENTITIES_STATUSES.ongoing]: {
     color: COLORS.status.ongoing,
     text: 'ongoing',
-    icon: 'keyboard_arrow_up',
+    icon: 'warning',
   },
   [ENTITIES_STATUSES.stealthy]: {
     color: COLORS.status.stealthy,
     text: 'stealthy',
-    icon: 'keyboard_arrow_up',
+    icon: 'swap_vert',
   },
   [ENTITIES_STATUSES.flapping]: {
     color: COLORS.status.flapping,
     text: 'flapping',
-    icon: 'keyboard_arrow_up',
+    icon: 'swap_vert',
   },
   [ENTITIES_STATUSES.cancelled]: {
     color: COLORS.status.cancelled,
     text: 'cancelled',
-    icon: 'keyboard_arrow_up',
+    icon: 'highlight_off',
+  },
+  [ENTITIES_STATUSES.noEvents]: {
+    color: COLORS.status.noEvents,
+    text: 'no events',
+    icon: 'sync_problem',
   },
 };
 
@@ -465,6 +477,18 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.instructionJobFail]: {
     icon: 'assignment',
   },
+  [EVENT_ENTITY_TYPES.autoInstructionStart]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.autoInstructionComplete]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.autoInstructionFail]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: {
+    icon: 'assignment',
+  },
   [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: {
     icon: 'keyboard_arrow_up',
   },
@@ -543,12 +567,17 @@ export const DATETIME_FORMATS = {
   time: 'H:mm:ss',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
   dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
-  datePicker: 'DD/MM/YYYY',
+  datePicker: 'YYYY-MM-DD',
   timePicker: 'HH:mm',
   timePickerWithSeconds: 'HH:mm:ss',
   veeValidateDateTimeFormat: 'dd/MM/yyyy HH:mm',
   refreshFieldFormat: 'Y __ D __ H _ m _ s _',
   testSuiteFormat: 'DD MMM YYYY [\n]H:mm:ss [GMT]',
+};
+
+export const DATETIME_INTERVAL_TYPES = {
+  start: 'start',
+  stop: 'stop',
 };
 
 export const STATS_OPTIONS = {
@@ -631,7 +660,7 @@ export const STATS_CRITICITY = {
   critical: 'critical',
 };
 
-export const STATS_QUICK_RANGES = {
+export const QUICK_RANGES = {
   custom: {
     value: 'custom',
   },
@@ -794,6 +823,7 @@ export const USER_PERMISSIONS_PREFIXES = {
   technical: {
     admin: 'models',
     exploitation: 'models_exploitation',
+    notification: 'models_notification',
   },
   business: {
     common: 'common',
@@ -828,10 +858,13 @@ export const USERS_PERMISSIONS = {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
       snmpRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_snmpRule`,
-      heartbeat: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_heartbeat`,
       dynamicInfo: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_dynamicInfo`,
       metaAlarmRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_metaAlarmRule`,
       scenario: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_scenario`,
+      idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
+    },
+    notification: {
+      instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
     },
   },
   business: {
@@ -956,7 +989,6 @@ export const USERS_PERMISSIONS = {
     metaalarmrule: `${USER_PERMISSIONS_PREFIXES.api}_metaalarmrule`,
     playlist: `${USER_PERMISSIONS_PREFIXES.api}_playlist`,
     dynamicinfos: `${USER_PERMISSIONS_PREFIXES.api}_dynamicinfos`,
-    heartbeat: `${USER_PERMISSIONS_PREFIXES.api}_heartbeat`,
     entityservice: `${USER_PERMISSIONS_PREFIXES.api}_entityservice`,
     viewgroup: `${USER_PERMISSIONS_PREFIXES.api}_viewgroup`,
     view: `${USER_PERMISSIONS_PREFIXES.api}_view`,
@@ -982,6 +1014,7 @@ export const USERS_PERMISSIONS = {
     junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
     datastorageRead: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_read`,
     datastorageUpdate: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_update`,
+    instructionApprove: `${USER_PERMISSIONS_PREFIXES.api}_instruction_approve`,
   },
 };
 
@@ -1252,11 +1285,6 @@ export const CANOPSIS_FORUM = 'https://community.capensis.org/';
 
 export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
 
-export const HEARTBEAT_DURATION_UNITS = {
-  minute: 'm',
-  hour: 'h',
-};
-
 export const TIME_UNITS = {
   second: 's',
   minute: 'm',
@@ -1434,10 +1462,13 @@ export const ADMIN_PAGES_RULES = {
   remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
 };
 
+export const NOTIFICATIONS_PAGES_RULES = {
+  instructionStats: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+};
+
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
   snmpRule: { edition: CANOPSIS_EDITION.cat },
-  heartbeat: { stack: CANOPSIS_STACK.go },
   dynamicInfo: { edition: CANOPSIS_EDITION.cat },
   metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
   scenario: { stack: CANOPSIS_STACK.go },
@@ -1454,10 +1485,14 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
    */
   [USERS_PERMISSIONS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
   [USERS_PERMISSIONS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
-  [USERS_PERMISSIONS.technical.exploitation.heartbeat]: EXPLOITATION_PAGES_RULES.heartbeat,
   [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USERS_PERMISSIONS.technical.exploitation.scenario]: EXPLOITATION_PAGES_RULES.scenario,
+
+  /**
+   * Notifications pages
+   */
+  [USERS_PERMISSIONS.technical.notification.instructionStats]: NOTIFICATIONS_PAGES_RULES.instructionStats,
 };
 
 export const WIDGET_TYPES_RULES = {
@@ -1600,9 +1635,14 @@ export const WORKFLOW_TYPES = {
 
 export const MAX_LIMIT = 10000;
 
-export const REMEDIATION_CONFIGURATION_TYPES = {
-  rundeck: 'rundeck',
-  awx: 'awx',
+export const REMEDIATION_INSTRUCTION_TYPES = {
+  manual: 0,
+  auto: 1,
+};
+
+export const REMEDIATION_INSTRUCTION_APPROVAL_TYPES = {
+  role: 0,
+  user: 1,
 };
 
 export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
@@ -1619,8 +1659,6 @@ export const REMEDIATION_JOB_EXECUTION_STATUSES = {
   failed: 2,
   canceled: 3,
 };
-
-export const REMEDIATION_INSTRUCTION_FILTER_ALL = 'all';
 
 /**
  * 19/01/2038 @ 3:14am (UTC) in unix timestamp
@@ -1640,7 +1678,6 @@ export const ENGINES_NAMES = {
   service: 'engine-service',
   dynamicInfo: 'engine-dynamic-info',
   correlation: 'engine-correlation',
-  heartbeat: 'engine-heartbeat',
 };
 
 export const ENGINES_QUEUE_NAMES = {
@@ -1653,7 +1690,6 @@ export const ENGINES_QUEUE_NAMES = {
   service: 'Engine_service',
   dynamicInfo: 'Engine_dynamic_infos',
   correlation: 'Engine_correlation',
-  heartbeat: 'Engine_heartbeat',
 };
 
 export const ENGINES_NAMES_TO_QUEUE_NAMES = {
@@ -1666,7 +1702,6 @@ export const ENGINES_NAMES_TO_QUEUE_NAMES = {
   [ENGINES_QUEUE_NAMES.service]: ENGINES_NAMES.service,
   [ENGINES_QUEUE_NAMES.dynamicInfo]: ENGINES_NAMES.dynamicInfo,
   [ENGINES_QUEUE_NAMES.correlation]: ENGINES_NAMES.correlation,
-  [ENGINES_QUEUE_NAMES.heartbeat]: ENGINES_NAMES.heartbeat,
 };
 
 export const CAT_ENGINES = [
@@ -1689,7 +1724,7 @@ export const REQUEST_METHODS = {
 
 export const PAYLOAD_VARIABLE_REGEXP = /[^"]({{\s?(\w|\s|\.){2,}\s?}})[^"]/g;
 
-export const SCENARIO_ACTION_TYPES = {
+export const ACTION_TYPES = {
   ack: 'ack',
   ackremove: 'ackremove',
   assocticket: 'assocticket',
@@ -1700,7 +1735,7 @@ export const SCENARIO_ACTION_TYPES = {
   webhook: 'webhook',
 };
 
-export const CAT_SCENARIO_ACTION_TYPES = [SCENARIO_ACTION_TYPES.webhook];
+export const CAT_ACTION_TYPES = [ACTION_TYPES.webhook];
 
 export const SCENARIO_TRIGGERS = {
   create: 'create',
@@ -1844,3 +1879,48 @@ export const DAYS_IN_MONTH = 30;
 export const MONTHS_IN_YEAR = 12;
 
 export const DAYS_IN_WEEK = 7;
+
+export const IDLE_RULE_TYPES = {
+  alarm: 'alarm',
+  entity: 'entity',
+};
+
+export const IDLE_RULE_ALARM_CONDITIONS = {
+  lastEvent: 'last_event',
+  lastUpdate: 'last_update',
+};
+
+export const PATTERNS_TYPES = {
+  alarm: 'alarm',
+  event: 'event',
+  entity: 'entity',
+  totalEntity: 'totalEntity',
+};
+
+export const DOCUMENTATION_LINKS = {
+  /**
+   * Exploitation
+   */
+  [USERS_PERMISSIONS.technical.exploitation.eventFilter]: 'guide-administration/moteurs/moteur-che-event_filter/',
+  [USERS_PERMISSIONS.technical.exploitation.pbehavior]: 'guide-utilisation/cas-d-usage/comportements_periodiques/',
+  [USERS_PERMISSIONS.technical.exploitation.snmpRule]: 'interconnexions/Supervision/SNMPtrap/',
+  // [USERS_PERMISSIONS.technical.exploitation.idleRules]: '', // TODO: TBD
+  [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: 'guide-administration/moteurs/moteur-dynamic-infos/',
+  [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'guide-administration/moteurs/moteur-correlation/',
+  [USERS_PERMISSIONS.technical.exploitation.scenario]: 'guide-administration/moteurs/moteur-action/',
+
+  /**
+   * Admin
+   */
+  [USERS_PERMISSIONS.technical.broadcastMessage]: 'guide-utilisation/interface/broadcast-messages/',
+  [USERS_PERMISSIONS.technical.playlist]: 'guide-utilisation/interface/playlists/',
+  [USERS_PERMISSIONS.technical.planning]: 'guide-administration/moteurs/moteur-pbehavior/#administration-de-la-planification',
+  [USERS_PERMISSIONS.technical.remediation]: 'guide-utilisation/remediation/',
+
+  /**
+   * Notifications
+   */
+  // [USERS_PERMISSIONS.technical.notification.instructionStats]: '', // TODO: TBD
+};
+
+export const REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME = ['basic-auth'];

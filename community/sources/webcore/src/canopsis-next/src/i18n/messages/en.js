@@ -4,20 +4,23 @@ import {
   EVENT_ENTITY_TYPES,
   STATS_TYPES,
   STATS_CRITICITY,
-  STATS_QUICK_RANGES,
+  QUICK_RANGES,
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_PERMISSIONS_PREFIXES,
-  REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
   ENGINES_NAMES,
   WIDGET_TYPES,
-  SCENARIO_ACTION_TYPES,
+  ACTION_TYPES,
   ENTITY_TYPES,
   TEST_SUITE_STATUSES,
   SIDE_BARS,
   STATE_SETTING_METHODS,
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  REMEDIATION_INSTRUCTION_TYPES,
+  IDLE_RULE_TYPES,
+  IDLE_RULE_ALARM_CONDITIONS,
+  USERS_PERMISSIONS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -28,7 +31,6 @@ export default {
     undefined: 'Not defined',
     entity: 'Entity',
     service: 'Service',
-    pbehaviors: 'PBehaviors',
     widget: 'Widget',
     addWidget: 'Add widget',
     addTab: 'Add tab',
@@ -69,11 +71,10 @@ export default {
     authors: 'Authors',
     stat: 'Stat',
     trend: 'Trend',
-    users: 'Users',
-    roles: 'Roles',
+    user: 'User | Users',
+    role: 'Role | Roles',
     import: 'Import',
     export: 'Export',
-    rights: 'Rights',
     profile: 'Profile',
     username: 'Username',
     password: 'Password',
@@ -119,13 +120,6 @@ export default {
     links: 'Links',
     stack: 'Stack',
     edition: 'Edition',
-    broadcastMessages: 'Broadcast messages',
-    playlists: 'Playlists',
-    planning: 'Planning',
-    remediation: 'Remediation',
-    instructions: 'Instructions',
-    metaAlarmRule: 'Meta alarm rule',
-    dynamicInfo: 'Dynamic informations',
     icon: 'Icon',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
@@ -149,7 +143,6 @@ export default {
     periods: 'Periods',
     range: 'Range',
     duration: 'Duration',
-    engines: 'Engines',
     previous: 'Previous',
     next: 'Next',
     eventPatterns: 'Event patterns',
@@ -190,6 +183,12 @@ export default {
     access: 'Access',
     communication: 'Communication | Communications',
     general: 'General',
+    notification: 'Notification | Notifications',
+    dismiss: 'Dismiss',
+    approve: 'Approve',
+    summary: 'Summary',
+    statistics: 'Statistics',
+    action: 'Action',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -232,6 +231,7 @@ export default {
   context: {
     impacts: 'Impacts',
     dependencies: 'Dependencies',
+    noEventsFilter: 'No events filter',
     expandPanel: {
       infos: 'Informations',
       type: 'Type',
@@ -393,6 +393,10 @@ export default {
         [EVENT_ENTITY_TYPES.instructionJobComplete]: 'Instruction job has been completed',
         [EVENT_ENTITY_TYPES.instructionJobAbort]: 'Instruction job has been aborted',
         [EVENT_ENTITY_TYPES.instructionJobFail]: 'Instruction job has been failed',
+        [EVENT_ENTITY_TYPES.autoInstructionStart]: 'Instruction has been started automatically',
+        [EVENT_ENTITY_TYPES.autoInstructionComplete]: 'Instruction has been completed automatically',
+        [EVENT_ENTITY_TYPES.autoInstructionFail]: 'Instruction has been failed automatically',
+        [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: 'Instruction has been started automatically for another alarm',
         [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'Test suite has been updated',
         [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'Test case has been updated',
       },
@@ -410,8 +414,13 @@ export default {
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
     infoPopup: 'Info popup',
-    instructionInfoPopup: 'There is an instruction for this type of incidents',
-    priorityPopup: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
+    tooltips: {
+      priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
+      hasInstruction: 'There is an instruction for this type of incidents',
+      hasAutoInstructionInRunning: 'Automatic instruction in progress',
+      allAutoInstructionExecuted: 'All automatic instructions has been executed',
+      awaitingInstructionComplete: 'Awaiting for the instruction to complete',
+    },
   },
   weather: {
     moreInfos: 'More info',
@@ -509,30 +518,6 @@ export default {
     },
     statsDateInterval: {
       monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
-      fields: {
-        quickRanges: 'Quick ranges',
-      },
-      quickRanges: {
-        [STATS_QUICK_RANGES.custom.value]: 'Custom',
-        [STATS_QUICK_RANGES.last2Days.value]: 'Last 2 days',
-        [STATS_QUICK_RANGES.last7Days.value]: 'Last 7 days',
-        [STATS_QUICK_RANGES.last30Days.value]: 'Last 30 days',
-        [STATS_QUICK_RANGES.last1Year.value]: 'Last 1 year',
-        [STATS_QUICK_RANGES.yesterday.value]: 'Yesterday',
-        [STATS_QUICK_RANGES.previousWeek.value]: 'Previous week',
-        [STATS_QUICK_RANGES.previousMonth.value]: 'Previous month',
-        [STATS_QUICK_RANGES.today.value]: 'Today',
-        [STATS_QUICK_RANGES.todaySoFar.value]: 'Today so far',
-        [STATS_QUICK_RANGES.thisWeek.value]: 'This week',
-        [STATS_QUICK_RANGES.thisWeekSoFar.value]: 'This week so far',
-        [STATS_QUICK_RANGES.thisMonth.value]: 'This month',
-        [STATS_QUICK_RANGES.thisMonthSoFar.value]: 'This month so far',
-        [STATS_QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
-        [STATS_QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
-        [STATS_QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
-        [STATS_QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
-        [STATS_QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
-      },
     },
     statsNumbers: {
       title: 'Stats numbers',
@@ -1188,26 +1173,6 @@ export default {
     selectViewTab: {
       title: 'Select tab',
     },
-    createHeartbeat: {
-      create: {
-        title: 'Create heartbeat',
-        success: 'Heartbeat successfully created!',
-      },
-      edit: {
-        title: 'Modify heartbeat',
-        success: 'Heartbeat successfully modified!',
-      },
-      duplicate: {
-        title: 'Duplicate heartbeat',
-      },
-      remove: {
-        success: 'Heartbeat successfully removed!',
-      },
-      massRemove: {
-        success: 'Heartbeats successfully removed!',
-      },
-      patternRequired: 'Pattern is required',
-    },
     createDynamicInfo: {
       create: {
         title: 'Create dynamic information',
@@ -1400,10 +1365,6 @@ export default {
           success: '{configurationName} has been successfully modified',
         },
       },
-      types: {
-        [REMEDIATION_CONFIGURATION_TYPES.rundeck]: 'Rundeck',
-        [REMEDIATION_CONFIGURATION_TYPES.awx]: 'Awx',
-      },
       fields: {
         host: 'Host',
         token: 'Authorization token',
@@ -1425,10 +1386,13 @@ export default {
       fields: {
         configuration: 'Configuration',
         jobId: 'Job ID',
+        query: 'Query',
       },
       errors: {
         invalidJSON: 'Invalid JSON',
       },
+      addPayload: 'Add payload',
+      deletePayload: 'Delete payload',
       payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
         '<i>For example:</i>' +
         '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
@@ -1446,7 +1410,7 @@ export default {
       title: 'Assign patterns',
     },
     rateInstruction: {
-      title: 'Rate this instruction',
+      title: 'Rate this instruction "{name}"',
       text: 'How useful was this instruction?',
     },
     createScenario: {
@@ -1501,6 +1465,36 @@ export default {
         placeholder: 'Input the path to the video folder',
       },
     },
+    remediationInstructionApproval: {
+      title: 'Instruction approval',
+      requested: 'requested for approval',
+      tabs: {
+        updated: 'Updated',
+        original: 'Original',
+      },
+    },
+    createAlarmIdleRule: {
+      create: {
+        title: 'Create alarm rule',
+      },
+      edit: {
+        title: 'Edit alarm rule',
+      },
+      duplicate: {
+        title: 'Duplicate alarm rule',
+      },
+    },
+    createEntityIdleRule: {
+      create: {
+        title: 'Create entity rule',
+      },
+      edit: {
+        title: 'Edit entity rule',
+      },
+      duplicate: {
+        title: 'Duplicate entity rule',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1517,13 +1511,6 @@ export default {
       state: 'Severity',
       status: 'Status',
       extraDetails: 'Extra details',
-    },
-    alarmStatus: {
-      [ENTITIES_STATUSES.off]: 'Off',
-      [ENTITIES_STATUSES.ongoing]: 'Ongoing',
-      [ENTITIES_STATUSES.flapping]: 'Flapping',
-      [ENTITIES_STATUSES.stealthy]: 'Stealth',
-      [ENTITIES_STATUSES.cancelled]: 'Canceled',
     },
     alarmStates: {
       [ENTITIES_STATES.ok]: 'Info',
@@ -1690,7 +1677,6 @@ export default {
     },
   },
   eventFilter: {
-    title: 'Event filter',
     externalDatas: 'External data',
     actionsRequired: 'Please add at least one action',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
@@ -1725,7 +1711,6 @@ export default {
     },
   },
   snmpRules: {
-    title: 'SNMP rules',
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
   },
@@ -1753,6 +1738,7 @@ export default {
       importExportViews: 'Import/Export',
       stateSettings: 'State settings',
       storageSettings: 'Storage settings',
+      notificationsSettings: 'Notifications settings',
     },
     interfaceLanguage: 'Interface language',
     groupsNavigationType: {
@@ -1775,9 +1761,11 @@ export default {
         popupTimeoutUnit: 'Unit',
         allowChangeSeverityToInfo: 'Allow change severity to info',
         maxMatchedItems: 'Max matched items',
+        checkCountRequestTimeout: 'Check max matched items request timeout (seconds)',
       },
       tooltips: {
         maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
+        checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',
       },
     },
   },
@@ -1857,15 +1845,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'See alarms',
   },
-  heartbeat: {
-    title: 'Heartbeats',
-    table: {
-      fields: {
-        id: 'ID',
-        expectedInterval: 'Expected interval',
-      },
-    },
-  },
   contextGeneralTable: {
     addSelection: 'Add selection',
   },
@@ -1898,10 +1877,12 @@ export default {
       },
     },
   },
+
   permissions: {
     technical: {
       admin: 'Admin rights',
       exploitation: 'Exploitation rights',
+      notification: 'Notification rights',
     },
     business: {
       [USER_PERMISSIONS_PREFIXES.business.common]: 'Rights for common',
@@ -1919,10 +1900,6 @@ export default {
       editFilter: 'Edit filter',
       addRRule: 'Add recurrence rule',
       editRrule: 'Edit recurrence rule',
-    },
-    alerts: {
-      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
     },
   },
 
@@ -1993,10 +1970,6 @@ export default {
       title: 'Correlation',
       description: 'Adds dynamic infos to alarm',
     },
-    [ENGINES_NAMES.heartbeat]: {
-      title: 'Heartbeat',
-      description: 'Adds dynamic infos to alarm',
-    },
   },
 
   remediation: {
@@ -2011,29 +1984,42 @@ export default {
     usingInstruction: 'Cannot be deleted since it is in use',
     addStep: 'Add step',
     addOperation: 'Add operation',
-    addEndpoint: 'Add endpoint',
+    addJob: 'Add job',
     endpoint: 'Endpoint',
+    job: 'Job | Jobs',
+    listJobs: 'List of jobs',
     endpointAvatar: 'EP',
     workflow: 'Workflow if this step fails:',
+    jobWorkflow: 'Workflow if this job fails:',
     remainingStep: 'Continue with remaining steps',
+    remainingJob: 'Continue with remaining job',
     timeToComplete: 'Time to complete',
     emptySteps: 'No steps added yet',
     emptyOperations: 'No operations added yet',
+    emptyJobs: 'No jobs added yet',
+    timeoutAfterExecution: 'Timeout after instruction execution',
+    requestApproval: 'Request for approval',
+    type: 'Instruction type',
+    approvalPending: 'Approval pending',
+    needApprove: 'Approval is needed',
+    types: {
+      [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manual',
+      [REMEDIATION_INSTRUCTION_TYPES.auto]: 'Automatic',
+    },
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',
     },
     table: {
       rating: 'Rating',
       lastModifiedOn: 'Last modified on',
-      averageTimeCompletion: 'Average time\nof completion',
       monthExecutions: '№ of executions\nthis month',
-      lastExecutedBy: 'Last executed by',
       lastExecutedOn: 'Last executed on',
     },
     errors: {
       runningInstruction: 'New changes cannot be applied to the instruction in progress. Would you like to cancel started instruction and apply new changes?',
       operationRequired: 'Please add at least one operation',
       stepRequired: 'Please add at least one step',
+      jobRequired: 'Please add at least one job',
     },
   },
 
@@ -2085,11 +2071,32 @@ export default {
       without: 'Without selected instructions',
       selectAll: 'Select all',
       selectedInstructions: 'Selected instructions',
+      selectedInstructionsHelp: 'Instructions of selected type are excluded from the list',
     },
     chip: {
       with: 'WITH',
       without: 'WITHOUT',
       all: 'ALL',
+    },
+  },
+
+  remediationInstructionStats: {
+    alarmsTimeline: 'Alarms timeline',
+    alarmId: 'Alarm ID',
+    executedOn: 'Executed on',
+    lastExecutedOn: 'Last executed on',
+    modifiedOn: 'Modified on',
+    lastModifiedOn: 'Last modified on',
+    averageCompletionTime: 'Average time\nof completion',
+    executionCount: 'Number of\nexecutions',
+    alarmStates: 'Alarms affected by state',
+    okAlarmStates: 'Number of resulting\nOK states',
+    rating: 'Rating',
+    notAvailable: 'N/a',
+    instructionChanged: 'The instruction has been changed',
+    actions: {
+      needRate: 'Rate it!',
+      rate: 'Rate',
     },
   },
 
@@ -2106,7 +2113,6 @@ export default {
   },
 
   scenario: {
-    title: 'Scenarios',
     headers: 'Headers',
     declareTicket: 'Declare ticket',
     workflow: 'Workflow if this action didn’t match:',
@@ -2131,14 +2137,14 @@ export default {
       '  children: {{ range .Children }}{{ .ID }}{{ end }}\n' +
       '}</pre>',
     actions: {
-      [SCENARIO_ACTION_TYPES.snooze]: 'Snooze',
-      [SCENARIO_ACTION_TYPES.pbehavior]: 'Pbehavior',
-      [SCENARIO_ACTION_TYPES.changeState]: 'Change state (Change and lock severity)',
-      [SCENARIO_ACTION_TYPES.ack]: 'Acknowledge',
-      [SCENARIO_ACTION_TYPES.ackremove]: 'Acknowledge remove',
-      [SCENARIO_ACTION_TYPES.assocticket]: 'Associate ticket',
-      [SCENARIO_ACTION_TYPES.cancel]: 'Cancel',
-      [SCENARIO_ACTION_TYPES.webhook]: 'Webhook',
+      [ACTION_TYPES.snooze]: 'Snooze',
+      [ACTION_TYPES.pbehavior]: 'Pbehavior',
+      [ACTION_TYPES.changeState]: 'Change state (Change and lock severity)',
+      [ACTION_TYPES.ack]: 'Acknowledge',
+      [ACTION_TYPES.ackremove]: 'Acknowledge remove',
+      [ACTION_TYPES.assocticket]: 'Associate ticket',
+      [ACTION_TYPES.cancel]: 'Cancel',
+      [ACTION_TYPES.webhook]: 'Webhook',
     },
     fields: {
       triggers: 'Triggers',
@@ -2237,7 +2243,6 @@ export default {
     failureMessage: 'Failure message',
     noData: 'No system messages found in XML',
     tabs: {
-      summary: 'Summary',
       globalMessages: 'Global messages',
       gantt: 'Gantt',
       details: 'Details',
@@ -2277,8 +2282,181 @@ export default {
       deleteAfter: 'Delete test suites data after',
       deleteAfterHelpText: 'When switched on, the JUnit test suites data (XMLs, screenshots and videos) will be deleted after the defined time period.',
     },
+    remediation: {
+      title: 'Instructions data storage',
+      accumulateAfter: 'Accumulate instructions statistics after',
+      deleteAfter: 'Delete instructions data after',
+      deleteAfterHelpText: 'When switched on, the instructions statistical data will be deleted after the defined time period.',
+    },
     history: {
       junit: 'Script launched at {launchedAt}',
+      remediation: 'Script launched at {launchedAt}',
+    },
+  },
+
+  notificationSettings: {
+    instruction: {
+      header: 'Instructions',
+      rate: '”Rate the instruction” notifications',
+      rateFrequency: 'Frequency',
+      duration: 'Time range',
+    },
+  },
+
+  quickRanges: {
+    title: 'Quick ranges',
+    types: {
+      [QUICK_RANGES.custom.value]: 'Custom',
+      [QUICK_RANGES.last2Days.value]: 'Last 2 days',
+      [QUICK_RANGES.last7Days.value]: 'Last 7 days',
+      [QUICK_RANGES.last30Days.value]: 'Last 30 days',
+      [QUICK_RANGES.last1Year.value]: 'Last 1 year',
+      [QUICK_RANGES.yesterday.value]: 'Yesterday',
+      [QUICK_RANGES.previousWeek.value]: 'Previous week',
+      [QUICK_RANGES.previousMonth.value]: 'Previous month',
+      [QUICK_RANGES.today.value]: 'Today',
+      [QUICK_RANGES.todaySoFar.value]: 'Today so far',
+      [QUICK_RANGES.thisWeek.value]: 'This week',
+      [QUICK_RANGES.thisWeekSoFar.value]: 'This week so far',
+      [QUICK_RANGES.thisMonth.value]: 'This month',
+      [QUICK_RANGES.thisMonthSoFar.value]: 'This month so far',
+      [QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
+      [QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
+      [QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
+      [QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
+      [QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
+    },
+  },
+
+  idleRules: {
+    timeAwaiting: 'Time awaiting',
+    timeRangeAwaiting: 'Time range awaiting',
+    types: {
+      [IDLE_RULE_TYPES.alarm]: 'Alarm rule',
+      [IDLE_RULE_TYPES.entity]: 'Entity rule',
+    },
+    alarmConditions: {
+      [IDLE_RULE_ALARM_CONDITIONS.lastEvent]: 'No events received',
+      [IDLE_RULE_ALARM_CONDITIONS.lastUpdate]: 'No state changes',
+    },
+  },
+
+  icons: {
+    noEvents: 'No events received for {duration} by some of dependencies',
+  },
+
+  pageHeaders: {
+    hideMessage: 'Got it! Hide',
+    learnMore: 'Learn more on {link}',
+
+    /**
+     * Exploitation
+     */
+    [USERS_PERMISSIONS.technical.exploitation.eventFilter]: {
+      title: 'Event filter',
+      message: 'The event-filter is a feature of the engine engine-cheallowing to define rules handling events.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: {
+      title: 'Dynamic informations',
+      message: 'The Canopsis Dynamic infos are used to add information to the alarms. This information is defined with rules indicating under which conditions information must be presented on an alarm.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
+      title: 'Meta alarm rule',
+      message: 'Meta alarm rules can be used for grouping alarms by types and criteria (parent-child relationship, time interval, etc).',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
+      title: 'Idle rules',
+      message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
+      title: 'PBehaviors',
+      message: 'Canopsis periodical behaviors can be used in order to define a periods when the behavior has to be changed, e.g. for  maintenance or service range.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.scenario]: {
+      title: 'Scenarios',
+      message: 'The Canopsis scenarios can be used to conditionally trigger various types of actions on alarms.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.snmpRule]: {
+      title: 'SNMP rules',
+      message: 'The SNMP engine allows the processing of SNMP traps retrieved by the connector snmp2canopsis.',
+    },
+
+    /**
+     * Admin access
+     */
+    [USERS_PERMISSIONS.technical.action]: {
+      title: 'Rights',
+    },
+    [USERS_PERMISSIONS.technical.role]: {
+      title: 'Roles',
+    },
+    [USERS_PERMISSIONS.technical.user]: {
+      title: 'Users',
+    },
+
+    /**
+     * Admin communications
+     */
+    [USERS_PERMISSIONS.technical.broadcastMessage]: {
+      title: 'Broadcast messages',
+      message: 'The Canopsis broadcasting messages can be used for displaying banners and information messages that will appear in the Canopsis interface.',
+    },
+    [USERS_PERMISSIONS.technical.playlist]: {
+      title: 'Playlists',
+      message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
+    },
+
+    /**
+     * Admin general
+     */
+    [USERS_PERMISSIONS.technical.engine]: {
+      title: 'Engines',
+      message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
+    },
+    [USERS_PERMISSIONS.technical.parameters]: {
+      title: 'Parameters',
+    },
+    [USERS_PERMISSIONS.technical.planning]: {
+      title: 'Planning',
+      message: 'The Canopsis Planning Administration functionality can be used for the periodic behavior types customization.',
+    },
+    [USERS_PERMISSIONS.technical.remediation]: {
+      title: 'Instructions',
+      message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
+    },
+
+    /**
+     * Notifications
+     */
+    [USERS_PERMISSIONS.technical.notification.instructionStats]: {
+      title: 'Instruction rating',
+      message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
+    },
+  },
+
+  alarmStatuses: {
+    [ENTITIES_STATUSES.closed]: 'Closed',
+    [ENTITIES_STATUSES.ongoing]: 'Ongoing',
+    [ENTITIES_STATUSES.flapping]: 'Flapping',
+    [ENTITIES_STATUSES.stealthy]: 'Stealth',
+    [ENTITIES_STATUSES.cancelled]: 'Canceled',
+    [ENTITIES_STATUSES.noEvents]: 'No events',
+  },
+
+  entitiesCountAlerts: {
+    filter: {
+      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
+      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
+    },
+    patterns: {
+      countOverLimit: 'The patterns you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
+      countRequestError: 'The request to entities count by the patterns was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
     },
   },
 

@@ -8,8 +8,7 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 import EnabledLimitField from '@/components/forms/fields/enabled-limit.vue';
 

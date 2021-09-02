@@ -1,9 +1,12 @@
 import { cloneDeep, isUndefined, pick } from 'lodash';
+
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES,
   EVENT_FILTER_RULE_TYPES,
 } from '@/constants';
+
+import { enabledToForm } from './shared/common';
 
 /**
  * @typedef { 'enrichment' | 'drop' | 'break' } EventFilterRuleType
@@ -162,6 +165,62 @@ import {
  */
 
 /**
+ * @typedef { 'enrichment' | 'drop' | 'break' } EventFilterRuleType
+ */
+
+/**
+ * @typedef {
+ *    'set_field' |
+ *    'set_field_from_template' |
+ *    'set_entity_info_from_template' |
+ *    'copy'
+ * } EventFilterRuleActionType
+ */
+
+/**
+ * @typedef {Object} EventFilterRuleAction
+ * @property {string} name
+ * @property {EventFilterRuleActionType} type
+ * @property {string} value
+ */
+
+/**
+ * @typedef {Object} EventFilterRuleEnrichment
+ * @property {EventFilterRuleAction[]} actions
+ * @property {Object} external_data
+ * @property {string} on_success
+ * @property {string} on_failure
+ */
+
+/**
+ * @typedef {Object} EventFilterRuleGeneral
+ * @property {string} _id
+ * @property {EventFilterRuleType} type
+ * @property {string} description
+ * @property {Array} patterns
+ * @property {number} priority
+ * @property {boolean} enabled
+ */
+
+/**
+ * @typedef {EventFilterRuleEnrichment & EventFilterRuleGeneral} EventFilterRule
+ */
+
+/**
+ * @typedef {EventFilterRuleGeneral} EventFilterRuleGeneralForm
+ */
+
+/**
+ * @typedef {EventFilterRuleEnrichment} EventFilterRuleEnrichmentForm
+ */
+
+/**
+ * @typedef {Object} EventFilterRuleForm
+ * @property {EventFilterRuleGeneralForm} general
+ * @property {EventFilterRuleEnrichmentForm} enrichmentOptions
+ */
+
+/**
  * Convert event filter rule to form
  *
  * @param {EventFilterRule} [rule={}]
@@ -174,7 +233,7 @@ export const eventFilterRuleToForm = (rule = {}) => ({
     description: rule.description || '',
     patterns: rule.patterns ? cloneDeep(rule.patterns) : [],
     priority: rule.priority || 0,
-    enabled: !isUndefined(rule.enabled) ? rule.enabled : true,
+    enabled: enabledToForm(rule.enabled),
   },
   enrichmentOptions: {
     actions: rule.actions ? cloneDeep(rule.actions) : [],

@@ -9,6 +9,10 @@ export default {
       type: Function,
       default: item => !item,
     },
+    tableClass: {
+      type: String,
+      required: false,
+    },
   },
   computed: {
     activeItems() {
@@ -17,6 +21,15 @@ export default {
 
     everyItem() {
       return this.activeItems.length && this.activeItems.every(this.isSelected);
+    },
+
+    classes() {
+      return {
+        'v-datatable v-table': true,
+        'v-datatable--select-all': this.selectAll !== false,
+        [this.tableClass]: this.tableClass,
+        ...this.themeClasses,
+      };
     },
   },
   methods: {

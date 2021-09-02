@@ -17,6 +17,7 @@ export default {
       appTitle: 'appTitle',
       popupTimeout: 'popupTimeout',
       maxMatchedItems: 'maxMatchedItems',
+      checkCountRequestTimeout: 'checkCountRequestTimeout',
       footer: 'footer',
       edition: 'edition',
       stack: 'stack',
@@ -29,7 +30,8 @@ export default {
       casConfig: 'casConfig',
       samlConfig: 'samlConfig',
       timezone: 'timezone',
-      jobExecutorFetchTimeoutSeconds: 'jobExecutorFetchTimeoutSeconds',
+      remediationJobConfigTypes: 'remediationJobConfigTypes',
+      remediationPauseManualInstructionIntervalSeconds: 'remediationPauseManualInstructionIntervalSeconds',
     }),
 
     isCatVersion() {
@@ -39,10 +41,10 @@ export default {
   methods: {
     ...mapActions(['fetchLoginInfos', 'fetchAppInfos', 'updateUserInterface']),
 
-    checkAppInfoAccessByRight(right) {
-      const rightAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[right];
+    checkAppInfoAccessByPermission(permission) {
+      const permissionAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[permission];
 
-      if (!rightAppInfoRules) {
+      if (!permissionAppInfoRules) {
         return true;
       }
 
@@ -51,7 +53,7 @@ export default {
         stack: this.stack,
       };
 
-      return isMatch(appInfo, USER_PERMISSIONS_TO_PAGES_RULES[right]);
+      return isMatch(appInfo, USER_PERMISSIONS_TO_PAGES_RULES[permission]);
     },
 
     setTitle() {

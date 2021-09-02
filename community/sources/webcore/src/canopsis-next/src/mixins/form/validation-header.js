@@ -1,6 +1,6 @@
-import validationChildrenMixin from './validation-children';
+import { validationChildrenMixin } from './validation-children';
 
-export default {
+export const formValidationHeaderMixin = {
   mixins: [validationChildrenMixin],
   computed: {
     hasAnyError() {
@@ -15,3 +15,5 @@ export default {
     },
   },
 };
+
+export default formValidationHeaderMixin;

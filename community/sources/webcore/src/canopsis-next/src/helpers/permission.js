@@ -76,9 +76,14 @@ export const getCheckboxValue = (
 export function getGroupedPermissions(permissions, views = [], playlists = []) {
   const allBusinessPermissionsIds = flatten(USERS_PERMISSIONS.business);
 
-  const { exploitation: exploitationTechnicalPermissions, ...adminTechnicalPermissions } = USERS_PERMISSIONS.technical;
+  const {
+    exploitation: exploitationTechnicalPermissions,
+    notification: notificationTechnicalPermissions,
+    ...adminTechnicalPermissions
+  } = USERS_PERMISSIONS.technical;
   const adminTechnicalPermissionsValues = Object.values(adminTechnicalPermissions);
   const exploitationTechnicalPermissionsValues = Object.values(exploitationTechnicalPermissions);
+  const notificationTechnicalPermissionsValues = Object.values(notificationTechnicalPermissions);
   const apiPermissionsValues = Object.values(USERS_PERMISSIONS.api);
   const viewsById = keyBy(views, '_id');
   const playlistsById = keyBy(playlists, '_id');
@@ -96,6 +101,8 @@ export function getGroupedPermissions(permissions, views = [], playlists = []) {
       acc.technical.admin.push(permission);
     } else if (exploitationTechnicalPermissionsValues.includes(permissionId)) {
       acc.technical.exploitation.push(permission);
+    } else if (notificationTechnicalPermissionsValues.includes(permissionId)) {
+      acc.technical.notification.push(permission);
     } else if (
       Object.values(allBusinessPermissionsIds).includes(permissionId) ||
       NOT_COMPLETED_USER_PERMISSIONS.some(id => permissionId.startsWith(id))
@@ -124,6 +131,7 @@ export function getGroupedPermissions(permissions, views = [], playlists = []) {
     technical: {
       admin: [],
       exploitation: [],
+      notification: [],
     },
     api: [],
   });

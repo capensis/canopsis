@@ -1,7 +1,7 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
-import { WIDGET_TYPES, STATS_QUICK_RANGES, ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP } from '@/constants';
+import { WIDGET_TYPES, QUICK_RANGES, ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP } from '@/constants';
 
 import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from './filter';
 import {
@@ -71,14 +71,15 @@ export function convertAlarmWidgetToQuery(widget) {
     opened: alarmsStateFilter.opened || false,
     resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,
+    with_instructions: true,
   };
 
   if (!isEmpty(liveReporting)) {
     query.tstart = liveReporting.tstart;
     query.tstop = liveReporting.tstop;
   } else if (query.resolved) {
-    query.tstart = STATS_QUICK_RANGES.last30Days.start;
-    query.tstop = STATS_QUICK_RANGES.last30Days.stop;
+    query.tstart = QUICK_RANGES.last30Days.start;
+    query.tstop = QUICK_RANGES.last30Days.stop;
   }
 
   if (widgetColumns) {
@@ -297,10 +298,11 @@ export function convertWeatherUserPreferenceToQuery({ widget_preferences: widget
  * @returns {{ category: string }}
  */
 export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  const { category } = widgetPreferences;
+  const { category, noEvents } = widgetPreferences;
 
   return {
     category,
+    no_events: noEvents,
   };
 }
 

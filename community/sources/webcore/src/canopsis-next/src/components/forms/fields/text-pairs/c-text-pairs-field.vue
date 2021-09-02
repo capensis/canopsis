@@ -20,13 +20,13 @@
       )
     v-flex(v-if="!disabled", xs12)
       v-layout
-        v-btn.ml-0(color="primary", @click="addItem") {{ addButtonLabel || $t('common.add') }}
+        v-btn.ml-0(color="primary", outline, @click="addItem") {{ addButtonLabel || $t('common.add') }}
 </template>
 
 <script>
 import { textPairToForm } from '@/helpers/text-pairs';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],

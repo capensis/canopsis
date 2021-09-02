@@ -46,7 +46,7 @@
           close,
           label,
           @input="removeHistoryFilter"
-        ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
+        ) {{ $t(`quickRanges.types.${activeRange.value}`) }}
         c-action-btn(
           :tooltip="$t('liveReporting.button')",
           :color="activeRange ? 'primary' : 'black'",
