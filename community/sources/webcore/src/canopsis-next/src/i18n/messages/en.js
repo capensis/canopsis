@@ -428,6 +428,7 @@ export default {
     status: 'Status',
     created: 'Creation date',
     updated: 'Last update date',
+    lastAlarmDate: 'Last alarm date',
     tabs: {
       filter: 'Filter',
       comments: 'Comments',
