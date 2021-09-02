@@ -100,7 +100,6 @@ export const API_ROUTES = {
     app: '/api/v4/internal/app_info',
     userInterface: '/api/v4/internal/user_interface',
   },
-  heartbeat: '/api/v4/heartbeats',
   associativeTable: '/api/v4/associativetable',
   sessionStart: '/api/v2/sessionstart',
   sessionTracePath: '/api/v2/session_tracepath',
@@ -132,17 +131,12 @@ export const API_ROUTES = {
   },
   scenarios: '/api/v4/scenarios',
   entityCategories: '/api/v4/entity-categories',
-  junit: {
-    directory: '/api/v4/cat/junit/directory',
-    testSuites: '/api/v4/cat/junit/test-suites',
-    entityGantt: '/api/v4/cat/junit/test-suites-entity-gantt',
-    history: '/api/v4/cat/junit/test-suites-history',
-    widget: '/api/v4/cat/junit/test-suites-widget',
-    file: '/api/v4/cat/junit/test-cases-file',
-  },
   stateSetting: '/api/v4/state-settings/',
   dataStorage: '/api/v4/data-storage',
+  notification: '/api/v4/notification/',
   logout: '/logout',
+  idleRules: '/api/v4/idle-rules',
+  idleRulesCount: '/api/v4/idle-rules/count',
 
   /**
    * Cat routes
@@ -152,11 +146,21 @@ export const API_ROUTES = {
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
   remediation: {
     instructions: '/api/v4/cat/instructions',
+    instructionStats: '/api/v4/cat/instruction-stats',
     jobs: '/api/v4/cat/jobs',
     configurations: '/api/v4/cat/job-configs',
     executions: '/api/v4/cat/executions',
     jobExecutions: '/api/v4/cat/job-executions',
     pausedExecutions: '/api/v4/cat/account/paused-executions',
+    instructionComments: '/api/v4/cat/instruction-comments',
+  },
+  junit: {
+    directory: '/api/v4/cat/junit/directory',
+    testSuites: '/api/v4/cat/junit/test-suites',
+    entityGantt: '/api/v4/cat/junit/test-suites-entity-gantt',
+    history: '/api/v4/cat/junit/test-suites-history',
+    widget: '/api/v4/cat/junit/test-suites-widget',
+    file: '/api/v4/cat/junit/test-cases-file',
   },
 };
 
@@ -171,11 +175,12 @@ export const COLORS = {
     pause: '#808080',
   },
   status: {
-    off: 'black',
-    ongoing: 'grey',
-    stealthy: 'gold',
-    flapping: 'orange',
-    cancelled: 'red',
+    closed: '#2fab63',
+    stealthy: '#757575',
+    flapping: '#2b3E4F',
+    ongoing: '#f9A825',
+    cancelled: '#757575',
+    noEvents: '#ff5252',
     unknown: 'black',
   },
   entitiesEvents: {
@@ -233,10 +238,12 @@ export const COLORS = {
 
 export const FILE_BASE_URL = `${API_BASE_URL}${API_ROUTES.file}`;
 
+export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
+
 export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
 
-export const EXPORT_FETCHING_INTERVAL = 2000;
+export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS = 10;
 
-export const DEFAULT_JOB_EXECUTOR_FETCH_TIMEOUT_SECONDS = 30;
+export const EXPORT_FETCHING_INTERVAL = 2000;
 
 export const DEFAULT_CATEGORIES_LIMIT = 3;

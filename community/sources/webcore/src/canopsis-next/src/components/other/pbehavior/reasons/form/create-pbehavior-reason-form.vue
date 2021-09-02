@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],

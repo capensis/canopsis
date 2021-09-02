@@ -1,4 +1,5 @@
-import { get, omit, cloneDeep, isObject } from 'lodash';
+import { get, omit, cloneDeep, isObject, groupBy } from 'lodash';
+import moment from 'moment';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
@@ -8,7 +9,7 @@ import {
   STATS_CALENDAR_COLORS,
   STATS_TYPES,
   STATS_DURATION_UNITS,
-  STATS_QUICK_RANGES,
+  QUICK_RANGES,
   STATS_DISPLAY_MODE,
   STATS_DISPLAY_MODE_PARAMETERS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
@@ -17,9 +18,8 @@ import {
   ENTITIES_STATUSES,
   AVAILABLE_COUNTERS,
   DEFAULT_COUNTER_BLOCK_TEMPLATE,
-  TIME_UNITS,
-  WORKFLOW_TYPES,
   COLOR_INDICATOR_TYPES,
+  DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
   EXPORT_CSV_DATETIME_FORMATS,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
@@ -158,8 +158,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         stats: {},
         statsColors: {},
@@ -172,8 +172,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         stats: {},
         statsColors: {},
@@ -186,8 +186,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stats: {},
@@ -214,8 +214,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stat: {
@@ -261,8 +261,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stats: {},
@@ -337,7 +337,7 @@ export function generateUserPreferenceByWidgetAndUser(widget, user) {
   return {
     _id: `${widget._id}_${user._id}`,
     widget_preferences: {},
-    crecord_name: user._id,
+    name: user._id,
     widget_id: widget._id,
     widgetXtype: widget.type,
     crecord_type: 'userpreferences',
@@ -394,7 +394,7 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
  * @returns {boolean}
  */
 export function isResolvedAlarm(alarm) {
-  return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
+  return [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
 }
 
 /**
@@ -459,44 +459,13 @@ export const getIdFromEntity = (entity, idField = '_id') =>
   (isObject(entity) ? entity[idField] : entity);
 
 /**
- * Generate an remediation instruction step operation entity
+ * Get grouped steps by date
  *
- * @typedef {Object} RemediationInstructionStepOperation
- * @property {string} name
- * @property {string} description
- * @property {Array} jobs
- * @property {DurationForm} time_to_complete
- * @property {string} [key]
- * @return {RemediationInstructionStepOperation}
+ * @param {AlarmEvent[]} steps
+ * @return {Object.<string, AlarmEvent[]>}
  */
-export const generateRemediationInstructionStepOperation = () => ({
-  name: '',
-  description: '',
-  jobs: [],
-  time_to_complete: {
-    value: 0,
-    unit: TIME_UNITS.minute,
-  },
-  key: uid(),
-});
+export const groupAlarmSteps = (steps) => {
+  const orderedSteps = [...steps].reverse();
 
-/**
- * Generate an remediation instruction step entity
- *
- * @typedef {Object} RemediationInstructionStep
- * @property {string} endpoint
- * @property {string} name
- * @property {boolean} stop_on_fail
- * @property {RemediationInstructionStepOperation[]} operations
- * @property {boolean} [saved]
- * @property {string} [key]
- * @return {RemediationInstructionStep}
- */
-export const generateRemediationInstructionStep = () => ({
-  endpoint: '',
-  name: '',
-  operations: [generateRemediationInstructionStepOperation()],
-  stop_on_fail: WORKFLOW_TYPES.stop,
-  saved: false,
-  key: uid(),
-});
+  return groupBy(orderedSteps, step => moment.unix(step.t).format(DATETIME_FORMATS.short));
+};

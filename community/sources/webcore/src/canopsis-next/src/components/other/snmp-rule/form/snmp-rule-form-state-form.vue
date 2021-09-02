@@ -38,7 +38,7 @@
 <script>
 import { SNMP_STATE_TYPES } from '@/constants';
 
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 

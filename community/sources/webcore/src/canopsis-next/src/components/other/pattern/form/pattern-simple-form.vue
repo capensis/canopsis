@@ -44,7 +44,7 @@ import { MODALS } from '@/constants';
 
 import { convertPatternToTreeview } from '@/helpers/treeview';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import PatternInformation from '@/components/other/pattern/pattern-information.vue';
 

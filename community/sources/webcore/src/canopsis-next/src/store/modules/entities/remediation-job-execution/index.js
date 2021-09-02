@@ -65,9 +65,5 @@ export default {
 
       return jobExecution;
     },
-
-    async cancel(context, { id } = {}) {
-      await request.put(`${API_ROUTES.remediation.jobExecutions}/${id}/cancel`);
-    },
   },
 };

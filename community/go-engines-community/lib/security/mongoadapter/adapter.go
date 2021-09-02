@@ -37,19 +37,22 @@ type objectConfig struct {
 
 // LoadPolicy loads all policy rules from mongo collection.
 func (a *adapter) LoadPolicy(model model.Model) (resErr error) {
-	objConfByID, err := a.findObjects()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	objConfByID, err := a.findObjects(ctx)
 
 	if err != nil {
 		return err
 	}
 
-	roleNamesByID, err := a.loadRoles(model, objConfByID)
+	roleNamesByID, err := a.loadRoles(ctx, model, objConfByID)
 
 	if err != nil {
 		return err
 	}
 
-	err = a.loadSubjects(model, roleNamesByID)
+	err = a.loadSubjects(ctx, model, roleNamesByID)
 
 	if err != nil {
 		return err
@@ -78,9 +81,7 @@ func (adapter) RemoveFilteredPolicy(string, string, int, ...string) error {
 }
 
 // findObjects fetches objects from mongo collection and returns map[objectID]objectConfig.
-func (a *adapter) findObjects() (_ map[string]objectConfig, resErr error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (a *adapter) findObjects(ctx context.Context) (objConfByID map[string]objectConfig, resErr error) {
 	cursor, err := a.collection.Find(
 		ctx,
 		bson.M{
@@ -99,7 +100,7 @@ func (a *adapter) findObjects() (_ map[string]objectConfig, resErr error) {
 		}
 	}()
 
-	objConfByID := make(map[string]objectConfig)
+	objConfByID = make(map[string]objectConfig)
 
 	for cursor.Next(ctx) {
 		var line libmodel.Rbac
@@ -125,11 +126,10 @@ func (a *adapter) findObjects() (_ map[string]objectConfig, resErr error) {
 // loadRoles fetches roles from mongo collection and adds them to casbin policy.
 // Method returns map[roleID]roleName.
 func (a *adapter) loadRoles(
+	ctx context.Context,
 	model model.Model,
 	objConfByID map[string]objectConfig,
-) (_ map[string]string, resErr error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+) (roleNamesByID map[string]string, resErr error) {
 	cursor, err := a.collection.Find(
 		ctx,
 		bson.M{
@@ -148,7 +148,7 @@ func (a *adapter) loadRoles(
 		}
 	}()
 
-	roleNamesByID := make(map[string]string)
+	roleNamesByID = make(map[string]string)
 	ptype := CasbinPtypePolicy
 	sec := ptype
 	permBitmasksByType := map[string]map[string]int{
@@ -181,20 +181,14 @@ func (a *adapter) loadRoles(
 					if permBitmasksByName, ok := permBitmasksByType[objConf.Type]; ok {
 						for permName, bitmask := range permBitmasksByName {
 							if permConfig.Bitmask&bitmask == bitmask {
-								model[sec][ptype].Policy = append(
-									model[sec][ptype].Policy,
-									[]string{roleName, objConf.Name, permName},
-								)
+								model.AddPolicy(sec, ptype, []string{roleName, objConf.Name, permName})
 							}
 						}
 					} else {
 						return nil, fmt.Errorf("unknown config type \"%s\"", objConf.Type)
 					}
 				} else if permConfig.Bitmask&libmodel.PermissionBitmaskCan == libmodel.PermissionBitmaskCan {
-					model[sec][ptype].Policy = append(
-						model[sec][ptype].Policy,
-						[]string{roleName, objConf.Name, libmodel.PermissionCan},
-					)
+					model.AddPolicy(sec, ptype, []string{roleName, objConf.Name, libmodel.PermissionCan})
 				}
 			}
 		}
@@ -211,11 +205,10 @@ func (a *adapter) loadRoles(
 
 // loadSubjects loads subjects from mongo collection and adds them to casbin policy.
 func (a *adapter) loadSubjects(
+	ctx context.Context,
 	model model.Model,
 	roleNamesByID map[string]string,
 ) (resErr error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	cursor, err := a.collection.Find(ctx, bson.M{
 		"crecord_type": libmodel.LineTypeSubject,
 		"role":         bson.M{"$exists": true, "$ne": ""},
@@ -245,10 +238,7 @@ func (a *adapter) loadSubjects(
 		subjectID := line.ID
 
 		if roleName, ok := roleNamesByID[line.Role]; ok {
-			model[sec][ptype].Policy = append(
-				model[sec][ptype].Policy,
-				[]string{subjectID, roleName},
-			)
+			model.AddPolicy(sec, ptype, []string{subjectID, roleName})
 		}
 	}
 

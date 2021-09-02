@@ -51,17 +51,17 @@ func (mr *MockServiceMockRecorder) LoadDataSourceFactories(arg0, arg1, arg2 inte
 }
 
 // LoadRules mocks base method
-func (m *MockService) LoadRules() error {
+func (m *MockService) LoadRules(arg0 context.Context) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "LoadRules")
+	ret := m.ctrl.Call(m, "LoadRules", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // LoadRules indicates an expected call of LoadRules
-func (mr *MockServiceMockRecorder) LoadRules() *gomock.Call {
+func (mr *MockServiceMockRecorder) LoadRules(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadRules", reflect.TypeOf((*MockService)(nil).LoadRules))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadRules", reflect.TypeOf((*MockService)(nil).LoadRules), arg0)
 }
 
 // ProcessEvent mocks base method
@@ -104,16 +104,16 @@ func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 }
 
 // List mocks base method
-func (m *MockAdapter) List() ([]eventfilter.Rule, error) {
+func (m *MockAdapter) List(arg0 context.Context) ([]eventfilter.Rule, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "List")
+	ret := m.ctrl.Call(m, "List", arg0)
 	ret0, _ := ret[0].([]eventfilter.Rule)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // List indicates an expected call of List
-func (mr *MockAdapterMockRecorder) List() *gomock.Call {
+func (mr *MockAdapterMockRecorder) List(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockAdapter)(nil).List))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockAdapter)(nil).List), arg0)
 }

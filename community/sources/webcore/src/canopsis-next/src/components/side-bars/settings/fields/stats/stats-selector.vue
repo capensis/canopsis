@@ -57,8 +57,7 @@ import { MODALS } from '@/constants';
 
 import { setSeveralFields } from '@/helpers/immutable';
 
-import formMixin from '@/mixins/form';
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],

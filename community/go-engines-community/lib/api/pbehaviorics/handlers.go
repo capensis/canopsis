@@ -72,10 +72,10 @@ func genFileName(pbehaviorName string) string {
 	// Transform to lower case
 	filename = strings.ToLower(filename)
 	// Replace all whitspace to "-"
-	r := regexp.MustCompile("[\\s]+")
+	r := regexp.MustCompile(`[\s]+`)
 	filename = r.ReplaceAllString(filename, "-")
 	// Remove all not alphanumeric chars
-	r = regexp.MustCompile("[^a-z0-9\\-]+")
+	r = regexp.MustCompile(`[^a-z0-9\-]+`)
 	filename = r.ReplaceAllString(filename, "")
 
 	filename = fmt.Sprintf("pbehavior-%s.ics", filename)

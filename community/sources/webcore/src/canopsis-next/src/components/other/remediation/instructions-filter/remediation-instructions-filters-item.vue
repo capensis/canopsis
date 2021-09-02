@@ -10,14 +10,14 @@
       span.instruction-filter__text
         v-icon(color="white", small) assignment
         v-icon.pl-1(v-if="filter.locked", color="white", small) lock
-        strong.pl-2 {{ typeMessage }}
-        span.pl-1(v-if="!filter.all") {{ instructionsMessage }}
+        strong.pl-2 {{ conditionTypeMessage }}
+        span.pl-1(v-if="!isAll") {{ typesAndInstructionsMessage }}
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 export default {
   mixins: [formMixin],
@@ -44,6 +44,10 @@ export default {
     },
   },
   computed: {
+    isAll() {
+      return this.filter.all || (this.filter.manual && this.filter.auto);
+    },
+
     chipListeners() {
       const listeners = { input: this.close };
 
@@ -70,16 +74,29 @@ export default {
       return this.filters.filter(item => item._id !== this.filter._id);
     },
 
-    typeMessage() {
-      const getMessage = key => this.$t(`remediationInstructionsFilters.chip.${key}`);
-
-      const { filter } = this;
-
-      return `${getMessage(filter.with ? 'with' : 'without')}${filter.all ? ` ${getMessage('all')}` : ':'}`;
+    instructionsNames() {
+      return this.filter.instructions.map(({ name }) => name);
     },
 
-    instructionsMessage() {
-      return this.filter.instructions.join(', ');
+    conditionTypeMessage() {
+      const allMessage = this.isAll ? ` ${this.$t('remediationInstructionsFilters.chip.all')}` : ':';
+      const conditionMessage = this.$t(`remediationInstructionsFilters.chip.${this.filter.with ? 'with' : 'without'}`);
+
+      return `${conditionMessage}${allMessage}`;
+    },
+
+    typesAndInstructionsMessage() {
+      const types = [];
+
+      if (this.filter.manual) {
+        types.push(this.$t(`remediationInstructions.types.${REMEDIATION_INSTRUCTION_TYPES.manual}`));
+      }
+
+      if (this.filter.auto) {
+        types.push(this.$t(`remediationInstructions.types.${REMEDIATION_INSTRUCTION_TYPES.auto}`));
+      }
+
+      return [...types, ...this.instructionsNames].join(', ');
     },
   },
   methods: {

@@ -3,6 +3,7 @@ package engine
 import (
 	"context"
 	"errors"
+	"fmt"
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
@@ -65,9 +66,6 @@ func (c *rpcClient) Call(m RPCMessage) error {
 }
 
 func (c *rpcClient) Consume(ctx context.Context) error {
-	c.logger.Debug().Msg("consume started")
-	defer c.logger.Debug().Msg("consume stopped")
-
 	msgs, err := c.amqpChannel.Consume(
 		c.clientQueueName, // queue
 		"",                // consumer
@@ -87,23 +85,24 @@ func (c *rpcClient) Consume(ctx context.Context) error {
 			return nil
 		case d, ok := <-msgs:
 			if !ok {
-				c.logger.Error().Msg("the rabbitmq channel has been closed")
-				return errors.New("channel is closed")
+				return errors.New("the rabbitmq channel has been closed")
 			}
 
-			c.logger.Debug().Str("msg", string(d.Body)).Msgf("received")
-			err := c.processor.Process(RPCMessage{
+			c.logger.Debug().
+				Str("consumer", c.name).Str("queue", c.clientQueueName).
+				Str("msg", string(d.Body)).
+				Msgf("received")
+			err := c.processor.Process(ctx, RPCMessage{
 				CorrelationID: d.CorrelationId,
 				Body:          d.Body,
 			})
 			if err != nil {
-				c.logger.Err(err).Msg("cannot process delivery")
 				nackErr := c.amqpChannel.Nack(d.DeliveryTag, false, true)
 				if nackErr != nil {
 					c.logger.Err(nackErr).Msg("cannot nack amqp delivery")
 				}
 
-				return err
+				return fmt.Errorf("cannot process message: %w", err)
 			}
 
 			err = c.amqpChannel.Ack(d.DeliveryTag, false)

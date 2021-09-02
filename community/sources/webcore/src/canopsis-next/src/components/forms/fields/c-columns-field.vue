@@ -61,8 +61,7 @@
 <script>
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
-import formArrayMixin from '@/mixins/form/array';
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formArrayMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],

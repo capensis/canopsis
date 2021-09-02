@@ -1,7 +1,7 @@
 import { omit, pick, isEqual } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
+import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, SORT_ORDERS } from '@/constants';
 
 import { dateParse } from '@/helpers/date/date-intervals';
 
@@ -93,13 +93,13 @@ export default {
       } = this.query;
 
       if (tstart) {
-        const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
+        const convertedTstart = dateParse(tstart, DATETIME_INTERVAL_TYPES.start, DATETIME_FORMATS.dateTimePicker);
 
         query.tstart = convertedTstart.unix();
       }
 
       if (tstop) {
-        const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
+        const convertedTstop = dateParse(tstop, DATETIME_INTERVAL_TYPES.stop, DATETIME_FORMATS.dateTimePicker);
 
         query.tstop = convertedTstop.unix();
       }

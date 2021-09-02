@@ -24,21 +24,21 @@ func NewMongoProvider(db libmongo.DbClient) security.UserProvider {
 	}
 }
 
-func (p *mongoProvider) FindByUsername(username string) (*security.User, error) {
-	return p.findByFilter(bson.M{
+func (p *mongoProvider) FindByUsername(ctx context.Context, username string) (*security.User, error) {
+	return p.findByFilter(ctx, bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"_id":          username,
 	})
 }
 
-func (p *mongoProvider) FindByAuthApiKey(apiKey string) (*security.User, error) {
-	return p.findByFilter(bson.M{
+func (p *mongoProvider) FindByAuthApiKey(ctx context.Context, apiKey string) (*security.User, error) {
+	return p.findByFilter(ctx, bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"authkey":      apiKey,
 	})
 }
 
-func (p *mongoProvider) FindByID(id string) (*security.User, error) {
+func (p *mongoProvider) FindByID(ctx context.Context, id string) (*security.User, error) {
 	var objID interface{}
 	var err error
 	objID, err = primitive.ObjectIDFromHex(id)
@@ -46,33 +46,31 @@ func (p *mongoProvider) FindByID(id string) (*security.User, error) {
 		objID = id
 	}
 
-	return p.findByFilter(bson.M{
+	return p.findByFilter(ctx, bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"_id":          objID,
 	})
 }
 
 func (p *mongoProvider) FindByExternalSource(
+	ctx context.Context,
 	externalID string,
 	source security.Source,
 ) (*security.User, error) {
-	return p.findByFilter(bson.M{
+	return p.findByFilter(ctx, bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"external_id":  externalID,
 		"source":       source,
 	})
 }
 
-func (p *mongoProvider) Save(u *security.User) error {
+func (p *mongoProvider) Save(ctx context.Context, u *security.User) error {
 	if u.ID == "" {
 		u.ID = utils.NewID()
 		u.AuthApiKey = utils.NewID()
 	}
 
 	m := transformUserToDbModel(u)
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	_, err := p.collection.UpdateOne(
 		ctx,
 		bson.M{"_id": m.ID},
@@ -88,11 +86,8 @@ func (p *mongoProvider) Save(u *security.User) error {
 }
 
 // findByFilter returns User or nil if no user matches filter.
-func (p *mongoProvider) findByFilter(f interface{}) (*security.User, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (p *mongoProvider) findByFilter(ctx context.Context, f interface{}) (*security.User, error) {
 	cursor, err := p.collection.Find(ctx, f)
-
 	if err != nil {
 		return nil, err
 	}

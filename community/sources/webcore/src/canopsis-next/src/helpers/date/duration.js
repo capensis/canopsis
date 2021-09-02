@@ -1,10 +1,15 @@
+import { isNil } from 'lodash';
 import moment from 'moment';
+
+import 'moment-duration-format';
 
 import {
   AVAILABLE_SORTED_TIME_UNITS,
+  DATETIME_FORMATS,
   DAYS_IN_MONTH,
   DAYS_IN_WEEK,
   DAYS_IN_YEAR,
+  DEFAULT_DURATION_FORMAT,
   MONTHS_IN_YEAR,
   TIME_UNITS,
 } from '@/constants';
@@ -175,4 +180,26 @@ export const formToMaxByAvailableUnitsForm = (
     value: unitValue,
     unit: maxUnit || unit,
   };
+};
+
+/**
+ * Convert duration to more readable format
+ *
+ * @param {number | Duration | DurationForm} duration
+ * @param {string} [format = DEFAULT_DURATION_FORMAT]
+ * @param {DurationUnit} [unit = TIME_UNITS.second]
+ * @returns {string}
+ */
+export const durationToString = (duration, format = DEFAULT_DURATION_FORMAT, unit = TIME_UNITS.second) => {
+  if (isNil(duration)) {
+    return '';
+  }
+
+  /**
+   * TODO: Should be removed after duration refactoring
+   */
+  const durationValue = duration ? (duration.seconds || duration.value || duration) : duration;
+  const resultFormat = DATETIME_FORMATS[format] || format;
+
+  return moment.duration(durationValue, unit).format(resultFormat, { trim: 'both final' }) || '0s';
 };
