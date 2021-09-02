@@ -51,7 +51,7 @@ Vous avez également la possibilité de récupérer le nom du `trigger` (AlarmCh
 
 | Champ                             | Résultat                                                                  |
 |:--------------------------------- |:------------------------------------------------------------------------- |
-| `{{ .Event.AlarmChange.Type }}`      | Nom du trigger (sous forme de chaîne : ack, stateinc, etc. |
+| `{{ .Event.AlarmChange.Type }}`      | Nom du trigger (sous forme de chaîne : ack, stateinc, etc.) |
 
 ## Génération de texte
 

@@ -36,96 +36,93 @@ Actuellement, un évènement de type `log` doit être remonté dans Canopsis com
 
 #### Input
 
-```
+```bash
 input {
-  beats {
+    beats {
         port => "5044"
-        tags => ["syslog"]
+            tags => ["syslog"]
     }
 }
 ```
 
 #### Filter
 
-```
+```bash
 filter {
-
     # ajout des champs essentiels pour un event Canopsis
-        mutate {
-          add_field => {
+    mutate {
+        add_field => {
             "connector" => "logstash"
-            "connector_name" => "logstash"
-            "event_type" => "check"
-            "state" => 1
-          }
-         }
+                "connector_name" => "logstash"
+                "event_type" => "check"
+                "state" => 1
+        }
+    }
 
     # Conversion des champs en integer
+    mutate {
+        convert => ["[state]", "integer"]
+    }
+
+    # S'assurer que l'on traite bien les event comportant le tag *syslog* défini dans l'input
+    if "syslog" in [tags] {
+
+        # Parse du log et récupération des informations nécessaires pour l'event et/ou la routing_key. Exemple 'component',
+        # 'resource', 'output', 'timestamp', etc.
+        grok {
+            match => {"message" => "%{SYSLOGTIMESTAMP:timestamp} %{SYSLOGHOST:component} %{NOTSPACE:resource}\[%{NUMBER:pid}\]\: %{GREEDYDATA:output}"}
+        }
+
+        # Ajout du champ 'source_type' avec la valeur 'resource'
         mutate {
-          convert => ["[state]", "integer"]
+            # ce champ est ici a ajouter manuellement
+            add_field => {"source_type" => "resource"}
         }
+    }
 
-   # S'assurer que l'on traite bien les event comportant le tag *syslog* défini dans l'input
-        if "syslog" in [tags] {
+    # Ex : exemple de traitement d'une valeur pour un besoin précis (Facultatif)
+    mutate {
+        update => { "resource" => "%{resource}-%{pid}" }
+    }
 
-            # Parse de la log et récupération des informations nécessaires pour l'event et/ou la routing_key. Exemple 'component',
-            # 'resource', 'output', 'timestamp'...etc.
-            grok {
-                match => {"message" => "%{SYSLOGTIMESTAMP:timestamp} %{SYSLOGHOST:component} %{NOTSPACE:resource}\[%{NUMBER:pid}\]\: %{GREEDYDATA:output}"}
+    # construction de la clef de routage (routing key) necessaire à Canopsis
+    mutate {
+        add_field => {"[@metadata][canopsis_rk_]" => "%{connector}.%{connector_name}.%{event_type}.%{source_type}.%{component}" }
+    }
 
-            }
-
-            #Ajout du champ 'source_type' avec la valeur 'resource'
-            mutate {
-                # ce champ est ici a ajouter manuellement
-                add_field => {"source_type" => "resource"}
-            }
-        }
-
-    #   Ex: exemple de traitement d'une valeur pour un besoin précis (Facultatif)
+    if [source_type] == "resource" {
         mutate {
-            update => { "resource" => "%{resource}-%{pid}" }
+            add_field => {"[@metadata][canopsis_rk]" => "%{[@metadata][canopsis_rk_]}.%{resource}" }
         }
-
-        # construction de la clef de routage (routing key) necessaire a canopsis
+    } else {
         mutate {
-            add_field => {"[@metadata][canopsis_rk_]" => "%{connector}.%{connector_name}.%{event_type}.%{source_type}.%{component}" }
+            add_field => {"[@metadata][canopsis_rk]" => "%{[@metadata][canopsis_rk_]" }
         }
+    }
 
-        if [source_type] == "resource" {
-            mutate {
-                add_field => {"[@metadata][canopsis_rk]" => "%{[@metadata][canopsis_rk_]}.%{resource}" }
-            }
-        } else {
-            mutate {
-                add_field => {"[@metadata][canopsis_rk]" => "%{[@metadata][canopsis_rk_]" }
-            }
-        }
-
-        # nettoyage: suppression des champs et métadonnées maintenant inutiles
-        mutate {
-            remove_field => ["[@metadata][canopsis_rk_]", "message"]
-        }
+    # nettoyage : suppression des champs et métadonnées maintenant inutiles
+    mutate {
+        remove_field => ["[@metadata][canopsis_rk_]", "message"]
+    }
 
 
-        # Ajouter un timestamp à l'event (convertir une date en timestamp) :
-
-        ruby{
-          code =>"event.set('timestamp', event.get('@timestamp').to_i)"
-        }
+    # Ajouter un timestamp à l'event (convertir une date en timestamp) :
+    ruby {
+        code => "event.set('timestamp', event.get('@timestamp').to_i)"
+    }
 
 }
 ```
 
 #### Output
 
-```
+```bash
 output {
 
-  # Sortie debug (A supprimer)
-  stdout { codec => rubydebug }
+    # Sortie debug (à supprimer)
+    stdout { codec => rubydebug }
 
-  rabbitmq {
+    rabbitmq {
         host => "XXX.XXX.XXX.XXX" # IP de la machine RabbitMQ (ou VIP)
         user => "my_user"
         password => "my_passwd"
@@ -175,5 +172,5 @@ On retrouve la structure de l'évènement avec les champs ainsi que leurs valeur
 
 1.  Vérifier que la *routing key* est correcte et au bon format (voir les exemples ci dessus).
 2.  Vérifier que l'évènement est au bon format (champs, valeurs…).
-3.  Vérifier que l'évènement remonte bien dans RabbitMQ dans la file `Engine_cleaner_events`
-4.  Vérifier les logs des moteurs Canopsis. Vérifier qu'il n'y a pas d'erreurs dans `/opt/canopsis/var/log/engines/cleaner_events.log`
+3.  Vérifier que l'évènement remonte bien dans RabbitMQ
+4.  Vérifier les logs des moteurs Canopsis.
