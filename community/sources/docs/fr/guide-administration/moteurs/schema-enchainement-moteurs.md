@@ -36,7 +36,7 @@ fifo --> che["engine-che (multi-instanciable)"]
 che --> pbh["engine-pbehavior (multi-instanciable)"]
 pbh --> axe["engine-axe (multi-instanciable)"]
 axe --> correl["engine-correlation (multi-instanciable)"]
-correl --> service["engine-service"]
+correl --> service["engine-service (multi-instanciable)"]
 service --> info["engine-dynamic-infos"]
 info --> action["engine-action"]
 

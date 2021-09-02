@@ -10,20 +10,25 @@ Les moteur `engine-service` permet de surveiller et de répercuter les états d'
 
 La commande `engine-service -help` liste toutes les options acceptées par le moteur.
 
+### Multi-instanciation
+
+Il est possible, à partir de Canopsis 4.3.0, de lancer plusieurs instances du moteur `engine-service`, afin d'améliorer sa performance de traitement et sa résilience.
+
+En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker-compose up -d --scale service=2` pour que le moteur `engine-service` soit lancé avec 2 instances.
+
+Cette fonctionnalité sera aussi disponible en installation par paquets lors d'une prochaine mise à jour.
+
 ## Fonctionnement
 
 ### Concept d'un service
 
-Un service (ou *service*) représente un groupe de surveillance.
-C'est-à-dire que la criticité d'une entité de type service dépendra de la criticité des entités surveillées, et des alarmes ouvertes sur ces entités.
+Un service (ou *service*) représente un groupe de surveillance : c'est-à-dire que la criticité d'une entité de type service dépendra de la criticité des entités surveillées, et des alarmes ouvertes sur ces entités.
 
 Le but d'un service est de donner une visibilité accrue et claire sur l'état d'un groupe d'entités, afin de détecter un changement de criticité positif ou négatif sur les alarmes liées aux entités du groupe surveillé.
 
 ### Templates
 
-L'`output_template` est un [template](https://golang.org/pkg/text/template/)
-permettant d'afficher diverses informations dans l'output de l'alarme
-correspondant à l'service.
+L'`output_template` est un [template](https://golang.org/pkg/text/template/) permettant d'afficher diverses informations dans l'output de l'alarme correspondant à l'service.
 
 Les informations disponibles sont :
 
