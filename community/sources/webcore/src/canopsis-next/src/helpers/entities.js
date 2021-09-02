@@ -337,7 +337,7 @@ export function generateUserPreferenceByWidgetAndUser(widget, user) {
   return {
     _id: `${widget._id}_${user._id}`,
     widget_preferences: {},
-    crecord_name: user._id,
+    name: user._id,
     widget_id: widget._id,
     widgetXtype: widget.type,
     crecord_type: 'userpreferences',
@@ -394,7 +394,7 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
  * @returns {boolean}
  */
 export function isResolvedAlarm(alarm) {
-  return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
+  return [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
 }
 
 /**

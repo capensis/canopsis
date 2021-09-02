@@ -16,9 +16,9 @@
 import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
-import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
-import entitiesInfoMixin from '@/mixins/entities/info';
 import { pollingMixinCreator } from '@/mixins/polling';
+import entitiesInfoMixin from '@/mixins/entities/info';
+import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
 
@@ -34,7 +34,7 @@ export default {
     authMixin,
     entitiesRemediationInstructionExecutionMixin,
     entitiesInfoMixin,
-    pollingMixinCreator({ method: 'pingInstructionExecution' }),
+    pollingMixinCreator({ method: 'pingInstructionExecution', startOnMount: true }),
   ],
   data() {
     const { execution } = this.modal.config.assignedInstruction;

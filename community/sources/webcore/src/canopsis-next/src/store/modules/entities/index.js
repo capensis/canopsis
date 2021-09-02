@@ -37,6 +37,7 @@ import stateSettingModule from './state-setting';
 import associativeTableModule from './associative-table';
 import dataStorageModule from './data-storage';
 import notificationSettingsModule from './notification-settings';
+import idleRulesModule from './idle-rules';
 
 export default {
   alarm: alarmModule,
@@ -78,4 +79,5 @@ export default {
   associativeTable: associativeTableModule,
   dataStorage: dataStorageModule,
   notificationSettings: notificationSettingsModule,
+  idleRules: idleRulesModule,
 };

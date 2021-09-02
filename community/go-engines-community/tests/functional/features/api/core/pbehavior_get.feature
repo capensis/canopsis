@@ -7,7 +7,7 @@ Feature: get a PBehavior
     When I do GET /api/v4/pbehaviors?search=test-pbehavior-to-get-by-name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -89,7 +89,8 @@ Feature: get a PBehavior
             "name": "Pbh edit 1 State",
             "priority": 10,
             "type": "active"
-          }
+          },
+          "last_alarm_date": null
         },
         {
           "_id": "test-pbehavior-to-get-by-name-2",
@@ -123,7 +124,8 @@ Feature: get a PBehavior
             "name": "Pbh edit 2 State",
             "priority": 11,
             "type": "active"
-          }
+          },
+          "last_alarm_date": null
         }
       ],
       "meta": {
@@ -140,7 +142,7 @@ Feature: get a PBehavior
     When I do GET /api/v4/pbehaviors?search=test-pbehavior-to-get-by-filter-filter
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -239,7 +241,7 @@ Feature: get a PBehavior
     When I do GET /api/v4/pbehaviors?search=test-type-to-get-pbehavior-name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -285,7 +287,7 @@ Feature: get a PBehavior
     When I do GET /api/v4/pbehaviors?search=test-reason-to-pbehavior-get-name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -331,7 +333,7 @@ Feature: get a PBehavior
     When I do GET /api/v4/pbehaviors?search=test-pbehavior-to-get-by-name&sort_by=type.name&sort=desc
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -364,7 +366,7 @@ Feature: get a PBehavior
     When I do GET /api/v4/pbehaviors/test-pbehavior-to-get-by-name-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-pbehavior-to-get-by-name-1",
       "author": "root",
@@ -444,7 +446,8 @@ Feature: get a PBehavior
         "name": "Pbh edit 1 State",
         "priority": 10,
         "type": "active"
-      }
+      },
+      "last_alarm_date": null
     }
     """
 
@@ -453,7 +456,7 @@ Feature: get a PBehavior
     When I do GET /api/v4/pbehaviors/test-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

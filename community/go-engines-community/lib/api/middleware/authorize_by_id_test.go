@@ -11,6 +11,7 @@ import (
 
 func TestAuthorizeByID_GivenAuthorizedUser_ShouldReturnResponse(t *testing.T) {
 	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 	subj := "testsubj"
 	obj := "testobj"
 	act := "testact"
@@ -39,6 +40,7 @@ func TestAuthorizeByID_GivenAuthorizedUser_ShouldReturnResponse(t *testing.T) {
 
 func TestAuthorizeByID_GivenNoUser_ShouldReturnUnauthorizedError(t *testing.T) {
 	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 	obj := "testobj"
 	act := "testact"
 	expectedCode := http.StatusUnauthorized
@@ -63,6 +65,7 @@ func TestAuthorizeByID_GivenNoUser_ShouldReturnUnauthorizedError(t *testing.T) {
 
 func TestAuthorizeByID_GivenNotAuthorizedUser_ShouldForbiddenError(t *testing.T) {
 	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 	subj := "testsubj"
 	obj := "testobj"
 	act := "testact"

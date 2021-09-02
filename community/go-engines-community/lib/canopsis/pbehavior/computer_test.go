@@ -19,7 +19,8 @@ import (
 )
 
 func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockLockClient := mock_redis.NewMockLockClient(ctrl)
@@ -59,8 +60,6 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 		mockDbClient, mockPublisher, mockEventManager, mockEncoder, "test-queue",
 		zerolog.Logger{})
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{
 		PbehaviorID:   pbehaviorID,
@@ -77,7 +76,8 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 }
 
 func TestCancelableComputer_Compute_GivenEmptyPbehaviorID_ShouldRecomputeAllPbehaviors(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockLockClient := mock_redis.NewMockLockClient(ctrl)
@@ -104,8 +104,6 @@ func TestCancelableComputer_Compute_GivenEmptyPbehaviorID_ShouldRecomputeAllPbeh
 		mockDbClient, mockPublisher, mockEventManager, mockEncoder, "test-queue",
 		zerolog.Logger{})
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{}
 	defer close(ch)
@@ -119,7 +117,8 @@ func TestCancelableComputer_Compute_GivenEmptyPbehaviorID_ShouldRecomputeAllPbeh
 }
 
 func TestCancelableComputer_Compute_GivenPbehaviorIDAndOperationType_ShouldSendPbehaviorEvent(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockLockClient := mock_redis.NewMockLockClient(ctrl)
@@ -199,8 +198,6 @@ func TestCancelableComputer_Compute_GivenPbehaviorIDAndOperationType_ShouldSendP
 		mockDbClient, mockPublisher, mockEventManager, mockEncoder, queue,
 		zerolog.Logger{})
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{PbehaviorID: pbehaviorID, OperationType: pbehavior.OperationCreate}
 	defer close(ch)

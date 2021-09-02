@@ -23,7 +23,6 @@ Feature: entity_service idle_rules integration
     {
       "name": "test-idle-rule-es-integration-name",
       "description": "test-idle-rule-es-integration-description",
-      "author": "test-idle-rule-es-integration-author",
       "type": "entity",
       "enabled": true,
       "priority": 21,
@@ -82,7 +81,7 @@ Feature: entity_service idle_rules integration
       }
     }
     """
-    When I do GET /api/v4/entityservices/test-entityservice-idle-since-integration/dependencies
+    When I do GET /api/v4/entityservice-dependencies?_id=test-entityservice-idle-since-integration
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -128,7 +127,6 @@ Feature: entity_service idle_rules integration
     {
       "name": "test-idle-rule-es-integration-2-name",
       "description": "test-idle-rule-es-integration-2-description",
-      "author": "test-idle-rule-es-integration-2-author",
       "type": "entity",
       "enabled": true,
       "priority": 21,
@@ -210,7 +208,6 @@ Feature: entity_service idle_rules integration
     {
       "name": "test-idle-rule-es-integration-3-name",
       "description": "test-idle-rule-es-integration-3-description",
-      "author": "test-idle-rule-es-integration-3-author",
       "type": "entity",
       "enabled": true,
       "priority": 21,
@@ -250,7 +247,7 @@ Feature: entity_service idle_rules integration
       }
     }
     """
-    When I do GET /api/v4/entityservices/test-entityservice-idle-since-integration-4/dependencies
+    When I do GET /api/v4/entityservice-dependencies?_id=test-entityservice-idle-since-integration-4
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -299,7 +296,6 @@ Feature: entity_service idle_rules integration
     {
       "name": "test-idle-rule-es-integration-4-name",
       "description": "test-idle-rule-es-integration-4-description",
-      "author": "test-idle-rule-es-integration-4-author",
       "type": "entity",
       "enabled": true,
       "priority": 21,
@@ -323,7 +319,6 @@ Feature: entity_service idle_rules integration
     {
       "name": "test-idle-rule-es-integration-5-name",
       "description": "test-idle-rule-es-integration-5-description",
-      "author": "test-idle-rule-es-integration-5-author",
       "type": "entity",
       "enabled": true,
       "priority": 21,

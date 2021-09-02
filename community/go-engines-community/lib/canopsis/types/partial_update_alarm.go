@@ -145,7 +145,8 @@ func (a *Alarm) PartialUpdateUncancel(timestamp CpsTime, author, output, role,
 }
 
 // PartialUpdateChangeState add state change step to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateChangeState(state CpsNumber, timestamp CpsTime, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdateChangeState(state CpsNumber, timestamp CpsTime,
+	author, output, role, initiator string, alarmConfig config.AlarmConfig) error {
 	if a.Value.State != nil && a.Value.State.Value == state {
 		return nil
 	}
@@ -159,8 +160,35 @@ func (a *Alarm) PartialUpdateChangeState(state CpsNumber, timestamp CpsTime, aut
 		return err
 	}
 
-	a.addUpdate("$set", bson.M{"v.state": a.Value.State})
-	a.addUpdate("$push", bson.M{"v.steps": a.Value.State})
+	currentStatus := a.CurrentStatus(alarmConfig)
+	newStatus := a.ComputeStatus(alarmConfig)
+
+	if newStatus == currentStatus && a.Value.Status != nil {
+		a.addUpdate("$set", bson.M{"v.state": a.Value.State})
+		a.addUpdate("$push", bson.M{"v.steps": a.Value.State})
+		return nil
+	}
+
+	newStepStatus := NewAlarmStep(AlarmStepStatusIncrease, timestamp, author, output, role, initiator)
+	newStepStatus.Value = newStatus
+	if a.Value.Status != nil && newStepStatus.Value < a.Value.Status.Value {
+		newStepStatus.Type = AlarmStepStatusDecrease
+	}
+	a.Value.Status = &newStepStatus
+	if err := a.Value.Steps.Add(newStepStatus); err != nil {
+		return err
+	}
+
+	a.Value.StateChangesSinceStatusUpdate = 0
+	a.Value.LastUpdateDate = timestamp
+
+	a.addUpdate("$set", bson.M{
+		"v.state":                             a.Value.State,
+		"v.status":                            a.Value.Status,
+		"v.state_changes_since_status_update": a.Value.StateChangesSinceStatusUpdate,
+		"v.last_update_date":                  a.Value.LastUpdateDate,
+	})
+	a.addUpdate("$push", bson.M{"v.steps": bson.M{"$each": bson.A{a.Value.State, a.Value.Status}}})
 
 	return nil
 }
@@ -237,9 +265,9 @@ func (a *Alarm) PartialUpdateNoEvents(state CpsNumber, timestamp CpsTime, author
 }
 
 // PartialUpdateAssocTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, author, ticketNumber, role, initiator string) error {
+func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, ticketData map[string]string, author, ticketNumber, role, initiator string) error {
 	newStep := NewAlarmStep(AlarmStepAssocTicket, timestamp, author, ticketNumber, role, initiator)
-	ticketStep := newStep.NewTicket(ticketNumber, nil)
+	ticketStep := newStep.NewTicket(ticketNumber, ticketData)
 	a.Value.Ticket = &ticketStep
 
 	err := a.Value.Steps.Add(newStep)
@@ -569,6 +597,21 @@ func (a *Alarm) PartialUpdateComment(timestamp CpsTime, author, output, role, in
 	return nil
 }
 
+func (a *Alarm) PartialUpdateAddInstructionStep(stepType string, timestamp CpsTime,
+	execution, author, msg, role, initiator string) error {
+	newStep := NewAlarmStep(stepType, timestamp, author, msg, role, initiator)
+	err := a.Value.Steps.Add(newStep)
+	if err != nil {
+		return err
+	}
+
+	newStep.Execution = execution
+
+	a.addUpdate("$push", bson.M{"v.steps": newStep})
+
+	return nil
+}
+
 func (a *Alarm) PartialUpdateCropSteps() {
 	if a.CropSteps() {
 		a.addUpdate("$set", bson.M{"v.steps": a.Value.Steps})
@@ -577,6 +620,17 @@ func (a *Alarm) PartialUpdateCropSteps() {
 
 func (a *Alarm) PartialUpdateAddStep(stepType string, timestamp CpsTime, author, msg, role, initiator string) error {
 	newStep := NewAlarmStep(stepType, timestamp, author, msg, role, initiator)
+	err := a.Value.Steps.Add(newStep)
+	if err != nil {
+		return err
+	}
+
+	a.addUpdate("$push", bson.M{"v.steps": newStep})
+
+	return nil
+}
+
+func (a *Alarm) PartialUpdateAddStepWithStep(newStep AlarmStep) error {
 	err := a.Value.Steps.Add(newStep)
 	if err != nil {
 		return err
@@ -612,6 +666,10 @@ func (a *Alarm) GetUpdate() bson.M {
 // CleanUpdate removes mongo updates. Call it after succeeded update.
 func (a *Alarm) CleanUpdate() {
 	a.update = nil
+	a.childrenUpdate = nil
+	a.parentsUpdate = nil
+	a.childrenRemove = nil
+	a.parentsRemove = nil
 }
 
 func ResolveSnoozeAfterPbhLeave(timestamp CpsTime, alarm *Alarm) {

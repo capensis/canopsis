@@ -2,6 +2,8 @@ package user
 
 import (
 	"context"
+	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -52,6 +54,9 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
+	if r.Permission != "" {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("role.rights.%s", r.Permission): bson.M{"$exists": true}}})
+	}
 
 	sortBy := s.defaultSortBy
 	if r.SortBy != "" {
@@ -189,8 +194,9 @@ func getNestedObjectsPipeline() []bson.M {
 		{"$unwind": bson.M{"path": "$role", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
 			"role": bson.M{
-				"_id":  "$role._id",
-				"name": "$role.crecord_name",
+				"_id":    "$role._id",
+				"name":   "$role.crecord_name",
+				"rights": "$role.rights",
 			},
 		}},
 		{"$lookup": bson.M{

@@ -26,7 +26,7 @@ Feature: delete a job's config
     """
   Scenario: DELETE a linked job's config shouldn't be possible
     When I am admin
-    When I do DELETE /api/v4/cat/job-configs/test-job-config-to-link
+    When I do DELETE /api/v4/cat/job-configs/test-job-config-to-check-linked
     Then the response code should be 400
     Then the response body should be:
     """

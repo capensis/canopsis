@@ -11,13 +11,16 @@ import {
   PBEHAVIOR_RRULE_PERIODS_RANGES,
   ENGINES_NAMES,
   WIDGET_TYPES,
-  SCENARIO_ACTION_TYPES,
+  ACTION_TYPES,
   ENTITY_TYPES,
   TEST_SUITE_STATUSES,
   SIDE_BARS,
   STATE_SETTING_METHODS,
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   REMEDIATION_INSTRUCTION_TYPES,
+  IDLE_RULE_TYPES,
+  IDLE_RULE_ALARM_CONDITIONS,
+  USERS_PERMISSIONS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -28,7 +31,6 @@ export default {
     undefined: 'Not defined',
     entity: 'Entity',
     service: 'Service',
-    pbehaviors: 'PBehaviors',
     widget: 'Widget',
     addWidget: 'Add widget',
     addTab: 'Add tab',
@@ -73,7 +75,6 @@ export default {
     role: 'Role | Roles',
     import: 'Import',
     export: 'Export',
-    rights: 'Rights',
     profile: 'Profile',
     username: 'Username',
     password: 'Password',
@@ -119,14 +120,6 @@ export default {
     links: 'Links',
     stack: 'Stack',
     edition: 'Edition',
-    broadcastMessages: 'Broadcast messages',
-    playlists: 'Playlists',
-    planning: 'Planning',
-    remediation: 'Remediation',
-    instructions: 'Instructions',
-    metaAlarmRule: 'Meta alarm rule',
-    dynamicInfo: 'Dynamic informations',
-    instructionRating: 'Instruction rating',
     icon: 'Icon',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
@@ -150,7 +143,6 @@ export default {
     periods: 'Periods',
     range: 'Range',
     duration: 'Duration',
-    engines: 'Engines',
     previous: 'Previous',
     next: 'Next',
     eventPatterns: 'Event patterns',
@@ -196,6 +188,7 @@ export default {
     approve: 'Approve',
     summary: 'Summary',
     statistics: 'Statistics',
+    action: 'Action',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -227,6 +220,7 @@ export default {
     number: 'Number',
     boolean: 'Boolean',
     null: 'Null',
+    array: 'Array',
   },
   user: {
     role: 'Role',
@@ -237,6 +231,7 @@ export default {
   context: {
     impacts: 'Impacts',
     dependencies: 'Dependencies',
+    noEventsFilter: 'No events filter',
     expandPanel: {
       infos: 'Informations',
       type: 'Type',
@@ -263,6 +258,10 @@ export default {
     },
     entityInfo: {
       valueAsList: 'Change value type to list',
+    },
+    fab: {
+      common: 'Add a new entity',
+      addService: 'Add a new service entity',
     },
   },
   search: {
@@ -438,6 +437,7 @@ export default {
     status: 'Status',
     created: 'Creation date',
     updated: 'Last update date',
+    lastAlarmDate: 'Last alarm date',
     tabs: {
       filter: 'Filter',
       comments: 'Comments',
@@ -1473,6 +1473,28 @@ export default {
         original: 'Original',
       },
     },
+    createAlarmIdleRule: {
+      create: {
+        title: 'Create alarm rule',
+      },
+      edit: {
+        title: 'Edit alarm rule',
+      },
+      duplicate: {
+        title: 'Duplicate alarm rule',
+      },
+    },
+    createEntityIdleRule: {
+      create: {
+        title: 'Create entity rule',
+      },
+      edit: {
+        title: 'Edit entity rule',
+      },
+      duplicate: {
+        title: 'Duplicate entity rule',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1489,13 +1511,6 @@ export default {
       state: 'Severity',
       status: 'Status',
       extraDetails: 'Extra details',
-    },
-    alarmStatus: {
-      [ENTITIES_STATUSES.off]: 'Off',
-      [ENTITIES_STATUSES.ongoing]: 'Ongoing',
-      [ENTITIES_STATUSES.flapping]: 'Flapping',
-      [ENTITIES_STATUSES.stealthy]: 'Stealth',
-      [ENTITIES_STATUSES.cancelled]: 'Canceled',
     },
     alarmStates: {
       [ENTITIES_STATES.ok]: 'Info',
@@ -1662,7 +1677,6 @@ export default {
     },
   },
   eventFilter: {
-    title: 'Event filter',
     externalDatas: 'External data',
     actionsRequired: 'Please add at least one action',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
@@ -1697,7 +1711,6 @@ export default {
     },
   },
   snmpRules: {
-    title: 'SNMP rules',
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
   },
@@ -1748,9 +1761,11 @@ export default {
         popupTimeoutUnit: 'Unit',
         allowChangeSeverityToInfo: 'Allow change severity to info',
         maxMatchedItems: 'Max matched items',
+        checkCountRequestTimeout: 'Check max matched items request timeout (seconds)',
       },
       tooltips: {
         maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
+        checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',
       },
     },
   },
@@ -1862,6 +1877,7 @@ export default {
       },
     },
   },
+
   permissions: {
     technical: {
       admin: 'Admin rights',
@@ -1884,10 +1900,6 @@ export default {
       editFilter: 'Edit filter',
       addRRule: 'Add recurrence rule',
       editRrule: 'Edit recurrence rule',
-    },
-    alerts: {
-      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
     },
   },
 
@@ -2101,7 +2113,6 @@ export default {
   },
 
   scenario: {
-    title: 'Scenarios',
     headers: 'Headers',
     declareTicket: 'Declare ticket',
     workflow: 'Workflow if this action didn’t match:',
@@ -2126,14 +2137,14 @@ export default {
       '  children: {{ range .Children }}{{ .ID }}{{ end }}\n' +
       '}</pre>',
     actions: {
-      [SCENARIO_ACTION_TYPES.snooze]: 'Snooze',
-      [SCENARIO_ACTION_TYPES.pbehavior]: 'Pbehavior',
-      [SCENARIO_ACTION_TYPES.changeState]: 'Change state (Change and lock severity)',
-      [SCENARIO_ACTION_TYPES.ack]: 'Acknowledge',
-      [SCENARIO_ACTION_TYPES.ackremove]: 'Acknowledge remove',
-      [SCENARIO_ACTION_TYPES.assocticket]: 'Associate ticket',
-      [SCENARIO_ACTION_TYPES.cancel]: 'Cancel',
-      [SCENARIO_ACTION_TYPES.webhook]: 'Webhook',
+      [ACTION_TYPES.snooze]: 'Snooze',
+      [ACTION_TYPES.pbehavior]: 'Pbehavior',
+      [ACTION_TYPES.changeState]: 'Change state (Change and lock severity)',
+      [ACTION_TYPES.ack]: 'Acknowledge',
+      [ACTION_TYPES.ackremove]: 'Acknowledge remove',
+      [ACTION_TYPES.assocticket]: 'Associate ticket',
+      [ACTION_TYPES.cancel]: 'Cancel',
+      [ACTION_TYPES.webhook]: 'Webhook',
     },
     fields: {
       triggers: 'Triggers',
@@ -2160,6 +2171,7 @@ export default {
       number: '@:variableTypes.number',
       boolean: '@:variableTypes.boolean',
       null: '@:variableTypes.null',
+      array: '@:variableTypes.array',
     },
   },
 
@@ -2313,6 +2325,138 @@ export default {
       [QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
       [QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
       [QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
+    },
+  },
+
+  idleRules: {
+    timeAwaiting: 'Time awaiting',
+    timeRangeAwaiting: 'Time range awaiting',
+    types: {
+      [IDLE_RULE_TYPES.alarm]: 'Alarm rule',
+      [IDLE_RULE_TYPES.entity]: 'Entity rule',
+    },
+    alarmConditions: {
+      [IDLE_RULE_ALARM_CONDITIONS.lastEvent]: 'No events received',
+      [IDLE_RULE_ALARM_CONDITIONS.lastUpdate]: 'No state changes',
+    },
+  },
+
+  icons: {
+    noEvents: 'No events received for {duration} by some of dependencies',
+  },
+
+  pageHeaders: {
+    hideMessage: 'Got it! Hide',
+    learnMore: 'Learn more on {link}',
+
+    /**
+     * Exploitation
+     */
+    [USERS_PERMISSIONS.technical.exploitation.eventFilter]: {
+      title: 'Event filter',
+      message: 'The event-filter is a feature of the engine engine-cheallowing to define rules handling events.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: {
+      title: 'Dynamic informations',
+      message: 'The Canopsis Dynamic infos are used to add information to the alarms. This information is defined with rules indicating under which conditions information must be presented on an alarm.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
+      title: 'Meta alarm rule',
+      message: 'Meta alarm rules can be used for grouping alarms by types and criteria (parent-child relationship, time interval, etc).',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
+      title: 'Idle rules',
+      message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
+      title: 'PBehaviors',
+      message: 'Canopsis periodical behaviors can be used in order to define a periods when the behavior has to be changed, e.g. for  maintenance or service range.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.scenario]: {
+      title: 'Scenarios',
+      message: 'The Canopsis scenarios can be used to conditionally trigger various types of actions on alarms.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.snmpRule]: {
+      title: 'SNMP rules',
+      message: 'The SNMP engine allows the processing of SNMP traps retrieved by the connector snmp2canopsis.',
+    },
+
+    /**
+     * Admin access
+     */
+    [USERS_PERMISSIONS.technical.action]: {
+      title: 'Rights',
+    },
+    [USERS_PERMISSIONS.technical.role]: {
+      title: 'Roles',
+    },
+    [USERS_PERMISSIONS.technical.user]: {
+      title: 'Users',
+    },
+
+    /**
+     * Admin communications
+     */
+    [USERS_PERMISSIONS.technical.broadcastMessage]: {
+      title: 'Broadcast messages',
+      message: 'The Canopsis broadcasting messages can be used for displaying banners and information messages that will appear in the Canopsis interface.',
+    },
+    [USERS_PERMISSIONS.technical.playlist]: {
+      title: 'Playlists',
+      message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
+    },
+
+    /**
+     * Admin general
+     */
+    [USERS_PERMISSIONS.technical.engine]: {
+      title: 'Engines',
+      message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
+    },
+    [USERS_PERMISSIONS.technical.parameters]: {
+      title: 'Parameters',
+    },
+    [USERS_PERMISSIONS.technical.planning]: {
+      title: 'Planning',
+      message: 'The Canopsis Planning Administration functionality can be used for the periodic behavior types customization.',
+    },
+    [USERS_PERMISSIONS.technical.remediation]: {
+      title: 'Instructions',
+      message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
+    },
+
+    /**
+     * Notifications
+     */
+    [USERS_PERMISSIONS.technical.notification.instructionStats]: {
+      title: 'Instruction rating',
+      message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
+    },
+  },
+
+  alarmStatuses: {
+    [ENTITIES_STATUSES.closed]: 'Closed',
+    [ENTITIES_STATUSES.ongoing]: 'Ongoing',
+    [ENTITIES_STATUSES.flapping]: 'Flapping',
+    [ENTITIES_STATUSES.stealthy]: 'Stealth',
+    [ENTITIES_STATUSES.cancelled]: 'Canceled',
+    [ENTITIES_STATUSES.noEvents]: 'No events',
+  },
+
+  entitiesCountAlerts: {
+    filter: {
+      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
+      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
+    },
+    patterns: {
+      countOverLimit: 'The patterns you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
+      countRequestError: 'The request to entities count by the patterns was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
     },
   },
 

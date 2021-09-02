@@ -138,7 +138,7 @@ func (t *modelTransformer) transformExceptionsToModel(ctx context.Context, ids [
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$data",
-				bson.D{{"exdates", "$exdates"}}}},
+				bson.D{{Key: "exdates", Value: "$exdates"}}}},
 		}},
 	})
 	if err != nil {

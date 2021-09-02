@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 
-import { TIME_UNITS } from '@/constants';
+import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
 /**
  * Convert timestamps/Date to moment
@@ -103,6 +103,36 @@ export const isEndOfDay = (date, unit = 'seconds') => {
   const dateMoment = moment(date);
 
   return dateMoment.clone().endOf('day').diff(dateMoment, unit) === 0;
+};
+
+/**
+ * Convert date to string format
+ *
+ * @param {Date|number|moment.Moment} date
+ * @param {string} format
+ * @param {boolean} [ignoreTodayChecker]
+ * @param {string} [defaultValue]
+ * @return {string}
+ */
+export const convertDateToString = (date, format, ignoreTodayChecker, defaultValue) => {
+  let momentFormat = DATETIME_FORMATS[format] || format;
+
+  if (!date) {
+    return defaultValue || date;
+  }
+
+  const dateObject = convertTimestampToMoment(date);
+
+  if (!dateObject || !dateObject.isValid()) {
+    console.warn('Could not build a valid `moment` object from input.');
+    return date;
+  }
+
+  if (!ignoreTodayChecker && dateObject.isSame(new Date(), 'day')) {
+    momentFormat = DATETIME_FORMATS.time;
+  }
+
+  return dateObject.format(momentFormat);
 };
 
 /**

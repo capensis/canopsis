@@ -45,7 +45,7 @@ import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
 import CInstructionJobChip from '@/components/common/chips/c-instruction-job-chip.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
-import CThePageHeader from '@/components/common/page/c-the-page-header.vue';
+import CPageHeader from '@/components/common/page/c-page-header.vue';
 import CExpandBtn from '@/components/common/buttons/c-expand-btn.vue';
 import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
 import CDownloadBtn from '@/components/common/buttons/c-download-btn.vue';
@@ -62,6 +62,7 @@ import CAlertOverlay from '@/components/common/overlay/c-alert-overlay.vue';
 import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
 import CDraggableStepNumber from '@/components/common/drag-drop/c-draggable-step-number.vue';
 import CHelpIcon from '@/components/common/icons/c-help-icon.vue';
+import CNoEventsIcon from '@/components/common/icons/c-no-events-icon.vue';
 
 /**
  * Fields
@@ -80,6 +81,7 @@ import CTextPairField from '@/components/forms/fields/text-pairs/c-text-pair-fie
 import CJsonField from '@/components/forms/fields/c-json-field.vue';
 import CRetryField from '@/components/forms/fields/c-retry-field.vue';
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
+import CArrayMixedField from '@/components/forms/fields/c-array-mixed-field.vue';
 import CColorPickerField from '@/components/forms/fields/c-color-picker-field.vue';
 import CEntityTypeField from '@/components/forms/fields/c-entity-type-field.vue';
 import CImpactLevelField from '@/components/forms/fields/c-impact-level-field.vue';
@@ -107,6 +109,7 @@ import SettingsSyncIcon from '@/components/icons/settings_sync.vue';
 import EngineeringIcon from '@/components/icons/engineering.vue';
 import InsightsIcon from '@/components/icons/insights.vue';
 import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services.vue';
+import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
 
 import * as modalsComponents from '@/components/modals';
 
@@ -140,6 +143,9 @@ Vue.use(Vuetify, {
     },
     miscellaneous_services: {
       component: MiscellaneousServicesIcon,
+    },
+    published_with_changes: {
+      component: PublishedWithChangesIcon,
     },
   },
 });
@@ -211,7 +217,7 @@ Vue.component('alarms-list-table', AlarmsListTable);
 Vue.component('c-alarm-chip', CAlarmChip);
 Vue.component('c-instruction-job-chip', CInstructionJobChip);
 Vue.component('c-test-suite-chip', CTestSuiteChip);
-Vue.component('c-the-page-header', CThePageHeader);
+Vue.component('c-page-header', CPageHeader);
 Vue.component('c-advanced-data-table', CAdvancedDataTable);
 Vue.component('c-treeview-data-table', CTreeviewDataTable);
 Vue.component('c-expand-btn', CExpandBtn);
@@ -243,6 +249,7 @@ Vue.component('c-text-pairs-field', CTextPairsField);
 Vue.component('c-json-field', CJsonField);
 Vue.component('c-retry-field', CRetryField);
 Vue.component('c-mixed-field', CMixedField);
+Vue.component('c-array-mixed-field', CArrayMixedField);
 Vue.component('c-color-picker-field', CColorPickerField);
 Vue.component('c-json-field', CJsonField);
 Vue.component('c-entity-type-field', CEntityTypeField);
@@ -260,6 +267,7 @@ Vue.component('c-mini-bar-chart', CMiniBarChart);
 Vue.component('c-images-viewer', CImagesViewer);
 Vue.component('c-clickable-tooltip', CClickableTooltip);
 Vue.component('c-help-icon', CHelpIcon);
+Vue.component('c-no-events-icon', CNoEventsIcon);
 Vue.component('c-role-picker-field', CRolePickerField);
 Vue.component('c-user-picker-field', CUserPickerField);
 Vue.component('c-instruction-type-field', CInstructionTypeField);

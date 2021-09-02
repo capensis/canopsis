@@ -1,9 +1,12 @@
 import { cloneDeep, isUndefined, pick } from 'lodash';
+
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES,
   EVENT_FILTER_RULE_TYPES,
 } from '@/constants';
+
+import { enabledToForm } from './shared/common';
 
 /**
  * @typedef { 'enrichment' | 'drop' | 'break' } EventFilterRuleType
@@ -230,7 +233,7 @@ export const eventFilterRuleToForm = (rule = {}) => ({
     description: rule.description || '',
     patterns: rule.patterns ? cloneDeep(rule.patterns) : [],
     priority: rule.priority || 0,
-    enabled: !isUndefined(rule.enabled) ? rule.enabled : true,
+    enabled: enabledToForm(rule.enabled),
   },
   enrichmentOptions: {
     actions: rule.actions ? cloneDeep(rule.actions) : [],
@@ -253,7 +256,6 @@ export const eventFilterRuleActionToForm = (ruleAction = {}) => ({
   description: ruleAction.description || '',
   from: ruleAction.from || '',
   to: ruleAction.to || '',
-  asd: 2,
 });
 
 /**

@@ -1,6 +1,6 @@
-import { isUndefined } from 'lodash';
-
 import { durationToForm, formToDuration } from '../date/duration';
+
+import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {Object} InstructionNotificationsSettings
@@ -30,7 +30,7 @@ import { durationToForm, formToDuration } from '../date/duration';
  * @returns {InstructionNotificationsSettingsForm}
  */
 export const instructionNotificationsSettingsToForm = (instructionNotificationsSettings = {}) => ({
-  rate: !isUndefined(instructionNotificationsSettings.rate) ? instructionNotificationsSettings.rate : true,
+  rate: enabledToForm(instructionNotificationsSettings.rate),
   rate_frequency: durationToForm(instructionNotificationsSettings.rate_frequency),
 });
 

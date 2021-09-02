@@ -298,10 +298,11 @@ export function convertWeatherUserPreferenceToQuery({ widget_preferences: widget
  * @returns {{ category: string }}
  */
 export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  const { category } = widgetPreferences;
+  const { category, noEvents } = widgetPreferences;
 
   return {
     category,
+    no_events: noEvents,
   };
 }
 
