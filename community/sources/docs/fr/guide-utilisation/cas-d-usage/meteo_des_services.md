@@ -61,7 +61,7 @@ Pour personaliser le rendu du widget, il existe 3 niveaux de templates :
 
 1. La tuile
 2. La modale après clic
-3. L'affichage des sous éléments
+3. L'affichage des sous-éléments
 
 Dans ces templates, vous pouvez utiliser la notation **handlebars** pour accéder aux variables de vos entités.  
 

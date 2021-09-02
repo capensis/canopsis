@@ -44,7 +44,7 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
 === "Paquets CentOS 7"
 
-    Auparavant, dans le cadre d'une installation avec des paquets RPM, Canopsis nécessitait de complétement désactiver SELinux, SELinux n'étant pas pris en charge.
+    Auparavant, dans le cadre d'une installation avec des paquets RPM, Canopsis nécessitait de complètement désactiver SELinux, SELinux n'étant pas pris en charge.
 
     À partir de Canopsis 4.3.0, ce prérequis est moins radical, en ce sens qu'une configuration de SELinux en mode *permissif* est aussi permise.
 
