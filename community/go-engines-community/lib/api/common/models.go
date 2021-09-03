@@ -13,6 +13,16 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+type User struct {
+	ID   string `bson:"_id" json:"_id"`
+	Name string `bson:"crecord_name" json:"name"`
+}
+
+type Role struct {
+	ID   string `bson:"_id" json:"_id"`
+	Name string `bson:"crecord_name" json:"name"`
+}
+
 // PaginatedMeta is meta for paginated list data.
 type PaginatedMeta struct {
 	Page       int64 `json:"page"`
@@ -33,8 +43,8 @@ type PaginatedData interface {
 	GetTotal() int64
 }
 
-func NewPaginatedResponse(q pagination.Query, d PaginatedData) (interface{}, error) {
-	if q.Paginate == false {
+func NewPaginatedResponse(q pagination.Query, d PaginatedData) (PaginatedListResponse, error) {
+	if !q.Paginate {
 		q.Limit = d.GetTotal()
 	}
 
@@ -44,7 +54,7 @@ func NewPaginatedResponse(q pagination.Query, d PaginatedData) (interface{}, err
 	}
 
 	if q.Page > pageCount {
-		return nil, errors.New("page is out of range")
+		return PaginatedListResponse{}, errors.New("page is out of range")
 	}
 
 	data := d.GetData()
@@ -52,7 +62,7 @@ func NewPaginatedResponse(q pagination.Query, d PaginatedData) (interface{}, err
 		data = []interface{}{}
 	}
 
-	return &PaginatedListResponse{
+	return PaginatedListResponse{
 		Data: data,
 		Meta: PaginatedMeta{
 			Page:       q.Page,

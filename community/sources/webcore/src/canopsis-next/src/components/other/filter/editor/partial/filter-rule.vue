@@ -44,9 +44,9 @@
 </template>
 
 <script>
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 
-import { FILTER_OPERATORS, FILTER_OPERATORS_FOR_ARRAY } from '@/constants';
+import { FILTER_INPUT_TYPES, FILTER_OPERATORS, FILTER_OPERATORS_FOR_ARRAY } from '@/constants';
 
 import uid from '@/helpers/uid';
 
@@ -180,8 +180,16 @@ export default {
         dense: true,
         flat: true,
         errorMessages: this.errors.collect(name),
+        types: valueProps.types
+          ? valueProps.types.filter(type => type.value !== FILTER_INPUT_TYPES.array)
+          : [
+            { value: FILTER_INPUT_TYPES.string },
+            { value: FILTER_INPUT_TYPES.number },
+            { value: FILTER_INPUT_TYPES.boolean },
+            { value: FILTER_INPUT_TYPES.null },
+          ],
 
-        ...valueProps,
+        ...omit(valueProps, ['types']),
       };
     },
 

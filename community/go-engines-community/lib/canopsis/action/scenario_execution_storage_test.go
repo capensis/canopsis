@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	redislib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/influxdata/influxdb/pkg/deep"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -78,7 +78,7 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecut
 
 	for _, exec := range abandonedExecutions {
 		exec.Entity.Created = zeroTime
-		if !deep.Equal(exec, firstExecution) && !deep.Equal(exec, secondExecution) {
+		if !reflect.DeepEqual(exec, firstExecution) && !reflect.DeepEqual(exec, secondExecution) {
 			t.Errorf("GetAbandoned should return %+v or %+v but got %v",
 				firstExecution, secondExecution, exec)
 		}

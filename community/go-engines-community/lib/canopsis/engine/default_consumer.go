@@ -80,8 +80,7 @@ func (c *defaultConsumer) Consume(ctx context.Context) error {
 			return nil
 		case d, ok := <-msgs:
 			if !ok {
-				c.logger.Error().Msg("the rabbitmq channel has been closed")
-				return errors.New("channel is closed")
+				return errors.New("the rabbitmq channel has been closed")
 			}
 
 			err := c.processMessage(ctx, d, consumeCh, publishCh)
@@ -93,17 +92,19 @@ func (c *defaultConsumer) Consume(ctx context.Context) error {
 }
 
 func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery, consumeCh, publishCh libamqp.Channel) error {
-	c.logger.Debug().Str("msg", string(d.Body)).Msgf("received")
+	c.logger.Debug().
+		Str("consumer", c.name).Str("queue", c.queue).
+		Str("msg", string(d.Body)).
+		Msgf("received")
 	msgToNext, err := c.processor.Process(ctx, d)
 
 	if err != nil {
-		c.logger.Err(err).Msg("cannot process delivery")
 		nackErr := consumeCh.Nack(d.DeliveryTag, false, true)
 		if nackErr != nil {
 			c.logger.Err(nackErr).Msg("cannot nack amqp delivery")
 		}
 
-		return err
+		return fmt.Errorf("cannot process message: %w", err)
 	}
 
 	err = consumeCh.Ack(d.DeliveryTag, false)
@@ -114,14 +115,12 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery, c
 	if c.nextQueue != "" && msgToNext != nil {
 		err := publishToChannel(publishCh, c.nextExchange, c.nextQueue, msgToNext)
 		if err != nil {
-			c.logger.Err(err).Msg("cannot sent message to next queue")
-			return err
+			return fmt.Errorf("cannot sent message to next queue: %w", err)
 		}
 	} else if c.fifoQueue != "" {
 		err := publishToChannel(publishCh, c.fifoExchange, c.fifoQueue, d.Body)
 		if err != nil {
-			c.logger.Err(err).Msg("cannot sent message to fifo queue")
-			return err
+			return fmt.Errorf("cannot sent message to fifo queue: %w", err)
 		}
 	}
 

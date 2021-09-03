@@ -22,7 +22,6 @@ import eventFilterRuleModule from './event-filter-rule';
 import infoModule from './info';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
-import heartbeatModule from './heartbeat';
 import keepaliveModule from './keepalive';
 import dynamicInfoModule from './dynamic-info';
 import sessionsCountModule from './sessions-count';
@@ -59,7 +58,6 @@ export default {
   info: infoModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
-  heartbeat: heartbeatModule,
   keepalive: keepaliveModule,
   dynamicInfo: dynamicInfoModule,
   sessionsCount: sessionsCountModule,

@@ -250,11 +250,7 @@ func (v *uniqueBulkFieldValidator) Validate(_ context.Context, sl validator.Stru
 		}
 		val := field.Interface()
 
-		if _, ok := vals[val]; ok {
-			vals[val] = append(vals[val], i)
-		} else {
-			vals[val] = []int{i}
-		}
+		vals[val] = append(vals[val], i)
 	}
 
 	for val, indexes := range vals {

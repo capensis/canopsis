@@ -28,12 +28,12 @@ func NewScenarioStorage(
 	}
 }
 
-func (s *scenarioStorage) ReloadScenarios() error {
+func (s *scenarioStorage) ReloadScenarios(ctx context.Context) error {
 	s.scenariosMx.Lock()
 	defer s.scenariosMx.Unlock()
 
 	var err error
-	scenarios, err := s.adapter.GetEnabled()
+	scenarios, err := s.adapter.GetEnabled(ctx)
 
 	if err != nil {
 		return err

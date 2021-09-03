@@ -28,7 +28,6 @@ export const ENTITIES_TYPES = {
   eventFilterRule: 'eventFilterRule',
   metaAlarmRule: 'metaAlarmRule',
   snmpRule: 'snmpRule',
-  heartbeat: 'heartbeat',
   dynamicInfo: 'dynamicInfo',
   broadcastMessage: 'broadcastMessage',
   playlist: 'playlist',
@@ -96,7 +95,6 @@ export const MODALS = {
   filtersList: 'filters-list',
   createSnmpRule: 'create-snmp-rule',
   selectViewTab: 'select-view-tab',
-  createHeartbeat: 'create-heartbeat',
   createDynamicInfo: 'create-dynamic-info',
   createDynamicInfoInformation: 'create-dynamic-info-information',
   importExportViews: 'import-groups-and-views',
@@ -544,6 +542,7 @@ export const FILTER_INPUT_TYPES = {
   number: 'number',
   boolean: 'boolean',
   null: 'null',
+  array: 'array',
 };
 
 export const FILTER_DEFAULT_VALUES = {
@@ -859,7 +858,6 @@ export const USERS_PERMISSIONS = {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
       snmpRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_snmpRule`,
-      heartbeat: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_heartbeat`,
       dynamicInfo: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_dynamicInfo`,
       metaAlarmRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_metaAlarmRule`,
       scenario: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_scenario`,
@@ -956,10 +954,10 @@ export const USERS_PERMISSIONS = {
         alarmsList: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_alarmsList`,
         pbehaviorList: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_pbehaviorList`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.weather}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.weather}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.weather}_addFilter`,
-        userFilter: `${USER_PERMISSIONS_PREFIXES.business.weather}_userFilter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_userFilter`,
 
         category: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_category`,
 
@@ -991,7 +989,6 @@ export const USERS_PERMISSIONS = {
     metaalarmrule: `${USER_PERMISSIONS_PREFIXES.api}_metaalarmrule`,
     playlist: `${USER_PERMISSIONS_PREFIXES.api}_playlist`,
     dynamicinfos: `${USER_PERMISSIONS_PREFIXES.api}_dynamicinfos`,
-    heartbeat: `${USER_PERMISSIONS_PREFIXES.api}_heartbeat`,
     entityservice: `${USER_PERMISSIONS_PREFIXES.api}_entityservice`,
     viewgroup: `${USER_PERMISSIONS_PREFIXES.api}_viewgroup`,
     view: `${USER_PERMISSIONS_PREFIXES.api}_view`,
@@ -1288,11 +1285,6 @@ export const CANOPSIS_FORUM = 'https://community.capensis.org/';
 
 export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
 
-export const HEARTBEAT_DURATION_UNITS = {
-  minute: 'm',
-  hour: 'h',
-};
-
 export const TIME_UNITS = {
   second: 's',
   minute: 'm',
@@ -1477,7 +1469,6 @@ export const NOTIFICATIONS_PAGES_RULES = {
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
   snmpRule: { edition: CANOPSIS_EDITION.cat },
-  heartbeat: { stack: CANOPSIS_STACK.go },
   dynamicInfo: { edition: CANOPSIS_EDITION.cat },
   metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
   scenario: { stack: CANOPSIS_STACK.go },
@@ -1494,7 +1485,6 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
    */
   [USERS_PERMISSIONS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
   [USERS_PERMISSIONS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
-  [USERS_PERMISSIONS.technical.exploitation.heartbeat]: EXPLOITATION_PAGES_RULES.heartbeat,
   [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USERS_PERMISSIONS.technical.exploitation.scenario]: EXPLOITATION_PAGES_RULES.scenario,
@@ -1650,11 +1640,6 @@ export const REMEDIATION_INSTRUCTION_TYPES = {
   auto: 1,
 };
 
-export const REMEDIATION_CONFIGURATION_TYPES = {
-  rundeck: 'rundeck',
-  awx: 'awx',
-};
-
 export const REMEDIATION_INSTRUCTION_APPROVAL_TYPES = {
   role: 0,
   user: 1,
@@ -1693,7 +1678,6 @@ export const ENGINES_NAMES = {
   service: 'engine-service',
   dynamicInfo: 'engine-dynamic-info',
   correlation: 'engine-correlation',
-  heartbeat: 'engine-heartbeat',
 };
 
 export const ENGINES_QUEUE_NAMES = {
@@ -1706,7 +1690,6 @@ export const ENGINES_QUEUE_NAMES = {
   service: 'Engine_service',
   dynamicInfo: 'Engine_dynamic_infos',
   correlation: 'Engine_correlation',
-  heartbeat: 'Engine_heartbeat',
 };
 
 export const ENGINES_NAMES_TO_QUEUE_NAMES = {
@@ -1719,7 +1702,6 @@ export const ENGINES_NAMES_TO_QUEUE_NAMES = {
   [ENGINES_QUEUE_NAMES.service]: ENGINES_NAMES.service,
   [ENGINES_QUEUE_NAMES.dynamicInfo]: ENGINES_NAMES.dynamicInfo,
   [ENGINES_QUEUE_NAMES.correlation]: ENGINES_NAMES.correlation,
-  [ENGINES_QUEUE_NAMES.heartbeat]: ENGINES_NAMES.heartbeat,
 };
 
 export const CAT_ENGINES = [
@@ -1923,7 +1905,6 @@ export const DOCUMENTATION_LINKS = {
   [USERS_PERMISSIONS.technical.exploitation.pbehavior]: 'guide-utilisation/cas-d-usage/comportements_periodiques/',
   [USERS_PERMISSIONS.technical.exploitation.snmpRule]: 'interconnexions/Supervision/SNMPtrap/',
   // [USERS_PERMISSIONS.technical.exploitation.idleRules]: '', // TODO: TBD
-  [USERS_PERMISSIONS.technical.exploitation.heartbeat]: 'guide-administration/moteurs/moteur-heartbeat/',
   [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: 'guide-administration/moteurs/moteur-dynamic-infos/',
   [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'guide-administration/moteurs/moteur-correlation/',
   [USERS_PERMISSIONS.technical.exploitation.scenario]: 'guide-administration/moteurs/moteur-action/',
@@ -1941,6 +1922,8 @@ export const DOCUMENTATION_LINKS = {
    */
   // [USERS_PERMISSIONS.technical.notification.instructionStats]: '', // TODO: TBD
 };
+
+export const REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME = ['basic-auth'];
 
 export const ALARMS_OPENED_VALUES = {
   opened: true,

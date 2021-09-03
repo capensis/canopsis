@@ -24,9 +24,18 @@ Feature: delete a job
       "error": "Not found"
     }
     """
+
   Scenario: DELETE a linked job shouldn't be possible
     When I am admin
-    When I do DELETE /api/v4/cat/jobs/test-job-to-test-instruction-to-get-step-2-operation-1-2
+    When I do DELETE /api/v4/cat/jobs/test-job-to-check-linked-to-manual-instruction
+    Then the response code should be 400
+    Then the response body should be:
+    """
+    {
+      "error": "job is linked with instruction"
+    }
+    """
+    When I do DELETE /api/v4/cat/jobs/test-job-to-check-linked-to-auto-instruction
     Then the response code should be 400
     Then the response body should be:
     """

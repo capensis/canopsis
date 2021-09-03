@@ -7,6 +7,7 @@ Feature: pause a instruction execution
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-pause-1-name",
       "alarm_patterns": [
         {
@@ -15,6 +16,10 @@ Feature: pause a instruction execution
       ],
       "description": "test-instruction-execution-pause-1-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-pause-1-step-1",
@@ -65,6 +70,7 @@ Feature: pause a instruction execution
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-pause-2-name",
       "alarm_patterns": [
         {
@@ -73,6 +79,10 @@ Feature: pause a instruction execution
       ],
       "description": "test-instruction-execution-pause-2-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-pause-2-step-1",
@@ -126,6 +136,7 @@ Feature: pause a instruction execution
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-pause-3-name",
       "alarm_patterns": [
         {
@@ -134,6 +145,10 @@ Feature: pause a instruction execution
       ],
       "description": "test-instruction-execution-pause-3-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-pause-3-step-1",
@@ -198,6 +213,7 @@ Feature: pause a instruction execution
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-pause-4-name",
       "alarm_patterns": [
         {
@@ -206,6 +222,10 @@ Feature: pause a instruction execution
       ],
       "description": "test-instruction-execution-pause-4-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-pause-4-step-1",
@@ -270,10 +290,10 @@ Feature: pause a instruction execution
     """
 
   Scenario: given unauth request should not allow access
-    When I do PUT /api/v4/cat/executions/test-instruction-execution-running/pause
+    When I do PUT /api/v4/cat/executions/notexist/pause
     Then the response code should be 401
 
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
-    When I do PUT /api/v4/cat/executions/test-instruction-execution-running/pause
+    When I do PUT /api/v4/cat/executions/notexist/pause
     Then the response code should be 403

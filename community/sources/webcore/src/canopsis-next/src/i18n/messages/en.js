@@ -8,7 +8,6 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_PERMISSIONS_PREFIXES,
-  REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
   ENGINES_NAMES,
   WIDGET_TYPES,
@@ -222,6 +221,7 @@ export default {
     number: 'Number',
     boolean: 'Boolean',
     null: 'Null',
+    array: 'Array',
   },
   user: {
     role: 'Role',
@@ -259,6 +259,10 @@ export default {
     },
     entityInfo: {
       valueAsList: 'Change value type to list',
+    },
+    fab: {
+      common: 'Add a new entity',
+      addService: 'Add a new service entity',
     },
   },
   search: {
@@ -416,6 +420,7 @@ export default {
       hasInstruction: 'There is an instruction for this type of incidents',
       hasAutoInstructionInRunning: 'Automatic instruction in progress',
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
+      awaitingInstructionComplete: 'Awaiting for the instruction to complete',
     },
   },
   weather: {
@@ -433,6 +438,7 @@ export default {
     status: 'Status',
     created: 'Creation date',
     updated: 'Last update date',
+    lastAlarmDate: 'Last alarm date',
     tabs: {
       filter: 'Filter',
       comments: 'Comments',
@@ -1173,26 +1179,6 @@ export default {
     selectViewTab: {
       title: 'Select tab',
     },
-    createHeartbeat: {
-      create: {
-        title: 'Create heartbeat',
-        success: 'Heartbeat successfully created!',
-      },
-      edit: {
-        title: 'Modify heartbeat',
-        success: 'Heartbeat successfully modified!',
-      },
-      duplicate: {
-        title: 'Duplicate heartbeat',
-      },
-      remove: {
-        success: 'Heartbeat successfully removed!',
-      },
-      massRemove: {
-        success: 'Heartbeats successfully removed!',
-      },
-      patternRequired: 'Pattern is required',
-    },
     createDynamicInfo: {
       create: {
         title: 'Create dynamic information',
@@ -1385,10 +1371,6 @@ export default {
           success: '{configurationName} has been successfully modified',
         },
       },
-      types: {
-        [REMEDIATION_CONFIGURATION_TYPES.rundeck]: 'Rundeck',
-        [REMEDIATION_CONFIGURATION_TYPES.awx]: 'Awx',
-      },
       fields: {
         host: 'Host',
         token: 'Authorization token',
@@ -1410,10 +1392,13 @@ export default {
       fields: {
         configuration: 'Configuration',
         jobId: 'Job ID',
+        query: 'Query',
       },
       errors: {
         invalidJSON: 'Invalid JSON',
       },
+      addPayload: 'Add payload',
+      deletePayload: 'Delete payload',
       payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
         '<i>For example:</i>' +
         '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
@@ -1866,14 +1851,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'See alarms',
   },
-  heartbeat: {
-    table: {
-      fields: {
-        id: 'ID',
-        expectedInterval: 'Expected interval',
-      },
-    },
-  },
   contextGeneralTable: {
     addSelection: 'Add selection',
   },
@@ -1997,10 +1974,6 @@ export default {
     },
     [ENGINES_NAMES.correlation]: {
       title: 'Correlation',
-      description: 'Adds dynamic infos to alarm',
-    },
-    [ENGINES_NAMES.heartbeat]: {
-      title: 'Heartbeat',
       description: 'Adds dynamic infos to alarm',
     },
   },
@@ -2204,6 +2177,7 @@ export default {
       number: '@:variableTypes.number',
       boolean: '@:variableTypes.boolean',
       null: '@:variableTypes.null',
+      array: '@:variableTypes.array',
     },
   },
 
@@ -2424,11 +2398,6 @@ export default {
     [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: {
       title: 'Dynamic informations',
       message: 'The Canopsis Dynamic infos are used to add information to the alarms. This information is defined with rules indicating under which conditions information must be presented on an alarm.',
-    },
-
-    [USERS_PERMISSIONS.technical.exploitation.heartbeat]: {
-      title: 'Heartbeats',
-      message: 'Canopsis heartbeats can be used to define rules for inbound event patterns and time intervals.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: {

@@ -2,28 +2,20 @@
  * Mixin creator for polling
  *
  * @param {string} method
- * @param {boolean} [startOnMount = false]
- * @param {number} delay
+ * @param {string} [delayField = 'pollingDelay']
  * @returns {{
- *   data(): { timeout: null },
  *   methods: {
- *     startPolling(): void,
- *     stopPolling(): void
+ *     polling(): Promise,
+ *     stopPolling(): void,
+ *     stopPolling(): void,
  *   },
+ *   mounted(): void,
  *   beforeDestroy(): void,
- *   mounted(): void
  * }}
  */
-export const createPollingMixin = ({ method, startOnMount = false, delay }) => ({
-  data() {
-    return {
-      timeout: null,
-    };
-  },
+export const pollingMixinCreator = ({ method, delayField = 'pollingDelay' }) => ({
   mounted() {
-    if (startOnMount) {
-      this.startPolling();
-    }
+    this.startPolling();
   },
   beforeDestroy() {
     this.stopPolling();
@@ -36,6 +28,12 @@ export const createPollingMixin = ({ method, startOnMount = false, delay }) => (
     },
 
     startPolling() {
+      const delay = this[delayField];
+
+      if (!delay) {
+        return;
+      }
+
       this.timeout = setTimeout(this.polling, delay);
     },
 

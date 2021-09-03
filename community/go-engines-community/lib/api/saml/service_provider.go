@@ -43,12 +43,13 @@ type serviceProvider struct {
 	samlSP       *saml2.SAMLServiceProvider
 	userProvider security.UserProvider
 	sessionStore libsession.Store
+	enforcer     security.Enforcer
 	config       *security.Config
 	logger       zerolog.Logger
 }
 
-func NewServiceProvider(userProvider security.UserProvider, sessionStore libsession.Store, config *security.Config, logger zerolog.Logger) (ServiceProvider, error) {
-	if config.Security.Saml.IdpMetadataUrl != "" && config.Security.Saml.IdpMetadataXml != ""{
+func NewServiceProvider(userProvider security.UserProvider, sessionStore libsession.Store, enforcer security.Enforcer, config *security.Config, logger zerolog.Logger) (ServiceProvider, error) {
+	if config.Security.Saml.IdpMetadataUrl != "" && config.Security.Saml.IdpMetadataXml != "" {
 		return nil, fmt.Errorf("should provide only idp metadata url or xml, not both")
 	}
 
@@ -151,8 +152,9 @@ func NewServiceProvider(userProvider security.UserProvider, sessionStore libsess
 		},
 		userProvider: userProvider,
 		sessionStore: sessionStore,
-		config: config,
-		logger: logger,
+		enforcer:     enforcer,
+		config:       config,
+		logger:       logger,
 	}, nil
 }
 
@@ -281,7 +283,7 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 			return
 		}
 
-		user, err := sp.userProvider.FindByExternalSource(assertionInfo.NameID, security.SourceSaml)
+		user, err := sp.userProvider.FindByExternalSource(c.Request.Context(), assertionInfo.NameID, security.SourceSaml)
 		if err != nil {
 			sp.logger.Err(err).Msg("SamlAcsHandler: userProvider FindByExternalSource error")
 			panic(err)
@@ -309,7 +311,7 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 				Lastname:   sp.getAssocAttribute(assertionInfo.Values, "lastname", ""),
 				Email:      sp.getAssocAttribute(assertionInfo.Values, "email", ""),
 			}
-			err = sp.userProvider.Save(user)
+			err = sp.userProvider.Save(c.Request.Context(), user)
 			if err != nil {
 				sp.logger.Err(err).Msg("SamlAcsHandler: userProvider Save error")
 				panic(fmt.Errorf("cannot save user: %v", err))
@@ -328,6 +330,11 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 		if err != nil {
 			sp.logger.Err(err).Msg("SamlAcsHandler: save session error")
 			panic(err)
+		}
+
+		err = sp.enforcer.LoadPolicy()
+		if err != nil {
+			panic(fmt.Errorf("reload enforcer error: %w", err))
 		}
 
 		c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
@@ -370,7 +377,7 @@ func (sp *serviceProvider) SamlSloHandler() gin.HandlerFunc {
 			return
 		}
 
-		user, err := sp.userProvider.FindByExternalSource(request.NameID.Value, security.SourceSaml)
+		user, err := sp.userProvider.FindByExternalSource(c.Request.Context(), request.NameID.Value, security.SourceSaml)
 		if err != nil {
 			sp.logger.Err(err).Msg("SamlSloHandler: userProvider FindByExternalSource error")
 			panic(err)
@@ -387,7 +394,7 @@ func (sp *serviceProvider) SamlSloHandler() gin.HandlerFunc {
 			return
 		}
 
-		err = sp.sessionStore.ExpireSessions(user.ID, "saml")
+		err = sp.sessionStore.ExpireSessions(c.Request.Context(), user.ID, "saml")
 		if err != nil {
 			responseUrl, err := sp.buildLogoutResponseUrl(saml2.StatusCodeUnknownPrincipal, request.ID, relayState)
 			if err != nil {
@@ -426,7 +433,7 @@ func (sp *serviceProvider) buildLogoutResponseUrl(status, reqID, relayState stri
 	}
 
 	query := responseUrl.Query()
-	query.Set("SAMLResponse", string(buffer.Bytes()))
+	query.Set("SAMLResponse", buffer.String())
 	query.Set("RelayState", relayState)
 
 	responseUrl.RawQuery = query.Encode()
@@ -434,26 +441,30 @@ func (sp *serviceProvider) buildLogoutResponseUrl(status, reqID, relayState stri
 	return responseUrl, nil
 }
 
-func (sp *serviceProvider) encodeAndCompress(doc io.WriterTo) (*bytes.Buffer, error) {
+func (sp *serviceProvider) encodeAndCompress(doc io.WriterTo) (_ *bytes.Buffer, resErr error) {
 	buffer := &bytes.Buffer{}
 	encoder := base64.NewEncoder(base64.StdEncoding, buffer)
+
+	defer func() {
+		err := encoder.Close()
+		if err != nil && resErr == nil {
+			resErr = err
+		}
+	}()
 
 	compressor, err := flate.NewWriter(encoder, flate.BestCompression)
 	if err != nil {
 		return nil, err
 	}
 
+	defer func() {
+		err = compressor.Close()
+		if err != nil && resErr == nil {
+			resErr = err
+		}
+	}()
+
 	_, err = doc.WriteTo(compressor)
-	if err != nil {
-		return nil, err
-	}
-
-	err = compressor.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	err = encoder.Close()
 	if err != nil {
 		return nil, err
 	}

@@ -20,7 +20,7 @@
       )
     v-flex(v-if="!disabled", xs12)
       v-layout
-        v-btn.ml-0(color="primary", @click="addItem") {{ addButtonLabel || $t('common.add') }}
+        v-btn.ml-0(color="primary", outline, @click="addItem") {{ addButtonLabel || $t('common.add') }}
 </template>
 
 <script>

@@ -41,15 +41,6 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 func (w *periodicalWorker) Work(ctx context.Context) error {
 	w.Logger.Debug().Msg("Periodical process")
 
-	_, err := w.LockerClient.Obtain(ctx, redis.PeriodicalLockKey, w.GetInterval(), nil)
-	if err == redislock.ErrNotObtained {
-		w.Logger.Debug().Msg("Periodical process: Could not obtain periodical lock! Skip periodical process")
-		return nil
-	} else if err != nil {
-		w.Logger.Error().Err(err).Msg("Periodical process: obtain redis lock - unexpected error! Skip periodical process")
-		return nil
-	}
-
 	backoff := time.Second
 	retries := int(w.GetInterval().Seconds() - 1)
 	computeLock, err := w.LockerClient.Obtain(ctx, redis.RecomputeLockKey, redis.RecomputeLockDuration, &redislock.Options{
