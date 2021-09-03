@@ -14,6 +14,7 @@
 import { isObject, isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
+import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { MAX_LIMIT, ROUTE_NAMES } from '@/constants';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
@@ -22,13 +23,13 @@ import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active
 
 import { authMixin } from '@/mixins/auth';
 import systemMixin from '@/mixins/system';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { entitiesViewStatsMixin } from '@/mixins/entities/view-stats';
 import entitiesUserMixin from '@/mixins/entities/user';
-import keepaliveMixin from '@/mixins/entities/keepalive';
-
-import { removeCookie } from '@/helpers/cookies';
 
 import '@/assets/styles/main.scss';
+
+import localStorageService from '@/services/local-storage';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
@@ -42,8 +43,8 @@ export default {
     authMixin,
     systemMixin,
     entitiesInfoMixin,
+    entitiesViewStatsMixin,
     entitiesUserMixin,
-    keepaliveMixin,
   ],
   data() {
     return {
@@ -70,7 +71,7 @@ export default {
     try {
       await this.fetchCurrentUser();
     } catch (err) {
-      removeCookie();
+      localStorageService.clear();
 
       this.$router.push({
         name: ROUTE_NAMES.error,
@@ -83,7 +84,7 @@ export default {
     }
   },
   beforeDestroy() {
-    this.stopKeepalive();
+    this.stopViewStats();
   },
   methods: {
     ...mapActions({
@@ -93,6 +94,7 @@ export default {
     registerCurrentUserOnceWatcher() {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
+          this.$socket.connect(`${SOCKET_URL}?token=${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
           await this.fetchAppInfos();
 
           this.setSystemData({
@@ -101,8 +103,7 @@ export default {
           });
 
           this.setTitle();
-
-          this.startKeepalive();
+          this.startViewStats();
           this.showPausedExecutionsPopup();
 
           unwatch();

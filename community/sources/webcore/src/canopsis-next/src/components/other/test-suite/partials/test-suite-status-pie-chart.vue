@@ -4,7 +4,7 @@ import { Pie } from 'vue-chartjs';
 
 import { TEST_SUITE_COLORS, TEST_SUITE_STATUSES } from '@/constants';
 
-import chartAnnotationMixin from '@/mixins/chart/annotation';
+import { chartAnnotationMixin } from '@/mixins/chart/annotation';
 
 export default {
   extends: Pie,

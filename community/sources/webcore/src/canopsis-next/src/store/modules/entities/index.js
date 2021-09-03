@@ -23,9 +23,7 @@ import infoModule from './info';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
 import heartbeatModule from './heartbeat';
-import keepaliveModule from './keepalive';
 import dynamicInfoModule from './dynamic-info';
-import sessionsCountModule from './sessions-count';
 import broadcastMessageModule from './broadcast-message';
 import counterModule from './counter';
 import playlistModule from './playlist';
@@ -39,6 +37,10 @@ import associativeTableModule from './associative-table';
 import dataStorageModule from './data-storage';
 import notificationSettingsModule from './notification-settings';
 import idleRulesModule from './idle-rules';
+import healthcheckModule from './healthcheck';
+import healthcheckParametersModule from './healthcheck-parameters';
+import messageRateStatsModule from './message-rate-stats';
+import viewStatsModule from './view-stats';
 
 export default {
   alarm: alarmModule,
@@ -60,9 +62,7 @@ export default {
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
   heartbeat: heartbeatModule,
-  keepalive: keepaliveModule,
   dynamicInfo: dynamicInfoModule,
-  sessionsCount: sessionsCountModule,
   broadcastMessage: broadcastMessageModule,
   counter: counterModule,
   playlist: playlistModule,
@@ -82,4 +82,8 @@ export default {
   dataStorage: dataStorageModule,
   notificationSettings: notificationSettingsModule,
   idleRules: idleRulesModule,
+  healthcheck: healthcheckModule,
+  healthcheckParameters: healthcheckParametersModule,
+  messageRateStats: messageRateStatsModule,
+  viewStats: viewStatsModule,
 };

@@ -4,8 +4,11 @@ import Router from 'vue-router';
 import { ROUTER_MODE } from '@/config';
 import { CRUD_ACTIONS, ROUTE_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
 import store from '@/store';
-import { checkAppInfoAccessForRoute, checkUserAccessForRoute, getKeepalivePathByRoute } from '@/helpers/router';
-import { hasCookie } from '@/helpers/cookies';
+import {
+  checkAppInfoAccessForRoute,
+  checkUserAccessForRoute,
+  getViewStatsPathByRoute,
+} from '@/helpers/router';
 
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
@@ -315,7 +318,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const isRequiresAuth = to.matched.some(v => v.meta.requiresLogin);
   const isDontRequiresAuth = to.matched.some(v => v.meta.requiresLogin === false);
-  const isLoggedIn = hasCookie();
+  const isLoggedIn = store.getters['auth/isLoggedIn'];
 
   if (!isLoggedIn && isRequiresAuth) {
     return next({
@@ -348,14 +351,19 @@ router.beforeResolve(async (to, from, next) => {
 });
 
 router.afterEach((to, from) => {
-  const isLoggedIn = hasCookie();
+  const isLoggedIn = store.getters['auth/isLoggedIn'];
 
   if (to.path !== from.path) {
     store.dispatch('entities/sweep');
   }
 
   if (isLoggedIn) {
-    store.dispatch('keepalive/sessionTracePath', { path: getKeepalivePathByRoute(to) });
+    store.dispatch('viewStats/update', {
+      data: {
+        visible: !(document.visibilityState === 'hidden'),
+        path: getViewStatsPathByRoute(to),
+      },
+    });
   }
 });
 

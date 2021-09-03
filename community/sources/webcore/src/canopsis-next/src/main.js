@@ -35,6 +35,7 @@ import ToursPlugin from '@/plugins/tours';
 import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 import GridPlugin from '@/plugins/grid';
+import SocketPlugin from '@/plugins/socket';
 
 import { setSeveralFields } from '@/helpers/immutable';
 
@@ -63,6 +64,7 @@ import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue
 import CDraggableStepNumber from '@/components/common/drag-drop/c-draggable-step-number.vue';
 import CHelpIcon from '@/components/common/icons/c-help-icon.vue';
 import CNoEventsIcon from '@/components/common/icons/c-no-events-icon.vue';
+import CInformationBlock from '@/components/common/block/c-information-block.vue';
 
 /**
  * Fields
@@ -100,6 +102,8 @@ import CRolePickerField from '@/components/forms/fields/c-role-picker-field.vue'
 import CUserPickerField from '@/components/forms/fields/c-user-picker-field.vue';
 import CInstructionTypeField from '@/components/forms/fields/c-instruction-type-field.vue';
 import CPriorityField from '@/components/forms/fields/c-priority-field.vue';
+import CEnabledDurationField from '@/components/forms/fields/c-enabled-duration-field.vue';
+import CEnabledLimitField from '@/components/forms/fields/c-enabled-limit-field.vue';
 
 import BullhornIcon from '@/components/icons/bullhorn.vue';
 import AltRouteIcon from '@/components/icons/alt_route.vue';
@@ -269,7 +273,10 @@ Vue.component('c-role-picker-field', CRolePickerField);
 Vue.component('c-user-picker-field', CUserPickerField);
 Vue.component('c-instruction-type-field', CInstructionTypeField);
 Vue.component('c-priority-field', CPriorityField);
+Vue.component('c-enabled-duration-field', CEnabledDurationField);
+Vue.component('c-enabled-limit-field', CEnabledLimitField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
+Vue.component('c-information-block', CInformationBlock);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
@@ -322,6 +329,7 @@ Vue.use(SetSeveralPlugin);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ToursPlugin);
 Vue.use(VuetifyReplacerPlugin);
+Vue.use(SocketPlugin);
 
 Vue.config.productionTip = false;
 

@@ -5,8 +5,8 @@ import request from '@/services/request';
 export default {
   namespaced: true,
   actions: {
-    fetchItemWithoutStore() {
-      return request.get(API_ROUTES.sessionsCount);
+    fetchStatusWithoutStore() {
+      return request.get(API_ROUTES.healthcheck.engines);
     },
   },
 };

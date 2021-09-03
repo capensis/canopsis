@@ -1,16 +1,24 @@
 import { removeTrailingSlashes } from '@/helpers/url';
 
-export const { BASE_URL, VUE_APP_COOKIE_SESSION_KEY } = process.env;
-
-export const API_BASE_URL = '/backend';
+export const {
+  BASE_URL,
+  VUE_APP_API_HOST,
+  VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY,
+} = process.env;
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
 
-export const API_HOST = removeTrailingSlashes(`${APP_HOST}${API_BASE_URL}`);
+export const API_HOST = VUE_APP_API_HOST;
+
+export const SOCKET_HOST = VUE_APP_API_HOST.replace(/^http(s?)/, 'wss');
+
+export const SOCKET_ROUTE = '/api/v4/ws';
+
+export const SOCKET_URL = removeTrailingSlashes(`${SOCKET_HOST}${SOCKET_ROUTE}`);
 
 export const ROUTER_MODE = 'history';
 
-export const COOKIE_SESSION_KEY = VUE_APP_COOKIE_SESSION_KEY;
+export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY || 'accessToken';
 
 export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
 
@@ -22,7 +30,7 @@ export const DEFAULT_WEATHER_LIMIT = 120;
 
 export const DEFAULT_LOCALE = 'en';
 
-export const DEFAULT_KEEP_ALIVE_INTERVAL = 120000;
+export const DEFAULT_VIEW_STATS_INTERVAL = 120000;
 
 export const LOCALE_PRIORITIES = {
   default: 1,
@@ -32,7 +40,7 @@ export const LOCALE_PRIORITIES = {
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
 
-export const ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL = 60000;
+export const ACTIVE_LOGGED_USERS_COUNT_FETCHING_INTERVAL = 60000;
 
 export const ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL = 60000;
 
@@ -41,6 +49,8 @@ export const VUETIFY_ANIMATION_DELAY = 300;
 export const POPUP_TICK_DELAY = 100;
 
 export const SIDE_BAR_WIDTH = 250;
+
+export const TOP_BAR_HEIGHT = 48;
 
 export const EXPAND_DEFAULT_MAX_LETTERS = 50;
 
@@ -60,7 +70,10 @@ export const DEFAULT_APP_TITLE = 'Canopsis';
 export const EXPORT_VIEWS_AND_GROUPS_PREFIX = 'canopsis_groups_views-';
 
 export const API_ROUTES = {
-  auth: '/auth',
+  login: '/api/v4/login',
+  logout: '/api/v4/logout',
+  loggedUserCount: '/api/v4/logged-user-count',
+  viewStats: '/api/v4/view-stats',
   currentUser: '/api/v4/account/me',
   alarmList: '/api/v4/alarms',
   entity: '/api/v4/entities',
@@ -100,9 +113,7 @@ export const API_ROUTES = {
   },
   heartbeat: '/api/v4/heartbeats',
   associativeTable: '/api/v4/associativetable',
-  sessionStart: '/api/v2/sessionstart',
   sessionTracePath: '/api/v2/session_tracepath',
-  keepalive: '/api/v2/keepalive',
   sessionsCount: '/api/v4/sessions-count',
   broadcastMessage: {
     list: '/api/v4/broadcast-message',
@@ -122,20 +133,20 @@ export const API_ROUTES = {
   },
   engineRunInfo: '/api/v4/engine-runinfo',
   cas: {
-    login: '/cas/login',
-    loggedin: '/cas/loggedin',
+    login: '/api/v4/cas/login',
+    loggedin: '/api/v4/cas/loggedin',
   },
   saml: {
-    auth: '/saml/auth',
+    auth: '/api/v4/saml/auth',
   },
   scenarios: '/api/v4/scenarios',
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings/',
   dataStorage: '/api/v4/data-storage',
   notification: '/api/v4/notification/',
-  logout: '/logout',
   idleRules: '/api/v4/idle-rules',
   idleRulesCount: '/api/v4/idle-rules/count',
+  messageRateStats: '/api/v4/message-rate-stats',
 
   /**
    * Cat routes
@@ -160,6 +171,10 @@ export const API_ROUTES = {
     history: '/api/v4/cat/junit/test-suites-history',
     widget: '/api/v4/cat/junit/test-suites-widget',
     file: '/api/v4/cat/junit/test-cases-file',
+  },
+  healthcheck: {
+    engines: '/api/v4/cat/healthcheck',
+    parameters: '/api/v4/cat/healthcheck/parameters',
   },
 };
 
@@ -199,6 +214,13 @@ export const COLORS = {
     failed: '#ff5252',
     skipped: '#5a6D80',
   },
+  healthcheck: {
+    error: '#FF5252',
+    warning: '#FFA800',
+    unknown: '#C4C4C4',
+    edgeGray: '#979797',
+    edgeBlack: '#000000',
+  },
   statsDefault: '#dddddd',
   impactState: [
     '#2FAB63',
@@ -235,7 +257,7 @@ export const COLORS = {
   ],
 };
 
-export const FILE_BASE_URL = `${API_BASE_URL}${API_ROUTES.file}`;
+export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
 
