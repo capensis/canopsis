@@ -75,7 +75,7 @@ Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite
 
 ### Mise à jour en environnement Docker Compose
 
-Après avoir suivi les notes de version, resynchronisez l'ensemble de vos fichiers Docker Compose avec les fichiers de référence correspondant à la version voulue : <https://git.canopsis.net/canopsis/canopsis/-/tree/develop/docker-compose>.
+Après avoir suivi les notes de version, resynchronisez l'ensemble de vos fichiers Docker Compose avec les fichiers de référence correspondant à la version voulue : <https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop/community/docker-compose>.
 
 Puis, exécutez la commande suivante :
 

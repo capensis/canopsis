@@ -4,6 +4,7 @@
   v-flex(v-else, offset-xs1, md10)
     v-form(@submit.prevent="submit")
       storage-settings-form(v-model="form", :history="history")
+      v-divider.mt-3
       v-layout.mt-3(row, justify-end)
         v-btn.primary.mr-0(
           :disabled="isDisabled",
@@ -40,7 +41,7 @@ export default {
   async mounted() {
     const dataStorageSettings = await this.fetchDataStorageSettingsWithoutStore();
 
-    this.form = dataStorageSettingsToForm(dataStorageSettings.config);
+    this.form = dataStorageSettingsToForm(dataStorageSettings.config); // TODO: remove junit
     this.history = dataStorageSettings.history;
   },
   methods: {

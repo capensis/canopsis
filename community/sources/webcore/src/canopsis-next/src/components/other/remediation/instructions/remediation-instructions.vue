@@ -3,11 +3,12 @@
     remediation-instructions-list(
       :remediation-instructions="remediationInstructions",
       :pending="remediationInstructionsPending",
-      :totalItems="remediationInstructionsMeta.total_count",
+      :total-items="remediationInstructionsMeta.total_count",
       :pagination.sync="pagination",
       @remove-selected="showRemoveSelectedRemediationInstructionModal",
       @assign-patterns="showAssignPatternsModal",
       @remove="showRemoveRemediationInstructionModal",
+      @approve="showApproveRemediationInstructionModal",
       @edit="showEditRemediationInstructionModal"
     )
 </template>
@@ -19,8 +20,9 @@ import { MODALS } from '@/constants';
 
 import { remediationInstructionToForm, formToRemediationInstruction } from '@/helpers/forms/remediation-instruction';
 
-import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
+import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { authMixin } from '@/mixins/auth';
 
 import RemediationInstructionsList from './remediation-instructions-list.vue';
 
@@ -29,6 +31,7 @@ export default {
   mixins: [
     entitiesRemediationInstructionsMixin,
     localQueryMixin,
+    authMixin,
   ],
   mounted() {
     this.fetchList();
@@ -37,15 +40,20 @@ export default {
     fetchList() {
       const params = this.getQuery();
       params.with_flags = true;
+      params.with_month_executions = true;
 
-      this.fetchRemediationInstructionsList({ params });
+      return this.fetchRemediationInstructionsList({ params });
     },
 
     showEditRemediationInstructionModal(remediationInstruction) {
+      const wasRequestedByAnotherUser = !!remediationInstruction.approval
+        && !(remediationInstruction.approval.requested_by === this.currentUser._id);
+
       this.$modals.show({
         name: MODALS.createRemediationInstruction,
         config: {
           remediationInstruction,
+          disabled: wasRequestedByAnotherUser,
           title: this.$t('modals.createRemediationInstruction.edit.title'),
           action: async (instruction) => {
             await this.updateRemediationInstructionWithConfirm(remediationInstruction, instruction);
@@ -62,16 +70,31 @@ export default {
       });
     },
 
+    showApproveRemediationInstructionModal(remediationInstruction) {
+      this.$modals.show({
+        name: MODALS.remediationInstructionApproval,
+        config: {
+          remediationInstructionId: remediationInstruction._id,
+          afterSubmit: this.fetchList,
+        },
+      });
+    },
+
     showConfirmModalOnRunningRemediationInstruction(action) {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         this.$modals.show({
           name: MODALS.confirmation,
           dialogProps: { persistent: true },
           config: {
             text: this.$t('remediationInstructions.errors.runningInstruction'),
             action: async () => {
-              await action();
-              resolve();
+              try {
+                await action();
+
+                resolve();
+              } catch (err) {
+                reject(err);
+              }
             },
             cancel: resolve,
           },
@@ -81,9 +104,8 @@ export default {
 
     async updateRemediationInstructionWithConfirm(remediationInstruction, data) {
       if (remediationInstruction.running) {
-        await this.showConfirmModalOnRunningRemediationInstruction(() => {
-          this.updateRemediationInstruction({ id: remediationInstruction._id, data });
-        });
+        await this.showConfirmModalOnRunningRemediationInstruction(() =>
+          this.updateRemediationInstruction({ id: remediationInstruction._id, data }));
       } else {
         await this.updateRemediationInstruction({ id: remediationInstruction._id, data });
       }

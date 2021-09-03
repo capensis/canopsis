@@ -10,6 +10,10 @@ type pingRequest struct {
 	Path    []string `json:"path" binding:"required,notblank,max=2"`
 }
 
+type pingResponse struct {
+	ID string `json:"_id"`
+}
+
 type listRequest struct {
 	IsActive      *bool          `form:"active"`
 	Usernames     []string       `form:"usernames[]"`

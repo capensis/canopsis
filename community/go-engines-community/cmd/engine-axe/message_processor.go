@@ -2,15 +2,18 @@ package main
 
 import (
 	"context"
+	"runtime/trace"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statsng"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
-	"runtime/trace"
 )
 
 type messageProcessor struct {
@@ -23,6 +26,7 @@ type messageProcessor struct {
 	Encoder                  encoding.Encoder
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
+	PbehaviorAdapter         pbehavior.Adapter
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -66,6 +70,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, err
 	}
 
+	p.updatePbhLastAlarmDate(ctx, event)
 	p.handleStats(ctx, event, msg)
 
 	// Encode and publish the event to the next engine
@@ -79,6 +84,22 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	return bevent, nil
+}
+
+// updatePbhLastAlarmDate updates last time in pbehavior when it was applied on alarm.
+func (p *messageProcessor) updatePbhLastAlarmDate(ctx context.Context, event types.Event) {
+	if event.AlarmChange.Type != types.AlarmChangeTypeCreateAndPbhEnter &&
+		event.AlarmChange.Type != types.AlarmChangeTypePbhEnter &&
+		event.AlarmChange.Type != types.AlarmChangeTypePbhLeaveAndEnter {
+		return
+	}
+
+	go func() {
+		err := p.PbehaviorAdapter.UpdateLastAlarmDate(ctx, event.PbehaviorInfo.ID, types.CpsTime{Time: time.Now()})
+		if err != nil {
+			p.Logger.Err(err).Msg("")
+		}
+	}()
 }
 
 func (p *messageProcessor) handleStats(ctx context.Context, event types.Event, msg []byte) {

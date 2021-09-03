@@ -44,6 +44,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewstats"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -1022,4 +1023,17 @@ func GetProxy(
 		middleware.ProxyAuthorize(enforcer, accessConfig),
 		ReverseProxyHandler(),
 	)
+}
+
+func RegisterWebsocketRoutes(
+	router gin.IRouter,
+	hub websocket.Hub,
+	security Security,
+) {
+	authMiddleware := security.GetWebsocketAuthMiddleware()
+	protected := router.Group("/api/v4/ws")
+	{
+		protected.Use(authMiddleware...)
+		protected.GET("", websocket.NewApi(hub).Handler)
+	}
 }

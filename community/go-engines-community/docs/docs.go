@@ -3382,31 +3382,6 @@ var doc = `{
                     },
                     {
                         "type": "integer",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "paginate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort_by",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "to",
                         "in": "query",
                         "required": true
@@ -3416,22 +3391,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/common.PaginatedListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/messageratestats.StatsListResponse"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/messageratestats.StatsListResponse"
                         }
                     },
                     "400": {
@@ -6781,7 +6741,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/stats.Stats"
+                            "$ref": "#/definitions/viewstats.pingResponse"
                         }
                     }
                 }
@@ -6831,7 +6791,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/stats.Stats"
+                            "$ref": "#/definitions/viewstats.pingResponse"
                         }
                     },
                     "400": {
@@ -9390,21 +9350,6 @@ var doc = `{
                 "interval": {
                     "type": "string"
                 },
-                "limit": {
-                    "type": "integer"
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "paginate": {
-                    "type": "boolean"
-                },
-                "sort": {
-                    "type": "string"
-                },
-                "sort_by": {
-                    "type": "string"
-                },
                 "to": {
                     "type": "integer"
                 }
@@ -9424,18 +9369,6 @@ var doc = `{
                     "properties": {
                         "deleted_before": {
                             "type": "integer"
-                        },
-                        "page": {
-                            "type": "integer"
-                        },
-                        "page_count": {
-                            "type": "integer"
-                        },
-                        "per_page": {
-                            "type": "integer"
-                        },
-                        "total_count": {
-                            "type": "integer"
                         }
                     }
                 }
@@ -9444,10 +9377,10 @@ var doc = `{
         "messageratestats.StatsResponse": {
             "type": "object",
             "properties": {
-                "_id": {
+                "rate": {
                     "type": "integer"
                 },
-                "received": {
+                "time": {
                     "type": "integer"
                 }
             }
@@ -10369,6 +10302,9 @@ var doc = `{
                 "is_active_status": {
                     "description": "IsActiveStatus represents if pbehavior is in action for current time.",
                     "type": "boolean"
+                },
+                "last_alarm_date": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -12294,6 +12230,14 @@ var doc = `{
                 },
                 "visible": {
                     "type": "boolean"
+                }
+            }
+        },
+        "viewstats.pingResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
                 }
             }
         }

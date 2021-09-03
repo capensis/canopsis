@@ -465,14 +465,6 @@
         "type": "CRUD"
     },
     {
-        "_id": "models_exploitation_heartbeat",
-        "loader_id": "models_exploitation_heartbeat",
-        "crecord_name": "models_exploitation_heartbeat",
-        "crecord_type": "action",
-        "desc": "Exploitation: Heartbeat",
-        "type": "CRUD"
-    },
-    {
         "_id": "models_exploitation_dynamicInfo",
         "loader_id": "models_exploitation_dynamicInfo",
         "crecord_name": "models_exploitation_dynamicInfo",
@@ -494,6 +486,22 @@
         "crecord_name": "models_exploitation_scenario",
         "crecord_type": "action",
         "desc": "Exploitation: Scenarios",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_exploitation_idleRules",
+        "loader_id": "models_exploitation_idleRules",
+        "crecord_name": "models_exploitation_idleRules",
+        "crecord_type": "action",
+        "desc": "Exploitation: Idle rules",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_notification_instructionStats",
+        "loader_id": "models_notification_instructionStats",
+        "crecord_name": "models_notification_instructionStats",
+        "crecord_type": "action",
+        "desc": "Notifications: Instructions stats",
         "type": "CRUD"
     },
     {
@@ -1182,14 +1190,6 @@
         "type": "CRUD"
     },
     {
-        "_id": "api_heartbeat",
-        "loader_id": "api_heartbeat",
-        "crecord_name": "api_heartbeat",
-        "crecord_type": "action",
-        "desc": "Heartbeats",
-        "type": "CRUD"
-    },
-    {
         "_id": "api_entityservice",
         "loader_id": "api_entityservice",
         "crecord_name": "api_entityservice",
@@ -1394,5 +1394,19 @@
         "crecord_name": "api_datastorage_update",
         "crecord_type": "action",
         "desc": "Data storage settings update"
+    },
+    {
+        "_id": "api_notification",
+        "loader_id": "api_notification",
+        "crecord_name": "api_notification",
+        "crecord_type": "action",
+        "desc": "Notification settings"
+    },
+    {
+        "_id": "api_instruction_approve",
+        "loader_id": "api_instruction_approve",
+        "crecord_name": "api_instruction_approve",
+        "crecord_type": "action",
+        "desc": "Instruction approve"
     }
 ]

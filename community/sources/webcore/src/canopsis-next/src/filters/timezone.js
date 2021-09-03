@@ -1,12 +1,11 @@
-import { convertTimestampToMomentByTimezone } from '@/helpers/date/date';
+import { convertTimestampToMomentByTimezone, convertDateToString } from '@/helpers/date/date';
 
-import dateFilter from './date';
-
-export default function (date, timezone, format, ignoreTodayChecker, defaultValue = '') {
-  if (!date) {
-    return defaultValue;
-  }
-
-  return dateFilter(convertTimestampToMomentByTimezone(date, timezone), format, ignoreTodayChecker, defaultValue);
+export default function (date, timezone, format, defaultValue = '') {
+  return convertDateToString(
+    convertTimestampToMomentByTimezone(date, timezone),
+    format,
+    true,
+    defaultValue,
+  );
 }
 

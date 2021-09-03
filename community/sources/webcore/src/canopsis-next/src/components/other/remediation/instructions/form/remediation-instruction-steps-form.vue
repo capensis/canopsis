@@ -8,11 +8,13 @@
           remediation-instruction-step-field(
             v-field="steps[index]",
             :step-number="index + 1",
+            :disabled="disabled",
             @remove="removeStep(index)"
           )
     v-layout(row, align-center)
       v-btn.ml-0(
         :color="hasStepsErrors ? 'error' : 'primary'",
+        :disabled="disabled",
         outline,
         @click="addStep"
       ) {{ $t('remediationInstructions.addStep') }}
@@ -24,9 +26,9 @@ import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import { generateRemediationInstructionStep } from '@/helpers/entities';
+import { remediationInstructionStepToForm } from '@/helpers/forms/remediation-instruction';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 import RemediationInstructionStepField from './fields/remediation-instruction-step-field.vue';
 
@@ -50,6 +52,10 @@ export default {
       type: String,
       default: 'steps',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -63,6 +69,7 @@ export default {
 
     draggableOptions() {
       return {
+        disabled: this.disabled,
         animation: VUETIFY_ANIMATION_DELAY,
         handle: '.step-drag-handler',
         ghostClass: 'white',
@@ -91,7 +98,7 @@ export default {
   },
   methods: {
     addStep() {
-      this.addItemIntoArray(generateRemediationInstructionStep());
+      this.addItemIntoArray(remediationInstructionStepToForm());
     },
 
     removeStep(index) {
