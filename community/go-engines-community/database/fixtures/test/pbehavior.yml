@@ -160,6 +160,7 @@ pbehavior:
       message: asdasd
       ts: 1592215337
     created: 1592215337
+    last_alarm_date: 1592215337
     enabled: true
     exceptions:
     - test-exception-to-pbh-edit
