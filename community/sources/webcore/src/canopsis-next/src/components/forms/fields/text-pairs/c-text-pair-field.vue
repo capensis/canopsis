@@ -6,7 +6,8 @@
         v-validate="textValidationRules",
         :label="textLabel",
         :disabled="disabled",
-        :name="textFieldName"
+        :name="textFieldName",
+        :error-messages="errors.collect(textFieldName)"
       )
     v-flex.pa-1(xs6)
       v-text-field(

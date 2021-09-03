@@ -24,14 +24,7 @@
           :items="types"
         )
       v-flex.ml-2(xs6)
-        v-text-field(
-          v-field.number="form.priority",
-          v-validate="'required|numeric|min_value:0'",
-          :label="$t('modals.createPbehaviorType.fields.priority')",
-          :error-messages="errors.collect('priority')",
-          type="number",
-          name="priority"
-        )
+        c-priority-field(v-field="form.priority", required)
     v-layout(row)
       icon-field(
         v-field="form.iconName",
@@ -60,7 +53,7 @@
 <script>
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import IconField from '@/components/forms/fields/icon-field.vue';
 

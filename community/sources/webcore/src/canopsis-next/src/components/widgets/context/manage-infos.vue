@@ -31,7 +31,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 export default {
   mixins: [

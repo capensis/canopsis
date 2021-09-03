@@ -2,10 +2,10 @@ import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash'
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
+import { DATETIME_FORMATS } from '@/constants';
+
 import { durationToString } from '@/helpers/date/duration';
 import { convertDateToString } from '@/helpers/date/date';
-
-import { DATETIME_FORMATS, ENTITY_INFOS_TYPE } from '@/constants';
 
 import i18n from '@/i18n';
 
@@ -78,7 +78,7 @@ export function durationHelper(seconds) {
  * @returns {Handlebars.SafeString}
  */
 export function alarmStateHelper(state) {
-  return new Handlebars.SafeString(`<c-alarm-chip type="${ENTITY_INFOS_TYPE.state}" value="${state}"></c-alarm-chip>`);
+  return new Handlebars.SafeString(`<c-alarm-chip value="${state}"></c-alarm-chip>`);
 }
 
 /**

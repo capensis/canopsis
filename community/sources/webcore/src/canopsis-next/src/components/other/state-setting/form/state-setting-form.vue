@@ -27,7 +27,7 @@
 <script>
 import { STATE_SETTING_METHODS } from '@/constants';
 
-import formMixin from '@/mixins/form/object';
+import { formMixin } from '@/mixins/form';
 
 import StateSettingMethodField from './fields/state-setting-method-field.vue';
 import StateSettingThresholdField from './fields/state-setting-thresholds-field.vue';

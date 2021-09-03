@@ -40,10 +40,12 @@ import { setSeveralFields } from '@/helpers/immutable';
 
 import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
+import CStateCountChangesChips from '@/components/common/chips/c-state-count-changes-chips.vue';
 import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
+import CInstructionJobChip from '@/components/common/chips/c-instruction-job-chip.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
-import CThePageHeader from '@/components/common/page/c-the-page-header.vue';
+import CPageHeader from '@/components/common/page/c-page-header.vue';
 import CExpandBtn from '@/components/common/buttons/c-expand-btn.vue';
 import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
 import CDownloadBtn from '@/components/common/buttons/c-download-btn.vue';
@@ -60,6 +62,7 @@ import CAlertOverlay from '@/components/common/overlay/c-alert-overlay.vue';
 import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
 import CDraggableStepNumber from '@/components/common/drag-drop/c-draggable-step-number.vue';
 import CHelpIcon from '@/components/common/icons/c-help-icon.vue';
+import CNoEventsIcon from '@/components/common/icons/c-no-events-icon.vue';
 
 /**
  * Fields
@@ -94,6 +97,10 @@ import CColorIndicatorField from '@/components/forms/fields/c-color-indicator-fi
 import CMiniBarChart from '@/components/common/chart/c-mini-bar-chart.vue';
 import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
+import CRolePickerField from '@/components/forms/fields/c-role-picker-field.vue';
+import CUserPickerField from '@/components/forms/fields/c-user-picker-field.vue';
+import CInstructionTypeField from '@/components/forms/fields/c-instruction-type-field.vue';
+import CPriorityField from '@/components/forms/fields/c-priority-field.vue';
 
 import BullhornIcon from '@/components/icons/bullhorn.vue';
 import AltRouteIcon from '@/components/icons/alt_route.vue';
@@ -101,6 +108,7 @@ import SettingsSyncIcon from '@/components/icons/settings_sync.vue';
 import EngineeringIcon from '@/components/icons/engineering.vue';
 import InsightsIcon from '@/components/icons/insights.vue';
 import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services.vue';
+import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
 
 import * as modalsComponents from '@/components/modals';
 
@@ -134,6 +142,9 @@ Vue.use(Vuetify, {
     },
     miscellaneous_services: {
       component: MiscellaneousServicesIcon,
+    },
+    published_with_changes: {
+      component: PublishedWithChangesIcon,
     },
   },
 });
@@ -203,8 +214,9 @@ Vue.component('alarms-list-table', AlarmsListTable);
 
 /* Global custom canopsis components */
 Vue.component('c-alarm-chip', CAlarmChip);
+Vue.component('c-instruction-job-chip', CInstructionJobChip);
 Vue.component('c-test-suite-chip', CTestSuiteChip);
-Vue.component('c-the-page-header', CThePageHeader);
+Vue.component('c-page-header', CPageHeader);
 Vue.component('c-advanced-data-table', CAdvancedDataTable);
 Vue.component('c-treeview-data-table', CTreeviewDataTable);
 Vue.component('c-expand-btn', CExpandBtn);
@@ -254,6 +266,12 @@ Vue.component('c-mini-bar-chart', CMiniBarChart);
 Vue.component('c-images-viewer', CImagesViewer);
 Vue.component('c-clickable-tooltip', CClickableTooltip);
 Vue.component('c-help-icon', CHelpIcon);
+Vue.component('c-no-events-icon', CNoEventsIcon);
+Vue.component('c-role-picker-field', CRolePickerField);
+Vue.component('c-user-picker-field', CUserPickerField);
+Vue.component('c-instruction-type-field', CInstructionTypeField);
+Vue.component('c-priority-field', CPriorityField);
+Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
@@ -288,10 +306,11 @@ Vue.use(ModalsPlugin, {
     [MODALS.pbehaviorPlanning]: { fullscreen: true, lazy: true, persistent: true },
     [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
     [MODALS.createRemediationInstruction]: { maxWidth: 960 },
+    [MODALS.remediationInstructionApproval]: { maxWidth: 960 },
     [MODALS.executeRemediationInstruction]: { maxWidth: 960, persistent: true },
     [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
     [MODALS.imagesViewer]: { maxWidth: '100%', contentClass: 'v-dialog__images-viewer' },
-    [MODALS.rate]: { maxWidth: 400 },
+    [MODALS.rate]: { maxWidth: 500 },
     [MODALS.createMetaAlarmRule]: { maxWidth: 920, lazy: true },
     [MODALS.createEventFilterRuleAction]: { maxWidth: 920 },
     [MODALS.testSuite]: { maxWidth: 920 },

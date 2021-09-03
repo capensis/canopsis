@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],

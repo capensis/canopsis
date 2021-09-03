@@ -23,7 +23,7 @@
 <script>
 import { pick } from 'lodash';
 
-import { MODALS, STATS_DURATION_UNITS, STATS_QUICK_RANGES } from '@/constants';
+import { MODALS, STATS_DURATION_UNITS, QUICK_RANGES } from '@/constants';
 
 import { submittableMixin } from '@/mixins/submittable';
 import { confirmableModalMixin } from '@/mixins/confirmable-modal';
@@ -50,8 +50,8 @@ export default {
     };
 
     const defaultDateSelectorForm = {
-      tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-      tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+      tstart: QUICK_RANGES.thisMonthSoFar.start,
+      tstop: QUICK_RANGES.thisMonthSoFar.stop,
     };
 
     let periodForm;

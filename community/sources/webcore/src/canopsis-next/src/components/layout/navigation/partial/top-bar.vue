@@ -20,6 +20,7 @@
     v-toolbar-items
       top-bar-exploitation-menu
       top-bar-administration-menu
+      top-bar-notifications-menu
       top-bar-user-menu
     groups-top-bar(v-if="isShownGroupsTopBar", slot="extension")
 </template>
@@ -34,6 +35,7 @@ import ActiveSessionsCount from './active-sessions-count.vue';
 import GroupsTopBar from './groups-top-bar/groups-top-bar.vue';
 import TopBarExploitationMenu from './top-bar-exploitation-menu.vue';
 import TopBarAdministrationMenu from './top-bar-administration-menu.vue';
+import TopBarNotificationsMenu from './top-bar-notifications-menu.vue';
 import TopBarUserMenu from './top-bar-user-menu.vue';
 
 /**
@@ -49,6 +51,7 @@ export default {
     GroupsTopBar,
     TopBarExploitationMenu,
     TopBarAdministrationMenu,
+    TopBarNotificationsMenu,
     TopBarUserMenu,
   },
   mixins: [

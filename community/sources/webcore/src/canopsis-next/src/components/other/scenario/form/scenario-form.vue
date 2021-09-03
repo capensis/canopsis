@@ -30,21 +30,13 @@
         name="disable_during_periods"
       )
     v-layout(row)
-      v-text-field(
-        v-field.number="form.priority",
-        v-validate="'required'",
-        :label="$t('common.priority')",
-        :error-messages="errors.collect('priority')",
-        :min="1",
-        name="priority",
-        type="number"
-      )
+      c-priority-field(v-model="form.priority", :min="1", required)
     v-layout(column)
       scenario-actions-form(v-field="form.actions", name="actions")
 </template>
 
 <script>
-import formMixin from '@/mixins/form/object';
+import { formMixin } from '@/mixins/form';
 
 import ScenarioActionsForm from './scenario-actions-form.vue';
 

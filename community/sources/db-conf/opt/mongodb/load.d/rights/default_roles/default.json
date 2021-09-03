@@ -31,9 +31,6 @@
         "models_exploitation_snmpRule": {
             "checksum": 15
         },
-        "models_exploitation_heartbeat": {
-            "checksum": 15
-        },
         "models_exploitation_dynamicInfo": {
             "checksum": 15
         },
@@ -41,6 +38,12 @@
           "checksum": 15
         },
         "models_exploitation_scenario": {
+          "checksum": 15
+        },
+        "models_exploitation_idleRules": {
+          "checksum": 15
+        },
+        "models_notification_instructionStats": {
           "checksum": 15
         },
         "tabs_showeditionmenu" : {
@@ -542,10 +545,6 @@
           "checksum": 15,
           "crecord_type": "right"
         },
-        "api_heartbeat": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
         "api_entityservice": {
           "checksum": 15,
           "crecord_type": "right"
@@ -651,6 +650,14 @@
           "crecord_type": "right"
         },
         "api_datastorage_update": {
+          "checksum": 1,
+          "crecord_type": "right"
+        },
+        "api_notification": {
+          "checksum": 1,
+          "crecord_type": "right"
+        },
+        "api_instruction_approve": {
           "checksum": 1,
           "crecord_type": "right"
         }
