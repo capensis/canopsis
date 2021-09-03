@@ -16,10 +16,6 @@ En environnement Docker, il vous suffit par exemple de lancer Docker Compose ave
 
 Cette fonctionnalité sera aussi disponible en installation par paquets lors d'une prochaine mise à jour.
 
-## Fichier de configuration
-
-Lors de son tout premier démarrage, le moteur `engine-axe` lit le fichier de configuration `/opt/canopsis/etc/canopsis.toml` (ou `/canopsis.toml` en environnement Docker) et inscrit ces informations en base de données.
-
 ### Option `EnableLastEventDate`
 
 !!! attention

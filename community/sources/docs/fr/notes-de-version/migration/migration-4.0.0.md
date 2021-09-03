@@ -225,7 +225,7 @@ Vous devez, ici aussi, vous baser sur le nouveau fichier `canopsis.toml` install
 
 Les fichiers de référence (pour Community et Pro) sont aussi disponibles à cette adresse : <https://git.canopsis.net/canopsis/go-engines/-/tree/develop/cmd/canopsis-reconfigure>.
 
-Notez par ailleurs qu'après toute modification du fichier `canopsis.toml` vous devrez [relancer l'outil `canopsis-reconfigure`](../../guide-administration/mise-a-jour/index.md#mise-a-jour-en-installation-par-paquets) (qui remplace l'ancien programme `init`), afin que ces changements soient pris en compte.
+Notez par ailleurs que toute modification du fichier `canopsis.toml` nécessite de suivre la procédure décrite dans le [Guide de modification de `canopsis.toml`](../../guide-administration/administration-avancee/modification-canopsis-toml.md).
 
 ### Options obsolètes des moteurs
 

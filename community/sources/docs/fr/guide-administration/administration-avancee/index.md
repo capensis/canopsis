@@ -23,6 +23,7 @@ Cette section vous accompagne dans l'administration avancée des composants de C
 
 ### Configuration avancée des composants
 
+- [Modification du fichier de configuration `canopsis.toml`](modification-canopsis-toml.md)
 - [Configuration avancée de la base de données MongoDB](configuration-composants/base-de-donnees-mongodb.md)
 - [Configuration avancée du serveur de cache Redis](configuration-composants/serveur-cache-redis.md)
 - [Configuration avancée du reverse proxy HTTP Nginx](configuration-composants/reverse-proxy-nginx.md)

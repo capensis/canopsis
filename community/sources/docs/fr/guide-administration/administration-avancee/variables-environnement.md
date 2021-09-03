@@ -30,11 +30,13 @@ Votre installation de Canopsis doit obligatoirement comporter les adresses et do
 
 Les différents moteurs et binaires Go ont besoin d'un fichier de configuration `canopsis.toml`. La variable `CPS_DEFAULT_CFG` permet de leur indiquer le chemin où se trouve ce fichier.
 
-En installation Docker, elle doit presque toujours valoir `/canopsis.toml`. En installation par paquets, elle doit valoir `/opt/canopsis/etc/canopsis.toml` (`canoctl deploy` se charge de renseigner cette valeur dans l'unité systemd `canopsis-engine-go@.service`).
-
 | Variable d'environnement | Valeur par défaut | Utilité |
 |:-------------------------|-------------------|---------|
 | `CPS_DEFAULT_CFG` | `canopsis.toml` (dans le répertoire courant) | Chemin d'accès vers le fichier de configuration `canopsis.toml` |
+
+En installation Docker, elle est surchargée en `/canopsis.toml`. En installation par paquets, elle vaut `/opt/canopsis/etc/canopsis.toml` (`canoctl deploy` se charge de renseigner cette valeur dans l'unité systemd `canopsis-engine-go@.service`).
+
+Il est recommandé de ne pas modifier cette valeur.
 
 ### Tentatives de connexion aux services externes
 

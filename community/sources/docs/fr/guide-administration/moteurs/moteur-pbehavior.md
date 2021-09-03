@@ -78,6 +78,9 @@ Le fichier de configuration `/opt/canopsis/etc/canopsis.toml` vous permet de mod
 Timezone = "Europe/Paris"
 ```
 
+!!! note
+    Toute modification d'une de ces valeurs implique de suivre de le [Guide de modification du fichier `canopsis.toml`](../administration-avancee/modification-canopsis-toml.md).
+
 ## Administration de la planification
 
 ### Configuration des types de comportements périodiques
