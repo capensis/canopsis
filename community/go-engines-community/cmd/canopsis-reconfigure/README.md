@@ -8,11 +8,11 @@ initialize the Mongo database.
     - [Environment vars](#environment-vars)
 - [Configuration](#configuration)
 - [Migrations](#migrations)
-  - [Fixtures](#fixtures)
-    - [Creating fixtures](#creating-fixtures)
-      - [Functions](#functions)
-      - [References](#references)
-      - [Templates](#templates)
+- [Fixtures](#fixtures)
+  - [Creating fixtures](#creating-fixtures)
+    - [Functions](#functions)
+    - [References](#references)
+    - [Templates](#templates)
 
 ## Run
 
