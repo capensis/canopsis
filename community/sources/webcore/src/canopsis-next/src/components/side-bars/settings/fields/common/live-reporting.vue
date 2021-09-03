@@ -11,7 +11,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 import SettingsButtonField from '../partials/button-field.vue';
 

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 import ChooseEntitiesList from '@/components/widgets/context/choose-entities-list.vue';
 import ChooseExpansionPanel from '@/components/common/choose-expansion-panel/choose-expansion-panel.vue';

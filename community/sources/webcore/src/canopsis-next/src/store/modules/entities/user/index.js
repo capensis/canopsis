@@ -42,5 +42,16 @@ export default createEntityModule({
         params: state.fetchingParams,
       });
     },
+
+    /**
+     * Fetch users list without store
+     *
+     * @param {VuexActionContext} context
+     * @param {Object} [params]
+     * @returns {*}
+     */
+    fetchListWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.users, params);
+    },
   },
 });

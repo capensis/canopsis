@@ -24,28 +24,52 @@
         @change="changeSelectedAll"
       )
     v-layout(row)
+      v-flex(md3, xs6)
+        v-checkbox(
+          :input-value="form.auto",
+          :label="$t(`remediationInstructions.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.auto}`)",
+          :disabled="form.all || hasAnyAnotherOppositeFilterWithAuto",
+          color="primary",
+          @change="changeType('auto', $event)"
+        )
+      v-checkbox(
+        :input-value="form.manual",
+        :label="$t(`remediationInstructions.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.manual}`)",
+        :disabled="form.all || hasAnyAnotherOppositeFilterWithManual",
+        color="primary",
+        @change="changeType('manual', $event)"
+      )
+    v-layout(row)
       v-select(
         v-validate="selectValidationRules",
         :value="form.instructions",
         :items="preparedRemediationInstructions",
         :loading="remediationInstructionsPending",
-        :disabled="form.all",
+        :disabled="isAll",
         :label="$t('remediationInstructionsFilters.fields.selectedInstructions')",
         :error-messages="errors.collect('instructions')",
         item-text="name",
-        item-value="name",
+        item-value="_id",
         name="instructions",
         multiple,
         clearable,
-        @change="updateField('instructions', $event)"
+        return-object,
+        @change="changeInstructions"
       )
+        v-tooltip(slot="append-outer", left)
+          v-icon(slot="activator") help
+          div {{ $t('remediationInstructionsFilters.fields.selectedInstructionsHelp') }}
 </template>
 
 <script>
+import { find, pick } from 'lodash';
+
 import { MAX_LIMIT } from '@/constants';
 
-import formMixin from '@/mixins/form';
-import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
+import { isRemediationInstructionIntersectsWithFilterByType } from '@/helpers/forms/remediation-instruction-filter';
+
+import { formMixin } from '@/mixins/form';
+import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
 
 export default {
   inject: ['$validator'],
@@ -65,32 +89,52 @@ export default {
     },
   },
   computed: {
+    isAll() {
+      return this.form.all || (this.form.auto && this.form.manual);
+    },
+
     selectValidationRules() {
-      return this.form.all ? {} : { required: true };
+      return (this.form.all || this.form.manual || this.form.auto) ? {} : { required: true };
     },
 
     hasAnyAnotherOppositeFilter() {
       return this.filters.some(filter => this.form.with !== filter.with);
     },
 
+    hasAnyAnotherOppositeFilterWithAuto() {
+      return this.filters.some(filter =>
+        this.form.with !== filter.with && (filter.auto || filter.all));
+    },
+
+    hasAnyAnotherOppositeFilterWithManual() {
+      return this.filters.some(filter =>
+        this.form.with !== filter.with && (filter.manual || filter.all));
+    },
+
     preparedRemediationInstructions() {
-      return this.remediationInstructions.map((instruction) => {
-        const filtersSomeComparator = filter => this.form.with !== filter.with
-          && (filter.all || filter.instructions.includes(instruction.name));
-
-        const instructionAlreadyInForm = this.form.instructions.includes(instruction.name);
-        const disabled = !instructionAlreadyInForm && this.filters.some(filtersSomeComparator);
-
-        if (disabled) {
-          return { ...instruction, disabled };
+      return this.remediationInstructions.reduce((acc, instruction) => {
+        if (isRemediationInstructionIntersectsWithFilterByType(this.form, instruction)) {
+          return acc;
         }
 
-        return instruction;
-      });
+        const filtersSomeComparator = filter =>
+          this.form.with !== filter.with
+          && (
+            (filter.all || find(filter.instructions, { _id: instruction._id }))
+            || isRemediationInstructionIntersectsWithFilterByType(filter, instruction)
+          );
+
+        const instructionAlreadyInForm = find(this.form.instructions, { _id: instruction._id });
+        const disabled = !instructionAlreadyInForm && this.filters.some(filtersSomeComparator);
+
+        acc.push(disabled ? { ...instruction, disabled } : instruction);
+
+        return acc;
+      }, []);
     },
   },
   mounted() {
-    this.fetchRemediationInstructionsList({ limit: MAX_LIMIT });
+    this.fetchRemediationInstructionsList({ params: { limit: MAX_LIMIT } });
   },
   methods: {
     changeSelectedAll(all) {
@@ -98,9 +142,29 @@ export default {
 
       if (all) {
         newForm.instructions = [];
+        newForm.manual = true;
+        newForm.auto = true;
       }
 
       this.updateModel(newForm);
+    },
+
+    changeType(key, value) {
+      const newForm = {
+        ...this.form,
+
+        [key]: value,
+      };
+
+      newForm.instructions =
+        newForm.instructions
+          .filter(instruction => !isRemediationInstructionIntersectsWithFilterByType(newForm, instruction));
+
+      this.updateModel(newForm);
+    },
+
+    changeInstructions(instructions) {
+      this.updateField('instructions', instructions.map(instruction => pick(instruction, ['_id', 'name', 'type'])));
     },
   },
 };

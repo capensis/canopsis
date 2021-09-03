@@ -41,7 +41,7 @@ import moment from 'moment';
 import { DATETIME_FORMATS } from '@/constants';
 import { isEndOfDay, isStartOfDay } from '@/helpers/date/date';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';

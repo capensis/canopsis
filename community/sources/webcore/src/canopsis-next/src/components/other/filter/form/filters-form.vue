@@ -32,7 +32,7 @@
 <script>
 import Draggable from 'vuedraggable';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';

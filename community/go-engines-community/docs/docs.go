@@ -10303,6 +10303,9 @@ var doc = `{
                     "description": "IsActiveStatus represents if pbehavior is in action for current time.",
                     "type": "boolean"
                 },
+                "last_alarm_date": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },

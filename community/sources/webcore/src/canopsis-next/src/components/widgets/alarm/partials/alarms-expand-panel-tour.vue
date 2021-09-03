@@ -7,7 +7,7 @@ import { TOURS } from '@/constants';
 
 import { getStepTarget } from '@/helpers/tour';
 
-import tourInnerMixin from '@/mixins/tour/inner';
+import { tourInnerMixin } from '@/mixins/tour/inner';
 
 export default {
   mixins: [tourInnerMixin],

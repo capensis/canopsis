@@ -72,7 +72,7 @@ $mobileBreakpoint: 450px;
   cursor: pointer;
 }
 
-.weather__item {
+.weather-item {
   min-height: unset !important;
 
   &.v-card__with-see-alarms-btn {
@@ -94,18 +94,7 @@ $mobileBreakpoint: 450px;
     }
   }
 
-  .pauseIcon {
-    position: absolute;
-    right: 0;
-    bottom: 1em;
-    cursor: inherit;
-
-    &:hover, &:focus {
-      position: absolute;
-    }
-  }
-
-  .service-name {
+  &__service-name {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -127,7 +116,7 @@ $mobileBreakpoint: 450px;
     }
   }
 
-  &--background {
+  &__background {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -178,6 +167,10 @@ $mobileBreakpoint: 450px;
   white-space: pre-line !important;
 }
 
+.c-nowrap {
+  white-space: nowrap;
+}
+
 .progress-linear-absolute--top {
   position: absolute !important;
   width: 100% !important;
@@ -204,5 +197,25 @@ $mobileBreakpoint: 450px;
   &__message {
     max-width: 600px;
     white-space: pre-line;
+  }
+}
+
+.c-state-count-changes-chip {
+  font-size: 12px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 20px;
+  border-radius: 10px;
+}
+
+.c-table-header {
+  &__text {
+    &--multiline {
+      white-space: pre-line !important;
+      display: inline-block;
+      vertical-align: middle;
+    }
   }
 }
