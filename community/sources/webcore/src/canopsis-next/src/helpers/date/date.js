@@ -9,16 +9,14 @@ import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
  * @returns {moment.Moment}
  */
 export const convertTimestampToMoment = (timestamp) => {
-  let dateObject;
-
-  // If it's unix timestamp in seconds
+  /**
+   * NOTE: If it's unix timestamp in seconds
+   */
   if (typeof timestamp === 'number' && timestamp < 100000000000) {
-    dateObject = moment.unix(timestamp);
-  } else {
-    dateObject = moment(timestamp);
+    return moment.unix(timestamp);
   }
 
-  return dateObject;
+  return moment(timestamp);
 };
 
 /**
