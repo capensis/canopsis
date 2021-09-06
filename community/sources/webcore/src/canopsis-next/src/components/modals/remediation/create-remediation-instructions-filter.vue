@@ -23,9 +23,9 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-
 import { MODALS } from '@/constants';
+
+import { remediationInstructionFilterToForm } from '@/helpers/forms/remediation-instruction-filter';
 
 import { submittableMixin } from '@/mixins/submittable';
 import { confirmableModalMixin } from '@/mixins/confirmable-modal';
@@ -46,16 +46,8 @@ export default {
     confirmableModalMixin(),
   ],
   data() {
-    const defaultForm = {
-      with: true,
-      all: false,
-      instructions: [],
-    };
-
-    const { filter } = this.modal.config;
-
     return {
-      form: filter ? cloneDeep(filter) : defaultForm,
+      form: remediationInstructionFilterToForm(this.modal.config.filter),
     };
   },
   methods: {

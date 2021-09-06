@@ -26,8 +26,7 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-import formArrayMixin from '@/mixins/form/array';
+import { formMixin, formArrayMixin } from '@/mixins/form';
 
 import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/form/pbehavior-exceptions-field.vue';
 

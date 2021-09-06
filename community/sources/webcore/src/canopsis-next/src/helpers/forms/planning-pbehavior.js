@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import moment from 'moment-timezone';
-import { omit, isObject, isString, cloneDeep, isUndefined } from 'lodash';
+import { omit, isObject, isString, cloneDeep } from 'lodash';
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
@@ -9,6 +9,8 @@ import {
   convertTimestampToMomentByTimezone,
 } from '@/helpers/date/date';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/entities';
+
+import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {Object} PbehaviorType
@@ -178,7 +180,7 @@ export const pbehaviorToForm = (
   return {
     rrule,
     _id: pbehavior._id || uid('pbehavior'),
-    enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
+    enabled: enabledToForm(pbehavior.enabled),
     name: pbehavior.name || '',
     type: cloneDeep(pbehavior.type),
     reason: cloneDeep(pbehavior.reason),
@@ -210,7 +212,7 @@ export const pbehaviorToDuplicateForm = pbehavior => ({
 export const formToPbehavior = (form, timezone = moment.tz.guess()) => ({
   ...form,
 
-  enabled: isUndefined(form.enabled) ? true : form.enabled,
+  enabled: enabledToForm(form.enabled),
   reason: form.reason,
   type: form.type,
   comments: removeKeyFromEntities(form.comments),

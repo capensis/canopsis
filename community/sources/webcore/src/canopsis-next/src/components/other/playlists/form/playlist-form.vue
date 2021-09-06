@@ -31,7 +31,7 @@ import DraggablePlaylistTabs from '@/components/other/playlists/form/partials/dr
 
 import { MODALS } from '@/constants';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import TabPanelContent from './partials/tab-panel-content.vue';
 

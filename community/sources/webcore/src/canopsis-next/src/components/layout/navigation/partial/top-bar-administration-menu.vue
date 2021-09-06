@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-menu(v-show="administrationGroupedLinks.length", bottom, offset-y, offset-x)
+  v-menu(v-show="administrationGroupedLinks.length", bottom, offset-y)
     v-btn.white--text(slot="activator", flat) {{ $t('common.administration') }}
     v-list.py-0
       template(v-for="(group, index) in administrationGroupedLinks")
@@ -16,18 +16,15 @@
 </template>
 
 <script>
-import { sortBy } from 'lodash';
-
 import { USERS_PERMISSIONS } from '@/constants';
 
-import { authMixin } from '@/mixins/auth';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { layoutNavigationTopBarMenuMixin } from '@/mixins/layout/navigation/top-bar-menu';
 
 import TopBarMenuLink from './top-bar-menu-link.vue';
 
 export default {
   components: { TopBarMenuLink },
-  mixins: [authMixin, entitiesInfoMixin],
+  mixins: [layoutNavigationTopBarMenuMixin],
   computed: {
     administrationGroupedLinks() {
       const groupedLinks = [
@@ -46,10 +43,10 @@ export default {
       ];
 
       return groupedLinks.reduce((acc, group) => {
-        const links = group.links.filter(this.linksFilterHandler);
+        const links = this.prepareLinks(group.links);
 
         if (links.length) {
-          acc.push({ links: sortBy(links, 'title'), title: group.title });
+          acc.push({ links, title: group.title });
         }
 
         return acc;
@@ -60,19 +57,16 @@ export default {
       return [
         {
           route: { name: 'admin-rights' },
-          title: this.$t('common.rights'),
           icon: 'verified_user',
           permission: USERS_PERMISSIONS.technical.action,
         },
         {
           route: { name: 'admin-roles' },
-          title: this.$t('common.roles'),
           icon: 'supervised_user_circle',
           permission: USERS_PERMISSIONS.technical.role,
         },
         {
           route: { name: 'admin-users' },
-          title: this.$t('common.users'),
           icon: 'people',
           permission: USERS_PERMISSIONS.technical.user,
         },
@@ -83,13 +77,11 @@ export default {
       return [
         {
           route: { name: 'admin-broadcast-messages' },
-          title: this.$t('common.broadcastMessages'),
           icon: '$vuetify.icons.bullhorn',
           permission: USERS_PERMISSIONS.technical.broadcastMessage,
         },
         {
           route: { name: 'admin-playlists' },
-          title: this.$t('common.playlists'),
           icon: 'playlist_play',
           permission: USERS_PERMISSIONS.technical.playlist,
         },
@@ -100,25 +92,21 @@ export default {
       return [
         {
           route: { name: 'admin-engines' },
-          title: this.$t('common.engines'),
           icon: '$vuetify.icons.alt_route',
           permission: USERS_PERMISSIONS.technical.engine,
         },
         {
           route: { name: 'admin-parameters' },
-          title: this.$t('common.parameters'),
           icon: 'settings',
           permission: USERS_PERMISSIONS.technical.parameters,
         },
         {
           route: { name: 'admin-planning-administration' },
-          title: this.$t('common.planning'),
           icon: 'event_note',
           permission: USERS_PERMISSIONS.technical.planning,
         },
         {
           route: { name: 'admin-remediation-administration' },
-          title: this.$t('common.remediation'),
           icon: 'assignment',
           permission: USERS_PERMISSIONS.technical.remediation,
         },
@@ -129,13 +117,6 @@ export default {
       return [
         USERS_PERMISSIONS.technical.engine,
       ];
-    },
-  },
-  methods: {
-    linksFilterHandler({ permission } = {}) {
-      return this.permissionsWithDefaultType.includes(permission)
-        ? this.checkAccess(permission)
-        : this.checkAppInfoAccessByRight(permission) && this.checkReadAccess(permission);
     },
   },
 };

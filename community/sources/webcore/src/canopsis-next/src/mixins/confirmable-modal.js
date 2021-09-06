@@ -52,7 +52,7 @@ export const confirmableModalMixin = ({
               persistent: true,
             },
             config: {
-              action: async (confirmed) => {
+              action: (confirmed) => {
                 if (confirmed) {
                   return this[method]();
                 }

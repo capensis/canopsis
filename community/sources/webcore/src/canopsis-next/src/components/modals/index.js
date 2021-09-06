@@ -44,7 +44,6 @@ export { default as CreateEventFilterRuleAction } from './event-filter/create-ev
 export { default as FiltersList } from './common/filters-list.vue';
 export { default as CreateSnmpRule } from './snmp-rule/create-snmp-rule.vue';
 export { default as SelectViewTab } from './view/select-view-tab.vue';
-export { default as CreateHeartbeat } from './heartbeat/create-heartbeat.vue';
 export { default as CreateDynamicInfo } from './dynamic-info/create-dynamic-info.vue';
 export { default as CreateDynamicInfoInformation } from './dynamic-info/create-dynamic-info-information.vue';
 export { default as DynamicInfoTemplatesList } from './dynamic-info/dynamic-info-templates-list.vue';
@@ -66,6 +65,7 @@ export { default as CreateRemediationConfiguration } from './remediation/create-
 export { default as CreateRemediationJob } from './remediation/create-remediation-job.vue';
 export { default as ExecuteRemediationInstruction } from './remediation/execute-remediation-instruction.vue';
 export { default as RemediationPatterns } from './remediation/remediation-patterns.vue';
+export { default as RemediationInstructionApproval } from './remediation/remediation-instruction-approval.vue';
 export { default as ImageViewer } from './common/image-viewer.vue';
 export { default as ImagesViewer } from './common/images-viewer.vue';
 export { default as Patterns } from './pattern/patterns.vue';
@@ -74,3 +74,4 @@ export { default as CreateRemediationInstructionsFilter } from './remediation/cr
 export { default as CreateScenario } from './scenario/create-scenario.vue';
 export { default as TestSuite } from './test-suite/test-suite.vue';
 export { default as StateSetting } from './state-setting/state-setting.vue';
+export { default as CreateIdleRule } from './idle-rule/create-idle-rule.vue';

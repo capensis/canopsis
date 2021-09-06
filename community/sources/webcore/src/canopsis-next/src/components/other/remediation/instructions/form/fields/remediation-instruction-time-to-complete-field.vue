@@ -6,7 +6,8 @@
         v-validate="'required|min_value:1'",
         :label="$t('remediationInstructions.timeToComplete')",
         :error-messages="errors.collect(durationFieldName)",
-        :min="0",
+        :disabled="disabled",
+        :min="min",
         :name="durationFieldName",
         type="number",
         box
@@ -17,6 +18,7 @@
         v-validate="'required'",
         :items="availableUnits",
         :name="unitFieldName",
+        :disabled="disabled",
         hide-details
       )
 </template>
@@ -40,6 +42,14 @@ export default {
     name: {
       type: String,
       default: '',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    min: {
+      type: Number,
+      default: 0,
     },
   },
   computed: {

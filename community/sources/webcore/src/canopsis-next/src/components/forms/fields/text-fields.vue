@@ -42,7 +42,7 @@
 <script>
 import { defaultPrimitiveArrayItemCreator } from '@/helpers/forms/shared/common';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],

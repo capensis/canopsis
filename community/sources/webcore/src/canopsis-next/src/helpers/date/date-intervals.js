@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 
-import { STATS_DURATION_UNITS, DATETIME_FORMATS, STATS_QUICK_RANGES } from '@/constants';
+import { STATS_DURATION_UNITS, DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES } from '@/constants';
 
 /**
  * Convert a date interval string to moment date object
@@ -20,7 +20,7 @@ export function parseStringToDateInterval(dateString, type) {
     let roundUnit = matches[6];
     let deltaUnit = matches[4];
 
-    const roundMethod = type === 'start' ? 'startOf' : 'endOf';
+    const roundMethod = type === DATETIME_INTERVAL_TYPES.start ? 'startOf' : 'endOf';
     const deltaMethod = operator === '+' ? 'add' : 'subtract';
 
     if (roundUnit) {
@@ -128,7 +128,7 @@ export function prepareStatsStopForMonthPeriod(stop) {
  * @param {Object} defaultValue
  * @returns {Object}
  */
-export function findRange(start, stop, ranges = STATS_QUICK_RANGES, defaultValue = STATS_QUICK_RANGES.custom) {
+export function findRange(start, stop, ranges = QUICK_RANGES, defaultValue = QUICK_RANGES.custom) {
   return Object.values(ranges)
     .find(range => start === range.start && stop === range.stop) || defaultValue;
 }

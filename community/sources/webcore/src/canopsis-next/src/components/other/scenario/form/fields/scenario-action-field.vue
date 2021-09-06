@@ -25,17 +25,17 @@
             )
           v-tabs(v-model="activeTab", centered, slider-color="primary", color="transparent", fixed-tabs)
             v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
-            v-tab(:class="{ 'error--text': hasPatternsError }") {{ $t('scenario.tabs.pattern') }}
+            v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern') }}
           v-divider
           v-tabs-items.pt-2(v-model="activeTab")
             v-tab-item
-              scenario-action-general-field(
+              action-parameters-form.mt-4(
                 ref="general",
                 v-field="action",
                 :name="`${name}.parameters`"
               )
             v-tab-item
-              scenario-action-patterns-field(
+              scenario-action-patterns-form(
                 ref="patterns",
                 v-model="action.patterns",
                 :name="name"
@@ -43,18 +43,18 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form/object';
+import { formMixin, validationChildrenMixin } from '@/mixins/form';
 import confirmableFormMixin from '@/mixins/confirmable-form';
-import validationChildrenMixin from '@/mixins/form/validation-children';
 
-import ScenarioActionGeneralField from './scenario-action-general-field.vue';
-import ScenarioActionPatternsField from './scenario-action-patterns-field.vue';
+import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
+
+import ScenarioActionPatternsForm from './scenario-action-patterns-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    ScenarioActionPatternsField,
-    ScenarioActionGeneralField,
+    ActionParametersForm,
+    ScenarioActionPatternsForm,
   },
   mixins: [
     formMixin,
