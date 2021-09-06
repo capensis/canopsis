@@ -19,7 +19,6 @@ import { dateParse } from '@/helpers/date/date-intervals';
 import {
   convertDateToEndOfDayMoment,
   convertDateToStartOfDayMoment,
-  convertDateToTimestampByTimezone,
 } from '@/helpers/date/date';
 
 import { authMixin } from '@/mixins/auth';
@@ -30,7 +29,6 @@ import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediat
 import RemediationInstructionStatsList from '@/components/other/remediation/instruction-stats/remediation-instruction-stats-list.vue';
 
 export default {
-  inject: ['$system'],
   components: {
     RemediationInstructionStatsList,
   },
@@ -72,20 +70,16 @@ export default {
       const params = this.getQuery();
       params.with_flags = true;
 
-      const from = convertDateToStartOfDayMoment(dateParse(
+      params.from = convertDateToStartOfDayMoment(dateParse(
         this.pagination.interval.from,
         DATETIME_INTERVAL_TYPES.start,
         DATETIME_FORMATS.datePicker,
       ));
-
-      const to = convertDateToEndOfDayMoment(dateParse(
+      params.to = convertDateToEndOfDayMoment(dateParse(
         this.pagination.interval.to,
         DATETIME_INTERVAL_TYPES.stop,
         DATETIME_FORMATS.datePicker,
       ));
-
-      params.from = convertDateToTimestampByTimezone(from, this.$system.timezone);
-      params.to = convertDateToTimestampByTimezone(to, this.$system.timezone);
 
       this.fetchRemediationInstructionStatsList({ params });
     },
