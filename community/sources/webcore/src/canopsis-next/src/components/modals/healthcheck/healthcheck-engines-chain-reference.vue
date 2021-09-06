@@ -5,7 +5,10 @@
     template(slot="text")
       div.pre-wrap {{ $t('healthcheck.chainConfigurationInvalid') }}
       div.healthcheck-engine-chain-reference
-        healthcheck-network-graph(:engines="engines")
+        healthcheck-network-graph(
+          :engines-graph="enginesGraph",
+          :engines-parameters="enginesParameters"
+        )
     template(slot="actions")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.ok') }}
 </template>
@@ -32,24 +35,22 @@ export default {
   components: { HealthcheckNetworkGraph, ModalWrapper },
   mixins: [healthcheckNodesMixin, entitiesInfoMixin],
   computed: {
-    nodes() {
-      return Object.values(HEALTHCHECK_ENGINES_NAMES)
-        .reduce((acc, name) => {
-          if (this.isCatVersion || !CAT_ENGINES.includes(name)) {
-            acc.push({ name, is_running: true });
-          }
-
-          return acc;
-        }, []);
-    },
-
-    engines() {
+    enginesGraph() {
       return {
-        nodes: this.nodes,
+        nodes: Object.values(HEALTHCHECK_ENGINES_NAMES)
+          .filter(name => this.isCatVersion || !CAT_ENGINES.includes(name)),
         edges: this.isCatVersion
           ? HEALTHCHECK_ENGINES_CAT_REFERENCE_EDGES
           : HEALTHCHECK_ENGINES_REFERENCE_EDGES,
       };
+    },
+
+    enginesParameters() {
+      return this.enginesGraph.nodes.reduce((acc, name) => {
+        acc[name] = { name, is_running: true };
+
+        return acc;
+      }, {});
     },
 
     title() {

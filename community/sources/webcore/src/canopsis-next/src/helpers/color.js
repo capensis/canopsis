@@ -47,7 +47,7 @@ export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYP
  * @param {HealthcheckNode} node
  * @returns {string}
  */
-export const getHealthcheckNodeColor = (node) => {
+export const getHealthcheckNodeColor = (node = {}) => {
   if (node.is_unknown) {
     return COLORS.healthcheck.unknown;
   }

@@ -25,7 +25,6 @@
         healthcheck-graphs(:max-queue-length="maxQueueLength")
       v-tab-item(lazy)
         healthcheck-parameters
-    c-fab-btn(@refresh="fetchList")
 </template>
 
 <script>
@@ -68,7 +67,7 @@ export default {
   },
   beforeDestroy() {
     this.$socket.getRoom('healthcheck').removeListener(this.setData);
-    this.$socket.join('healthcheck');
+    this.$socket.leave('healthcheck');
   },
   methods: {
     ...mapActions({
@@ -77,10 +76,13 @@ export default {
 
     setData(data) {
       const {
-        services,
-        engines: { graph: enginesGraph, parameters: enginesParameters },
-        has_invalid_engines_order: hasInvalidEnginesOrder,
-        max_queue_length: maxQueueLength,
+        services = [],
+        engines: {
+          graph: enginesGraph = {},
+          parameters: enginesParameters = {},
+        },
+        has_invalid_engines_order: hasInvalidEnginesOrder = false,
+        max_queue_length: maxQueueLength = 0,
       } = data;
 
       const preparedData = {
