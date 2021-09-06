@@ -26,7 +26,7 @@
 import { MODALS } from '@/constants';
 
 import entitiesServiceMixin from '@/mixins/entities/service';
-import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 
 /**
  * Buttons to open the modal to add entities

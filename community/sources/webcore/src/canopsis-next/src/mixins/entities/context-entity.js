@@ -7,7 +7,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('entity');
 /**
  * @mixin Helpers' for context store
  */
-export default {
+export const entitiesContextEntityMixin = {
   computed: {
     ...mapGetters({
       getContextEntitiesListByWidgetId: 'getListByWidgetId',
@@ -44,6 +44,7 @@ export default {
       createContextExport: 'createContextExport',
       fetchContextExport: 'fetchContextExport',
       fetchContextCsvFile: 'fetchContextCsvFile',
+      cleanEntitiesData: 'cleanEntitiesData',
     }),
 
     async updateContextEntityWithPopup({ data, id }) {

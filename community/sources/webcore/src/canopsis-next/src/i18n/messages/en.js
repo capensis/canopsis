@@ -21,6 +21,7 @@ import {
   IDLE_RULE_TYPES,
   IDLE_RULE_ALARM_CONDITIONS,
   USERS_PERMISSIONS,
+  ALARMS_OPENED_VALUES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -458,6 +459,11 @@ export default {
       [SIDE_BARS.textSettings]: 'Text settings',
       [SIDE_BARS.counterSettings]: 'Counter settings',
       [SIDE_BARS.testingWeatherSettings]: 'Testing weather',
+    },
+    openedTypes: {
+      [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
+      [ALARMS_OPENED_VALUES.resolved]: 'All resolved alarms',
+      [ALARMS_OPENED_VALUES.all]: 'Opened and recent resolved alarms',
     },
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
@@ -2277,6 +2283,12 @@ export default {
   },
 
   storageSetting: {
+    alarm: {
+      title: 'Alarm data storage',
+      titleHelp: 'When switched on, the resolved alarms data will be archived and/or deleted after the defined time period.',
+      archiveAfter: 'Archive resolved alarms data after',
+      deleteAfter: 'Delete resolved alarms data after',
+    },
     junit: {
       title: 'JUnit data storage',
       deleteAfter: 'Delete test suites data after',
@@ -2288,9 +2300,35 @@ export default {
       deleteAfter: 'Delete instructions data after',
       deleteAfterHelpText: 'When switched on, the instructions statistical data will be deleted after the defined time period.',
     },
+    entity: {
+      title: 'Entities data storage',
+      titleHelp: 'All disabled entities with associated alarms can be archived (moved to the separate collection) and/or deleted forever.',
+      archiveEntity: 'Archive disabled entities',
+      deleteEntity: 'Delete disabled entities forever from archive',
+      archiveDependencies: 'Remove the impacting and dependent entities as well',
+      archiveDependenciesHelp: 'For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well.',
+      cleanStorage: 'Clean storage',
+      confirmation: {
+        title: 'Delete disabled entities?',
+        archive: 'Are you sure you want to archive all disabled entities? This action cannot be canceled.',
+        delete: 'Are you sure you want to delete all disabled entities from the archive forever? This action cannot be canceled.',
+      },
+    },
+    pbehavior: {
+      title: 'PBehavior data storage',
+      deleteAfter: 'Delete PBehavior data after',
+      deleteAfterHelpText: 'When switched on, inactive PBehaviors will be deleted after the defined time period from the last event.',
+    },
     history: {
-      junit: 'Script launched at {launchedAt}',
-      remediation: 'Script launched at {launchedAt}',
+      scriptLaunched: 'Script launched at {launchedAt}.',
+      alarm: {
+        deletedCount: 'Alarms deleted: {count}.',
+        archivedCount: 'Alarms archived: {count}.',
+      },
+      entity: {
+        deletedCount: 'Entities deleted: {count}.',
+        archivedCount: 'Entities archived: {count}.',
+      },
     },
   },
 

@@ -9,7 +9,7 @@
         @update:filters="updateField('filters', $event)"
       )
       v-divider
-      field-opened-resolved-filter(v-field="value.alarmsStateFilter")
+      field-opened-resolved-filter(v-field="value.opened")
       v-divider
       field-switcher(
         v-field="value.considerPbehaviors",

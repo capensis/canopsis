@@ -1,7 +1,7 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
-import { WIDGET_TYPES, QUICK_RANGES, ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP } from '@/constants';
+import { WIDGET_TYPES, QUICK_RANGES, ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP, ALARMS_OPENED_VALUES } from '@/constants';
 
 import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from './filter';
 import {
@@ -30,23 +30,17 @@ export function convertSortToQuery({ parameters }) {
 }
 
 /**
- *  This function converts widget.parameters.alarmsStateFilter to query Object
+ *  This function converts widget.parameters.opened to query Object
  *
  * @param {Object} parameters
- * @returns {{}}
+ * @returns {{ opened: boolean }}
  */
 export function convertAlarmStateFilterToQuery({ parameters }) {
-  const { alarmsStateFilter } = parameters;
+  const { opened = ALARMS_OPENED_VALUES.opened } = parameters;
   const query = {};
 
-  if (alarmsStateFilter) {
-    if (!isUndefined(alarmsStateFilter.opened)) {
-      query.opened = alarmsStateFilter.opened;
-    }
-
-    if (!isUndefined(alarmsStateFilter.resolved)) {
-      query.resolved = alarmsStateFilter.resolved;
-    }
+  if (!isUndefined(opened)) {
+    query.opened = opened;
   }
 
   return query;
@@ -60,16 +54,15 @@ export function convertAlarmStateFilterToQuery({ parameters }) {
  */
 export function convertAlarmWidgetToQuery(widget) {
   const {
-    alarmsStateFilter = {},
     liveReporting = {},
     widgetColumns,
     itemsPerPage,
+    opened = ALARMS_OPENED_VALUES.opened,
   } = widget.parameters;
 
   const query = {
+    opened,
     page: 1,
-    opened: alarmsStateFilter.opened || false,
-    resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,
     with_instructions: true,
   };
@@ -77,7 +70,7 @@ export function convertAlarmWidgetToQuery(widget) {
   if (!isEmpty(liveReporting)) {
     query.tstart = liveReporting.tstart;
     query.tstop = liveReporting.tstop;
-  } else if (query.resolved) {
+  } else if (query.opened === ALARMS_OPENED_VALUES.resolved) {
     query.tstart = QUICK_RANGES.last30Days.start;
     query.tstop = QUICK_RANGES.last30Days.stop;
   }
