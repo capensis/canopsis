@@ -52,6 +52,10 @@ export default {
       type: Number,
       required: false,
     },
+    min: {
+      type: Number,
+      required: false,
+    },
   },
   computed: {
     quickRanges() {
@@ -139,6 +143,10 @@ export default {
         return false;
       }
 
+      if (this.min) {
+        return dateTimestamp >= this.min;
+      }
+
       return this.isAllowedAccumulatedFromDate(dateMoment);
     },
 
@@ -155,9 +163,10 @@ export default {
     isAllowedToDate(date) {
       const dateMoment = moment(date);
       const dateTimestamp = dateMoment.unix();
+      const nowTimestamp = moment().unix();
       const fromTimestamp = this.intervalFromAsMoment.unix();
 
-      if (dateTimestamp < fromTimestamp) {
+      if (dateTimestamp < fromTimestamp || nowTimestamp < dateTimestamp) {
         return false;
       }
 

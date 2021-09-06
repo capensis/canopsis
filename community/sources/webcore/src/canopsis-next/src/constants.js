@@ -2027,3 +2027,5 @@ export const MESSAGE_STATS_INTERVALS = {
   hour: 'hour',
   minute: 'minute',
 };
+
+export const HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR = 1.2;
