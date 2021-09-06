@@ -5,13 +5,14 @@ import { DATETIME_FORMATS } from '@/constants';
 
 import { chartAnnotationMixin } from '@/mixins/chart/annotation';
 import { chartLimitedSegmentMixin } from '@/mixins/chart/limited-segment';
+import { chartBackgroundMixin } from '@/mixins/chart/background';
 import { chartZoomMixin } from '@/mixins/chart/zoom';
 
 import { Line } from '@/externals/vue-chart/components';
 
 export default {
   extends: Line,
-  mixins: [chartAnnotationMixin, chartLimitedSegmentMixin, chartZoomMixin],
+  mixins: [chartAnnotationMixin, chartLimitedSegmentMixin, chartZoomMixin, chartBackgroundMixin],
   props: {
     ...Line.props,
 
@@ -90,6 +91,9 @@ export default {
           },
         },
         plugins: {
+          background: {
+            color: 'white',
+          },
           legend: {
             display: false,
           },
@@ -139,9 +143,15 @@ export default {
 
   },
   watch: {
-    chartData(value, oldValue) {
-      if (value !== oldValue) {
-        this.updateChart(value, this.mergedOptions);
+    chartData(data, oldData) {
+      if (data !== oldData) {
+        this.updateChart(data, this.mergedOptions);
+      }
+    },
+
+    mergedOptions(options, oldOptions) {
+      if (options !== oldOptions) {
+        this.updateChart(this.chartData, options);
       }
     },
   },

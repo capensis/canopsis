@@ -1,3 +1,3 @@
-import chartPluginZoom from 'chartjs-plugin-zoom';
+import ChartPluginZoom from 'chartjs-plugin-zoom';
 
-export default chartPluginZoom;
+export { ChartPluginZoom };

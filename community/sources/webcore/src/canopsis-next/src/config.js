@@ -268,3 +268,7 @@ export const EXPORT_FETCHING_INTERVAL = 2000;
 export const DEFAULT_JOB_EXECUTOR_FETCH_TIMEOUT_SECONDS = 30;
 
 export const DEFAULT_CATEGORIES_LIMIT = 3;
+
+export const HEALTHCHECK_HISTORY_PREFIX = 'healthcheck_history-';
+
+export const HEALTHCHECK_LAST_HOUR_PREFIX = 'healthcheck_last_hour-';

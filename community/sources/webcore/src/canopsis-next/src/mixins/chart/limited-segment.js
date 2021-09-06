@@ -1,7 +1,7 @@
-import LimitedSegmentPlugin from '@/externals/chart/plugins/limited-segment';
+import { ChartLimitedSegmentPlugin } from '@/externals/chart/plugins/limited-segment';
 
 export const chartLimitedSegmentMixin = {
   created() {
-    this.addPlugin(LimitedSegmentPlugin);
+    this.addPlugin(ChartLimitedSegmentPlugin);
   },
 };
