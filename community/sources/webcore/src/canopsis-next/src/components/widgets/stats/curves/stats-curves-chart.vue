@@ -1,6 +1,7 @@
 <script>
 import { merge } from 'lodash';
-import { Line } from 'vue-chartjs';
+
+import { Line } from '@/externals/vue-chart/components';
 
 import { chartAnnotationMixin } from '@/mixins/chart/annotation';
 
@@ -35,16 +36,16 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          xAxes: [{
+          x: {
             ticks: {
               fontSize: 11,
             },
-          }],
-          yAxes: [{
+          },
+          y: {
             ticks: {
               fontSize: 11,
             },
-          }],
+          },
         },
       }, this.options);
     },
@@ -53,7 +54,7 @@ export default {
   watch: {
     chartData(value, oldValue) {
       if (value !== oldValue) {
-        this.renderChart(value, this.mergedOptions);
+        this.updateChart(value, this.mergedOptions);
       }
     },
   },
