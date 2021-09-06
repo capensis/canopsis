@@ -2026,6 +2026,9 @@ export const MESSAGE_STATS_INTERVALS = {
   minute: 'minute',
 };
 
-export const WEBSOCKET_ROOMS = {
+export const SOCKET_ROOMS = {
   healthcheck: 'healthcheck',
+  messageRates: 'message-rates',
 };
+
+export const HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR = 1.2;

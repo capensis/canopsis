@@ -25,6 +25,8 @@ import { get } from 'lodash';
 
 import { TEST_SUITE_COLORS, TEST_SUITE_STATUSES } from '@/constants';
 
+import { colorToRgba } from '@/helpers/color';
+
 import HorizontalBar from './horizontal-bar.vue';
 
 /**
@@ -127,7 +129,7 @@ export default {
         datasets.unshift({
           ...defaultDatasetParameters,
 
-          backgroundColor: 'rgba(0, 0, 0, .2)',
+          backgroundColor: colorToRgba('#000', 0.2),
           data: items.map(({ from, avg_to: avgTo }) => [from, avgTo]),
         });
       }
@@ -140,22 +142,26 @@ export default {
         animation: false,
         responsive: false,
         maintainAspectRatio: false,
-        legend: { display: false },
         scales: {
-          yAxes: [{
+          y: {
             stacked: true,
-          }],
-          xAxes: [{
+          },
+          x: {
             position: 'top',
             ticks: {
               callback: value => `${value}s`,
             },
             suggestedMin: 0,
-          }],
+          },
         },
-        tooltips: {
-          enabled: false,
-          custom: this.getTooltip,
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            enabled: false,
+            external: this.getTooltip,
+          },
         },
       };
     },
@@ -164,7 +170,7 @@ export default {
     getTooltipContent(tooltipModel) {
       const { dataPoints: [dataPoint] } = tooltipModel;
 
-      const { time = 0, status, message } = this.items[dataPoint.index];
+      const { time = 0, status, message } = this.items[dataPoint.dataIndex];
 
       const timeDiv = `<div>${time.toFixed(3)}s</div>`;
       const statusDiv = `<div>${this.$t(`testSuite.statuses.${status}`)}${message ? `: ${message}` : ''}</div>`;
@@ -207,7 +213,7 @@ export default {
 
     getHistoricalTooltipContent(tooltipModel) {
       const { dataPoints: [dataPoint] } = tooltipModel;
-      const item = this.items[dataPoint.index] || {};
+      const item = this.items[dataPoint.dataIndex] || {};
       const {
         time = 0,
         status,
@@ -227,7 +233,7 @@ export default {
       return `<div>${currentDiv}${averageDiv}</div>`;
     },
 
-    getTooltip(tooltipModel) {
+    getTooltip({ tooltip: tooltipModel }) {
       const { tooltip: tooltipEl, horizontalBar: horizontalBarEl } = this.$refs;
 
       if (tooltipModel.opacity === 0) {
