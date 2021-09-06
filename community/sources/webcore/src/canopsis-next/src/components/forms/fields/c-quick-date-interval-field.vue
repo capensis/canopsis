@@ -31,6 +31,7 @@ import moment from 'moment';
 
 import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
 
+import { getNowTimestamp } from '@/helpers/date/date';
 import { findRange, dateParse } from '@/helpers/date/date-intervals';
 
 import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
@@ -49,6 +50,10 @@ export default {
       default: () => ({}),
     },
     accumulatedBefore: {
+      type: Number,
+      required: false,
+    },
+    min: {
       type: Number,
       required: false,
     },
@@ -117,7 +122,7 @@ export default {
       const startMoment = this.convertIntervalFromFieldToMoment(start);
       const stopMoment = this.convertIntervalToFieldToMoment(stop);
 
-      return this.isAllowedAccumulatedFromDate(startMoment) && this.isAllowedAccumulatedToDate(stopMoment);
+      return this.isAllowedFromDate(startMoment) && this.isAllowedToDate(stopMoment);
     },
 
     isAllowedAccumulatedFromDate(dateMoment) {
@@ -139,6 +144,10 @@ export default {
         return false;
       }
 
+      if (this.min) {
+        return dateTimestamp >= this.min;
+      }
+
       return this.isAllowedAccumulatedFromDate(dateMoment);
     },
 
@@ -155,9 +164,10 @@ export default {
     isAllowedToDate(date) {
       const dateMoment = moment(date);
       const dateTimestamp = dateMoment.unix();
+      const nowTimestamp = getNowTimestamp();
       const fromTimestamp = this.intervalFromAsMoment.unix();
 
-      if (dateTimestamp < fromTimestamp) {
+      if (dateTimestamp < fromTimestamp || nowTimestamp < dateTimestamp) {
         return false;
       }
 
