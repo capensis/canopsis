@@ -112,4 +112,24 @@ export const isEndOfDay = (date, unit = 'seconds') => {
  */
 export const convertDateToStartOfDayMoment = date => moment(convertTimestampToMoment(date).startOf('day').format());
 
+/**
+ * Getting a now timestamp
+ *
+ * @return {number}
+ */
+export const getNowTimestamp = () => moment().unix();
+
+/**
+ * Subtract value from date by unit
+ *
+ * @param {Date|number|moment.Moment} date
+ * @param {number} [value = 0]
+ * @param {string} [unit = TIME_UNITS.second]
+ * @return {number}
+ */
+export const subtractUnitFromDate = (date, value = 0, unit = TIME_UNITS.second) => convertTimestampToMoment(date)
+  .clone()
+  .subtract(value, unit)
+  .unix();
+
 export default convertTimestampToMoment;

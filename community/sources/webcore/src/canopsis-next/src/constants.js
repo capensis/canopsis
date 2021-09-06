@@ -2029,3 +2029,7 @@ export const MESSAGE_STATS_INTERVALS = {
 };
 
 export const HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR = 1.2;
+
+export const SOCKET_ROOMS = {
+  messageRates: 'message-rates',
+};

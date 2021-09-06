@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { colorToRgba } from '@/helpers/color';
+
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
@@ -75,14 +77,14 @@ export default {
             data: curveData,
             yAxisID: 'y2',
             backgroundColor: 'transparent',
-            borderColor: this.widget.parameters.statsColors.Accumulation || 'rgba(0, 0, 0, 0.1)',
+            borderColor: this.widget.parameters.statsColors.Accumulation || colorToRgba('#000', 0.1),
             cubicInterpolationMode: 'monotone',
           },
           {
             label: this.statTitle,
             data: barsData,
             yAxisID: 'y',
-            backgroundColor: this.widget.parameters.statsColors[this.statTitle] || 'rgba(0, 0, 0, 0.1)',
+            backgroundColor: this.widget.parameters.statsColors[this.statTitle] || colorToRgba('#000', 0.1),
           },
         ];
       }

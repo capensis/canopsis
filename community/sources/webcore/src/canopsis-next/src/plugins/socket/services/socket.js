@@ -204,7 +204,7 @@ class Socket {
    *
    * @param {string} data
    */
-  baseMessageHandler(data) {
+  baseMessageHandler({ data }) {
     try {
       const { room, msg } = JSON.parse(data);
 
