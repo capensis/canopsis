@@ -2021,9 +2021,11 @@ export const HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS = {
   [HEALTHCHECK_SERVICES_NAMES.enginesChain]: { x: 0, y: -0.5 },
 };
 
-export const HEALTHCHECK_FIFO_UNKNOWN_SERVICE = { name: HEALTHCHECK_ENGINES_NAMES.fifo, is_unknown: true };
-
 export const MESSAGE_STATS_INTERVALS = {
   hour: 'hour',
   minute: 'minute',
+};
+
+export const WEBSOCKET_ROOMS = {
+  healthcheck: 'healthcheck',
 };
