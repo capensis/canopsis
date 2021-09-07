@@ -24,19 +24,17 @@ type mongoUpdateExecutor struct {
 
 // Exec finds executor by operation and calls it.
 func (e *mongoUpdateExecutor) Exec(
+	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
 	role, initiator string,
 ) (types.AlarmChangeType, error) {
-	changeType, err := e.executor.Exec(operation, alarm, time, role, initiator)
+	changeType, err := e.executor.Exec(ctx, operation, alarm, time, role, initiator)
 	if err != nil {
 		return "", err
 	}
 
-	// todo move ctx to operation.Executor arg
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	err = e.adapter.PartialUpdateOpen(ctx, alarm)
 	if err != nil {
 		return "", err

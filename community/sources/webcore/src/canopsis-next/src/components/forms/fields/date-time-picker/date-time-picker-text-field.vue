@@ -29,7 +29,7 @@ import { DATETIME_FORMATS } from '@/constants';
 
 import uid from '@/helpers/uid';
 
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 import DateTimePickerButton from './date-time-picker-button.vue';
 

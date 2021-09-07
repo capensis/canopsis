@@ -127,6 +127,12 @@ type OperationPbhParameters struct {
 	Author        string        `json:"author"`
 }
 
+type OperationInstructionParameters struct {
+	Execution string `bson:"execution" json:"execution"`
+	Output    string `bson:"output" json:"output"`
+	Author    string `bson:"author" json:"author"`
+}
+
 func renderTemplate(templateStr string, data interface{}, f template.FuncMap) (string, error) {
 	t, err := template.New("template").Funcs(f).Parse(templateStr)
 	if err != nil {

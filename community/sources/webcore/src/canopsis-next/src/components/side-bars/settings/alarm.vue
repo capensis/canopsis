@@ -36,7 +36,7 @@
           v-divider
           field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
           v-divider
-          field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
+          field-opened-resolved-filter(v-model="settings.widget.parameters.opened")
           v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(

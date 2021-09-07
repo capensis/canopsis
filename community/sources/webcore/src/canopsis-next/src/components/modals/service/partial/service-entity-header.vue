@@ -16,6 +16,7 @@
           icon
         )
           v-icon(small) {{ icon.icon }}
+        c-no-events-icon(:value="entity.idle_since", color="white", top)
 </template>
 
 <script>

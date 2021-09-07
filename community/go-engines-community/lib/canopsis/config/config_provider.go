@@ -5,6 +5,7 @@ package config
 import (
 	"fmt"
 	"html/template"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -58,6 +59,7 @@ type AlarmConfig struct {
 	LongOutputLength      int
 	// DisableActionSnoozeDelayOnPbh ignores Pbh state to resolve snoozed with Action alarm while is True
 	DisableActionSnoozeDelayOnPbh bool
+	TimeToKeepResolvedAlarms      time.Duration
 }
 
 type TimezoneConfig struct {
@@ -65,7 +67,13 @@ type TimezoneConfig struct {
 }
 
 type RemediationConfig struct {
-	JobExecutorFetchTimeout time.Duration
+	HttpTimeout                    time.Duration
+	LaunchJobRetriesAmount         int
+	LaunchJobRetriesInterval       time.Duration
+	WaitJobCompleteRetriesAmount   int
+	WaitJobCompleteRetriesInterval time.Duration
+	PauseManualInstructionInterval time.Duration
+	ExternalAPI                    map[string]ExternalApiConfig
 }
 
 type DataStorageConfig struct {
@@ -82,84 +90,18 @@ func (t ScheduledTime) String() string {
 }
 
 func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmConfigProvider {
-	conf := AlarmConfig{}
-
-	if cfg.Alarm.BaggotTime == "" {
-		conf.BaggotTime = AlarmBaggotTime
-		logger.Error().
-			Str("default", conf.BaggotTime.String()).
-			Str("invalid", cfg.Alarm.BaggotTime).
-			Msg("BaggotTime of alarm config section is not defined, default value is used instead")
-	} else {
-		var err error
-		conf.BaggotTime, err = time.ParseDuration(cfg.Alarm.BaggotTime)
-		if err == nil {
-			logger.Info().
-				Str("value", conf.BaggotTime.String()).
-				Msg("BaggotTime of alarm config section is used")
-		} else {
-			conf.BaggotTime = AlarmBaggotTime
-			logger.Err(err).
-				Str("default", conf.BaggotTime.String()).
-				Str("invalid", cfg.Alarm.BaggotTime).
-				Msg("bad value BaggotTime of alarm config section, default value is used instead")
-		}
+	sectionName := "alarm"
+	conf := AlarmConfig{
+		FlappingFreqLimit:             parseInt(cfg.Alarm.FlappingFreqLimit, 0, "FlappingFreqLimit", sectionName, logger),
+		FlappingInterval:              parseTimeDurationBySeconds(cfg.Alarm.FlappingInterval, 0, "FlappingInterval", sectionName, logger),
+		StealthyInterval:              parseTimeDurationBySeconds(cfg.Alarm.StealthyInterval, 0, "StealthyInterval", sectionName, logger),
+		BaggotTime:                    parseTimeDurationByStr(cfg.Alarm.BaggotTime, AlarmBaggotTime, "BaggotTime", sectionName, logger),
+		EnableLastEventDate:           parseBool(cfg.Alarm.EnableLastEventDate, "EnableLastEventDate", sectionName, logger),
+		CancelAutosolveDelay:          parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
+		DisableActionSnoozeDelayOnPbh: parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
+		TimeToKeepResolvedAlarms:      parseTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, 0, "TimeToKeepResolvedAlarms", sectionName, logger),
 	}
-
-	if cfg.Alarm.CancelAutosolveDelay == "" {
-		conf.CancelAutosolveDelay = AlarmCancelAutosolveDelay
-		logger.Error().
-			Str("default", conf.CancelAutosolveDelay.String()).
-			Str("invalid", cfg.Alarm.CancelAutosolveDelay).
-			Msg("CancelAutosolveDelay of alarm config section is not defined, default value is used instead")
-	} else {
-		var err error
-		conf.CancelAutosolveDelay, err = time.ParseDuration(cfg.Alarm.CancelAutosolveDelay)
-		if err == nil {
-			logger.Info().
-				Str("value", conf.CancelAutosolveDelay.String()).
-				Msg("CancelAutosolveDelay of alarm config section is used")
-		} else {
-			conf.CancelAutosolveDelay = AlarmCancelAutosolveDelay
-			logger.Err(err).
-				Str("default", conf.CancelAutosolveDelay.String()).
-				Str("invalid", cfg.Alarm.CancelAutosolveDelay).
-				Msg("bad value CancelAutosolveDelay of alarm config section, default value is used instead")
-		}
-	}
-
-	if cfg.Alarm.DisplayNameScheme == "" {
-		var err error
-		conf.displayNameSchemeText = AlarmDefaultNameScheme
-		conf.DisplayNameScheme, err = CreateDisplayNameTpl(conf.displayNameSchemeText)
-		if err != nil {
-			panic(fmt.Errorf("invalid contant AlarmDefaultNameScheme: %w", err))
-		}
-		logger.Error().
-			Str("default", conf.displayNameSchemeText).
-			Str("invalid", cfg.Alarm.DisplayNameScheme).
-			Msg("DisplayNameScheme of alarm config section is not defined, default value is used instead")
-	} else {
-		var err error
-		conf.displayNameSchemeText = cfg.Alarm.DisplayNameScheme
-		conf.DisplayNameScheme, err = CreateDisplayNameTpl(conf.displayNameSchemeText)
-		if err == nil {
-			logger.Info().
-				Str("value", conf.displayNameSchemeText).
-				Msg("DisplayNameScheme of alarm config section is used")
-		} else {
-			var err error
-			conf.displayNameSchemeText = AlarmDefaultNameScheme
-			conf.DisplayNameScheme, err = CreateDisplayNameTpl(conf.displayNameSchemeText)
-			if err != nil {
-				panic(fmt.Errorf("invalid contant AlarmDefaultNameScheme: %w", err))
-			}
-			logger.Err(err).
-				Str("default", conf.displayNameSchemeText).
-				Str("invalid", cfg.Alarm.DisplayNameScheme).
-				Msg("bad value DisplayNameScheme of alarm config section, default value is used instead")
-		}
-	}
+	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDefaultNameScheme, "DisplayNameScheme", sectionName, logger)
 
 	if cfg.Alarm.OutputLength <= 0 {
 		logger.Warn().Msg("OutputLength of alarm config section is not set or less than 1: the event's output won't be truncated")
@@ -167,7 +109,7 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 		conf.OutputLength = cfg.Alarm.OutputLength
 		logger.Info().
 			Int("value", conf.OutputLength).
-			Msg("OutputLength of alarm config section is used")
+			Msgf("OutputLength of %s config section is used", sectionName)
 	}
 
 	if cfg.Alarm.LongOutputLength <= 0 {
@@ -178,52 +120,6 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 			Int("value", conf.LongOutputLength).
 			Msg("LongOutputLength of alarm config section is used")
 	}
-
-	if cfg.Alarm.FlappingFreqLimit < 0 {
-		logger.Error().
-			Int("default", conf.FlappingFreqLimit).
-			Int("invalid", cfg.Alarm.FlappingFreqLimit).
-			Msg("bad value FlappingFreqLimit of alarm config section, default value is used instead")
-	} else {
-		conf.FlappingFreqLimit = cfg.Alarm.FlappingFreqLimit
-		logger.Info().
-			Int("value", conf.FlappingFreqLimit).
-			Msg("FlappingFreqLimit of alarm config section is used")
-	}
-
-	if cfg.Alarm.FlappingInterval < 0 {
-		logger.Error().
-			Str("default", conf.FlappingInterval.String()).
-			Int("invalid", cfg.Alarm.FlappingInterval).
-			Msg("bad value FlappingInterval of alarm config section, default value is used instead")
-	} else {
-		conf.FlappingInterval = time.Second * time.Duration(cfg.Alarm.FlappingInterval)
-		logger.Info().
-			Str("value", conf.FlappingInterval.String()).
-			Msg("FlappingInterval of alarm config section is used")
-	}
-
-	if cfg.Alarm.StealthyInterval < 0 {
-		logger.Error().
-			Str("default", conf.StealthyInterval.String()).
-			Int("invalid", cfg.Alarm.StealthyInterval).
-			Msg("bad value StealthyInterval of alarm config section, default value is used instead")
-	} else {
-		conf.StealthyInterval = time.Second * time.Duration(cfg.Alarm.StealthyInterval)
-		logger.Info().
-			Str("value", conf.StealthyInterval.String()).
-			Msg("StealthyInterval of alarm config section is used")
-	}
-
-	conf.EnableLastEventDate = cfg.Alarm.EnableLastEventDate
-	logger.Info().
-		Bool("value", conf.EnableLastEventDate).
-		Msg("EnableLastEventDate of alarm config section is used")
-
-	conf.DisableActionSnoozeDelayOnPbh = cfg.Alarm.DisableActionSnoozeDelayOnPbh
-	logger.Info().
-		Bool("value", conf.DisableActionSnoozeDelayOnPbh).
-		Msg("DisableActionSnoozeDelayOnPbh of alarm config section is used")
 
 	return &BaseAlarmConfigProvider{
 		conf:   conf,
@@ -238,166 +134,72 @@ type BaseAlarmConfigProvider struct {
 }
 
 func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
-	if cfg.Alarm.BaggotTime == "" {
-		p.logger.Error().
-			Str("invalid", cfg.Alarm.BaggotTime).
-			Msg("BaggotTime of alarm config section is not defined, previous value is used")
-	} else {
-		duration, err := time.ParseDuration(cfg.Alarm.BaggotTime)
-		if err == nil {
-			if p.conf.BaggotTime != duration {
-				p.logger.Info().
-					Str("previous", p.conf.BaggotTime.String()).
-					Str("new", duration.String()).
-					Msg("BaggotTime of alarm config section is loaded")
+	p.mx.Lock()
+	defer p.mx.Unlock()
 
-				p.mx.Lock()
-				p.conf.BaggotTime = duration
-				p.mx.Unlock()
-			}
-		} else {
-			p.logger.Err(err).
-				Str("invalid", cfg.Alarm.BaggotTime).
-				Msg("bad value BaggotTime of alarm config section, previous value is used instead")
-		}
+	sectionName := "alarm"
+	d, ok := parseUpdatedTimeDurationByStr(cfg.Alarm.BaggotTime, p.conf.BaggotTime, "BaggotTime", sectionName, p.logger)
+	if ok {
+		p.conf.BaggotTime = d
 	}
 
-	if cfg.Alarm.CancelAutosolveDelay == "" {
-		p.logger.Error().
-			Str("invalid", cfg.Alarm.CancelAutosolveDelay).
-			Msg("CancelAutosolveDelay of alarm config section is not defined, previous value is used")
-	} else {
-		duration, err := time.ParseDuration(cfg.Alarm.CancelAutosolveDelay)
-		if err == nil {
-			if p.conf.CancelAutosolveDelay != duration {
-				p.logger.Info().
-					Str("previous", p.conf.CancelAutosolveDelay.String()).
-					Str("new", duration.String()).
-					Msg("CancelAutosolveDelay of alarm config section is loaded")
-
-				p.mx.Lock()
-				p.conf.CancelAutosolveDelay = duration
-				p.mx.Unlock()
-			}
-		} else {
-			p.logger.Err(err).
-				Str("invalid", cfg.Alarm.CancelAutosolveDelay).
-				Msg("bad value CancelAutosolveDelay of alarm config section, previous value is used instead")
-		}
+	d, ok = parseUpdatedTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, p.conf.CancelAutosolveDelay, "CancelAutosolveDelay", sectionName, p.logger)
+	if ok {
+		p.conf.CancelAutosolveDelay = d
 	}
 
-	if cfg.Alarm.DisplayNameScheme == "" {
-		p.logger.Error().
-			Str("invalid", cfg.Alarm.DisplayNameScheme).
-			Msg("DisplayNameScheme of alarm config section is not defined, previous value is used")
-	} else if cfg.Alarm.DisplayNameScheme != p.conf.displayNameSchemeText {
-		displayNameScheme, err := CreateDisplayNameTpl(cfg.Alarm.DisplayNameScheme)
-		if err == nil {
-			p.logger.Info().
-				Str("previous", p.conf.displayNameSchemeText).
-				Str("new", cfg.Alarm.DisplayNameScheme).
-				Msg("DisplayNameScheme of alarm config section is loaded")
-
-			p.mx.Lock()
-			p.conf.DisplayNameScheme = displayNameScheme
-			p.conf.displayNameSchemeText = cfg.Alarm.DisplayNameScheme
-			p.mx.Unlock()
-		} else {
-			p.logger.Err(err).
-				Str("invalid", cfg.Alarm.DisplayNameScheme).
-				Msg("bad value DisplayNameScheme of alarm config section, previous value is used instead")
-		}
+	t, s, ok := parseUpdatedTemplate(cfg.Alarm.DisplayNameScheme, p.conf.displayNameSchemeText, "DisplayNameScheme", sectionName, p.logger)
+	if ok {
+		p.conf.DisplayNameScheme = t
+		p.conf.displayNameSchemeText = s
 	}
 
 	if cfg.Alarm.OutputLength != p.conf.OutputLength {
 		if cfg.Alarm.OutputLength <= 0 {
+			p.conf.OutputLength = 0
 			p.logger.Warn().
 				Int("previous", p.conf.OutputLength).
 				Int("new", cfg.Alarm.OutputLength).
 				Msg("OutputLength of alarm config section is loaded, value is not set or less than 1: the event's output and long_output won't be truncated")
 		} else {
+			p.conf.OutputLength = cfg.Alarm.OutputLength
 			p.logger.Info().
 				Int("previous", p.conf.OutputLength).
 				Int("new", cfg.Alarm.OutputLength).
 				Msg("OutputLength of alarm config section is loaded")
 		}
+	}
 
+	i, ok := parseUpdatedInt(cfg.Alarm.FlappingFreqLimit, p.conf.FlappingFreqLimit, "FlappingFreqLimit", sectionName, p.logger)
+	if ok {
+		p.conf.FlappingFreqLimit = i
+	}
+
+	d, ok = parseUpdatedTimeDurationBySeconds(cfg.Alarm.FlappingInterval, p.conf.FlappingInterval, "FlappingInterval", sectionName, p.logger)
+	if ok {
+		p.conf.FlappingInterval = d
+	}
+
+	d, ok = parseUpdatedTimeDurationBySeconds(cfg.Alarm.StealthyInterval, p.conf.StealthyInterval, "StealthyInterval", sectionName, p.logger)
+	if ok {
+		p.conf.StealthyInterval = d
+	}
+
+	d, ok = parseUpdatedTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, p.conf.TimeToKeepResolvedAlarms, "TimeToKeepResolvedAlarms", sectionName, p.logger)
+	if ok {
 		p.mx.Lock()
-		p.conf.OutputLength = cfg.Alarm.OutputLength
+		p.conf.TimeToKeepResolvedAlarms = d
 		p.mx.Unlock()
 	}
 
-	if cfg.Alarm.FlappingFreqLimit < 0 {
-		p.logger.Error().
-			Int("invalid", cfg.Alarm.FlappingFreqLimit).
-			Msg("FlappingFreqLimit of alarm config section is not defined, previous value is used")
-	} else if cfg.Alarm.FlappingFreqLimit != p.conf.FlappingFreqLimit {
-		p.logger.Info().
-			Int("previous", p.conf.FlappingFreqLimit).
-			Int("new", cfg.Alarm.FlappingFreqLimit).
-			Msg("FlappingFreqLimit of alarm config section is loaded")
-
-		p.mx.Lock()
-		p.conf.FlappingFreqLimit = cfg.Alarm.FlappingFreqLimit
-		p.mx.Unlock()
+	b, ok := parseUpdatedBool(cfg.Alarm.EnableLastEventDate, p.conf.EnableLastEventDate, "EnableLastEventDate", sectionName, p.logger)
+	if ok {
+		p.conf.EnableLastEventDate = b
 	}
 
-	if cfg.Alarm.FlappingInterval < 0 {
-		p.logger.Error().
-			Int("invalid", cfg.Alarm.FlappingInterval).
-			Msg("FlappingInterval of alarm config section is not defined, previous value is used")
-	} else {
-		flappingInterval := time.Second * time.Duration(cfg.Alarm.FlappingInterval)
-		if flappingInterval != p.conf.FlappingInterval {
-			p.logger.Info().
-				Str("previous", p.conf.FlappingInterval.String()).
-				Str("new", flappingInterval.String()).
-				Msg("FlappingInterval of alarm config section is loaded")
-
-			p.mx.Lock()
-			p.conf.FlappingInterval = flappingInterval
-			p.mx.Unlock()
-		}
-	}
-
-	if cfg.Alarm.StealthyInterval < 0 {
-		p.logger.Error().
-			Int("invalid", cfg.Alarm.StealthyInterval).
-			Msg("StealthyInterval of alarm config section is not defined, previous value is used")
-	} else {
-		stealthyInterval := time.Second * time.Duration(cfg.Alarm.StealthyInterval)
-		if stealthyInterval != p.conf.StealthyInterval {
-			p.logger.Info().
-				Str("previous", p.conf.StealthyInterval.String()).
-				Str("new", stealthyInterval.String()).
-				Msg("StealthyInterval of alarm config section is loaded")
-
-			p.mx.Lock()
-			p.conf.StealthyInterval = stealthyInterval
-			p.mx.Unlock()
-		}
-	}
-
-	if cfg.Alarm.EnableLastEventDate != p.conf.EnableLastEventDate {
-		p.logger.Info().
-			Bool("previous", p.conf.EnableLastEventDate).
-			Bool("new", cfg.Alarm.EnableLastEventDate).
-			Msg("EnableLastEventDate of alarm config section is loaded")
-
-		p.mx.Lock()
-		p.conf.EnableLastEventDate = cfg.Alarm.EnableLastEventDate
-		p.mx.Unlock()
-	}
-
-	if cfg.Alarm.DisableActionSnoozeDelayOnPbh != p.conf.DisableActionSnoozeDelayOnPbh {
-		p.logger.Info().
-			Bool("previous", p.conf.DisableActionSnoozeDelayOnPbh).
-			Bool("new", cfg.Alarm.DisableActionSnoozeDelayOnPbh).
-			Msg("DisableActionSnoozeDelayOnPbh of alarm config section is loaded")
-
-		p.mx.Lock()
-		p.conf.DisableActionSnoozeDelayOnPbh = cfg.Alarm.DisableActionSnoozeDelayOnPbh
-		p.mx.Unlock()
+	b, ok = parseUpdatedBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, p.conf.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, p.logger)
+	if ok {
+		p.conf.DisableActionSnoozeDelayOnPbh = b
 	}
 
 	return nil
@@ -411,33 +213,9 @@ func (p *BaseAlarmConfigProvider) Get() AlarmConfig {
 }
 
 func NewTimezoneConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseTimezoneConfigProvider {
-	var location *time.Location
-	defaultLocation := time.UTC
-	if cfg.Timezone.Timezone == "" {
-		location = defaultLocation
-		logger.Error().
-			Str("default", location.String()).
-			Str("invalid", cfg.Timezone.Timezone).
-			Msg("Timezone of timezone config section is not defined, default value is used instead")
-	} else {
-		var err error
-		location, err = time.LoadLocation(cfg.Timezone.Timezone)
-		if err == nil {
-			logger.Info().
-				Str("value", location.String()).
-				Msg("Timezone of timezone config section is used")
-		} else {
-			location = defaultLocation
-			logger.Err(err).
-				Str("default", location.String()).
-				Str("invalid", cfg.Timezone.Timezone).
-				Msg("bad value Timezone of timezone config section, default value is used instead")
-		}
-	}
-
 	return &BaseTimezoneConfigProvider{
 		conf: TimezoneConfig{
-			Location: location,
+			Location: parseLocation(cfg.Timezone.Timezone, time.UTC, "Timezone", "timezone", logger),
 		},
 		logger: logger,
 	}
@@ -450,28 +228,12 @@ type BaseTimezoneConfigProvider struct {
 }
 
 func (p *BaseTimezoneConfigProvider) Update(cfg CanopsisConf) error {
-	if cfg.Timezone.Timezone == "" {
-		p.logger.Error().
-			Str("invalid", cfg.Timezone.Timezone).
-			Msg("Timezone of timezone config section is not defined, previous value is used")
-	} else {
-		location, err := time.LoadLocation(cfg.Timezone.Timezone)
-		if err == nil {
-			if p.conf.Location.String() != location.String() {
-				p.logger.Info().
-					Str("previous", p.conf.Location.String()).
-					Str("new", location.String()).
-					Msg("Timezone of timezone config section is loaded")
+	p.mx.Lock()
+	defer p.mx.Unlock()
 
-				p.mx.Lock()
-				defer p.mx.Unlock()
-				p.conf.Location = location
-			}
-		} else {
-			p.logger.Err(err).
-				Str("invalid", cfg.Timezone.Timezone).
-				Msg("bad value Timezone of timezone config section, previous value is used instead")
-		}
+	l, ok := parseUpdatedLocation(cfg.Timezone.Timezone, p.conf.Location, "Timezone", "timezone", p.logger)
+	if ok {
+		p.conf.Location = l
 	}
 
 	return nil
@@ -484,24 +246,27 @@ func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
 	return p.conf
 }
 
-func NewRemediationConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseRemediationConfigProvider {
-	var jobExecutorFetchTimeout time.Duration
-	if cfg.Remediation.JobExecutorFetchTimeoutSeconds <= 0 {
-		jobExecutorFetchTimeout = RemediationJobExecutorFetchTimeout
-		logger.Error().
-			Str("default", jobExecutorFetchTimeout.String()).
-			Int64("invalid", cfg.Remediation.JobExecutorFetchTimeoutSeconds).
-			Msg("bad value JobExecutorFetchTimeoutSeconds duration of remediation config section, default value is used instead")
-	} else {
-		jobExecutorFetchTimeout = time.Second * time.Duration(cfg.Remediation.JobExecutorFetchTimeoutSeconds)
-		logger.Info().
-			Str("value", jobExecutorFetchTimeout.String()).
-			Msg("JobExecutorFetchTimeoutSeconds duration of remediation config section is used")
+func NewRemediationConfigProvider(cfg RemediationConf, logger zerolog.Logger) *BaseRemediationConfigProvider {
+	sectionName := "Remediation"
+
+	apiKeys := make([]string, len(cfg.ExternalAPI))
+	i := 0
+	for key := range cfg.ExternalAPI {
+		apiKeys[i] = key
+		i++
 	}
+	logger.Info().
+		Msgf("%+v is loaded %s of %s config section", apiKeys, "external_api", sectionName)
 
 	return &BaseRemediationConfigProvider{
 		conf: RemediationConfig{
-			JobExecutorFetchTimeout: jobExecutorFetchTimeout,
+			HttpTimeout:                    parseTimeDurationByStr(cfg.HttpTimeout, RemediationHttpTimeout, "http_timeout", sectionName, logger),
+			LaunchJobRetriesAmount:         parseInt(cfg.LaunchJobRetriesAmount, RemediationLaunchJobRetriesAmount, "launch_job_retries_amount", sectionName, logger),
+			LaunchJobRetriesInterval:       parseTimeDurationByStr(cfg.LaunchJobRetriesInterval, RemediationLaunchJobRetriesInterval, "launch_job_retries_interval", sectionName, logger),
+			WaitJobCompleteRetriesAmount:   parseInt(cfg.WaitJobCompleteRetriesAmount, RemediationWaitJobCompleteRetriesAmount, "wait_job_complete_retries_amount", sectionName, logger),
+			WaitJobCompleteRetriesInterval: parseTimeDurationByStr(cfg.WaitJobCompleteRetriesInterval, RemediationWaitJobCompleteRetriesInterval, "wait_job_complete_retries_interval", sectionName, logger),
+			PauseManualInstructionInterval: parseTimeDurationByStr(cfg.PauseManualInstructionInterval, RemediationPauseManualInstructionInterval, "pause_manual_instruction_interval", sectionName, logger),
+			ExternalAPI:                    cfg.ExternalAPI,
 		},
 		logger: logger,
 	}
@@ -513,23 +278,47 @@ type BaseRemediationConfigProvider struct {
 	logger zerolog.Logger
 }
 
-func (p *BaseRemediationConfigProvider) Update(cfg CanopsisConf) error {
-	if cfg.Remediation.JobExecutorFetchTimeoutSeconds <= 0 {
-		p.logger.Error().
-			Int64("invalid", cfg.Remediation.JobExecutorFetchTimeoutSeconds).
-			Msg("bad value JobExecutorFetchTimeoutSeconds duration of remediation config section, previous value is used")
-	} else {
-		jobExecutorFetchTimeout := time.Second * time.Duration(cfg.Remediation.JobExecutorFetchTimeoutSeconds)
-		if jobExecutorFetchTimeout != p.conf.JobExecutorFetchTimeout {
-			p.logger.Info().
-				Str("previous", p.conf.JobExecutorFetchTimeout.String()).
-				Str("new", jobExecutorFetchTimeout.String()).
-				Msg("JobExecutorFetchTimeoutSeconds duration of remediation config section is loaded")
+func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) error {
+	p.mx.Lock()
+	defer p.mx.Unlock()
 
-			p.mx.Lock()
-			defer p.mx.Unlock()
-			p.conf.JobExecutorFetchTimeout = jobExecutorFetchTimeout
+	sectionName := "remediation"
+	d, ok := parseUpdatedTimeDurationByStr(cfg.HttpTimeout, p.conf.HttpTimeout, "http_timeout", sectionName, p.logger)
+	if ok {
+		p.conf.HttpTimeout = d
+	}
+	i, ok := parseUpdatedInt(cfg.LaunchJobRetriesAmount, p.conf.LaunchJobRetriesAmount, "launch_job_retries_amount", sectionName, p.logger)
+	if ok {
+		p.conf.LaunchJobRetriesAmount = i
+	}
+	d, ok = parseUpdatedTimeDurationByStr(cfg.LaunchJobRetriesInterval, p.conf.LaunchJobRetriesInterval, "launch_job_retries_interval", sectionName, p.logger)
+	if ok {
+		p.conf.LaunchJobRetriesInterval = d
+	}
+	i, ok = parseUpdatedInt(cfg.WaitJobCompleteRetriesAmount, p.conf.WaitJobCompleteRetriesAmount, "wait_job_complete_retries_amount", sectionName, p.logger)
+	if ok {
+		p.conf.WaitJobCompleteRetriesAmount = i
+	}
+	d, ok = parseUpdatedTimeDurationByStr(cfg.WaitJobCompleteRetriesInterval, p.conf.WaitJobCompleteRetriesInterval, "wait_job_complete_retries_interval", sectionName, p.logger)
+	if ok {
+		p.conf.WaitJobCompleteRetriesInterval = d
+	}
+	d, ok = parseUpdatedTimeDurationByStr(cfg.PauseManualInstructionInterval, p.conf.PauseManualInstructionInterval, "pause_manual_instruction_interval", sectionName, p.logger)
+	if ok {
+		p.conf.PauseManualInstructionInterval = d
+	}
+
+	if !reflect.DeepEqual(cfg.ExternalAPI, p.conf.ExternalAPI) {
+		apiKeys := make([]string, len(cfg.ExternalAPI))
+		i := 0
+		for key := range cfg.ExternalAPI {
+			apiKeys[i] = key
+			i++
 		}
+		p.logger.Info().
+			Msgf("%+v is updated %s of %s config section", apiKeys, "external_api", sectionName)
+
+		p.conf.ExternalAPI = cfg.ExternalAPI
 	}
 
 	return nil
@@ -654,18 +443,18 @@ func NewDataStorageConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *Base
 }
 
 type BaseDataStorageConfigProvider struct {
-	conf     DataStorageConfig
-	mx       sync.RWMutex
-	logger   zerolog.Logger
-	weekdays map[string]time.Weekday
+	conf   DataStorageConfig
+	mx     sync.RWMutex
+	logger zerolog.Logger
 }
 
 func (p *BaseDataStorageConfigProvider) Update(cfg CanopsisConf) error {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
 	t, ok := parseUpdatedScheduledTime(cfg.DataStorage.TimeToExecute, p.conf.TimeToExecute,
 		"TimeToExecute", "data_storage", p.logger)
 	if ok {
-		p.mx.Lock()
-		defer p.mx.Unlock()
 		p.conf.TimeToExecute = t
 	}
 
@@ -759,4 +548,329 @@ func stringToScheduledTime(v string) (ScheduledTime, bool) {
 	}
 
 	return t, false
+}
+
+func parseTimeDurationByStr(
+	v string,
+	defaultVal time.Duration,
+	name, sectionName string,
+	logger zerolog.Logger,
+) time.Duration {
+	if v == "" {
+		logger.Error().
+			Str("default", defaultVal.String()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	d, err := time.ParseDuration(v)
+	if err != nil {
+		logger.Err(err).
+			Str("default", defaultVal.String()).
+			Str("invalid", v).
+			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	logger.Info().
+		Str("value", d.String()).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return d
+}
+
+func parseUpdatedTimeDurationByStr(
+	v string, oldValal time.Duration,
+	name, sectionName string,
+	logger zerolog.Logger,
+) (time.Duration, bool) {
+	if v == "" {
+		logger.Error().
+			Str("invalid", v).
+			Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
+		return 0, false
+	}
+
+	d, err := time.ParseDuration(v)
+	if err != nil {
+		logger.Err(err).
+			Str("invalid", v).
+			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		return 0, false
+	}
+
+	if d == oldValal {
+		return 0, false
+	}
+
+	logger.Info().
+		Str("previous", oldValal.String()).
+		Str("new", d.String()).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	return d, true
+}
+
+func parseTimeDurationBySeconds(
+	v int,
+	defaultVal time.Duration,
+	name, sectionName string,
+	logger zerolog.Logger,
+) time.Duration {
+	if v < 0 {
+		logger.Error().
+			Str("default", defaultVal.String()).
+			Int("invalid", v).
+			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	d := time.Duration(v) * time.Second
+	logger.Info().
+		Str("value", d.String()).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return d
+}
+
+func parseUpdatedTimeDurationBySeconds(
+	v int,
+	oldValal time.Duration,
+	name, sectionName string,
+	logger zerolog.Logger,
+) (time.Duration, bool) {
+	if v < 0 {
+		logger.Error().
+			Int("invalid", v).
+			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		return 0, false
+	}
+
+	d := time.Duration(v) * time.Second
+	if d == oldValal {
+		return 0, false
+	}
+
+	logger.Info().
+		Str("previous", oldValal.String()).
+		Str("new", d.String()).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	return d, true
+}
+
+func parseInt(
+	v, defaultVal int,
+	name, sectionName string,
+	logger zerolog.Logger,
+) int {
+	if v < 0 {
+		logger.Error().
+			Int("default", defaultVal).
+			Int("invalid", v).
+			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+		return defaultVal
+	}
+
+	logger.Info().
+		Int("value", v).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return v
+}
+
+func parseUpdatedInt(
+	v, oldValal int,
+	name, sectionName string,
+	logger zerolog.Logger,
+	invalidMsg ...string,
+) (int, bool) {
+	if v < 0 {
+		msg := "bad value %s of %s config section, previous value is used instead"
+		if len(invalidMsg) == 1 {
+			msg = invalidMsg[0]
+		}
+
+		logger.Error().
+			Int("invalid", v).
+			Msgf(msg, name, sectionName)
+		return 0, false
+	}
+
+	if v == oldValal {
+		return 0, false
+	}
+
+	logger.Info().
+		Int("previous", oldValal).
+		Int("new", v).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	return v, true
+}
+
+func parseTemplate(
+	v, defaultVal string,
+	name, sectionName string,
+	logger zerolog.Logger,
+) (*template.Template, string) {
+	if v == "" {
+		tpl, err := CreateDisplayNameTpl(defaultVal)
+		if err != nil {
+			panic(fmt.Errorf("invalid contant %s: %w", name, err))
+		}
+		logger.Error().
+			Str("default", defaultVal).
+			Str("invalid", v).
+			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+
+		return tpl, defaultVal
+	}
+
+	tpl, err := CreateDisplayNameTpl(v)
+	if err != nil {
+		tpl, parseErr := CreateDisplayNameTpl(defaultVal)
+		if parseErr != nil {
+			panic(fmt.Errorf("invalid contant %s: %w", name, parseErr))
+		}
+
+		logger.Err(err).
+			Str("default", defaultVal).
+			Str("invalid", v).
+			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+
+		return tpl, defaultVal
+	}
+
+	logger.Info().
+		Str("value", v).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return tpl, v
+}
+
+func parseUpdatedTemplate(
+	v, oldVal string,
+	name, sectionName string,
+	logger zerolog.Logger,
+) (*template.Template, string, bool) {
+	if v == "" {
+		logger.Error().
+			Str("invalid", v).
+			Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
+		return nil, "", false
+	}
+
+	if v == oldVal {
+		return nil, "", false
+	}
+
+	tpl, err := CreateDisplayNameTpl(v)
+	if err != nil {
+		logger.Err(err).
+			Str("invalid", v).
+			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		return nil, "", false
+	}
+
+	logger.Info().
+		Str("previous", oldVal).
+		Str("new", v).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	return tpl, v, true
+}
+
+func parseBool(
+	v bool,
+	name, sectionName string,
+	logger zerolog.Logger,
+) bool {
+	logger.Info().
+		Bool("value", v).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return v
+}
+
+func parseUpdatedBool(
+	v, oldVal bool,
+	name, sectionName string,
+	logger zerolog.Logger,
+) (bool, bool) {
+	if v == oldVal {
+		return false, false
+	}
+	logger.Info().
+		Bool("previous", oldVal).
+		Bool("new", v).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	return v, true
+}
+
+func parseLocation(
+	v string,
+	defaultVal *time.Location,
+	name, sectionName string,
+	logger zerolog.Logger,
+) *time.Location {
+	if v == "" {
+		logger.Error().
+			Str("default", defaultVal.String()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+		return defaultVal
+	}
+
+	location, err := time.LoadLocation(v)
+	if err != nil {
+		logger.Err(err).
+			Str("default", defaultVal.String()).
+			Str("invalid", v).
+			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+		return defaultVal
+	}
+
+	logger.Info().
+		Str("value", location.String()).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return location
+}
+
+func parseUpdatedLocation(
+	v string,
+	oldVal *time.Location,
+	name, sectionName string,
+	logger zerolog.Logger,
+) (*time.Location, bool) {
+	if v == "" {
+		logger.Error().
+			Str("invalid", v).
+			Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
+		return nil, false
+	}
+	location, err := time.LoadLocation(v)
+	if err != nil {
+		logger.Err(err).
+			Str("invalid", v).
+			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		return nil, false
+	}
+
+	if oldVal.String() == location.String() {
+		return nil, false
+	}
+
+	logger.Info().
+		Str("previous", oldVal.String()).
+		Str("new", location.String()).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	return location, true
 }

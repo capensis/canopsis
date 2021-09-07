@@ -1,13 +1,11 @@
 package canopsis
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"time"
 )
 
 // Globals
 const (
-	EnvCpsAMQPTestExchange          = "canopsis.tests"
 	ActionEngineName                = "engine-action"
 	ActionQueueName                 = "Engine_action"
 	ActionAxeRPCClientQueueName     = "Engine_action_axe_rpc_client"
@@ -25,21 +23,12 @@ const (
 	CheEngineName                   = "engine-che"
 	CheQueueName                    = "Engine_che"
 	CheConsumerName                 = "che"
-	DbName                          = mongo.DB
 	DefaultBulkSize                 = 1000
 	DefaultEventAuthor              = "system"
 	DoneAutosolveDelay              = 15 * 60
+	DynamicInfosEngineName          = "engine-dynamic-infos"
 	DynamicInfosQueueName           = "Engine_dynamic_infos"
 	DynamicInfosConsumerName        = "dynamic-infos"
-	HeartBeatExchangeName           = "canopsis.events"
-	HeartBeatQueueName              = "Engine_heartbeat"
-	HeartBeatConsumerName           = "heartbeat"
-	MaxPythonTimestamp              = 253402297199 // compat: max timestamp in python
-	StatsExchangeName               = "canopsis.events"
-	StatsQueueName                  = "Engine_stat"
-	StatsConsumerName               = "stat"
-	StatsDatabase                   = "canopsis"
-	StatsMeasurement                = "event_state_history"
 	StatsngExchangeName             = "amq.direct"
 	StatsngQueueName                = "Engine_statsng"
 	PBehaviorEngineName             = "engine-pbehavior"
@@ -55,14 +44,23 @@ const (
 	ServiceRPCConsumerName          = "service_rpc"
 	WebhookRPCQueueServerName       = "Engine_webhook_rpc_server"
 	WebhookRPCConsumerName          = "webhook_rpc"
+	FIFOEngineName                  = "engine-fifo"
 	FIFOExchangeName                = ""
 	FIFOQueueName                   = "Engine_fifo"
 	FIFOAckExchangeName             = ""
 	FIFOAckQueueName                = "FIFO_ack"
 	FIFOConsumerName                = "fifo"
+	FIFOAckConsumerName             = "fifo_ack"
+	CorrelationEngineName           = "engine-correlation"
 	CorrelationQueueName            = "Engine_correlation"
 	CorrelationConsumerName         = "correlation"
 	PeriodicalWaitTime              = time.Minute
 	JsonContentType                 = "application/json"
 	CanopsisEventsExchange          = "canopsis.events"
+
+	RemediationEngineName            = "engine-remediation"
+	RemediationConsumerName          = "remediation"
+	RemediationRPCConsumerName       = "remediation_rpc"
+	RemediationRPCQueueServerName    = "Engine_remediation_rpc_server"
+	RemediationRPCQueueServerJobName = "Engine_remediation_rpc_server_job"
 )

@@ -46,6 +46,13 @@ export default {
             value: this.value,
           },
         },
+        idle_since: {
+          bind: {
+            is: 'c-no-events-icon',
+            value: Number(this.value),
+            top: true,
+          },
+        },
       };
 
       if (PROPERTIES_COMPONENTS_MAP[this.column.value]) {

@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        remediation-instruction-form(v-model="form")
+        remediation-instruction-form(v-model="form", :disabled="disabled")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -17,7 +17,11 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formToRemediationInstruction, remediationInstructionToForm } from '@/helpers/forms/remediation-instruction';
+import {
+  formToRemediationInstruction,
+  remediationInstructionErrorsToForm,
+  remediationInstructionToForm,
+} from '@/helpers/forms/remediation-instruction';
 
 import { validationErrorsMixin } from '@/mixins/form/validation-errors';
 import { submittableMixin } from '@/mixins/submittable';
@@ -50,6 +54,10 @@ export default {
     title() {
       return this.config.title || this.$t('modals.createRemediationInstruction.create.title');
     },
+
+    disabled() {
+      return this.config.disabled;
+    },
   },
   methods: {
     async submit() {
@@ -63,7 +71,7 @@ export default {
 
           this.$modals.hide();
         } catch (err) {
-          this.setFormErrors(err);
+          this.setFormErrors(remediationInstructionErrorsToForm(err));
         }
       }
     },

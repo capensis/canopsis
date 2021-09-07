@@ -1,7 +1,8 @@
-import { isUndefined, cloneDeep, omit } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
-import { infosToArray } from '@/helpers/forms/shared/common';
+
+import { enabledToForm, infosToArray } from './shared/common';
 
 /**
  * @typedef {Object} Entity
@@ -15,6 +16,7 @@ import { infosToArray } from '@/helpers/forms/shared/common';
  * @property {Array} changeable_depends
  * @property {Array} changeable_impact
  * @property {Object} infos
+ * @property {number} [idle_since]
  */
 
 /**
@@ -34,18 +36,18 @@ export const entityToForm = (entity = {}) => {
   const changeableImpact = entity.changeable_impact || [];
   const changeableDepends = entity.changeable_depends || [];
 
-  return ({
+  return {
     impact,
     depends,
     name: entity.name || '',
     description: entity.description || '',
     type: entity.type || BASIC_ENTITY_TYPES.connector,
-    enabled: !isUndefined(entity.enabled) ? entity.enabled : true,
+    enabled: enabledToForm(entity.enabled),
     disabled_impact: impact.filter(id => !changeableImpact.includes(id)),
     disabled_depends: depends.filter(id => !changeableDepends.includes(id)),
     infos: infosToArray(entity.infos),
     impact_level: entity.impact_level,
-  });
+  };
 };
 
 /**

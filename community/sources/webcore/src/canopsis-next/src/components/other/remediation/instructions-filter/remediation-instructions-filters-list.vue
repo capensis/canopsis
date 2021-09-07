@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 import RemediationInstructionsFiltersItem from './remediation-instructions-filters-item.vue';
 

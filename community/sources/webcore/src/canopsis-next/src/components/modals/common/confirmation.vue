@@ -1,7 +1,7 @@
 <template lang="pug">
   modal-wrapper(data-test="confirmationModal", close)
     template(v-if="!config.hideTitle", slot="title")
-      span {{ $t('common.confirmation') }}
+      span {{ title }}
     template(v-if="config.text", slot="text")
       span.subheading {{ config.text }}
     template(slot="actions")
@@ -37,6 +37,11 @@ export default {
       submitted: false,
       cancelled: false,
     };
+  },
+  computed: {
+    title() {
+      return this.config.title || this.$t('common.confirmation');
+    },
   },
   beforeDestroy() {
     if (!this.submitted && this.config.cancel) {

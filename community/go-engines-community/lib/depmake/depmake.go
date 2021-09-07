@@ -6,11 +6,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/influx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	redismod "github.com/go-redis/redis/v8"
-	influxmod "github.com/influxdata/influxdb/client/v2"
 	"github.com/rs/zerolog"
 	amqpmod "github.com/streadway/amqp"
 )
@@ -30,23 +28,15 @@ type DependencyMaker struct {
 }
 
 // DepMongoClient opens a mongo session.
-func (m DependencyMaker) DepMongoClient(cfg config.CanopsisConf) mongo.DbClient {
-	c, err := mongo.NewClient(
-		cfg.Global.ReconnectRetries,
-		cfg.Global.GetReconnectTimeout(),
-	)
+func (m DependencyMaker) DepMongoClient(ctx context.Context) mongo.DbClient {
+	c, err := mongo.NewClient(ctx, 0, 0)
 	Panic("mongo session", err)
 	return c
 }
 
 // DepConfig gets a config from mongodb
-func (m DependencyMaker) DepConfig() config.CanopsisConf {
-	dbClient, err := mongo.NewClient(0, 0)
-	if err != nil {
-		panic(err)
-	}
-
-	cfg, err := config.NewAdapter(dbClient).GetConfig()
+func (m DependencyMaker) DepConfig(ctx context.Context, dbClient mongo.DbClient) config.CanopsisConf {
+	cfg, err := config.NewAdapter(dbClient).GetConfig(ctx)
 	if err != nil {
 		panic(fmt.Errorf("dependency error: %s: %v", "can't get the config", err))
 	}
@@ -91,13 +81,6 @@ func (m DependencyMaker) DepRedisSession(ctx context.Context, db int, logger zer
 	s, err := redis.NewSession(ctx, db, logger, cfg.Global.ReconnectRetries,
 		cfg.Global.GetReconnectTimeout())
 	Panic("redis", err)
-	return s
-}
-
-// DepInfluxSession opens an influx session.
-func (m DependencyMaker) DepInfluxSession() influxmod.Client {
-	s, err := influx.NewSession()
-	Panic("influx", err)
 	return s
 }
 

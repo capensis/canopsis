@@ -157,7 +157,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	// Find entity if still empty.
 	if event.Entity == nil {
-		event.Entity, err = p.EnrichmentCenter.Get(event)
+		event.Entity, err = p.EnrichmentCenter.Get(ctx, event)
 		if err != nil {
 			if engine.IsConnectionError(err) {
 				return nil, err
@@ -171,7 +171,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	event.AddedToServices = append(event.AddedToServices, updatedEntityServices.AddedTo...)
 	event.RemovedFromServices = append(event.RemovedFromServices, updatedEntityServices.RemovedFrom...)
 
-	err = p.publishComponentInfosUpdatedEvents(updatedEntityServices.UpdatedComponentInfosResources)
+	err = p.publishComponentInfosUpdatedEvents(ctx, updatedEntityServices.UpdatedComponentInfosResources)
 	if err != nil {
 		return nil, err
 	}
@@ -200,13 +200,13 @@ func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
 // component infos of resources have been updated on component event.
 // It's not possible to immediately process such resources  since only component entity
 // is locked by engine fifo and resource entity can be updated by another event in parallel.
-func (p *messageProcessor) publishComponentInfosUpdatedEvents(resources []string) error {
+func (p *messageProcessor) publishComponentInfosUpdatedEvents(ctx context.Context, resources []string) error {
 	if len(resources) == 0 {
 		return nil
 	}
 
 	alarms := make([]types.Alarm, 0)
-	err := p.AlarmAdapter.GetOpenedAlarmsByIDs(resources, &alarms)
+	err := p.AlarmAdapter.GetOpenedAlarmsByIDs(ctx, resources, &alarms)
 	if err != nil {
 		if engine.IsConnectionError(err) {
 			return err

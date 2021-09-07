@@ -50,7 +50,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	model := a.transformer.TransformRequestToModel(&request)
-	ok, err := a.store.Insert(request.Pbehavior, model)
+	ok, err := a.store.Insert(c.Request.Context(), request.Pbehavior, model)
 	if err != nil {
 		panic(err)
 	}
@@ -75,7 +75,7 @@ func (a *api) Create(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /pbehavior-comments/:id [delete]
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Param("id"))
+	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		panic(err)
 	}

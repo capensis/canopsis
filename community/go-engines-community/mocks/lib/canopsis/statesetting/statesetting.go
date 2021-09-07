@@ -5,6 +5,7 @@
 package mock_statesetting
 
 import (
+	context "context"
 	statesetting "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
@@ -34,16 +35,16 @@ func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 }
 
 // Get mocks base method
-func (m *MockAdapter) Get(arg0 string) (statesetting.StateSetting, error) {
+func (m *MockAdapter) Get(arg0 context.Context, arg1 string) (statesetting.StateSetting, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", arg0)
+	ret := m.ctrl.Call(m, "Get", arg0, arg1)
 	ret0, _ := ret[0].(statesetting.StateSetting)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get
-func (mr *MockAdapterMockRecorder) Get(arg0 interface{}) *gomock.Call {
+func (mr *MockAdapterMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockAdapter)(nil).Get), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockAdapter)(nil).Get), arg0, arg1)
 }

@@ -90,6 +90,60 @@ Feature: Get a role
     }
     """
 
+  Scenario: given search request should return roles with permission
+    When I am admin
+    When I do GET /api/v4/roles?permission=api_instruction_approve
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "admin"
+        },
+        {
+          "_id": "approver"
+        },
+        {
+          "_id": "approver2"
+        },
+        {
+          "_id": "manager"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
+
+  Scenario: given search request should return roles with permission
+    When I am admin
+    When I do GET /api/v4/roles?permission=api_instruction_approve&search=ap
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "approver"
+        },
+        {
+          "_id": "approver2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+
   Scenario: given get request should return role
     When I am admin
     When I do GET /api/v4/roles/test-role-to-get-1

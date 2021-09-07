@@ -14,10 +14,9 @@ import (
 
 func TestEntityDataSourceCreate(t *testing.T) {
 	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 	Convey("Given an entity data source factory", t, func() {
-		entity := types.NewEntity("component", "name", types.EntityTypeComponent, nil, nil, nil)
 		enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
-		enrichmentCenter.EXPECT().Handle(gomock.Any(), gomock.Any(), gomock.Any()).Return(&entity, libcontext.UpdatedEntityServices{}, nil)
 		enrichFields := libcontext.NewEnrichFields("", "")
 
 		factory := eventfilter.NewEntityDataSourceFactory(enrichmentCenter, enrichFields)
@@ -33,6 +32,7 @@ func TestEntityDataSourceCreate(t *testing.T) {
 
 func TestEntityDataSourceGet(t *testing.T) {
 	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 	Convey("Given an entity data source factory", t, func() {
 		entity := types.NewEntity("component", "name", types.EntityTypeComponent, nil, nil, nil)
 		enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)

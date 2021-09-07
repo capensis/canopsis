@@ -31,7 +31,7 @@ type EditRequest struct {
 	ID                   string                    `json:"-"`
 	Name                 string                    `json:"name" binding:"required,max=255"`
 	Description          string                    `json:"description" binding:"max=255"`
-	Author               string                    `json:"author" binding:"required,max=255"`
+	Author               string                    `json:"author" swaggerignore:"true"`
 	Enabled              *bool                     `json:"enabled" binding:"required"`
 	Type                 string                    `json:"type" binding:"required"`
 	Priority             *int64                    `json:"priority" binding:"required"`
