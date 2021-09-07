@@ -196,6 +196,7 @@ export default {
     optimal: 'Optimal',
     graph: 'Graph | Graphs',
     systemStatus: 'System status',
+    downloadAsPng: 'Download as PNG',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

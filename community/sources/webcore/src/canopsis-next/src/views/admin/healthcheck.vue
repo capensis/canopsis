@@ -13,23 +13,25 @@
       v-tab-item.healthcheck__graph-tab
         healthcheck-network-graph(
           v-if="!pending && !hasServerError",
-          :services="response.services",
-          :engines="response.engines",
-          :has-invalid-engines-order="response.has_invalid_engines_order",
-          :max-queue-length="response.max_queue_length",
+          :services="services",
+          :engines-graph="enginesGraph",
+          :engines-parameters="enginesParameters",
+          :has-invalid-engines-order="hasInvalidEnginesOrder",
+          :max-queue-length="maxQueueLength",
           show-description
         )
         h2.my-4.headline.text-xs-center(v-else-if="hasServerError") {{ $t('healthcheck.systemStatusServerError') }}
       v-tab-item(lazy)
-        healthcheck-graphs(:max-queue-length="response.max_queue_length")
+        healthcheck-graphs(:max-queue-length="maxQueueLength")
       v-tab-item(lazy)
         healthcheck-parameters
-    c-fab-btn(@refresh="fetchList")
 </template>
 
 <script>
 import { isEqual } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
+
+import { SOCKET_ROOMS } from '@/constants';
 
 import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation/healthcheck-network-graph.vue';
 import HealthcheckGraphs from '@/components/other/healthcheck/exploitation/healthcheck-graphs.vue';
@@ -46,17 +48,28 @@ export default {
     return {
       activeTab: 0,
       pending: true,
-      response: {},
+      services: [],
+      enginesGraph: {},
+      enginesParameters: {},
+      hasInvalidEnginesOrder: false,
+      maxQueueLength: 0,
       hasServerError: false,
     };
   },
   computed: {
     hasAnyError() {
-      return this.hasServerError || this.response.has_invalid_engines_order;
+      return this.hasServerError || this.hasInvalidEnginesOrder;
     },
   },
   mounted() {
     this.fetchList();
+
+    this.$socket.join(SOCKET_ROOMS.healthcheck);
+    this.$socket.getRoom(SOCKET_ROOMS.healthcheck).addListener(this.setData);
+  },
+  beforeDestroy() {
+    this.$socket.getRoom(SOCKET_ROOMS.healthcheck).removeListener(this.setData);
+    this.$socket.leave(SOCKET_ROOMS.healthcheck);
   },
   methods: {
     ...mapActions({
@@ -64,9 +77,29 @@ export default {
     }),
 
     setData(data) {
-      if (!isEqual(data, this.response)) {
-        this.response = data;
-      }
+      const {
+        services = [],
+        engines: {
+          graph: enginesGraph = {},
+          parameters: enginesParameters = {},
+        },
+        has_invalid_engines_order: hasInvalidEnginesOrder = false,
+        max_queue_length: maxQueueLength = 0,
+      } = data;
+
+      const preparedData = {
+        services,
+        enginesGraph,
+        enginesParameters,
+        hasInvalidEnginesOrder,
+        maxQueueLength,
+      };
+
+      Object.entries(preparedData).forEach(([key, value]) => {
+        if (!isEqual(this[key], value)) {
+          this[key] = value;
+        }
+      });
     },
 
     async fetchList() {
@@ -74,7 +107,9 @@ export default {
         this.hasServerError = false;
         this.pending = true;
 
-        this.response = await this.fetchHealthcheckEnginesWithoutStore();
+        const data = await this.fetchHealthcheckEnginesWithoutStore();
+
+        this.setData(data);
       } catch (err) {
         this.hasServerError = true;
       } finally {

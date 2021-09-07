@@ -9,7 +9,6 @@ import 'chartjs-adapter-moment';
 export const generateChart = (chartId, chartType) => ({
   render(h) {
     return h('div', {}, [
-      this.$scopedSlots.actions && this.$scopedSlots.actions({ chart: this.chart }),
       h('div', {
         style: this.styles,
         class: this.cssClasses,
@@ -21,6 +20,7 @@ export const generateChart = (chartId, chartType) => ({
         },
         ref: 'canvas',
       })]),
+      this.$scopedSlots.actions && this.$scopedSlots.actions({ chart: this.chart }),
     ]);
   },
 
