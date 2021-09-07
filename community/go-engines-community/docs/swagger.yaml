@@ -3686,7 +3686,9 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get paginated list of alarms
+      description: Get paginated list of alarms. Use parameters "multi_sort[]=field_1,asc&multi_sort[]=field_2,desc&multi_sort[]=field_3,asc"
+        to sort list by multiple fields. "sort_key", "sort_dir" are left for compatibility
+        with older ways of sorting
       operationId: alarms-find-all
       parameters:
       - collectionFormat: multi
