@@ -40,6 +40,7 @@
       :expand="expand",
       :is-disabled-item="isDisabledItem",
       :hide-actions="hideActions || advancedPagination || noPagination",
+      :multi-sort="multiSort",
       :table-class="tableClass",
       @update:pagination="updatePagination"
     )
@@ -170,6 +171,10 @@ export default {
     toolbarProps: {
       type: Object,
       required: false,
+    },
+    multiSort: {
+      type: Boolean,
+      default: false,
     },
     tableClass: {
       type: String,
