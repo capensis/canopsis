@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { isObject, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
@@ -70,15 +70,6 @@ export default {
   async mounted() {
     try {
       await this.fetchCurrentUser();
-    } catch (err) {
-      localStorageService.clear();
-
-      this.$router.push({
-        name: ROUTE_NAMES.error,
-        query: {
-          message: isObject(err) ? err.error || err.message : undefined,
-        },
-      });
     } finally {
       this.pending = false;
     }

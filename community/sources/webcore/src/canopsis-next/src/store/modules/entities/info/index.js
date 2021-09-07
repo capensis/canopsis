@@ -1,7 +1,9 @@
 import { API_ROUTES } from '@/config';
 import request from '@/services/request';
 import { toSeconds } from '@/helpers/date/duration';
-import { POPUP_TYPES } from '@/constants';
+import { POPUP_TYPES, ROUTE_NAMES } from '@/constants';
+
+import router from '@/router';
 
 const types = {
   FETCH_LOGIN_INFOS: 'FETCH_LOGIN_INFOS',
@@ -108,7 +110,7 @@ export default {
           version,
           user_interface: userInterface,
           login_config: loginConfig,
-        } = await request.get(API_ROUTES.infos.login);
+        } = await request.get(API_ROUTES.infos.login, { fullResponse: true });
 
         const { language, popup_timeout: popupTimeout } = userInterface;
 
@@ -125,8 +127,12 @@ export default {
         if (popupTimeout) {
           dispatch('setPopupTimeouts', { popupTimeout });
         }
-      } catch (err) {
-        console.error(err);
+      } catch ({ status, data }) {
+        if (![401, 403].includes(status)) {
+          router.push({ name: ROUTE_NAMES.error });
+        }
+
+        throw data;
       }
     },
 

@@ -4,22 +4,43 @@
       img(src="@/assets/canopsis-green.png")
       span.subheading.pt-4 {{ $t('errors.default') }}
       span.subheading(v-if="message") {{ message }}
-      v-btn.primary.mt-4(small, @click="redirectToLogin") {{ $t('common.login') }}
 </template>
 
 <script>
+import { LOGIN_INFOS_FETCHING_INTERVAL } from '@/config';
+
 import { ROUTE_NAMES } from '@/constants';
 
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { createPollingMixin } from '@/mixins/polling';
+
 export default {
+  mixins: [
+    entitiesInfoMixin,
+    createPollingMixin({
+      method: 'fetchInfos',
+      delay: LOGIN_INFOS_FETCHING_INTERVAL,
+      startOnMount: true,
+    }),
+  ],
   props: {
     message: {
       type: String,
       default: '',
     },
   },
+  mounted() {
+    this.fetchInfos();
+  },
   methods: {
-    redirectToLogin() {
-      return this.$router.replace({ name: ROUTE_NAMES.login });
+    async fetchInfos() {
+      try {
+        await this.fetchLoginInfos();
+
+        this.$router.replace({ name: ROUTE_NAMES.login });
+      } catch (err) {
+        console.error(err);
+      }
     },
   },
 };
