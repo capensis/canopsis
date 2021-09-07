@@ -268,44 +268,44 @@ export default {
     },
   },
   search: {
-    alarmAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
-    '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
-    '<p>Le "-" avant la recherche est obligatoire</p>\n' +
-    '<p>Opérateurs:\n' +
-    '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
-    '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
-    '<dl><dt>Exemples :</dt><dt>- Connector = "connector_1"</dt>\n' +
-    '    <dd>Alarmes dont le connecteur est "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
-    '    <dd>Alarmes dont le connecteur est "connector_1" et la ressource est "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
-    '    <dd>Alarmes dont le connecteur est "connector_1" ou la ressource est "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
-    '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
-    '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n' +
-    '</dl>',
-    contextAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
-      '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
-      '<p>Le "-" avant la recherche est obligatoire</p>\n' +
-      '<p>Opérateurs:\n' +
-      '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
-      '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
-      '<dl><dt>Exemples :</dt><dt>- Name = "name_1"</dt>\n' +
-      '    <dd>Entités dont le names est "name_1"</dd><dt>- Name="name_1" AND Type="service"</dt>\n' +
-      '    <dd>Entités dont le names est "name_1" et la types est "service"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n' +
-      '    <dd>Entités dont le infos.custom.value est "Custom value" ou la type est "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n' +
-      '    <dd>Entités dont le infos.custom.value contient 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n' +
-      '    <dd>Entités dont le name n\'est pas "name_1"</dd>\n' +
-      '</dl>',
-    dynamicInfoAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
-      '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
-      '<p>Le "-" avant la recherche est obligatoire</p>\n' +
-      '<p>Opérateurs:\n' +
-      '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
-      '<p>Pour effectuer une recherche dans les "patterns", utilisez le mot-clé "pattern" comme &lt;NomColonne&gt;</p>\n' +
-      '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
-      '<dl><dt>Examples :</dt><dt>- description = "testdyninfo"</dt>\n' +
-      '    <dd>Règles d\'Informations dynamiques dont la description est "testdyninfo"</dd><dt>- pattern = "SEARCHPATTERN1"</dt>\n' +
-      '    <dd>Règles d\'Informations dynamiques dont un des patterns est "SEARCHPATTERN1"</dd><dt>- pattern LIKE "SEARCHPATTERN2"</dt>\n' +
-      '    <dd>Règles d\'Informations dynamiques dont un des patterns contient "SEARCHPATTERN2"</dd>' +
-      '</dl>',
+    alarmAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
+    + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
+    + '<p>Le "-" avant la recherche est obligatoire</p>\n'
+    + '<p>Opérateurs:\n'
+    + '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n'
+    + '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+    + '<dl><dt>Exemples :</dt><dt>- Connector = "connector_1"</dt>\n'
+    + '    <dd>Alarmes dont le connecteur est "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n'
+    + '    <dd>Alarmes dont le connecteur est "connector_1" et la ressource est "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n'
+    + '    <dd>Alarmes dont le connecteur est "connector_1" ou la ressource est "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n'
+    + '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n'
+    + '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n'
+    + '</dl>',
+    contextAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
+      + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
+      + '<p>Le "-" avant la recherche est obligatoire</p>\n'
+      + '<p>Opérateurs:\n'
+      + '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n'
+      + '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+      + '<dl><dt>Exemples :</dt><dt>- Name = "name_1"</dt>\n'
+      + '    <dd>Entités dont le names est "name_1"</dd><dt>- Name="name_1" AND Type="service"</dt>\n'
+      + '    <dd>Entités dont le names est "name_1" et la types est "service"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n'
+      + '    <dd>Entités dont le infos.custom.value est "Custom value" ou la type est "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n'
+      + '    <dd>Entités dont le infos.custom.value contient 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n'
+      + '    <dd>Entités dont le name n\'est pas "name_1"</dd>\n'
+      + '</dl>',
+    dynamicInfoAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
+      + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
+      + '<p>Le "-" avant la recherche est obligatoire</p>\n'
+      + '<p>Opérateurs:\n'
+      + '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n'
+      + '<p>Pour effectuer une recherche dans les "patterns", utilisez le mot-clé "pattern" comme &lt;NomColonne&gt;</p>\n'
+      + '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+      + '<dl><dt>Examples :</dt><dt>- description = "testdyninfo"</dt>\n'
+      + '    <dd>Règles d\'Informations dynamiques dont la description est "testdyninfo"</dd><dt>- pattern = "SEARCHPATTERN1"</dt>\n'
+      + '    <dd>Règles d\'Informations dynamiques dont un des patterns est "SEARCHPATTERN1"</dd><dt>- pattern LIKE "SEARCHPATTERN2"</dt>\n'
+      + '    <dd>Règles d\'Informations dynamiques dont un des patterns contient "SEARCHPATTERN2"</dd>'
+      + '</dl>',
     submit: 'Rechercher',
     clear: 'Ne plus appliquer cette recherche',
   },
@@ -643,12 +643,12 @@ export default {
     },
     screenshotMask: {
       title: 'Masque de nom de fichier de captures d\'écran',
-      helpText: '<dl>' +
-        '<dt>Définissez le masque de nom de fichier dont les captures d\'écran sont créées à l\'aide des variables suivantes:<dt>\n' +
-        '<dd>- nom du cas de test %test_case%</dd>\n' +
-        '<dd>- date (YYYY, MM, DD)</dd>\n' +
-        '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
-        '</dl>',
+      helpText: '<dl>'
+        + '<dt>Définissez le masque de nom de fichier dont les captures d\'écran sont créées à l\'aide des variables suivantes:<dt>\n'
+        + '<dd>- nom du cas de test %test_case%</dd>\n'
+        + '<dd>- date (YYYY, MM, DD)</dd>\n'
+        + '<dd>- temps d\'exécution (hh, mm, ss)</dd>'
+        + '</dl>',
     },
     videoDirectories: {
       title: 'Paramètres de stockage vidéo',
@@ -656,12 +656,12 @@ export default {
     },
     videoMask: {
       title: 'Masque de nom de fichier de vidéos',
-      helpText: '<dl>' +
-        '<dt>Définissez le masque de nom de fichier dont les vidéos sont créées à l\'aide des variables suivantes:<dt>\n' +
-        '<dd>- nom du cas de test %test_case%</dd>\n' +
-        '<dd>- date (YYYY, MM, DD)</dd>\n' +
-        '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
-        '</dl>',
+      helpText: '<dl>'
+        + '<dt>Définissez le masque de nom de fichier dont les vidéos sont créées à l\'aide des variables suivantes:<dt>\n'
+        + '<dd>- nom du cas de test %test_case%</dd>\n'
+        + '<dd>- date (YYYY, MM, DD)</dd>\n'
+        + '<dd>- temps d\'exécution (hh, mm, ss)</dd>'
+        + '</dl>',
     },
   },
   modals: {
@@ -1053,8 +1053,8 @@ export default {
         addObjectRuleField: 'Ajouter un groupe',
         editObjectRuleField: 'Éditer le groupe',
         removeRuleField: 'Supprimer le groupe/la règle',
-        copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>' +
-          '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
+        copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>'
+          + '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
       },
       actionsTypes: {
         [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
@@ -1420,9 +1420,9 @@ export default {
       errors: {
         invalidJSON: 'JSON non valide',
       },
-      payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
-        '<i>Quelques exemples:</i>' +
-        '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+      payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
+        + '<i>Quelques exemples:</i>'
+        + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     },
     clickOutsideConfirmation: {
       title: 'Êtes-vous sûr(e) ?',
@@ -1718,21 +1718,21 @@ export default {
     autoResolve: 'Résolution automatique',
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
     corelId: 'Corel ID',
-    corelIdHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
-      '<i>Quelques exemples:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+    corelIdHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
+      + '<i>Quelques exemples:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
     corelStatus: 'Corel statut',
-    corelStatusHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
-      '<i>Quelques exemples:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+    corelStatusHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
+      + '<i>Quelques exemples:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
     corelParent: 'Corel parent',
     corelChild: 'Corel enfant',
-    outputTemplateHelp: '<p>Les variables accessibles sont:</p>\n' +
-      '<p><strong>.Count</strong>: Le nombre d\'alarmes conséquences attachées à la méta alarme.</p>' +
-      '<p><strong>.Children</strong>: L\'ensemble des variables de la dernière alarme conséquence attachée à la méta alarme.</p>' +
-      '<p><strong>.Rule</strong>: Les informations administratives de la méta alarme en elle-même.</p>' +
-      '<p>Quelques exemples:</p>' +
-      '<p><strong>{{ .Count }} conséquences;</strong> Message de la dernière alarme conséquence : <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Règle : <strong>{{ .Rule.Name }};</strong></p>' +
-      '<p>Un message informatif statique</p>' +
-      '<p>Corrélé par la règle <strong>{{ .Rule.Name }}</strong></p>',
+    outputTemplateHelp: '<p>Les variables accessibles sont:</p>\n'
+      + '<p><strong>.Count</strong>: Le nombre d\'alarmes conséquences attachées à la méta alarme.</p>'
+      + '<p><strong>.Children</strong>: L\'ensemble des variables de la dernière alarme conséquence attachée à la méta alarme.</p>'
+      + '<p><strong>.Rule</strong>: Les informations administratives de la méta alarme en elle-même.</p>'
+      + '<p>Quelques exemples:</p>'
+      + '<p><strong>{{ .Count }} conséquences;</strong> Message de la dernière alarme conséquence : <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Règle : <strong>{{ .Rule.Name }};</strong></p>'
+      + '<p>Un message informatif statique</p>'
+      + '<p>Corrélé par la règle <strong>{{ .Rule.Name }}</strong></p>',
     errors: {
       noValuePaths: 'Vous devez ajouter au moins 1 chemin de valeur',
     },
@@ -2214,23 +2214,23 @@ export default {
     remainingAction: 'Continuer avec les actions restantes',
     addAction: 'Ajouter une action',
     emptyActions: 'Aucune action ajoutée pour le moment',
-    urlHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>' +
-      '<i>Quelques exemples :</i>' +
-      '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>' +
-      '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>' +
-      '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>' +
-      '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
-    outputHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
-      '<i>Quelques exemples:</i>' +
-      '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',
-    payloadHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>' +
-      '<i>Quelques exemples:</i>' +
-      '<pre>{\n' +
-      '  resource: "{{ .Alarm.Value.Resource }}",\n' +
-      '  entity: "{{ .Entity.ID }}",\n' +
-      '  children_count: "{{ len .Children }}",\n' +
-      '  children: {{ range .Children }}{{ .ID }}{{ end }}\n' +
-      '}</pre>',
+    urlHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>'
+      + '<i>Quelques exemples :</i>'
+      + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
+      + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
+      + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
+      + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
+    outputHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
+      + '<i>Quelques exemples:</i>'
+      + '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',
+    payloadHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>'
+      + '<i>Quelques exemples:</i>'
+      + '<pre>{\n'
+      + '  resource: "{{ .Alarm.Value.Resource }}",\n'
+      + '  entity: "{{ .Entity.ID }}",\n'
+      + '  children_count: "{{ len .Children }}",\n'
+      + '  children: {{ range .Children }}{{ .ID }}{{ end }}\n'
+      + '}</pre>',
     actions: {
       [ACTION_TYPES.snooze]: 'Snooze',
       [ACTION_TYPES.pbehavior]: 'Pbehavior',
