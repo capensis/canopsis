@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import entitiesRemediationJobsMixin from '@/mixins/entities/remediation/jobs';
+import { entitiesRemediationJobsMixin } from '@/mixins/entities/remediation/jobs';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
 export default {

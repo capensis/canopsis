@@ -11,6 +11,7 @@ import remediationInstructionExecutionModule from './remediation-instruction-exe
 import remediationConfigurationModule from './remediation-configuration';
 import remediationJobModule from './remediation-job';
 import remediationJobExecutionModule from './remediation-job-execution';
+import remediationInstructionStatsModule from './remediation-instruction-stats';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
 import statsModule from './stats';
@@ -21,7 +22,6 @@ import eventFilterRuleModule from './event-filter-rule';
 import infoModule from './info';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
-import heartbeatModule from './heartbeat';
 import keepaliveModule from './keepalive';
 import dynamicInfoModule from './dynamic-info';
 import sessionsCountModule from './sessions-count';
@@ -36,6 +36,8 @@ import testSuiteModule from './test-suite';
 import stateSettingModule from './state-setting';
 import associativeTableModule from './associative-table';
 import dataStorageModule from './data-storage';
+import notificationSettingsModule from './notification-settings';
+import idleRulesModule from './idle-rules';
 
 export default {
   alarm: alarmModule,
@@ -56,7 +58,6 @@ export default {
   info: infoModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
-  heartbeat: heartbeatModule,
   keepalive: keepaliveModule,
   dynamicInfo: dynamicInfoModule,
   sessionsCount: sessionsCountModule,
@@ -70,10 +71,13 @@ export default {
   remediationConfiguration: remediationConfigurationModule,
   remediationInstructionExecution: remediationInstructionExecutionModule,
   remediationJobExecution: remediationJobExecutionModule,
+  remediationInstructionStats: remediationInstructionStatsModule,
   scenario: scenarioModule,
   entityCategory: entityCategoryModule,
   testSuite: testSuiteModule,
   stateSetting: stateSettingModule,
   associativeTable: associativeTableModule,
   dataStorage: dataStorageModule,
+  notificationSettings: notificationSettingsModule,
+  idleRules: idleRulesModule,
 };

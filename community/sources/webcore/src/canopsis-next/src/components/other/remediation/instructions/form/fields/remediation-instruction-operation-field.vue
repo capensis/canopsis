@@ -3,13 +3,15 @@
     v-flex.mt-3(xs1)
       c-draggable-step-number(
         drag-class="operation-drag-handler",
+        :disabled="disabled",
         :color="hasChildrenError ? 'error' : 'primary'"
       ) {{ operationNumber }}
     v-flex(xs11)
       v-layout(row)
-        v-flex.pr-1(xs11)
+        v-flex(xs11)
           v-layout(row)
             c-expand-btn.operation-expand(
+              v-if="!disabled",
               v-model="expanded",
               :color="!expanded && hasChildrenError ? 'error' : 'grey darken-3'"
             )
@@ -20,46 +22,63 @@
                 :label="$t('common.name')",
                 :error-messages="errors.collect(nameFieldName)",
                 :name="nameFieldName",
+                :disabled="disabled",
                 box
               )
               v-expand-transition(mode="out-in")
                 v-layout(v-if="expanded", column)
                   remediation-instruction-time-to-complete-field(
                     v-field="operation.time_to_complete",
+                    :disabled="disabled",
                     :name="timeToCompleteFieldName"
                   )
+                  text-editor-blurred(
+                    v-if="disabled",
+                    :value="operation.description",
+                    :label="$t('common.description')",
+                    :disabled="disabled",
+                    hide-details
+                  )
                   text-editor-field(
+                    v-else,
                     v-field="operation.description",
                     v-validate="'required'",
                     :label="$t('common.description')",
                     :error-messages="errors.collect(descriptionFieldName)",
                     :name="descriptionFieldName"
                   )
-                  jobs-select(v-field="operation.jobs")
-        v-flex.mt-3(xs1)
+                  jobs-chips(
+                    v-if="disabled &&  operation.jobs && operation.jobs.length",
+                    :jobs="operation.jobs"
+                  )
+                  jobs-select(v-if="!disabled", v-field="operation.jobs")
+        v-flex.mt-1(xs1)
           v-layout(justify-center)
-            v-btn.ma-0(icon, small, @click.prevent="remove")
-              v-icon(color="error") delete
+            c-action-btn(v-if="!disabled", type="delete", @click="$emit('remove')")
 </template>
 
 <script>
 import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
-import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
 
-import formMixin from '@/mixins/form';
-import validationChildrenMixin from '@/mixins/form/validation-children';
+import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
+
+import { formMixin, validationChildrenMixin } from '@/mixins/form';
 import confirmableFormMixin from '@/mixins/confirmable-form';
 
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
+import JobsChips from '@/components/other/remediation/instructions/partials/jobs-chips.vue';
 import JobsSelect from '@/components/other/remediation/instructions/partials/jobs-select.vue';
+import TextEditorBlurred from '@/components/common/text-editor/text-editor-blurred.vue';
 
 import RemediationInstructionTimeToCompleteField from './remediation-instruction-time-to-complete-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    TextEditorBlurred,
     RemediationInstructionTimeToCompleteField,
     TextEditorField,
+    JobsChips,
     JobsSelect,
   },
   mixins: [
@@ -69,7 +88,7 @@ export default {
       field: 'operation',
       method: 'remove',
       comparator(operation) {
-        const emptyOperation = generateRemediationInstructionStepOperation();
+        const emptyOperation = remediationInstructionStepOperationToForm();
         const paths = ['key'];
 
         return isOmitEqual(operation, emptyOperation, paths);
@@ -88,6 +107,10 @@ export default {
     operationNumber: {
       type: [Number, String],
       default: 0,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

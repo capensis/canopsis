@@ -16,7 +16,7 @@ import (
 // IndexService is used to implement mongo indexes creations.
 // Base implementation uses config configDir as source of index options.
 type IndexService interface {
-	Create() error
+	Create(ctx context.Context) error
 }
 
 // NewIndexService creates index service.
@@ -50,7 +50,7 @@ type IndexConfig struct {
 	Options map[string]interface{} `yaml:"options"`
 }
 
-func (s *baseIndexService) Create() error {
+func (s *baseIndexService) Create(ctx context.Context) error {
 	ch, err := s.parseConfigDir()
 
 	if err != nil {
@@ -58,7 +58,7 @@ func (s *baseIndexService) Create() error {
 	}
 
 	for config := range ch {
-		s.createIndexes(config)
+		s.createIndexes(ctx, config)
 	}
 
 	return nil
@@ -151,7 +151,7 @@ func (s *baseIndexService) parseConfigFile(path string) (*Config, error) {
 }
 
 // createIndexes creates mongo indexes by config.
-func (s *baseIndexService) createIndexes(config *Config) {
+func (s *baseIndexService) createIndexes(ctx context.Context, config *Config) {
 	for collectionName, indexes := range config.Indexes {
 		collection := s.dbClient.Collection(collectionName)
 
@@ -171,7 +171,6 @@ func (s *baseIndexService) createIndexes(config *Config) {
 			}
 
 			indexOptions.Name = &indexName
-			ctx := context.Background()
 			_, err = collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 				Keys:    &params.Keys,
 				Options: &indexOptions,

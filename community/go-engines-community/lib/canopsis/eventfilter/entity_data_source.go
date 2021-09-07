@@ -66,7 +66,7 @@ func (g EntityDataSourceGetter) Get(ctx context.Context, parameters DataSourceGe
 		return *entity, nil
 	}
 
-	entity, err := g.EnrichmentCenter.Get(parameters.Event)
+	entity, err := g.EnrichmentCenter.Get(ctx, parameters.Event)
 	if err != nil || entity == nil || !entity.Enabled {
 		return nil, err
 	}

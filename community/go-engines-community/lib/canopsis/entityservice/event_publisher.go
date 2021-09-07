@@ -80,7 +80,7 @@ func (p *eventPublisher) Publish(
 			if msg.IsService {
 				go p.publishServiceEvent(msg)
 			} else {
-				go p.publishBasicEntityEvent(msg)
+				go p.publishBasicEntityEvent(ctx, msg)
 			}
 		}
 	}
@@ -114,8 +114,8 @@ func (p *eventPublisher) publishServiceEvent(msg ChangeEntityMessage) {
 	p.logger.Debug().Msgf("publish %s", msg.ID)
 }
 
-func (p *eventPublisher) publishBasicEntityEvent(msg ChangeEntityMessage) {
-	alarms, err := p.alarmAdapter.GetAlarmsByID(msg.ID)
+func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg ChangeEntityMessage) {
+	alarms, err := p.alarmAdapter.GetAlarmsByID(ctx, msg.ID)
 	if err != nil {
 		p.logger.Err(err).Msg("cannot find alarm")
 		return

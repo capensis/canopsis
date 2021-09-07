@@ -1,12 +1,14 @@
 <template lang="pug">
   v-speed-dial.d-inline-block(
     v-model="isVSpeedDialOpen",
-    direction="left",
+    direction="top",
     transition="scale-transition"
   )
-    v-btn.primary(slot="activator", :input-value="isVSpeedDialOpen", dark, fab, small)
-      v-icon add
-      v-icon close
+    v-tooltip(slot="activator", bottom)
+      v-btn.primary(slot="activator", :input-value="isVSpeedDialOpen", dark, fab, small)
+        v-icon add
+        v-icon close
+      span {{ $t('context.fab.common') }}
     v-tooltip(top)
       v-btn(
         slot="activator",
@@ -17,14 +19,14 @@
         @click.prevent.stop="showCreateServiceModal"
       )
         v-icon(size="24") $vuetify.icons.engineering
-      span {{ $t('common.service') }}
+      span {{ $t('context.fab.addService') }}
 </template>
 
 <script>
 import { MODALS } from '@/constants';
 
 import entitiesServiceMixin from '@/mixins/entities/service';
-import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 
 /**
  * Buttons to open the modal to add entities

@@ -23,6 +23,7 @@ Feature: instruction execution should be added to alarm steps
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-axe-api-instruction-1-name",
       "entity_patterns": [
         {
@@ -31,6 +32,10 @@ Feature: instruction execution should be added to alarm steps
       ],
       "description": "test-instruction-axe-api-instruction-1-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-axe-api-instruction-1-step-1",
@@ -72,7 +77,7 @@ Feature: instruction execution should be added to alarm steps
               {
                 "_t": "instructionstart",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-1-name"
+                "m": "Instruction test-instruction-axe-api-instruction-1-name."
               }
             ]
           }
@@ -106,6 +111,7 @@ Feature: instruction execution should be added to alarm steps
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-axe-api-instruction-2-name",
       "entity_patterns": [
         {
@@ -114,6 +120,10 @@ Feature: instruction execution should be added to alarm steps
       ],
       "description": "test-instruction-axe-api-instruction-2-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-axe-api-instruction-2-step-1",
@@ -171,12 +181,12 @@ Feature: instruction execution should be added to alarm steps
               {
                 "_t": "instructionstart",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-2-name"
+                "m": "Instruction test-instruction-axe-api-instruction-2-name."
               },
               {
                 "_t": "instructioncomplete",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-2-name"
+                "m": "Instruction test-instruction-axe-api-instruction-2-name."
               }
             ]
           }
@@ -207,6 +217,7 @@ Feature: instruction execution should be added to alarm steps
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-axe-api-instruction-3-name",
       "entity_patterns": [
         {
@@ -215,6 +226,10 @@ Feature: instruction execution should be added to alarm steps
       ],
       "description": "test-instruction-axe-api-instruction-3-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-axe-api-instruction-3-step-1",
@@ -258,12 +273,12 @@ Feature: instruction execution should be added to alarm steps
               {
                 "_t": "instructionstart",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-3-name"
+                "m": "Instruction test-instruction-axe-api-instruction-3-name."
               },
               {
                 "_t": "instructionpause",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-3-name"
+                "m": "Instruction test-instruction-axe-api-instruction-3-name."
               }
             ]
           }
@@ -294,6 +309,7 @@ Feature: instruction execution should be added to alarm steps
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-axe-api-instruction-4-name",
       "entity_patterns": [
         {
@@ -302,6 +318,10 @@ Feature: instruction execution should be added to alarm steps
       ],
       "description": "test-instruction-axe-api-instruction-4-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-axe-api-instruction-4-step-1",
@@ -349,17 +369,17 @@ Feature: instruction execution should be added to alarm steps
               {
                 "_t": "instructionstart",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-4-name"
+                "m": "Instruction test-instruction-axe-api-instruction-4-name."
               },
               {
                 "_t": "instructionpause",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-4-name"
+                "m": "Instruction test-instruction-axe-api-instruction-4-name."
               },
               {
                 "_t": "instructionresume",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-4-name"
+                "m": "Instruction test-instruction-axe-api-instruction-4-name."
               }
             ]
           }
@@ -393,6 +413,7 @@ Feature: instruction execution should be added to alarm steps
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-axe-api-instruction-5-name",
       "entity_patterns": [
         {
@@ -401,6 +422,10 @@ Feature: instruction execution should be added to alarm steps
       ],
       "description": "test-instruction-axe-api-instruction-5-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-axe-api-instruction-5-step-1",
@@ -444,12 +469,12 @@ Feature: instruction execution should be added to alarm steps
               {
                 "_t": "instructionstart",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-5-name"
+                "m": "Instruction test-instruction-axe-api-instruction-5-name."
               },
               {
                 "_t": "instructionabort",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-5-name"
+                "m": "Instruction test-instruction-axe-api-instruction-5-name."
               }
             ]
           }
@@ -480,6 +505,7 @@ Feature: instruction execution should be added to alarm steps
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-axe-api-instruction-6-name",
       "entity_patterns": [
         {
@@ -488,6 +514,10 @@ Feature: instruction execution should be added to alarm steps
       ],
       "description": "test-instruction-axe-api-instruction-6-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-axe-api-instruction-6-step-1",
@@ -550,12 +580,12 @@ Feature: instruction execution should be added to alarm steps
               {
                 "_t": "instructionstart",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-6-name"
+                "m": "Instruction test-instruction-axe-api-instruction-6-name."
               },
               {
                 "_t": "instructionfail",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-6-name"
+                "m": "Instruction test-instruction-axe-api-instruction-6-name."
               }
             ]
           }
@@ -586,6 +616,7 @@ Feature: instruction execution should be added to alarm steps
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-axe-api-instruction-7-name",
       "filter":{
         "$and":[
@@ -596,6 +627,10 @@ Feature: instruction execution should be added to alarm steps
       },
       "description": "test-instruction-axe-api-instruction-7-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-axe-api-instruction-7-step-1",
@@ -638,12 +673,12 @@ Feature: instruction execution should be added to alarm steps
               {
                 "_t": "instructionstart",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-7-name"
+                "m": "Instruction test-instruction-axe-api-instruction-7-name."
               },
               {
                 "_t": "instructionpause",
                 "a": "system",
-                "m": "Instruction test-instruction-axe-api-instruction-7-name"
+                "m": "Instruction test-instruction-axe-api-instruction-7-name."
               }
             ]
           }
@@ -682,6 +717,7 @@ Feature: instruction execution should be added to alarm steps
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-axe-api-instruction-8-name",
       "filter":{
         "$and":[
@@ -692,6 +728,10 @@ Feature: instruction execution should be added to alarm steps
       },
       "description": "test-instruction-axe-api-instruction-8-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-axe-api-instruction-8-step-1",
@@ -722,6 +762,7 @@ Feature: instruction execution should be added to alarm steps
     When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
     """
     {
+      "type": 0,
       "name": "test-instruction-axe-api-instruction-8-name",
       "filter":{
         "$and":[
@@ -732,6 +773,10 @@ Feature: instruction execution should be added to alarm steps
       },
       "description": "test-instruction-axe-api-instruction-8-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-axe-api-instruction-8-step-1",
@@ -764,12 +809,12 @@ Feature: instruction execution should be added to alarm steps
               {
                 "_t": "instructionstart",
                 "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-8-name"
+                "m": "Instruction test-instruction-axe-api-instruction-8-name."
               },
               {
                 "_t": "instructionabort",
                 "a": "system",
-                "m": "Instruction test-instruction-axe-api-instruction-8-name"
+                "m": "Instruction test-instruction-axe-api-instruction-8-name."
               }
             ]
           }

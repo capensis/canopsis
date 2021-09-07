@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.white--text.weather__item(
+  v-card.white--text.weather-item(
     :class="itemClasses",
     :style="{ height: itemHeight + 'em', backgroundColor: color }",
     tile
@@ -14,7 +14,7 @@
     div
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
-        v-runtime-template.service-name.pt-3(:template="compiledTemplate")
+        v-runtime-template.weather-item__service-name.pt-3(:template="compiledTemplate")
         v-btn.see-alarms-btn(
           v-if="hasAlarmsListAccess",
           flat,
@@ -124,7 +124,7 @@ export default {
         ...widget.parameters,
         ...this.widget.parameters.alarmsList,
 
-        alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
+        opened: this.widget.parameters.opened,
         mainFilter: this.counter.filter,
         viewFilters: [this.counter.filter],
       };
