@@ -1,7 +1,7 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
-import { WIDGET_TYPES, QUICK_RANGES, ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP } from '@/constants';
+import { WIDGET_TYPES, QUICK_RANGES, ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP, SORT_ORDERS } from '@/constants';
 
 import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from './filter';
 import {
@@ -64,6 +64,7 @@ export function convertAlarmWidgetToQuery(widget) {
     liveReporting = {},
     widgetColumns,
     itemsPerPage,
+    sort,
   } = widget.parameters;
 
   const query = {
@@ -72,6 +73,7 @@ export function convertAlarmWidgetToQuery(widget) {
     resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,
     with_instructions: true,
+    multiSortBy: [],
   };
 
   if (!isEmpty(liveReporting)) {
@@ -86,7 +88,11 @@ export function convertAlarmWidgetToQuery(widget) {
     query.active_columns = widgetColumns.map(v => (ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP[v.value] || v.value));
   }
 
-  return { ...query, ...convertSortToQuery(widget) };
+  if (sort && sort.column && sort.order) {
+    query.multiSortBy.push({ sortBy: sort.column, descending: sort.order === SORT_ORDERS.desc });
+  }
+
+  return query;
 }
 
 /**
