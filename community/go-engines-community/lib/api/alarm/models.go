@@ -22,11 +22,12 @@ type ListRequestWithPagination struct {
 
 type ListRequest struct {
 	FilterRequest
-	WithSteps        bool   `form:"with_steps" json:"with_steps"`
-	WithChildren     bool   `form:"with_consequences" json:"with_consequences"`
-	WithInstructions bool   `form:"with_instructions" json:"with_instructions"`
-	Sort             string `form:"sort_dir" json:"sort_dir" binding:"oneoforempty=asc desc"`
-	SortBy           string `form:"sort_key" json:"sort_key"`
+	WithSteps        bool     `form:"with_steps" json:"with_steps"`
+	WithChildren     bool     `form:"with_consequences" json:"with_consequences"`
+	WithInstructions bool     `form:"with_instructions" json:"with_instructions"`
+	MultiSort        []string `form:"multi_sort[]" json:"multi_sort[]"`
+	Sort             string   `form:"sort_dir" json:"sort_dir" binding:"oneoforempty=asc desc"`
+	SortBy           string   `form:"sort_key" json:"sort_key"`
 }
 
 type FilterRequest struct {

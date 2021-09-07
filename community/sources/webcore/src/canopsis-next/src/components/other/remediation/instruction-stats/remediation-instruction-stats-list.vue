@@ -14,7 +14,7 @@
     )
       template(slot="toolbar", slot-scope="props")
         v-layout(align-center)
-          remediation-instruction-stats-date-interval(
+          c-quick-date-interval-field(
             :interval="pagination.interval",
             :accumulated-before="accumulatedBefore",
             @input="updateInterval"
@@ -61,11 +61,9 @@ import RatingField from '@/components/forms/fields/rating-field.vue';
 
 import AffectAlarmStates from './partials/affect-alarm-states.vue';
 import RemediationInstructionStatsListExpandPanel from './partials/remediation-instruction-stats-list-expand-panel.vue';
-import RemediationInstructionStatsDateInterval from './partials/remediation-instruction-stats-date-interval.vue';
 
 export default {
   components: {
-    RemediationInstructionStatsDateInterval,
     RemediationInstructionStatsListExpandPanel,
     RatingField,
     AffectAlarmStates,

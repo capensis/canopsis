@@ -191,12 +191,9 @@ export const widgetActionsPanelAlarmMixin = {
       };
 
       /**
-       * Default value for alarmsStateFilter
+       * Default value for opened
        */
-      widget.parameters.alarmsStateFilter = {
-        opened: false,
-        resolved: true,
-      };
+      widget.parameters.opened = false;
 
       /**
        * Special entity filter for alarms list modal

@@ -446,6 +446,15 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "multi_sort[]",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "name": "opened",
                         "in": "query"
@@ -647,9 +656,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -909,9 +916,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1062,9 +1067,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1215,9 +1218,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1537,9 +1538,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "202": {
-                        "description": ""
-                    },
+                    "202": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -1861,9 +1860,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2147,9 +2144,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -2488,9 +2483,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2799,9 +2792,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3128,9 +3119,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3254,9 +3243,7 @@ var doc = `{
                 "summary": "delete user interface",
                 "operationId": "internal-delete-user-interface",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -3556,9 +3543,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3836,9 +3821,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -3883,9 +3866,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": ""
-                    },
+                    "200": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4163,9 +4144,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4493,9 +4472,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4828,9 +4805,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5286,9 +5261,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5560,9 +5533,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5834,9 +5805,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6277,9 +6246,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6551,9 +6518,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -6606,9 +6571,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6880,9 +6843,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7681,6 +7642,12 @@ var doc = `{
                 },
                 "manual": {
                     "type": "boolean"
+                },
+                "multi_sort[]": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "opened": {
                     "type": "boolean"
@@ -9339,6 +9306,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmStepRefPattern"
                 },
+                "children": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringArrayPattern"
+                },
                 "component": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
@@ -9396,6 +9367,10 @@ var doc = `{
                 "output": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "parents": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringArrayPattern"
                 },
                 "resolved": {
                     "type": "object",
@@ -9768,6 +9743,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.OptionalStringArray"
                 },
+                "isEmpty": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalBool"
+                },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
@@ -9782,6 +9761,31 @@ var doc = `{
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
                     "$ref": "#/definitions/types.OptionalRegexp"
+                },
+                "unexpectedFields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.StringArrayPattern": {
+            "type": "object",
+            "properties": {
+                "hasEvery": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "hasNot": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "hasOneOf": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "isEmpty": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalBool"
                 },
                 "unexpectedFields": {
                     "type": "object",
@@ -11222,6 +11226,12 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "related_parents": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "resolved": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
@@ -11330,6 +11340,19 @@ var doc = `{
                 },
                 "unit": {
                     "type": "string"
+                }
+            }
+        },
+        "types.OptionalBool": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the bool. It should only be taken into\naccount if Set is true.",
+                    "type": "boolean"
                 }
             }
         },
