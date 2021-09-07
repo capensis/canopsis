@@ -47,11 +47,13 @@ Pour les champs de date, comme par exemple `{{ .Event.Timestamp }}`, il est poss
 !!! attention
     Les champs enrichis depuis un événement ou via l'event filter se retrouvent au niveau de l'entité et sont sensibles à la casse. Par exemple un champ enrichi intitulé `switch` dans l'entité sera traduit en `{{ .Entity.Infos.switch.Value }}`.
 
-Vous avez également la possibilité de récupérer le nom du `trigger` (AlarmChange) qui a permis de déclencher l'exécution du Webhook.
+Vous avez également la possibilité de récupérer des informations propres à l'action qui s'exécute.
 
-| Champ                             | Résultat                                                                  |
-|:--------------------------------- |:------------------------------------------------------------------------- |
-| `{{ .Event.AlarmChange.Type }}`      | Nom du trigger (sous forme de chaîne: ack, stateinc, ...)                                                |
+| Champ                                   | Résultat                                                                                                  |
+|:--------------------------------------- |:--------------------------------------------------------------------------------------------------------- |
+| `{{ .AdditionalData.AlarmChangeType }}` | Nom du trigger (sous forme de chaîne: ack, stateinc, ...)                                                                               |
+| `{{ .AdditionalData.Author }}`          | Auteur de l'action                                                                                                                      |
+| `{{ .AdditionalData.Initiator }}`       | Initiateur de l'action (**user** pour une action exécutée depuis l'interface graphique, **system** pour une action exécutée par un moteur)  |
 
 ## Génération de texte
 
