@@ -1,6 +1,5 @@
 import { addPassiveEventListener } from 'vuetify/es5/util/helpers';
 
-
 export default {
   methods: {
     hideScroll() {

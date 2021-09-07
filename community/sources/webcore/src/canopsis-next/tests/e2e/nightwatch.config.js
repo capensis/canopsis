@@ -23,14 +23,13 @@ require('babel-plugin-require-context-hook/register')();
 const path = require('path');
 const deepmerge = require('deepmerge');
 
-/* eslint-disable import/no-extraneous-dependencies */
 const seleniumServer = require('selenium-server');
-const ChildProcess = require('nightwatch/lib/runner/cli/child-process');
-/* eslint-enable import/no-extraneous-dependencies */
+const ChildProcess = require('nightwatch/lib/runner/concurrency/child-process');
+
 const { nightwatchRunWithQueue } = require('./helpers/nightwatch-child-process');
 
 const loadEnv = require('../../tools/load-env'); // eslint-disable-line import/no-extraneous-dependencies
-const nightWatchRecordConfig = require('./nightwatch-record.config.js');
+const nightWatchRecordConfig = require('./nightwatch-record.config');
 
 const localEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env.local');
 const baseEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env');

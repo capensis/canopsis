@@ -165,8 +165,7 @@ export const groupToRequest = group => omit(group, ['_id', 'views', 'created', '
  * @param {ViewGroupWithViews | {}} [group = {}]
  * @return {ViewGroupWithViewsPosition}
  */
-export const groupWithViewsToPositions = (group = {}) =>
-  ({ _id: group._id, views: group.views.map(view => view._id) });
+export const groupWithViewsToPositions = (group = {}) => ({ _id: group._id, views: group.views.map(view => view._id) });
 
 /**
  * Convert view groups with views to view group with view positions
@@ -240,8 +239,8 @@ export const getExportedGroupsAndViews = ({ groups, views }) => {
  * @param {number} groupIndex
  * @return {ExportedViewWrapper[]}
  */
-export const getExportedViewsWrappersFromGroup = ({ views = [], ...group }, groupIndex) =>
-  views.reduce((acc, { exported, ...view }, index) => {
+export const getExportedViewsWrappersFromGroup = ({ views = [], ...group }, groupIndex) => views
+  .reduce((acc, { exported, ...view }, index) => {
     if (exported) {
       acc.push({ view: { ...view, group }, path: `${groupIndex}.views.${index}` });
     }
@@ -255,12 +254,11 @@ export const getExportedViewsWrappersFromGroup = ({ views = [], ...group }, grou
  * @param {ExportedViewGroup[]} [groups = []]
  * @return {ExportedViewWrapper[]}
  */
-export const getExportedViewsWrappersFromGroups = (groups = []) =>
-  groups.reduce((acc, group, index) => {
-    acc.push(...getExportedViewsWrappersFromGroup(group, index));
+export const getExportedViewsWrappersFromGroups = (groups = []) => groups.reduce((acc, group, index) => {
+  acc.push(...getExportedViewsWrappersFromGroup(group, index));
 
-    return acc;
-  }, []);
+  return acc;
+}, []);
 
 /**
  * Get exported views wrappers
@@ -268,14 +266,13 @@ export const getExportedViewsWrappersFromGroups = (groups = []) =>
  * @param {ExportedViewGroup[]} [groups = []]
  * @return {ExportedViewGroupWrapper[]}
  */
-export const getExportedGroupsWrappers = (groups = []) =>
-  groups.reduce((acc, { exported, ...group }, index) => {
-    if (exported) {
-      acc.push({ group, path: index });
-    }
+export const getExportedGroupsWrappers = (groups = []) => groups.reduce((acc, { exported, ...group }, index) => {
+  if (exported) {
+    acc.push({ group, path: index });
+  }
 
-    return acc;
-  }, []);
+  return acc;
+}, []);
 
 /**
  * Prepare imported views
@@ -284,8 +281,12 @@ export const getExportedGroupsWrappers = (groups = []) =>
  * @param {ViewGroup} [group]
  * @return {View[]}
  */
-export const prepareImportedViews = (views, group) =>
-  views.map(view => ({ ...view, _id: uuid(), group: group || view.group }));
+export const prepareImportedViews = (views, group) => views
+  .map(view => ({
+    ...view,
+    _id: uuid(),
+    group: group || view.group,
+  }));
 
 /**
  * Prepare imported groups
@@ -293,9 +294,8 @@ export const prepareImportedViews = (views, group) =>
  * @param {ViewGroupWithViews[]} groups
  * @return {ViewGroupWithViews[]}
  */
-export const prepareImportedGroups = groups =>
-  groups.map(({ views, ...group }) => {
-    const preparedGroup = { ...group, _id: uuid() };
+export const prepareImportedGroups = groups => groups.map(({ views, ...group }) => {
+  const preparedGroup = { ...group, _id: uuid() };
 
-    return ({ ...preparedGroup, views: prepareImportedViews(views, preparedGroup) });
-  });
+  return ({ ...preparedGroup, views: prepareImportedViews(views, preparedGroup) });
+});

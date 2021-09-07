@@ -1,4 +1,6 @@
-import { TIME_UNITS, DAYS_IN_YEAR, MONTHS_IN_YEAR, DAYS_IN_MONTH, DAYS_IN_WEEK } from '@/constants';
+import {
+  TIME_UNITS, DAYS_IN_YEAR, MONTHS_IN_YEAR, DAYS_IN_MONTH, DAYS_IN_WEEK,
+} from '@/constants';
 
 import { convertUnit } from '@/helpers/date/duration';
 

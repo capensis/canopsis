@@ -25,7 +25,7 @@ export default {
           class: 'instruction-icon--auto-running',
           tooltip: this.$t('alarmList.tooltips.hasAutoInstructionInRunning'),
         };
-      } else if (this.alarm.is_all_auto_instructions_completed) {
+      } if (this.alarm.is_all_auto_instructions_completed) {
         return {
           icon: 'assignment_late',
           class: 'error--text',

@@ -9,7 +9,9 @@
 </template>
 
 <script>
-import { saveJsonFile, saveCsvFile, saveTextFile, saveFile } from '@/helpers/file/files';
+import {
+  saveJsonFile, saveCsvFile, saveTextFile, saveFile,
+} from '@/helpers/file/files';
 
 /**
  * @example

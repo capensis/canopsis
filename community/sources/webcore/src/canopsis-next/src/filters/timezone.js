@@ -9,4 +9,3 @@ export default function (date, timezone, format, ignoreTodayChecker, defaultValu
 
   return dateFilter(convertTimestampToMomentByTimezone(date, timezone), format, ignoreTodayChecker, defaultValue);
 }
-

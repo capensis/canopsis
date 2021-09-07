@@ -13,7 +13,9 @@
 </template>
 
 <script>
-import { MODALS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
+import {
+  MODALS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES,
+} from '@/constants';
 
 import { dateParse } from '@/helpers/date/date-intervals';
 import { convertDateToTimestampByTimezone } from '@/helpers/date/date';

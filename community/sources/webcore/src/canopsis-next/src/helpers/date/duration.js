@@ -93,8 +93,7 @@ export const convertUnit = (value, fromUnit = TIME_UNITS.second, toUnit = TIME_U
  * @param {DurationUnit} [unit = TIME_UNITS.second]
  * @returns {number}
  */
-export const toSeconds = (value, unit = TIME_UNITS.second) =>
-  convertUnit(value, unit, TIME_UNITS.second);
+export const toSeconds = (value, unit = TIME_UNITS.second) => convertUnit(value, unit, TIME_UNITS.second);
 
 /**
  * Convert duration from "seconds" to unit
@@ -103,8 +102,7 @@ export const toSeconds = (value, unit = TIME_UNITS.second) =>
  * @param {DurationUnit} [unit = TIME_UNITS.second]
  * @returns {number}
  */
-export const fromSeconds = (value, unit = TIME_UNITS.second) =>
-  convertUnit(value, TIME_UNITS.second, unit);
+export const fromSeconds = (value, unit = TIME_UNITS.second) => convertUnit(value, TIME_UNITS.second, unit);
 
 /**
  * Convert Duration object to DurationForm
@@ -114,8 +112,10 @@ export const fromSeconds = (value, unit = TIME_UNITS.second) =>
  * @param {DurationUnit} [duration.unit = TIME_UNITS.second]
  * @returns {DurationForm}
  */
-export const durationToForm = ({ seconds = 1, unit = TIME_UNITS.second } = {}) =>
-  ({ unit, value: fromSeconds(seconds, unit) });
+export const durationToForm = ({ seconds = 1, unit = TIME_UNITS.second } = {}) => ({
+  unit,
+  value: fromSeconds(seconds, unit),
+});
 
 /**
  * Convert DurationForm object to Duration
@@ -125,8 +125,10 @@ export const durationToForm = ({ seconds = 1, unit = TIME_UNITS.second } = {}) =
  * @param {DurationUnit} [duration.unit = TIME_UNITS.second]
  * @returns {Duration}
  */
-export const formToDuration = ({ value = 0, unit = TIME_UNITS.second } = {}) =>
-  ({ unit, seconds: toSeconds(value, unit) });
+export const formToDuration = ({ value = 0, unit = TIME_UNITS.second } = {}) => ({
+  unit,
+  seconds: toSeconds(value, unit),
+});
 
 /**
  * Convert DurationWithEnabled object to DurationWithEnabledForm

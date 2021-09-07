@@ -47,7 +47,7 @@ export default {
 
       if (type.startsWith('status')) {
         return ENTITY_INFOS_TYPE.status;
-      } else if (type.startsWith('state')) {
+      } if (type.startsWith('state')) {
         return ENTITY_INFOS_TYPE.state;
       }
 
@@ -129,7 +129,6 @@ export default {
     border-bottom: solid 1px $border_line;
     padding-left: 5px;
     padding-top: 5px;
-
 
     .chips {
       font-size: 15px;

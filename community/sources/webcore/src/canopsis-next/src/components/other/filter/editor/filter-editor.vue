@@ -26,15 +26,15 @@
     v-alert(:value="errors.has('filter')", type="error") {{ $t('filterEditor.errors.required') }}
 </template>
 
-
 <script>
 import { get } from 'lodash';
 
-import { ENTITIES_TYPES, FILTER_OPERATORS, FILTER_INPUT_TYPES, ENTITY_TYPES, MAX_LIMIT } from '@/constants';
+import {
+  ENTITIES_TYPES, FILTER_OPERATORS, FILTER_INPUT_TYPES, ENTITY_TYPES, MAX_LIMIT,
+} from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/forms/filter';
 import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
-
 
 import { entitiesFilterHintsMixin } from '@/mixins/entities/associative-table/filter-hints';
 import entitiesEntityCategoryMixin from '@/mixins/entities/entity-category';

@@ -84,8 +84,7 @@ export default {
       this.$modals.show({
         name: MODALS.createDynamicInfoTemplate,
         config: {
-          action: async newTemplate =>
-            this.templates = await this.createDynamicInfoTemplate({ data: newTemplate }),
+          action: async newTemplate => this.templates = await this.createDynamicInfoTemplate({ data: newTemplate }),
         },
       });
     },
@@ -97,8 +96,9 @@ export default {
           template,
 
           title: this.$t('modals.createDynamicInfoTemplate.edit.title'),
-          action: async newTemplate =>
-            this.templates = await this.updateDynamicInfoTemplate({ id: template._id, data: newTemplate }),
+          action: async newTemplate => {
+            this.templates = await this.updateDynamicInfoTemplate({ id: template._id, data: newTemplate });
+          },
         },
       });
     },
@@ -107,8 +107,7 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: async () =>
-            this.templates = await this.removeDynamicInfoTemplate({ id }),
+          action: async () => this.templates = await this.removeDynamicInfoTemplate({ id }),
         },
       });
     },

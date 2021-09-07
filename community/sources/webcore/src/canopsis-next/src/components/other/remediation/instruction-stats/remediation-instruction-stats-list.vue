@@ -164,7 +164,6 @@ export default {
 };
 </script>
 
-
 <style lang="scss">
 .c-remediation-instruction-stats {
   &__table {

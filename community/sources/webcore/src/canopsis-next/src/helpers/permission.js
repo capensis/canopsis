@@ -1,4 +1,6 @@
-import { get, isUndefined, omit, sortBy, keyBy } from 'lodash';
+import {
+  get, isUndefined, omit, sortBy, keyBy,
+} from 'lodash';
 import flatten from 'flat';
 
 import {
@@ -104,8 +106,8 @@ export function getGroupedPermissions(permissions, views = [], playlists = []) {
     } else if (notificationTechnicalPermissionsValues.includes(permissionId)) {
       acc.technical.notification.push(permission);
     } else if (
-      Object.values(allBusinessPermissionsIds).includes(permissionId) ||
-      NOT_COMPLETED_USER_PERMISSIONS.some(id => permissionId.startsWith(id))
+      Object.values(allBusinessPermissionsIds).includes(permissionId)
+      || NOT_COMPLETED_USER_PERMISSIONS.some(id => permissionId.startsWith(id))
     ) {
       const [parentKey] = permission._id.split('_');
 

@@ -76,8 +76,9 @@ export const convertTimestampToMomentByTimezone = (
  * @param {string} timezone
  * @returns {number}
  */
-export const convertDateToTimestampByTimezone = (date, timezone = moment.tz.guess()) =>
-  convertTimestampToMoment(date).tz(timezone, true).unix();
+export const convertDateToTimestampByTimezone = (date, timezone = moment.tz.guess()) => convertTimestampToMoment(date)
+  .tz(timezone, true)
+  .unix();
 
 /**
  * Check if date is start of day

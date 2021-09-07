@@ -1,4 +1,6 @@
-import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash';
+import {
+  get, isFunction, isNumber, isObject, unescape, isString,
+} from 'lodash';
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
@@ -18,8 +20,7 @@ import i18n from '@/i18n';
  */
 function prepareAttributes(attributes) {
   return Object.entries(attributes)
-    .map(([key, value]) =>
-      `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`)
+    .map(([key, value]) => `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`)
     .join(' ');
 }
 

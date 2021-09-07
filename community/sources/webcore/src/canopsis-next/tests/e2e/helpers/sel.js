@@ -4,4 +4,4 @@
  * @param id - DOM element data-test identifier
  * @return {string}
  */
-module.exports = id => `[data-test="${id}"]`;
+module.exports = (id) => `[data-test="${id}"]`;

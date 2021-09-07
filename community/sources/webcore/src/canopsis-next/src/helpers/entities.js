@@ -1,4 +1,6 @@
-import { get, omit, cloneDeep, isObject, groupBy } from 'lodash';
+import {
+  get, omit, cloneDeep, isObject, groupBy,
+} from 'lodash';
 import moment from 'moment';
 
 import i18n from '@/i18n';
@@ -381,19 +383,16 @@ export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
  * @param {View | ViewRequest} newView
  * @returns {{ oldId: string, newId: string }[]}
  */
-export function getViewsWidgetsIdsMappings(oldView, newView) {
-  return oldView.tabs.reduce((acc, tab, index) =>
-    acc.concat(getViewsTabsWidgetsIdsMappings(tab, newView.tabs[index])), []);
-}
+export const getViewsWidgetsIdsMappings = (oldView, newView) => oldView.tabs
+  .reduce((acc, tab, index) => acc.concat(getViewsTabsWidgetsIdsMappings(tab, newView.tabs[index])), []);
 
 /**
  * Checks if alarm is resolved
  * @param alarm - alarm entity
  * @returns {boolean}
  */
-export function isResolvedAlarm(alarm) {
-  return [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
-}
+export const isResolvedAlarm = (alarm) => [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled]
+  .includes(alarm.v.status.val);
 
 /**
  * Checks if alarm have critical state
@@ -401,9 +400,7 @@ export function isResolvedAlarm(alarm) {
  * @param alarm - alarm entity
  * @returns {boolean}
  */
-export function isWarningAlarmState(alarm) {
-  return ENTITIES_STATES.ok !== alarm.v.state.val;
-}
+export const isWarningAlarmState = (alarm) => ENTITIES_STATES.ok !== alarm.v.state.val;
 
 /**
  * Function return new title if title is not uniq
@@ -453,8 +450,7 @@ export const removeKeyFromEntities = (entities = []) => entities.map(entity => o
  * @param {string} idField
  * @return {string}
  */
-export const getIdFromEntity = (entity, idField = '_id') =>
-  (isObject(entity) ? entity[idField] : entity);
+export const getIdFromEntity = (entity, idField = '_id') => (isObject(entity) ? entity[idField] : entity);
 
 /**
  * Get grouped steps by date

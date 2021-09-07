@@ -6,7 +6,7 @@ const commands = {
     const { activePopupCloseIcon } = this.elements;
 
     return this.api.elements(activePopupCloseIcon.locateStrategy, activePopupCloseIcon.selector, ({ value = [] }) => {
-      value.forEach(item => this.api.elementIdClick(item.ELEMENT).pause(VUETIFY_ANIMATION_DELAY));
+      value.forEach((item) => this.api.elementIdClick(item.ELEMENT).pause(VUETIFY_ANIMATION_DELAY));
     });
   },
 };

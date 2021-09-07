@@ -1,4 +1,9 @@
-import { isUndefined, omit, pick, cloneDeep } from 'lodash';
+import {
+  isUndefined,
+  omit,
+  pick,
+  cloneDeep,
+} from 'lodash';
 
 import {
   REMEDIATION_INSTRUCTION_APPROVAL_TYPES,
@@ -120,8 +125,8 @@ export const remediationInstructionStepOperationToForm = (operation = {}) => ({
  * @param {RemediationInstructionStepOperation[]} [operations = [undefined]]
  * @returns {Array}
  */
-const remediationInstructionStepOperationsToForm = (operations = [undefined]) =>
-  operations.map(remediationInstructionStepOperationToForm);
+const remediationInstructionStepOperationsToForm = (operations = [undefined]) => operations
+  .map(remediationInstructionStepOperationToForm);
 
 /**
  * Convert a remediation instruction step to form
@@ -211,7 +216,6 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   jobs: remediationInstructionJobsToForm(remediationInstruction.jobs),
 });
 
-
 /**
  * Convert a remediation instruction step operations form array to a API compatible operation array
  *
@@ -223,7 +227,6 @@ const formJobsToRemediationInstructionJobs = (jobs = []) => jobs.map(job => ({
 
   job: job.job._id,
 }));
-
 
 /**
  * Convert a remediation instruction step operations form array to a API compatible operation array

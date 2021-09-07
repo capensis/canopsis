@@ -24,7 +24,7 @@ module.exports = {
     const { users } = browser.globals;
     const generatedUser = generateTemporaryUser();
 
-    browser.completed.user.create(generatedUser, user => users.create = { ...user, ...generatedUser });
+    browser.completed.user.create(generatedUser, (user) => users.create = { ...user, ...generatedUser });
   },
 
   'Check searching': (browser) => {
@@ -38,7 +38,7 @@ module.exports = {
         () => usersPage.clickSubmitSearchButton(), ({ responseData }) => {
           const { data } = JSON.parse(responseData);
 
-          browser.assert.ok(data.every(item => item._id === user._id));
+          browser.assert.ok(data.every((item) => item._id === user._id));
           browser.assert.elementsCount(usersPage.elements.dataTableUserItem.selector, 1);
 
           usersPage.verifyPageUserBefore(user._id);
@@ -50,7 +50,7 @@ module.exports = {
         () => usersPage.clickClearSearchButton(), ({ responseData }) => {
           const { data } = JSON.parse(responseData);
 
-          browser.assert.ok(data.some(item => item._id !== user._id));
+          browser.assert.ok(data.some((item) => item._id !== user._id));
         },
       );
   },
@@ -166,7 +166,7 @@ module.exports = {
       .selectRange()
       .defaultPause();
 
-    users.mass.map(user => browser.page.admin.users()
+    users.mass.map((user) => browser.page.admin.users()
       .verifyPageUserBefore(user.username)
       .clickOptionCheckbox(user.username)
       .defaultPause());

@@ -84,7 +84,7 @@ module.exports = {
   },
 
   'Deleting all test items view with name from constants': (browser) => {
-    browser.globals.views.forEach(view => browser.completed.view.delete(view.group_id, view._id));
-    browser.globals.views.forEach(view => browser.completed.view.deleteGroup(view.group_id));
+    browser.globals.views.forEach((view) => browser.completed.view.delete(view.group_id, view._id));
+    browser.globals.views.forEach((view) => browser.completed.view.deleteGroup(view.group_id));
   },
 };

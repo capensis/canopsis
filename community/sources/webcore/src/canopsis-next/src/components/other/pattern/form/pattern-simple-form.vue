@@ -38,7 +38,9 @@
 </template>
 
 <script>
-import { isString, isNull, dropRight, has } from 'lodash';
+import {
+  isString, isNull, dropRight, has,
+} from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -54,7 +56,7 @@ export default {
     treeViewValue(value) {
       if (isString(value)) {
         return `"${value}"`;
-      } else if (isNull(value)) {
+      } if (isNull(value)) {
         return 'null';
       }
 

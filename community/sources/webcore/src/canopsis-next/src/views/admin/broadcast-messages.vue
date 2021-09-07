@@ -62,8 +62,7 @@ export default {
       this.$modals.show({
         name: MODALS.createBroadcastMessage,
         config: {
-          action: newMessage =>
-            this.callActionWithFetching(() => this.createBroadcastMessage({ data: newMessage })),
+          action: newMessage => this.callActionWithFetching(() => this.createBroadcastMessage({ data: newMessage })),
         },
       });
     },
@@ -75,8 +74,9 @@ export default {
           message,
           title: this.$t('modals.createBroadcastMessage.edit.title'),
 
-          action: newMessage =>
-            this.callActionWithFetching(() => this.updateBroadcastMessage({ id: message._id, data: newMessage })),
+          action: newMessage => this.callActionWithFetching(
+            () => this.updateBroadcastMessage({ id: message._id, data: newMessage }),
+          ),
         },
       });
     },

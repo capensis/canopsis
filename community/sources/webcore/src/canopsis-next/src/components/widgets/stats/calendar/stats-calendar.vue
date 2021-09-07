@@ -222,7 +222,6 @@ export default {
             },
           })));
 
-
           this.alarmsCollections = results.map(({ data: alarms }) => {
             if (this.query.considerPbehaviors) {
               return alarms.filter(alarm => isEmpty(alarm.pbehaviors));

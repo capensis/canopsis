@@ -49,7 +49,6 @@ import RemediationInstructionApprovalAlert from
 import RemediationInstructionApprovalTabs from
   '@/components/other/remediation/instructions/partials/approval-tabs.vue';
 
-
 import ModalWrapper from '../modal-wrapper.vue';
 
 const { mapActions } = createNamespacedHelpers('remediationInstruction');

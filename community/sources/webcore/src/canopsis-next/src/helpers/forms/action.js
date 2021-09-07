@@ -223,7 +223,6 @@ const pbehaviorActionParametersToForm = (parameters = {}, timezone = moment.tz.g
   return pbehaviorForm;
 };
 
-
 /**
  * Prepare parameters for all action types
  *
@@ -326,11 +325,10 @@ export const formToWebhookActionParameters = (parameters = {}) => {
  * @param {ActionSnoozeFormParameters} parameters
  * @return {ActionSnoozeParameters}
  */
-export const formToSnoozeActionParameters = (parameters = {}) =>
-  ({
-    ...parameters,
-    duration: formToDuration(parameters.duration),
-  });
+export const formToSnoozeActionParameters = (parameters = {}) => ({
+  ...parameters,
+  duration: formToDuration(parameters.duration),
+});
 
 /**
  * Convert pbehavior parameters to action

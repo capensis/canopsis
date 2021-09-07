@@ -68,8 +68,8 @@ export default {
   created() {
     this.$validator.extend('unique-name', {
       getMessage: () => this.$t('validator.unique'),
-      validate: value => (this.initialName && this.initialName === value) ||
-        !this.existingNames.find(name => name === value),
+      validate: value => (this.initialName && this.initialName === value)
+        || !this.existingNames.find(name => name === value),
     });
   },
   methods: {

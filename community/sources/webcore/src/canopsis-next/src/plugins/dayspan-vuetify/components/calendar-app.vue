@@ -181,9 +181,8 @@ export default {
   computed: {
     currentType: {
       get() {
-        return this.types.find(type =>
-          type.type === this.calendar.type &&
-          type.size === this.calendar.size) || this.types[0];
+        return this.types.find(type => type.type === this.calendar.type
+          && type.size === this.calendar.size) || this.types[0];
       },
       set(type) {
         this.rebuild(undefined, true, type);
@@ -269,8 +268,8 @@ export default {
     isType(type, aroundDay) {
       const cal = this.calendar;
 
-      return (cal.type === type.type && cal.size === type.size &&
-          (!aroundDay || cal.span.matchesDay(aroundDay)));
+      return (cal.type === type.type && cal.size === type.size
+          && (!aroundDay || cal.span.matchesDay(aroundDay)));
     },
 
     rebuild(aroundDay, force, forceType, ignoreTriggerChange) {

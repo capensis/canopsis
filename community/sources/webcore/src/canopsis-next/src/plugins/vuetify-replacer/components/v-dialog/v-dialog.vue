@@ -50,15 +50,15 @@ export default {
         /**
          * It isn't the document or the dialog body
          */
-        ![document, this.$refs.content].includes(target) &&
+        ![document, this.$refs.content].includes(target)
         /**
          * It isn't inside the dialog body
          */
-        !this.$refs.content.contains(target) &&
+        && !this.$refs.content.contains(target)
         /**
          * It isn't inside a dependent element (like a menu)
          */
-        !this.getOpenDependentElements().some(el => el.contains(target))
+        && !this.getOpenDependentElements().some(el => el.contains(target))
         /**
          * So we must have focused something outside the dialog and its children
          *

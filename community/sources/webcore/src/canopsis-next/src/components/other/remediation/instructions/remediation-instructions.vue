@@ -104,8 +104,9 @@ export default {
 
     async updateRemediationInstructionWithConfirm(remediationInstruction, data) {
       if (remediationInstruction.running) {
-        await this.showConfirmModalOnRunningRemediationInstruction(() =>
-          this.updateRemediationInstruction({ id: remediationInstruction._id, data }));
+        await this.showConfirmModalOnRunningRemediationInstruction(
+          () => this.updateRemediationInstruction({ id: remediationInstruction._id, data }),
+        );
       } else {
         await this.updateRemediationInstruction({ id: remediationInstruction._id, data });
       }

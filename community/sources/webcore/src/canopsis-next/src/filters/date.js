@@ -22,4 +22,3 @@ export default function (date, format, ignoreTodayChecker, defaultValue) {
 
   return dateObject.format(momentFormat);
 }
-

@@ -1,5 +1,7 @@
 import { COLORS } from '@/config';
-import { ENTITIES_STATES_STYLES, ENTITY_STATUS_STYLES, EVENT_ENTITY_STYLE, UNKNOWN_VALUE_STYLE } from '@/constants';
+import {
+  ENTITIES_STATES_STYLES, ENTITY_STATUS_STYLES, EVENT_ENTITY_STYLE, UNKNOWN_VALUE_STYLE,
+} from '@/constants';
 
 /**
  * Return object that contains the state style

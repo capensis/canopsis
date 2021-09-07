@@ -262,7 +262,6 @@ export default {
       return query;
     },
 
-
     fetchList() {
       if (this.hasColumns) {
         const params = this.getQuery();

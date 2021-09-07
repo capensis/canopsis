@@ -85,6 +85,6 @@ describe('RecordsPerPage', () => {
 
     expect(wrapper.emitted('input')).toBeTruthy();
     expect(wrapper.emitted('input').length).toBe(1);
-    expect(wrapper.emitted('input')[0].map(e => parseInt(e, 10))).toEqual([value]);
+    expect(wrapper.emitted('input')[0].map((e) => parseInt(e, 10))).toEqual([value]);
   });
 });

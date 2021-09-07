@@ -25,7 +25,7 @@ const mockData = {
 };
 
 jest.mock('@/i18n', () => ({
-  t: key => key,
+  t: (key) => key,
 }));
 
 describe('Entities alarm module actions', () => {

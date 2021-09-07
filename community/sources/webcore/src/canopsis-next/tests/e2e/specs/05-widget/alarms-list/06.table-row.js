@@ -117,7 +117,7 @@ module.exports = {
     const [firstAlarm] = browser.globals.temporary.alarmsList;
 
     const status = {
-      [firstAlarm.pbehaviors.some(pbehavior => pbehavior.isActive)]: 'pbehaviors',
+      [firstAlarm.pbehaviors.some((pbehavior) => pbehavior.isActive)]: 'pbehaviors',
       [!!firstAlarm.v.canceled]: 'canceled',
       [!!firstAlarm.v.ticket]: 'ticket',
       [!!firstAlarm.v.ack]: 'ack',

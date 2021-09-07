@@ -1,4 +1,6 @@
-import { get, clone, setWith, unset, isFunction } from 'lodash';
+import {
+  get, clone, setWith, unset, isFunction,
+} from 'lodash';
 
 /**
  * Immutable method for deep updating object field or array item
@@ -26,8 +28,8 @@ export function setSeveralFields(obj, pathsValuesMap) {
   const clonedObject = clone(obj);
 
   Object.keys(pathsValuesMap).forEach((path) => {
-    const preparedValue = isFunction(pathsValuesMap[path]) ?
-      pathsValuesMap[path](get(obj, path)) : pathsValuesMap[path];
+    const preparedValue = isFunction(pathsValuesMap[path])
+      ? pathsValuesMap[path](get(obj, path)) : pathsValuesMap[path];
     let currentPath = '';
 
     setWith(clonedObject, path, preparedValue, (customizerValue, key) => {

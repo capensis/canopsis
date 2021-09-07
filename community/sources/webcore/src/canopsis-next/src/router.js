@@ -2,7 +2,12 @@ import Vue from 'vue';
 import Router from 'vue-router';
 
 import { ROUTER_MODE } from '@/config';
-import { CRUD_ACTIONS, ROUTE_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
+import {
+  CRUD_ACTIONS,
+  ROUTE_NAMES,
+  ROUTES,
+  USERS_PERMISSIONS,
+} from '@/constants';
 import store from '@/store';
 import {
   checkAppInfoAccessForRoute,
@@ -328,7 +333,9 @@ router.beforeEach((to, from, next) => {
         errorMessage: to.query.errorMessage,
       },
     });
-  } else if (isLoggedIn && isDontRequiresAuth) {
+  }
+
+  if (isLoggedIn && isDontRequiresAuth) {
     return next({
       name: ROUTE_NAMES.home,
     });

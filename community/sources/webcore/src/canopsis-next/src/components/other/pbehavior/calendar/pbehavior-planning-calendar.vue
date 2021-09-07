@@ -246,7 +246,6 @@ export default {
         to,
       });
 
-
       return this.fetchTimespansListWithoutStore({ data: timespan });
     },
 

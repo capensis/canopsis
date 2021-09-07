@@ -1,4 +1,6 @@
-import { isArray, isEmpty, isObject, cloneDeep, isNull } from 'lodash';
+import {
+  isArray, isEmpty, isObject, cloneDeep, isNull,
+} from 'lodash';
 
 import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES, FILTER_MONGO_OPERATORS } from '@/constants';
 import uid from '@/helpers/uid';
@@ -118,7 +120,6 @@ function parseRuleToFilter(rule) {
 
   return parsedRule;
 }
-
 
 export default function parseGroupToFilter(group) {
   const parsedGroup = cloneDeep(FILTER_DEFAULT_VALUES.group);

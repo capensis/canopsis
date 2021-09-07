@@ -42,7 +42,9 @@
 <script>
 import moment from 'moment-timezone';
 
-import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES, SORT_ORDERS } from '@/constants';
+import {
+  MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES, SORT_ORDERS,
+} from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
 
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';

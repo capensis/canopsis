@@ -64,11 +64,12 @@
       )
 </template>
 
-
 <script>
 import { get } from 'lodash';
 
-import { CalendarEvent, Day, DaySpan, Op, Schedule } from 'dayspan';
+import {
+  CalendarEvent, Day, DaySpan, Op, Schedule,
+} from 'dayspan';
 import { DsCalendar } from 'dayspan-vuetify/src/components';
 
 export default {
