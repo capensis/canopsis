@@ -105,6 +105,7 @@
     "stylus-loader": "^3.0.2",
     "vue-cli-plugin-test-attrs": "^0.1.5",
     "vue-cli-plugin-webpack-bundle-analyzer": "^4.0.0",
+    "vue-loader": "15.9.2",
     "vue-template-compiler": "^2.6.11",
     "webpack": "4.36.0"
   },
