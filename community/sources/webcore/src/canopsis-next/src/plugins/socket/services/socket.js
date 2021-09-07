@@ -204,11 +204,15 @@ class Socket {
    *
    * @param {string} data
    */
-  baseMessageHandler(data) {
+  baseMessageHandler({ data }) {
     try {
-      const { room, msg } = JSON.parse(data);
+      const { room, msg, error } = JSON.parse(data);
 
-      if (this.rooms[room]) {
+      if (error) {
+        throw error;
+      }
+
+      if (this.rooms[room] && msg) {
         this.rooms[room].call(null, msg);
       }
     } catch (err) {

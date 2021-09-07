@@ -24,10 +24,11 @@
 </template>
 
 <script>
-import tinycolor from 'tinycolor2';
 import { Chrome, Compact } from 'vue-color';
 
 import { MODALS } from '@/constants';
+
+import { colorToHex, colorToRgb, isValidColor } from '@/helpers/color';
 
 import { submittableMixin } from '@/mixins/submittable';
 
@@ -46,10 +47,8 @@ export default {
     const color = {};
 
     if (config.color) {
-      const colorObject = tinycolor(config.color);
-
-      if (colorObject.isValid()) {
-        color.hex = colorObject.toHexString();
+      if (isValidColor(config.color)) {
+        color.hex = colorToHex(config.color);
       }
     }
 
@@ -69,8 +68,7 @@ export default {
     async submit() {
       if (this.config.action) {
         const { hex } = this.color;
-        const colorObject = tinycolor(hex);
-        const result = this.isHexType ? hex : colorObject.toRgbString();
+        const result = this.isHexType ? hex : colorToRgb(hex);
 
         await this.config.action(result);
       }

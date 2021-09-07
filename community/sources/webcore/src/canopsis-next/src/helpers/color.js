@@ -47,7 +47,7 @@ export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYP
  * @param {HealthcheckNode} node
  * @returns {string}
  */
-export const getHealthcheckNodeColor = (node) => {
+export const getHealthcheckNodeColor = (node = {}) => {
   if (node.is_unknown) {
     return COLORS.healthcheck.unknown;
   }
@@ -62,3 +62,45 @@ export const getHealthcheckNodeColor = (node) => {
 
   return CAT_ENGINES.includes(node.name) ? COLORS.secondary : COLORS.primary;
 };
+
+/**
+ * Convert color to rgb
+ *
+ * @param {string|Object} color
+ * @return {string}
+ */
+export const colorToRgb = color => tinycolor(color).toRgbString();
+
+/**
+ * Convert color to rgba with alpha
+ *
+ * @param {string|Object} color
+ * @param {number} alpha
+ * @return {string}
+ */
+export const colorToRgba = (color, alpha = 1.0) => tinycolor(color)
+  .setAlpha(alpha)
+  .toRgbString();
+
+/**
+ * Convert color to hex
+ *
+ * @param {string|Object} color
+ * @return {string}
+ */
+export const colorToHex = color => tinycolor(color).toHexString();
+
+/**
+ * Check color is valid
+ *
+ * @param {string|Object} color
+ * @return {boolean}
+ */
+export const isValidColor = color => tinycolor(color).isValid();
+
+/**
+ * Generate random hex color
+ *
+ * @return {string}
+ */
+export const getRandomHexColor = () => tinycolor.random().toHexString();

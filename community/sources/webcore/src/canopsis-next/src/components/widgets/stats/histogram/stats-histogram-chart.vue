@@ -1,6 +1,7 @@
 <script>
 import { merge } from 'lodash';
-import { Bar } from 'vue-chartjs';
+
+import { Bar } from '@/externals/vue-chart/components';
 
 import { chartAnnotationMixin } from '@/mixins/chart/annotation';
 
@@ -26,23 +27,25 @@ export default {
       return merge({
         responsive: true,
         maintainAspectRatio: false,
-        tooltips: {
-          mode: 'index',
-          intersect: false,
-        },
         scales: {
-          xAxes: [{
+          x: {
             stacked: true,
             ticks: {
               fontSize: 11,
             },
-          }],
-          yAxes: [{
+          },
+          y: {
             stacked: true,
             ticks: {
               fontSize: 11,
             },
-          }],
+          },
+        },
+        plugins: {
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+          },
         },
       }, this.options);
     },

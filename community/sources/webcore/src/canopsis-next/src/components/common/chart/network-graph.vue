@@ -31,12 +31,6 @@ export default {
     },
   },
   watch: {
-    options(newOptions, oldOptions) {
-      if (!isEqual(newOptions, oldOptions)) {
-        this.remountCytoscape();
-      }
-    },
-
     nodeHtmlLabelOptions(newOptions, oldOptions) {
       if (!isEqual(newOptions, oldOptions)) {
         this.$cy.nodeHtmlLabel(newOptions);

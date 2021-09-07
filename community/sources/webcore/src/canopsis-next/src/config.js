@@ -67,7 +67,7 @@ export const MAX_LOGO_SIZE_IN_KB = 16384;
 
 export const DEFAULT_APP_TITLE = 'Canopsis';
 
-export const EXPORT_VIEWS_AND_GROUPS_PREFIX = 'canopsis_groups_views-';
+export const EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX = 'canopsis_groups_views-';
 
 export const API_ROUTES = {
   login: '/api/v4/login',
@@ -268,5 +268,9 @@ export const EXPORT_FETCHING_INTERVAL = 2000;
 export const DEFAULT_JOB_EXECUTOR_FETCH_TIMEOUT_SECONDS = 30;
 
 export const DEFAULT_CATEGORIES_LIMIT = 3;
+
+export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
+
+export const HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX = 'healthcheck_last_hour-';
 
 export const LOGIN_INFOS_FETCHING_INTERVAL = 10000;

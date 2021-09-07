@@ -196,6 +196,7 @@ export default {
     optimal: 'Optimal',
     graph: 'Graphique | Graphiques',
     systemStatus: 'État du système',
+    downloadAsPng: 'Télécharger en PNG',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1982,6 +1983,7 @@ export default {
     numberOfInstances: 'Nombre d\'instances',
     notifyUsersNumberOfInstances: 'Les utilisateurs peuvent être avertis lorsque le nombre d\'instances actives est inférieur à la valeur minimale. Le nombre optimal d\'instances est affiché lorsque l\'état du moteur n\'est pas disponible.',
     messagesHistory: 'Historique de traitement des messages FIFO',
+    messagesLastHour: 'Traitement des messages FIFO pour la dernière heure',
     messagesPerHour: 'messages/heure',
     unknown: 'Cet état du système n\'est pas disponible',
     systemStatusChipError: 'Le système n\'est pas opérationnel',
