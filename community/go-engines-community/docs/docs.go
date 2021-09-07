@@ -362,7 +362,7 @@ var doc = `{
                         "BasicAuth": []
                     }
                 ],
-                "description": "Get paginated list of alarms",
+                "description": "Get paginated list of alarms. Use parameters \"multi_sort[]=field_1,asc\u0026multi_sort[]=field_2,desc\u0026multi_sort[]=field_3,asc\" to sort list by multiple fields. \"sort_key\", \"sort_dir\" are left for compatibility with older ways of sorting",
                 "consumes": [
                     "application/json"
                 ],
