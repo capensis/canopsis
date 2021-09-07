@@ -74,12 +74,12 @@ export default {
         this.pagination.interval.from,
         DATETIME_INTERVAL_TYPES.start,
         DATETIME_FORMATS.datePicker,
-      ));
+      )).unix();
       params.to = convertDateToEndOfDayMoment(dateParse(
         this.pagination.interval.to,
         DATETIME_INTERVAL_TYPES.stop,
         DATETIME_FORMATS.datePicker,
-      ));
+      )).unix();
 
       this.fetchRemediationInstructionStatsList({ params });
     },
