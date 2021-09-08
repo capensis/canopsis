@@ -102,6 +102,7 @@ module.exports = deepmerge({
         javascriptEnabled: true,
         acceptSslCerts: true,
         chromeOptions: {
+          args: ['--ignore-certificate-errors'],
         },
       },
     },
