@@ -61,6 +61,11 @@ const seleniumConfig = {
  * Put sel helper method into global object
  */
 global.sel = sel;
+global.window = {
+  location: {
+    href: process.env.VUE_DEV_SERVER_URL,
+  },
+};
 
 module.exports = deepmerge({
   src_folders: [path.resolve('tests', 'e2e', 'specs')],
@@ -102,7 +107,7 @@ module.exports = deepmerge({
         javascriptEnabled: true,
         acceptSslCerts: true,
         chromeOptions: {
-          args: ['--ignore-certificate-errors'],
+          args: ['--no-sandbox', '--ignore-certificate-errors'],
         },
       },
     },
