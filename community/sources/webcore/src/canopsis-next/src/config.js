@@ -4,6 +4,7 @@ export const {
   BASE_URL,
   VUE_APP_API_HOST,
   VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY,
+  VUE_APP_PAGINATION_LIMIT,
 } = process.env;
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
@@ -20,7 +21,7 @@ export const ROUTER_MODE = 'history';
 
 export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY || 'accessToken';
 
-export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
+export const PAGINATION_LIMIT = parseInt(VUE_APP_PAGINATION_LIMIT, 10);
 
 export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 
@@ -174,6 +175,7 @@ export const API_ROUTES = {
   },
   healthcheck: {
     engines: '/api/v4/cat/healthcheck',
+    status: '/api/v4/cat/healthcheck/status',
     parameters: '/api/v4/cat/healthcheck/parameters',
   },
 };
