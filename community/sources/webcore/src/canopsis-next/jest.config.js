@@ -16,5 +16,5 @@ module.exports = {
     'jest-serializer-vue',
   ],
   setupFiles: ['jest-localstorage-mock'],
-  setupTestFrameworkScriptFile: '<rootDir>/tests/unit/jest.setup-test-framework',
+  setupFilesAfterEnv: ['<rootDir>/tests/unit/jest.setup-test-framework'],
 };
