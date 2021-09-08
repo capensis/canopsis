@@ -92,11 +92,7 @@ function errorResponseHandler(responseWithError) {
     }
 
     if (response.data) {
-      if (response.data.errors) {
-        return Promise.reject(response.data.errors);
-      }
-
-      return Promise.reject(response.data);
+      return Promise.reject(response.data.errors || response.data);
     }
   }
 

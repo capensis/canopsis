@@ -1906,7 +1906,7 @@ export const ALARMS_OPENED_VALUES = {
   resolved: false,
 };
 
-export const ROUTE_NAMES = {
+export const ROUTES_NAMES = {
   home: 'home',
   error: 'error',
   login: 'login',
@@ -2086,3 +2086,5 @@ export const SOCKET_ROOMS = {
 };
 
 export const HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR = 1.2;
+
+export const EXCLUDED_SERVER_ERROR_STATUSES = [401, 403];

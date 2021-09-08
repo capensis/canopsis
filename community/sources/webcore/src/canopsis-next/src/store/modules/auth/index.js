@@ -6,7 +6,7 @@ import {
   VUETIFY_ANIMATION_DELAY,
   LOCAL_STORAGE_ACCESS_TOKEN_KEY,
 } from '@/config';
-import { ROUTE_NAMES } from '@/constants';
+import { EXCLUDED_SERVER_ERROR_STATUSES, ROUTES_NAMES } from '@/constants';
 
 import router from '@/router';
 
@@ -92,8 +92,8 @@ export default {
 
         return commit(types.FETCH_USER_COMPLETED, currentUser);
       } catch ({ data, status }) {
-        if (![401, 403].includes(status)) {
-          router.push({ name: ROUTE_NAMES.error });
+        if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(status)) {
+          router.push({ name: ROUTES_NAMES.error });
         } else {
           dispatch('logout');
         }

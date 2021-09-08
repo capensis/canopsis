@@ -28,7 +28,7 @@
 <script>
 import { find, isString } from 'lodash';
 
-import { MODALS, ROUTE_NAMES } from '@/constants';
+import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { generateCopyOfViewTab, getViewsWidgetsIdsMappings } from '@/helpers/entities';
 import { viewToForm, formToView, viewToRequest } from '@/helpers/forms/view';
@@ -109,8 +109,8 @@ export default {
     redirectToHomeIfCurrentRoute() {
       const { name, params = {} } = this.$route;
 
-      if (name === ROUTE_NAMES.view && params.id === this.view._id) {
-        this.$router.push({ name: ROUTE_NAMES.home });
+      if (name === ROUTES_NAMES.view && params.id === this.view._id) {
+        this.$router.push({ name: ROUTES_NAMES.home });
       }
     },
 

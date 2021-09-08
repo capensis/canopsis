@@ -1,7 +1,7 @@
 import { API_ROUTES } from '@/config';
 import request from '@/services/request';
 import { toSeconds } from '@/helpers/date/duration';
-import { POPUP_TYPES, ROUTE_NAMES } from '@/constants';
+import { EXCLUDED_SERVER_ERROR_STATUSES, POPUP_TYPES, ROUTES_NAMES } from '@/constants';
 
 import router from '@/router';
 
@@ -128,8 +128,8 @@ export default {
           dispatch('setPopupTimeouts', { popupTimeout });
         }
       } catch ({ status, data }) {
-        if (![401, 403].includes(status)) {
-          router.push({ name: ROUTE_NAMES.error });
+        if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(status)) {
+          router.push({ name: ROUTES_NAMES.error });
         }
 
         throw data;

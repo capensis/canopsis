@@ -9,7 +9,7 @@
 <script>
 import { LOGIN_INFOS_FETCHING_INTERVAL } from '@/config';
 
-import { ROUTE_NAMES } from '@/constants';
+import { ROUTES_NAMES } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { createPollingMixin } from '@/mixins/polling';
@@ -37,7 +37,7 @@ export default {
       try {
         await this.fetchLoginInfos();
 
-        this.$router.replace({ name: ROUTE_NAMES.login });
+        this.$router.replace({ name: ROUTES_NAMES.login });
       } catch (err) {
         console.error(err);
       }
