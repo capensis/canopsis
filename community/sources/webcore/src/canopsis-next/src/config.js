@@ -6,7 +6,7 @@ export const {
   VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY,
 } = process.env;
 
-export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
+export const APP_HOST = removeTrailingSlashes('test');
 
 export const API_HOST = VUE_APP_API_HOST;
 

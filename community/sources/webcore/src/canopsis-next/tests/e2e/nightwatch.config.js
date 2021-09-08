@@ -24,6 +24,7 @@ const path = require('path');
 const deepmerge = require('deepmerge');
 
 const seleniumServer = require('selenium-server');
+const chromedriver = require('chromedriver');
 const ChildProcess = require('nightwatch/lib/runner/concurrency/child-process');
 
 const { nightwatchRunWithQueue } = require('./helpers/nightwatch-child-process');
@@ -52,7 +53,7 @@ const seleniumConfig = {
   host: '127.0.0.1',
   port: 4444,
   cli_args: {
-    'webdriver.chrome.driver': process.env.CHROME_DRIVER_PATH,
+    'webdriver.chrome.driver': chromedriver.path,
   },
 };
 
@@ -101,7 +102,6 @@ module.exports = deepmerge({
         javascriptEnabled: true,
         acceptSslCerts: true,
         chromeOptions: {
-          args: ['--no-sandbox'],
         },
       },
     },
