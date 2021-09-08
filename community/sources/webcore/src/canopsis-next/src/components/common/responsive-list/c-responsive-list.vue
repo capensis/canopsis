@@ -99,11 +99,11 @@ export default {
 
         availableWidth -= this.itemsWidthByKey[key];
 
-        if (availableWidth > 0) {
-          results.push(item);
-        } else {
+        if (availableWidth <= 0) {
           break;
         }
+
+        results.push(item);
       }
 
       return results;
