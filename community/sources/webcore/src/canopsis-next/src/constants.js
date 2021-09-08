@@ -2026,9 +2026,10 @@ export const MESSAGE_STATS_INTERVALS = {
   minute: 'minute',
 };
 
+export const HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR = 1.2;
+
 export const SOCKET_ROOMS = {
   healthcheck: 'healthcheck',
+  healthcheckStatus: 'healthcheck-status',
   messageRates: 'message-rates',
 };
-
-export const HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR = 1.2;
