@@ -56,8 +56,10 @@ export const ChartLimitedSegmentPlugin = {
           }
 
           const pointValue = this.getPointValue(pointData);
+          const nextPointValue = nextPoint && this.getPointValue(points[dataIndex + 1]);
+          const isClosablePath = (pointValue <= limit.value && nextPointValue <= limit.value) || !nextPoint;
 
-          if (openedPath && (pointValue < limit.value || !nextPoint)) {
+          if (openedPath && isClosablePath) {
             /* right bottom corner */
             ctx.lineTo(point.x, xAxis.top);
 
@@ -66,10 +68,11 @@ export const ChartLimitedSegmentPlugin = {
             ctx.fill();
 
             openedPath = false;
-            return;
           }
 
-          const nextPointValue = this.getPointValue(points[dataIndex + 1]);
+          if (!nextPoint) {
+            return;
+          }
 
           if (pointValue > limit.value || nextPointValue > limit.value) {
             if (!openedPath) {
