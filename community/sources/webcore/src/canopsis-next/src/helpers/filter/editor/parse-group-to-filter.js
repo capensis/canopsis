@@ -1,6 +1,4 @@
-import {
-  isArray, isEmpty, isObject, cloneDeep, isNull,
-} from 'lodash';
+import { isArray, isEmpty, isObject, cloneDeep, isNull } from 'lodash';
 
 import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES, FILTER_MONGO_OPERATORS } from '@/constants';
 import uid from '@/helpers/uid';

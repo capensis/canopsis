@@ -1,8 +1,6 @@
 import moment from 'moment';
 import { get, groupBy } from 'lodash';
-import {
-  Day, Schedule, Constants, Op, DaySpan,
-} from 'dayspan';
+import { Day, Schedule, Constants, Op, DaySpan } from 'dayspan';
 
 import { convertTimestampToMomentByTimezone } from '@/helpers/date/date';
 

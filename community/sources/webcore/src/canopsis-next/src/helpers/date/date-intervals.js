@@ -1,8 +1,6 @@
 import moment from 'moment-timezone';
 
-import {
-  STATS_DURATION_UNITS, DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES,
-} from '@/constants';
+import { STATS_DURATION_UNITS, DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES } from '@/constants';
 
 /**
  * Convert a date interval string to moment date object

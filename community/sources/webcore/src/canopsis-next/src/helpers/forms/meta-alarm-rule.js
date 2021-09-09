@@ -1,6 +1,4 @@
-import {
-  cloneDeep, omit, pick, isNumber,
-} from 'lodash';
+import { cloneDeep, omit, pick, isNumber } from 'lodash';
 import moment from 'moment';
 
 import { DEFAULT_TIME_INTERVAL, META_ALARMS_RULE_TYPES, META_ALARMS_THRESHOLD_TYPES } from '@/constants';

@@ -25,9 +25,7 @@
 </template>
 
 <script>
-import {
-  get, isObject, isString, isUndefined,
-} from 'lodash';
+import { get, isObject, isString, isUndefined } from 'lodash';
 
 import { formBaseMixin } from '@/mixins/form';
 

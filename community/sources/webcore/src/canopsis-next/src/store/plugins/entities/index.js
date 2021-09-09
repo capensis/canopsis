@@ -1,7 +1,5 @@
 import Vue from 'vue';
-import {
-  get, pick, uniqWith, mergeWith, isEqual,
-} from 'lodash';
+import { get, pick, uniqWith, mergeWith, isEqual } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
 import { SCHEMA_EMBEDDED_KEY } from '@/config';

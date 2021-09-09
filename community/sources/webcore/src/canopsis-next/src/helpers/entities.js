@@ -1,6 +1,4 @@
-import {
-  get, omit, cloneDeep, isObject, groupBy,
-} from 'lodash';
+import { get, omit, cloneDeep, isObject, groupBy } from 'lodash';
 import moment from 'moment';
 
 import i18n from '@/i18n';

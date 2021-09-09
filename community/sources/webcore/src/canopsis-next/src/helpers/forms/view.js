@@ -297,5 +297,5 @@ export const prepareImportedViews = (views, group) => views
 export const prepareImportedGroups = groups => groups.map(({ views, ...group }) => {
   const preparedGroup = { ...group, _id: uuid() };
 
-  return ({ ...preparedGroup, views: prepareImportedViews(views, preparedGroup) });
+  return { ...preparedGroup, views: prepareImportedViews(views, preparedGroup) };
 });

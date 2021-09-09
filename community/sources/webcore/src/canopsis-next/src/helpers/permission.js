@@ -1,6 +1,4 @@
-import {
-  get, isUndefined, omit, sortBy, keyBy,
-} from 'lodash';
+import { get, isUndefined, omit, sortBy, keyBy } from 'lodash';
 import flatten from 'flat';
 
 import {

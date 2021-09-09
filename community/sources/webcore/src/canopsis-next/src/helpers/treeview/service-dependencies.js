@@ -89,7 +89,10 @@ export const dependencyToTreeviewDependency = (dependency = {}) => {
  * @param {ServiceTreeviewDependency} [treeviewDependency = {}]
  * @returns {ServiceDependency}
  */
-export const treeviewDependencyToDependency = (treeviewDependency = {}) => omit(treeviewDependency, ['children', 'parentId', 'parentKey']);
+export const treeviewDependencyToDependency = (treeviewDependency = {}) => omit(
+  treeviewDependency,
+  ['children', 'parentId', 'parentKey'],
+);
 
 /**
  * Normalize treeview dependencies array
@@ -138,31 +141,32 @@ export const getLoadMoreDenormalizedChild = (parent) => {
  * @param {DenormalizedServiceTreeviewDependency} [parent]
  * @returns {DenormalizedServiceTreeviewDependency[]}
  */
-export const dependenciesDenormalize = (ids = [], dependenciesByIds = {}, metaByIds = {}, parent) => ids.map((id) => {
-  const meta = metaByIds[id] || {};
-  const dependency = dependenciesByIds[id] || {};
-  const { children } = dependency;
-  const denormalizedDependency = { ...dependency };
+export const dependenciesDenormalize = (ids = [], dependenciesByIds = {}, metaByIds = {}, parent) => ids
+  .map((id) => {
+    const meta = metaByIds[id] || {};
+    const dependency = dependenciesByIds[id] || {};
+    const { children } = dependency;
+    const denormalizedDependency = { ...dependency };
 
-  if (parent) {
-    denormalizedDependency.parentKey = parent.key;
-    denormalizedDependency.parentId = parent._id;
-  }
+    if (parent) {
+      denormalizedDependency.parentKey = parent.key;
+      denormalizedDependency.parentId = parent._id;
+    }
 
-  if (!children) {
+    if (!children) {
+      return denormalizedDependency;
+    }
+
+    denormalizedDependency.children = dependenciesDenormalize(
+      children,
+      dependenciesByIds,
+      metaByIds,
+      denormalizedDependency,
+    );
+
+    if (meta.page < meta.page_count) {
+      denormalizedDependency.children.push(getLoadMoreDenormalizedChild(dependency));
+    }
+
     return denormalizedDependency;
-  }
-
-  denormalizedDependency.children = dependenciesDenormalize(
-    children,
-    dependenciesByIds,
-    metaByIds,
-    denormalizedDependency,
-  );
-
-  if (meta.page < meta.page_count) {
-    denormalizedDependency.children.push(getLoadMoreDenormalizedChild(dependency));
-  }
-
-  return denormalizedDependency;
-});
+  });

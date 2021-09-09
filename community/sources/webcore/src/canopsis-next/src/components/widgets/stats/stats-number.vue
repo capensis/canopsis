@@ -102,9 +102,13 @@ export default {
 
         if (value < criticityLevels.minor) {
           return colors.ok;
-        } if (value < criticityLevels.major) {
+        }
+
+        if (value < criticityLevels.major) {
           return colors.minor;
-        } if (value < criticityLevels.critical) {
+        }
+
+        if (value < criticityLevels.critical) {
           return colors.major;
         }
 
@@ -119,11 +123,16 @@ export default {
         if (mode === STATS_DISPLAY_MODE.criticity) {
           if (value < criticityLevels.minor) {
             return STATS_CRITICITY.ok;
-          } if (value < criticityLevels.major) {
+          }
+
+          if (value < criticityLevels.major) {
             return STATS_CRITICITY.minor;
-          } if (value < criticityLevels.critical) {
+          }
+
+          if (value < criticityLevels.critical) {
             return STATS_CRITICITY.major;
           }
+
           return STATS_CRITICITY.critical;
         }
 

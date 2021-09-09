@@ -1,7 +1,7 @@
 {
   "root": true,
   "extends": [
-    "plugin:vue/essential",
+    "plugin:vue/strongly-recommended",
     "@vue/airbnb"
   ],
   "plugins": [
@@ -11,6 +11,7 @@
     "sel": true
   },
   "rules": {
+    "object-curly-newline": "off",
     "arrow-parens": "off",
     "default-case": "off",
     "max-len": ["error", { "code": 120, "ignoreStrings": true, "ignoreTemplateLiterals": true, "ignoreRegExpLiterals": true }],
@@ -19,6 +20,8 @@
     "no-return-assign": "off",
     "no-underscore-dangle": ["error", { "allow": ["_id", "_embedded", "_t", "_filter", "type_", "_original"] }],
     "no-bitwise": ["error", { "allow": ["&"] }],
+    "vue/require-default-prop": "off",
+    "vue/require-prop-types": "error",
     "vue/order-in-components": ["error", {
       "order": [
         "el",

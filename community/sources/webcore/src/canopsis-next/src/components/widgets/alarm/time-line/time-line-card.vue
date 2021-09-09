@@ -47,7 +47,9 @@ export default {
 
       if (type.startsWith('status')) {
         return ENTITY_INFOS_TYPE.status;
-      } if (type.startsWith('state')) {
+      }
+
+      if (type.startsWith('state')) {
         return ENTITY_INFOS_TYPE.state;
       }
 
