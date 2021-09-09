@@ -18,6 +18,7 @@ import (
 
 type API interface {
 	common.CrudAPI
+	Patch(c *gin.Context)
 	ListByEntityID(c *gin.Context)
 	ListEntities(c *gin.Context)
 	CountFilter(c *gin.Context)
@@ -292,6 +293,118 @@ func (a *api) Update(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
+	}
+
+	err = a.actionLogger.Action(c, logger.LogEntry{
+		Action:    logger.ActionUpdate,
+		ValueType: logger.ValueTypePbehavior,
+		ValueID:   model.ID,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	a.sendComputeTask(pbehavior.ComputeTask{
+		PbehaviorID:   model.ID,
+		OperationType: pbehavior.OperationUpdate,
+	})
+
+	c.JSON(http.StatusOK, model)
+}
+
+// Patch partial of behavior's attributes by id
+// @Summary Update partial set of behavior attributes by id
+// @Description Update partial set of behavior attributes by id
+// @Tags pbehaviors
+// @ID pbehaviors-update-by-id
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Security BasicAuth
+// @Param id path string true "pbehavior id"
+// @Param body body EditRequest true "body"
+// @Success 200 {object} Response
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Failure 404 {object} common.ErrorResponse
+// @Router /pbehaviors/{id} [patch]
+func (a *api) Patch(c *gin.Context) {
+	req := PatchRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		a.logger.Error().Err(err).Msg("failed binding json")
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	var err error
+	var model *Response
+	if req.Start != nil || req.Stop != nil || req.Type != nil {
+		var updated = false
+		retried := 0
+		for !updated && retried < 5 {
+			model, err = a.store.GetOneBy(c.Request.Context(), bson.M{"_id": c.Param("id")})
+			if err != nil || model == nil {
+				c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+				return
+			}
+			snapshot := bson.M{
+				"_id":    model.ID,
+				"tstart": model.Start,
+				"tstop":  model.Stop,
+				"type_":  model.Type.ID,
+			}
+			err = a.transformer.Patch(c.Request.Context(), req, model)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+				return
+			}
+			// Validation
+			if model.Type.Type != pbehavior.TypePause && (!model.Stop.After(model.Start.Time) ||
+				model.Stop == nil) {
+				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("invalid fields start, stop, type")))
+				return
+			}
+			updated, err = a.store.UpdateByFilter(c.Request.Context(), model, snapshot)
+			if err != nil {
+				panic(err)
+			}
+			if updated {
+				break
+			}
+			retried++
+		}
+
+		if updated {
+			c.JSON(http.StatusOK, model)
+		} else {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NewErrorResponse(errors.New("max update retry reached")))
+		}
+		return
+
+	} else {
+		var ok bool
+		model, err = a.store.GetOneBy(c.Request.Context(), bson.M{"_id": c.Param("id")})
+		if err != nil || model == nil {
+			a.logger.Error().Err(err).Msg("id not exists")
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			return
+		}
+
+		err = a.transformer.Patch(c.Request.Context(), req, model)
+		if err != nil {
+			a.logger.Error().Err(err).Msg("failed map values")
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+
+		ok, err = a.store.Update(c.Request.Context(), model)
+		if err != nil {
+			panic(err)
+		}
+
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			return
+		}
 	}
 
 	err = a.actionLogger.Action(c, logger.LogEntry{

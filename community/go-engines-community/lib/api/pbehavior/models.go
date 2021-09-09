@@ -49,6 +49,18 @@ type UpdateRequest struct {
 	ID string `json:"-"`
 }
 
+type PatchRequest struct {
+	Enabled    *bool                              `json:"enabled"`
+	Name       *string                            `json:"name"`
+	Reason     *string                            `json:"reason"`
+	RRule      *string                            `json:"rrule"`
+	Start      *types.CpsTime                     `json:"tstart" swaggertype:"integer"`
+	Stop       *types.CpsTime                     `json:"tstop" swaggertype:"integer"`
+	Type       *string                            `json:"type"`
+	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
+	Exceptions []string                           `json:"exceptions"`
+}
+
 type FilterRequest struct {
 	Filter interface{} `json:"filter" binding:"required"`
 }
