@@ -101,6 +101,7 @@ func (s *service) sendEvent(event types.Event) error {
 // updateServiceState computes the state of a service given its AlarmCounters,
 // and sends an event to update the corresponding alarm.
 func (s *service) updateServiceState(
+	ctx context.Context,
 	serviceID, serviceOutput string,
 	counters AlarmCounters,
 ) error {
@@ -123,7 +124,7 @@ func (s *service) updateServiceState(
 		return err
 	}
 
-	err = s.adapter.UpdateCounters(serviceID, counters)
+	err = s.adapter.UpdateCounters(ctx, serviceID, counters)
 	if err != nil {
 		s.logger.Error().Err(err).Msg("unable to update service counters")
 		return err
@@ -534,7 +535,7 @@ func (s *service) calculateServiceState(
 		return err
 	}
 
-	return s.updateServiceState(msg.Service.ID, msg.Service.OutputTemplate, counters[msg.Service.ID])
+	return s.updateServiceState(ctx, msg.Service.ID, msg.Service.OutputTemplate, counters[msg.Service.ID])
 }
 
 // UpdateService recomputes service counters and alarm state.
@@ -542,12 +543,7 @@ func (s *service) calculateServiceState(
 // are ignored for service. In this case counters for each alarm are stored in cache to
 // determinate which alarm state was used during service recomputing.
 // If lockClient is not defined service is not locked and cache for alarms is not used.
-func (s *service) UpdateService(parentCtx context.Context, event types.Event) error {
-	defer trace.StartRegion(parentCtx, "service.UpdateService").End()
-
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
+func (s *service) UpdateService(ctx context.Context, event types.Event) error {
 	serviceID := event.GetEID()
 	if s.lockClient != nil {
 		lock, err := s.lockServiceUpdate(ctx, serviceID)
@@ -562,7 +558,7 @@ func (s *service) UpdateService(parentCtx context.Context, event types.Event) er
 		}()
 	}
 
-	service, err := s.adapter.GetByID(serviceID)
+	service, err := s.adapter.GetByID(ctx, serviceID)
 	if err != nil {
 		return err
 	}
@@ -626,7 +622,7 @@ func (s *service) UpdateService(parentCtx context.Context, event types.Event) er
 		s.logger.Error().Err(err).Msg("Unable to process state")
 	}
 
-	err = s.updateServiceState(serviceID, serviceData.OutputTemplate, counters)
+	err = s.updateServiceState(ctx, serviceID, serviceData.OutputTemplate, counters)
 	if err != nil {
 		return err
 	}
@@ -635,7 +631,7 @@ func (s *service) UpdateService(parentCtx context.Context, event types.Event) er
 }
 
 func (s *service) ReloadService(ctx context.Context, serviceID string) error {
-	service, err := s.adapter.GetByID(serviceID)
+	service, err := s.adapter.GetByID(ctx, serviceID)
 	if err != nil {
 		return err
 	}
@@ -736,7 +732,7 @@ func (s *service) ComputeAllServices(parentCtx context.Context) error {
 						return
 					}
 
-					err = s.updateServiceState(data.ID, data.OutputTemplate, counters)
+					err = s.updateServiceState(ctx, data.ID, data.OutputTemplate, counters)
 					if err != nil {
 						errCh <- err
 						return
@@ -762,7 +758,7 @@ func (s *service) ClearCache(ctx context.Context) error {
 }
 
 func (s *service) loadServices(ctx context.Context, redisSave bool) ([]ServiceData, error) {
-	services, err := s.adapter.GetValid()
+	services, err := s.adapter.GetValid(ctx)
 	if err != nil {
 		return nil, err
 	}

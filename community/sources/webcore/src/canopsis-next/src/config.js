@@ -27,6 +27,8 @@ export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 
 export const PAGINATION_TOTAL_VISIBLE = 7;
 
+export const DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT = 3;
+
 export const DEFAULT_WEATHER_LIMIT = 120;
 
 export const DEFAULT_LOCALE = 'en';
@@ -112,7 +114,6 @@ export const API_ROUTES = {
     app: '/api/v4/internal/app_info',
     userInterface: '/api/v4/internal/user_interface',
   },
-  heartbeat: '/api/v4/heartbeats',
   associativeTable: '/api/v4/associativetable',
   sessionTracePath: '/api/v2/session_tracepath',
   sessionsCount: '/api/v4/sessions-count',
@@ -265,9 +266,9 @@ export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
 
 export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
 
-export const EXPORT_FETCHING_INTERVAL = 2000;
+export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS = 10;
 
-export const DEFAULT_JOB_EXECUTOR_FETCH_TIMEOUT_SECONDS = 30;
+export const EXPORT_FETCHING_INTERVAL = 2000;
 
 export const DEFAULT_CATEGORIES_LIMIT = 3;
 

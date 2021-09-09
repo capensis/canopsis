@@ -15,13 +15,13 @@ import { ROUTES_NAMES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
-import { createPollingMixin } from '@/mixins/polling';
+import { pollingMixinCreator } from '@/mixins/polling';
 
 export default {
   mixins: [
     authMixin,
     entitiesInfoMixin,
-    createPollingMixin({
+    pollingMixinCreator({
       method: 'fetchInfos',
       delay: LOGIN_INFOS_FETCHING_INTERVAL,
       startOnMount: true,

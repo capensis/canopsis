@@ -20,6 +20,8 @@ type Router func(gin.IRouter)
 //  Worker is used to implement adding new worker to API.
 type Worker func(context.Context)
 
+type DeferFunc func(ctx context.Context) error
+
 // API is used to implement API http server.
 type API interface {
 	// Run starts http server.
@@ -34,6 +36,7 @@ type API interface {
 
 type api struct {
 	addr            string
+	deferFunc       DeferFunc
 	logger          zerolog.Logger
 	routers         []Router
 	noRouteHandlers []gin.HandlerFunc
@@ -44,13 +47,15 @@ type api struct {
 // New creates new api.
 func New(
 	addr string,
+	deferFunc DeferFunc,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		addr:    addr,
-		logger:  logger,
-		routers: make([]Router, 0),
-		workers: make(map[string]Worker),
+		addr:      addr,
+		deferFunc: deferFunc,
+		logger:    logger,
+		routers:   make([]Router, 0),
+		workers:   make(map[string]Worker),
 	}
 }
 
@@ -66,7 +71,7 @@ func (a *api) AddNoRoute(handlers []gin.HandlerFunc) {
 	a.noRouteHandlers = handlers
 }
 
-func (a *api) Run(ctx context.Context) error {
+func (a *api) Run(ctx context.Context) (resErr error) {
 	handler := a.registerRoutes()
 	a.runWorkers(ctx)
 
@@ -83,6 +88,17 @@ func (a *api) Run(ctx context.Context) error {
 
 		if err := server.Shutdown(shutdownCtx); err != nil {
 			a.logger.Err(err).Msg("server forced to shutdown")
+		}
+	}()
+
+	defer func() {
+		if a.deferFunc != nil {
+			deferCtx, deferCancel := context.WithTimeout(context.Background(), shutdownTimout)
+			defer deferCancel()
+			err := a.deferFunc(deferCtx)
+			if err != nil && resErr == nil {
+				resErr = err
+			}
 		}
 	}()
 

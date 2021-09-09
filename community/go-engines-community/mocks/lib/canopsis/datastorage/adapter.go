@@ -50,6 +50,34 @@ func (mr *MockAdapterMockRecorder) Get(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockAdapter)(nil).Get), arg0)
 }
 
+// UpdateHistoryAlarm mocks base method
+func (m *MockAdapter) UpdateHistoryAlarm(arg0 context.Context, arg1 datastorage.HistoryWithCount) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHistoryAlarm", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateHistoryAlarm indicates an expected call of UpdateHistoryAlarm
+func (mr *MockAdapterMockRecorder) UpdateHistoryAlarm(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryAlarm", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryAlarm), arg0, arg1)
+}
+
+// UpdateHistoryEntity mocks base method
+func (m *MockAdapter) UpdateHistoryEntity(arg0 context.Context, arg1 datastorage.HistoryWithCount) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHistoryEntity", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateHistoryEntity indicates an expected call of UpdateHistoryEntity
+func (mr *MockAdapterMockRecorder) UpdateHistoryEntity(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryEntity", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryEntity), arg0, arg1)
+}
+
 // UpdateHistoryJunit mocks base method
 func (m *MockAdapter) UpdateHistoryJunit(arg0 context.Context, arg1 types.CpsTime) error {
 	m.ctrl.T.Helper()
@@ -62,4 +90,32 @@ func (m *MockAdapter) UpdateHistoryJunit(arg0 context.Context, arg1 types.CpsTim
 func (mr *MockAdapterMockRecorder) UpdateHistoryJunit(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryJunit", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryJunit), arg0, arg1)
+}
+
+// UpdateHistoryPbehavior mocks base method
+func (m *MockAdapter) UpdateHistoryPbehavior(arg0 context.Context, arg1 types.CpsTime) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHistoryPbehavior", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateHistoryPbehavior indicates an expected call of UpdateHistoryPbehavior
+func (mr *MockAdapterMockRecorder) UpdateHistoryPbehavior(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryPbehavior", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryPbehavior), arg0, arg1)
+}
+
+// UpdateHistoryRemediation mocks base method
+func (m *MockAdapter) UpdateHistoryRemediation(arg0 context.Context, arg1 types.CpsTime) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHistoryRemediation", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateHistoryRemediation indicates an expected call of UpdateHistoryRemediation
+func (mr *MockAdapterMockRecorder) UpdateHistoryRemediation(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryRemediation", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryRemediation), arg0, arg1)
 }

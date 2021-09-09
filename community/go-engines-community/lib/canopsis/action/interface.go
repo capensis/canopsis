@@ -4,13 +4,14 @@ package action
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type Adapter interface {
-	GetEnabled() ([]Scenario, error)
-	GetEnabledById(id string) (Scenario, error)
-	GetEnabledByIDs(ids []string) ([]Scenario, error)
+	GetEnabled(ctx context.Context) ([]Scenario, error)
+	GetEnabledById(ctx context.Context, id string) (Scenario, error)
+	GetEnabledByIDs(ctx context.Context, ids []string) ([]Scenario, error)
 }
 
 // Service allows you to manipulate actions.
@@ -30,7 +31,7 @@ type Service interface {
 // ScenarioStorage is used to provide scenarios.
 type ScenarioStorage interface {
 	// ReloadScenarios trigger a refresh on scenarios cache from DB
-	ReloadScenarios() error
+	ReloadScenarios(ctx context.Context) error
 
 	// GetTriggeredScenarios returns scenarios which are triggered by triggers.
 	GetTriggeredScenarios(
@@ -67,11 +68,13 @@ type ScenarioExecution struct {
 	Tries            int64                  `json:"t"`
 	Header           map[string]string      `json:"h,omitempty"`
 	Response         map[string]interface{} `json:"r,omitempty"`
+	AdditionalData   AdditionalData         `json:"ad"`
 }
 
 type ScenarioResult struct {
-	Alarm types.Alarm
-	Err   error
+	Alarm            types.Alarm
+	Err              error
+	ActionExecutions []Execution
 }
 
 type ExecuteScenariosTask struct {
@@ -81,6 +84,13 @@ type ExecuteScenariosTask struct {
 	Entity               types.Entity
 	Alarm                types.Alarm
 	AckResources         bool
+	AdditionalData       AdditionalData
+}
+
+type AdditionalData struct {
+	AlarmChangeType types.AlarmChangeType `json:"alarm_change_type"`
+	Author          string                `json:"author"`
+	Initiator       string                `json:"initiator"`
 }
 
 type Execution struct {

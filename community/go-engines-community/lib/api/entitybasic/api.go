@@ -56,7 +56,7 @@ func (a *api) Get(c *gin.Context) {
 		return
 	}
 
-	entity, err := a.store.GetOneBy(request.ID)
+	entity, err := a.store.GetOneBy(c.Request.Context(), request.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -98,7 +98,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	request.ID = idRequest.ID
-	entity, isToggled, err := a.store.Update(request)
+	entity, isToggled, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -146,7 +146,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Delete(request.ID)
+	ok, err := a.store.Delete(c.Request.Context(), request.ID)
 
 	if err != nil {
 		if err == ErrLinkedEntityToAlarm {

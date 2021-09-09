@@ -13,6 +13,7 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
 import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
+import { authMixin } from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
@@ -21,8 +22,9 @@ import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/reme
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
-export default {
+export const widgetActionsPanelAlarmMixin = {
   mixins: [
+    authMixin,
     queryMixin,
     eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
@@ -215,17 +217,6 @@ export default {
           title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
           eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
           parentsIds: [get(this.parentAlarm, 'd')],
-        },
-      });
-    },
-
-    showRateInstructionModal(instruction) {
-      this.$modals.show({
-        name: MODALS.rate,
-        config: {
-          title: this.$t('modals.rateInstruction.title', { name: instruction.name }),
-          text: this.$t('modals.rateInstruction.text'),
-          action: data => this.rateRemediationInstructionExecution({ id: instruction._id, data }),
         },
       });
     },

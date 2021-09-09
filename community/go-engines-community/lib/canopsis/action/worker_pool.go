@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
-	"sync"
 )
 
 const (
@@ -20,16 +21,17 @@ const (
 )
 
 type Task struct {
-	Source       string
-	Action       Action
-	Alarm        types.Alarm
-	Entity       types.Entity
-	Step         int
-	ExecutionID  string
-	ScenarioID   string
-	AckResources bool
-	Header       map[string]string
-	Response     map[string]interface{}
+	Source         string
+	Action         Action
+	Alarm          types.Alarm
+	Entity         types.Entity
+	Step           int
+	ExecutionID    string
+	ScenarioID     string
+	AckResources   bool
+	Header         map[string]string
+	Response       map[string]interface{}
+	AdditionalData AdditionalData
 }
 
 type TaskResult struct {
@@ -127,7 +129,7 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 								Status:      TaskNotMatched,
 							}
 						} else {
-							err := s.call(task, id)
+							err := s.call(ctx, task, id)
 							if err != nil {
 								resultChannel <- TaskResult{
 									Source:      source,
@@ -155,14 +157,14 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 	return resultChannel, nil
 }
 
-func (s *pool) call(task Task, workerId int) error {
+func (s *pool) call(ctx context.Context, task Task, workerId int) error {
 	var event interface{}
 	var rpcClient engine.RPCClient
 	var err error
 	switch task.Action.Type {
 	case types.ActionTypeWebhook:
 		rpcClient = s.webhookRpcClient
-		event, err = s.getRPCWebhookEvent(task)
+		event, err = s.getRPCWebhookEvent(ctx, task)
 	default:
 		rpcClient = s.axeRpcClient
 		event, err = s.getRPCAxeEvent(task)
@@ -214,7 +216,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*types.RPCAxeEvent, error) {
 	}, nil
 }
 
-func (s *pool) getRPCWebhookEvent(task Task) (*types.RPCWebhookEvent, error) {
+func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWebhookEvent, error) {
 	params, ok := task.Action.Parameters.(*types.WebhookParameters)
 	if !ok {
 		return nil, errors.New("invalid parameters")
@@ -222,18 +224,19 @@ func (s *pool) getRPCWebhookEvent(task Task) (*types.RPCWebhookEvent, error) {
 
 	children := make([]types.Alarm, 0)
 	if len(task.Alarm.Value.Children) > 0 {
-		err := s.alarmAdapter.GetOpenedAlarmsByAlarmIDs(task.Alarm.Value.Children, &children)
+		err := s.alarmAdapter.GetOpenedAlarmsByAlarmIDs(ctx, task.Alarm.Value.Children, &children)
 		if err != nil {
 			return nil, fmt.Errorf("cannot find children : %v", err)
 		}
 	}
 
 	err := params.Template(map[string]interface{}{
-		"Alarm":    task.Alarm,
-		"Entity":   task.Entity,
-		"Children": children,
-		"Response": task.Response,
-		"Header":   task.Header,
+		"Alarm":          task.Alarm,
+		"Entity":         task.Entity,
+		"Children":       children,
+		"Response":       task.Response,
+		"Header":         task.Header,
+		"AdditionalData": task.AdditionalData,
 	})
 	if err != nil {
 		return nil, err

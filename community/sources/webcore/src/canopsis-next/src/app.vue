@@ -94,7 +94,6 @@ export default {
 
           this.setSystemData({
             timezone: this.timezone,
-            jobExecutorFetchTimeoutSeconds: this.jobExecutorFetchTimeoutSeconds,
           });
 
           this.setTitle();

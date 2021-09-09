@@ -20,7 +20,6 @@ func Dial(url string, logger zerolog.Logger,
 	reconnectCount int, minReconnectTimeout time.Duration) (Connection, error) {
 	amqpConn, err := amqp.Dial(url)
 	if err != nil {
-		logger.Err(err).Msg("Dial: connect failed")
 		return nil, err
 	}
 
@@ -38,7 +37,6 @@ func Dial(url string, logger zerolog.Logger,
 		}
 	}
 
-	logger.Debug().Msg("Dial: connected")
 	conn := &baseConnection{
 		amqpConn:                amqpConn,
 		logger:                  logger,
@@ -114,12 +112,10 @@ func (c *baseConnection) Channel() (res Channel, resErr error) {
 		}
 
 		if err != nil {
-			c.logger.Err(err).Msgf("%s channel creation failed", logPrefix)
 			return nil, err
 		}
 	}
 
-	c.logger.Debug().Msgf("%s channel created", logPrefix)
 	ch := &baseChannel{
 		amqpCh:                  amqpCh,
 		logger:                  c.logger,
@@ -232,8 +228,6 @@ func (ch *baseChannel) Consume(
 	res := make(chan amqp.Delivery)
 
 	go func() {
-		ch.logger.Debug().Msgf("%s goroutine started", logPrefix)
-		defer ch.logger.Debug().Msgf("%s goroutine stopped", logPrefix)
 		defer close(res)
 		defer func() {
 			ch.removeListener(listener)
@@ -275,13 +269,10 @@ func (ch *baseChannel) Consume(
 				}
 			}
 
-			ch.logger.Debug().Msgf("%s consume started", logPrefix)
 			// Sends messages to custom channel.
 			for msg := range msgs {
 				res <- msg
 			}
-
-			ch.logger.Debug().Msgf("%s consume ended", logPrefix)
 		}
 	}()
 
@@ -452,8 +443,6 @@ func (ch *baseChannel) notifyListeners(reconnected bool) {
 // It notifies opened channels about reconnection result.
 func reconnect(url string, c *baseConnection) {
 	logPrefix := "reconnect:"
-	c.logger.Debug().Msgf("%s goroutine started", logPrefix)
-	defer c.logger.Debug().Msgf("%s goroutine stopped", logPrefix)
 	defer func() {
 		// Close channel before notify listeners to prevent race condition.
 		_ = c.Close()
@@ -485,7 +474,7 @@ func reconnect(url string, c *baseConnection) {
 		}
 
 		if err != nil {
-			c.logger.Debug().Msgf("%s reconnect failed", logPrefix)
+			c.logger.Debug().Err(err).Msgf("%s reconnect failed", logPrefix)
 			break
 		}
 
@@ -500,8 +489,6 @@ func reconnect(url string, c *baseConnection) {
 // It notifies consumers and publishers about reconnection result.
 func reconnectChannel(conn *baseConnection, ch *baseChannel, reconnectListener chan bool) {
 	logPrefix := "reconnectChannel:"
-	ch.logger.Debug().Msgf("%s goroutine started", logPrefix)
-	defer ch.logger.Debug().Msgf("%s goroutine stopped", logPrefix)
 	defer func() {
 		// Close channel before notify listeners to prevent race condition.
 		_ = ch.Close()
@@ -542,7 +529,7 @@ func reconnectChannel(conn *baseConnection, ch *baseChannel, reconnectListener c
 
 		amqpCh, err := conn.amqpConn.Channel()
 		if err != nil {
-			ch.logger.Debug().Msgf("%s reconnect channel failed (%s)", logPrefix, err)
+			ch.logger.Debug().Err(err).Msgf("%s reconnect channel failed (%s)", logPrefix, err)
 			break
 		}
 

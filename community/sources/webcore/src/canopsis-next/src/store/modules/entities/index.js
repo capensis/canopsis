@@ -22,7 +22,6 @@ import eventFilterRuleModule from './event-filter-rule';
 import infoModule from './info';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
-import heartbeatModule from './heartbeat';
 import dynamicInfoModule from './dynamic-info';
 import broadcastMessageModule from './broadcast-message';
 import counterModule from './counter';
@@ -61,7 +60,6 @@ export default {
   info: infoModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
-  heartbeat: heartbeatModule,
   dynamicInfo: dynamicInfoModule,
   broadcastMessage: broadcastMessageModule,
   counter: counterModule,

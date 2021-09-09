@@ -22,9 +22,7 @@ func NewMongoProvider(dbClient libmongo.DbClient) security.ConfigProvider {
 
 const defaultLdapPort = 389
 
-func (p *mongoProvider) LoadLdapConfig() (*security.LdapConfig, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (p *mongoProvider) LoadLdapConfig(ctx context.Context) (*security.LdapConfig, error) {
 	col := p.dbClient.Collection(libmongo.ObjectMongoCollection)
 	res := col.FindOne(ctx, bson.M{"_id": security.LdapConfigID})
 	if err := res.Err(); err != nil {
@@ -56,9 +54,7 @@ func (p *mongoProvider) LoadLdapConfig() (*security.LdapConfig, error) {
 	return &config, nil
 }
 
-func (p *mongoProvider) LoadCasConfig() (*security.CasConfig, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (p *mongoProvider) LoadCasConfig(ctx context.Context) (*security.CasConfig, error) {
 	col := p.dbClient.Collection(libmongo.ObjectMongoCollection)
 	res := col.FindOne(ctx, bson.M{"_id": security.CasConfigID})
 	if err := res.Err(); err != nil {

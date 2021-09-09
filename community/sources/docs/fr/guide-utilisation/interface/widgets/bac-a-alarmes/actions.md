@@ -20,7 +20,7 @@ Les différentes actions possibles sur cette alarme sont :
 
 ## Acquitter l'alarme
 
-Deux choix possibles : Acquittement et Acquittement rapide.
+Deux options possibles : Acquittement et Acquittement rapide.
 
 L'acquittement permet de voir les détails généraux de l'évènement, de lier un numéro de ticket et d'écrire une note. Il permet d'accuser réception, ou d'accuser réception et de reporter un incident.
 

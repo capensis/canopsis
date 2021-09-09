@@ -38,6 +38,7 @@ type security struct {
 	Config       *libsecurity.Config
 	DbClient     mongo.DbClient
 	SessionStore libsession.Store
+	enforcer     libsecurity.Enforcer
 	Logger       zerolog.Logger
 }
 
@@ -46,12 +47,14 @@ func NewSecurity(
 	config *libsecurity.Config,
 	dbClient mongo.DbClient,
 	sessionStore libsession.Store,
+	enforcer libsecurity.Enforcer,
 	logger zerolog.Logger,
 ) Security {
 	return &security{
 		Config:       config,
 		DbClient:     dbClient,
 		SessionStore: sessionStore,
+		enforcer:     enforcer,
 		Logger:       logger,
 	}
 }
@@ -102,7 +105,7 @@ func (s *security) RegisterCallbackRoutes(router gin.IRouter) {
 			router.GET("/cas/login", s.casLoginHandler())
 			router.GET("/cas/loggedin", s.casCallbackHandler(p))
 		case libsecurity.AuthMethodSaml:
-			sp, err := saml.NewServiceProvider(s.newUserProvider(), s.SessionStore, s.Config, s.Logger)
+			sp, err := saml.NewServiceProvider(s.newUserProvider(), s.SessionStore, s.enforcer, s.Config, s.Logger)
 			if err != nil {
 				s.Logger.Err(err).Msg("RegisterCallbackRoutes: NewServiceProvider error")
 				panic(err)
@@ -152,7 +155,7 @@ func (s *security) casLoginHandler() gin.HandlerFunc {
 			return
 		}
 
-		casConfig, err := s.newConfigProvider().LoadCasConfig()
+		casConfig, err := s.newConfigProvider().LoadCasConfig(c.Request.Context())
 		if err != nil {
 			panic(err)
 		}
@@ -199,6 +202,11 @@ func (s *security) casCallbackHandler(p libsecurity.HttpProvider) gin.HandlerFun
 			panic(err)
 		}
 
+		err = s.enforcer.LoadPolicy()
+		if err != nil {
+			panic(fmt.Errorf("reload enforcer error: %w", err))
+		}
+
 		c.Redirect(http.StatusPermanentRedirect, request.Redirect)
 	}
 }
@@ -220,6 +228,7 @@ func (s *security) newLdapAuthProvider() libsecurity.Provider {
 		s.newConfigProvider(),
 		s.newUserProvider(),
 		provider.NewLdapDialer(),
+		s.enforcer,
 	)
 }
 

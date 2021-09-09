@@ -5,7 +5,6 @@ import (
 	"flag"
 	"os"
 	"os/signal"
-	"syscall"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/debug"
@@ -14,9 +13,7 @@ import (
 
 func main() {
 	flagVersion := flag.Bool("version", false, "version infos")
-
 	opts := Options{}
-
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.StringVar(&opts.PublishToQueue, "publishQueue", "Engine_action", "Publish event to this queue.")
@@ -45,19 +42,11 @@ func main() {
 	}
 
 	trace := debug.Start(logger)
+	// Graceful shutdown.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 
-	ctx, cancel := context.WithCancel(context.Background())
 	engine := NewEngine(ctx, opts, logger)
-
-	go func() {
-		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, os.Interrupt, syscall.SIGTERM)
-		<-sigint
-
-		logger.Info().Msg("engine is stopping")
-		cancel()
-	}()
-
 	err := engine.Run(ctx)
 	exitStatus := 0
 	if err != nil {

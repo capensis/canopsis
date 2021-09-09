@@ -4,8 +4,8 @@ import axios from 'axios';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import dateFilter from '@/filters/date';
-import durationFilter from '@/filters/duration';
+import { durationToString } from '@/helpers/date/duration';
+import { convertDateToString } from '@/helpers/date/date';
 
 import i18n from '@/i18n';
 
@@ -35,7 +35,7 @@ export function timestampHelper(date) {
   let result = '';
 
   if (date) {
-    result = dateFilter(date, 'long');
+    result = convertDateToString(date, 'long');
   }
 
   return result;
@@ -62,11 +62,11 @@ export function internalLinkHelper(options) {
  * First example: {{duration 120}} -> 2 mins
  * Second example: {{duration 12000}} -> 3 hrs 20 mins
  *
- * @param second
+ * @param {number} seconds
  * @returns {String}
  */
-export function durationHelper(second) {
-  return durationFilter(second, undefined, DATETIME_FORMATS.refreshFieldFormat);
+export function durationHelper(seconds) {
+  return durationToString(seconds, DATETIME_FORMATS.refreshFieldFormat);
 }
 
 /**
