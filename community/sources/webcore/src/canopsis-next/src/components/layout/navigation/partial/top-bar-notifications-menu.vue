@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { ROUTE_NAMES, USERS_PERMISSIONS } from '@/constants';
+import { ROUTES_NAMES, USERS_PERMISSIONS } from '@/constants';
 
 import TopBarMenu from './top-bar-menu.vue';
 
@@ -13,7 +13,7 @@ export default {
     links() {
       return [
         {
-          route: { name: ROUTE_NAMES.notificationInstructionStats },
+          route: { name: ROUTES_NAMES.notificationInstructionStats },
           icon: 'star_half',
           permission: USERS_PERMISSIONS.technical.notification.instructionStats,
         },

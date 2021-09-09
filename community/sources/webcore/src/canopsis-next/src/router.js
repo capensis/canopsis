@@ -4,7 +4,7 @@ import Router from 'vue-router';
 import { ROUTER_MODE } from '@/config';
 import {
   CRUD_ACTIONS,
-  ROUTE_NAMES,
+  ROUTES_NAMES,
   ROUTES,
   USERS_PERMISSIONS,
 } from '@/constants';
@@ -45,7 +45,7 @@ Vue.use(Router);
 const routes = [
   {
     path: ROUTES.login,
-    name: ROUTE_NAMES.login,
+    name: ROUTES_NAMES.login,
     component: Login,
     meta: {
       requiresLogin: false,
@@ -53,7 +53,7 @@ const routes = [
   },
   {
     path: ROUTES.home,
-    name: ROUTE_NAMES.home,
+    name: ROUTES_NAMES.home,
     component: Home,
     meta: {
       requiresLogin: true,
@@ -61,7 +61,7 @@ const routes = [
   },
   {
     path: ROUTES.view,
-    name: ROUTE_NAMES.view,
+    name: ROUTES_NAMES.view,
     component: View,
     meta: {
       requiresLogin: true,
@@ -73,7 +73,7 @@ const routes = [
   },
   {
     path: ROUTES.alarms,
-    name: ROUTE_NAMES.alarms,
+    name: ROUTES_NAMES.alarms,
     component: Alarm,
     meta: {
       requiresLogin: true,
@@ -85,7 +85,7 @@ const routes = [
   },
   {
     path: ROUTES.adminRights,
-    name: ROUTE_NAMES.adminRights,
+    name: ROUTES_NAMES.adminRights,
     component: AdminPermissions,
     meta: {
       requiresLogin: true,
@@ -96,7 +96,7 @@ const routes = [
   },
   {
     path: ROUTES.adminUsers,
-    name: ROUTE_NAMES.adminUsers,
+    name: ROUTES_NAMES.adminUsers,
     component: AdminUsers,
     meta: {
       requiresLogin: true,
@@ -107,7 +107,7 @@ const routes = [
   },
   {
     path: ROUTES.adminRoles,
-    name: ROUTE_NAMES.adminRoles,
+    name: ROUTES_NAMES.adminRoles,
     component: AdminRoles,
     meta: {
       requiresLogin: true,
@@ -118,7 +118,7 @@ const routes = [
   },
   {
     path: ROUTES.adminParameters,
-    name: ROUTE_NAMES.adminParameters,
+    name: ROUTES_NAMES.adminParameters,
     component: AdminParameters,
     meta: {
       requiresLogin: true,
@@ -129,7 +129,7 @@ const routes = [
   },
   {
     path: ROUTES.adminBroadcastMessages,
-    name: ROUTE_NAMES.adminBroadcastMessages,
+    name: ROUTES_NAMES.adminBroadcastMessages,
     component: AdminBroadcastMessages,
     meta: {
       requiresLogin: true,
@@ -140,7 +140,7 @@ const routes = [
   },
   {
     path: ROUTES.adminPlaylists,
-    name: ROUTE_NAMES.adminPlaylists,
+    name: ROUTES_NAMES.adminPlaylists,
     component: AdminPlaylists,
     meta: {
       requiresLogin: true,
@@ -151,7 +151,7 @@ const routes = [
   },
   {
     path: ROUTES.adminPlanning,
-    name: ROUTE_NAMES.adminPlanning,
+    name: ROUTES_NAMES.adminPlanning,
     component: AdminPlanning,
     meta: {
       requiresLogin: true,
@@ -162,7 +162,7 @@ const routes = [
   },
   {
     path: ROUTES.adminRemediation,
-    name: ROUTE_NAMES.adminRemediation,
+    name: ROUTES_NAMES.adminRemediation,
     component: AdminRemediation,
     meta: {
       requiresLogin: true,
@@ -173,7 +173,7 @@ const routes = [
   },
   {
     path: ROUTES.adminHealthcheck,
-    name: ROUTE_NAMES.adminHealthcheck,
+    name: ROUTES_NAMES.adminHealthcheck,
     component: AdminHealthcheck,
     meta: {
       requiresLogin: true,
@@ -185,7 +185,7 @@ const routes = [
   },
   {
     path: ROUTES.exploitationPbehaviors,
-    name: ROUTE_NAMES.exploitationPbehaviors,
+    name: ROUTES_NAMES.exploitationPbehaviors,
     component: ExploitationPbehaviors,
     meta: {
       requiresLogin: true,
@@ -196,7 +196,7 @@ const routes = [
   },
   {
     path: ROUTES.exploitationEventFilter,
-    name: ROUTE_NAMES.exploitationEventFilter,
+    name: ROUTES_NAMES.exploitationEventFilter,
     component: ExploitationEventFilter,
     meta: {
       requiresLogin: true,
@@ -207,7 +207,7 @@ const routes = [
   },
   {
     path: ROUTES.exploitationSnmpRules,
-    name: ROUTE_NAMES.exploitationSnmpRules,
+    name: ROUTES_NAMES.exploitationSnmpRules,
     component: ExploitationSnmpRules,
     meta: {
       requiresLogin: true,
@@ -218,7 +218,7 @@ const routes = [
   },
   {
     path: ROUTES.exploitationHeartbeats,
-    name: ROUTE_NAMES.exploitationHeartbeats,
+    name: ROUTES_NAMES.exploitationHeartbeats,
     component: ExploitationHeartbeats,
     meta: {
       requiresLogin: true,
@@ -229,7 +229,7 @@ const routes = [
   },
   {
     path: ROUTES.exploitationDynamicInfos,
-    name: ROUTE_NAMES.exploitationDynamicInfos,
+    name: ROUTES_NAMES.exploitationDynamicInfos,
     component: ExploitationDynamicInfos,
     meta: {
       requiresLogin: true,
@@ -240,7 +240,7 @@ const routes = [
   },
   {
     path: ROUTES.playlist,
-    name: ROUTE_NAMES.playlist,
+    name: ROUTES_NAMES.playlist,
     component: Playlist,
     meta: {
       requiresLogin: true,
@@ -253,7 +253,7 @@ const routes = [
   },
   {
     path: ROUTES.exploitationMetaAlarmRules,
-    name: ROUTE_NAMES.exploitationMetaAlarmRules,
+    name: ROUTES_NAMES.exploitationMetaAlarmRules,
     component: ExploitationMetaAlarmRules,
     meta: {
       requiresLogin: true,
@@ -264,7 +264,7 @@ const routes = [
   },
   {
     path: ROUTES.exploitationScenarios,
-    name: ROUTE_NAMES.exploitationScenarios,
+    name: ROUTES_NAMES.exploitationScenarios,
     component: ExploitationScenarios,
     meta: {
       requiresLogin: true,
@@ -275,7 +275,7 @@ const routes = [
   },
   {
     path: ROUTES.exploitationIdleRules,
-    name: ROUTE_NAMES.exploitationIdleRules,
+    name: ROUTES_NAMES.exploitationIdleRules,
     component: ExploitationIdleRules,
     meta: {
       requiresLogin: true,
@@ -286,7 +286,7 @@ const routes = [
   },
   {
     path: ROUTES.notificationInstructionStats,
-    name: ROUTE_NAMES.notificationInstructionStats,
+    name: ROUTES_NAMES.notificationInstructionStats,
     component: NotificationInstructionStats,
     meta: {
       requiresLogin: true,
@@ -297,17 +297,14 @@ const routes = [
   },
   {
     path: ROUTES.error,
-    name: ROUTE_NAMES.error,
+    name: ROUTES_NAMES.error,
     component: Error,
-    props: route => ({ message: route.query.message }),
-    meta: {
-      requiresLogin: false,
-    },
+    props: route => ({ message: route.query.message, redirect: route.query.redirect }),
   },
   {
     path: '*',
     redirect: {
-      name: ROUTE_NAMES.home,
+      name: ROUTES_NAMES.home,
     },
   },
 ];
@@ -327,7 +324,7 @@ router.beforeEach((to, from, next) => {
 
   if (!isLoggedIn && isRequiresAuth) {
     return next({
-      name: ROUTE_NAMES.login,
+      name: ROUTES_NAMES.login,
       query: {
         redirect: to.fullPath,
         errorMessage: to.query.errorMessage,
@@ -337,7 +334,7 @@ router.beforeEach((to, from, next) => {
 
   if (isLoggedIn && isDontRequiresAuth) {
     return next({
-      name: ROUTE_NAMES.home,
+      name: ROUTES_NAMES.home,
     });
   }
 
@@ -352,7 +349,7 @@ router.beforeResolve(async (to, from, next) => {
     next();
   } catch (err) {
     next({
-      name: ROUTE_NAMES.home,
+      name: ROUTES_NAMES.home,
     });
   }
 });

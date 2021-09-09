@@ -45,6 +45,7 @@ import CEllipsis from '@/components/common/table/c-ellipsis.vue';
 import CPagination from '@/components/common/pagination/c-pagination.vue';
 import CDraggableStepNumber from '@/components/common/drag-drop/c-draggable-step-number.vue';
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
+import CResponsiveList from '@/components/common/responsive-list/c-responsive-list.vue';
 
 /**
  * Overlays
@@ -59,6 +60,7 @@ import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
 import CStateCountChangesChips from '@/components/common/chips/c-state-count-changes-chips.vue';
 import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
 import CInstructionJobChip from '@/components/common/chips/c-instruction-job-chip.vue';
+import CEngineChip from '@/components/common/chips/c-engine-chip.vue';
 
 /**
  * Table
@@ -239,6 +241,7 @@ Vue.component('alarms-list-table', AlarmsListTable);
 Vue.component('c-alarm-chip', CAlarmChip);
 Vue.component('c-instruction-job-chip', CInstructionJobChip);
 Vue.component('c-test-suite-chip', CTestSuiteChip);
+Vue.component('c-engine-chip', CEngineChip);
 Vue.component('c-page-header', CPageHeader);
 Vue.component('c-advanced-data-table', CAdvancedDataTable);
 Vue.component('c-treeview-data-table', CTreeviewDataTable);
@@ -298,6 +301,7 @@ Vue.component('c-enabled-limit-field', CEnabledLimitField);
 Vue.component('c-quick-date-interval-field', CQuickDateIntervalField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
+Vue.component('c-responsive-list', CResponsiveList);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

@@ -7,15 +7,19 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
+
 import { LOGIN_INFOS_FETCHING_INTERVAL } from '@/config';
 
-import { ROUTE_NAMES } from '@/constants';
+import { ROUTES_NAMES } from '@/constants';
 
+import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { createPollingMixin } from '@/mixins/polling';
 
 export default {
   mixins: [
+    authMixin,
     entitiesInfoMixin,
     createPollingMixin({
       method: 'fetchInfos',
@@ -28,6 +32,10 @@ export default {
       type: String,
       default: '',
     },
+    redirect: {
+      type: String,
+      default: '',
+    },
   },
   mounted() {
     this.fetchInfos();
@@ -37,7 +45,18 @@ export default {
       try {
         await this.fetchLoginInfos();
 
-        this.$router.replace({ name: ROUTE_NAMES.login });
+        if (!isEmpty(this.currentUser)) {
+          this.$router.replace({
+            name: this.redirect || ROUTES_NAMES.home,
+          });
+        } else {
+          this.$router.replace({
+            name: ROUTES_NAMES.login,
+            query: {
+              redirect: this.redirect,
+            },
+          });
+        }
       } catch (err) {
         console.error(err);
       }

@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import { EXCLUDED_SERVER_ERROR_STATUSES, ROUTES_NAMES } from '@/constants';
+
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -27,9 +29,20 @@ export default {
   },
   mixins: [authMixin, entitiesInfoMixin],
   async mounted() {
-    await this.fetchLoginInfos();
+    try {
+      await this.fetchLoginInfos();
 
-    this.setTitle();
+      this.setTitle();
+    } catch ({ status, data }) {
+      if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(status)) {
+        this.$router.push({
+          name: ROUTES_NAMES.error,
+          query: {
+            redirect: this.$route.query.redirect,
+          },
+        });
+      }
+    }
   },
 };
 </script>

@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { MODALS, ROUTE_NAMES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
+import { MODALS, ROUTES_NAMES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
@@ -63,7 +63,7 @@ export default {
           resolve();
         } else {
           this.$router.push({
-            name: ROUTE_NAMES.view,
+            name: ROUTES_NAMES.view,
             params: { id: viewId },
             query: { tabId },
           }, resolve, reject);

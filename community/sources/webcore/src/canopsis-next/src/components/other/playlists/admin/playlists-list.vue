@@ -52,7 +52,7 @@
 
 <script>
 import { APP_HOST } from '@/config';
-import { ROUTE_NAMES } from '@/constants';
+import { ROUTES_NAMES } from '@/constants';
 
 import { permissionsTechnicalPlaylistMixin } from '@/mixins/permissions/technical/playlist';
 
@@ -112,7 +112,7 @@ export default {
   methods: {
     getPlaylistRouteById(id, userAction = false) {
       return {
-        name: ROUTE_NAMES.playlist,
+        name: ROUTES_NAMES.playlist,
         params: { id, userAction },
         query: { autoplay: true },
       };

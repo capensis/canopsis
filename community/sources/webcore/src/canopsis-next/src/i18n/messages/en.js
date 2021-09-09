@@ -173,7 +173,7 @@ export default {
     percent: 'Percent | Percents',
     tests: 'Tests',
     total: 'Total',
-    errors: 'Errors',
+    error: 'Error | Errors',
     failures: 'Failures',
     skipped: 'Skipped',
     current: 'Current',
@@ -1988,6 +1988,7 @@ export default {
     unknown: 'This system state is unavailable',
     systemStatusChipError: 'The system is not operational',
     systemStatusServerError: 'System configuration is invalid, please contact the administrator',
+    systemsOperational: 'All systems are operational',
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
@@ -2055,10 +2056,6 @@ export default {
 
       [HEALTHCHECK_ENGINES_NAMES.correlation]: {
         name: 'Correlation',
-      },
-
-      [HEALTHCHECK_ENGINES_NAMES.heartbeat]: {
-        name: 'Heartbeat',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.remediation]: {

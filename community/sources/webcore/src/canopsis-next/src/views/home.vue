@@ -7,7 +7,7 @@
 import { authMixin } from '@/mixins/auth';
 import entitiesRoleMixin from '@/mixins/entities/role';
 
-import { ROUTE_NAMES } from '@/constants';
+import { ROUTES_NAMES } from '@/constants';
 
 export default {
   mixins: [authMixin, entitiesRoleMixin],
@@ -32,7 +32,7 @@ export default {
 
         await this.redirectToRoleDefaultView();
       } else {
-        this.$router.push({ name: ROUTE_NAMES.view, params: { id: userDefaultView._id } });
+        this.$router.push({ name: ROUTES_NAMES.view, params: { id: userDefaultView._id } });
       }
     },
 
@@ -44,7 +44,7 @@ export default {
       } else if (!this.checkReadAccess(roleDefaultView._id)) {
         this.addRedirectInfoPopup(this.$t('home.popups.info.noAccessToRoleDefaultView'));
       } else {
-        this.$router.push({ name: ROUTE_NAMES.view, params: { id: roleDefaultView._id } });
+        this.$router.push({ name: ROUTES_NAMES.view, params: { id: roleDefaultView._id } });
       }
     },
 
