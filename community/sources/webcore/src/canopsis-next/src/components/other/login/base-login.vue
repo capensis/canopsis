@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { ROUTES_NAMES, ROUTES } from '@/constants';
+
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -60,15 +62,15 @@ export default {
           await this.login(this.form);
           await this.fetchAppInfos();
 
-          if (this.$route.query.redirect && this.$route.query.redirect !== '/') {
+          if (this.$route.query.redirect && this.$route.query.redirect !== ROUTES.home) {
             this.$router.push(this.$route.query.redirect);
           } else if (this.currentUser.defaultview) {
             this.$router.push({
-              name: 'view',
+              name: ROUTES_NAMES.view,
               params: { id: this.currentUser.defaultview },
             });
           } else {
-            this.$router.push({ name: 'home' });
+            this.$router.push({ name: ROUTES_NAMES.home });
           }
         }
       } catch (err) {

@@ -274,3 +274,5 @@ export const DEFAULT_CATEGORIES_LIMIT = 3;
 export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
 
 export const HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX = 'healthcheck_last_hour-';
+
+export const LOGIN_INFOS_FETCHING_INTERVAL = 10000;

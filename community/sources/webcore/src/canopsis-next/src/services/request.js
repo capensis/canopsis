@@ -77,20 +77,22 @@ function successResponseHandler(response) {
  */
 function errorResponseHandler(responseWithError) {
   if (responseWithError.response) {
+    const { response, config } = responseWithError;
+
     /**
      * When we will receive 502 or 401 error we must remove cookie to avoid getting a infinity page refreshing
      */
-    if ([502, 401].includes(responseWithError.response.status)) {
+    if ([502, 401].includes(response.status)) {
       localStorageService.clear();
       window.location.reload();
     }
 
-    if (responseWithError.response.data) {
-      if (responseWithError.response.data.errors) {
-        return Promise.reject(responseWithError.response.data.errors);
-      }
+    if (config.fullResponse) {
+      return Promise.reject(response);
+    }
 
-      return Promise.reject(responseWithError.response.data);
+    if (response.data) {
+      return Promise.reject(response.data.errors || response.data);
     }
   }
 

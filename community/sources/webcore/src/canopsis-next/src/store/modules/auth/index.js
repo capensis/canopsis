@@ -6,6 +6,7 @@ import {
   VUETIFY_ANIMATION_DELAY,
   LOCAL_STORAGE_ACCESS_TOKEN_KEY,
 } from '@/config';
+import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants';
 
 import router from '@/router';
 
@@ -81,7 +82,7 @@ export default {
       try {
         commit(types.FETCH_USER);
 
-        const currentUser = await request.get(API_ROUTES.currentUser);
+        const currentUser = await request.get(API_ROUTES.currentUser, { fullResponse: true });
 
         if (currentUser.ui_language) {
           dispatch('i18n/setPersonalLocale', currentUser.ui_language, { root: true });
@@ -90,10 +91,12 @@ export default {
         }
 
         return commit(types.FETCH_USER_COMPLETED, currentUser);
-      } catch (err) {
-        dispatch('logout');
+      } catch (error) {
+        if (EXCLUDED_SERVER_ERROR_STATUSES.includes(error.status)) {
+          dispatch('logout');
+        }
 
-        throw err;
+        throw error;
       }
     },
 

@@ -108,7 +108,7 @@ export default {
           version,
           user_interface: userInterface,
           login_config: loginConfig,
-        } = await request.get(API_ROUTES.infos.login);
+        } = await request.get(API_ROUTES.infos.login, { fullResponse: true });
 
         const { language, popup_timeout: popupTimeout } = userInterface;
 
@@ -126,7 +126,7 @@ export default {
           dispatch('setPopupTimeouts', { popupTimeout });
         }
       } catch (err) {
-        console.error(err);
+        throw err;
       }
     },
 

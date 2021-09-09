@@ -1906,6 +1906,60 @@ export const ALARMS_OPENED_VALUES = {
   resolved: false,
 };
 
+export const ROUTES_NAMES = {
+  home: 'home',
+  error: 'error',
+  login: 'login',
+  view: 'view',
+  alarms: 'alarms',
+  adminRights: 'admin-rights',
+  adminUsers: 'admin-users',
+  adminRoles: 'admin-roles',
+  adminParameters: 'admin-parameters',
+  adminBroadcastMessages: 'admin-broadcast-messages',
+  adminPlaylists: 'admin-playlists',
+  adminPlanning: 'admin-planning-administration',
+  adminRemediation: 'admin-remediation-administration',
+  adminHealthcheck: 'admin-healthcheck',
+  exploitationPbehaviors: 'exploitation-pbehaviors',
+  exploitationEventFilter: 'exploitation-event-filter',
+  exploitationSnmpRules: 'exploitation-snmp-rules',
+  exploitationHeartbeats: 'exploitation-heartbeats',
+  exploitationDynamicInfos: 'exploitation-dynamic-infos',
+  playlist: 'playlist',
+  exploitationMetaAlarmRules: 'exploitation-meta-alarm-rules',
+  exploitationScenarios: 'exploitation-scenarios',
+  exploitationIdleRules: 'exploitation-idle-rules',
+  notificationInstructionStats: 'notification-instruction-stats',
+};
+
+export const ROUTES = {
+  home: '/',
+  login: '/login',
+  error: '/error',
+  view: '/view/:id',
+  alarms: '/alarms/:id',
+  adminRights: '/admin/rights',
+  adminUsers: '/admin/users',
+  adminRoles: '/admin/roles',
+  adminParameters: '/admin/parameters',
+  adminBroadcastMessages: '/admin/broadcast-messages',
+  adminPlaylists: '/admin/playlists',
+  adminPlanning: '/admin/planning',
+  adminRemediation: '/admin/remediation',
+  adminHealthcheck: '/admin/healthcheck',
+  exploitationPbehaviors: '/exploitation/pbehaviors',
+  exploitationEventFilter: '/exploitation/event-filter',
+  exploitationSnmpRules: '/exploitation/snmp-rules',
+  exploitationHeartbeats: '/exploitation/heartbeats',
+  exploitationDynamicInfos: '/exploitation/dynamic-infos',
+  playlist: '/playlist/:id',
+  exploitationMetaAlarmRules: '/exploitation/meta-alarm-rule',
+  exploitationScenarios: '/exploitation/scenarios',
+  exploitationIdleRules: '/exploitation/idle-rules',
+  notificationInstructionStats: '/notification/instruction-stats',
+};
+
 export const HEALTHCHECK_SERVICES_NAMES = {
   mongo: 'MongoDB',
   redis: 'Redis',
@@ -2033,3 +2087,5 @@ export const SOCKET_ROOMS = {
   healthcheckStatus: 'healthcheck-status',
   messageRates: 'message-rates',
 };
+
+export const EXCLUDED_SERVER_ERROR_STATUSES = [401, 403];

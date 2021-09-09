@@ -1,7 +1,7 @@
 <template lang="pug">
   v-app#app
     v-layout(v-if="!pending")
-      the-navigation#main-navigation(v-if="$route.name !== 'login'")
+      the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
         active-broadcast-message
         router-view(:key="routeViewKey")
@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import { isEmpty } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
-import { MAX_LIMIT } from '@/constants';
+import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import TheSideBars from '@/components/side-bars/the-sidebars.vue';
@@ -53,20 +53,30 @@ export default {
   },
   computed: {
     routeViewKey() {
-      if (this.$route.name === 'view') {
+      if (this.$route.name === ROUTES_NAMES.view) {
         return this.$route.path;
       }
 
       return this.$route.fullPath;
+    },
+
+    shownNavigation() {
+      return ![ROUTES_NAMES.login, ROUTES_NAMES.error].includes(this.$route.name);
     },
   },
   created() {
     this.registerCurrentUserOnceWatcher();
   },
   async mounted() {
-    await this.fetchCurrentUser();
-
-    this.pending = false;
+    try {
+      await this.fetchCurrentUser();
+    } catch ({ status }) {
+      if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(status)) {
+        this.$router.push({ name: ROUTES_NAMES.error });
+      }
+    } finally {
+      this.pending = false;
+    }
   },
   beforeDestroy() {
     this.stopViewStats();
