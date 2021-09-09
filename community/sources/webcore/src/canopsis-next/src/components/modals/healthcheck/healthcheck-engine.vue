@@ -3,7 +3,7 @@
     template(slot="title")
       span {{ title }}
     template(slot="text")
-      healthcheck-engine-information(:engine="engine")
+      healthcheck-engine-information(:engine="engine", :max-queue-length="maxQueueLength")
     template(slot="actions")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.ok') }}
 </template>
@@ -24,6 +24,10 @@ export default {
   computed: {
     engine() {
       return this.config.engine;
+    },
+
+    maxQueueLength() {
+      return this.config.maxQueueLength;
     },
 
     title() {

@@ -29,6 +29,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    maxQueueLength: {
+      type: Number,
+      default: 0,
+    },
   },
   computed: {
     name() {
@@ -41,10 +45,6 @@ export default {
 
     queueLength() {
       return this.engine.queue_length;
-    },
-
-    maxQueueLength() {
-      return this.engine.max_queue_length;
     },
 
     instances() {
