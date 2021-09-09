@@ -55,7 +55,9 @@
 </template>
 
 <script>
-import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
+import {
+  permissionsTechnicalRemediationInstructionMixin,
+} from '@/mixins/permissions/technical/remediation-instruction';
 
 import RatingField from '@/components/forms/fields/rating-field.vue';
 

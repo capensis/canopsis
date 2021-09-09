@@ -82,7 +82,9 @@ export default {
     },
 
     submitWithTicketBtnLabel() {
-      return this.form.ticket ? this.$t('common.actions.acknowledgeAndAssociateTicket') : this.$t('common.actions.acknowledgeAndDeclareTicket');
+      return this.form.ticket
+        ? this.$t('common.actions.acknowledgeAndAssociateTicket')
+        : this.$t('common.actions.acknowledgeAndDeclareTicket');
     },
   },
   methods: {

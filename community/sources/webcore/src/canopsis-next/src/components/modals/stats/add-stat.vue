@@ -73,7 +73,11 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          const preparedForm = setField(this.form, 'parameters', parameters => pick(parameters, this.form.stat.options));
+          const preparedForm = setField(
+            this.form,
+            'parameters',
+            parameters => pick(parameters, this.form.stat.options),
+          );
 
           await this.config.action(preparedForm);
         }

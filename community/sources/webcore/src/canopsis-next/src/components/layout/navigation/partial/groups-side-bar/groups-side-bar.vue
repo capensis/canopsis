@@ -121,7 +121,12 @@ export default {
     },
 
     isGroupsOrderChanged() {
-      return isDeepOrderChanged(this.availableGroups, this.mutatedGroups, '_id', (entity = {}, anotherEntity = {}) => isDeepOrderChanged(entity.views, anotherEntity.views));
+      return isDeepOrderChanged(
+        this.availableGroups,
+        this.mutatedGroups,
+        '_id',
+        (entity = {}, anotherEntity = {}) => isDeepOrderChanged(entity.views, anotherEntity.views),
+      );
     },
   },
   watch: {

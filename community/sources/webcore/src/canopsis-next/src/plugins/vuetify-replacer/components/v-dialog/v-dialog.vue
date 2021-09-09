@@ -73,7 +73,9 @@ export default {
             /**
              * Find and focus the first available element inside the dialog
              */
-            const focusable = this.$refs.content.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            const focusable = this.$refs.content.querySelectorAll(
+              'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+            );
 
             if (focusable.length) {
               focusable[0].focus();

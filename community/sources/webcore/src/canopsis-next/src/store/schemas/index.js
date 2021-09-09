@@ -106,15 +106,35 @@ export const pbehaviorTypesSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorTy
 
 export const pbehaviorReasonsSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorReasons, {}, { idAttribute: '_id' });
 
-export const pbehaviorExceptionsSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorExceptions, {}, { idAttribute: '_id' });
+export const pbehaviorExceptionsSchema = new schema.Entity(
+  ENTITIES_TYPES.pbehaviorExceptions,
+  {},
+  { idAttribute: '_id' },
+);
 
-export const remediationInstructionSchema = new schema.Entity(ENTITIES_TYPES.remediationInstruction, {}, { idAttribute: '_id' });
+export const remediationInstructionSchema = new schema.Entity(
+  ENTITIES_TYPES.remediationInstruction,
+  {},
+  { idAttribute: '_id' },
+);
 
-export const remediationJobSchema = new schema.Entity(ENTITIES_TYPES.remediationJob, {}, { idAttribute: '_id' });
+export const remediationJobSchema = new schema.Entity(
+  ENTITIES_TYPES.remediationJob,
+  {},
+  { idAttribute: '_id' },
+);
 
-export const remediationConfigurationSchema = new schema.Entity(ENTITIES_TYPES.remediationConfiguration, {}, { idAttribute: '_id' });
+export const remediationConfigurationSchema = new schema.Entity(
+  ENTITIES_TYPES.remediationConfiguration,
+  {},
+  { idAttribute: '_id' },
+);
 
-export const remediationInstructionStatsSchema = new schema.Entity(ENTITIES_TYPES.remediationInstructionStats, {}, { idAttribute: '_id' });
+export const remediationInstructionStatsSchema = new schema.Entity(
+  ENTITIES_TYPES.remediationInstructionStats,
+  {},
+  { idAttribute: '_id' },
+);
 
 export const scenarioSchema = new schema.Entity(ENTITIES_TYPES.scenario, {}, { idAttribute: '_id' });
 

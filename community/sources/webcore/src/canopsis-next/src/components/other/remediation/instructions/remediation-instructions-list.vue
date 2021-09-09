@@ -63,7 +63,9 @@
 <script>
 import { get } from 'lodash';
 
-import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
+import {
+  permissionsTechnicalRemediationInstructionMixin,
+} from '@/mixins/permissions/technical/remediation-instruction';
 
 export default {
   mixins: [permissionsTechnicalRemediationInstructionMixin],

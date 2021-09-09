@@ -17,13 +17,17 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formToRemediationConfiguration, remediationConfigurationToForm } from '@/helpers/forms/remediation-configuration';
+import {
+  formToRemediationConfiguration,
+  remediationConfigurationToForm,
+} from '@/helpers/forms/remediation-configuration';
 
 import { validationErrorsMixin } from '@/mixins/form/validation-errors';
 import { submittableMixin } from '@/mixins/submittable';
 import { confirmableModalMixin } from '@/mixins/confirmable-modal';
 
-import RemediationConfigurationForm from '@/components/other/remediation/configurations/form/remediation-configuration-form.vue';
+import RemediationConfigurationForm
+  from '@/components/other/remediation/configurations/form/remediation-configuration-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
