@@ -110,30 +110,26 @@ export default {
   },
   actions: {
     async fetchLoginInfos({ commit, dispatch }) {
-      try {
-        const {
-          version,
-          user_interface: userInterface,
-          login_config: loginConfig,
-        } = await request.get(API_ROUTES.infos.login, { fullResponse: true });
+      const {
+        version,
+        user_interface: userInterface,
+        login_config: loginConfig,
+      } = await request.get(API_ROUTES.infos.login, { fullResponse: true });
 
-        const { language, popup_timeout: popupTimeout } = userInterface;
+      const { language, popup_timeout: popupTimeout } = userInterface;
 
-        commit(types.FETCH_LOGIN_INFOS, {
-          version,
-          userInterface: userInterface || {},
-          loginConfig: loginConfig || {},
-        });
+      commit(types.FETCH_LOGIN_INFOS, {
+        version,
+        userInterface: userInterface || {},
+        loginConfig: loginConfig || {},
+      });
 
-        if (language) {
-          dispatch('i18n/setGlobalLocale', language, { root: true });
-        }
+      if (language) {
+        dispatch('i18n/setGlobalLocale', language, { root: true });
+      }
 
-        if (popupTimeout) {
-          dispatch('setPopupTimeouts', { popupTimeout });
-        }
-      } catch (err) {
-        throw err;
+      if (popupTimeout) {
+        dispatch('setPopupTimeouts', { popupTimeout });
       }
     },
 

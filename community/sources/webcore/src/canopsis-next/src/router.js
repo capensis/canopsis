@@ -313,7 +313,9 @@ router.beforeEach((to, from, next) => {
         errorMessage: to.query.errorMessage,
       },
     });
-  } if (isLoggedIn && isDontRequiresAuth) {
+  }
+
+  if (isLoggedIn && isDontRequiresAuth) {
     return next({
       name: ROUTES_NAMES.home,
     });
