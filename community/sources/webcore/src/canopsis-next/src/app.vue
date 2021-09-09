@@ -15,7 +15,7 @@ import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
-import { MAX_LIMIT, ROUTES_NAMES } from '@/constants';
+import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import TheSideBars from '@/components/side-bars/the-sidebars.vue';
@@ -70,6 +70,10 @@ export default {
   async mounted() {
     try {
       await this.fetchCurrentUser();
+    } catch ({ status }) {
+      if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(status)) {
+        this.$router.push({ name: ROUTES_NAMES.error });
+      }
     } finally {
       this.pending = false;
     }

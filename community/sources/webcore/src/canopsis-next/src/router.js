@@ -294,10 +294,7 @@ const routes = [
     path: ROUTES.error,
     name: ROUTES_NAMES.error,
     component: Error,
-    props: route => ({ message: route.query.message }),
-    meta: {
-      requiresLogin: false,
-    },
+    props: route => ({ message: route.query.message, redirect: route.query.redirect }),
   },
   {
     path: '*',

@@ -1,9 +1,7 @@
 import { API_ROUTES } from '@/config';
 import request from '@/services/request';
 import { toSeconds } from '@/helpers/date/duration';
-import { EXCLUDED_SERVER_ERROR_STATUSES, POPUP_TYPES, ROUTES_NAMES } from '@/constants';
-
-import router from '@/router';
+import { POPUP_TYPES } from '@/constants';
 
 const types = {
   FETCH_LOGIN_INFOS: 'FETCH_LOGIN_INFOS',
@@ -127,12 +125,8 @@ export default {
         if (popupTimeout) {
           dispatch('setPopupTimeouts', { popupTimeout });
         }
-      } catch ({ status, data }) {
-        if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(status)) {
-          router.push({ name: ROUTES_NAMES.error });
-        }
-
-        throw data;
+      } catch (err) {
+        throw err;
       }
     },
 
