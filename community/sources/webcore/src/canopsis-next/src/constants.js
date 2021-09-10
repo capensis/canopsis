@@ -1001,7 +1001,7 @@ export const USERS_PERMISSIONS = {
     pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
     pbehaviorException: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorexception`,
     event: `${USER_PERMISSIONS_PREFIXES.api}_event`,
-    engine: `${USER_PERMISSIONS_PREFIXES.api}_engine`,
+    healthcheck: `${USER_PERMISSIONS_PREFIXES.api}_healthcheck`,
     entity: `${USER_PERMISSIONS_PREFIXES.api}_entity`,
     acl: `${USER_PERMISSIONS_PREFIXES.api}_acl`,
     remediationExecution: `${USER_PERMISSIONS_PREFIXES.api}_execution`,
