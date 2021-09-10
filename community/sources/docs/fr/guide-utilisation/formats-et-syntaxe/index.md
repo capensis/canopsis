@@ -9,4 +9,5 @@ Ces formats peuvent être réutilisés par différentes parties de Canopsis. Ils
 
 ## Liste des formats utilisables dans Canopsis
 
-*  [Format des expressions régulières Canopsis](format-regex.md) : concerne notamment l'opérateur `regex_match`.
+* [Format des expressions régulières Canopsis](format-regex.md) : concerne notamment l'opérateur `regex_match`.
+* [Format de synthaxe des `valuepath`](format-valuepath.md) : concerne les règles de corrélation des alarmes. Plus précisémant l'expression des chemins d'accès au valeurs.
