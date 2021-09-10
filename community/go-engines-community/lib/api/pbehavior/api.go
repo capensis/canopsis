@@ -312,17 +312,17 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, model)
 }
 
-// Patch partial of behavior's attributes by id
-// @Summary Update partial set of behavior attributes by id
-// @Description Update partial set of behavior attributes by id
+// Patch partial set of behavior's attributes by id
+// @Summary Patch partial set of behavior attributes by id
+// @Description Patch partial set of behavior attributes by id
 // @Tags pbehaviors
-// @ID pbehaviors-update-by-id
+// @ID pbehaviors-patch-by-id
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param id path string true "pbehavior id"
-// @Param body body EditRequest true "body"
+// @Param body body PatchRequest true "body"
 // @Success 200 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
@@ -330,14 +330,15 @@ func (a *api) Update(c *gin.Context) {
 func (a *api) Patch(c *gin.Context) {
 	req := PatchRequest{}
 	if err := c.ShouldBindJSON(&req); err != nil {
-		a.logger.Error().Err(err).Msg("failed binding json")
-		c.AbortWithStatus(http.StatusBadRequest)
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, req))
 		return
 	}
 
 	var err error
 	var model *Response
 	if req.Start != nil || req.Stop != nil || req.Type != nil {
+		// Patching fields having constraint validation will retry
+		// until snapshot is matching or retry count reached
 		var updated = false
 		retried := 0
 		for !updated && retried < 5 {
@@ -358,8 +359,8 @@ func (a *api) Patch(c *gin.Context) {
 				return
 			}
 			// Validation
-			if model.Type.Type != pbehavior.TypePause && (!model.Stop.After(model.Start.Time) ||
-				model.Stop == nil) {
+			if model.Type.Type != pbehavior.TypePause && (model.Stop == nil ||
+				!model.Stop.After(model.Start.Time)) {
 				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("invalid fields start, stop, type")))
 				return
 			}
@@ -373,25 +374,21 @@ func (a *api) Patch(c *gin.Context) {
 			retried++
 		}
 
-		if updated {
-			c.JSON(http.StatusOK, model)
-		} else {
+		if !updated {
 			c.AbortWithStatusJSON(http.StatusNotFound, common.NewErrorResponse(errors.New("max update retry reached")))
+			return
 		}
-		return
-
 	} else {
+		// Patching fields that doesn't need to be validated will be executed once
 		var ok bool
 		model, err = a.store.GetOneBy(c.Request.Context(), bson.M{"_id": c.Param("id")})
 		if err != nil || model == nil {
-			a.logger.Error().Err(err).Msg("id not exists")
 			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 			return
 		}
 
 		err = a.transformer.Patch(c.Request.Context(), req, model)
 		if err != nil {
-			a.logger.Error().Err(err).Msg("failed map values")
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
