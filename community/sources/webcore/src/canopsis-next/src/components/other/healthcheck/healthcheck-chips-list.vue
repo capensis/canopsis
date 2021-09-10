@@ -73,6 +73,9 @@ export default {
       .addListener(this.setHealthcheckStatus);
   },
   beforeDestroy() {
+    this.$socket
+      .getRoom(SOCKET_ROOMS.healthcheckStatus)
+      .removeListener(this.setHealthcheckStatus);
     this.$socket.leave(SOCKET_ROOMS.healthcheckStatus);
   },
   methods: {

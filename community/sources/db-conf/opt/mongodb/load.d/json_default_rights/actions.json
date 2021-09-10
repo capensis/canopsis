@@ -458,14 +458,6 @@
         "type": "CRUD"
     },
     {
-        "_id": "models_exploitation_heartbeat",
-        "loader_id": "models_exploitation_heartbeat",
-        "crecord_name": "models_exploitation_heartbeat",
-        "crecord_type": "action",
-        "desc": "Exploitation: Heartbeat",
-        "type": "CRUD"
-    },
-    {
         "_id": "models_exploitation_dynamicInfo",
         "loader_id": "models_exploitation_dynamicInfo",
         "crecord_name": "models_exploitation_dynamicInfo",
@@ -474,12 +466,12 @@
         "type": "CRUD"
     },
     {
-      "_id": "models_exploitation_metaAlarmRule",
-      "loader_id": "models_exploitation_metaAlarmRule",
-      "crecord_name": "models_exploitation_metaAlarmRule",
-      "crecord_type": "action",
-      "desc": "Exploitation: Meta alarm rule",
-      "type": "CRUD"
+        "_id": "models_exploitation_metaAlarmRule",
+        "loader_id": "models_exploitation_metaAlarmRule",
+        "crecord_name": "models_exploitation_metaAlarmRule",
+        "crecord_type": "action",
+        "desc": "Exploitation: Meta alarm rule",
+        "type": "CRUD"
     },
     {
         "_id": "models_exploitation_scenario",
@@ -503,6 +495,14 @@
         "crecord_name": "models_healthcheck",
         "crecord_type": "action",
         "desc": "Healthcheck"
+    },
+    {
+        "_id": "models_notification_instructionStats",
+        "loader_id": "models_notification_instructionStats",
+        "crecord_name": "models_notification_instructionStats",
+        "crecord_type": "action",
+        "desc": "Notifications: Instructions stats",
+        "type": "CRUD"
     },
     {
         "_id": "listalarm_ack",
@@ -1187,14 +1187,6 @@
         "crecord_name": "api_dynamicinfos",
         "crecord_type": "action",
         "desc": "Dynamic infos",
-        "type": "CRUD"
-    },
-    {
-        "_id": "api_heartbeat",
-        "loader_id": "api_heartbeat",
-        "crecord_name": "api_heartbeat",
-        "crecord_type": "action",
-        "desc": "Heartbeats",
         "type": "CRUD"
     },
     {

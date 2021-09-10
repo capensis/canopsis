@@ -17,7 +17,7 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author enabled tstart tstop type.name reason.name created updated rrule type.icon_name"`
+	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author enabled tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
 }
 
 type EntitiesListRequest struct {
@@ -58,21 +58,22 @@ type FindByEntityIDRequest struct {
 }
 
 type Response struct {
-	ID         string                         `bson:"_id" json:"_id"`
-	Author     string                         `bson:"author" json:"author"`
-	Comments   pbehavior.Comments             `bson:"comments" json:"comments"`
-	Enabled    bool                           `bson:"enabled" json:"enabled"`
-	Filter     Filter                         `bson:"filter" json:"filter"`
-	Name       string                         `bson:"name" json:"name"`
-	Reason     *pbehaviorreason.Reason        `bson:"reason" json:"reason"`
-	RRule      string                         `bson:"rrule" json:"rrule"`
-	Start      *types.CpsTime                 `bson:"tstart" json:"tstart" swaggertype:"integer"`
-	Stop       *types.CpsTime                 `bson:"tstop" json:"tstop" swaggertype:"integer"`
-	Created    *types.CpsTime                 `bson:"created" json:"created" swaggertype:"integer"`
-	Updated    *types.CpsTime                 `bson:"updated" json:"updated" swaggertype:"integer"`
-	Type       *pbehavior.Type                `bson:"type" json:"type"`
-	Exdates    []pbehaviorexception.Exdate    `bson:"exdates" json:"exdates"`
-	Exceptions []pbehaviorexception.Exception `bson:"exceptions" json:"exceptions"`
+	ID            string                         `bson:"_id" json:"_id"`
+	Author        string                         `bson:"author" json:"author"`
+	Comments      pbehavior.Comments             `bson:"comments" json:"comments"`
+	Enabled       bool                           `bson:"enabled" json:"enabled"`
+	Filter        Filter                         `bson:"filter" json:"filter"`
+	Name          string                         `bson:"name" json:"name"`
+	Reason        *pbehaviorreason.Reason        `bson:"reason" json:"reason"`
+	RRule         string                         `bson:"rrule" json:"rrule"`
+	Start         *types.CpsTime                 `bson:"tstart" json:"tstart" swaggertype:"integer"`
+	Stop          *types.CpsTime                 `bson:"tstop" json:"tstop" swaggertype:"integer"`
+	Created       *types.CpsTime                 `bson:"created" json:"created" swaggertype:"integer"`
+	Updated       *types.CpsTime                 `bson:"updated" json:"updated" swaggertype:"integer"`
+	Type          *pbehavior.Type                `bson:"type" json:"type"`
+	Exdates       []pbehaviorexception.Exdate    `bson:"exdates" json:"exdates"`
+	Exceptions    []pbehaviorexception.Exception `bson:"exceptions" json:"exceptions"`
+	LastAlarmDate *types.CpsTime                 `bson:"last_alarm_date,omitempty" json:"last_alarm_date" swaggertype:"integer"`
 	// IsActiveStatus represents if pbehavior is in action for current time.
 	IsActiveStatus *bool `bson:"-" json:"is_active_status,omitempty"`
 }

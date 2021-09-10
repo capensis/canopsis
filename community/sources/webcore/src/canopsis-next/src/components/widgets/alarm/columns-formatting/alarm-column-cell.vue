@@ -171,7 +171,7 @@ export default {
             links: this.alarm.links,
           },
         },
-        extra_details: {
+        [ALARM_ENTITY_FIELDS.extraDetails]: {
           bind: {
             is: 'alarm-column-value-extra-details',
             alarm: this.alarm,

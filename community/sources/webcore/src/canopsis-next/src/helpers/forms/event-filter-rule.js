@@ -256,7 +256,6 @@ export const eventFilterRuleActionToForm = (ruleAction = {}) => ({
   description: ruleAction.description || '',
   from: ruleAction.from || '',
   to: ruleAction.to || '',
-  asd: 2,
 });
 
 /**

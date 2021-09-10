@@ -99,6 +99,7 @@ import CTextPairField from '@/components/forms/fields/text-pairs/c-text-pair-fie
 import CJsonField from '@/components/forms/fields/c-json-field.vue';
 import CRetryField from '@/components/forms/fields/c-retry-field.vue';
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
+import CArrayMixedField from '@/components/forms/fields/c-array-mixed-field.vue';
 import CColorPickerField from '@/components/forms/fields/c-color-picker-field.vue';
 import CEntityTypeField from '@/components/forms/fields/c-entity-type-field.vue';
 import CImpactLevelField from '@/components/forms/fields/c-impact-level-field.vue';
@@ -118,9 +119,9 @@ import CRolePickerField from '@/components/forms/fields/c-role-picker-field.vue'
 import CUserPickerField from '@/components/forms/fields/c-user-picker-field.vue';
 import CInstructionTypeField from '@/components/forms/fields/c-instruction-type-field.vue';
 import CPriorityField from '@/components/forms/fields/c-priority-field.vue';
+import CQuickDateIntervalField from '@/components/forms/fields/c-quick-date-interval-field.vue';
 import CEnabledDurationField from '@/components/forms/fields/c-enabled-duration-field.vue';
 import CEnabledLimitField from '@/components/forms/fields/c-enabled-limit-field.vue';
-import CQuickDateIntervalField from '@/components/forms/fields/c-quick-date-interval-field.vue';
 
 /**
  * Icons
@@ -274,6 +275,7 @@ Vue.component('c-text-pairs-field', CTextPairsField);
 Vue.component('c-json-field', CJsonField);
 Vue.component('c-retry-field', CRetryField);
 Vue.component('c-mixed-field', CMixedField);
+Vue.component('c-array-mixed-field', CArrayMixedField);
 Vue.component('c-color-picker-field', CColorPickerField);
 Vue.component('c-json-field', CJsonField);
 Vue.component('c-entity-type-field', CEntityTypeField);
@@ -296,9 +298,9 @@ Vue.component('c-role-picker-field', CRolePickerField);
 Vue.component('c-user-picker-field', CUserPickerField);
 Vue.component('c-instruction-type-field', CInstructionTypeField);
 Vue.component('c-priority-field', CPriorityField);
+Vue.component('c-quick-date-interval-field', CQuickDateIntervalField);
 Vue.component('c-enabled-duration-field', CEnabledDurationField);
 Vue.component('c-enabled-limit-field', CEnabledLimitField);
-Vue.component('c-quick-date-interval-field', CQuickDateIntervalField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
 Vue.component('c-responsive-list', CResponsiveList);

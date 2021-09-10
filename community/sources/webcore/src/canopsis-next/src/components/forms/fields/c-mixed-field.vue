@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { isBoolean, isNumber, isNan, isUndefined, isEmpty, isNull, pick } from 'lodash';
+import { isBoolean, isNumber, isNan, isArray, isUndefined, isEmpty, isNull, pick } from 'lodash';
 
 import { FILTER_INPUT_TYPES } from '@/constants';
 
@@ -47,7 +47,7 @@ export default {
   mixins: [formBaseMixin],
   props: {
     value: {
-      type: [String, Number, Boolean],
+      type: [String, Number, Boolean, Array],
       default: '',
     },
     name: {
@@ -97,6 +97,7 @@ export default {
         { value: FILTER_INPUT_TYPES.number },
         { value: FILTER_INPUT_TYPES.boolean },
         { value: FILTER_INPUT_TYPES.null },
+        { value: FILTER_INPUT_TYPES.array },
       ],
     },
   },
@@ -122,6 +123,8 @@ export default {
 
       if (isNull(this.value)) {
         return FILTER_INPUT_TYPES.null;
+      } if (isArray(this.value)) {
+        return FILTER_INPUT_TYPES.array;
       }
 
       return FILTER_INPUT_TYPES.string;
@@ -179,6 +182,20 @@ export default {
             change: this.updateModel,
           },
         };
+      } if (this.inputType === FILTER_INPUT_TYPES.array) {
+        return {
+          is: 'c-array-mixed-field',
+
+          bind: {
+            class: 'ml-3',
+            values: this.value,
+            disabled: this.disabled,
+            types: this.types.filter(({ value }) => value !== FILTER_INPUT_TYPES.array),
+          },
+          on: {
+            change: this.updateModel,
+          },
+        };
       }
 
       return {
@@ -212,6 +229,7 @@ export default {
         [FILTER_INPUT_TYPES.number]: 'exposure_plus_1',
         [FILTER_INPUT_TYPES.boolean]: 'toggle_on',
         [FILTER_INPUT_TYPES.null]: 'space_bar',
+        [FILTER_INPUT_TYPES.array]: 'view_array',
       }[type];
     },
 
@@ -232,6 +250,9 @@ export default {
           break;
         case FILTER_INPUT_TYPES.null:
           this.updateModel(null);
+          break;
+        case FILTER_INPUT_TYPES.array:
+          this.updateModel([preparedValue]);
           break;
       }
     },
@@ -266,6 +287,8 @@ export default {
     }
 
     &__text {
+      margin-top: 0;
+
       & /deep/ input {
         padding-left: 5px;
       }

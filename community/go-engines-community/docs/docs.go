@@ -124,8 +124,44 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "exclude_instruction_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "exclude_instructions",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "include_instruction_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "include_instructions",
                         "in": "query"
                     },
                     {
@@ -136,11 +172,6 @@ var doc = `{
                     {
                         "type": "boolean",
                         "name": "opened",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "resolved",
                         "in": "query"
                     },
                     {
@@ -156,16 +187,6 @@ var doc = `{
                     {
                         "type": "integer",
                         "name": "tstop",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "with_instructions",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "without_instructions",
                         "in": "query"
                     }
                 ],
@@ -341,7 +362,7 @@ var doc = `{
                         "BasicAuth": []
                     }
                 ],
-                "description": "Get paginated list of alarms",
+                "description": "Get paginated list of alarms. Use parameters \"multi_sort[]=field_1,asc\u0026multi_sort[]=field_2,desc\u0026multi_sort[]=field_3,asc\" to sort list by multiple fields. \"sort_key\", \"sort_dir\" are left for compatibility with older ways of sorting",
                 "consumes": [
                     "application/json"
                 ],
@@ -374,8 +395,44 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "exclude_instruction_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "exclude_instructions",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "include_instruction_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "include_instructions",
                         "in": "query"
                     },
                     {
@@ -386,6 +443,15 @@ var doc = `{
                     {
                         "type": "boolean",
                         "name": "manual",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "multi_sort[]",
                         "in": "query"
                     },
                     {
@@ -401,11 +467,6 @@ var doc = `{
                     {
                         "type": "boolean",
                         "name": "paginate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "resolved",
                         "in": "query"
                     },
                     {
@@ -439,18 +500,13 @@ var doc = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "boolean",
                         "name": "with_instructions",
                         "in": "query"
                     },
                     {
                         "type": "boolean",
                         "name": "with_steps",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "without_instructions",
                         "in": "query"
                     }
                 ],
@@ -600,9 +656,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -862,168 +916,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/bulk/heartbeats": {
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk update heartbeats by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Bulk update heartbeats by id",
-                "operationId": "heartbeats-bulk-update-by-id",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/heartbeat.BulkUpdateRequestItem"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/definitions/heartbeat.Response"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk create heartbeats",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Bulk create heartbeats",
-                "operationId": "heartbeats-bulk-create",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/heartbeat.CreateRequest"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/definitions/heartbeat.Response"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk delete heartbeats by id",
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Bulk delete heartbeats by id",
-                "operationId": "heartbeats-bulk-delete-by-id",
-                "parameters": [
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "ids",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1174,9 +1067,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1327,9 +1218,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1542,6 +1431,26 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "no_events",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "paginate",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "search",
                         "in": "query"
@@ -1554,6 +1463,11 @@ var doc = `{
                     {
                         "type": "string",
                         "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "with_flags",
                         "in": "query"
                     }
                 ],
@@ -1583,6 +1497,52 @@ var doc = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/entities/clean": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Clean disabled entities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Clean disabled entities",
+                "operationId": "entities-clean",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "name": "archive",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "archive_dependencies",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "202": {},
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
                         }
                     }
                 }
@@ -1900,9 +1860,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2186,9 +2144,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -2527,9 +2483,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2838,283 +2792,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/heartbeats": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Get paginated list of heartbeats",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Find heartbeats",
-                "operationId": "heartbeats-find-all",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "current page",
-                        "name": "page",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "items per page",
-                        "name": "limit",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "search query",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "sort query",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "sort query",
-                        "name": "sort_by",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/common.PaginatedListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/heartbeat.Response"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Create heartbeat",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Create heartbeat",
-                "operationId": "heartbeats-create",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/heartbeat.CreateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/heartbeat.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/heartbeats/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Get heartbeat by id",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Get heartbeat by id",
-                "operationId": "heartbeats-get-by-id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "heartbeat id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/heartbeat.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Update heartbeat by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Update heartbeat by id",
-                "operationId": "heartbeats-update-by-id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "heartbeat id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/heartbeat.UpdateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/heartbeat.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Delete heartbeat by id",
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Delete heartbeat by id",
-                "operationId": "heartbeats-delete-by-id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "heartbeat id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3441,9 +3119,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3567,9 +3243,7 @@ var doc = `{
                 "summary": "delete user interface",
                 "operationId": "internal-delete-user-interface",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -3671,6 +3345,129 @@ var doc = `{
                 }
             }
         },
+        "/notification": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get notification settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Get notification settings",
+                "operationId": "notification-get",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/notification.Notification"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update notification settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Update notification settings",
+                "operationId": "notification-update",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/notification.Notification"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/notification.Notification"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/pbehavior-comments": {
             "post": {
                 "security": [
@@ -3746,9 +3543,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4026,9 +3821,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4073,9 +3866,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": ""
-                    },
+                    "200": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4353,9 +4144,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4683,9 +4472,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -5018,9 +4805,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5476,9 +5261,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5750,9 +5533,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6024,9 +5805,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6250,6 +6029,12 @@ var doc = `{
                     },
                     {
                         "type": "string",
+                        "description": "role permission",
+                        "name": "permission",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "sort query",
                         "name": "sort_by",
                         "in": "query"
@@ -6461,9 +6246,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6735,9 +6518,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -6790,9 +6571,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7064,9 +6843,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7333,6 +7110,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/alarm.Causes"
                 },
+                "children_instructions": {
+                    "type": "boolean"
+                },
                 "consequences": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.Children"
@@ -7356,6 +7136,15 @@ var doc = `{
                         "type": "object",
                         "additionalProperties": true
                     }
+                },
+                "is_all_auto_instructions_completed": {
+                    "type": "boolean"
+                },
+                "is_auto_instruction_running": {
+                    "type": "boolean"
+                },
+                "is_manual_instruction_waiting_result": {
+                    "type": "boolean"
                 },
                 "links": {
                     "type": "object",
@@ -7649,6 +7438,18 @@ var doc = `{
                 "correlation": {
                     "type": "boolean"
                 },
+                "exclude_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "exclude_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "fields": {
                     "type": "object",
                     "$ref": "#/definitions/export.Fields"
@@ -7656,13 +7457,22 @@ var doc = `{
                 "filter": {
                     "type": "string"
                 },
+                "include_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "include_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "manual": {
                     "type": "boolean"
                 },
                 "opened": {
-                    "type": "boolean"
-                },
-                "resolved": {
                     "type": "boolean"
                 },
                 "search": {
@@ -7683,14 +7493,8 @@ var doc = `{
                 "with_consequences": {
                     "type": "boolean"
                 },
-                "with_instructions": {
-                    "type": "string"
-                },
                 "with_steps": {
                     "type": "boolean"
-                },
-                "without_instructions": {
-                    "type": "string"
                 }
             }
         },
@@ -7720,16 +7524,37 @@ var doc = `{
                 "correlation": {
                     "type": "boolean"
                 },
+                "exclude_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "exclude_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "filter": {
                     "type": "string"
+                },
+                "include_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "include_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "manual": {
                     "type": "boolean"
                 },
                 "opened": {
-                    "type": "boolean"
-                },
-                "resolved": {
                     "type": "boolean"
                 },
                 "search": {
@@ -7740,12 +7565,6 @@ var doc = `{
                 },
                 "tstop": {
                     "type": "integer"
-                },
-                "with_instructions": {
-                    "type": "string"
-                },
-                "without_instructions": {
-                    "type": "string"
                 }
             }
         },
@@ -7791,14 +7610,44 @@ var doc = `{
                 "correlation": {
                     "type": "boolean"
                 },
+                "exclude_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "exclude_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "filter": {
                     "type": "string"
+                },
+                "include_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "include_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "limit": {
                     "type": "integer"
                 },
                 "manual": {
                     "type": "boolean"
+                },
+                "multi_sort[]": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "opened": {
                     "type": "boolean"
@@ -7807,9 +7656,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "paginate": {
-                    "type": "boolean"
-                },
-                "resolved": {
                     "type": "boolean"
                 },
                 "search": {
@@ -7831,13 +7677,10 @@ var doc = `{
                     "type": "boolean"
                 },
                 "with_instructions": {
-                    "type": "string"
+                    "type": "boolean"
                 },
                 "with_steps": {
                     "type": "boolean"
-                },
-                "without_instructions": {
-                    "type": "string"
                 }
             }
         },
@@ -7897,9 +7740,6 @@ var doc = `{
                 "footer": {
                     "type": "string"
                 },
-                "jobexecutorfetchtimeoutseconds": {
-                    "type": "integer"
-                },
                 "language": {
                     "type": "string"
                 },
@@ -7915,6 +7755,10 @@ var doc = `{
                 "popup_timeout": {
                     "type": "object",
                     "$ref": "#/definitions/appinfo.PopupTimeout"
+                },
+                "remediation": {
+                    "type": "object",
+                    "$ref": "#/definitions/appinfo.RemediationConf"
                 },
                 "stack": {
                     "type": "string"
@@ -7934,6 +7778,17 @@ var doc = `{
                     "type": "integer"
                 },
                 "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "appinfo.JobConfigType": {
+            "type": "object",
+            "properties": {
+                "auth_type": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }
@@ -7998,6 +7853,21 @@ var doc = `{
                 "info": {
                     "type": "object",
                     "$ref": "#/definitions/appinfo.IntervalUnit"
+                }
+            }
+        },
+        "appinfo.RemediationConf": {
+            "type": "object",
+            "properties": {
+                "job_config_types": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/appinfo.JobConfigType"
+                    }
+                },
+                "pause_manual_instruction_interval": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
                 }
             }
         },
@@ -8311,9 +8181,44 @@ var doc = `{
         "datastorage.Config": {
             "type": "object",
             "properties": {
+                "alarm": {
+                    "type": "object",
+                    "properties": {
+                        "archive_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        },
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
                 "junit": {
                     "type": "object",
                     "properties": {
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
+                "pbehavior": {
+                    "type": "object",
+                    "properties": {
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
+                "remediation": {
+                    "type": "object",
+                    "properties": {
+                        "accumulate_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        },
                         "delete_after": {
                             "type": "object",
                             "$ref": "#/definitions/types.DurationWithEnabled"
@@ -8338,8 +8243,50 @@ var doc = `{
         "datastorage.History": {
             "type": "object",
             "properties": {
+                "alarm": {
+                    "type": "object",
+                    "$ref": "#/definitions/datastorage.HistoryWithCount"
+                },
+                "entity": {
+                    "type": "object",
+                    "$ref": "#/definitions/datastorage.HistoryWithCount"
+                },
                 "junit": {
                     "type": "integer"
+                },
+                "pbehavior": {
+                    "type": "integer"
+                },
+                "remediation": {
+                    "type": "integer"
+                }
+            }
+        },
+        "datastorage.HistoryWithCount": {
+            "type": "object",
+            "properties": {
+                "archived": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.CleanRequest": {
+            "type": "object",
+            "required": [
+                "archive"
+            ],
+            "properties": {
+                "archive": {
+                    "type": "boolean"
+                },
+                "archive_dependencies": {
+                    "type": "boolean"
                 }
             }
         },
@@ -8457,7 +8404,7 @@ var doc = `{
                 "$ref": "#/definitions/entity.Info"
             }
         },
-        "entity.ListRequest": {
+        "entity.ListRequestWithPagination": {
             "type": "object",
             "properties": {
                 "active_columns[]": {
@@ -8472,6 +8419,18 @@ var doc = `{
                 "filter": {
                     "type": "string"
                 },
+                "limit": {
+                    "type": "integer"
+                },
+                "no_events": {
+                    "type": "boolean"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginate": {
+                    "type": "boolean"
+                },
                 "search": {
                     "type": "string"
                 },
@@ -8480,6 +8439,9 @@ var doc = `{
                 },
                 "sort_by": {
                     "type": "string"
+                },
+                "with_flags": {
+                    "type": "boolean"
                 }
             }
         },
@@ -8908,149 +8870,6 @@ var doc = `{
                 "$ref": "#/definitions/export.Field"
             }
         },
-        "heartbeat.BulkDeleteRequest": {
-            "type": "object",
-            "required": [
-                "ids"
-            ],
-            "properties": {
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "heartbeat.BulkUpdateRequestItem": {
-            "type": "object",
-            "required": [
-                "_id",
-                "description",
-                "expected_interval",
-                "name",
-                "pattern"
-            ],
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "expected_interval": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output": {
-                    "type": "string"
-                },
-                "pattern": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "heartbeat.CreateRequest": {
-            "type": "object",
-            "required": [
-                "description",
-                "expected_interval",
-                "name",
-                "pattern"
-            ],
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "expected_interval": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output": {
-                    "type": "string"
-                },
-                "pattern": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "heartbeat.Response": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "created": {
-                    "type": "integer"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "expected_interval": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output": {
-                    "type": "string"
-                },
-                "pattern": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "updated": {
-                    "type": "integer"
-                }
-            }
-        },
-        "heartbeat.UpdateRequest": {
-            "type": "object",
-            "required": [
-                "description",
-                "expected_interval",
-                "name",
-                "pattern"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "expected_interval": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output": {
-                    "type": "string"
-                },
-                "pattern": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "http.Response": {
             "type": "object",
             "properties": {
@@ -9131,7 +8950,6 @@ var doc = `{
         "idlerule.EditRequest": {
             "type": "object",
             "required": [
-                "author",
                 "duration",
                 "enabled",
                 "name",
@@ -9145,9 +8963,6 @@ var doc = `{
                 "alarm_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmPatternList"
-                },
-                "author": {
-                    "type": "string"
                 },
                 "description": {
                     "type": "string"
@@ -9315,6 +9130,31 @@ var doc = `{
                 }
             }
         },
+        "notification.InstructionNotification": {
+            "type": "object",
+            "required": [
+                "rate",
+                "rate_frequency"
+            ],
+            "properties": {
+                "rate": {
+                    "type": "boolean"
+                },
+                "rate_frequency": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                }
+            }
+        },
+        "notification.Notification": {
+            "type": "object",
+            "properties": {
+                "instruction": {
+                    "type": "object",
+                    "$ref": "#/definitions/notification.InstructionNotification"
+                }
+            }
+        },
         "pattern.AlarmPattern": {
             "type": "object",
             "properties": {
@@ -9466,6 +9306,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmStepRefPattern"
                 },
+                "children": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringArrayPattern"
+                },
                 "component": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
@@ -9523,6 +9367,10 @@ var doc = `{
                 "output": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "parents": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringArrayPattern"
                 },
                 "resolved": {
                     "type": "object",
@@ -9895,6 +9743,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.OptionalStringArray"
                 },
+                "isEmpty": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalBool"
+                },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
@@ -9909,6 +9761,31 @@ var doc = `{
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
                     "$ref": "#/definitions/types.OptionalRegexp"
+                },
+                "unexpectedFields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.StringArrayPattern": {
+            "type": "object",
+            "properties": {
+                "hasEvery": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "hasNot": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "hasOneOf": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "isEmpty": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalBool"
                 },
                 "unexpectedFields": {
                     "type": "object",
@@ -10170,6 +10047,9 @@ var doc = `{
                 "is_active_status": {
                     "description": "IsActiveStatus represents if pbehavior is in action for current time.",
                     "type": "boolean"
+                },
+                "last_alarm_date": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -11180,13 +11060,17 @@ var doc = `{
                 "a": {
                     "type": "string"
                 },
+                "exec": {
+                    "description": "Execution contains id if instruction execution for instruction steps only.",
+                    "type": "string"
+                },
                 "initiator": {
                     "type": "string"
                 },
                 "m": {
                     "type": "string"
                 },
-                "pbehaviorCanonicalType": {
+                "pbehavior_canonical_type": {
                     "type": "string"
                 },
                 "role": {
@@ -11342,6 +11226,12 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "related_parents": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "resolved": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
@@ -11450,6 +11340,19 @@ var doc = `{
                 },
                 "unit": {
                     "type": "string"
+                }
+            }
+        },
+        "types.OptionalBool": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the bool. It should only be taken into\naccount if Set is true.",
+                    "type": "boolean"
                 }
             }
         },

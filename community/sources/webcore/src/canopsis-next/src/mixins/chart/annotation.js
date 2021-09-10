@@ -5,5 +5,3 @@ export const chartAnnotationMixin = {
     this.addPlugin(ChartAnnotationPlugin);
   },
 };
-
-export default chartAnnotationMixin;

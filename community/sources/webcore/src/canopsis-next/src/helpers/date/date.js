@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 
-import { TIME_UNITS } from '@/constants';
+import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
 /**
  * Convert timestamps/Date to moment
@@ -9,16 +9,14 @@ import { TIME_UNITS } from '@/constants';
  * @returns {moment.Moment}
  */
 export const convertTimestampToMoment = (timestamp) => {
-  let dateObject;
-
-  // If it's unix timestamp in seconds
+  /**
+   * NOTE: If it's unix timestamp in seconds
+   */
   if (typeof timestamp === 'number' && timestamp < 100000000000) {
-    dateObject = moment.unix(timestamp);
-  } else {
-    dateObject = moment(timestamp);
+    return moment.unix(timestamp);
   }
 
-  return dateObject;
+  return moment(timestamp);
 };
 
 /**
@@ -107,11 +105,62 @@ export const isEndOfDay = (date, unit = 'seconds') => {
 };
 
 /**
+ * Convert date to string format
+ *
+ * @param {Date|number|moment.Moment} date
+ * @param {string} format
+ * @param {boolean} [ignoreTodayChecker]
+ * @param {string} [defaultValue]
+ * @return {string}
+ */
+export const convertDateToString = (date, format, ignoreTodayChecker, defaultValue) => {
+  let momentFormat = DATETIME_FORMATS[format] || format;
+
+  if (!date) {
+    return defaultValue || date;
+  }
+
+  const dateObject = convertTimestampToMoment(date);
+
+  if (!dateObject || !dateObject.isValid()) {
+    console.warn('Could not build a valid `moment` object from input.');
+    return date;
+  }
+
+  if (!ignoreTodayChecker && dateObject.isSame(new Date(), 'day')) {
+    momentFormat = DATETIME_FORMATS.time;
+  }
+
+  return dateObject.format(momentFormat);
+};
+
+/**
  * Return moment with start of day timestamp
  *
  * @param {Date|number|moment.Moment} date
  */
-export const convertDateToStartOfDayMoment = date => moment(convertTimestampToMoment(date).startOf('day').format());
+export const convertDateToStartOfDayMoment = (date) => {
+  const startOfMoment = convertTimestampToMoment(date).startOf('day');
+  /* Format date to string without time and timezone */
+  const formattedStartOfMoment = startOfMoment.format(DATETIME_FORMATS.long);
+
+  /* Format to moment object */
+  return moment(formattedStartOfMoment, DATETIME_FORMATS.long);
+};
+
+/**
+ * Return moment with end of day timestamp
+ *
+ * @param {Date|number|moment.Moment} date
+ */
+export const convertDateToEndOfDayMoment = (date) => {
+  const endOfMoment = convertTimestampToMoment(date).endOf('day');
+  /* Format date to string without time and timezone */
+  const formattedEndOfMoment = endOfMoment.format(DATETIME_FORMATS.long);
+
+  /* Format to moment object */
+  return moment(formattedEndOfMoment, DATETIME_FORMATS.long);
+};
 
 /**
  * Getting a now timestamp

@@ -16,12 +16,8 @@ func NewMongoAdapter(client mongo.DbClient) Adapter {
 	}
 }
 
-func (a *mongoAdapter) Get(settingType string) (StateSetting, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a *mongoAdapter) Get(ctx context.Context, settingType string) (StateSetting, error) {
 	var stateSettings StateSetting
-
 	res := a.collection.FindOne(ctx, bson.M{"type": settingType})
 	if res.Err() != nil {
 		return stateSettings, res.Err()
@@ -30,5 +26,3 @@ func (a *mongoAdapter) Get(settingType string) (StateSetting, error) {
 	err := res.Decode(&stateSettings)
 	return stateSettings, err
 }
-
-

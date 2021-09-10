@@ -48,7 +48,6 @@
         v-field="form.password",
         v-validate="passwordRules",
         :label="$t('users.fields.password')",
-        :disabled="onlyUserPrefs",
         :error-messages="errors.collect('password')",
         type="password",
         name="password",

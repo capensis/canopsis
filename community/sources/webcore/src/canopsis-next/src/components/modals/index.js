@@ -44,7 +44,6 @@ export { default as CreateEventFilterRuleAction } from './event-filter/create-ev
 export { default as FiltersList } from './common/filters-list.vue';
 export { default as CreateSnmpRule } from './snmp-rule/create-snmp-rule.vue';
 export { default as SelectViewTab } from './view/select-view-tab.vue';
-export { default as CreateHeartbeat } from './heartbeat/create-heartbeat.vue';
 export { default as CreateDynamicInfo } from './dynamic-info/create-dynamic-info.vue';
 export { default as CreateDynamicInfoInformation } from './dynamic-info/create-dynamic-info-information.vue';
 export { default as DynamicInfoTemplatesList } from './dynamic-info/dynamic-info-templates-list.vue';

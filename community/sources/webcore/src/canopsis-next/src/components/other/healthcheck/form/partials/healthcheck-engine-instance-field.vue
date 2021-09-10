@@ -81,14 +81,14 @@ export default {
 
     minimalRules() {
       return {
-        required: true,
+        required: this.value.enabled,
         max_value: this.value.optimal,
       };
     },
 
     optimalRules() {
       return {
-        required: true,
+        required: this.value.enabled,
         min_value: this.value.minimal,
       };
     },

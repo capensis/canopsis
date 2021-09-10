@@ -16,15 +16,7 @@ type LoadConfig struct {
 	Data           interface{}
 }
 
-func LoadFixtures(loadConfigs ...LoadConfig) error {
-	client, err := mongo.NewClient(0, 0)
-	if err != nil {
-		return err
-	}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func LoadFixtures(ctx context.Context, client mongo.DbClient, loadConfigs ...LoadConfig) error {
 	for _, loadConfig := range loadConfigs {
 		_, err := client.Collection(loadConfig.CollectionName).DeleteMany(ctx, bson.M{})
 		if err != nil {

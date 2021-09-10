@@ -31,18 +31,7 @@ Feature: pause a instruction execution
               "name": "test-instruction-execution-resume-1-step-1-operation-2-name",
               "time_to_complete": {"seconds": 3, "unit":"s"},
               "description": "test-instruction-execution-resume-1-step-1-operation-2-description",
-              "jobs": [
-                {
-                  "_id": "",
-                  "job_id": "test-job-execution-resume-1",
-                  "status": null,
-                  "name": "test-job-execution-resume-1",
-                  "fail_reason": "",
-                  "started_at": 0,
-                  "launched_at": 0,
-                  "completed_at": 0
-                }
-              ]
+              "jobs": []
             }
           ]
         },
@@ -66,10 +55,10 @@ Feature: pause a instruction execution
     """
 
   Scenario: given unauth request should not allow access
-    When I do PUT /api/v4/cat/executions/test-instruction-execution-running/resume
+    When I do PUT /api/v4/cat/executions/notexist/resume
     Then the response code should be 401
 
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
-    When I do PUT /api/v4/cat/executions/test-instruction-execution-running/resume
+    When I do PUT /api/v4/cat/executions/notexist/resume
     Then the response code should be 403

@@ -8,12 +8,9 @@ Feature: Update a metaalarmrule
     """
     {
       "auto_resolve": false,
-      "config": {
-        "time_interval": 20
-      },
-      "name": "Test alarm get",
+      "name": "test-metaalarm-to-update-1-updated",
       "patterns": null,
-      "type": "timebased"
+      "type": "complex"
     }
     """
     Then the response code should be 200
@@ -22,12 +19,9 @@ Feature: Update a metaalarmrule
     {
       "_id": "test-metaalarm-to-update-1",
       "auto_resolve": false,
-      "config": {
-        "time_interval": 20
-      },
-      "name": "Test alarm get",
+      "name": "test-metaalarm-to-update-1-updated",
       "author": "root",
-      "type": "timebased"
+      "type": "complex"
     }
     """
 

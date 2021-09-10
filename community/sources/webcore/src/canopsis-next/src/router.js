@@ -31,7 +31,6 @@ import AdminHealthcheck from '@/views/admin/healthcheck.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
-import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
 import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
 import ExploitationMetaAlarmRules from '@/views/exploitation/meta-alarm-rules.vue';
 import ExploitationScenarios from '@/views/exploitation/scenarios.vue';
@@ -213,17 +212,6 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.snmpRule,
-      },
-    },
-  },
-  {
-    path: ROUTES.exploitationHeartbeats,
-    name: ROUTES_NAMES.exploitationHeartbeats,
-    component: ExploitationHeartbeats,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: USERS_PERMISSIONS.technical.exploitation.heartbeat,
       },
     },
   },

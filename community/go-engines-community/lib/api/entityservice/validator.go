@@ -48,7 +48,7 @@ func (v *basicValidator) validatePatterns(sl validator.StructLevel, patterns pat
 	} else {
 		if patterns.IsSet() {
 			query := patterns.AsMongoDriverQuery()["$or"].([]bson.M)
-			if query == nil || len(query) == 0 {
+			if len(query) == 0 {
 				sl.ReportError(patterns, "EntityPatterns", "EntityPatterns", "entitypattern_empty", "")
 			} else {
 				for _, q := range query {
