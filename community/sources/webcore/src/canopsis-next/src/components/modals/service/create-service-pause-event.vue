@@ -17,8 +17,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { createSubmittableMixin } from '@/mixins/submittable';
-import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ServicePauseEventForm from '@/components/widgets/service-weather/service-pause-event-form.vue';
 
@@ -31,8 +31,8 @@ export default {
   },
   components: { ServicePauseEventForm, ModalWrapper },
   mixins: [
-    createSubmittableMixin(),
-    createConfirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {

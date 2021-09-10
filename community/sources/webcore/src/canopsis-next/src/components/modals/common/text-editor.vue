@@ -23,8 +23,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { createSubmittableMixin } from '@/mixins/submittable';
-import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import TextEditorComponent from '@/components/common/text-editor/text-editor.vue';
 
@@ -34,8 +34,8 @@ export default {
   name: MODALS.textEditor,
   components: { TextEditorComponent, ModalWrapper },
   mixins: [
-    createSubmittableMixin(),
-    createConfirmableModalMixin({ field: 'text' }),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator({ field: 'text' }),
   ],
   data() {
     const text = this.modal.config.text || '';

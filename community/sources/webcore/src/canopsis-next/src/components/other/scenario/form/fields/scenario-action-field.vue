@@ -44,7 +44,7 @@
 
 <script>
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
-import { createConfirmableFormMixin } from '@/mixins/confirmable-form';
+import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
 
@@ -59,7 +59,7 @@ export default {
   mixins: [
     formMixin,
     validationChildrenMixin,
-    createConfirmableFormMixin({
+    confirmableFormMixinCreator({
       field: 'action',
       method: 'removeAction',
       cloning: true,

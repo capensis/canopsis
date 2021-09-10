@@ -1,6 +1,6 @@
 import { has, get, keyBy } from 'lodash';
 
-export const createValidationErrorsMixin = ({ formField = 'form' } = {}) => ({
+export const validationErrorsMixinCreator = ({ formField = 'form' } = {}) => ({
   computed: {
     fieldsByName() {
       return keyBy(this.$validator.fields.items, 'name');

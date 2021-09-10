@@ -55,7 +55,7 @@ import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 
 import entitiesViewMixin from '@/mixins/entities/view';
 import { authMixin } from '@/mixins/auth';
-import { createSubmittableMixin } from '@/mixins/submittable';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 import DraggableGroupViews from '@/components/layout/navigation/partial/groups-side-bar/draggable-group-views.vue';
 import DraggableGroups from '@/components/layout/navigation/partial/groups-side-bar/draggable-groups.vue';
@@ -73,7 +73,7 @@ export default {
     authMixin,
     entitiesViewMixin,
     entitiesViewGroupMixin,
-    createSubmittableMixin(),
+    submittableMixinCreator(),
   ],
   data() {
     return {

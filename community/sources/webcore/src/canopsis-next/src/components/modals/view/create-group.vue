@@ -36,8 +36,8 @@ import { MODALS } from '@/constants';
 
 import { groupToRequest } from '@/helpers/forms/view';
 
-import { createSubmittableMixin } from '@/mixins/submittable';
-import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 
@@ -50,8 +50,8 @@ export default {
   },
   components: { ModalWrapper },
   mixins: [
-    createSubmittableMixin(),
-    createConfirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
     entitiesViewGroupMixin,
     permissionsTechnicalViewMixin,
   ],

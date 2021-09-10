@@ -17,8 +17,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { createSubmittableMixin } from '@/mixins/submittable';
-import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import { eventFilterRuleActionToForm, formToEventFilterRuleAction } from '@/helpers/forms/event-filter-rule';
 
@@ -33,8 +33,8 @@ export default {
   },
   components: { EventFilterRuleActionForm, ModalWrapper },
   mixins: [
-    createSubmittableMixin(),
-    createConfirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {

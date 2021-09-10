@@ -17,8 +17,8 @@
 import { notificationsSettingsToForm, formToNotificationsSettings } from '@/helpers/forms/notification';
 
 import { entitiesNotificationSettingsMixin } from '@/mixins/entities/notification-settings';
-import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
-import { createSubmittableMixin } from '@/mixins/submittable';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 import NotificationsSettingsForm from './form/notifications-settings-form.vue';
 
@@ -30,9 +30,9 @@ export default {
     NotificationsSettingsForm,
   },
   mixins: [
-    createSubmittableMixin(),
+    submittableMixinCreator(),
     entitiesNotificationSettingsMixin,
-    createValidationErrorsMixin(),
+    validationErrorsMixinCreator(),
   ],
   data() {
     return {

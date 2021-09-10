@@ -21,9 +21,9 @@ import { MODALS } from '@/constants';
 
 import { serviceToForm, formToService } from '@/helpers/forms/service';
 
-import { createSubmittableMixin } from '@/mixins/submittable';
-import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
-import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 
 import ServiceForm from '@/components/other/service/form/service-form.vue';
@@ -38,9 +38,9 @@ export default {
   components: { ServiceForm, ModalWrapper },
   mixins: [
     entitiesContextEntityMixin,
-    createSubmittableMixin(),
-    createConfirmableModalMixin(),
-    createValidationErrorsMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+    validationErrorsMixinCreator(),
   ],
   data() {
     return {

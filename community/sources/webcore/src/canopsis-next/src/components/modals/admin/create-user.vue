@@ -24,9 +24,9 @@ import { MODALS } from '@/constants';
 
 import { userToForm, formToUser } from '@/helpers/forms/user';
 
-import { createSubmittableMixin } from '@/mixins/submittable';
-import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
-import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 
 import UserForm from '@/components/other/users/form/user-form.vue';
 
@@ -42,9 +42,9 @@ export default {
   },
   components: { UserForm, ModalWrapper },
   mixins: [
-    createSubmittableMixin(),
-    createConfirmableModalMixin(),
-    createValidationErrorsMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+    validationErrorsMixinCreator(),
   ],
   data() {
     return {

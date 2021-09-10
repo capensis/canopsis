@@ -28,9 +28,9 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { createSubmittableMixin } from '@/mixins/submittable';
-import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
-import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 
 import RemediationPatternsPbehaviorTypesForm
   from '@/components/other/remediation/patterns/remediation-patterns-pbehavior-types-form.vue';
@@ -47,9 +47,9 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    createSubmittableMixin(),
-    createValidationErrorsMixin(),
-    createConfirmableModalMixin(),
+    submittableMixinCreator(),
+    validationErrorsMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {

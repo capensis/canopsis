@@ -19,9 +19,9 @@ import { MODALS } from '@/constants';
 
 import { formToIdleRule, idleRuleToForm } from '@/helpers/forms/idle-rule';
 
-import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
-import { createSubmittableMixin } from '@/mixins/submittable';
-import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import IdleRuleForm from '@/components/other/idle-rule/form/idle-rule-form.vue';
 
@@ -37,9 +37,9 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    createValidationErrorsMixin(),
-    createSubmittableMixin(),
-    createConfirmableModalMixin(),
+    validationErrorsMixinCreator(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {

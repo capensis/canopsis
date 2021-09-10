@@ -6,7 +6,7 @@
  * @param {string} [computedProperty='isDisabled'] - computed property name for buttons disabling
  * @returns {{data(): *, computed: {}, created(): void}}
  */
-export const createSubmittableMixin = ({
+export const submittableMixinCreator = ({
   method = 'submit',
   property = 'submitting',
   computedProperty = 'isDisabled',
@@ -47,4 +47,4 @@ export const createSubmittableMixin = ({
   },
 });
 
-export default createSubmittableMixin;
+export default submittableMixinCreator;

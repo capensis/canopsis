@@ -19,8 +19,8 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { createSubmittableMixin } from '@/mixins/submittable';
-import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -28,8 +28,8 @@ export default {
   name: MODALS.eventFilterRuleExternalData,
   components: { ModalWrapper },
   mixins: [
-    createSubmittableMixin(),
-    createConfirmableModalMixin({ field: 'newVal' }),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator({ field: 'newVal' }),
   ],
   data() {
     const { value } = this.modal.config;

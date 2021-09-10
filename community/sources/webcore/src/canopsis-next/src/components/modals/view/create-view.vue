@@ -33,8 +33,8 @@ import { MODALS, ROUTES_NAMES } from '@/constants';
 import { generateCopyOfViewTab, getViewsWidgetsIdsMappings } from '@/helpers/entities';
 import { viewToForm, formToView, viewToRequest } from '@/helpers/forms/view';
 
-import { createSubmittableMixin } from '@/mixins/submittable';
-import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import entitiesViewMixin from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
@@ -58,8 +58,8 @@ export default {
     entitiesViewGroupMixin,
     entitiesUserPreferenceMixin,
     permissionsTechnicalViewMixin,
-    createSubmittableMixin(),
-    createConfirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {

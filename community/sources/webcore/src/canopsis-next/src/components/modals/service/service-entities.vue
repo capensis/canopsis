@@ -48,8 +48,8 @@ import { PAGINATION_LIMIT } from '@/config';
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { addKeyInEntities } from '@/helpers/entities';
 
-import { createSubmittableMixin } from '@/mixins/submittable';
-import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesServiceEntityMixin from '@/mixins/entities/service-entity';
@@ -72,8 +72,8 @@ export default {
     eventActionsMixin,
     entitiesPbehaviorMixin,
     entitiesServiceEntityMixin,
-    createSubmittableMixin(),
-    createConfirmableModalMixin({ field: 'events' }),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator({ field: 'events' }),
     localQueryMixin,
   ],
   data() {

@@ -15,8 +15,8 @@
 <script>
 import { healthcheckParametersToForm } from '@/helpers/forms/healthcheck';
 
-import { createSubmittableMixin } from '@/mixins/submittable';
-import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { entitiesHealthcheckParametersMixin } from '@/mixins/entities/healthcheck';
 
 import HealthcheckForm from '@/components/other/healthcheck/form/healthcheck-form.vue';
@@ -27,8 +27,8 @@ export default {
   },
   components: { HealthcheckForm },
   mixins: [
-    createSubmittableMixin(),
-    createValidationErrorsMixin(),
+    submittableMixinCreator(),
+    validationErrorsMixinCreator(),
     entitiesHealthcheckParametersMixin,
   ],
   data() {
