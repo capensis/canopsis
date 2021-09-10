@@ -15,6 +15,9 @@ Actuellement, cette configuration apporte :
 *  une compression à la volée de la plupart des ressources, afin d'en accélérer le téléchargement dans les navigateurs ;
 *  des [entêtes de sécurité CORS](https://developer.mozilla.org/fr/docs/Web/HTTP/CORS), nécessaires pour certains applicatifs.
 
+!!! information
+        La configuration Nginx par défaut déployée avec Canopsis est consultable sur le [dépôt Gitlab](https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop/community/deploy-ansible/playbook/roles/canopsis/templates/nginx).
+
 ## Configuration additionnelle
 
 Vous pouvez compléter le fichier de configuration fourni, ou créer un nouveau fichier `.conf` dans le répertoire `/etc/nginx/conf.d/`, comportant vos propres ajouts.
