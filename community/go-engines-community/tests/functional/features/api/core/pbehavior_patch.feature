@@ -201,6 +201,24 @@ Feature: update a PBehavior
         }
       }
     """
+  
+  Scenario: PATCH a valid PBehavior having type pause with null tstop
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
+    """
+      {
+        "tstop": null
+      }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+      {
+        "tstop": null
+      }
+    """
 
   Scenario: PATCH a valid PBehavior having invalid tstart/tstop with type active
     When I am admin
@@ -247,32 +265,19 @@ Feature: update a PBehavior
       }
     """
 
-  Scenario: PATCH a valid PBehavior with valid tstart/tstop and type active
+  Scenario: PATCH a valid PBehavior having type active with null tstop
     When I am admin
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
     """
       {
-        "tstart": 1111111111,
-        "tstop": 1111111112,
-        "type": "test-active-type-to-patch-pbehavior"
+        "tstop": null
       }
     """
-    Then the response code should be 200
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
-    Then the response code should be 200
+    Then the response code should be 400
     Then the response body should contain:
     """
       {
-        "tstart": 1111111111,
-        "tstop": 1111111112,
-        "type": {
-          "_id": "test-active-type-to-patch-pbehavior",
-          "name": "test-active-type-to-patch-pbehavior-name",
-          "description": "test-active-type-to-patch-pbehavior-description",
-          "type": "active",
-          "priority": 28,
-          "icon_name": "test-active-type-to-patch-pbehavior-icon"
-        }
+        "error": "invalid fields start, stop, type"
       }
     """
 

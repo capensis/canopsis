@@ -2,7 +2,9 @@ package pbehavior
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -329,14 +331,28 @@ func (a *api) Update(c *gin.Context) {
 // @Router /pbehaviors/{id} [patch]
 func (a *api) Patch(c *gin.Context) {
 	req := PatchRequest{}
-	if err := c.ShouldBindJSON(&req); err != nil {
+	var err error
+	var reqBody []byte
+	reqBody, err = io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	err = json.Unmarshal(reqBody, &req)
+	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, req))
 		return
 	}
 
-	var err error
+	keys, err := a.getProvidedKeys(reqBody)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, req))
+		return
+	}
+
 	var model *Response
-	if req.Start != nil || req.Stop != nil || req.Type != nil {
+	if a.hasValidationFields(keys, []string{"tstart", "tstop", "type"}) {
 		// Patching fields having constraint validation will retry
 		// until snapshot is matching or retry count reached
 		var updated = false
@@ -353,11 +369,18 @@ func (a *api) Patch(c *gin.Context) {
 				"tstop":  model.Stop,
 				"type_":  model.Type.ID,
 			}
+
+			// Clear tstop field when tstop is defined as null in request body
+			if a.hasValidationFields(keys, []string{"tstop"}) {
+				model.Stop = nil
+			}
+
 			err = a.transformer.Patch(c.Request.Context(), req, model)
 			if err != nil {
 				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 				return
 			}
+
 			// Validation
 			if model.Type.Type != pbehavior.TypePause && (model.Stop == nil ||
 				!model.Stop.After(model.Start.Time)) {
@@ -502,4 +525,29 @@ func (a *api) sendComputeTask(task pbehavior.ComputeTask) {
 			Str("pbehavior", task.PbehaviorID).
 			Msg("fail to start pbehavior recompute")
 	}
+}
+
+func (a *api) getProvidedKeys(data []byte) ([]string, error) {
+	m := make(map[string]interface{})
+	err := json.Unmarshal(data, &m)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]string, 0)
+	for key := range m {
+		result = append(result, key)
+	}
+	return result, nil
+}
+
+func (a *api) hasValidationFields(keys []string, fields []string) bool {
+	for _, key := range keys {
+		for _, field := range fields {
+			if key == field {
+				return true
+			}
+		}
+	}
+	return false
 }
