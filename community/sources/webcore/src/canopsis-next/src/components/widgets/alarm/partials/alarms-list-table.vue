@@ -18,6 +18,7 @@
         ref="dataTable",
         item-key="_id",
         hide-actions,
+        multi-sort,
         @update:pagination="updatePaginationHandler"
       )
         template(slot="progress")

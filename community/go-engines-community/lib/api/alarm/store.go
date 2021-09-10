@@ -3,8 +3,8 @@ package alarm
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"reflect"
 	"regexp"
 	"sort"
@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -140,7 +141,12 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 	if err != nil {
 		return nil, err
 	}
-	sort := s.getSort(r.ListRequest)
+
+	sort, err := s.getSort(r.ListRequest)
+	if err != nil {
+		return nil, err
+	}
+
 	entitiesToProject := s.resetEntities(r.ListRequest, &pipeline)
 	project := s.getProject(r.ListRequest, entitiesToProject)
 	project = s.insertDeferred(r.FilterRequest, &pipeline, project)
@@ -317,7 +323,13 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 		{"d": bson.M{"$in": childrenIds}},
 	}}})
 	s.addNestedObjects(r.FilterRequest, &pipeline)
-	pipeline = append(pipeline, s.getSort(r))
+
+	sortExpr, err := s.getSort(r)
+	if err != nil {
+		return err
+	}
+
+	pipeline = append(pipeline, sortExpr)
 	pipeline = append(pipeline, s.getProject(r, false)...)
 	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -1172,7 +1184,11 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 	return pipeline
 }
 
-func (s *store) getSort(r ListRequest) bson.M {
+func (s *store) getSort(r ListRequest) (bson.M, error) {
+	if len(r.MultiSort) != 0 {
+		return s.getMultiSort(r.MultiSort)
+	}
+
 	sortBy := s.resolveAlias(r.SortBy)
 	sort := r.Sort
 
@@ -1187,7 +1203,38 @@ func (s *store) getSort(r ListRequest) bson.M {
 		}
 	}
 
-	return common.GetSortQuery(sortBy, sort)
+	return common.GetSortQuery(sortBy, sort), nil
+}
+
+func (s *store) getMultiSort(multiSort []string) (bson.M, error) {
+	idExist := false
+
+	q := bson.D{}
+
+	for _, multiSortValue := range multiSort {
+		multiSortData := strings.Split(multiSortValue, ",")
+		if len(multiSortData) != 2 {
+			return nil, errors.New("length of multi_sort value should be equal 2")
+		}
+
+		sortBy := s.resolveAlias(multiSortData[0])
+		sortDir := 1
+		if multiSortData[1] == common.SortDesc {
+			sortDir = -1
+		}
+
+		if sortBy == "_id" {
+			idExist = true
+		}
+
+		q = append(q, bson.E{Key: sortBy, Value: sortDir})
+	}
+
+	if !idExist {
+		q = append(q, bson.E{Key: "_id", Value: 1})
+	}
+
+	return bson.M{"$sort": q}, nil
 }
 
 func (s *store) getCausesPipeline() []bson.M {

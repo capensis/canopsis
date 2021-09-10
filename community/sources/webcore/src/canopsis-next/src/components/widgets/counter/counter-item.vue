@@ -124,7 +124,7 @@ export default {
         ...widget.parameters,
         ...this.widget.parameters.alarmsList,
 
-        alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
+        opened: this.widget.parameters.opened,
         mainFilter: this.counter.filter,
         viewFilters: [this.counter.filter],
       };
