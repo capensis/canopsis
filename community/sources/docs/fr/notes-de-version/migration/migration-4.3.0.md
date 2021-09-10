@@ -147,7 +147,7 @@ Canopsis 4.3.0 apportant une importante refonte des API, plusieurs scripts de mi
 Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un client MongoDB, assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes suivantes, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
 
 ```sh
-git clone --depth 1 --single-branch -b 4.3.0 https://git.canopsis.net/canopsis/canopsis-community.git
+git clone --depth 1 --single-branch -b release-4.3 https://git.canopsis.net/canopsis/canopsis-community.git
 cd canopsis-community/community/go-engines-community/database/migrations
 for file in ./*/*.js ; do
     mongo -u cpsmongo -p canopsis canopsis < "$file"
