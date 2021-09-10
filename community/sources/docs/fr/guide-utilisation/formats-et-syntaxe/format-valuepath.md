@@ -1,4 +1,4 @@
-# Format de synthaxe des valuepath
+# Format de syntaxe des valuepath
 
 Les règles de correlation des alarmes comprennent des chemins d'accès aux valeurs (`valuepath`) sur lesquels se baser pour effectuer le regroupement d'alarmes.
 
