@@ -1,4 +1,4 @@
-# Météo des services
+# Météo des Services
 
 La Météo des services permet de représenter des états agrégés de services selon différentes règles.  
 La documentation complète est disponible [ici](../../guide-utilisation/interface/widgets/meteo-des-services/index.md)
@@ -10,100 +10,97 @@ Une tuile correspond à l'état d'un *service*, qui est calculé selon des règl
     Nous souhaitons représenter l'état de l'application *E-Commerce* sur une météo des services.
     Cette application est dépendante de 3 scénarios applicatifs :
 
-    * Accès plate-forme
-    * Workflow commande
+    * Accès plateforme
+    * Workflow commande (Validation panier + Paiement)
     * Mon compte utilisateur
 
-## Entités à prendre en compte
+## Création des services
 
-La première étape consiste à créer un service E-Commerce qui va regrouper les sous-éléments constituants.  
-D'un point de vue "structuration de données", nous allons utiliser un critère de parentalité entre les sous-éléments constituants et le service.
+La première étape consiste à créer les services dans l'**exploirateur de contexte**. À commencer par la création du service "Workflow commande" va regrouper les composants le constituant. Puis le service "ECommerce" qui va regrouper les composants le constituant ainsi que le service "Workflow commande".
 
-Le service est une entité du contexte de Canopsis qui porte un filtre de sélection d'éléments.  
-Dans notre cas il s'agit de :
+Ce qui donnerait un arbre de dépendance comme suit pour le service "ECommerce":
 
-```
-"entity.infos.app.value" : "E-Commerce"
-```
+ * Accès plateforme
+ * Workflow commande
+    * Validation panier
+    * Paiement
+ * Mon compte utilisateur
 
-Autrement dit, chaque entité de Canopsis qui portera un attribut **infos.app.value = E-Commerce** sera incluse dans le service E-Commerce.  
-Le critère de sélection est laissé à votre discrétion, vos manières de représenter les données, les modèles utilisés dans vos référentiels.
+Pour créer un service, cliquer sur le "+" vert "add a new entity" puis le bouton bleu "add a new service entity".
 
-!!! attention
-    La réflexion autour de ce sujet est extrêmement importante, ne la négligez pas.
+![Bouton création service](./img/mds_create_service01.png)
 
-Voici les étapes de création du service.
-Utilisez un widget **Explorateur de contexte**.  
+Dans la fenêtre qui s'ouvre, remplir les champs "Name", "Category" (en créer une nouvelle si besoin), "Impact level" et "Output template".
 
-![Création service](./img/mds_observateur_creation1.png "Création du service")  
+![Champs création service](./img/mds_create_service02.png)
 
-On nomme le service et on configure son filtre de sélection.  
+Puis ajouter les composants constituant le services avec le bouton "Add" sous "Entity patterns". Une nouvelle fenêtre s'ouvre alors.
 
-![Définition du service](./img/mds_observateur_creation2.png "Définition du service")  
+![Patterns service](./img/mds_create_service03.png)
 
-On crée un attribut qui nous servira plus tard sur le widget météo. Ici, on a choisi de le nommer `affichage_tv` et d'en faire une valeur.  
-On crée un attribut application_label qui nous servira plus tard à mieux repérer notre service. Ici, on a choisi de lui donner "Plateforme E-Commerce" comme valeur.
+Cliquer sur le "+" correspondant à "add value rule field". Puis compléter les champs dans la nouvelle fenêtre.
 
-![Définition du service](./img/mds_observateur_creation3.png "Définition du service")  
+![Add field](./img/mds_create_service04.png)
 
-À ce stade, une alarme portant le critère app.value = "E-Commerce" aura un impact sur le service.
+Valider l'ajout du champs.
 
-## Widget ServiceWeather
+![Add pattern](./img/mds_create_service05.png)
 
-Visuellement, pour réprésenter une météo de service, le widget "serviceweather" est utilisé.  
-Instanciez le et utilisez le critère d'affichage "affichage_tv = oui" pour filtrer les tuiles.  
+Valider l'ajout du pattern.
 
-![Widget servieweather](./img/mds_widget_creation.png "Widget serviceweather")  
+Puis recommencer les opérations afin d'ajouter au service, l'ensemble des composants le constituant.
 
-![Widget filtre](./img/mds_widget_filtre.png "Widget filtre")  
+Dans l'exemple, le service "Workflow commande" est constitué de ses éléments "Validation panier" et "Paiement".
 
-Pour personaliser le rendu du widget, il existe 3 niveaux de templates :  
+![Workflow commande patterns](./img/mds_create_service06.png)
 
-1. La tuile
-2. La modale après clic
-3. L'affichage des sous-éléments
+Valider la création du service puis créer le nouveau service "ECommerce".
 
-Dans ces templates, vous pouvez utiliser la notation **handlebars** pour accéder aux variables de vos entités.  
+![Creaton service ecommerce](./img/mds_create_service07.png)
 
-La tuile :
+Puis ajouter les *patterns* de façon à ce que ce service comprenne les composants "Acces plateforme", "Mon compte" et le service "Workflow commande".
 
-![Template tuile](./img/mds_widget_template_tuile.png "Widget template tuile")  
+![Ecommerce patterns](./img/mds_create_service08.png)
 
-La modale :
+Lorsqu'on cliquqe sur le service "ECommerce" dans la liste des contextes, on peut aller visualiser l'arbre des dépendances (*tree of dependencies*).
 
-![Template modale](./img/mds_widget_template_modale.png "Widget template modale")  
+![Arbre dependances](./img/mds_create_service09.png)
 
-!!! note
-    Notez le helper *entities* qui est fourni directement par Canopsis et qui vous permet d'itérer sur l'ensemble des sous-éléments du service.
+## Widget Service Weather
 
-Le rendu final sera
+Pour ajouter le widget de météo, sélectionner "Service weather" dans la liste des widgets.
 
-![Rendu](./img/mds_widget_rendu.png "Widget rendu")  
+![Widget servie weather](./img/mds_widget01.png)  
+
+À la validation de la création du widget, les deux services précédemments créés apparaissent sous forme de tuiles.
+
+![Tuiles](./img/mds_widget02.png)
+
+Au clic sur la tuile "ECommerce", on observe la liste des ses composants constituant le service.
+
+![](./img/mds_widget03.png)
+
+Ces modales peuvent être déroulés afin d'y consulter les *info* ainsi que l'arbre des dépendances.
+
+![](./img/mds_widget04.png)
+
+De même, pour la tuile "Workflow commande", les différents éléments apparaissent et des actions sont possible.
+
+![](./img/mds_widget05.png)
 
 ## Scénario
 
-La phase de préparation est terminée.  
+La phase de préparation est terminée.
+
 Les éléments ont été paramétrés de manière manuelle, il est bien entendu beaucoup intéressant d'utiliser un mécanisme d'enrichissement par [synchronisation de référentiel externe](enrichissement.md#enrichissement-via-referentiels-externes) pour s'éviter ces opérations.  
 
-Nous allons à présent simuler des alarmes sur les sous-éléments constituants et observer le comportement de la tuile de météo.  
+Vous pouvez à présent simuler des alarmes sur les sous-éléments constituants et observer le comportement des tuiles de météo.  
 
-Pour rappel, voici les éléments constituants :
+Pour rappel la liste des éléments constituant:
 
-* acces_plate-forme
-* mon-compte-utilisateur
-* workflow-commande
+* Accès plateforme
+* Validation panier
+* Paiement
+* Mon compte utilisateur
 
-Le filtre du service concerne l'attribut *app* qui doit valoir "E-Commerce".  
-
-![Constituants](./img/mds_constituants1.png "Constituants")  
-
-Vous pouvez publier des événements sur ces 3 scénarios (avec par exemple le [connecteur send-event](../../interconnexions/Transport/send_event.md)
-
-Les résultats observés seront alors :
-
-![Résultats](./img/mds_resultat1.png "Résultats")  
-![Résultats](./img/mds_resultat2.png "Résultats")  
-
-Depuis cette modale, vous pourrez au final exécuter les [actions adéquates](../interface/widgets/meteo-des-services/index.md#les-actions) de prise en charge des alarmes.  
-
-![Actions](./img/mds_actions.png "Actions")  
+Il est possible de publier des événements sur ces 4 scénarios avec, par exemple, le [connecteur send-event](../../interconnexions/Transport/send_event.md).

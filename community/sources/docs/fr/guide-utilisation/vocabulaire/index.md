@@ -1,50 +1,50 @@
-# Vocabulaire des termes de Canopsis
+# Vocabulaire des termes Canopsis
 
 ## Alarme
 
 Une *alarme* est le résultat du traitement des [évènements](#evenement) par un [moteur](#moteur). Elle sert à signaler un problème.
 
-Une alarme est liée à une [entité](#entite) de type [composant](#composant), [ressource](#ressource) ou [service](#service). La combinaison d'un [connecteur](#connecteur), d'un [nom de connecteur](#nom-de-connecteur), d'un [composant](#composant) et d'une [ressource](#ressource) crée une alarme unique. Si l'un de ces éléments change, une alarme différente est créée.
+Une alarme est liée à une [entité](#entite) de type [composant](#composant), [ressource](#ressource) ou [service](#service). La combinaison d'un [connecteur](#connecteur), d'un [nom de connecteur](#nom-de-connecteur), d'un [composant](#composant) et d'une [ressource](#ressource) créé une alarme unique. Si l'un de ces éléments change, une alarme différente est créée.
 
-Une alarme peut connaître de multiples changements de criticité et de statut, et subir une suite d'actions (acquittement, mise en veille, changement de criticité, annulation, etc.), [utilisateurs](../interface/widgets/bac-a-alarmes/actions.md) ou [automatiques](../../guide-administration/moteurs/moteur-action.md). L'ensemble de ces changements et de ces actions constitue le *cycle d'alarme*.
+Une alarme peut connaître de multiples changements de [criticité](#criticite), [priorité](#priorite) et de [statut](#statut), et subir une suite d'actions (acquittement, mise en veille, changement de criticité, annulation, etc.), [utilisateurs](../interface/widgets/bac-a-alarmes/actions.md) ou [automatiques](../../guide-administration/moteurs/moteur-action.md). L'ensemble de ces changements et de ces actions constitue le *cycle d'alarme*.
 
-Les alarmes peuvent être affichées à l'aide d'un [widget Bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
+Les alarmes peuvent être affichées à l'aide d'un widget [Bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
 
 Vous pouvez consulter la [structure des alarmes](../../guide-developpement/base-de-donnees/periodical-alarm.md) présente dans le Guide de développement.
 
 ## Battement
 
-Un [moteur](#moteur) effectue une tâche périodique appelée *battement* (ou *beat*) à un intervalle régulier. L'intervalle typique est de 1 minute.
+Un [moteur](#moteur) effectue une tâche périodique appelée *battement* (ou *beat*) à un intervalle régulier. L'intervalle typique est de 1 minute.
 
 ## Composant
 
 Un *composant* peut être soit :
 
 * Un type d'[entité](#entite) créé après le traitement d'un [évènement](#evenement).
-* Le champ `component` d'un évènement. Le plus souvent, il s'agit d'une machine ou d'un périphérique réseau (serveur, routeur, etc.). Une [alarme](#alarme) peut être rattachée à ce composant.
+* Le champ `component` d'un [évènement](#evenement). Le plus souvent, il s'agit d'une machine ou d'un périphérique réseau (serveur, routeur, etc.). Une [alarme](#alarme) peut être rattachée à ce composant.
 
 ## Context-Graph
 
-Le *context-graph* est un schéma relationnel entre les [entités](#entite) de Canopsis. Il sert à grapher leur contexte. Il s'appuie sur les notions de [`impact` et `depends`](../../guide-developpement/base-de-donnees/default-entities.md#context-graph). Il est présent au sein de chaque [entité](#entite) et est accessible au travers du [widget Explorateur de contexte](../interface/widgets/contexte/index.md).
+Le *context-graph* est un schéma relationnel entre les [entités](#entite) de Canopsis. Il sert à grapher leur contexte. Il s'appuie sur les notions de [`impact` et `depends`](../../guide-developpement/base-de-donnees/default-entities.md#context-graph). Il est présent au sein de chaque [entité](#entite) et est accessible au travers du widget [explorateur de contexte](../interface/widgets/contexte/index.md).
 
 ## Connecteur
 
 Un *connecteur* peut être soit :
 
 * Un type d'[entité](#entite) créé suite au traitement d'un [évènement](#evenement). Il est le fruit de la concaténation des champs `connector` et `connector_name`.
-* Le champ `connector` d'un évènement. Le plus souvent, il s'agit du nom du logiciel qui envoie ses données à Canopsis. Il sert à créer l'entité [connecteur](#connecteur).
-* Un [script ou un programme](../../interconnexions/index.md#connecteurs) permettant d’envoyer à Canopsis des évènements à partir de sources d'informations extérieures.
+* Le champ `connector` d'un [évènement](#evenement). Le plus souvent, il s'agit du nom du logiciel qui envoie ses données à Canopsis. Il sert à créer l'entité [connecteur](#connecteur).
+* Un [script ou un programme](../../interconnexions/index.md#connecteurs) permettant d’envoyer à Canopsis des [évènements](#evenement) à partir de sources d'informations extérieures.
 
 ## Criticité
 
-Une [alarme](#alarme) a une *criticité*, indiquant la gravité de l'incident.
+Une [alarme](#alarme) a une *criticité*, indiquant la gravité de l'incident. 
 
 Il y a actuellement 4 criticités possibles :
 
-* 0 - Info (quand en cours) / OK (quand résolue), de type stable.
-* 1 - Mineure (*minor*), de type alerte.
-* 2 - Majeure (*major*), de type alerte.
-* 3 - Critique (*critical*), de type alerte.
+*  0 - Info (quand en cours)/ OK (quand résolue), de type stable.
+*  1 - Mineure (*minor*), de type alerte.
+*  2 - Majeure (*major*), de type alerte.
+*  3 - Critique (*critical*), de type alerte.
 
 ## Enrichissement
 
@@ -53,16 +53,17 @@ L'*enrichissement* est l'action d'ajouter des informations supplémentaires à u
 On peut enrichir :
 
 * Un [évènement](#evenement) via l'[event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md).
-* Une [entité](#entite) via l'[event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md#set_entity_info_from_template), l'[Explorateur de contexte](../interface/widgets/contexte/index.md) ou les [drivers](../../interconnexions/index.md#drivers).
+* Une [entité](#entite) via l'[event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md#set_entity_info_from_template), l'[explorateur de contexte](../interface/widgets/contexte/index.md) ou les [drivers](../../interconnexions/index.md#drivers).
 * Une [alarme](#alarme) via le [moteur `engine-dynamic-infos`](../../guide-administration/moteurs/moteur-dynamic-infos.md).
 
 ## Entité
 
 Les *entités* servent à structurer les [alarmes](#alarme). Elles sont liées entre elles via le [context-graph](#context-graph). Elles peuvent permettre, via l'[enrichissement](#enrichissement) de conserver des données statiques (emplacement du serveur, nom du client, etc.).
 
+
 Les entités sont accessibles au travers du [widget Explorateur de contexte](../interface/widgets/contexte/index.md).
 
-Les entités ont les propriétés suivantes :
+Les entités ont les propriétés suivantes :
 
 | Type d'entité | Résulte du traitement d'un [évènement](#evenement) | Peut être lié à une [alarme](#alarme)|
 |---------------|--------------------------------------|---------------------------|
@@ -81,9 +82,15 @@ Il est formaté en JSON et peut être de plusieurs types, avec leurs propres str
 
 Les évènements de type `check` peuvent provenir d'une source externe, d'un [connecteur](../../interconnexions/index.md#connecteurs) ([email](../../interconnexions/Transport/Mail.md), [SNMP](../../interconnexions/Supervision/SNMPtrap.md), etc.) ou de Canopsis lui-même. Ils aboutissent à la création ou la mise à jour d'une [alarme](#alarme) dans le [Bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
 
+## Impact
+
+Une [entité](#entite) de [service](#service) a un *niveau d'impact* permettant de calculer la [priorité](#priorite) des [alarmes](#alarme) liées à l'entité.
+
+Ce niveau d'impact permet aussi de définir la couleurs de l'alarme ou de la tuile liée au [service](#service) dans la [météo de services](#meteo).
+
 ## Météo
 
-La *météo des services* est [un widget](../interface/widgets/meteo-des-services/index.md) qui permet d'avoir une vue globale sur l'état d'un ensemble d'[entités](#entite). Pour cela, elle affiche des tuiles dont la couleur est représentative de [la criticité](#criticite) des [alarmes](#alarme) liées aux [services](#service).
+La [*météo des services* est un widget](../interface/widgets/meteo-des-services/index.md) qui permet permet d'avoir une vue globale sur l'état d'un ensemble d'[entités](#entite). Pour cela, elle affiche des tuiles dont la couleur est représentative de la [priorité](#priorite) des [alarmes](#alarme) calculée par le [service](#service) lié.
 
 ## Moteur
 
@@ -95,6 +102,10 @@ Vous pouvez consulter [plus d'informations sur les moteurs](../../guide-administ
 
 Un *nom de connecteur* (ou `connector_name`) est le champ d'un [évènement](#evenement). Le plus souvent, il s'agit du nom du logiciel qui envoie ses données à Canopsis, complété par sa localisation ou sa numérotation (`superviseur_lille` ou `superviseur_5` par exemple). Il sert à créer l'entité [connecteur](#connecteur).
 
+## Priorité
+
+Une [alarme](#alarme) a une *priorité* qui est le produit de la [criticité](#criticite) d'une alarme et du niveau d'impact d'une [entité](#entite) liée. Cette priorité est recalculée par le [service](#service) lié à chaque changement de criticité de l'alarme.
+
 ## Ressource
 
 Une *ressource* peut être soit :
@@ -104,26 +115,26 @@ Une *ressource* peut être soit :
 
 ## Service
 
-Un *service* peut être soit :
+Un *service* peut être soit :
 
 * un type d'[entité](#entite) constituant l'arbre de dépendances, auquel peut être ajoutée une catégorie. Il s'agissait anciennement des watchers/observateurs.
 * le nom de certains composants de Canopsis n'étant pas des [moteurs](#moteur). Par exemple, `canopsis-api` est un service et non pas un moteur, puisqu'il ne consomme pas d'évènements.
-* dans le cadre d'une installation de type paquets, le nom d'une [unité systemd](https://access.redhat.com/documentation/fr-fr/red_hat_enterprise_linux/7/html/system_administrators_guide/sect-managing_services_with_systemd-unit_files) lançant un composant de Canopsis.
+* dans le cadre d'une installation de type paquets, le nom d'une [unité systemd](https://access.redhat.com/documentation/fr-fr/red_hat_enterprise_linux/7/html/system_administrators_guide/sect-managing_services_with_systemd-unit_files) lançant un composant de Canopsis.
 
 ## Statut des alarmes
 
 Une [alarme](#alarme) a un *statut*, indiquant la situation dans laquelle se trouve l'alarme indiquant un incident.
 
-Il y a actuellement 5 statuts possibles :
+Il y a actuellement 5 statuts possibles :
 
 * 0 - Fermée
-    * Une alarme est considérée *fermée* (*off*) si elle est stable. C'est-à-dire que sa [criticité](#criticite) est stable à 0.
+    * Une alarme est considérée *fermée* (*off*) si elle est stable. C'est-à-dire que sa [criticité](#criticite) est stable à 0.
 * 1 - En cours
-    * Une alarme est considérée *en cours* (*ongoing*) si sa criticité est dans un état d'alerte (supérieur à 0).
+    * Une alarme est considérée *en cours* (*ongoing*) si sa criticité est dans un état d'alerte (supérieur à 0).
 * 2 - Furtive
     * Une alarme est considérée *furtive* (*stealthy*) si sa criticité est passée d'alerte à stable dans un délai spécifié.
     * Si la criticité de cette alarme est de nouveau modifiée durant le délai spécifié, elle est toujours considérée *furtive*.
-    * Une alarme restera *furtive* pendant une durée spécifiée et passera à *fermée* si la dernière criticité était 0, *en cours* s'il s'agissait d'une alerte, ou *bagot* si elle se qualifie en tant que tel.
+    * Une alarme restera *furtive* pendant une durée spécifiée et passera à *fermée* si la dernière criticité était 0, *en cours* s'il s'agissait d'une alerte, ou *bagot* si elle se qualifie en tant que tel.
 * 3 - Bagot
     * Une alarme est considérée *bagot* (*flapping*) si elle est passée d'une criticité d'alerte à un état stable un nombre spécifique de fois sur une période donnée.
 * 4 - Annulée

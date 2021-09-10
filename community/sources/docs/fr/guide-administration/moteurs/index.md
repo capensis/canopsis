@@ -25,7 +25,7 @@ La plupart des moteurs « nouvelle génération » de Canopsis sont écrits en
 | [`engine-fifo`](moteur-fifo.md) | Garantit la cohérence et l'ordre des évènements entrant dans Canopsis | |
 | [`engine-heartbeat`](moteur-heartbeat.md)  | Surveille certaines entités et lève des alarmes en cas d'absence d'information | |
 | [`engine-pbehavior`](moteur-pbehavior.md) | Gère les comportements périodiques | |
-| [`engine-service`](moteur-service.md)| Calcule les états des [services](../../guide-utilisation/vocabulaire/index.md#service) | |
+| [`engine-service`](moteur-service.md)| Calcule les états des [services](../../guide-utilisation/vocabulaire/index.md#service) | | 
 | [`engine-webhook`](moteur-webhook.md) | Gère le système de webhooks vers des services externes | ✅ |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
@@ -74,7 +74,7 @@ En cas d'erreur fatale, telle qu'une perte prolongée de la connexion à un serv
 Les unités systemd (en installation paquets) et les lignes `restart: unless-stopped` (avec Docker Compose) sont configurées de manière à ce que les moteurs soient automatiquement relancés après une erreur fatale.
 
 !!! attention
-    Ceci est une partie essentielle de l'architecture de Canopsis et de la disponibilité du service. Il ne doit en aucun cas être modifié.
+	Ceci est une partie essentielle de l'architecture de Canopsis et de la disponibilité du service. Il ne doit en aucun cas être modifié.
 
 ## Variables d'environnement liées aux moteurs
 
