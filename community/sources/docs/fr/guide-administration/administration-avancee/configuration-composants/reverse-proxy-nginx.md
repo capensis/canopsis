@@ -16,7 +16,7 @@ Actuellement, cette configuration apporte :
 *  des [entêtes de sécurité CORS](https://developer.mozilla.org/fr/docs/Web/HTTP/CORS), nécessaires pour certains applicatifs.
 
 !!! information
-        La configuration Nginx par défaut déploiée avec Canopsis est consultable sur le [dépôt Gitlab](https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop/community/deploy-ansible/playbook/roles/canopsis/templates/nginx).
+        La configuration Nginx par défaut déployée avec Canopsis est consultable sur le [dépôt Gitlab](https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop/community/deploy-ansible/playbook/roles/canopsis/templates/nginx).
 
 ## Configuration additionnelle
 
