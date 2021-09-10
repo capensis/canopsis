@@ -20,9 +20,9 @@ import { MODALS } from '@/constants';
 import { stateSettingToForm, formToStateSetting } from '@/helpers/forms/state-setting';
 
 import { authMixin } from '@/mixins/auth';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
 
 import StateSettingForm from '@/components/other/state-setting/form/state-setting-form.vue';
 
@@ -39,9 +39,9 @@ export default {
   },
   mixins: [
     authMixin,
-    validationErrorsMixin(),
-    submittableMixin(),
-    confirmableModalMixin(),
+    createValidationErrorsMixin(),
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     return {

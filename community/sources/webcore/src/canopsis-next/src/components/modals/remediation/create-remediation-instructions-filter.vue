@@ -27,8 +27,8 @@ import { MODALS } from '@/constants';
 
 import { remediationInstructionFilterToForm } from '@/helpers/forms/remediation-instruction-filter';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
 
 import RemediationInstructionsFilterForm
   from '@/components/other/remediation/instructions-filter/remediation-instructions-filter-form.vue';
@@ -42,8 +42,8 @@ export default {
   },
   components: { RemediationInstructionsFilterForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     return {

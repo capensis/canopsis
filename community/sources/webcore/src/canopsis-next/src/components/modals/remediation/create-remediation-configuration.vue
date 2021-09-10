@@ -22,9 +22,9 @@ import {
   remediationConfigurationToForm,
 } from '@/helpers/forms/remediation-configuration';
 
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
 
 import RemediationConfigurationForm
   from '@/components/other/remediation/configurations/form/remediation-configuration-form.vue';
@@ -41,9 +41,9 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    validationErrorsMixin(),
-    submittableMixin(),
-    confirmableModalMixin(),
+    createValidationErrorsMixin(),
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     return {

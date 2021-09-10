@@ -30,9 +30,9 @@ import { omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -43,9 +43,9 @@ export default {
   },
   components: { ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin({ field: 'text' }),
-    validationErrorsMixin(),
+    createSubmittableMixin(),
+    createConfirmableModalMixin({ field: 'text' }),
+    createValidationErrorsMixin(),
   ],
   data() {
     const field = this.modal.config.field || {};

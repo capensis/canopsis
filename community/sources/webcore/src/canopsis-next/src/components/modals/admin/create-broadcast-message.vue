@@ -19,8 +19,8 @@ import { MODALS } from '@/constants';
 
 import { messageToForm, formToMessage } from '@/helpers/forms/broadcast-message';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
 
 import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
 import BroadcastMessageForm from '@/components/other/broadcast-message/broadcast-message-form.vue';
@@ -34,8 +34,8 @@ export default {
   },
   components: { BroadcastMessage, BroadcastMessageForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     return {

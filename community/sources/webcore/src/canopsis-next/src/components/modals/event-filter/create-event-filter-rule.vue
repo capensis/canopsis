@@ -26,9 +26,9 @@ import { MODALS, EVENT_FILTER_RULE_TYPES } from '@/constants';
 
 import { eventFilterRuleToForm, formToEventFilterRule } from '@/helpers/forms/event-filter-rule';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
 import EventFilterEnrichmentForm from '@/components/other/event-filter/form/event-filter-enrichment-form.vue';
@@ -42,9 +42,9 @@ export default {
   },
   components: { EventFilterForm, EventFilterEnrichmentForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
-    validationErrorsMixin({
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
+    createValidationErrorsMixin({
       formField: 'form.general',
     }),
   ],

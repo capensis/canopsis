@@ -26,8 +26,8 @@ import { keyBy, omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import { pbehaviorToDuplicateForm, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
@@ -41,8 +41,8 @@ export default {
   components: { PbehaviorPlanningCalendar, ModalWrapper },
   mixins: [
     entitiesPbehaviorMixin,
-    submittableMixin(),
-    confirmableModalMixin(),
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     const { pbehaviors = [], pbehaviorsToAdd = [] } = this.modal.config;

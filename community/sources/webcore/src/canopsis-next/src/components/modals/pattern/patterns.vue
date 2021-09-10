@@ -29,9 +29,9 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -42,9 +42,9 @@ export default {
   },
   components: { ModalWrapper },
   mixins: [
-    submittableMixin(),
-    validationErrorsMixin(),
-    confirmableModalMixin(),
+    createSubmittableMixin(),
+    createValidationErrorsMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     return {

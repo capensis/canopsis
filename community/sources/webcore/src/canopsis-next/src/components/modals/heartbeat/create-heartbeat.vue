@@ -19,8 +19,8 @@ import { MODALS } from '@/constants';
 
 import { heartbeatToForm, formToHeartbeat } from '@/helpers/forms/heartbeat';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
 
 import HeartbeatForm from '@/components/other/heartbeat/form/heartbeat-form.vue';
 
@@ -36,8 +36,8 @@ export default {
   },
   components: { HeartbeatForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     const { heartbeat = {} } = this.modal.config;

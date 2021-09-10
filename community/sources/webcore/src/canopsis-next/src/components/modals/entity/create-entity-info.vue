@@ -23,8 +23,8 @@ import { MODALS } from '@/constants';
 
 import { entityInfoToForm, formToEntityInfo } from '@/helpers/forms/entity-info';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
 
 import EntityInfoForm from '@/components/other/entity/form/entity-info-form.vue';
 
@@ -37,8 +37,8 @@ export default {
   },
   components: { EntityInfoForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     return {

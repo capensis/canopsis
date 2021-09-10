@@ -26,8 +26,8 @@ import moment from 'moment';
 
 import { MODALS, DATETIME_FORMATS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
 
 import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 
@@ -43,8 +43,8 @@ export default {
   },
   components: { DateIntervalSelector, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     const { config } = this.modal;

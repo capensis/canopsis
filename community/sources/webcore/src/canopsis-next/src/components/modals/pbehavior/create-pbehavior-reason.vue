@@ -15,7 +15,7 @@ import { MODALS } from '@/constants';
 
 import { pbehaviorReasonToForm } from '@/helpers/forms/reason-pbehavior';
 
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
 
 import CreatePbehaviorReasonForm from '@/components/other/pbehavior/reasons/form/create-pbehavior-reason-form.vue';
 
@@ -31,7 +31,7 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    validationErrorsMixin(),
+    createValidationErrorsMixin(),
   ],
   data() {
     return {

@@ -18,8 +18,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
 
 import { filtersToForm, formToFilters } from '@/helpers/forms/filter';
 
@@ -34,8 +34,8 @@ export default {
   name: MODALS.filtersList,
   components: { FiltersForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     const { filters = [] } = this.modal.config;

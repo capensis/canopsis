@@ -25,8 +25,8 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS, STATS_DISPLAY_MODE, STATS_DISPLAY_MODE_PARAMETERS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
 
 import StatsDisplayModeForm from '@/components/widgets/stats/stats-display-mode-form.vue';
 
@@ -36,8 +36,8 @@ export default {
   name: MODALS.statsDisplayMode,
   components: { StatsDisplayModeForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     const { displayMode } = this.modal.config;

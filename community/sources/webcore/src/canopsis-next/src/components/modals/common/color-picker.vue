@@ -30,7 +30,7 @@ import { MODALS } from '@/constants';
 
 import { colorToHex, colorToRgb, isValidColor } from '@/helpers/color';
 
-import { submittableMixin } from '@/mixins/submittable';
+import { createSubmittableMixin } from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -41,7 +41,7 @@ export default {
     Compact,
     ModalWrapper,
   },
-  mixins: [submittableMixin()],
+  mixins: [createSubmittableMixin()],
   data() {
     const { config } = this.modal;
     const color = {};

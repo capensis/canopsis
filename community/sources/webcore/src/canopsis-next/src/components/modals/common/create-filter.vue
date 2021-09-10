@@ -42,8 +42,8 @@ import { ENTITIES_TYPES, MODALS } from '@/constants';
 
 import { filterToForm, formToFilter, filterToObject } from '@/helpers/forms/filter';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
 
 import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
 
@@ -56,8 +56,8 @@ export default {
   },
   components: { FilterEditor, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     const { title = '', filter = '{}' } = this.modal.config.filter || {};

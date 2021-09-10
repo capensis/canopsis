@@ -27,9 +27,9 @@ import { playlistToForm, formToPlaylist } from '@/helpers/forms/playlist';
 
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { permissionsEntitiesPlaylistTabMixin } from '@/mixins/permissions/entities/playlist-tab';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createValidationErrorsMixin } from '@/mixins/form/validation-errors';
 
 import PlaylistForm from '@/components/other/playlists/form/playlist-form.vue';
 
@@ -46,9 +46,9 @@ export default {
   mixins: [
     entitiesViewGroupMixin,
     permissionsEntitiesPlaylistTabMixin,
-    submittableMixin(),
-    validationErrorsMixin(),
-    confirmableModalMixin(),
+    createSubmittableMixin(),
+    createValidationErrorsMixin(),
+    createConfirmableModalMixin(),
   ],
   data() {
     return {

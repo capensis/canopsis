@@ -25,7 +25,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
+import { createSubmittableMixin } from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -35,7 +35,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.clickOutsideConfirmation,
   components: { ModalWrapper },
-  mixins: [submittableMixin()],
+  mixins: [createSubmittableMixin()],
   methods: {
     async submit(confirmed) {
       await this.config.action(confirmed);

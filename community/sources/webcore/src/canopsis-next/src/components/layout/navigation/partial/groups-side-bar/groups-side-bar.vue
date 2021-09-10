@@ -53,7 +53,7 @@ import { groupsWithViewsToPositions } from '@/helpers/forms/view';
 
 import entitiesViewMixin from '@/mixins/entities/view';
 import layoutNavigationGroupsBarMixin from '@/mixins/layout/navigation/groups-bar';
-import registrableMixin from '@/mixins/registrable';
+import { registrableMixin } from '@/mixins/registrable';
 
 import GroupsSettingsButton from '../groups-settings-button.vue';
 import AppLogo from '../app-logo.vue';

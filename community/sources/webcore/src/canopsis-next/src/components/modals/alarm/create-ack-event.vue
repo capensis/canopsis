@@ -37,8 +37,8 @@ import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { createSubmittableMixin } from '@/mixins/submittable';
+import { createConfirmableModalMixin } from '@/mixins/confirmable-modal';
 
 import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
@@ -59,9 +59,9 @@ export default {
   mixins: [
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
-    submittableMixin(),
-    confirmableModalMixin(),
-    submittableMixin({
+    createSubmittableMixin(),
+    createConfirmableModalMixin(),
+    createSubmittableMixin({
       method: 'submitWithTicket',
       property: 'submittingWithTicket',
       computedProperty: 'isDisabledWithTicket',

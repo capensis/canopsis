@@ -14,7 +14,7 @@ import uid from '@/helpers/uid';
  * @param {boolean} [cloning = false]
  * @returns {{created(): void, methods: {}, beforeDestroy(): void, inject: [string]}|*}
  */
-export default ({
+export const createConfirmableFormMixin = ({
   field = 'form',
   method = 'submit',
   modalName = MODALS.confirmation,
@@ -59,3 +59,5 @@ export default ({
     },
   };
 };
+
+export default createConfirmableFormMixin;
