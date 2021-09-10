@@ -65,7 +65,7 @@ function scopedPageObject(pageObject) {
   return {
     ...pageObject,
     commands: [
-      ...preparedPageObjectCommands.map((commandsItem) => ({
+      ...preparedPageObjectCommands.map(commandsItem => ({
         setSelectorScope(sectionSelector) {
           const elements = sectionSelector
             ? elementsWrapperCreator(sectionSelector, pageObject.elements)

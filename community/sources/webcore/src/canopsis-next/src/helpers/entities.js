@@ -389,7 +389,7 @@ export const getViewsWidgetsIdsMappings = (oldView, newView) => oldView.tabs
  * @param alarm - alarm entity
  * @returns {boolean}
  */
-export const isResolvedAlarm = (alarm) => [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled]
+export const isResolvedAlarm = alarm => [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled]
   .includes(alarm.v.status.val);
 
 /**
@@ -398,7 +398,7 @@ export const isResolvedAlarm = (alarm) => [ENTITIES_STATUSES.closed, ENTITIES_ST
  * @param alarm - alarm entity
  * @returns {boolean}
  */
-export const isWarningAlarmState = (alarm) => ENTITIES_STATES.ok !== alarm.v.state.val;
+export const isWarningAlarmState = alarm => ENTITIES_STATES.ok !== alarm.v.state.val;
 
 /**
  * Function return new title if title is not uniq

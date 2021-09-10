@@ -53,7 +53,7 @@ module.exports = {
         tab,
         ...views.view,
         tabId: JSON.parse(requestData).tabs
-          .filter((item) => item.title === tab)[0]._id,
+          .filter(item => item.title === tab)[0]._id,
         ...JSON.parse(requestData),
         ...JSON.parse(responseData),
       },
@@ -125,7 +125,7 @@ module.exports = {
         copyTab,
         ...views.view,
         copyTabId: JSON.parse(requestData).tabs
-          .filter((item) => item.title === copyTab)[0]._id,
+          .filter(item => item.title === copyTab)[0]._id,
         ...JSON.parse(requestData),
         ...JSON.parse(responseData),
       },
@@ -169,7 +169,7 @@ module.exports = {
         copyTab,
         ...views.viewForCopying,
         copyTabId: JSON.parse(requestData).tabs
-          .filter((item) => item.title === copyTab)[0]._id,
+          .filter(item => item.title === copyTab)[0]._id,
         ...JSON.parse(requestData),
         ...JSON.parse(responseData),
       },

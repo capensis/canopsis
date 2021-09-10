@@ -174,7 +174,7 @@ module.exports = {
 
     alarmsWidget.waitFirstPbehaviorXHR(
       () => createPbehaviorModal.clickSubmitButton(),
-      (id) => browser.assert.equal(!!id, true),
+      id => browser.assert.equal(!!id, true),
     );
   },
 

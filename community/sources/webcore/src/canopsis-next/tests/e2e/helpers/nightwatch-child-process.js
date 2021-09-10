@@ -105,7 +105,7 @@ const onNextQueueFunction = () => new Promise((resolve) => {
     process.send(JSON.stringify({ type: initQueueType }));
     process.on('message', eventHandler);
   }
-}).then((handler) => handler && process.removeListener('message', handler));
+}).then(handler => handler && process.removeListener('message', handler));
 
 /**
  * Call and await callback, after resolve send a message to parent process

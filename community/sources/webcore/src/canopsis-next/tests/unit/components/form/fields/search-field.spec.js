@@ -120,6 +120,6 @@ describe('SearchField', () => {
 
     expect(wrapper.emitted('clear')).toBeTruthy();
     expect(wrapper.emitted('clear').length).toBe(1);
-    expect(wrapper.emittedByOrder().map((e) => e.name)).toEqual(['input', 'clear']);
+    expect(wrapper.emittedByOrder().map(e => e.name)).toEqual(['input', 'clear']);
   });
 });

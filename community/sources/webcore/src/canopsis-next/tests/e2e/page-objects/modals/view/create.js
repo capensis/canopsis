@@ -21,7 +21,7 @@ const commands = {
       viewFieldGroupTagsChipsRemove.locateStrategy,
       viewFieldGroupTagsChipsRemove.selector,
       ({ value = [] }) => {
-        value.forEach((item) => this.api.elementIdClick(item.ELEMENT).pause(DEFAULT_PAUSE));
+        value.forEach(item => this.api.elementIdClick(item.ELEMENT).pause(DEFAULT_PAUSE));
       },
     );
     return this;
@@ -40,7 +40,7 @@ const commands = {
   },
   setViewGroupTags(value) {
     if (isArray(value)) {
-      value.forEach((tag) => this.customSetValue('@viewFieldGroupTags', tag)
+      value.forEach(tag => this.customSetValue('@viewFieldGroupTags', tag)
         .customKeyup('@viewFieldGroupTags', this.api.Keys.ENTER));
     } else {
       this.customSetValue('@viewFieldGroupTags', value)

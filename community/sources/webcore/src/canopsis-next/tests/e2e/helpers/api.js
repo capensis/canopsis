@@ -337,7 +337,7 @@ async function removeWidgetView(viewId, groupId) {
 
   await removeRightsForView(viewId, options);
 
-  await Promise.all(roles.map((role) => createUserRole(role, omit(role.rights, [viewId]), options)));
+  await Promise.all(roles.map(role => createUserRole(role, omit(role.rights, [viewId]), options)));
   await removeViewGroup(groupId, options);
 }
 

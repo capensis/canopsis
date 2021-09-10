@@ -90,7 +90,7 @@ module.exports = {
         () => rolesPage.clickSubmitSearchButton(), ({ responseData }) => {
           const { data } = JSON.parse(responseData);
 
-          browser.assert.ok(data.every((item) => item._id === role._id));
+          browser.assert.ok(data.every(item => item._id === role._id));
           browser.assert.elementsCount(rolesPage.elements.dataTableUserItem.selector, 1);
 
           rolesPage.verifyPageRoleBefore(role._id);
@@ -102,7 +102,7 @@ module.exports = {
         () => rolesPage.clickClearSearchButton(), ({ responseData }) => {
           const { data } = JSON.parse(responseData);
 
-          browser.assert.ok(data.some((item) => item._id !== role._id));
+          browser.assert.ok(data.some(item => item._id !== role._id));
         },
       );
   },

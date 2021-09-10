@@ -9,7 +9,7 @@ const modalSelector = sel('createFilterModal');
 
 const commands = {
   selectGroup([firstIndex, ...path]) {
-    const childrens = path.map((item) => this.el('@filterGroupLayout', item));
+    const childrens = path.map(item => this.el('@filterGroupLayout', item));
     const parent = this.el('@filterGroup', firstIndex);
 
     return [parent, ...childrens].join(' ');
