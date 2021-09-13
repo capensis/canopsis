@@ -22,7 +22,7 @@ import App from '@/app.vue';
 import router from '@/router';
 import store from '@/store';
 import i18n from '@/i18n';
-import filters from '@/filters';
+import Filters from '@/filters';
 
 import featuresService from '@/services/features';
 
@@ -143,7 +143,7 @@ import * as modalsComponents from '@/components/modals';
 Vue.use(VueAsyncComputed);
 Vue.use(VueResizeText);
 Vue.use(PortalVue);
-Vue.use(filters);
+Vue.use(Filters);
 Vue.use(Vuetify, {
   iconfont: 'md',
   theme: {

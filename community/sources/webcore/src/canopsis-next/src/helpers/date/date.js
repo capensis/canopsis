@@ -114,15 +114,15 @@ export const isEndOfDay = (date, unit = 'seconds') => {
  * @return {string}
  */
 export const convertDateToString = (date, format, ignoreTodayChecker, defaultValue) => {
-  let momentFormat = DATETIME_FORMATS[format] || format;
+  let momentFormat = DATETIME_FORMATS[format] ?? format;
 
   if (!date) {
-    return defaultValue || date;
+    return defaultValue ?? date;
   }
 
   const dateObject = convertTimestampToMoment(date);
 
-  if (!dateObject || !dateObject.isValid()) {
+  if (!dateObject?.isValid()) {
     console.warn('Could not build a valid `moment` object from input.');
     return date;
   }
@@ -133,6 +133,22 @@ export const convertDateToString = (date, format, ignoreTodayChecker, defaultVal
 
   return dateObject.format(momentFormat);
 };
+
+/**
+ * Convert date to timezone date string
+ *
+ * @param date
+ * @param timezone
+ * @param format
+ * @param defaultValue
+ * @return {string}
+ */
+export const convertDateToTimezoneDateString = (date, timezone, format, defaultValue = '') => convertDateToString(
+  convertTimestampToMomentByTimezone(date, timezone),
+  format,
+  true,
+  defaultValue,
+);
 
 /**
  * Return moment with start of day timestamp

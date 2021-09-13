@@ -14,7 +14,7 @@
         )
           template(slot="label", slot-scope="{ item }")
             slot(name="expand", :item="item")
-              v-avatar.white--text(color="primary", size="32") {{ item | get(`${itemChildren}.length`, null, 0) }}
+              v-avatar.white--text(color="primary", size="32") {{ item | get(`${itemChildren}.length`, 0) }}
             slot(name="expand-append", :item="item")
       v-flex
         v-data-table(

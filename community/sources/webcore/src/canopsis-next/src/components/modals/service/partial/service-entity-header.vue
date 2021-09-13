@@ -6,7 +6,7 @@
       v-layout(align-center)
         div.mr-1.entity-name(
           v-resize-text="{ maxFontSize: '16px' }",
-        ) {{ { entity } | get(entityNameField, false, entityNameField) }}
+        ) {{ { entity } | get(entityNameField, entityNameField) }}
         v-btn.mx-1.white(
           v-for="icon in extraIcons",
           :key="icon.icon",

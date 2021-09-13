@@ -85,7 +85,9 @@ export default {
   },
   computed: {
     value() {
-      return this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '');
+      const value = get(this.alarm, this.column.value, '');
+
+      return this.columnFilter ? this.columnFilter(value) : value;
     },
 
     sanitizedValue() {
@@ -197,10 +199,12 @@ export default {
         };
       }
 
+      const prepareFunc = this.columnFilter ?? String;
+
       return {
         bind: {
           is: 'c-ellipsis',
-          text: String(this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '')),
+          text: prepareFunc(get(this.alarm, this.column.value, '')),
         },
       };
     },

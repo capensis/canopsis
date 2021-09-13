@@ -166,7 +166,7 @@ export const formToDurationWithEnabled = ({ value, unit, enabled }) => ({
  * @param {DurationUnit[]} [availableUnits = AVAILABLE_SORTED_TIME_UNITS]
  * @return {DurationForm}
  */
-export const formToMaxByAvailableUnitsForm = (
+export const convertDurationFormToMaxUnitDurationForm = (
   durationForm = { value: 0, unit: TIME_UNITS.second },
   availableUnits = AVAILABLE_SORTED_TIME_UNITS,
 ) => {
@@ -182,6 +182,24 @@ export const formToMaxByAvailableUnitsForm = (
     value: unitValue,
     unit: maxUnit || unit,
   };
+};
+
+/**
+ * Filter for getting max available interval value from unit
+ *
+ * @param {number|string} [value = 0]
+ * @param {string} [unit = TIME_UNITS.second]
+ * @param {string[]} [availableUnits = AVAILABLE_SORTED_TIME_UNITS]
+ * @return {string}
+ */
+export const convertDurationFormToMaxUnitDurationString = (
+  value = 0,
+  unit = TIME_UNITS.second,
+  availableUnits = AVAILABLE_SORTED_TIME_UNITS,
+) => {
+  const durationForm = convertDurationFormToMaxUnitDurationForm({ value, unit }, availableUnits);
+
+  return `${durationForm.value}${durationForm.unit}`;
 };
 
 /**

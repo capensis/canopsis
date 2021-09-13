@@ -4,6 +4,12 @@
     "plugin:vue/strongly-recommended",
     "@vue/airbnb"
   ],
+
+  "parserOptions": {
+    "parser": "babel-eslint",
+    "sourceType": "module"
+  },
+
   "plugins": [
     "vue"
   ],
