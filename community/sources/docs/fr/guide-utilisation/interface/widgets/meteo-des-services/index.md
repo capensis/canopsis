@@ -76,7 +76,7 @@ La couleur de la tuile correspond à l'état d'impact du service. Cette valeur e
 >
 > L'état d'impact du service est donc de `3 * 5 = 15`
 
-Voici la palette de couleurs correspondant à l'état d'impact:
+Voici la palette de couleurs correspondant à l'état d'impact :
 
 ![](./img/color_prio_table.png)
 
