@@ -89,7 +89,7 @@ Ce niveau d'impact permet aussi de définir la couleurs de l'alarme ou de la tui
 
 ## Météo
 
-La [*météo des services* est un widget](../interface/widgets/meteo-des-services/index.md) qui permet permet d'avoir une vue globale sur l'état d'un ensemble d'[entités](#entite). Pour cela, elle affiche des tuiles dont la couleur est représentative de la [priorité](#priorite) des [alarmes](#alarme) calculée par le [service](#service) lié.
+La [*météo des services* est un widget](../interface/widgets/meteo-des-services/index.md) qui permet d'avoir une vue globale sur l'état d'un ensemble d'[entités](#entite). Pour cela, elle affiche des tuiles dont la couleur est représentative de la [priorité](#priorite) des [alarmes](#alarme) calculée par le [service](#service) lié.
 
 ## Moteur
 
