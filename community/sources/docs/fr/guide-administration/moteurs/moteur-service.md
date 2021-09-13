@@ -30,7 +30,7 @@ Le but d'un service est de donner une visibilité accrue et claire sur l'état d
 
 La liste des alarmes est triée par `priority`. Toutes les entités ont une propriété `impact_level`. Ainsi, les alarmes ont une `priority` définie en fonction de la criticité de l'alarme et du niveau d'impact de l'entité.
 
-Le paramètre dérivé `alarm priority` est ajouté aux paramètres de l'alarme. Ce paramètre est égale à la valeur de l'état de l'alarme (`state.val`) multipliée par l'`impact_level` de l'entité liée à l'alarme.
+Le paramètre dérivé `alarm priority` est ajouté aux paramètres de l'alarme. Ce paramètre est égal à la valeur de l'état de l'alarme (`state.val`) multipliée par l'`impact_level` de l'entité liée à l'alarme.
 
 !!! note
 	`alarm priority` affecte la fonction de tri des alarmes ou le filtrage des alarmes par priorité, il n'affecte pas le paramètre `impact_state` d'une entité.
