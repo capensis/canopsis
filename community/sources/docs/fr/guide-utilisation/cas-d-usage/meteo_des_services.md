@@ -80,7 +80,7 @@ Au clic sur la tuile "ECommerce", on observe la liste des ses composants constit
 
 ![](./img/mds_widget03.png)
 
-Ces modales peuvent être déroulés afin d'y consulter les *info* ainsi que l'arbre des dépendances.
+Ces modales peuvent être déroulées afin d'y consulter les *info* ainsi que l'arbre des dépendances.
 
 ![](./img/mds_widget04.png)
 
