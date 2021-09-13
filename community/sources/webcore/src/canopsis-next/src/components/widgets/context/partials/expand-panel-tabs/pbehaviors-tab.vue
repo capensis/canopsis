@@ -7,8 +7,8 @@
           td {{ props.item.author }}
           td
             c-enabled(:value="props.item.enabled")
-          td {{ props.item.tstart | timezone($system.timezone, 'long') }}
-          td {{ props.item.tstop | timezone($system.timezone, 'long') }}
+          td {{ props.item.tstart | timezone($system.timezone) }}
+          td {{ props.item.tstop | timezone($system.timezone) }}
           td {{ props.item.type.name }}
           td {{ props.item.reason.name }}
           td {{ props.item.rrule }}

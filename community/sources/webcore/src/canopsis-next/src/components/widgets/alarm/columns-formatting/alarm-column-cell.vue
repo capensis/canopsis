@@ -117,7 +117,7 @@ export default {
     },
 
     columnFilter() {
-      const formatDate = value => this.$options.filters.dateWithToday(value, 'long', undefined, true);
+      const formatDate = value => this.$options.filters.dateWithToday(value);
       const formatDuration = value => this.$options.filters.duration(value);
 
       const PROPERTIES_FILTERS_MAP = {

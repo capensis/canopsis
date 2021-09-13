@@ -34,7 +34,7 @@ export function timestampHelper(date) {
   let result = '';
 
   if (date) {
-    result = convertDateToStringWithFormatForToday(date, 'long');
+    result = convertDateToStringWithFormatForToday(date);
   }
 
   return result;

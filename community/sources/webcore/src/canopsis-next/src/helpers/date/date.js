@@ -132,7 +132,7 @@ export const convertDateToString = (date, format = DATETIME_FORMATS.long, defaul
  * Convert date to string. If the date is today, only the time is returned.
  *
  * @param {Date|number|moment.Moment} date
- * @param {string} format
+ * @param {string} [format]
  * @param {string} [defaultValue]
  */
 export const convertDateToStringWithFormatForToday = (date, format, defaultValue) => {
@@ -147,11 +147,11 @@ export const convertDateToStringWithFormatForToday = (date, format, defaultValue
  *
  * @param date
  * @param timezone
- * @param format
- * @param defaultValue
+ * @param [format]
+ * @param [defaultValue]
  * @return {string}
  */
-export const convertDateToTimezoneDateString = (date, timezone, format, defaultValue = '') => convertDateToString(
+export const convertDateToTimezoneDateString = (date, timezone, format, defaultValue) => convertDateToString(
   convertTimestampToMomentByTimezone(date, timezone),
   format,
   defaultValue,

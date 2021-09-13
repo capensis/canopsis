@@ -4,7 +4,7 @@
     div.text-md-center
       strong {{ $t('alarmList.actions.iconsTitles.ack') }}
       div {{ $t('common.by') }} : {{ ack.a }}
-      div {{ $t('common.date') }} : {{ ack.t | dateWithToday('long') }}
+      div {{ $t('common.date') }} : {{ ack.t | dateWithToday }}
       div(v-if="ack.initiator") {{ $t('common.initiator') }} : {{ ack.initiator }}
       div.c-extra-details__message(v-if="ack.m") {{ $tc('common.comment') }} : {{ ack.m }}
 </template>

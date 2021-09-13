@@ -4,8 +4,8 @@
     div.text-md-center
       strong {{ $t('alarmList.actions.iconsTitles.snooze') }}
       div {{ $t('common.by') }} : {{ snooze.a }}
-      div {{ $t('common.date') }} : {{ snooze.t | dateWithToday('long') }}
-      div {{ $t('common.end') }} : {{ snooze.val | dateWithToday('long') }}
+      div {{ $t('common.date') }} : {{ snooze.t | dateWithToday }}
+      div {{ $t('common.end') }} : {{ snooze.val | dateWithToday }}
       div(v-if="snooze.initiator") {{ $t('common.initiator') }} : {{ snooze.initiator }}
       div.c-extra-details__message(v-if="snooze.m") {{ $tc('common.comment') }} : {{ snooze.m }}
 </template>
