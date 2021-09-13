@@ -113,7 +113,7 @@ Au clic sur une tuile de la météo de services, une fenêtre s'ouvre.
 
 Le contenu de cette fenêtre est configurable depuis les paramètres du widget.
 
-Celle-ci contient la liste des entités surveillées. Au clic sur l'une de ces entités, deux onglets apparaissent:
+Celle-ci contient la liste des entités surveillées. Au clic sur l'une de ces entités, deux onglets apparaissent :
 
 - "Info" : Affiche les informations configurées dans le template des entités qui se trouve dans les paramètres avancés du widget. Ainsi que la listes des actions possible.
 
