@@ -74,7 +74,7 @@ En cas d'erreur fatale, telle qu'une perte prolongée de la connexion à un serv
 Les unités systemd (en installation paquets) et les lignes `restart: unless-stopped` (avec Docker Compose) sont configurées de manière à ce que les moteurs soient automatiquement relancés après une erreur fatale.
 
 !!! attention
-	Ceci est une partie essentielle de l'architecture de Canopsis et de la disponibilité du service. Il ne doit en aucun cas être modifié.
+    Ceci est une partie essentielle de l'architecture de Canopsis et de la disponibilité du service. Il ne doit en aucun cas être modifié.
 
 ## Variables d'environnement liées aux moteurs
 
