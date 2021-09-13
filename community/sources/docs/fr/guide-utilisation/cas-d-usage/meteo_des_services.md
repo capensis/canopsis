@@ -42,7 +42,7 @@ Cliquer sur le "+" correspondant à "add value rule field". Puis compléter les 
 
 ![Add field](./img/mds_create_service04.png)
 
-Valider l'ajout du champs.
+Valider l'ajout du champ.
 
 ![Add pattern](./img/mds_create_service05.png)
 
