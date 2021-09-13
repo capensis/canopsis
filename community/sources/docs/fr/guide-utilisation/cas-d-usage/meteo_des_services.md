@@ -92,7 +92,7 @@ De même, pour la tuile "Workflow commande", les différents éléments apparais
 
 La phase de préparation est terminée.
 
-Les éléments ont été paramétrés de manière manuelle, il est bien entendu beaucoup intéressant d'utiliser un mécanisme d'enrichissement par [synchronisation de référentiel externe](enrichissement.md#enrichissement-via-referentiels-externes) pour s'éviter ces opérations.  
+Les éléments ont été paramétrés de manière manuelle, il est bien entendu beaucoup plus intéressant d'utiliser un mécanisme d'enrichissement par [synchronisation de référentiel externe](enrichissement.md#enrichissement-via-referentiels-externes) pour s'éviter ces opérations.  
 
 Vous pouvez à présent simuler des alarmes sur les sous-éléments constituants et observer le comportement des tuiles de météo.  
 
