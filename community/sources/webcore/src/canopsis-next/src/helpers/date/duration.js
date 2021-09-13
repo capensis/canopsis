@@ -210,7 +210,7 @@ export const convertDurationFormToMaxUnitDurationString = (
  * @param {DurationUnit} [unit = TIME_UNITS.second]
  * @returns {string}
  */
-export const durationToString = (duration, format = DEFAULT_DURATION_FORMAT, unit = TIME_UNITS.second) => {
+export const convertDurationToString = (duration, format = DEFAULT_DURATION_FORMAT, unit = TIME_UNITS.second) => {
   if (isNil(duration)) {
     return '';
   }

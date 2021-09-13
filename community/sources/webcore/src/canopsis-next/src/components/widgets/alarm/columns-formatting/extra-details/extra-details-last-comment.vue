@@ -7,7 +7,7 @@
     div.text-md-center
       strong {{ $t('alarmList.actions.iconsTitles.comment') }}
       div {{ $t('common.by') }}: {{ lastComment.a }}
-      div {{ $t('common.date') }}: {{ lastComment.t | date('long') }}
+      div {{ $t('common.date') }}: {{ lastComment.t | dateWithToday('long') }}
       div.c-extra-details__message
         | {{ $tc('common.comment') }}:&nbsp;
         span(v-html="lastComment.m")

@@ -12,7 +12,7 @@ export const getLetterByIndex = (index = 0) => String.fromCharCode(FIRST_LETTER_
  * Convert number to string with fixed point
  *
  * @param {number} value
- * @param {number} digits
+ * @param {number} [digits = 3]
  * @return {string}
  */
 export const convertNumberToFixedString = (value, digits = 3) => value && Number(value).toFixed(digits);
@@ -21,7 +21,7 @@ export const convertNumberToFixedString = (value, digits = 3) => value && Number
  * Convert number to rounded percent string
  *
  * @param {number} value - Numeric value to format
- * @param {number} precision - Number of floating digit to keep
+ * @param {number} [precision = 3] - Number of floating digit to keep
  *
  * @returns {string}
  */

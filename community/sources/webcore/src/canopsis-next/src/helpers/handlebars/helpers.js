@@ -4,8 +4,8 @@ import axios from 'axios';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import { durationToString } from '@/helpers/date/duration';
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
+import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 import i18n from '@/i18n';
 
@@ -34,7 +34,7 @@ export function timestampHelper(date) {
   let result = '';
 
   if (date) {
-    result = convertDateToString(date, 'long');
+    result = convertDateToStringWithFormatForToday(date, 'long');
   }
 
   return result;
@@ -65,7 +65,7 @@ export function internalLinkHelper(options) {
  * @returns {String}
  */
 export function durationHelper(seconds) {
-  return durationToString(seconds, DATETIME_FORMATS.refreshFieldFormat);
+  return convertDurationToString(seconds, DATETIME_FORMATS.refreshFieldFormat);
 }
 
 /**

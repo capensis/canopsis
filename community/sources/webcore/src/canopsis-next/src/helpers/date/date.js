@@ -109,13 +109,10 @@ export const isEndOfDay = (date, unit = 'seconds') => {
  *
  * @param {Date|number|moment.Moment} date
  * @param {string} format
- * @param {boolean} [ignoreTodayChecker]
  * @param {string} [defaultValue]
  * @return {string}
  */
-export const convertDateToString = (date, format, ignoreTodayChecker, defaultValue) => {
-  let momentFormat = DATETIME_FORMATS[format] ?? format;
-
+export const convertDateToString = (date, format, defaultValue) => {
   if (!date) {
     return defaultValue ?? date;
   }
@@ -124,14 +121,25 @@ export const convertDateToString = (date, format, ignoreTodayChecker, defaultVal
 
   if (!dateObject?.isValid()) {
     console.warn('Could not build a valid `moment` object from input.');
+
     return date;
   }
 
-  if (!ignoreTodayChecker && dateObject.isSame(new Date(), 'day')) {
-    momentFormat = DATETIME_FORMATS.time;
-  }
+  return dateObject.format(DATETIME_FORMATS[format] ?? format);
+};
 
-  return dateObject.format(momentFormat);
+/**
+ * Convert date to string. If the date is today, only the time is returned.
+ *
+ * @param {Date|number|moment.Moment} date
+ * @param {string} format
+ * @param {string} [defaultValue]
+ */
+export const convertDateToStringWithFormatForToday = (date, format, defaultValue) => {
+  const dateObject = convertTimestampToMoment(date);
+  const resultFormat = dateObject.isSame(new Date(), 'day') ? DATETIME_FORMATS.time : format;
+
+  return convertDateToString(date, resultFormat, defaultValue);
 };
 
 /**
@@ -146,7 +154,6 @@ export const convertDateToString = (date, format, ignoreTodayChecker, defaultVal
 export const convertDateToTimezoneDateString = (date, timezone, format, defaultValue = '') => convertDateToString(
   convertTimestampToMomentByTimezone(date, timezone),
   format,
-  true,
   defaultValue,
 );
 

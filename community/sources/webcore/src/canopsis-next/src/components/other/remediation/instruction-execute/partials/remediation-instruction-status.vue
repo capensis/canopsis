@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     convertDate(date) {
-      return this.$options.filters.date(date, 'dateTimePicker', true);
+      return this.$options.filters.date(date, 'dateTimePicker');
     },
   },
 };

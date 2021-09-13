@@ -24,9 +24,9 @@
       template(slot="type", slot-scope="props")
         | {{ $t(`remediationInstructions.types.${props.item.type}`) }}
       template(slot="last_executed_on", slot-scope="props")
-        | {{ props.item.last_executed_on | date('long', true, null) }}
+        | {{ props.item.last_executed_on | date('long', null) }}
       template(slot="last_modified", slot-scope="props")
-        | {{ props.item.last_modified | date('long', true, null) }}
+        | {{ props.item.last_modified | date('long', null) }}
       template(slot="avg_complete_time", slot-scope="props")
         | {{ props.item.avg_complete_time | duration }}
       template(slot="alarm_states", slot-scope="props")

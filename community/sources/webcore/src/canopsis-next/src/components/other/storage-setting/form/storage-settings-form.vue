@@ -126,25 +126,25 @@ export default {
 
     junitSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.junit, DATETIME_FORMATS.long, true),
+        launchedAt: this.$options.filters.date(this.history.junit, DATETIME_FORMATS.long),
       });
     },
 
     remediationSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.remediation, DATETIME_FORMATS.long, true),
+        launchedAt: this.$options.filters.date(this.history.remediation, DATETIME_FORMATS.long),
       });
     },
 
     pbehaviorSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.pbehavior, DATETIME_FORMATS.long, true),
+        launchedAt: this.$options.filters.date(this.history.pbehavior, DATETIME_FORMATS.long),
       });
     },
 
     healthCheckSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.health_check, DATETIME_FORMATS.long, true),
+        launchedAt: this.$options.filters.date(this.history.health_check, DATETIME_FORMATS.long),
       });
     },
 
@@ -153,7 +153,7 @@ export default {
 
       const result = [
         this.$t('storageSetting.history.scriptLaunched', {
-          launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long, true),
+          launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long),
         }),
       ];
 
@@ -177,7 +177,7 @@ export default {
 
       const result = [
         this.$t('storageSetting.history.scriptLaunched', {
-          launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long, true),
+          launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long),
         }),
       ];
 
