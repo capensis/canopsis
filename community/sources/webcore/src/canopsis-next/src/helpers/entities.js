@@ -6,7 +6,7 @@ import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
 import {
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   WIDGET_TYPES,
-  STATS_CALENDAR_COLORS,
+  ALARM_STATS_CALENDAR_COLORS,
   STATS_TYPES,
   STATS_DURATION_UNITS,
   QUICK_RANGES,
@@ -199,7 +199,7 @@ export function generateWidgetByType(type) {
         filters: [],
         opened: false,
         considerPbehaviors: false,
-        criticityLevelsColors: { ...STATS_CALENDAR_COLORS.alarm },
+        criticityLevelsColors: { ...ALARM_STATS_CALENDAR_COLORS },
         criticityLevels: {
           minor: 20,
           major: 30,
