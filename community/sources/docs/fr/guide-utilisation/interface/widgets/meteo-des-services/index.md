@@ -185,7 +185,7 @@ Un champ de texte vous permet de définir ce titre.
 #### Editeur de filtre (*optionnel*)
 
 Ce paramètre permet de définir le filtre à appliquer à la météo de services.
-Ce filtre permet de n'afficher qu'une partie des observateurs.
+Ce filtre permet de n'afficher qu'une partie des services.
 Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../filtres/index.md).
 
 Pour créer un filtre, ou éditer celui actuellement actif, cliquez sur le bouton 'Créer/Editer'. Une fenêtre de création de filtre s'ouvre alors.
@@ -193,7 +193,7 @@ Pour créer un filtre, ou éditer celui actuellement actif, cliquez sur le bouto
 Pour supprimer le filtre actuellement actif, cliquez sur l'icone de suppression se trouvant à droite du bouton 'Créer/Editer'. Une fenêtre vous demande alors de confirmer la suppression.
 
 !!! warning "Champs utilisables dans le filtre"
-    Le filtre utilise les champs des entités (qui sont différents des champs utilisables dans les templates). Par exemple, pour filtrer sur le nom d'un observateur, il faut utiliser `name`, et non `display_name`.
+    Le filtre utilise les champs des entités (qui sont différents des champs utilisables dans les templates). Par exemple, pour filtrer sur le nom d'un service, il faut utiliser `name`, et non `display_name`.
 
 #### Paramètres avancés
 
@@ -202,7 +202,7 @@ Pour supprimer le filtre actuellement actif, cliquez sur l'icone de suppression 
 Ce paramètre permet de trier les tuiles selon un attribut pré-défini par ordre alphabétique.  
 
 !!! attention
-    Le tri implémenté est sensible à la casse et fait que les majuscules sont traitées avant les minuscules
+    Le tri implémenté est sensible à la casse et fait que les majuscules sont traitées avant les minuscules.
 
 Par défaut, les attributs disponibles pour le tri sont :
 
@@ -223,7 +223,7 @@ Le langage utilisé ici est le Handlebars.
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entre le texte souhaité pour le template des tuiles, puis cliquez sur 'Envoyer'.
 
-Une variable est disponible ici pour vous permettre d'afficher les détails de l'observateur : `entity`.
+Une variable est disponible ici pour vous permettre d'afficher les détails du service : `entity`.
 Exemple : Pour afficher le champ `display_name` de l'observateur (qui correspond au nom de l'observateur), il vous faut écrire dans le template : `{{ entity.display_name }}`.
 Tous les champs disponibles dans l'observateur sont disponibles ici.
 
@@ -231,7 +231,7 @@ Tous les champs disponibles dans l'observateur sont disponibles ici.
 
 Ce paramètre permet de personnaliser les informations affichées dans la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
 
-Il vous est possible ici d'afficher, à n'importe quel endroit de la modale, la liste des entités concernées par l'observateur sur lequel vous avez cliqué. Pour ce faire, insérez dans le template:
+Il vous est possible ici d'afficher, à n'importe quel endroit de la modale, la liste des entités concernées par le service sur lequel vous avez cliqué. Pour ce faire, insérez dans le template:
 
 ```
 {{ entities }}

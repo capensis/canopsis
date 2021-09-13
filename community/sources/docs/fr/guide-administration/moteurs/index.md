@@ -25,7 +25,7 @@ La plupart des moteurs « nouvelle génération » de Canopsis sont écrits en
 | [`engine-fifo`](moteur-fifo.md) | Garantit la cohérence et l'ordre des évènements entrant dans Canopsis | |
 | [`engine-heartbeat`](moteur-heartbeat.md)  | Surveille certaines entités et lève des alarmes en cas d'absence d'information | |
 | [`engine-pbehavior`](moteur-pbehavior.md) | Gère les comportements périodiques | |
-| [`engine-service`](moteur-service.md)| Calcule les états des [services](../../guide-utilisation/vocabulaire/index.md#service) | | 
+| [`engine-service`](moteur-service.md)| Calcule les états des [services](../../guide-utilisation/vocabulaire/index.md#service) | |
 | [`engine-webhook`](moteur-webhook.md) | Gère le système de webhooks vers des services externes | ✅ |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 

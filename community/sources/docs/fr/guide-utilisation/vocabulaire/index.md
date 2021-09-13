@@ -1,14 +1,14 @@
-# Vocabulaire des termes Canopsis
+# Vocabulaire des termes de Canopsis
 
 ## Alarme
 
 Une *alarme* est le résultat du traitement des [évènements](#evenement) par un [moteur](#moteur). Elle sert à signaler un problème.
 
-Une alarme est liée à une [entité](#entite) de type [composant](#composant), [ressource](#ressource) ou [service](#service). La combinaison d'un [connecteur](#connecteur), d'un [nom de connecteur](#nom-de-connecteur), d'un [composant](#composant) et d'une [ressource](#ressource) créé une alarme unique. Si l'un de ces éléments change, une alarme différente est créée.
+Une alarme est liée à une [entité](#entite) de type [composant](#composant), [ressource](#ressource) ou [service](#service). La combinaison d'un [connecteur](#connecteur), d'un [nom de connecteur](#nom-de-connecteur), d'un [composant](#composant) et d'une [ressource](#ressource) crée une alarme unique. Si l'un de ces éléments change, une alarme différente est créée.
 
 Une alarme peut connaître de multiples changements de [criticité](#criticite), [priorité](#priorite) et de [statut](#statut), et subir une suite d'actions (acquittement, mise en veille, changement de criticité, annulation, etc.), [utilisateurs](../interface/widgets/bac-a-alarmes/actions.md) ou [automatiques](../../guide-administration/moteurs/moteur-action.md). L'ensemble de ces changements et de ces actions constitue le *cycle d'alarme*.
 
-Les alarmes peuvent être affichées à l'aide d'un widget [Bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
+Les alarmes peuvent être affichées à l'aide d'un [widget Bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
 
 Vous pouvez consulter la [structure des alarmes](../../guide-developpement/base-de-donnees/periodical-alarm.md) présente dans le Guide de développement.
 
@@ -25,7 +25,7 @@ Un *composant* peut être soit :
 
 ## Context-Graph
 
-Le *context-graph* est un schéma relationnel entre les [entités](#entite) de Canopsis. Il sert à grapher leur contexte. Il s'appuie sur les notions de [`impact` et `depends`](../../guide-developpement/base-de-donnees/default-entities.md#context-graph). Il est présent au sein de chaque [entité](#entite) et est accessible au travers du widget [explorateur de contexte](../interface/widgets/contexte/index.md).
+Le *context-graph* est un schéma relationnel entre les [entités](#entite) de Canopsis. Il sert à grapher leur contexte. Il s'appuie sur les notions de [`impact` et `depends`](../../guide-developpement/base-de-donnees/default-entities.md#context-graph). Il est présent au sein de chaque [entité](#entite) et est accessible au travers du [widget Explorateur de contexte](../interface/widgets/contexte/index.md).
 
 ## Connecteur
 
@@ -37,14 +37,14 @@ Un *connecteur* peut être soit :
 
 ## Criticité
 
-Une [alarme](#alarme) a une *criticité*, indiquant la gravité de l'incident. 
+Une [alarme](#alarme) a une *criticité*, indiquant la gravité de l'incident.
 
 Il y a actuellement 4 criticités possibles :
 
-*  0 - Info (quand en cours)/ OK (quand résolue), de type stable.
-*  1 - Mineure (*minor*), de type alerte.
-*  2 - Majeure (*major*), de type alerte.
-*  3 - Critique (*critical*), de type alerte.
+* 0 - Info (quand en cours) / OK (quand résolue), de type stable.
+* 1 - Mineure (*minor*), de type alerte.
+* 2 - Majeure (*major*), de type alerte.
+* 3 - Critique (*critical*), de type alerte.
 
 ## Enrichissement
 
@@ -53,13 +53,12 @@ L'*enrichissement* est l'action d'ajouter des informations supplémentaires à u
 On peut enrichir :
 
 * Un [évènement](#evenement) via l'[event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md).
-* Une [entité](#entite) via l'[event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md#set_entity_info_from_template), l'[explorateur de contexte](../interface/widgets/contexte/index.md) ou les [drivers](../../interconnexions/index.md#drivers).
+* Une [entité](#entite) via l'[event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md#set_entity_info_from_template), l'[Explorateur de contexte](../interface/widgets/contexte/index.md) ou les [drivers](../../interconnexions/index.md#drivers).
 * Une [alarme](#alarme) via le [moteur `engine-dynamic-infos`](../../guide-administration/moteurs/moteur-dynamic-infos.md).
 
 ## Entité
 
 Les *entités* servent à structurer les [alarmes](#alarme). Elles sont liées entre elles via le [context-graph](#context-graph). Elles peuvent permettre, via l'[enrichissement](#enrichissement) de conserver des données statiques (emplacement du serveur, nom du client, etc.).
-
 
 Les entités sont accessibles au travers du [widget Explorateur de contexte](../interface/widgets/contexte/index.md).
 

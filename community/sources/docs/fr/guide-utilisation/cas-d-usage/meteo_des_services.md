@@ -10,7 +10,7 @@ Une tuile correspond à l'état d'un *service*, qui est calculé selon des règl
     Nous souhaitons représenter l'état de l'application *E-Commerce* sur une météo des services.
     Cette application est dépendante de 3 scénarios applicatifs :
 
-    * Accès plateforme
+    * Accès plate-forme
     * Workflow commande (Validation panier + Paiement)
     * Mon compte utilisateur
 
@@ -20,7 +20,7 @@ La première étape consiste à créer les services dans l'**exploirateur de con
 
 Ce qui donnerait un arbre de dépendance comme suit pour le service "ECommerce":
 
- * Accès plateforme
+ * Accès plate-forme
  * Workflow commande
     * Validation panier
     * Paiement
@@ -98,7 +98,7 @@ Vous pouvez à présent simuler des alarmes sur les sous-éléments constituants
 
 Pour rappel la liste des éléments constituant:
 
-* Accès plateforme
+* Accès plate-forme
 * Validation panier
 * Paiement
 * Mon compte utilisateur
