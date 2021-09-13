@@ -90,7 +90,7 @@ Cette échelle permet situer l'état du service sur la palette de couleurs ainsi
 
 #### Le point d'interrogation
 
-Cette icône clicable permet l'affichage de la valeur de toutes les variables du service. 
+Cette icône cliquable permet l'affichage de la valeur de toutes les variables du service. 
 
 Ces variables peuvent être utilisées dans l'édition des [templates](#template-tuile).
 
