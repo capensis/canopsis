@@ -35,7 +35,7 @@ La couleur de la tuile et une icône présente sur celle-ci permettent d'obtenir
 
 #### Bac à alarmes
 
-Sur le partie inférieur des tuiles, une indication "See alarms" est clicable et permet un accès direct à la liste des alarmes liées au service de la tuile.
+Sur le partie inférieuré des tuiles, une indication "See alarms" est cliquable et permet un accès direct à la liste des alarmes liées au service de la tuile.
 
 #### La couleur
 
