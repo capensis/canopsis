@@ -31,7 +31,7 @@ Chaque tuile correspond à un service.
 
 Le contenu de texte de cette tuile est personnalisable (*Cf: [Guide exploitant](#guide-exploitant_1)*). Il permet de présenter des informations sur le service.
 
-La couleur de la tuile et une icône présenet sur celle-ci permettent d'obtenir des informations sur **la criticité** du service.
+La couleur de la tuile et une icône présente sur celle-ci permettent d'obtenir des informations sur **la criticité** du service.
 
 #### Bac à alarmes
 
