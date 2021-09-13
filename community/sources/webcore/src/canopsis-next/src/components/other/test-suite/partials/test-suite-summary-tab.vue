@@ -5,7 +5,7 @@
     test-suite-summary-row(:label="$t('testSuite.hostname')", :value="testSuite.hostname")
     test-suite-summary-row(
       :label="$t('testSuite.lastUpdate')"
-    ) {{ testSuite.last_update | date('testSuiteFormat', true) }}
+    ) {{ testSuite.last_update | date('testSuiteFormat') }}
     test-suite-summary-row(
       :label="$t('testSuite.timeTaken')"
     )

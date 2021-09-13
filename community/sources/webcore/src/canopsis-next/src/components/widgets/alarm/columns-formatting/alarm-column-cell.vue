@@ -117,17 +117,20 @@ export default {
     },
 
     columnFilter() {
+      const formatDate = value => this.$options.filters.dateWithToday(value);
+      const formatDuration = value => this.$options.filters.duration(value);
+
       const PROPERTIES_FILTERS_MAP = {
-        'v.last_update_date': value => this.$options.filters.date(value, 'long'),
-        'v.creation_date': value => this.$options.filters.date(value, 'long'),
-        'v.last_event_date': value => this.$options.filters.date(value, 'long'),
-        'v.activation_date': value => this.$options.filters.date(value, 'long'),
-        'v.state.t': value => this.$options.filters.date(value, 'long'),
-        'v.status.t': value => this.$options.filters.date(value, 'long'),
-        'v.resolved': value => this.$options.filters.date(value, 'long'),
-        'v.duration': value => this.$options.filters.duration(value),
-        'v.current_state_duration': value => this.$options.filters.duration(value),
-        t: value => this.$options.filters.date(value, 'long'),
+        'v.last_update_date': formatDate,
+        'v.creation_date': formatDate,
+        'v.last_event_date': formatDate,
+        'v.activation_date': formatDate,
+        'v.state.t': formatDate,
+        'v.status.t': formatDate,
+        'v.resolved': formatDate,
+        'v.duration': formatDuration,
+        'v.current_state_duration': formatDuration,
+        t: formatDate,
 
         ...this.columnsFiltersMap,
       };

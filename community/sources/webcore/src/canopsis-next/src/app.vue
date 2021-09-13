@@ -118,7 +118,7 @@ export default {
         text: this.$t('remediationInstructionExecute.popups.wasPaused', {
           instructionName: execution.instruction_name,
           alarmName: execution.alarm_name,
-          date: this.$options.filters.date(execution.paused, 'long', true),
+          date: this.$options.filters.date(execution.paused),
         }),
       }));
     },

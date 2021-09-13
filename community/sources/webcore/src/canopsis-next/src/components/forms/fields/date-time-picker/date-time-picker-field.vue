@@ -14,7 +14,7 @@
       v-text-field(
         :label="label",
         :error-messages="errors.collect(name)",
-        :value="value | date('dateTimePicker', true)",
+        :value="value | date('dateTimePicker')",
         :append-icon="clearable ? 'close' : ''",
         readonly,
         @click:append="clear"

@@ -100,8 +100,8 @@ export default {
 
     monthIntervalMessage() {
       return this.$t('modals.statsDateInterval.info.monthPeriodUnit', {
-        start: this.$options.filters.date(this.dateObjectValues.start, 'long', false),
-        stop: this.$options.filters.date(this.dateObjectValues.stop, 'long', false),
+        start: this.$options.filters.date(this.dateObjectValues.start),
+        stop: this.$options.filters.date(this.dateObjectValues.stop),
       });
     },
   },

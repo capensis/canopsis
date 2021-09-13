@@ -24,7 +24,7 @@ export default {
     title() {
       const timestamp = this.testSuite.last_update || this.testSuite.created;
 
-      return this.$options.filters.date(timestamp, 'testSuiteFormat', true);
+      return this.$options.filters.date(timestamp, 'testSuiteFormat');
     },
 
     color() {

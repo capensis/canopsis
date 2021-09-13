@@ -6,8 +6,8 @@
       c-advanced-data-table(:headers="headers", :items="filteredPbehaviors", expand)
         template(slot="enabled", slot-scope="props")
           c-enabled(:value="props.item.enabled")
-        template(slot="tstart", slot-scope="props") {{ props.item.tstart | timezone($system.timezone, 'long') }}
-        template(slot="tstop", slot-scope="props") {{ props.item.tstop | timezone($system.timezone, 'long') }}
+        template(slot="tstart", slot-scope="props") {{ props.item.tstart | timezone($system.timezone) }}
+        template(slot="tstop", slot-scope="props") {{ props.item.tstop | timezone($system.timezone) }}
         template(slot="rrule", slot-scope="props")
           v-icon {{ props.item.rrule ? 'check' : 'clear' }}
         template(slot="expand", slot-scope="props")
