@@ -232,3 +232,9 @@ export const PATTERNS_TYPES = {
 export const AUTH_METHODS = {
   local: 'local',
 };
+
+export const ASSOCIATIVE_TABLES_NAMES = {
+  alarmColumnsFilters: 'alarm-column-filters',
+  dynamicInfoTemplates: 'dynamic-info-templates',
+  filterHints: 'filterhints',
+};

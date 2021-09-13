@@ -11,6 +11,7 @@ export * from './healthcheck';
 export * from './idle-rule';
 export * from './junit';
 export * from './modal';
+export * from './pbehavior';
 export * from './permission';
 export * from './remediation';
 export * from './scenario';

@@ -1,6 +1,6 @@
 import { COLORS } from '@/config';
 
-import { PBEHAVIOR_TYPE_TYPES } from './remediation';
+import { PBEHAVIOR_TYPE_TYPES } from './pbehavior';
 
 export const EVENT_ENTITY_TYPES = {
   ack: 'ack',
