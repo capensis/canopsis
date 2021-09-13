@@ -64,7 +64,7 @@ La couleur de la tuile correspond à la criticité du service. Elle est calculé
 
 ##### Par priorité
 
-La couleur de la tuile correspond à l'état d'impact du service. Cette valeur est le produit de l'alarme la plus critique parmi les entités surveillées par ce service et du niveau d'impact définit de ce dernier.
+La couleur de la tuile correspond à l'état d'impact du service. Cette valeur est le produit de l'alarme la plus critique parmi les entités surveillées par ce service et du niveau d'impact défini de ce dernier.
 
 > **Exemple**
 >
