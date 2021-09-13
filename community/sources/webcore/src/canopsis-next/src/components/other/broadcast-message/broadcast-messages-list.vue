@@ -14,8 +14,8 @@
         td {{ $t(`tables.broadcastMessages.statuses.${props.item.status}`) }}
         td.broadcast-message-cell
           broadcast-message(:message="props.item.message", :color="props.item.color")
-        td {{ props.item.start | date('long') }}
-        td {{ props.item.end | date('long') }}
+        td {{ props.item.start | date }}
+        td {{ props.item.end | date }}
         td
           v-layout(row)
             c-action-btn(

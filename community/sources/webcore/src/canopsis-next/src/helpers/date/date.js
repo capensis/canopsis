@@ -108,13 +108,13 @@ export const isEndOfDay = (date, unit = 'seconds') => {
  * Convert date to string format
  *
  * @param {Date|number|moment.Moment} date
- * @param {string} format
- * @param {string} [defaultValue]
+ * @param {string} [format = DATETIME_FORMATS.long]
+ * @param {string} [defaultValue = '']
  * @return {string}
  */
-export const convertDateToString = (date, format, defaultValue) => {
+export const convertDateToString = (date, format = DATETIME_FORMATS.long, defaultValue = '') => {
   if (!date) {
-    return defaultValue ?? date;
+    return defaultValue;
   }
 
   const dateObject = convertTimestampToMoment(date);

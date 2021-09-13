@@ -77,8 +77,6 @@
 <script>
 import { isNumber } from 'lodash';
 
-import { DATETIME_FORMATS } from '@/constants';
-
 export default {
   inject: ['$validator'],
   model: {
@@ -126,25 +124,25 @@ export default {
 
     junitSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.junit, DATETIME_FORMATS.long),
+        launchedAt: this.$options.filters.date(this.history.junit),
       });
     },
 
     remediationSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.remediation, DATETIME_FORMATS.long),
+        launchedAt: this.$options.filters.date(this.history.remediation),
       });
     },
 
     pbehaviorSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.pbehavior, DATETIME_FORMATS.long),
+        launchedAt: this.$options.filters.date(this.history.pbehavior),
       });
     },
 
     healthCheckSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.health_check, DATETIME_FORMATS.long),
+        launchedAt: this.$options.filters.date(this.history.health_check),
       });
     },
 
@@ -153,7 +151,7 @@ export default {
 
       const result = [
         this.$t('storageSetting.history.scriptLaunched', {
-          launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long),
+          launchedAt: this.$options.filters.date(time),
         }),
       ];
 
@@ -177,7 +175,7 @@ export default {
 
       const result = [
         this.$t('storageSetting.history.scriptLaunched', {
-          launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long),
+          launchedAt: this.$options.filters.date(time),
         }),
       ];
 

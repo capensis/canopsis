@@ -29,8 +29,8 @@
           span {{ $t('remediationInstructions.approvalPending') }}
         v-icon(v-else, color="primary") check_circle
       template(slot="type", slot-scope="props") {{ $t(`remediationInstructions.types.${props.item.type}`) }}
-      template(slot="last_modified", slot-scope="props") {{ props.item.last_modified | date('long', null) }}
-      template(slot="last_executed_on", slot-scope="props") {{ props.item.last_executed_on | date('long', null) }}
+      template(slot="last_modified", slot-scope="props") {{ props.item.last_modified | date }}
+      template(slot="last_executed_on", slot-scope="props") {{ props.item.last_executed_on | date }}
       template(slot="actions", slot-scope="props")
         v-layout(row, justify-end)
           c-action-btn(
