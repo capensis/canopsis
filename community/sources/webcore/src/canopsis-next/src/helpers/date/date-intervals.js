@@ -31,7 +31,6 @@ export function parseStringToDateInterval(dateString, type) {
       result[roundMethod](roundUnit);
     }
 
-
     if (deltaValue && deltaUnit) {
       if (deltaUnit === STATS_DURATION_UNITS.month) {
         deltaUnit = deltaUnit.toUpperCase();

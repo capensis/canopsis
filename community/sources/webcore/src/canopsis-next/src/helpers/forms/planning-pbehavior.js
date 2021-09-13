@@ -1,7 +1,17 @@
 import Vue from 'vue';
 import moment from 'moment-timezone';
-import { omit, isObject, isString, cloneDeep } from 'lodash';
-import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
+import {
+  omit,
+  isObject,
+  isString,
+  cloneDeep,
+} from 'lodash';
+import {
+  CalendarEvent,
+  DaySpan,
+  Op,
+  Schedule,
+} from 'dayspan';
 
 import uid from '@/helpers/uid';
 import {
@@ -55,7 +65,6 @@ import { enabledToForm } from './shared/common';
  * @property {number} end
  * @property {PbehaviorType} type
  */
-
 
 /**
  * @typedef {PbehaviorExdate} PbehaviorExdateForm

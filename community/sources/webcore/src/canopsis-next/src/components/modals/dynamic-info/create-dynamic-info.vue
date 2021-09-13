@@ -13,9 +13,9 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 
 import { dynamicInfoToForm, formToDynamicInfo } from '@/helpers/forms/dynamic-info';
 
@@ -30,9 +30,9 @@ export default {
   },
   components: { DynamicInfoForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
-    validationErrorsMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+    validationErrorsMixinCreator(),
   ],
   data() {
     return {

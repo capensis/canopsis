@@ -225,10 +225,8 @@ export default {
       const fixedAvgTime = avgTime.toFixed(3);
 
       const icon = `&nbsp;${this.getHistoricalTooltipIcon(item)}`;
-      const currentDiv =
-        `<div>${this.$t('common.current')}: ${this.$t(`testSuite.statuses.${status}`)} ${fixedTime}s${icon}</div>`;
-      const averageDiv =
-        `<div>${this.$t('common.average')}: ${this.$t(`testSuite.statuses.${avgStatus}`)} ${fixedAvgTime}s</div>`;
+      const currentDiv = `<div>${this.$t('common.current')}: ${this.$t(`testSuite.statuses.${status}`)} ${fixedTime}s${icon}</div>`;
+      const averageDiv = `<div>${this.$t('common.average')}: ${this.$t(`testSuite.statuses.${avgStatus}`)} ${fixedAvgTime}s</div>`;
 
       return `<div>${currentDiv}${averageDiv}</div>`;
     },

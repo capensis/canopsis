@@ -4,7 +4,6 @@ import { Day, Schedule, Constants, Op, DaySpan } from 'dayspan';
 
 import { convertTimestampToMomentByTimezone } from '@/helpers/date/date';
 
-
 /**
  * Convert alarms to calendar events
  *

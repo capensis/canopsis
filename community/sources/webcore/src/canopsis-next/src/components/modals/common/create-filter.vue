@@ -42,8 +42,8 @@ import { ENTITIES_TYPES, MODALS } from '@/constants';
 
 import { filterToForm, formToFilter, filterToObject } from '@/helpers/forms/filter';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
 
@@ -56,8 +56,8 @@ export default {
   },
   components: { FilterEditor, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const { title = '', filter = '{}' } = this.modal.config.filter || {};
@@ -98,8 +98,8 @@ export default {
   created() {
     this.$validator.extend('unique-title', {
       getMessage: () => this.$t('validator.unique'),
-      validate: value => (this.initialTitle && this.initialTitle === value) ||
-        !this.existingTitles.find(title => title === value),
+      validate: value => (this.initialTitle && this.initialTitle === value)
+        || !this.existingTitles.find(title => title === value),
     });
   },
   methods: {

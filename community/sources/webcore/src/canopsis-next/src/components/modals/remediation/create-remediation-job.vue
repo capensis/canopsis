@@ -19,9 +19,9 @@ import { MODALS } from '@/constants';
 
 import { formToRemediationJob, remediationJobToForm } from '@/helpers/forms/remediation-job';
 
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import RemediationJobForm from '@/components/other/remediation/jobs/form/remediation-job-form.vue';
 
@@ -37,9 +37,9 @@ export default {
     RemediationJobForm,
   },
   mixins: [
-    validationErrorsMixin(),
-    submittableMixin(),
-    confirmableModalMixin(),
+    validationErrorsMixinCreator(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {

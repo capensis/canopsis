@@ -6,6 +6,7 @@ node_modules
 /tests/e2e/reports/
 /tests/e2e/records/
 selenium-debug.log
+selenium-server.log
 
 # local env files
 .env.local

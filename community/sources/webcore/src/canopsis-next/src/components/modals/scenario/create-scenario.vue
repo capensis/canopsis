@@ -19,9 +19,9 @@ import { MODALS } from '@/constants';
 
 import { formToScenario, scenarioToForm, scenarioErrorToForm } from '@/helpers/forms/scenario';
 
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ScenarioForm from '@/components/other/scenario/form/scenario-form.vue';
 
@@ -38,9 +38,9 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    validationErrorsMixin(),
-    submittableMixin(),
-    confirmableModalMixin(),
+    validationErrorsMixinCreator(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {

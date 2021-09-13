@@ -62,8 +62,8 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ModalWrapper from '../../modal-wrapper.vue';
 
@@ -71,8 +71,8 @@ export default {
   name: MODALS.infoPopupSetting,
   components: { ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const { infoPopups = [] } = this.modal.config;

@@ -20,7 +20,6 @@
       )
 </template>
 
-
 <script>
 /**
  * Component showing an action icon

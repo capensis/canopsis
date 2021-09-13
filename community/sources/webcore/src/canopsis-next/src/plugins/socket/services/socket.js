@@ -74,7 +74,6 @@ class Socket {
     return this;
   }
 
-
   /**
    * Add event listener for connection
    *

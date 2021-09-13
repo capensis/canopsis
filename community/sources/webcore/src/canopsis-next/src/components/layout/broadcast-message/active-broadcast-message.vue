@@ -16,7 +16,7 @@ import { ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL } from '@/config';
 import { broadcastMessageSchema } from '@/store/schemas';
 
 import { pollingMixinCreator } from '@/mixins/polling';
-import registrableMixin from '@/mixins/registrable';
+import { registrableMixin } from '@/mixins/registrable';
 
 import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
 

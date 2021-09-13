@@ -22,9 +22,9 @@ import { MODALS } from '@/constants';
 
 import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/forms/meta-alarm-rule';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
 
@@ -40,9 +40,9 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
-    validationErrorsMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+    validationErrorsMixinCreator(),
   ],
   data() {
     return {
@@ -75,4 +75,3 @@ export default {
   },
 };
 </script>
-

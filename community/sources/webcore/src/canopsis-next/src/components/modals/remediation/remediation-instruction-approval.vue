@@ -42,13 +42,12 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/plugins/modals/mixins/inner';
 
-import { submittableMixin } from '@/mixins/submittable';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 import RemediationInstructionApprovalAlert from
   '@/components/other/remediation/instructions/partials/approval-alert.vue';
 import RemediationInstructionApprovalTabs from
   '@/components/other/remediation/instructions/partials/approval-tabs.vue';
-
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -63,7 +62,7 @@ export default {
   },
   mixins: [
     modalInnerMixin,
-    submittableMixin(),
+    submittableMixinCreator(),
   ],
   data() {
     return {

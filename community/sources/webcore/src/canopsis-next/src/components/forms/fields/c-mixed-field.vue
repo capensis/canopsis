@@ -103,8 +103,9 @@ export default {
   },
   computed: {
     preparedTypes() {
-      return this.types.map(type =>
-        (type.text ? type : ({ ...type, text: this.$t(`mixedField.types.${type.value}`) })));
+      return this.types.map(
+        type => (type.text ? type : ({ ...type, text: this.$t(`mixedField.types.${type.value}`) })),
+      );
     },
 
     switchLabel() {
@@ -114,11 +115,15 @@ export default {
     inputType() {
       if (isBoolean(this.value)) {
         return FILTER_INPUT_TYPES.boolean;
-      } else if (isNumber(this.value)) {
+      }
+
+      if (isNumber(this.value)) {
         return FILTER_INPUT_TYPES.number;
-      } else if (isNull(this.value)) {
+      }
+
+      if (isNull(this.value)) {
         return FILTER_INPUT_TYPES.null;
-      } else if (isArray(this.value)) {
+      } if (isArray(this.value)) {
         return FILTER_INPUT_TYPES.array;
       }
 
@@ -159,7 +164,9 @@ export default {
             'update:searchInput': this.updateTextFieldValue,
           },
         };
-      } else if (this.inputType === FILTER_INPUT_TYPES.boolean) {
+      }
+
+      if (this.inputType === FILTER_INPUT_TYPES.boolean) {
         return {
           is: 'v-switch',
 
@@ -175,7 +182,7 @@ export default {
             change: this.updateModel,
           },
         };
-      } else if (this.inputType === FILTER_INPUT_TYPES.array) {
+      } if (this.inputType === FILTER_INPUT_TYPES.array) {
         return {
           is: 'c-array-mixed-field',
 

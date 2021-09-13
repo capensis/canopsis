@@ -114,8 +114,7 @@ export default {
       }
 
       if (multiSortBy.length) {
-        query.multi_sort = multiSortBy.map(({ sortBy, descending }) =>
-          `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
+        query.multi_sort = multiSortBy.map(({ sortBy, descending }) => `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
       }
 
       query.limit = limit;

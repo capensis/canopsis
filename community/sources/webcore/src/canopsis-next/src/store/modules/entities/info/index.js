@@ -56,8 +56,7 @@ export default {
     timezone: state => state.timezone,
     remediation: state => state.remediation,
     remediationJobConfigTypes: state => get(state.remediation, 'job_config_types', []),
-    remediationPauseManualInstructionIntervalSeconds: state =>
-      get(state.remediation, 'pause_manual_instruction_interval.seconds', INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS),
+    remediationPauseManualInstructionIntervalSeconds: state => get(state.remediation, 'pause_manual_instruction_interval.seconds', INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS),
   },
   mutations: {
     [types.FETCH_LOGIN_INFOS](state, {

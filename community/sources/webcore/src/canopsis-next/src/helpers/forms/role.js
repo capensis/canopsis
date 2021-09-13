@@ -80,7 +80,6 @@ const permissionsFormToRolePermissions = (permissionsForm = {}) => Object.entrie
       acc[id] = actions;
     }
 
-
     return acc;
   }, {});
 

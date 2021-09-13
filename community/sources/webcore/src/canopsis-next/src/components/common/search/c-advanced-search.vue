@@ -41,8 +41,10 @@ export default {
         const preparedSearchingText = this.searchingText.replace(/^-(\s*)/, '');
 
         if (this.columns.length) {
-          return this.columns.reduce((acc, { text, value }) =>
-            replaceTextNotInQuotes(acc, text, value), preparedSearchingText);
+          return this.columns.reduce(
+            (acc, { text, value }) => replaceTextNotInQuotes(acc, text, value),
+            preparedSearchingText,
+          );
         }
 
         return preparedSearchingText;

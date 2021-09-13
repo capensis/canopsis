@@ -15,7 +15,7 @@ import { MODALS } from '@/constants';
 
 import { formToPbehaviorException, pbehaviorExceptionToForm } from '@/helpers/forms/exceptions-pbehavior';
 
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 
 import PbehaviorExceptionForm from '@/components/other/pbehavior/exceptions/form/pbehavior-exception-form.vue';
 
@@ -31,7 +31,7 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    validationErrorsMixin(),
+    validationErrorsMixinCreator(),
   ],
   data() {
     return {

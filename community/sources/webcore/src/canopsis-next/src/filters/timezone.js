@@ -8,4 +8,3 @@ export default function (date, timezone, format, defaultValue = '') {
     defaultValue,
   );
 }
-

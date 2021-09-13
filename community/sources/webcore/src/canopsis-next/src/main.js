@@ -360,12 +360,9 @@ Vue.use(SocketPlugin);
 
 Vue.config.productionTip = false;
 
-/**
- * TODO: Update it to Vue.config.errorHandler after updating to 2.6.0+ Vue version
- */
-window.addEventListener('unhandledrejection', (err) => {
+Vue.config.errorHandler = (err) => {
   store.dispatch('popups/error', { text: err.description || i18n.t('errors.default') });
-});
+};
 
 if (process.env.NODE_ENV === 'development') {
   Vue.config.devtools = true;
@@ -381,4 +378,3 @@ new Vue({
   i18n,
   render: h => h(App),
 }).$mount('#app');
-

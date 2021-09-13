@@ -20,7 +20,13 @@
 </template>
 
 <script>
-import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_ICONS } from '@/constants';
+import {
+  MODALS,
+  WIDGET_TYPES,
+  SIDE_BARS_BY_WIDGET_TYPES,
+  WIDGET_TYPES_RULES,
+  WIDGET_ICONS,
+} from '@/constants';
 
 import { generateWidgetByType } from '@/helpers/entities';
 
@@ -90,4 +96,3 @@ export default {
     cursor: pointer;
   }
 </style>
-

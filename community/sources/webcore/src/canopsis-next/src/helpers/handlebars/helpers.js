@@ -18,8 +18,7 @@ import i18n from '@/i18n';
  */
 function prepareAttributes(attributes) {
   return Object.entries(attributes)
-    .map(([key, value]) =>
-      `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`)
+    .map(([key, value]) => `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`)
     .join(' ');
 }
 

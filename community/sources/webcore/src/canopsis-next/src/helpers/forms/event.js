@@ -146,7 +146,8 @@ export const prepareManualMetaAlarmEventByAlarms = (type, alarms, data = {}) => 
  * @param {Object|Event} [data]
  * @return {Event[]|ManualMetaAlarmEvent[]}
  */
-export const prepareEventsByAlarms = (type, alarms, data) =>
-  ([EVENT_ENTITY_TYPES.manualMetaAlarmGroup, EVENT_ENTITY_TYPES.manualMetaAlarmUpdate].includes(type)
+export const prepareEventsByAlarms = (type, alarms, data) => (
+  [EVENT_ENTITY_TYPES.manualMetaAlarmGroup, EVENT_ENTITY_TYPES.manualMetaAlarmUpdate].includes(type)
     ? prepareManualMetaAlarmEventByAlarms(type, alarms, data)
-    : alarms.map(alarm => prepareEventByAlarm(type, alarm, data)));
+    : alarms.map(alarm => prepareEventByAlarm(type, alarm, data))
+);

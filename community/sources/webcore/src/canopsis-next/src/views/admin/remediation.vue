@@ -36,8 +36,12 @@ import RemediationConfigurations from '@/components/other/remediation/configurat
 import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
 import entitiesRemediationConfigurationsMixin from '@/mixins/entities/remediation/configurations';
 import { entitiesRemediationJobsMixin } from '@/mixins/entities/remediation/jobs';
-import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
-import { permissionsTechnicalRemediationConfigurationMixin } from '@/mixins/permissions/technical/remediation-configuration';
+import {
+  permissionsTechnicalRemediationInstructionMixin,
+} from '@/mixins/permissions/technical/remediation-instruction';
+import {
+  permissionsTechnicalRemediationConfigurationMixin,
+} from '@/mixins/permissions/technical/remediation-configuration';
 import { permissionsTechnicalRemediationJobMixin } from '@/mixins/permissions/technical/remediation-job';
 
 export default {

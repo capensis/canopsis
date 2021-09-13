@@ -100,7 +100,7 @@ function parseField(value) {
 }
 
 module.exports = {
-  baseUrl: '/',
+  publicPath: '/',
   lintOnSave: false,
   chainWebpack: (config) => {
     config.resolve.alias.store.set('vue$', 'vue/dist/vue.common.js');
@@ -131,10 +131,9 @@ module.exports = {
               let valueExpression = baseValueExpression;
 
               if (trim) {
-                valueExpression =
-                  `(typeof ${baseValueExpression} === 'string'` +
-                  `? ${baseValueExpression}.trim()` +
-                  `: ${baseValueExpression})`;
+                valueExpression = `(typeof ${baseValueExpression} === 'string'`
+                  + `? ${baseValueExpression}.trim()`
+                  + `: ${baseValueExpression})`;
               }
 
               if (number) {

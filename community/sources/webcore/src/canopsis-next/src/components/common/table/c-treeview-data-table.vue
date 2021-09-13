@@ -99,8 +99,11 @@ export default {
         return acc;
       }, {});
 
-      const isItemOpen = (item = {}) =>
-        !item.parentKey || (this.opened.includes(item.parentKey) && isItemOpen(itemsById[item.parentKey]));
+      const isItemOpen = (item = {}) => !item.parentKey
+        || (
+          this.opened.includes(item.parentKey)
+          && isItemOpen(itemsById[item.parentKey])
+        );
 
       return arrayItems.filter(isItemOpen);
     },

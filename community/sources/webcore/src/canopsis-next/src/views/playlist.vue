@@ -142,7 +142,6 @@ export default {
     timerTick() {
       this.time -= 1;
 
-
       if (this.time <= 0) {
         return this.nextTab();
       }

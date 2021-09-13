@@ -92,7 +92,6 @@ module.exports.CONTEXT_WIDGET_SORT_FIELD = {
   type: 2,
 };
 
-
 module.exports.SORT_ORDERS = {
   asc: 1,
   desc: 2,

@@ -169,8 +169,8 @@ export default {
       }
 
       if (
-        this.entity.alarm_display_name &&
-        (!this.entity.status || this.entity.status.val !== ENTITIES_STATUSES.cancelled)
+        this.entity.alarm_display_name
+        && (!this.entity.status || this.entity.status.val !== ENTITIES_STATUSES.cancelled)
       ) {
         actions.push(filteredActionsMap.cancel);
       }

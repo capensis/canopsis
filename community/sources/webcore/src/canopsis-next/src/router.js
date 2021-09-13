@@ -2,7 +2,12 @@ import Vue from 'vue';
 import Router from 'vue-router';
 
 import { ROUTER_MODE } from '@/config';
-import { CRUD_ACTIONS, ROUTES_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
+import {
+  CRUD_ACTIONS,
+  ROUTES_NAMES,
+  ROUTES,
+  USERS_PERMISSIONS,
+} from '@/constants';
 import store from '@/store';
 import {
   checkAppInfoAccessForRoute,

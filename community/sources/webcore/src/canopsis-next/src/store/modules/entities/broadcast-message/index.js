@@ -29,8 +29,10 @@ export default createEntityModule({
     activeMessagesPending: false,
   },
   getters: {
-    activeMessages: (state, getters, rootState, rootGetters) =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.broadcastMessage, state.activeMessagesIds),
+    activeMessages: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](
+      ENTITIES_TYPES.broadcastMessage,
+      state.activeMessagesIds,
+    ),
 
     activeMessagesPending: state => state.activeMessagesPending,
   },

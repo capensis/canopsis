@@ -19,9 +19,9 @@ import { MODALS } from '@/constants';
 
 import { roleToForm, formToRole } from '@/helpers/forms/role';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 
 import RoleForm from '@/components/other/role/role-form.vue';
 
@@ -34,9 +34,9 @@ export default {
   },
   components: { RoleForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
-    validationErrorsMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+    validationErrorsMixinCreator(),
   ],
   data() {
     return {
@@ -65,4 +65,3 @@ export default {
   },
 };
 </script>
-

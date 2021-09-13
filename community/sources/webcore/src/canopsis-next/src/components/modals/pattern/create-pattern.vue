@@ -23,8 +23,8 @@ import { cloneDeep, get } from 'lodash';
 
 import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import PatternForm from '@/components/other/pattern/form/pattern-form.vue';
 
@@ -40,8 +40,8 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const { pattern = {} } = this.modal.config;
@@ -75,4 +75,3 @@ export default {
   },
 };
 </script>
-
