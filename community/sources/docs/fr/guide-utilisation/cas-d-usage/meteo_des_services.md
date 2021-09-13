@@ -84,7 +84,7 @@ Ces modales peuvent être déroulées afin d'y consulter les *info* ainsi que l'
 
 ![](./img/mds_widget04.png)
 
-De même, pour la tuile "Workflow commande", les différents éléments apparaissent et des actions sont possible.
+De même, pour la tuile "Workflow commande", les différents éléments apparaissent et des actions sont possibles.
 
 ![](./img/mds_widget05.png)
 
