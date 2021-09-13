@@ -4,7 +4,7 @@
 
 Une *alarme* est le résultat du traitement des [évènements](#evenement) par un [moteur](#moteur). Elle sert à signaler un problème.
 
-Une alarme est liée à une [entité](#entite) de type [composant](#composant), [ressource](#ressource) ou [service](#service). La combinaison d'un [connecteur](#connecteur), d'un [nom de connecteur](#nom-de-connecteur), d'un [composant](#composant) et d'une [ressource](#ressource) crée une alarme unique. Si l'un de ces éléments change, une alarme différente est créée.
+Une alarme est liée à une [entité](#entite) de type [composant](#composant), [ressource](#ressource) ou [service](#service). La combinaison d'un [connecteur](#connecteur), d'un [nom de connecteur](#nom-de-connecteur), d'un composant et d'une ressource crée une alarme unique. Si l'un de ces éléments change, une alarme différente est créée.
 
 Une alarme peut connaître de multiples changements de [criticité](#criticite), [priorité](#priorite) et de [statut](#statut), et subir une suite d'actions (acquittement, mise en veille, changement de criticité, annulation, etc.), [utilisateurs](../interface/widgets/bac-a-alarmes/actions.md) ou [automatiques](../../guide-administration/moteurs/moteur-action.md). L'ensemble de ces changements et de ces actions constitue le *cycle d'alarme*.
 
@@ -32,8 +32,8 @@ Le *context-graph* est un schéma relationnel entre les [entités](#entite) de C
 Un *connecteur* peut être soit :
 
 * Un type d'[entité](#entite) créé suite au traitement d'un [évènement](#evenement). Il est le fruit de la concaténation des champs `connector` et `connector_name`.
-* Le champ `connector` d'un [évènement](#evenement). Le plus souvent, il s'agit du nom du logiciel qui envoie ses données à Canopsis. Il sert à créer l'entité [connecteur](#connecteur).
-* Un [script ou un programme](../../interconnexions/index.md#connecteurs) permettant d’envoyer à Canopsis des [évènements](#evenement) à partir de sources d'informations extérieures.
+* Le champ `connector` d'un évènement. Le plus souvent, il s'agit du nom du logiciel qui envoie ses données à Canopsis. Il sert à créer l'entité [connecteur](#connecteur).
+* Un [script ou un programme](../../interconnexions/index.md#connecteurs) permettant d’envoyer à Canopsis des évènements à partir de sources d'informations extérieures.
 
 ## Criticité
 
@@ -85,7 +85,7 @@ Les évènements de type `check` peuvent provenir d'une source externe, d'un [co
 
 Une [entité](#entite) de [service](#service) a un *niveau d'impact* permettant de calculer la [priorité](#priorite) des [alarmes](#alarme) liées à l'entité.
 
-Ce niveau d'impact permet aussi de définir la couleurs de l'alarme ou de la tuile liée au [service](#service) dans la [météo de services](#meteo).
+Ce niveau d'impact permet aussi de définir la couleurs de l'alarme ou de la tuile liée au service dans la [météo de services](#meteo).
 
 ## Météo
 
@@ -110,7 +110,7 @@ Une [alarme](#alarme) a une *priorité* qui est le produit de la [criticité](#c
 Une *ressource* peut être soit :
 
 - Un type d'[entité](#entite) créé suite au traitement d'un [évènement](#evenement). Il est le fruit de la concaténation des champs `resource` et `component`.
-- Un champ d'un [évènement](#evenement). Le plus souvent, il s'agit du nom de la vérification effectuée (RAM, DISK, PING, CPU, etc.). Une [alarme](#alarme) peut être rattachée à une ressource.
+- Un champ d'un évènement. Le plus souvent, il s'agit du nom de la vérification effectuée (RAM, DISK, PING, CPU, etc.). Une [alarme](#alarme) peut être rattachée à une ressource.
 
 ## Service
 

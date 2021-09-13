@@ -2,7 +2,7 @@
 
 Les moteur `engine-service` permet de surveiller et de répercuter les états d'alarmes ouvertes sur des entités surveillées.
 
-À partir de Canopsis 4.3.0, il remplace l'ancien moteur `engine-watcher`.
+À partir de Canopsis 4.3.0, il remplace l'ancien moteur `engine-watcher`.
 
 ## Utilisation
 
@@ -12,7 +12,7 @@ La commande `engine-service -help` liste toutes les options acceptées par le mo
 
 ### Multi-instanciation
 
-Il est possible, à partir de Canopsis 4.3.0, de lancer plusieurs instances du moteur `engine-service`, afin d'améliorer sa performance de traitement et sa résilience.
+Il est possible, à partir de Canopsis 4.3.0, de lancer plusieurs instances du moteur `engine-service`, afin d'améliorer sa performance de traitement et sa résilience.
 
 En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker-compose up -d --scale service=2` pour que le moteur `engine-service` soit lancé avec 2 instances.
 

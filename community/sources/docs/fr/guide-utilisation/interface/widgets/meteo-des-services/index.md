@@ -144,7 +144,7 @@ Durant la configuration de votre widget Météo de services, notamment les Templ
 
 > **Exemple**
 >
-> Il vous sera possible d'afficher, pour chacune des tuiles de la météo de services, le nom de l'observateur, ou son identifiant, etc.
+> Il vous sera possible d'afficher, pour chacune des tuiles de la météo de services, le nom du service, ou son identifiant, etc.
 
 Afin de connaitre les variables disponibles, cliquer sur [le point d'interrogation](#le-point-dinterrogation) d'une tuile.
 
@@ -224,8 +224,8 @@ Le langage utilisé ici est le Handlebars.
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entre le texte souhaité pour le template des tuiles, puis cliquez sur 'Envoyer'.
 
 Une variable est disponible ici pour vous permettre d'afficher les détails du service : `entity`.
-Exemple : Pour afficher le champ `display_name` de l'observateur (qui correspond au nom de l'observateur), il vous faut écrire dans le template : `{{ entity.display_name }}`.
-Tous les champs disponibles dans l'observateur sont disponibles ici.
+Exemple : Pour afficher le champ `display_name` du service (qui correspond au nom du service), il vous faut écrire dans le template : `{{ entity.display_name }}`.
+Tous les champs disponibles dans le service sont disponibles ici.
 
 ##### Template - Modale
 
