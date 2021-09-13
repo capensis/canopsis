@@ -472,15 +472,15 @@ export const groupAlarmSteps = (steps) => {
  */
 export const stringifyJson = (json, indents = 4, defaultValue = '{}') => {
   try {
-    if (json) {
-      if (isObject(json)) {
-        return JSON.stringify(json, null, indents);
-      }
-
-      return JSON.stringify(JSON.parse(json), null, indents);
+    if (!json) {
+      return defaultValue;
     }
 
-    return defaultValue;
+    if (isObject(json)) {
+      return JSON.stringify(json, null, indents);
+    }
+
+    return JSON.stringify(JSON.parse(json), null, indents);
   } catch (err) {
     console.warn(err);
 
