@@ -16,7 +16,7 @@ Une tuile correspond à l'état d'un *service*, qui est calculé selon des règl
 
 ## Création des services
 
-La première étape consiste à créer les services dans l'**exploirateur de contexte**. À commencer par la création du service "Workflow commande" va regrouper les composants le constituant. Puis le service "ECommerce" qui va regrouper les composants le constituant ainsi que le service "Workflow commande".
+La première étape consiste à créer les services dans l'**explorateur de contexte**. À commencer par la création du service "Workflow commande" qui va regrouper les composants le constituant, puis le service "ECommerce" qui va regrouper les composants le constituant ainsi que le service "Workflow commande".
 
 Ce qui donnerait un arbre de dépendance comme suit pour le service "ECommerce":
 
