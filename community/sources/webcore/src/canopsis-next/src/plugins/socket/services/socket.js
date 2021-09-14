@@ -53,7 +53,8 @@ class Socket {
     this.reconnectsCount += 1;
     this.disconnect();
     this.connect(this.url, this.protocols);
-    this.rooms.forEach(({ name }) => this.join(name));
+
+    Object.keys(this.rooms).forEach(name => this.join(name));
 
     return this;
   }
@@ -73,7 +74,6 @@ class Socket {
 
     return this;
   }
-
 
   /**
    * Add event listener for connection
