@@ -22,6 +22,7 @@ import {
   remediationConfigurationToForm,
 } from '@/helpers/forms/remediation-configuration';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
@@ -41,6 +42,7 @@ export default {
     ModalWrapper,
   },
   mixins: [
+    modalInnerMixin,
     validationErrorsMixinCreator(),
     submittableMixinCreator(),
     confirmableModalMixinCreator(),

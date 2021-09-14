@@ -26,6 +26,7 @@ import { keyBy, omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
@@ -40,6 +41,7 @@ export default {
   name: MODALS.pbehaviorPlanning,
   components: { PbehaviorPlanningCalendar, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     entitiesPbehaviorMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),

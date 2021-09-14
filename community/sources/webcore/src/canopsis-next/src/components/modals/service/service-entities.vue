@@ -48,6 +48,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { addKeyInEntities } from '@/helpers/entities';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
@@ -69,6 +70,7 @@ export default {
   },
   components: { ServiceTemplate, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     eventActionsMixin,
     entitiesPbehaviorMixin,
     entitiesServiceEntityMixin,

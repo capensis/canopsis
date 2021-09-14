@@ -15,6 +15,7 @@ import { MODALS } from '@/constants';
 
 import { pbehaviorReasonToForm } from '@/helpers/forms/reason-pbehavior';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 
 import CreatePbehaviorReasonForm from '@/components/other/pbehavior/reasons/form/create-pbehavior-reason-form.vue';
@@ -31,6 +32,7 @@ export default {
     ModalWrapper,
   },
   mixins: [
+    modalInnerMixin,
     validationErrorsMixinCreator(),
   ],
   data() {

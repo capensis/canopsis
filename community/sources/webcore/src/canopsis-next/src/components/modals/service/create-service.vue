@@ -21,6 +21,7 @@ import { MODALS } from '@/constants';
 
 import { serviceToForm, formToService } from '@/helpers/forms/service';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
@@ -37,6 +38,7 @@ export default {
   },
   components: { ServiceForm, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     entitiesContextEntityMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),

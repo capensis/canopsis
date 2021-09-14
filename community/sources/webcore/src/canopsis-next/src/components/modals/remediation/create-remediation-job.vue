@@ -19,6 +19,7 @@ import { MODALS } from '@/constants';
 
 import { formToRemediationJob, remediationJobToForm } from '@/helpers/forms/remediation-job';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
@@ -37,6 +38,7 @@ export default {
     RemediationJobForm,
   },
   mixins: [
+    modalInnerMixin,
     validationErrorsMixinCreator(),
     submittableMixinCreator(),
     confirmableModalMixinCreator(),

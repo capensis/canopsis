@@ -28,6 +28,7 @@
 <script>
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -42,7 +43,12 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.createDeclareTicketEvent,
   components: { AlarmGeneralTable, ModalWrapper },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixinCreator()],
+  mixins: [
+    modalInnerMixin,
+    modalInnerItemsMixin,
+    eventActionsAlarmMixin,
+    submittableMixinCreator(),
+  ],
   methods: {
     async submit() {
       await this.createEvent(EVENT_ENTITY_TYPES.declareTicket, this.items, {

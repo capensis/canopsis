@@ -361,6 +361,8 @@ Vue.use(SocketPlugin);
 Vue.config.productionTip = false;
 
 Vue.config.errorHandler = (err) => {
+  console.error(err);
+
   store.dispatch('popups/error', { text: err.description || i18n.t('errors.default') });
 };
 

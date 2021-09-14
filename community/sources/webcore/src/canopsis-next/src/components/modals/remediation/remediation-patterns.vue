@@ -28,6 +28,7 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
@@ -47,6 +48,7 @@ export default {
     ModalWrapper,
   },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     validationErrorsMixinCreator(),
     confirmableModalMixinCreator(),

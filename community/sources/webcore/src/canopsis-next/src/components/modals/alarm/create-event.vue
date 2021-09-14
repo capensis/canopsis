@@ -36,6 +36,7 @@
 <script>
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -55,6 +56,7 @@ export default {
   },
   components: { AlarmGeneralTable, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
     submittableMixinCreator(),

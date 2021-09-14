@@ -19,6 +19,7 @@ import { MODALS } from '@/constants';
 
 import { roleToForm, formToRole } from '@/helpers/forms/role';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
@@ -34,6 +35,7 @@ export default {
   },
   components: { RoleForm, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
     validationErrorsMixinCreator(),

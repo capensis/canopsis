@@ -27,6 +27,7 @@ import { MODALS } from '@/constants';
 
 import { remediationInstructionFilterToForm } from '@/helpers/forms/remediation-instruction-filter';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -42,6 +43,7 @@ export default {
   },
   components: { RemediationInstructionsFilterForm, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],

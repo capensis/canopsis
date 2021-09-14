@@ -42,6 +42,7 @@ import { ENTITIES_TYPES, MODALS } from '@/constants';
 
 import { filterToForm, formToFilter, filterToObject } from '@/helpers/forms/filter';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -56,6 +57,7 @@ export default {
   },
   components: { FilterEditor, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],

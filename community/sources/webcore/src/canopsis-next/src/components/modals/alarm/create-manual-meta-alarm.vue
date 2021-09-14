@@ -33,6 +33,7 @@ import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import { isWarningAlarmState } from '@/helpers/entities';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -57,6 +58,7 @@ export default {
     ModalWrapper,
   },
   mixins: [
+    modalInnerMixin,
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
     submittableMixinCreator(),

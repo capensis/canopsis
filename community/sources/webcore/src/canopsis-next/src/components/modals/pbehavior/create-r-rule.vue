@@ -25,6 +25,7 @@ import { MODALS } from '@/constants';
 import RRuleForm from '@/components/forms/rrule.vue';
 import PbehaviorExceptionForm from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-form.vue';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -42,6 +43,7 @@ export default {
     ModalWrapper,
   },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],

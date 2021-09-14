@@ -42,6 +42,7 @@
 <script>
 import { MODALS, CRUD_ACTIONS } from '@/constants';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import PbehaviorsListExpandItem from '@/components/other/pbehavior/exploitation/pbehaviors-list-expand-item.vue';
@@ -57,7 +58,7 @@ export default {
     PbehaviorsListExpandItem,
     ModalWrapper,
   },
-  mixins: [entitiesPbehaviorMixin],
+  mixins: [modalInnerMixin, entitiesPbehaviorMixin],
   computed: {
     headers() {
       return [

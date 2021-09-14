@@ -36,6 +36,7 @@ import { MODALS } from '@/constants';
 
 import { groupToRequest } from '@/helpers/forms/view';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
@@ -50,6 +51,7 @@ export default {
   },
   components: { ModalWrapper },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
     entitiesViewGroupMixin,

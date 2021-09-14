@@ -19,6 +19,7 @@ import { MODALS } from '@/constants';
 
 import { stateSettingToForm, formToStateSetting } from '@/helpers/forms/state-setting';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { authMixin } from '@/mixins/auth';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -38,6 +39,7 @@ export default {
     ModalWrapper,
   },
   mixins: [
+    modalInnerMixin,
     authMixin,
     validationErrorsMixinCreator(),
     submittableMixinCreator(),

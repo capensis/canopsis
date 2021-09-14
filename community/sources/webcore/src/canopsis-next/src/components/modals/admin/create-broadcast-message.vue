@@ -19,6 +19,7 @@ import { MODALS } from '@/constants';
 
 import { messageToForm, formToMessage } from '@/helpers/forms/broadcast-message';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -34,6 +35,7 @@ export default {
   },
   components: { BroadcastMessage, BroadcastMessageForm, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],

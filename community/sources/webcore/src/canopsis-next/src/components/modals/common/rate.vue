@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -30,6 +31,7 @@ export default {
   name: MODALS.rate,
   components: { ModalWrapper, RateForm },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],

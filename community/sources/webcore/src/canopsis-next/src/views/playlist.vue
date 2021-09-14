@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-fade-transition(mode="out-in")
-      c-progress-overlay(v-if="pending", :pending="true")
+      c-progress-overlay(v-if="pending", pending)
       div.playlist(v-else-if="playlist")
         c-page-header {{ playlist.name }}
         portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")

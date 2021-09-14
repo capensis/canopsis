@@ -18,6 +18,7 @@ import {
   formToTemplate,
 } from '@/helpers/forms/dynamic-info-template';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -32,6 +33,7 @@ export default {
   },
   components: { DynamicInfoTemplateForm, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],

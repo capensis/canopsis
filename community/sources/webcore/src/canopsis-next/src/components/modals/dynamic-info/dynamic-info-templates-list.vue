@@ -47,6 +47,7 @@ import { MODALS } from '@/constants';
 
 import { templateToDynamicInfoInfos } from '@/helpers/forms/dynamic-info-template';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesDynamicInfoTemplatesMixin } from '@/mixins/entities/associative-table/dynamic-info-templates';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -54,7 +55,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.dynamicInfoTemplatesList,
   components: { ModalWrapper },
-  mixins: [entitiesDynamicInfoTemplatesMixin],
+  mixins: [modalInnerMixin, entitiesDynamicInfoTemplatesMixin],
   data() {
     return {
       pending: false,

@@ -53,6 +53,7 @@ import { setSeveralFields } from '@/helpers/immutable';
 
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import entitiesViewMixin from '@/mixins/entities/view';
 import { authMixin } from '@/mixins/auth';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -70,6 +71,7 @@ export default {
     ModalWrapper,
   },
   mixins: [
+    modalInnerMixin,
     authMixin,
     entitiesViewMixin,
     entitiesViewGroupMixin,
