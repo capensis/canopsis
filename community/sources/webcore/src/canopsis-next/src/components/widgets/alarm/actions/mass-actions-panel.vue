@@ -123,6 +123,7 @@ export default {
       return {
         itemsType: ENTITIES_TYPES.alarm,
         itemsIds: this.itemsIds,
+        afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
       };
     },
   },
