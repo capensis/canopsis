@@ -238,3 +238,5 @@ export const ASSOCIATIVE_TABLES_NAMES = {
   dynamicInfoTemplates: 'dynamic-info-templates',
   filterHints: 'filterhints',
 };
+
+export const MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED = 100;
