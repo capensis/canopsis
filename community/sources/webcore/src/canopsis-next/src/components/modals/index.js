@@ -33,7 +33,7 @@ export const VariablesHelp = () => ({
   loading: CModalLoaderOverlay,
 });
 export const InfoPopupSetting = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/info-popup-setting/info-popup-setting.vue'),
+  component: import(/* webpackChunkName: "Common" */ './alarm/info-popup-setting/info-popup-setting.vue'),
   loading: CModalLoaderOverlay,
 });
 export const AddInfoPopup = () => ({
@@ -89,19 +89,19 @@ export const CreateEntityInfo = () => ({
   loading: CModalLoaderOverlay,
 });
 export const SelectView = () => ({
-  component: import(/* webpackChunkName: "Views" */ './view/select-view.vue'),
+  component: import(/* webpackChunkName: "View" */ './view/select-view.vue'),
   loading: CModalLoaderOverlay,
 });
 export const CreateView = () => ({
-  component: import(/* webpackChunkName: "Views" */ './view/create-view.vue'),
+  component: import(/* webpackChunkName: "View" */ './view/create-view.vue'),
   loading: CModalLoaderOverlay,
 });
 export const CreateGroup = () => ({
-  component: import(/* webpackChunkName: "Views" */ './view/create-group.vue'),
+  component: import(/* webpackChunkName: "View" */ './view/create-group.vue'),
   loading: CModalLoaderOverlay,
 });
 export const ImportGroupsAndViews = () => ({
-  component: import(/* webpackChunkName: "Views" */ './view/import-groups-and-views.vue'),
+  component: import(/* webpackChunkName: "View" */ './view/import-groups-and-views.vue'),
   loading: CModalLoaderOverlay,
 });
 export const CreateFilter = () => ({
@@ -181,7 +181,7 @@ export const CreateSnmpRule = () => ({
   loading: CModalLoaderOverlay,
 });
 export const SelectViewTab = () => ({
-  component: import(/* webpackChunkName: "Views" */ './view/select-view-tab.vue'),
+  component: import(/* webpackChunkName: "View" */ './view/select-view-tab.vue'),
   loading: CModalLoaderOverlay,
 });
 export const CreateDynamicInfo = () => ({

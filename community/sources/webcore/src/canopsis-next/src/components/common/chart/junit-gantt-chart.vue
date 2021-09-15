@@ -27,7 +27,7 @@ import { TEST_SUITE_COLORS, TEST_SUITE_STATUSES } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
 
-import HorizontalBar from './horizontal-bar.vue';
+const HorizontalBar = () => import(/* webpackChunkName: "Charts" */ './horizontal-bar.vue');
 
 /**
  * Local constants
