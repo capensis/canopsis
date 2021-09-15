@@ -16,7 +16,6 @@
 <script>
 import { notificationsSettingsToForm, formToNotificationsSettings } from '@/helpers/forms/notification';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesNotificationSettingsMixin } from '@/mixins/entities/notification-settings';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -31,7 +30,6 @@ export default {
     NotificationsSettingsForm,
   },
   mixins: [
-    modalInnerMixin,
     submittableMixinCreator(),
     entitiesNotificationSettingsMixin,
     validationErrorsMixinCreator(),

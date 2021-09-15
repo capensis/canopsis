@@ -22,7 +22,6 @@ import { MODALS } from '@/constants';
 
 import { formToDataStorageSettings, dataStorageSettingsToForm } from '@/helpers/forms/data-storage';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { entitiesDataStorageSettingsMixin } from '@/mixins/entities/data-storage';
@@ -36,7 +35,6 @@ export default {
   },
   components: { StorageSettingsForm },
   mixins: [
-    modalInnerMixin,
     submittableMixinCreator(),
     validationErrorsMixinCreator(),
     entitiesDataStorageSettingsMixin,

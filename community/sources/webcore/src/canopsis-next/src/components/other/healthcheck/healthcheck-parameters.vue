@@ -15,7 +15,6 @@
 <script>
 import { healthcheckParametersToForm } from '@/helpers/forms/healthcheck';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { entitiesHealthcheckParametersMixin } from '@/mixins/entities/healthcheck';
@@ -28,7 +27,6 @@ export default {
   },
   components: { HealthcheckForm },
   mixins: [
-    modalInnerMixin,
     submittableMixinCreator(),
     validationErrorsMixinCreator(),
     entitiesHealthcheckParametersMixin,
