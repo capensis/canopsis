@@ -203,49 +203,6 @@ import { mapValues, pickBy, isArray } from 'lodash';
  */
 export default {
   inject: ['$validator'],
-  filters: {
-    rRuleToFormOptions(rRule) {
-      const { origOptions } = rRule;
-
-      return {
-        freq: origOptions.freq || '',
-        count: origOptions.count || '',
-        interval: origOptions.interval || '',
-        byweekday: origOptions.byweekday ? origOptions.byweekday.map(v => v.weekday) : [],
-        wkst: origOptions.wkst ? origOptions.wkst.weekday : '',
-        bymonth: origOptions.bymonth || [],
-      };
-    },
-
-    rRuleToFormAdvancedOptions(rRule) {
-      const { origOptions } = rRule;
-      const optionPreparer = (v) => {
-        if (v) {
-          return (isArray(v) ? v.join(',') : String(v));
-        }
-
-        return '';
-      };
-
-      return {
-        bysetpos: optionPreparer(origOptions.bysetpos),
-        bymonthday: optionPreparer(origOptions.bymonthday),
-        byyearday: optionPreparer(origOptions.byyearday),
-        byweekno: optionPreparer(origOptions.byweekno),
-        byhour: optionPreparer(origOptions.byhour),
-        byminute: optionPreparer(origOptions.byminute),
-        bysecond: optionPreparer(origOptions.bysecond),
-      };
-    },
-
-    formOptionsToRRuleOptions(options) {
-      return pickBy(options, v => v !== '');
-    },
-
-    formAdvancedOptionsToRRuleOptions(options) {
-      return mapValues(options, o => o.split(',').filter(v => v));
-    },
-  },
   model: {
     prop: 'rrule',
     event: 'input',
@@ -277,8 +234,8 @@ export default {
       showRRule: !!this.rrule,
       rRuleObject: rRule,
       form: {
-        rRuleOptions: this.$options.filters.rRuleToFormOptions(rRule),
-        advancedRRuleOptions: this.$options.filters.rRuleToFormAdvancedOptions(rRule),
+        rRuleOptions: this.rRuleToFormOptions(rRule),
+        advancedRRuleOptions: this.rRuleToFormAdvancedOptions(rRule),
       },
     };
   },
@@ -347,6 +304,40 @@ export default {
     },
   },
   methods: {
+    rRuleToFormOptions(rRule) {
+      const { origOptions } = rRule;
+
+      return {
+        freq: origOptions.freq || '',
+        count: origOptions.count || '',
+        interval: origOptions.interval || '',
+        byweekday: origOptions.byweekday ? origOptions.byweekday.map(v => v.weekday) : [],
+        wkst: origOptions.wkst ? origOptions.wkst.weekday : '',
+        bymonth: origOptions.bymonth || [],
+      };
+    },
+
+    rRuleToFormAdvancedOptions(rRule) {
+      const { origOptions } = rRule;
+      const optionPreparer = (v) => {
+        if (v) {
+          return (isArray(v) ? v.join(',') : String(v));
+        }
+
+        return '';
+      };
+
+      return {
+        bysetpos: optionPreparer(origOptions.bysetpos),
+        bymonthday: optionPreparer(origOptions.bymonthday),
+        byyearday: optionPreparer(origOptions.byyearday),
+        byweekno: optionPreparer(origOptions.byweekno),
+        byhour: optionPreparer(origOptions.byhour),
+        byminute: optionPreparer(origOptions.byminute),
+        bysecond: optionPreparer(origOptions.bysecond),
+      };
+    },
+
     /**
      * For each changes in the form we call this function.
      * If RRule isn't valid then add error message to visible RRule field
@@ -355,8 +346,8 @@ export default {
     changeRRuleOption() {
       try {
         this.rRuleObject = new RRule({
-          ...this.$options.filters.formOptionsToRRuleOptions(this.form.rRuleOptions),
-          ...this.$options.filters.formAdvancedOptionsToRRuleOptions(this.form.advancedRRuleOptions),
+          ...pickBy(this.form.rRuleOptions, v => v !== ''),
+          ...mapValues(this.form.advancedRRuleOptions, o => o.split(',').filter(v => v)),
         });
 
         if (!this.errors.has('rRule') && !this.rRuleObject.isFullyConvertibleToText()) {
