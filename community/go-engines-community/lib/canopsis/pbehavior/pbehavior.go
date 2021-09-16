@@ -50,12 +50,14 @@ type PBehavior struct {
 	Reason     string         `bson:"reason"`
 	RRule      string         `bson:"rrule"`
 	Start      *types.CpsTime `bson:"tstart"`
-	Stop       *types.CpsTime `bson:"tstop,omitempty"`
+	Stop       *types.CpsTime `bson:"tstop"`
 	Type       string         `bson:"type_"`
 	Exdates    []Exdate       `bson:"exdates"`
 	Exceptions []string       `bson:"exceptions"`
 	Created    types.CpsTime  `bson:"created,omitempty"`
 	Updated    types.CpsTime  `bson:"updated,omitempty"`
+
+	LastAlarmDate *types.CpsTime `bson:"last_alarm_date,omitempty"`
 }
 
 // isActiveRRule checks if a pbehavior with a rrule is active at the given time.

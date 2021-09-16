@@ -35,7 +35,7 @@ import moment from 'moment';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 

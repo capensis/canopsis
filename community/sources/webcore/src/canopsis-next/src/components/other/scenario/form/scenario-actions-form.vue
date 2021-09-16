@@ -26,10 +26,9 @@ import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import { scenarioActionToForm } from '@/helpers/forms/scenario';
+import { actionToForm } from '@/helpers/forms/action';
 
-import formArrayMixin from '@/mixins/form/array';
-import validationChildrenMixin from '@/mixins/form/validation-children';
+import { formArrayMixin, validationChildrenMixin } from '@/mixins/form';
 
 import ScenarioActionField from './fields/scenario-action-field.vue';
 
@@ -90,7 +89,7 @@ export default {
   },
   methods: {
     addAction() {
-      this.addItemIntoArray(scenarioActionToForm());
+      this.addItemIntoArray(actionToForm());
     },
   },
 };

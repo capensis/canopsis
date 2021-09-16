@@ -36,7 +36,7 @@
           v-divider
           field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
           v-divider
-          field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
+          field-opened-resolved-filter(v-model="settings.widget.parameters.opened")
           v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(
@@ -109,23 +109,19 @@
           )
           v-divider
           export-csv-form(v-model="settings.widget.parameters", datetime-format)
-          v-divider
-          field-columns(
-            v-model="settings.widget.parameters.widgetExportColumns",
-            :label="$t('settings.exportColumnNames')"
-          )
       v-divider
     v-btn.primary(data-test="submitAlarms", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
-import { get, cloneDeep } from 'lodash';
+import { get } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS } from '@/constants';
 
+import { alarmListWidgetToForm, formToAlarmListWidget } from '@/helpers/forms/widgets/alarm';
+
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { sideBarSettingsWidgetAlarmMixin } from '@/mixins/side-bar/settings/widgets/alarm';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
@@ -175,7 +171,6 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
-    sideBarSettingsWidgetAlarmMixin,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
   ],
@@ -184,7 +179,7 @@ export default {
 
     return {
       settings: {
-        widget: this.prepareAlarmWidgetSettings(cloneDeep(widget), true),
+        widget: alarmListWidgetToForm(widget),
         widget_preferences: {
           itemsPerPage: PAGINATION_LIMIT,
         },
@@ -206,7 +201,7 @@ export default {
     prepareWidgetSettings() {
       const { widget } = this.settings;
 
-      return this.prepareAlarmWidgetSettings(widget);
+      return formToAlarmListWidget(widget);
     },
   },
 };

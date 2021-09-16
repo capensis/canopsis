@@ -1,4 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
+
 import { SORT_ORDERS } from '@/constants';
 
 import queryMixin from '@/mixins/query';
@@ -44,6 +45,7 @@ export default {
         sort_key: 't',
         sort_dir: SORT_ORDERS.desc.toLowerCase(),
         limit: 1,
+        with_instructions: true,
       };
 
       if (alarm.v.resolved) {

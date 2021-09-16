@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.white--text.cursor-pointer.weather__item(
+  v-card.white--text.cursor-pointer.weather-item(
     :class="itemClasses",
     :style="{ height: itemHeight + 'em', backgroundColor: color }",
     tile,
@@ -7,19 +7,20 @@
   )
     v-layout.fill-height(row)
       v-flex.position-relative.fill-height
-        div.weather-priority-indicator
-          impact-state-indicator(:value="service.impact_state")
-        v-icon.weather__item--background.white--text(size="5em") {{ icon }}
-        v-layout(:class="{ blinking: isBlinking }", justify-start)
-          v-runtime-template.service-name.pa-3(:template="compiledTemplate")
-        v-btn.helpBtn.ma-0(
-          v-if="hasVariablesHelpAccess",
-          icon,
-          small,
-          @click.stop="showVariablesHelpModal(service)"
-        )
-          v-icon help
-        v-btn.pauseIcon(v-if="secondaryIcon", icon)
+        v-layout(:class="{ 'weather-item--blinking': isBlinking }", justify-start)
+          v-runtime-template.weather-item__service-name.pa-3(:template="compiledTemplate")
+        v-layout.weather-item__toolbar.pt-1.pr-1(row, align-center)
+          c-no-events-icon.mr-1(:value="service.idle_since", color="white", top)
+          impact-state-indicator.mr-1(:value="service.impact_state")
+          v-btn.ma-0(
+            v-if="hasVariablesHelpAccess",
+            icon,
+            small,
+            @click.stop="showVariablesHelpModal(service)"
+          )
+            v-icon(color="white") help
+        v-icon.weather-item__background.white--text(size="5em") {{ icon }}
+        v-btn.weather-item__secondary-icon.ma-0.mr-1(v-if="secondaryIcon", icon, small)
           v-icon(color="white") {{ secondaryIcon }}
       v-flex(v-if="isCountersEnabled", xs2)
         alarm-counters.fill-height(
@@ -39,13 +40,12 @@ import VRuntimeTemplate from 'v-runtime-template';
 import {
   MODALS,
   USERS_PERMISSIONS,
-  WIDGET_TYPES,
   WEATHER_ICONS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 import { getEntityColor } from '@/helpers/color';
 
 import { authMixin } from '@/mixins/auth';
@@ -191,7 +191,7 @@ export default {
 
     async showAlarmListModal() {
       try {
-        const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+        const widget = generateDefaultAlarmListWidget();
 
         const filter = { $and: [{ 'entity.impact': this.service._id }] };
 
@@ -242,18 +242,32 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .weather-priority-indicator {
+@keyframes blink {
+  0% { opacity: 1 }
+  50% { opacity: 0.3 }
+}
+
+.weather-item {
+  &__toolbar {
     position: absolute;
-    top: 5px;
-    right: 40px;
+    top: 0;
+    right: 0;
+    z-index: 1;
   }
 
-  @keyframes blink {
-    0% { opacity: 1 }
-    50% { opacity: 0.3 }
+  &__secondary-icon {
+    position: absolute;
+    right: 0;
+    bottom: 1em;
+    cursor: inherit;
+
+    &:hover, &:focus {
+      position: absolute;
+    }
   }
 
-  .blinking {
+  &--blinking {
     animation: blink 2s linear infinite;
   }
+}
 </style>

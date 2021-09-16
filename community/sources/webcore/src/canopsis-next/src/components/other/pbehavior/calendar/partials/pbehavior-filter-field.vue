@@ -26,9 +26,9 @@
 import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS } from '@/constants';
+import { ENTITIES_TYPES, MODALS } from '@/constants';
 
-import formMixin from '@/mixins/form/object';
+import { formMixin } from '@/mixins/form';
 
 const { mapActions } = createNamespacedHelpers('pbehavior');
 
@@ -84,6 +84,7 @@ export default {
         config: {
           filter: { filter: this.form.filter },
           hiddenFields: ['title'],
+          entitiesType: ENTITIES_TYPES.entity,
           action: ({ filter }) => {
             this.updateField('filter', filter);
             this.fetchCountForFilter(filter);
@@ -103,7 +104,7 @@ export default {
         } = await this.fetchPbehaviorEntitiesCountWithoutStore({ data: { filter } });
 
         if (overLimit) {
-          this.countAlertMessage = this.$t('pbehavior.alerts.countOverLimit', { count: totalCount });
+          this.countAlertMessage = this.$t('entitiesCountAlerts.filter.countOverLimit', { count: totalCount });
           this.countAlertShown = true;
 
           return;
@@ -111,7 +112,7 @@ export default {
 
         this.countAlertShown = false;
       } catch (err) {
-        this.countAlertMessage = this.$t('pbehavior.alerts.countRequestError');
+        this.countAlertMessage = this.$t('entitiesCountAlerts.filter.countRequestError');
         this.countAlertShown = true;
       } finally {
         this.countPending = false;

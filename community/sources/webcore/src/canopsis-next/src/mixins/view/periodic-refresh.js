@@ -3,7 +3,6 @@ import { get } from 'lodash';
 import { DATETIME_FORMATS } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { toSeconds } from '@/helpers/date/duration';
 import Observer from '@/services/observer';
 
 import layoutNavigationEditingModeMixin from '../layout/navigation/editing-mode';
@@ -94,19 +93,15 @@ export default {
     },
 
     isPeriodicRefreshEnabled() {
-      return get(this.view, 'periodicRefresh.enabled', false);
+      return get(this.view, 'periodic_refresh.enabled', false);
     },
 
     periodicRefreshUnit() {
-      return get(this.view, 'periodicRefresh.unit');
-    },
-
-    periodicRefreshValue() {
-      return get(this.view, 'periodicRefresh.interval') || get(this.view, 'periodicRefresh.value', 0);
+      return get(this.view, 'periodic_refresh.unit');
     },
 
     periodicRefreshDelay() {
-      return toSeconds(Number(this.periodicRefreshValue), this.periodicRefreshUnit);
+      return get(this.view, 'periodic_refresh.seconds');
     },
 
     refreshHandler() {

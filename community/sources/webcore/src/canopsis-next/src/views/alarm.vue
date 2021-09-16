@@ -13,12 +13,13 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { ENTITIES_TYPES, WIDGET_TYPES } from '@/constants';
 
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
+
 import { authMixin } from '@/mixins/auth';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 
 import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
-import { generateWidgetByType } from '@/helpers/entities';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
@@ -50,7 +51,7 @@ export default {
       const widget = this.getEntityItem(ENTITIES_TYPES.widget, this.widgetId);
 
       return !widget || widget.type !== WIDGET_TYPES.alarmList
-        ? generateWidgetByType(WIDGET_TYPES.alarmList)
+        ? generateDefaultAlarmListWidget()
         : widget;
     },
 
@@ -64,13 +65,7 @@ export default {
   },
 
   mounted() {
-    this.fetchAlarmItem({
-      id: this.id,
-      params: {
-        opened: true,
-        resolved: true,
-      },
-    });
+    this.fetchAlarmItem({ id: this.id });
 
     if (this.widgetId && !this.groupsPending) {
       this.fetchAllGroupsListWithViews();

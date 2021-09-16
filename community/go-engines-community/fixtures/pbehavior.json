@@ -225,7 +225,8 @@
     ],
     "exceptions": ["test-exception-to-pbh-edit"],
     "created": 1592215337,
-    "updated": 1592215337
+    "updated": 1592215337,
+    "last_alarm_date": 1592215337
   },
   {
     "_id": "test-pbehavior-to-update-invalid",
@@ -545,23 +546,6 @@
     "updated": 1592215337
   },
   {
-    "_id": "test-pbehavior-to-get-eids",
-    "author": "root",
-    "comments": [],
-    "enabled": true,
-    "filter": "{\"$and\":[{\"name\":\"ccccc\"}]}",
-    "name": "test-pbehavior-to-get-by-reason-name",
-    "reason": "test-reason-1",
-    "rrule": "",
-    "tstart": 1591172881,
-    "tstop": 2591536400,
-    "type_": "test-type-to-get-by-eids",
-    "exdates": [],
-    "exceptions": [],
-    "created": 1592215337,
-    "updated": 1592215337
-  },
-  {
     "_id": "test-pbehavior-to-exception-get",
     "author": "test-pbehavior-to-exception-get-author",
     "comments": [],
@@ -575,6 +559,23 @@
     "type_": "test-type-to-pbh-edit-1",
     "exdates": [],
     "exceptions": ["test-exception-to-get-2"],
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-pbehavior-to-entities-get",
+    "author": "test-pbehavior-to-entities-get-author",
+    "comments": [],
+    "enabled": true,
+    "filter": "{\"$or\":[{\"name\":\"test-resource-to-entities-get-by-pbh-1\"},{\"name\":\"test-resource-to-entities-get-by-pbh-2\"},{\"name\":\"test-resource-to-entities-get-by-pbh-3\"},{\"name\":\"test-resource-to-entities-get-by-pbh-4\"},{\"name\":\"test-resource-to-entities-get-by-pbh-5\"}]}",
+    "name": "test-pbehavior-to-entities-get-name",
+    "reason": "test-reason-1",
+    "rrule": "",
+    "tstart": 1591172881,
+    "tstop": 2591536400,
+    "type_": "test-type-to-pbh-edit-1",
+    "exdates": [],
+    "exceptions": [],
     "created": 1592215337,
     "updated": 1592215337
   }

@@ -16,9 +16,8 @@ import {
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
-import { authMixin } from '@/mixins/auth';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import widgetActionsPanelAlarmMixin from '@/mixins/widget/actions-panel/alarm';
+import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 
 import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
@@ -35,7 +34,6 @@ import featuresService from '@/services/features';
 export default {
   components: { SharedActionsPanel },
   mixins: [
-    authMixin,
     entitiesAlarmMixin,
     widgetActionsPanelAlarmMixin,
 
@@ -275,10 +273,7 @@ export default {
           alarm: this.item,
           onOpen: refreshAlarm,
           onClose: refreshAlarm,
-          onComplete: async (instructionExecute) => {
-            await refreshAlarm();
-            this.showRateInstructionModal(instructionExecute._id);
-          },
+          onComplete: refreshAlarm,
         },
       });
     },

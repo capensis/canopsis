@@ -36,6 +36,18 @@
           v-icon(slot="activator") help
           div(v-html="$t('parameters.userInterfaceForm.tooltips.maxMatchedItems')")
     v-layout(row)
+      v-text-field(
+        v-model.number="form.check_count_request_timeout",
+        v-validate="'numeric|min_value:1'",
+        :label="$t('parameters.userInterfaceForm.fields.checkCountRequestTimeout')",
+        :error-messages="errors.collect('check_count_request_timeout')",
+        type="number",
+        name="check_count_request_timeout"
+      )
+        v-tooltip(slot="append", left)
+          v-icon(slot="activator") help
+          div(v-html="$t('parameters.userInterfaceForm.tooltips.checkCountRequestTimeout')")
+    v-layout(row)
       timezone-field(v-model="form.timezone", disabled)
     v-layout(row)
       v-switch(
@@ -87,7 +99,7 @@
 
 <script>
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
-import { userInterfaceToForm } from '@/helpers/forms/user-interface';
+import { formToUserInterface, userInterfaceToForm } from '@/helpers/forms/user-interface';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -148,6 +160,7 @@ export default {
         allow_change_severity_to_info: this.allowChangeSeverityToInfo,
         timezone: this.timezone,
         max_matched_items: this.maxMatchedItems,
+        check_count_request_timeout: this.checkCountRequestTimeout,
       };
 
       this.form = userInterfaceToForm(userInterface);
@@ -166,7 +179,7 @@ export default {
         const isValid = await this.$validator.validateAll();
 
         if (isValid) {
-          const data = { ...this.form };
+          const data = formToUserInterface(this.form);
 
           if (this.logoFile) {
             data.logo = await getFileDataUrlContent(this.logoFile);

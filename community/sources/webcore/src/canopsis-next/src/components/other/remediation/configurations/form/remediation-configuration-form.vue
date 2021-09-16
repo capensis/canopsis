@@ -13,12 +13,13 @@
         v-select(
           v-field="form.type",
           v-validate="'required'",
-          :items="availableTypes",
+          :items="remediationJobConfigTypes",
           :label="$t('common.type')",
           :error-messages="errors.collect('type')",
           name="type",
-          item-text="text",
-          item-value="value"
+          item-text="name",
+          item-value="name",
+          return-object
         )
       v-flex
         v-text-field(
@@ -36,13 +37,30 @@
         :error-messages="errors.collect('token')",
         name="token"
       )
+    v-layout(row)
+      v-text-field(
+        v-if="isShownUserNameField",
+        v-field="form.auth_username",
+        v-validate="'required'",
+        :label="$t('users.fields.username')",
+        :error-messages="errors.collect('username')",
+        name="username"
+      )
 </template>
 
 <script>
-import { REMEDIATION_CONFIGURATION_TYPES } from '@/constants';
+import { createNamespacedHelpers } from 'vuex';
+import { get, isString } from 'lodash';
+
+import { REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME } from '@/constants';
+
+import { formMixin } from '@/mixins/form';
+
+const { mapGetters } = createNamespacedHelpers('info');
 
 export default {
   inject: ['$validator'],
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -54,12 +72,21 @@ export default {
     },
   },
   computed: {
-    availableTypes() {
-      return Object.values(REMEDIATION_CONFIGURATION_TYPES).map(type => ({
-        value: type,
-        text: this.$t(`modals.createRemediationConfiguration.types.${type}`),
-      }));
+    ...mapGetters(['remediationJobConfigTypes']),
+
+    isShownUserNameField() {
+      return REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME.includes(get(this.form.type, 'auth_type'));
     },
+  },
+
+  mounted() {
+    if (isString(this.form.type)) {
+      const typeObject = this.remediationJobConfigTypes.find(({ name }) => name === this.form.type);
+
+      if (typeObject) {
+        this.updateField('type', typeObject);
+      }
+    }
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.white--text.weather__item(
+  v-card.white--text.weather-item(
     :class="itemClasses",
     :style="{ height: itemHeight + 'em', backgroundColor: color }",
     tile
@@ -14,7 +14,7 @@
     div
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
-        v-runtime-template.service-name.pt-3(:template="compiledTemplate")
+        v-runtime-template.weather-item__service-name.pt-3(:template="compiledTemplate")
         v-btn.see-alarms-btn(
           v-if="hasAlarmsListAccess",
           flat,
@@ -28,13 +28,12 @@ import VRuntimeTemplate from 'v-runtime-template';
 import {
   MODALS,
   USERS_PERMISSIONS,
-  WIDGET_TYPES,
   ENTITIES_STATES_KEYS,
   COUNTER_STATES_ICONS,
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';
@@ -119,13 +118,13 @@ export default {
   },
   methods: {
     async showAlarmListModal() {
-      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const widget = generateDefaultAlarmListWidget();
 
       widget.parameters = {
         ...widget.parameters,
         ...this.widget.parameters.alarmsList,
 
-        alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
+        opened: this.widget.parameters.opened,
         mainFilter: this.counter.filter,
         viewFilters: [this.counter.filter],
       };

@@ -8,6 +8,7 @@ import (
 	casbinmodel "github.com/casbin/casbin/v2/model"
 	"github.com/golang/mock/gomock"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"reflect"
 	"sort"
 	"testing"
@@ -93,6 +94,7 @@ func TestAdapter_LoadPolicy_GivenRole_ShouldAddCRUDPermissionsToRole(t *testing.
 
 func TestAdapter_LoadPolicy_GivenRole_ShouldAddRWPermissionsToRole(t *testing.T) {
 	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 	mockObjCursor := createMockCursor(ctrl, []libmodel.Rbac{
 		{
 			ID:         "testobj1",
@@ -263,7 +265,7 @@ func createMockDbClient(ctrl *gomock.Controller, objCursor, roleCursor, subjCurs
 	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.RightsMongoCollection)).Return(mockDbCollection)
 	mockDbCollection.EXPECT().
 		Find(gomock.Any(), gomock.Any()).
-		DoAndReturn(func(_ context.Context, q bson.M) (mongo.Cursor, error) {
+		DoAndReturn(func(_ context.Context, q bson.M, opts ...*options.FindOptions) (mongo.Cursor, error) {
 			switch q["crecord_type"] {
 			case libmodel.LineTypeObject:
 				return objCursor, nil

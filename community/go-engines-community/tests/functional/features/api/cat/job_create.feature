@@ -4,10 +4,10 @@ Feature: create a job
 
   Scenario: POST a valid job but unauthorized
     When I do POST /api/v4/cat/jobs:
-    """
+    """json
     {
       "name": "test-job-name",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
     }
@@ -17,10 +17,10 @@ Feature: create a job
   Scenario: POST a valid job but without permissions
     When I am noperms
     When I do POST /api/v4/cat/jobs:
-    """
+    """json
     {
       "name": "test-job-name",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
     }
@@ -30,25 +30,28 @@ Feature: create a job
   Scenario: POST a valid job
     When I am admin
     When I do POST /api/v4/cat/jobs:
-    """
+    """json
     {
       "name": "test-job-name",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}"
     }
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "name": "test-job-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "config": {
-        "_id": "test-job-config-to-link",
+        "_id": "test-job-config-to-edit-job",
         "auth_token": "test-auth-token",
         "host": "http://example.com",
-        "name": "test-job-config-name-to-link",
+        "name": "test-job-config-to-edit-job-name",
         "type": "rundeck"
       },
       "job_id": "test-job-id",
@@ -59,10 +62,10 @@ Feature: create a job
   Scenario: POST a valid job
     When I am admin
     When I do POST /api/v4/cat/jobs:
-    """
+    """json
     {
       "name": "test-job-name-2",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
     }
@@ -71,14 +74,18 @@ Feature: create a job
     When I do GET /api/v4/cat/jobs/{{ .lastResponse._id}}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "name": "test-job-name-2",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "config": {
-        "_id": "test-job-config-to-link",
+        "_id": "test-job-config-to-edit-job",
         "auth_token": "test-auth-token",
         "host": "http://example.com",
-        "name": "test-job-config-name-to-link",
+        "name": "test-job-config-to-edit-job-name",
         "type": "rundeck"
       },
       "job_id": "test-job-id",
@@ -89,11 +96,11 @@ Feature: create a job
   Scenario: POST a valid job with custom id
     When I am admin
     When I do POST /api/v4/cat/jobs:
-    """
+    """json
     {
       "_id": "custom-id",
       "name": "test-job-name-2-custom-id-1",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
     }
@@ -105,18 +112,18 @@ Feature: create a job
   Scenario: POST a valid job with custom id that already exist should cause dup error
     When I am admin
     When I do POST /api/v4/cat/jobs:
-    """
+    """json
     {
       "_id": "test-job-to-update",
       "name": "test-job-name-2-custom-id-2",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
     }
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "_id": "ID already exists."
@@ -127,17 +134,17 @@ Feature: create a job
   Scenario: POST an invalid job where name already exists
     When I am admin
     When I do POST /api/v4/cat/jobs:
-    """
+    """json
     {
       "name": "test-job-name-to-get",
-      "config": "test-job-config-to-link",
+      "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
     }
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "name": "Name already exists."
@@ -148,7 +155,7 @@ Feature: create a job
   Scenario: POST an invalid job where config doesn't exist
     When I am admin
     When I do POST /api/v4/cat/jobs:
-    """
+    """json
     {
       "name": "test-job-name-with-not-existed-config",
       "config": "test-job-config-not-exists",
@@ -158,8 +165,10 @@ Feature: create a job
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
-      "error": "job's config doesn't exist"
+      "errors": {
+        "config": "Config doesn't exist."
+      }
     }
     """

@@ -30,10 +30,10 @@ import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 
-import { DATETIME_FORMATS, MODALS, WIDGET_TYPES, MAX_LIMIT } from '@/constants';
+import { DATETIME_FORMATS, MODALS, MAX_LIMIT } from '@/constants';
 
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/dayspan';
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
@@ -154,11 +154,12 @@ export default {
     },
 
     showAlarmsListModal(meta) {
-      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const widget = generateDefaultAlarmListWidget();
+
       const widgetParameters = {
         ...this.widget.parameters.alarmsList,
 
-        alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
+        opened: this.widget.parameters.opened,
         liveReporting: {
           tstart: moment.unix(meta.tstart).format(DATETIME_FORMATS.dateTimePicker),
           tstop: moment.unix(meta.tstop).format(DATETIME_FORMATS.dateTimePicker),

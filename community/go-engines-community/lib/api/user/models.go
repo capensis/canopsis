@@ -6,7 +6,8 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `form:"sort_by" binding:"oneoforempty=_id name role enable"`
+	SortBy     string `form:"sort_by" binding:"oneoforempty=_id name role enable"`
+	Permission string `form:"permission"`
 }
 
 type EditRequest struct {

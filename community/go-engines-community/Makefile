@@ -105,7 +105,7 @@ $(MONOREPO_ROOT)/.dockerignore:
 
 canopsis.toml:
 	mkdir -p $(OUTPUT_DIR)
-	$(dir $(CURRENT_MAKEFILE))/config/canopsis.toml.template ${CANOPSIS_EDITION} > $(OUTPUT_DIR)/canopsis.toml
+	cp $(dir $(CURRENT_MAKEFILE))/config/${CANOPSIS_EDITION}.toml $(OUTPUT_DIR)/canopsis.toml
 
 .PHONY: docker_alpine_updated docker_builder $(DOCKER_TARGETS)
 docker_alpine_updated: $(MONOREPO_ROOT)/.dockerignore

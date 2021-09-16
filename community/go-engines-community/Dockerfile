@@ -37,3 +37,7 @@ COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}
 
 FROM final_container AS canopsis-api
 EXPOSE 8082
+
+FROM final_container AS engine-remediation
+RUN mkdir -p /opt/canopsis/share && chown canopsis:canopsis /opt/canopsis/share
+COPY config /opt/canopsis/share/config

@@ -7,6 +7,7 @@ Feature: get running instruction
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-get-1-name",
       "alarm_patterns": [
         {
@@ -15,6 +16,10 @@ Feature: get running instruction
       ],
       "description": "test-instruction-execution-get-1-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-get-1-step-1",
@@ -116,6 +121,7 @@ Feature: get running instruction
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-get-2-name",
       "alarm_patterns": [
         {
@@ -124,6 +130,10 @@ Feature: get running instruction
       ],
       "description": "test-instruction-execution-get-2-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-get-2-step-1",
@@ -230,6 +240,7 @@ Feature: get running instruction
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-get-3-name",
       "alarm_patterns": [
         {
@@ -238,6 +249,10 @@ Feature: get running instruction
       ],
       "description": "test-instruction-execution-get-3-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-get-3-step-1",
@@ -345,6 +360,7 @@ Feature: get running instruction
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-get-4-name",
       "alarm_patterns": [
         {
@@ -353,6 +369,10 @@ Feature: get running instruction
       ],
       "description": "test-instruction-execution-get-4-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "seconds": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-get-4-step-1",
@@ -384,10 +404,10 @@ Feature: get running instruction
     Then the response code should be 404
 
   Scenario: given unauth request should not allow access
-    When I do GET /api/v4/cat/executions/test-instruction-execution-running
+    When I do GET /api/v4/cat/executions/notexist
     Then the response code should be 401
 
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
-    When I do GET /api/v4/cat/executions/test-instruction-execution-running
+    When I do GET /api/v4/cat/executions/notexist
     Then the response code should be 403

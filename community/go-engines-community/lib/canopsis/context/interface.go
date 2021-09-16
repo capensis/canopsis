@@ -19,7 +19,7 @@ type EnrichmentCenter interface {
 	HandleEntityServiceUpdate(ctx context.Context, serviceID string) (*UpdatedEntityServices, error)
 
 	// Get finds entity for event.
-	Get(event types.Event) (*types.Entity, error)
+	Get(ctx context.Context, event types.Event) (*types.Entity, error)
 
 	// UpdateEntityInfos updates an entity.
 	// It also recomputes the link between the entity and the services, since

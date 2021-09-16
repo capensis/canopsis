@@ -1,11 +1,7 @@
-import { createNamespacedHelpers } from 'vuex';
+import { tourBaseMixin } from './base';
 
-import { formToUser, userToForm } from '@/helpers/forms/user';
-
-const { mapActions: authMapActions, mapGetters: authMapGetters } = createNamespacedHelpers('auth');
-const { mapActions: userMapActions } = createNamespacedHelpers('user');
-
-export default {
+export const tourInnerMixin = {
+  mixins: [tourBaseMixin],
   props: {
     callbacks: {
       type: Object,
@@ -13,8 +9,6 @@ export default {
     },
   },
   computed: {
-    ...authMapGetters(['currentUser']),
-
     tourCallbacks() {
       return {
         ...this.callbacks,
@@ -32,28 +26,12 @@ export default {
     }
   },
   methods: {
-    ...authMapActions(['fetchCurrentUser']),
-    ...userMapActions({
-      updateUser: 'update',
-    }),
-
     async onStop() {
       if (this.callbacks.onStop) {
         await this.callbacks.onStop();
       }
 
-      const userForm = userToForm(this.currentUser);
-      const user = formToUser({
-        ...userForm,
-        ui_tours: {
-          ...this.currentUser.ui_tours,
-          [this.tourName]: true,
-        },
-      });
-
-      await this.updateUser({ data: user, id: user._id });
-
-      this.fetchCurrentUser();
+      await this.finishTourByName(this.tourName);
     },
   },
 };

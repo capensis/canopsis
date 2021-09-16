@@ -52,14 +52,13 @@ type Filter struct {
 // Manager interfaces is used to implement stats store.
 type Manager interface {
 	// Ping updates stats if exists or creates new stats.
-	Ping(SessionData, PathData) (*Stats, error)
+	Ping(context.Context, SessionData, PathData) (*Stats, error)
 	// Find returns stats list.
-	Find(Filter) ([]Stats, error)
+	Find(context.Context, Filter) ([]Stats, error)
 }
 
 // manager saves stats to mongo db.
 type manager struct {
-	dbClient     mongo.DbClient
 	dbCollection mongo.DbCollection
 	frame        time.Duration
 }
@@ -67,20 +66,17 @@ type manager struct {
 // NewManager creates new stats manager.
 func NewManager(dbClient mongo.DbClient, frame time.Duration) Manager {
 	return &manager{
-		dbClient:     dbClient,
 		dbCollection: dbClient.Collection(mongo.SessionStatsMongoCollection),
 		frame:        frame,
 	}
 }
 
-func (m *manager) Ping(data SessionData, pathData PathData) (*Stats, error) {
+func (m *manager) Ping(ctx context.Context, data SessionData, pathData PathData) (*Stats, error) {
 	if data.SessionID == "" || data.UserID == "" {
 		return nil, errors.New("invalid session data")
 	}
 
 	now := types.CpsTime{Time: time.Now().In(time.UTC)}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	cursor, err := m.dbCollection.Find(ctx, m.getActiveStatsFilter(data, now))
 	if err != nil {
@@ -129,11 +125,8 @@ func (m *manager) Ping(data SessionData, pathData PathData) (*Stats, error) {
 	return &s, nil
 }
 
-func (m *manager) Find(f Filter) ([]Stats, error) {
+func (m *manager) Find(ctx context.Context, f Filter) ([]Stats, error) {
 	now := time.Now().In(time.UTC)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	filter := make([]bson.M, 0)
 
 	if f.IsActive != nil {

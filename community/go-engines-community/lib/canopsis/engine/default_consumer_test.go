@@ -228,11 +228,12 @@ func TestDefaultConsumer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testi
 	mockChannel.EXPECT().Ack(gomock.Any(), gomock.Any()).Times(0)
 	mockChannel.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any())
 
-	expectedErr := errors.New("test err")
+	expectedErr := &testErr{msg: "test error"}
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Any()).Return(nil, expectedErr)
 
 	err := consumer.Consume(context.Background())
-	if err != expectedErr {
+	testErr := &testErr{}
+	if !errors.As(err, &testErr) || testErr.Error() != expectedErr.Error() {
 		t.Errorf("expected error %v but got %v", expectedErr, err)
 	}
 }
@@ -271,4 +272,12 @@ func TestDefaultConsumer_Consume_GivenContextDone_ShouldStopConsumer(t *testing.
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
+}
+
+type testErr struct {
+	msg string
+}
+
+func (e *testErr) Error() string {
+	return e.msg
 }

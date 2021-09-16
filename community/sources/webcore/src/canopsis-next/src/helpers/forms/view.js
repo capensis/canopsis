@@ -1,10 +1,12 @@
-import { isUndefined, omit } from 'lodash';
+import { omit } from 'lodash';
 
 import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
 
 import uuid from '../uuid';
 import { durationWithEnabledToForm, formToDurationWithEnabled } from '../date/duration';
 import { generateViewTab } from '../entities';
+
+import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {Object} ViewTab
@@ -76,7 +78,7 @@ import { generateViewTab } from '../entities';
  * @property {string[]} tags
  * @property {ViewGroup} group
  * @property {ViewTab[]} tabs
- * @property {PeriodicRefresh} periodic_refresh
+ * @property {DurationWithEnabled} periodic_refresh
  */
 
 /**
@@ -111,7 +113,7 @@ import { generateViewTab } from '../entities';
 export const viewToForm = (view = {}) => ({
   title: view.title || '',
   description: view.description || '',
-  enabled: isUndefined(view.enabled) ? true : view.enabled,
+  enabled: enabledToForm(view.enabled),
   tags: view.tags ? [...view.tags] : [],
   group: view.group ? { ...view.group } : null,
   periodic_refresh: durationWithEnabledToForm(view.periodic_refresh || DEFAULT_PERIODIC_REFRESH),

@@ -16,7 +16,7 @@
 <script>
 import uid from '@/helpers/uid';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 import PbehaviorCommentField from '../fields/pbehavior-comment-field.vue';
 

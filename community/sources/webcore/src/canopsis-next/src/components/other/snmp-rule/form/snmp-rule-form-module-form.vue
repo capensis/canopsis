@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 import entitiesSnmpMibMixin from '@/mixins/entities/snmp-mib';
 
 import SnmpRuleFormFieldTitle from './snmp-rule-form-field-title.vue';

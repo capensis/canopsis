@@ -14,7 +14,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import entitiesRemediationJobsMixin from '@/mixins/entities/remediation/jobs';
+import { entitiesRemediationJobsMixin } from '@/mixins/entities/remediation/jobs';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
 import RemediationJobsList from './remediation-jobs-list.vue';

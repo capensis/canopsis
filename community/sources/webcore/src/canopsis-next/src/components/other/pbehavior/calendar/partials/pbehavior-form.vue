@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form/object';
+import { formMixin } from '@/mixins/form';
 
 import PbehaviorGeneralForm from './pbehavior-general-form.vue';
 import PbehaviorCommentsForm from './pbehavior-comments-form.vue';
