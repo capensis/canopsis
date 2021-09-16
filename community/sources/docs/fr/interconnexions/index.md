@@ -39,7 +39,7 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 | [Snmp Trap Custom](Supervision/SNMPtrap_custom.md) | Tout trap SNMP nécessitant un traitement spécifique | Pro | Oui | Version ≥ 3 |
 | [Nagios](Supervision/Nagios-et-Icinga.md) | [Icinga](https://icinga.com/) 1, [Nagios](https://www.nagios.org/)  ≤ 3.x (Nagios 4.x en beta) | Community | Oui | Toutes versions |
 | [Centreon Legacy](Supervision/Centreon.md) | [Centreon](https://www.centreon.com/) 2.11.5 à 2.11.7, 3.0.3 à 3.0.11, 3.0.13, 3.0.14, 3.0.16, 18.10 et 19.04 | Community | Oui | Toutes versions |
-| [Centreon Stream Connector](Supervision/Centreon-stream-connector.md) | [Centreon Stream Connector](https://docs.centreon.com/current/en/developer/developer-broker-stream-connector.html) | Pro | Oui | 19.10.5, >= 20.04.2 |
+| [Centreon Stream Connector](Supervision/Centreon-stream-connector.md) | [Centreon Stream Connector](https://docs.centreon.com/current/en/developer/developer-broker-stream-connector.html) | Community | Oui | 19.10.5, >= 20.04.2 |
 | [Icinga](Supervision/Icinga2.md) | [Icinga 2](https://icinga.com/) | Community | Oui | Toutes versions |
 | [Zabbix](Supervision/Zabbix.md) | [Zabbix](https://www.zabbix.com/) | Community | Oui | Toutes versions |
 | [LibreNMS](Supervision/LibreNMS.md) | [LibreNMS](https://www.librenms.org/) | Community | Oui | Toutes versions |
