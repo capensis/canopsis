@@ -23,39 +23,89 @@
 
 La météo de services est composée de tuiles.
 
-Exemple d'une tuile : ![Exemple d'une tuile - Météo de services](./img/tuile-weather.png  "Exemple d'une tuile - Météo de services")
+Exemple d'une tuile :
+
+![Exemple d'une tuile - Météo de services](./img/tuile-weather.png  "Exemple d'une tuile - Météo de services")
 
 Chaque tuile correspond à un service.
 
 Le contenu de texte de cette tuile est personnalisable (*Cf: [Guide exploitant](#guide-exploitant_1)*). Il permet de présenter des informations sur le service.
 
-La couleur de la tuile et l'icône présente sur celle-ci permettent d'obtenir des informations sur **la criticité** de le service:
+La couleur de la tuile et une icône présente sur celle-ci permettent d'obtenir des informations sur **la criticité** du service.
+
+#### Bac à alarmes
+
+Sur le partie inférieuré des tuiles, une indication "See alarms" est cliquable et permet un accès direct à la liste des alarmes liées au service de la tuile.
 
 #### La couleur
 
-La couleur de la tuile correspond à la criticité de le service. Elle est calculée en prenant en compte la pire criticité parmi les entités surveillées par ce service.
+Il est possible de définir la couleur des tuiles par criticité d'alarme (par défaut) ou par priorité de service.
 
-Exemple :
-Un service surveille deux entités, A et B. A a un criticité de 1. B a une criticité de 3. La criticité de le service sera alors égale à 3.
+![](./img/color_indicator.png)
 
-- Vert: Criticité = 0 => Ok
-- Jaune: Criticité = 1 => Mineur
-- Orange: Criticité = 2 => Majeur
-- Rouge: Criticité = 3 => Critique
-- Gris: Le service (ou toutes les entités de le service) possède un comportement périodique actif (pause, maintenance…).
+##### Par criticité
 
-#### L'icone
+La couleur de la tuile correspond à la criticité du service. Elle est calculée en prenant en compte la pire criticité parmi les entités surveillées par ce service.
 
-- Soleil: Le service possède une criticité "Ok" (égale à 0)
-- Personne: Le service possède une criticité "Mineure" (égale à 1) ou "Majeure" (égale à 2)
-- Nuage: Le service possède une criticité "Critique" (égale à 3)
-- Clé: Le service possède un comportement périodique actif, de type "Maintenance"
-- Lune: Le service possède un comportement périodique actif, de type "Hors plage de surveillance"
-- Pause: Le service ne possède pas de comportement périodique, mais toutes les entités liées à ce service possèdent un comportement périodique actif.
+> **Exemple**
+>
+> Un service surveille deux entités, A et B:
+> 
+> - A a une criticité de 1
+> - B a une criticité de 3
+>
+> La criticité du service sera alors égale à 3.
+
+- Vert: Criticité = 0 (Ok)
+- Jaune: Criticité = 1 (Mineur)
+- Orange: Criticité = 2 (Majeur)
+- Rouge: Criticité = 3 (Critique)
+- Gris: Le service (ou toutes les entités du service) possède un comportement périodique actif (pause, maintenance…).
+
+##### Par priorité
+
+La couleur de la tuile correspond à l'état d'impact du service. Cette valeur est le produit de l'alarme la plus critique parmi les entités surveillées par ce service et du niveau d'impact défini de ce dernier.
+
+> **Exemple**
+>
+> Un service surveille deux entités, A et B:
+> 
+> - A a un criticité de 1 
+> - B a une criticité de 3
+> - Et le niveau d'impact du service est 5
+>
+> L'état d'impact du service est donc de `3 * 5 = 15`
+
+Voici la palette de couleurs correspondant à l'état d'impact :
+
+![](./img/color_prio_table.png)
+
+#### L'échelle
+
+Chaque tuile comprend une petite échelle d'état du service.
+
+![](./img/tuile_scale.png)
+
+Cette échelle permet situer l'état du service sur la palette de couleurs ainsi que sa valeur numérique (0 à 30).
+
+#### Le point d'interrogation
+
+Cette icône cliquable permet l'affichage de la valeur de toutes les variables du service. 
+
+Ces variables peuvent être utilisées dans l'édition des [templates](#template-tuile).
+
+#### L'icône
+
+- **Soleil**: Le service possède une criticité "Ok" (égale à 0)
+- **Personne**: Le service possède une criticité "Mineure" (égale à 1) ou "Majeure" (égale à 2)
+- **Nuage**: Le service possède une criticité "Critique" (égale à 3)
+- **Clé**: Le service possède un comportement périodique actif, de type "Maintenance"
+- **Lune**: Le service possède un comportement périodique actif, de type "Hors plage de surveillance"
+- **Pause**: Le service ne possède pas de comportement périodique, mais toutes les entités liées à ce service possèdent un comportement périodique actif.
 
 #### Le clignotement
 
-Une tuile de la météo de service clignotera si une des entités lui appartenant possède une alarme non acquittée, et que celui-ci n'est pas en pause/ne possède pas d'entité en pause.
+Une tuile de la météo de service clignotera si une des entités lui appartenant possède une alarme non acquittée, et que celui-ci n'est pas en pause ou ne possède pas d'entité en pause.
 
 ### La modale
 
@@ -63,23 +113,21 @@ Au clic sur une tuile de la météo de services, une fenêtre s'ouvre.
 
 Le contenu de cette fenêtre est configurable depuis les paramètres du widget.
 
-Celle-ci contient, au choix :
+Celle-ci contient la liste des entités surveillées. Au clic sur l'une de ces entités, deux onglets apparaissent :
 
-- "Plus d'infos": Cette fenêtre présente des informations supplémentaires concernant le service sur lequel vous avez cliqué. Celle-ci peut, notamment, contenir la liste des entités concernées par le service. Le template de cette fenêtre est configurable depuis les paramètres du widget.
+- "Info" : Affiche les informations configurées dans le template des entités qui se trouve dans les paramètres avancés du widget. Ainsi que la listes des actions possible.
 
-![modale - Plus d'infos](./img/modal_more_infos.png "modale - Plus d'infos")
+![](./img/modale_info.png)
 
-- "Bac à alarmes": Cette fenêtre contient un widget Bac à alarmes. Ce Bac à alarmes regroupe toutes les alarmes dans le spectre de le service. Celui-ci est configurable depuis les paramètres du widget.
+- "Tree of dependencies" : Affiche l'arbre de dépendences de l'entité sélectionnée.
 
-![modale - Bac à alarmes](./img/modal_alarmlist.png "modale - Bac à alarmes")
+![](./img/modale_tree.png)
 
 ### Les actions
 
-Dans [la modale "Plus d'infos"](#la-modale), il vous est possible d'afficher la liste des entités concernées par le service (*Cf: [Template - modale](#template-modale)*).
+Dans la liste des entités affichée, des actions sont disponibles sur chacune d'entre elles. Les actions disponibles dépendent de la criticité de l'entité.
 
-Si la liste d'entités est affichée, des actions sont disponibles sur chacune d'entre elles. Les actions disponibles dépendent de la criticité de l'entité.
-
-Au clic sur les icônes d'actions, celles-ci sont mises en attente. Elles ne sont exécutées qu'au clic sur le bouton ```Envoyer``` de la modale "Plus d'infos".
+Au clic sur les icônes d'actions, celles-ci sont mises en attente. Elles ne sont exécutées qu'au clic sur le bouton `Save change`.
 
 - ![Action: Déclarer un incident](./img/action_declareTicket.png "Action: Déclarer un incident") *Déclarer un incident*: Cette action vous permet de déclarer un numéro de ticket, associé à un incident. Au clic sur cette action, une fenêtre s'ouvre, vous permettant d'indiquer un numéro de ticket. Cette action déclenche également automatiquement une action d'acquittement.
 - ![Action: Pause](./img/action_pause.png "Action: Pause") *Pause*: Cette action vous permet de mettre une entité en pause. Au clic, une fenêtre s'ouvre. Celle-ci vous permet de renseigner un commentaire, ainsi que la raison de la pause. Cette action n'est disponible que pour les entités qui ne sont pas déjà en pause.
@@ -94,15 +142,11 @@ Au clic sur les icônes d'actions, celles-ci sont mises en attente. Elles ne son
 
 Durant la configuration de votre widget Météo de services, notamment les Templates, il vous sera possible d'accéder à des variables concernant les services.
 
-Exemple : Il vous sera possible d'afficher, pour chacune des tuiles de la météo de services, le nom de le service, ou son identifiant, etc.
+> **Exemple**
+>
+> Il vous sera possible d'afficher, pour chacune des tuiles de la météo de services, le nom du service, ou son identifiant, etc.
 
-Afin de connaitre les variables disponibles, une modale d'aide est disponible.
-
-Pour y accéder, entrez dans le mode d'édition (*Cf: [Vues - Mode d'édition](../../vues#mode-edition)*).
-
-Un bouton d'aide apparaît alors sur chacune des tuiles de la Météo de service.
-
-Au clic sur ce bouton, une fenêtre s'ouvre. Celle-ci liste toutes les variables disponibles dans vos différents templates. Un bouton, à droite de chacune des variables, vous permet de copier directement dans le Presse-papier le chemin de cette variable.
+Afin de connaitre les variables disponibles, cliquer sur [le point d'interrogation](#le-point-dinterrogation) d'une tuile.
 
 ### Paramètres du widget
 
@@ -179,8 +223,8 @@ Le langage utilisé ici est le Handlebars.
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entre le texte souhaité pour le template des tuiles, puis cliquez sur 'Envoyer'.
 
-Une variable est disponible ici pour vous permettre d'afficher les détails de le service : `entity`.
-Exemple : Pour afficher le champ `display_name` de le service (qui correspond au nom de le service), il vous faut écrire dans le template : `{{ entity.display_name }}`.
+Une variable est disponible ici pour vous permettre d'afficher les détails du service : `entity`.
+Exemple : Pour afficher le champ `display_name` du service (qui correspond au nom du service), il vous faut écrire dans le template : `{{ entity.display_name }}`.
 Tous les champs disponibles dans le service sont disponibles ici.
 
 ##### Template - Modale
@@ -261,11 +305,3 @@ Pour le modifier, faites glisser le sélecteur, afin de choisir une valeur entre
 
 Par défaut, ce paramètre est réglé sur une valeur de 1.
 
-##### Type de modale
-
-Ce paramètre vous permet de sélectionner le type de modale que vous souhaitez ouvrir au clic sur une tuile de la Météo de services.
-
-Les types de modales disponibles sont :
-
-- "Plus d'infos": Cette modale vous permet d'afficher (grâce à un template configurable) des détails supplémentaires sur le service sur lequel vous cliquez.
-- "Bac à alarmes": Cette modale vous permet d'afficher un widget Bac à alarmes, regroupant les alarmes liées à le service. Ce widget est configurable grace aux [Paramètres du bac à alarmes](#parametres-du-bac-a-alarmes).
