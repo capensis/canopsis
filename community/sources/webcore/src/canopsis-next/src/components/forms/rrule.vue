@@ -193,7 +193,9 @@
 
 <script>
 import { RRule, rrulestr } from 'rrule';
-import { mapValues, pickBy, isArray } from 'lodash';
+import { mapValues, pickBy } from 'lodash';
+
+import { recurrenceRuleToFormAdvancedOptions, recurrenceRuleToFormOptions } from '@/helpers/forms/rrule';
 
 /**
  * RRule form component
@@ -234,8 +236,8 @@ export default {
       showRRule: !!this.rrule,
       rRuleObject: rRule,
       form: {
-        rRuleOptions: this.rRuleToFormOptions(rRule),
-        advancedRRuleOptions: this.rRuleToFormAdvancedOptions(rRule),
+        rRuleOptions: recurrenceRuleToFormOptions(rRule.origOptions),
+        advancedRRuleOptions: recurrenceRuleToFormAdvancedOptions(rRule.origOptions),
       },
     };
   },
@@ -246,42 +248,42 @@ export default {
 
     frequencies() {
       return [
-        { text: 'Secondly', value: RRule.SECONDLY },
-        { text: 'Minutely', value: RRule.MINUTELY },
-        { text: 'Hourly', value: RRule.HOURLY },
-        { text: 'Daily', value: RRule.DAILY },
-        { text: 'Weekly', value: RRule.WEEKLY },
-        { text: 'Monthly', value: RRule.MONTHLY },
-        { text: 'Yearly', value: RRule.YEARLY },
+        { text: this.$t('common.timeFrequencies.secondly'), value: RRule.SECONDLY },
+        { text: this.$t('common.timeFrequencies.minutely'), value: RRule.MINUTELY },
+        { text: this.$t('common.timeFrequencies.hourly'), value: RRule.HOURLY },
+        { text: this.$t('common.timeFrequencies.daily'), value: RRule.DAILY },
+        { text: this.$t('common.timeFrequencies.weekly'), value: RRule.WEEKLY },
+        { text: this.$t('common.timeFrequencies.monthly'), value: RRule.MONTHLY },
+        { text: this.$t('common.timeFrequencies.yearly'), value: RRule.YEARLY },
       ];
     },
 
     weekDays() {
       return [
-        { text: 'Monday', value: RRule.MO.weekday },
-        { text: 'Tuesday', value: RRule.TU.weekday },
-        { text: 'Wednesday', value: RRule.WE.weekday },
-        { text: 'Thursday', value: RRule.TH.weekday },
-        { text: 'Friday', value: RRule.FR.weekday },
-        { text: 'Saturday', value: RRule.SA.weekday },
-        { text: 'Sunday', value: RRule.SU.weekday },
+        { text: this.$t('common.weekDays.monday'), value: RRule.MO.weekday },
+        { text: this.$t('common.weekDays.tuesday'), value: RRule.TU.weekday },
+        { text: this.$t('common.weekDays.wednesday'), value: RRule.WE.weekday },
+        { text: this.$t('common.weekDays.thursday'), value: RRule.TH.weekday },
+        { text: this.$t('common.weekDays.friday'), value: RRule.FR.weekday },
+        { text: this.$t('common.weekDays.saturday'), value: RRule.SA.weekday },
+        { text: this.$t('common.weekDays.sunday'), value: RRule.SU.weekday },
       ];
     },
 
     months() {
       return [
-        { text: 'January', value: 1 },
-        { text: 'February', value: 2 },
-        { text: 'March', value: 3 },
-        { text: 'April', value: 4 },
-        { text: 'May', value: 5 },
-        { text: 'June', value: 6 },
-        { text: 'July', value: 7 },
-        { text: 'August', value: 8 },
-        { text: 'September', value: 9 },
-        { text: 'October', value: 10 },
-        { text: 'November', value: 11 },
-        { text: 'December', value: 12 },
+        { text: this.$t('common.months.january'), value: 1 },
+        { text: this.$t('common.months.february'), value: 2 },
+        { text: this.$t('common.months.march'), value: 3 },
+        { text: this.$t('common.months.april'), value: 4 },
+        { text: this.$t('common.months.may'), value: 5 },
+        { text: this.$t('common.months.june'), value: 6 },
+        { text: this.$t('common.months.july'), value: 7 },
+        { text: this.$t('common.months.august'), value: 8 },
+        { text: this.$t('common.months.september'), value: 9 },
+        { text: this.$t('common.months.october'), value: 10 },
+        { text: this.$t('common.months.november'), value: 11 },
+        { text: this.$t('common.months.december'), value: 12 },
       ];
     },
 
@@ -304,40 +306,6 @@ export default {
     },
   },
   methods: {
-    rRuleToFormOptions(rRule) {
-      const { origOptions } = rRule;
-
-      return {
-        freq: origOptions.freq || '',
-        count: origOptions.count || '',
-        interval: origOptions.interval || '',
-        byweekday: origOptions.byweekday ? origOptions.byweekday.map(v => v.weekday) : [],
-        wkst: origOptions.wkst ? origOptions.wkst.weekday : '',
-        bymonth: origOptions.bymonth || [],
-      };
-    },
-
-    rRuleToFormAdvancedOptions(rRule) {
-      const { origOptions } = rRule;
-      const optionPreparer = (v) => {
-        if (v) {
-          return (isArray(v) ? v.join(',') : String(v));
-        }
-
-        return '';
-      };
-
-      return {
-        bysetpos: optionPreparer(origOptions.bysetpos),
-        bymonthday: optionPreparer(origOptions.bymonthday),
-        byyearday: optionPreparer(origOptions.byyearday),
-        byweekno: optionPreparer(origOptions.byweekno),
-        byhour: optionPreparer(origOptions.byhour),
-        byminute: optionPreparer(origOptions.byminute),
-        bysecond: optionPreparer(origOptions.bysecond),
-      };
-    },
-
     /**
      * For each changes in the form we call this function.
      * If RRule isn't valid then add error message to visible RRule field
