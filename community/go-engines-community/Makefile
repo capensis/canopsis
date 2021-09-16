@@ -95,6 +95,7 @@ $(OUTPUT_DIR)/cmd/%: $(ROOT_DIR)/cmd/% $(ROOT_DIR)/cmd/%/*
 #
 
 $(MONOREPO_ROOT)/.dockerignore:
+	# I love Docker https://github.com/moby/moby/issues/20944
 	cd $(MONOREPO_ROOT);\
 	echo > $(MONOREPO_ROOT)/.dockerignore;\
 	set -x;\
@@ -105,7 +106,7 @@ $(MONOREPO_ROOT)/.dockerignore:
 
 canopsis.toml:
 	mkdir -p $(OUTPUT_DIR)
-	cp $(dir $(CURRENT_MAKEFILE))/config/${CANOPSIS_EDITION}.toml $(OUTPUT_DIR)/canopsis.toml
+	cp $(dir $(CURRENT_MAKEFILE))/config/canopsis.${CANOPSIS_EDITION}.toml $(OUTPUT_DIR)/canopsis.toml
 
 .PHONY: docker_alpine_updated docker_builder $(DOCKER_TARGETS)
 docker_alpine_updated: $(MONOREPO_ROOT)/.dockerignore
