@@ -5,8 +5,6 @@ import { POPUP_TYPES } from '@/constants';
 
 import request from '@/services/request';
 
-import { toSeconds } from '@/helpers/date/duration';
-
 const types = {
   FETCH_LOGIN_INFOS: 'FETCH_LOGIN_INFOS',
   FETCH_APP_INFOS: 'FETCH_APP_INFOS',
@@ -16,112 +14,61 @@ export default {
   namespaced: true,
   state: {
     version: '',
-    logo: '',
-    appTitle: '',
-    footer: '',
-    edition: '',
-    stack: '',
-    description: '',
-    language: '',
-    isLDAPAuthEnabled: false,
-    isCASAuthEnabled: false,
-    isSAMLAuthEnabled: false,
-    allowChangeSeverityToInfo: false,
-    casConfig: {},
-    samlConfig: {},
-    popupTimeout: undefined,
-    maxMatchedItems: '',
-    checkCountRequestTimeout: '',
-    timezone: undefined,
-    remediation: {},
+    userInterface: {},
+    loginConfig: {},
   },
   getters: {
     version: state => state.version,
-    logo: state => state.logo,
-    appTitle: state => state.appTitle,
-    popupTimeout: state => state.popupTimeout,
-    maxMatchedItems: state => state.maxMatchedItems,
-    checkCountRequestTimeout: state => state.checkCountRequestTimeout,
-    allowChangeSeverityToInfo: state => state.allowChangeSeverityToInfo,
-    footer: state => state.footer,
-    edition: state => state.edition,
-    stack: state => state.stack,
-    description: state => state.description,
-    language: state => state.language,
-    isLDAPAuthEnabled: state => state.isLDAPAuthEnabled,
-    isCASAuthEnabled: state => state.isCASAuthEnabled,
-    isSAMLAuthEnabled: state => state.isSAMLAuthEnabled,
-    casConfig: state => state.casConfig,
-    samlConfig: state => state.samlConfig,
-    timezone: state => state.timezone,
-    remediation: state => state.remediation,
-    remediationJobConfigTypes: state => get(state.remediation, 'job_config_types', []),
-    remediationPauseManualInstructionIntervalSeconds: state => get(state.remediation, 'pause_manual_instruction_interval.seconds', INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS),
+    userInterface: state => state.userInterface,
+    logo: state => state.userInterface.logo,
+    appTitle: state => state.userInterface.app_title,
+    popupTimeout: state => state.userInterface.popup_timeout || {},
+    maxMatchedItems: state => state.userInterface.max_matched_items,
+    checkCountRequestTimeout: state => state.userInterface.check_count_request_timeout,
+    allowChangeSeverityToInfo: state => state.userInterface.allow_change_severity_to_info,
+    footer: state => state.userInterface.footer,
+    edition: state => state.userInterface.edition,
+    stack: state => state.userInterface.stack,
+    description: state => state.userInterface.login_page_description,
+    language: state => state.userInterface.language,
+    timezone: state => state.userInterface.timezone,
+    remediation: state => state.userInterface.remediation,
+    remediationJobConfigTypes: state => get(state.userInterface.remediation, 'job_config_types', []),
+    remediationPauseManualInstructionIntervalSeconds: state => get(
+      state.userInterface.remediation,
+      'pause_manual_instruction_interval.seconds',
+      INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS,
+    ),
+
+    isLDAPAuthEnabled: state => !!state.loginConfig.ldapconfig?.enable,
+    isCASAuthEnabled: state => !!state.loginConfig.casconfig?.enable,
+    isSAMLAuthEnabled: state => !!state.loginConfig.saml2config?.enable,
+    casConfig: state => state.loginConfig.casconfig,
+    samlConfig: state => state.loginConfig.saml2config,
   },
   mutations: {
-    [types.FETCH_LOGIN_INFOS](state, {
-      version,
-      userInterface = {},
-      loginConfig = {},
-    }) {
+    [types.FETCH_LOGIN_INFOS](state, { loginInfo = {} }) {
+      const {
+        version,
+        user_interface: userInterface = {},
+        login_config: loginConfig = {},
+      } = loginInfo;
+
+      state.userInterface = userInterface;
+      state.loginConfig = loginConfig;
       state.version = version;
-      state.logo = userInterface.logo;
-      state.appTitle = userInterface.app_title;
-      state.footer = userInterface.footer;
-      state.description = userInterface.login_page_description;
-      state.language = userInterface.language;
-      state.popupTimeout = userInterface.popup_timeout || {};
-
-      state.isLDAPAuthEnabled = loginConfig.ldapconfig ? loginConfig.ldapconfig.enable : false;
-      state.isCASAuthEnabled = loginConfig.casconfig ? loginConfig.casconfig.enable : false;
-      state.isSAMLAuthEnabled = loginConfig.saml2config ? loginConfig.saml2config.enable : false;
-
-      state.casConfig = loginConfig.casconfig;
-      state.samlConfig = loginConfig.saml2config;
     },
-    [types.FETCH_APP_INFOS](state, {
-      version,
-      logo,
-      appTitle,
-      popupTimeout,
-      maxMatchedItems,
-      checkCountRequestTimeout,
-      allowChangeSeverityToInfo,
-      edition,
-      stack,
-      language,
-      timezone,
-      remediation,
-    }) {
-      state.version = version;
-      state.logo = logo;
-      state.appTitle = appTitle;
-      state.popupTimeout = popupTimeout || {};
-      state.maxMatchedItems = maxMatchedItems;
-      state.checkCountRequestTimeout = checkCountRequestTimeout;
-      state.allowChangeSeverityToInfo = allowChangeSeverityToInfo;
-      state.edition = edition;
-      state.stack = stack;
-      state.language = language;
-      state.timezone = timezone;
-      state.remediation = remediation;
+    [types.FETCH_APP_INFOS](state, { userInterface }) {
+      state.userInterface = userInterface;
     },
   },
   actions: {
     async fetchLoginInfos({ commit, dispatch }) {
-      const {
-        version,
-        user_interface: userInterface,
-        login_config: loginConfig,
-      } = await request.get(API_ROUTES.infos.login, { fullResponse: true });
+      const loginInfo = await request.get(API_ROUTES.infos.login, { fullResponse: true });
 
-      const { language, popup_timeout: popupTimeout } = userInterface;
+      const { language, popup_timeout: popupTimeout } = loginInfo.user_interface;
 
-      commit(types.FETCH_LOGIN_INFOS, {
-        version,
-        userInterface: userInterface || {},
-        loginConfig: loginConfig || {},
-      });
+      commit(types.FETCH_LOGIN_INFOS, { loginInfo });
 
       if (language) {
         dispatch('i18n/setGlobalLocale', language, { root: true });
@@ -134,45 +81,16 @@ export default {
 
     async fetchAppInfos({ commit, dispatch }) {
       try {
-        const {
-          version,
-          logo,
-          app_title: appTitle,
-          popup_timeout: popupTimeout,
-          max_matched_items: maxMatchedItems,
-          check_count_request_timeout: checkCountRequestTimeout,
-          allow_change_severity_to_info: allowChangeSeverityToInfo,
-          remediation,
-          edition,
-          stack,
-          language,
-          timezone,
-        } = await request.get(API_ROUTES.infos.app);
+        const userInterface = await request.get(API_ROUTES.infos.app);
 
-        commit(
-          types.FETCH_APP_INFOS,
-          {
-            version,
-            logo,
-            appTitle,
-            edition,
-            popupTimeout,
-            maxMatchedItems,
-            checkCountRequestTimeout,
-            allowChangeSeverityToInfo,
-            stack,
-            language,
-            timezone,
-            remediation,
-          },
-        );
+        commit(types.FETCH_APP_INFOS, { userInterface });
 
-        if (language) {
-          dispatch('i18n/setGlobalLocale', language, { root: true });
+        if (userInterface.language) {
+          dispatch('i18n/setGlobalLocale', userInterface.language, { root: true });
         }
 
-        if (popupTimeout) {
-          dispatch('setPopupTimeouts', { popupTimeout });
+        if (userInterface.popup_timeout) {
+          dispatch('setPopupTimeouts', { popupTimeout: userInterface.popup_timeout });
         }
       } catch (err) {
         console.error(err);
@@ -184,11 +102,11 @@ export default {
     },
 
     setPopupTimeouts({ dispatch }, { popupTimeout = {} }) {
-      const { interval: intervalInfo, unit: unitInfo } = popupTimeout.info;
-      const { interval: intervalError, unit: unitError } = popupTimeout.error;
+      const { seconds: intervalInfo } = popupTimeout.info;
+      const { seconds: intervalError } = popupTimeout.error;
 
-      const timeInfo = toSeconds(intervalInfo, unitInfo) * 1000;
-      const timeError = toSeconds(intervalError, unitError) * 1000;
+      const timeInfo = intervalInfo * 1000;
+      const timeError = intervalError * 1000;
 
       dispatch('popups/setDefaultCloseTime', { type: POPUP_TYPES.success, time: timeInfo }, { root: true });
       dispatch('popups/setDefaultCloseTime', { type: POPUP_TYPES.info, time: timeInfo }, { root: true });

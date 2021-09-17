@@ -13,6 +13,7 @@ export const entitiesInfoMixin = {
   computed: {
     ...mapGetters({
       version: 'version',
+      userInterface: 'userInterface',
       logo: 'logo',
       appTitle: 'appTitle',
       popupTimeout: 'popupTimeout',

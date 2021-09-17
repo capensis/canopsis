@@ -214,4 +214,9 @@ export const subtractUnitFromDate = (date, value = 0, unit = TIME_UNITS.second) 
  */
 export const formatDate = (date, format) => convertTimestampToMoment(date).format(format);
 
+/**
+ * Return all available timezones
+ */
+export const getTimezones = () => moment.tz.names();
+
 export default convertTimestampToMoment;

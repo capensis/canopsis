@@ -22,7 +22,7 @@ import {
   USERS_PERMISSIONS,
   ALARMS_OPENED_VALUES,
   HEALTHCHECK_SERVICES_NAMES,
-  HEALTHCHECK_ENGINES_NAMES,
+  HEALTHCHECK_ENGINES_NAMES, GROUPS_NAVIGATION_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -228,12 +228,6 @@ export default {
     boolean: 'Booléen',
     null: 'Nul',
     array: 'Array',
-  },
-  user: {
-    role: 'Rôle',
-    defaultView: 'Vue par défaut',
-    seeProfile: 'Voir le profil',
-    selectDefaultView: 'Sélectionner une vue par défaut',
   },
   context: {
     impacts: 'Impacts',
@@ -1752,34 +1746,6 @@ export default {
       storageSettings: 'Paramètres de stockage',
       notificationsSettings: 'Paramètres des notifications',
     },
-    interfaceLanguage: 'Langue de l\'interface',
-    groupsNavigationType: {
-      title: 'Type d\'affichage de la barre de vues',
-      items: {
-        sideBar: 'Barre latérale',
-        topBar: 'Barre d\'entête',
-      },
-    },
-    userInterfaceForm: {
-      title: 'Interface utilisateur',
-      fields: {
-        appTitle: 'Titre de l\'application',
-        language: 'Langue par défaut',
-        footer: 'Page d\'identification : pied de page',
-        description: 'Page d\'identification : description',
-        logo: 'Logo',
-        infoPopupTimeout: 'Timeout pour les popup d\'informations',
-        errorPopupTimeout: 'Timeout pour les popup d\'erreurs',
-        popupTimeoutUnit: 'Unité',
-        allowChangeSeverityToInfo: 'Allow change severity to info',
-        maxMatchedItems: 'Articles correspondants au maximum',
-        checkCountRequestTimeout: 'Vérifier le délai d\'expiration maximal de la demande d\'éléments correspondants (secondes)',
-      },
-      tooltips: {
-        maxMatchedItems: 'il doit avertir l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
-        checkCountRequestTimeout: 'il doit définir la valeur du délai d\'attente de la demande pour la vérification du nombre maximal d\'éléments correspondants',
-      },
-    },
   },
   view: {
     errors: {
@@ -2275,22 +2241,21 @@ export default {
   },
 
   users: {
-    table: {
-      username: 'Identifiant utilisateur',
-      firstName: 'Prénom',
-      lastName: 'Nom',
-      role: 'Rôle',
-      enabled: 'Actif',
-      auth: 'Auth',
-    },
-    fields: {
-      username: 'Identifiant utilisateur',
-      firstName: 'Prénom',
-      lastName: 'Nom',
-      email: 'Email',
-      password: 'Mot de passe',
-      role: 'Rôle',
-      language: 'Langue de l\'interface par défaut',
+    seeProfile: 'Voir le profil',
+    selectDefaultView: 'Sélectionner une vue par défaut',
+    username: 'Identifiant utilisateur',
+    firstName: 'Prénom',
+    lastName: 'Nom',
+    email: 'Email',
+    role: 'Rôle',
+    enabled: 'Actif',
+    password: 'Mot de passe',
+    language: 'Langue de l\'interface par défaut',
+    auth: 'Auth',
+    navigationType: 'Type d\'affichage de la barre de vues',
+    navigationTypes: {
+      [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',
+      [GROUPS_NAVIGATION_TYPES.topBar]: 'Barre d\'entête',
     },
   },
 
@@ -2562,6 +2527,24 @@ export default {
     patterns: {
       countOverLimit: 'Le patterns que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr?',
       countRequestError: 'Le calcul du nombre d\'entités ciblées par le patterns s\'est terminée avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr?',
+    },
+  },
+
+  userInterface: {
+    title: 'Interface utilisateur',
+    appTitle: 'Titre de l\'application',
+    language: 'Langue par défaut',
+    footer: 'Page d\'identification : pied de page',
+    description: 'Page d\'identification : description',
+    logo: 'Logo',
+    infoPopupTimeout: 'Timeout pour les popup d\'informations',
+    errorPopupTimeout: 'Timeout pour les popup d\'erreurs',
+    allowChangeSeverityToInfo: 'Allow change severity to info',
+    maxMatchedItems: 'Articles correspondants au maximum',
+    checkCountRequestTimeout: 'Vérifier le délai d\'expiration maximal de la demande d\'éléments correspondants (secondes)',
+    tooltips: {
+      maxMatchedItems: 'il doit avertir l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
+      checkCountRequestTimeout: 'il doit définir la valeur du délai d\'attente de la demande pour la vérification du nombre maximal d\'éléments correspondants',
     },
   },
 
