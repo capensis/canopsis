@@ -168,6 +168,9 @@ func (t *modelTransformer) Patch(ctx context.Context, req PatchRequest, model *R
 	if req.Enabled != nil {
 		model.Enabled = *req.Enabled
 	}
+	if req.Filter != nil {
+		model.Filter = NewFilter(req.Filter)
+	}
 	if req.Name != nil {
 		model.Name = *req.Name
 	}

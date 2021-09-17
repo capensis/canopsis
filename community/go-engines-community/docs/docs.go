@@ -10138,6 +10138,9 @@ var doc = `{
                         "$ref": "#/definitions/pbehaviorexception.ExdateRequest"
                     }
                 },
+                "filter": {
+                    "type": "object"
+                },
                 "name": {
                     "type": "string"
                 },

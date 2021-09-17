@@ -51,6 +51,7 @@ type UpdateRequest struct {
 
 type PatchRequest struct {
 	Enabled    *bool                              `json:"enabled"`
+	Filter     interface{}                        `json:"filter"`
 	Name       *string                            `json:"name"`
 	Reason     *string                            `json:"reason"`
 	RRule      *string                            `json:"rrule"`
