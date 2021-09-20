@@ -277,3 +277,5 @@ export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
 export const HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX = 'healthcheck_last_hour-';
 
 export const LOGIN_INFOS_FETCHING_INTERVAL = 10000;
+
+export const MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED = 100;
