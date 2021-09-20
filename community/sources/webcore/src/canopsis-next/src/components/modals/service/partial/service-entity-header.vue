@@ -4,7 +4,7 @@
       v-icon(color="white", small) {{ icon }}
     v-flex.pl-1.white--text.subheading(xs12)
       v-layout(align-center)
-        div.mr-1.entity-name( v-resize-text="{ maxFontSize: '16px' }") {{ entityName }}
+        div.mr-1.entity-name(v-resize-text="{ maxFontSize: '16px' }") {{ entityName }}
         v-btn.mx-1.white(
           v-for="icon in extraIcons",
           :key="icon.icon",
