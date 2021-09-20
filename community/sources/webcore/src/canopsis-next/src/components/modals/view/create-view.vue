@@ -33,6 +33,7 @@ import { MODALS, ROUTES_NAMES } from '@/constants';
 import { generateCopyOfViewTab, getViewsWidgetsIdsMappings } from '@/helpers/entities';
 import { viewToForm, formToView, viewToRequest } from '@/helpers/forms/view';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -54,6 +55,7 @@ export default {
   },
   components: { ViewForm, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     entitiesViewMixin,
     entitiesViewGroupMixin,
     entitiesUserPreferenceMixin,

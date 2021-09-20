@@ -24,6 +24,7 @@ import { MODALS } from '@/constants';
 
 import { userToForm, formToUser } from '@/helpers/forms/user';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
@@ -42,6 +43,7 @@ export default {
   },
   components: { UserForm, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
     validationErrorsMixinCreator(),

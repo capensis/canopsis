@@ -41,7 +41,8 @@
 <script>
 import TestSuiteSummaryRow from './test-suite-summary-row.vue';
 import TestSuiteSummaryStatusRow from './test-suite-summary-status-row.vue';
-import TestSuiteStatusPieChart from './test-suite-status-pie-chart.vue';
+
+const TestSuiteStatusPieChart = () => import(/* webpackChunkName: "Charts" */ './test-suite-status-pie-chart.vue');
 
 export default {
   components: {

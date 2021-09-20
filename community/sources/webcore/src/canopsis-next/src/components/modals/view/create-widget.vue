@@ -30,6 +30,7 @@ import {
 
 import { generateWidgetByType } from '@/helpers/entities';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -41,7 +42,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.createWidget,
   components: { ModalWrapper },
-  mixins: [sideBarMixin, entitiesInfoMixin],
+  mixins: [modalInnerMixin, sideBarMixin, entitiesInfoMixin],
   computed: {
     /**
      * Some widgets are only available with 'cat' edition.

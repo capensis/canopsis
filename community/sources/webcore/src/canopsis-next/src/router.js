@@ -16,28 +16,29 @@ import {
 } from '@/helpers/router';
 
 import Login from '@/views/login.vue';
-import Home from '@/views/home.vue';
-import View from '@/views/view.vue';
-import Alarm from '@/views/alarm.vue';
-import AdminPermissions from '@/views/admin/permissions.vue';
-import AdminUsers from '@/views/admin/users.vue';
-import AdminRoles from '@/views/admin/roles.vue';
-import AdminParameters from '@/views/admin/parameters.vue';
-import AdminBroadcastMessages from '@/views/admin/broadcast-messages.vue';
-import AdminPlaylists from '@/views/admin/playlists.vue';
-import AdminPlanning from '@/views/admin/planning.vue';
-import AdminRemediation from '@/views/admin/remediation.vue';
-import AdminHealthcheck from '@/views/admin/healthcheck.vue';
-import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
-import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
-import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
-import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
-import ExploitationMetaAlarmRules from '@/views/exploitation/meta-alarm-rules.vue';
-import ExploitationScenarios from '@/views/exploitation/scenarios.vue';
-import ExploitationIdleRules from '@/views/exploitation/idle-rules.vue';
-import Playlist from '@/views/playlist.vue';
-import NotificationInstructionStats from '@/views/notification/instruction-stats.vue';
 import Error from '@/views/error.vue';
+
+const Home = () => import(/* webpackChunkName: "Home" */ '@/views/home.vue');
+const View = () => import(/* webpackChunkName: "View" */ '@/views/view.vue');
+const Alarm = () => import(/* webpackChunkName: "Alarm" */ '@/views/alarm.vue');
+const AdminPermissions = () => import(/* webpackChunkName: "Permission" */ '@/views/admin/permissions.vue');
+const AdminUsers = () => import(/* webpackChunkName: "User" */ '@/views/admin/users.vue');
+const AdminRoles = () => import(/* webpackChunkName: "Role" */ '@/views/admin/roles.vue');
+const AdminParameters = () => import(/* webpackChunkName: "Parameters" */ '@/views/admin/parameters.vue');
+const AdminBroadcastMessages = () => import(/* webpackChunkName: "BroadcastMessage" */ '@/views/admin/broadcast-messages.vue');
+const AdminPlaylists = () => import(/* webpackChunkName: "Playlist" */ '@/views/admin/playlists.vue');
+const AdminPlanning = () => import(/* webpackChunkName: "Planning" */ '@/views/admin/planning.vue');
+const AdminRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/views/admin/remediation.vue');
+const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
+const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
+const ExploitationEventFilter = () => import(/* webpackChunkName: "EventFilter" */ '@/views/exploitation/event-filter.vue');
+const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
+const ExploitationDynamicInfos = () => import(/* webpackChunkName: "DynamicInfo" */ '@/views/exploitation/dynamic-infos.vue');
+const ExploitationMetaAlarmRules = () => import(/* webpackChunkName: "MetaAlarmRule" */ '@/views/exploitation/meta-alarm-rules.vue');
+const ExploitationScenarios = () => import(/* webpackChunkName: "Scenario" */ '@/views/exploitation/scenarios.vue');
+const ExploitationIdleRules = () => import(/* webpackChunkName: "IdleRule" */ '@/views/exploitation/idle-rules.vue');
+const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
+const NotificationInstructionStats = () => import(/* webpackChunkName: "InstructionStats" */ '@/views/notification/instruction-stats.vue');
 
 Vue.use(Router);
 

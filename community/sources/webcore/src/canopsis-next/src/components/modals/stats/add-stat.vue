@@ -26,6 +26,7 @@ import { MODALS, STATS_TYPES } from '@/constants';
 
 import { setField } from '@/helpers/immutable';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -40,6 +41,7 @@ export default {
   },
   components: { AddStatForm, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],

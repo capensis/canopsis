@@ -26,6 +26,7 @@ import moment from 'moment';
 
 import { MODALS, DATETIME_FORMATS } from '@/constants';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -43,6 +44,7 @@ export default {
   },
   components: { DateIntervalSelector, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],

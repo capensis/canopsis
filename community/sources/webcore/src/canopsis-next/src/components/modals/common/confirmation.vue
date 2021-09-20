@@ -21,6 +21,7 @@
 <script>
 import { MODALS } from '@/constants';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -31,7 +32,10 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.confirmation,
   components: { ModalWrapper },
-  mixins: [submittableMixinCreator()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixinCreator(),
+  ],
   data() {
     return {
       submitted: false,

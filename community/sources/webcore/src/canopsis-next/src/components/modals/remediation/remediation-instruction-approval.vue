@@ -40,8 +40,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/plugins/modals/mixins/inner';
-
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 
 import RemediationInstructionApprovalAlert from

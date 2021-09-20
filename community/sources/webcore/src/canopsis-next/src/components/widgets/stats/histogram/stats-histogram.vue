@@ -19,7 +19,7 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
 
-import StatsHistogramChart from './stats-histogram-chart.vue';
+const StatsHistogramChart = () => import(/* webpackChunkName: "Charts" */ './stats-histogram-chart.vue');
 
 export default {
   components: {

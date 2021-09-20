@@ -24,6 +24,7 @@ import { MODALS } from '@/constants';
 
 import { entityToForm, formToEntity } from '@/helpers/forms/entity';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
@@ -42,6 +43,7 @@ export default {
     ModalWrapper,
   },
   mixins: [
+    modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
     validationErrorsMixinCreator(),

@@ -15,6 +15,7 @@
 <script>
 import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { authMixin } from '@/mixins/auth';
 import { pollingMixinCreator } from '@/mixins/polling';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -31,6 +32,7 @@ export default {
     RemediationInstructionExecute,
   },
   mixins: [
+    modalInnerMixin,
     authMixin,
     entitiesRemediationInstructionExecutionMixin,
     entitiesInfoMixin,
