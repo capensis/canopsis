@@ -53,7 +53,7 @@ export function parseStringToDateInterval(dateString, type) {
  * @param {string} format
  * @return {number | moment.Moment}
  */
-export const dateParse = (date, type, format) => {
+export const parseDateInterval = (date, type, format) => {
   if (typeof date === 'number') {
     return moment.unix(date);
   }
@@ -74,7 +74,7 @@ export const dateParse = (date, type, format) => {
  * @param {string} format
  * @return {number | moment.Moment}
  */
-export const parseStartDate = (date, format) => dateParse(date, DATETIME_INTERVAL_TYPES.start, format);
+export const parseStartDate = (date, format) => parseDateInterval(date, DATETIME_INTERVAL_TYPES.start, format);
 
 /**
  * Convert to value to timestamp or moment
@@ -83,7 +83,7 @@ export const parseStartDate = (date, format) => dateParse(date, DATETIME_INTERVA
  * @param {string} format
  * @return {number | moment.Moment}
  */
-export const parseStopDate = (date, format) => dateParse(date, DATETIME_INTERVAL_TYPES.stop, format);
+export const parseStopDate = (date, format) => parseDateInterval(date, DATETIME_INTERVAL_TYPES.stop, format);
 
 /**
  * Prepare date to date object
@@ -100,7 +100,7 @@ export function prepareDateToObject(
   unit = 'hour',
   format = DATETIME_FORMATS.dateTimePicker,
 ) {
-  const momentDate = dateParse(date, type, format);
+  const momentDate = parseDateInterval(date, type, format);
 
   if (momentDate.isValid()) {
     return momentDate.startOf(unit).toDate();

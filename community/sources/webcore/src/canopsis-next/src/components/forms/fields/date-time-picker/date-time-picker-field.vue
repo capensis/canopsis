@@ -30,7 +30,9 @@
 </template>
 
 <script>
-import { convertDateToMoment } from '@/helpers/date/date';
+import { TIME_UNITS } from '@/constants';
+
+import { convertDateToStartOfUnitDateObject } from '@/helpers/date/date';
 
 import DateTimePicker from './date-time-picker.vue';
 
@@ -54,7 +56,7 @@ export default {
         return this.value;
       }
 
-      return convertDateToMoment(this.value).startOf('minute').toDate();
+      return convertDateToStartOfUnitDateObject(this.value, TIME_UNITS.minute);
     },
 
     name() {

@@ -159,11 +159,9 @@ export default {
         const unit = this.fullDay ? 'day' : 'hour';
 
         const tstop = addUnitToDate(tstart, 1, unit);
-        const tstopDate = convertDateToDateObject(
-          this.fullDay
-            ? convertDateToEndOfUnitDateObject(tstop, unit)
-            : tstop,
-        );
+        const tstopDate = this.fullDay
+          ? convertDateToEndOfUnitDateObject(tstop, unit)
+          : convertDateToDateObject(tstop);
 
         this.updateField('tstop', tstopDate);
       }

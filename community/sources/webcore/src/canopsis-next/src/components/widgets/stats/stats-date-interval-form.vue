@@ -36,7 +36,7 @@
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
 import {
-  dateParse,
+  parseDateInterval,
   prepareStatsStopForMonthPeriod,
   prepareStatsStartForMonthPeriod,
 } from '@/helpers/date/date-intervals';
@@ -111,8 +111,8 @@ export default {
       getMessage: () => this.$t('modals.statsDateInterval.errors.endDateLessOrEqualStartDate'),
       validate: (value, [otherValue]) => {
         try {
-          const convertedStop = dateParse(value, 'stop', DATETIME_FORMATS.dateTimePicker);
-          const convertedStart = dateParse(otherValue, 'start', DATETIME_FORMATS.dateTimePicker);
+          const convertedStop = parseDateInterval(value, 'stop', DATETIME_FORMATS.dateTimePicker);
+          const convertedStart = parseDateInterval(otherValue, 'start', DATETIME_FORMATS.dateTimePicker);
 
           return !convertedStop.isSameOrBefore(convertedStart);
         } catch (err) {

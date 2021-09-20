@@ -298,6 +298,15 @@ export const convertDateToStartOfUnitTimestamp = (date, unit) => convertDateToTi
 );
 
 /**
+ * Convert date to start of unit as native date
+ *
+ * @param {LocalDate} date
+ * @param {string} unit
+ * @return {Date}
+ */
+export const convertDateToStartOfUnitDateObject = (date, unit) => convertDateToStartOfUnitMoment(date, unit).toDate();
+
+/**
  * Convert date to start of unit as moment
  *
  * @param date

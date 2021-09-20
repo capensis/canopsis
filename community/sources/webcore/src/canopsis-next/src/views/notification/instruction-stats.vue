@@ -15,7 +15,7 @@
 <script>
 import { MODALS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
 
-import { dateParse } from '@/helpers/date/date-intervals';
+import { parseDateInterval } from '@/helpers/date/date-intervals';
 import {
   convertDateToEndOfDayTimestamp,
   convertDateToStartOfDayTimestamp,
@@ -70,12 +70,12 @@ export default {
       const params = this.getQuery();
       params.with_flags = true;
 
-      params.from = convertDateToStartOfDayTimestamp(dateParse(
+      params.from = convertDateToStartOfDayTimestamp(parseDateInterval(
         this.pagination.interval.from,
         DATETIME_INTERVAL_TYPES.start,
         DATETIME_FORMATS.datePicker,
       ));
-      params.to = convertDateToEndOfDayTimestamp(dateParse(
+      params.to = convertDateToEndOfDayTimestamp(parseDateInterval(
         this.pagination.interval.to,
         DATETIME_INTERVAL_TYPES.stop,
         DATETIME_FORMATS.datePicker,
