@@ -21,6 +21,7 @@ import {
   IDLE_RULE_TYPES,
   IDLE_RULE_ALARM_CONDITIONS,
   USERS_PERMISSIONS,
+  ALARMS_OPENED_VALUES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -458,6 +459,11 @@ export default {
       [SIDE_BARS.textSettings]: 'Paramètres du widget de texte',
       [SIDE_BARS.counterSettings]: 'Paramètres du widget de compteur',
       [SIDE_BARS.testingWeatherSettings]: 'Tester la météo',
+    },
+    openedTypes: {
+      [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
+      [ALARMS_OPENED_VALUES.resolved]: 'Toutes les alarmes résolues',
+      [ALARMS_OPENED_VALUES.all]: 'Alarmes ouvertes et récemment résolues',
     },
     advancedSettings: 'Paramètres avancés',
     widgetTitle: 'Titre du widget',
@@ -2277,6 +2283,12 @@ export default {
   },
 
   storageSetting: {
+    alarm: {
+      title: 'Stockage des données d\'alarme',
+      titleHelp: 'Une fois allumé, les données d\'alarmes résolues seront archivées et/ou supprimées après la période de temps définie.',
+      archiveAfter: 'Archiver les données d\'alarmes résolues après',
+      deleteAfter: 'Supprimer les données d\'alarmes résolues après',
+    },
     junit: {
       title: 'Stockage de données JUnit',
       deleteAfter: 'Supprimer les données des suites de tests après',
@@ -2288,9 +2300,35 @@ export default {
       deleteAfter: 'Supprimer les données des instructions après',
       deleteAfterHelpText: 'Lorsqu\'il est activé, les données statistiques des instructions seront supprimées après la période de temps définie.',
     },
+    entity: {
+      title: 'Stockage des données des entités',
+      titleHelp: 'Toutes les entités désactivées avec des alarmes associées peuvent être archivées (déplacées dans la collection séparée) et/ou supprimées pour toujours.',
+      archiveEntity: 'Archiver les entités désactivées',
+      deleteEntity: 'Supprimer définitivement les entités désactivées de l\'archive',
+      archiveDependencies: 'Supprimer également les entités impactantes et dépendantes',
+      archiveDependenciesHelp: 'Pour les connecteurs, tous les composants et ressources impactants et dépendants seront archivés ou supprimés pour toujours. Pour les composants, toutes les ressources dépendantes seront également archivées ou supprimées pour toujours.',
+      cleanStorage: 'Rangement propre',
+      confirmation: {
+        title: 'Supprimer les entités désactivées ?',
+        archive: 'Voulez-vous vraiment archiver toutes les entités désactivées ? Cette action ne peut pas être annulée.',
+        delete: 'Êtes-vous sûr de vouloir supprimer définitivement toutes les entités désactivées de l\'archive ? Cette action ne peut pas être annulée.',
+      },
+    },
+    pbehavior: {
+      title: 'Stockage des données de comportement',
+      deleteAfter: 'Supprimer les données PBehavior après',
+      deleteAfterHelpText: 'Lorsqu\'il est activé, les PBehaviors inactifs seront supprimés après la période de temps définie à partir du dernier événement.',
+    },
     history: {
-      junit: 'Script lancé à {launchedAt}',
-      remediation: 'Script lancé à {launchedAt}',
+      scriptLaunched: 'Script lancé à {launchedAt}.',
+      alarm: {
+        deletedCount: 'Alarmes supprimées : {count}.',
+        archivedCount: 'Alarmes archivées : {count}.',
+      },
+      entity: {
+        deletedCount: 'Entités supprimées : {count}.',
+        archivedCount: 'Entités archivées : {count}.',
+      },
     },
   },
 

@@ -1,4 +1,4 @@
-import { isString } from 'lodash';
+import { isString, isUndefined } from 'lodash';
 
 import {
   DEFAULT_ALARMS_WIDGET_COLUMNS,
@@ -33,12 +33,6 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
  * @typedef {Object} LiveReporting
  * @property {string} [tstart]
  * @property {string} [tstop]
- */
-
-/**
- * @typedef {Object} AlarmsStateFilter
- * @property {boolean} opened
- * @property {boolean} resolved
  */
 
 /**
@@ -82,7 +76,7 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
  * @property {number} mainFilterUpdatedAt
  * @property {LiveReporting} liveReporting
  * @property {Sort} sort
- * @property {AlarmsStateFilter} alarmsStateFilter
+ * @property {boolean | null} opened
  * @property {number[]} expandGridRangeSize
  * @property {CsvSeparators} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
@@ -201,9 +195,7 @@ const alarmListWidgetParametersToForm = (parameters = {}) => ({
   mainFilterUpdatedAt: parameters.mainFilterUpdatedAt || 0,
   liveReporting: parameters.liveReporting || {},
   sort: widgetSortToForm(parameters.sort),
-  alarmsStateFilter: parameters.alarmsStateFilter || {
-    opened: true,
-  },
+  opened: isUndefined(parameters.opened) ? true : parameters.opened,
   expandGridRangeSize: parameters.expandGridRangeSize || [GRID_SIZES.min, GRID_SIZES.max],
   exportCsvSeparator: parameters.exportCsvSeparator || EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat || EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds,
