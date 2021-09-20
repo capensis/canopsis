@@ -29,6 +29,9 @@ import sanitizeHTML from 'sanitize-html';
 
 import { ALARM_ENTITY_FIELDS, COLOR_INDICATOR_TYPES } from '@/constants';
 
+import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
+
 import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
@@ -117,20 +120,17 @@ export default {
     },
 
     columnFilter() {
-      const formatDate = value => this.$options.filters.dateWithToday(value);
-      const formatDuration = value => this.$options.filters.duration(value);
-
       const PROPERTIES_FILTERS_MAP = {
-        'v.last_update_date': formatDate,
-        'v.creation_date': formatDate,
-        'v.last_event_date': formatDate,
-        'v.activation_date': formatDate,
-        'v.state.t': formatDate,
-        'v.status.t': formatDate,
-        'v.resolved': formatDate,
-        'v.duration': formatDuration,
-        'v.current_state_duration': formatDuration,
-        t: formatDate,
+        'v.last_update_date': convertDateToStringWithFormatForToday,
+        'v.creation_date': convertDateToStringWithFormatForToday,
+        'v.last_event_date': convertDateToStringWithFormatForToday,
+        'v.activation_date': convertDateToStringWithFormatForToday,
+        'v.state.t': convertDateToStringWithFormatForToday,
+        'v.status.t': convertDateToStringWithFormatForToday,
+        'v.resolved': convertDateToStringWithFormatForToday,
+        'v.duration': convertDurationToString,
+        'v.current_state_duration': convertDurationToString,
+        t: convertDateToStringWithFormatForToday,
 
         ...this.columnsFiltersMap,
       };

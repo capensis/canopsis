@@ -10,6 +10,7 @@ import moment from 'moment-timezone';
 import { TIME_UNITS } from '@/constants';
 
 import { convertTimestampToMoment } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
 
 export default {
   props: {
@@ -52,9 +53,9 @@ export default {
     },
 
     message() {
-      const duration = this.$options.filters.duration(this.durationDiff);
-
-      return this.$t('icons.noEvents', { duration });
+      return this.$t('icons.noEvents', {
+        duration: convertDurationToString(this.durationDiff),
+      });
     },
   },
 };
