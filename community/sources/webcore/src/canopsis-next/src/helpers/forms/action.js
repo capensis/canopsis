@@ -1,12 +1,11 @@
-import moment from 'moment-timezone';
 import { cloneDeep, omit } from 'lodash';
 
 import { ENTITIES_STATES, ACTION_TYPES, TIME_UNITS } from '@/constants';
 
-import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
-
+import { objectToTextPairs, textPairsToObject } from '../text-pairs';
 import uid from '../uid';
 import { durationToForm, formToDuration } from '../date/duration';
+import { getLocalTimezone } from '../date/date';
 
 import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning-pbehavior';
 
@@ -211,10 +210,10 @@ const assocTicketActionParametersToForm = (parameters = {}) => ({
  * Convert action pbehavior parameters to form
  *
  * @param {Pbehavior} [parameters = {}]
- * @param {string} [timezone = moment.tz.guess()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @returns {PbehaviorForm}
  */
-const pbehaviorActionParametersToForm = (parameters = {}, timezone = moment.tz.guess()) => {
+const pbehaviorActionParametersToForm = (parameters = {}, timezone = getLocalTimezone()) => {
   const pbehaviorForm = pbehaviorToForm(parameters, null, timezone);
 
   pbehaviorForm.start_on_trigger = !!parameters.start_on_trigger;
@@ -272,10 +271,10 @@ export const actionParametersToForm = (action, timezone) => {
  * Convert action to form
  *
  * @param {Action} [action = {}]
- * @param {string} [timezone = moment.tz.guess()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @returns {ActionForm}
  */
-export const actionToForm = (action = {}, timezone = moment.tz.guess()) => {
+export const actionToForm = (action = {}, timezone = getLocalTimezone()) => {
   const type = action.type || ACTION_TYPES.snooze;
 
   return {
@@ -334,10 +333,10 @@ export const formToSnoozeActionParameters = (parameters = {}) => ({
  * Convert pbehavior parameters to action
  *
  * @param {PbehaviorForm} parameters
- * @param [timezone = moment.tz.guess()]
+ * @param [timezone = getLocalTimezone()]
  * @return {PbehaviorRequest}
  */
-export const formToPbehaviorActionParameters = (parameters = {}, timezone = moment.tz.guess()) => {
+export const formToPbehaviorActionParameters = (parameters = {}, timezone = getLocalTimezone()) => {
   const pbehavior = formToPbehavior(omit(parameters, ['start_on_trigger', 'duration']), timezone);
 
   if (parameters.start_on_trigger) {

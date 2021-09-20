@@ -31,9 +31,9 @@
 </template>
 
 <script>
-import moment from 'moment';
-
 import { BROADCAST_MESSAGES_STATUSES } from '@/constants';
+
+import { getNowTimestamp } from '@/helpers/date/date';
 
 import { permissionsTechnicalBroadcastMessageMixin } from '@/mixins/permissions/technical/broadcast-message';
 
@@ -93,7 +93,7 @@ export default {
 
     preparedBroadcastMessages() {
       return this.broadcastMessages.map((message) => {
-        const now = moment().unix();
+        const now = getNowTimestamp();
         let status = BROADCAST_MESSAGES_STATUSES.pending;
 
         if (now >= message.start) {

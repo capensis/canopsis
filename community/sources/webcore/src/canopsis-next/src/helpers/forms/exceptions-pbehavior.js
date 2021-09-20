@@ -1,6 +1,8 @@
-import moment from 'moment-timezone';
-
-import { convertTimestampToMomentByTimezone, convertDateToTimestampByTimezone } from '@/helpers/date/date';
+import {
+  convertTimestampToMomentByTimezone,
+  convertDateToTimestampByTimezone,
+  getLocalTimezone,
+} from '@/helpers/date/date';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
 
 /**
@@ -22,10 +24,10 @@ import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
  * Convert pbehavior exception data to date exception form
  *
  * @param {Object} [exception = {}]
- * @param {string} [timezone = moment.tz.guess()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {Object}
  */
-export function pbehaviorExceptionToForm(exception = {}, timezone = moment.tz.guess()) {
+export function pbehaviorExceptionToForm(exception = {}, timezone = getLocalTimezone()) {
   return {
     name: exception.name || '',
     description: exception.description || '',
@@ -44,10 +46,10 @@ export function pbehaviorExceptionToForm(exception = {}, timezone = moment.tz.gu
  * Convert exception form to pbehavior exception data
  *
  * @param {Object} [exceptionForm = {}]
- * @param {string} [timezone = moment.tz.guess()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {Object}
  */
-export function formToPbehaviorException(exceptionForm = {}, timezone = moment.tz.guess()) {
+export function formToPbehaviorException(exceptionForm = {}, timezone = getLocalTimezone()) {
   const { exdates, ...form } = exceptionForm;
 
   return {

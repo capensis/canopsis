@@ -1,6 +1,6 @@
 import { get, isString } from 'lodash';
 
-import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, STATS_DURATION_UNITS } from '@/constants';
+import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, TIME_UNITS } from '@/constants';
 
 import {
   dateParse,
@@ -29,7 +29,7 @@ export default {
       tstart = dateParse(tstart, DATETIME_INTERVAL_TYPES.start, DATETIME_FORMATS.dateTimePicker);
       tstop = dateParse(tstop, DATETIME_INTERVAL_TYPES.stop, DATETIME_FORMATS.dateTimePicker);
 
-      if (periodUnit === STATS_DURATION_UNITS.month) {
+      if (periodUnit === TIME_UNITS.month) {
         periodUnit = periodUnit.toUpperCase();
 
         /**

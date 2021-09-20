@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 
-import { STATS_DURATION_UNITS, DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES } from '@/constants';
+import { TIME_UNITS, DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES } from '@/constants';
 
 /**
  * Convert a date interval string to moment date object
@@ -24,7 +24,7 @@ export function parseStringToDateInterval(dateString, type) {
     const deltaMethod = operator === '+' ? 'add' : 'subtract';
 
     if (roundUnit) {
-      if (roundUnit === STATS_DURATION_UNITS.month) {
+      if (roundUnit === TIME_UNITS.month) {
         roundUnit = roundUnit.toUpperCase();
       }
 
@@ -32,7 +32,7 @@ export function parseStringToDateInterval(dateString, type) {
     }
 
     if (deltaValue && deltaUnit) {
-      if (deltaUnit === STATS_DURATION_UNITS.month) {
+      if (deltaUnit === TIME_UNITS.month) {
         deltaUnit = deltaUnit.toUpperCase();
       }
 
@@ -66,6 +66,10 @@ export function dateParse(date, type, format) {
 
   return momentDate;
 }
+
+export const parseStartDate = (date, format) => dateParse(date, DATETIME_INTERVAL_TYPES.start, format);
+
+export const parseStopDate = (date, format) => dateParse(date, DATETIME_INTERVAL_TYPES.stop, format);
 
 /**
  * Prepare date to date object
@@ -127,7 +131,10 @@ export function prepareStatsStopForMonthPeriod(stop) {
  * @param {Object} defaultValue
  * @returns {Object}
  */
-export function findRange(start, stop, ranges = QUICK_RANGES, defaultValue = QUICK_RANGES.custom) {
-  return Object.values(ranges)
-    .find(range => start === range.start && stop === range.stop) || defaultValue;
-}
+export const findQuickRangeValue = (
+  start,
+  stop,
+  ranges = QUICK_RANGES,
+  defaultValue = QUICK_RANGES.custom,
+) => Object.values(ranges)
+  .find(range => start === range.start && stop === range.stop) || defaultValue;

@@ -40,13 +40,12 @@
 </template>
 
 <script>
-import moment from 'moment-timezone';
-
 import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES, SORT_ORDERS } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
 
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { addKeyInEntities } from '@/helpers/entities';
+import { getNowTimestamp } from '@/helpers/date/date';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -135,7 +134,7 @@ export default {
             data: pbehaviorToRequest({
               ...pbehavior,
 
-              tstop: moment().unix(),
+              tstop: getNowTimestamp(),
             }),
           }));
         }

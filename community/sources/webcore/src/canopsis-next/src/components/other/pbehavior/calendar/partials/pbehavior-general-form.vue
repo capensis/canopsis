@@ -70,7 +70,12 @@ import moment from 'moment-timezone';
 
 import { DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
-import { isStartOfDay, isEndOfDay } from '@/helpers/date/date';
+import {
+  isStartOfDay,
+  isEndOfDay,
+  convertDateToStartOfDayDateObject,
+  convertDateToEndOfDayDateObject, convertDateToString,
+} from '@/helpers/date/date';
 
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
@@ -134,7 +139,7 @@ export default {
       const rules = { required: !this.hasPauseType };
 
       if (this.form.tstart) {
-        rules.after = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
+        rules.after = [convertDateToString(this.form.tstart, DATETIME_FORMATS.dateTimePicker)];
         rules.date_format = DATETIME_FORMATS.veeValidateDateTimeFormat;
       }
 
@@ -162,14 +167,10 @@ export default {
       const { tstart, tstop } = this.form;
 
       if (tstart) {
-        const tstartMoment = moment(tstart).startOf('day');
-
-        this.updateField('tstart', tstartMoment.toDate());
+        this.updateField('tstart', convertDateToStartOfDayDateObject(tstart));
 
         if (!this.noEnding && tstop) {
-          const tstopMoment = moment(tstop).endOf('day');
-
-          this.updateField('tstop', tstopMoment.toDate());
+          this.updateField('tstop', convertDateToEndOfDayDateObject(tstop));
         }
       }
     },

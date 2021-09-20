@@ -22,9 +22,9 @@
 </template>
 
 <script>
-import moment from 'moment';
-
 import { MODALS, DATETIME_FORMATS } from '@/constants';
+
+import { convertDateToString } from '@/helpers/date/date';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -70,7 +70,7 @@ export default {
       const rules = { required: true };
 
       if (this.tstart) {
-        rules.after = [moment(this.tstart).format(DATETIME_FORMATS.dateTimePicker)];
+        rules.after = [convertDateToString(this.tstart, DATETIME_FORMATS.dateTimePicker)];
         rules.date_format = DATETIME_FORMATS.veeValidateDateTimeFormat;
       }
 
