@@ -1,7 +1,7 @@
 import { omit, isNumber } from 'lodash';
 
 import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
-import { getLocalTimezone } from '@/helpers/date/date';
+import { getLocaleTimezone } from '@/helpers/date/date';
 
 import { durationToForm, formToDuration } from '../date/duration';
 
@@ -30,10 +30,10 @@ import { enabledToForm } from './shared/common';
  * Convert scenario to form
  *
  * @param {Scenario} [scenario = {}]
- * @param {string} [timezone = getLocalTimezone()]
+ * @param {string} [timezone = getLocaleTimezone()]
  * @returns {ScenarioForm}
  */
-export const scenarioToForm = (scenario = {}, timezone = getLocalTimezone()) => ({
+export const scenarioToForm = (scenario = {}, timezone = getLocaleTimezone()) => ({
   name: scenario.name || '',
   priority: scenario.priority || 1,
   enabled: enabledToForm(scenario.enabled),
@@ -51,10 +51,10 @@ export const scenarioToForm = (scenario = {}, timezone = getLocalTimezone()) => 
  * Convert form to scenario
  *
  * @param {ScenarioForm} form
- * @param {string} [timezone = getLocalTimezone()]
+ * @param {string} [timezone = getLocaleTimezone()]
  * @returns {Scenario}
  */
-export const formToScenario = (form, timezone = getLocalTimezone()) => ({
+export const formToScenario = (form, timezone = getLocaleTimezone()) => ({
   ...omit(form, ['delay', 'actions']),
   delay: form.delay && isNumber(form.delay.value)
     ? formToDuration(form.delay)

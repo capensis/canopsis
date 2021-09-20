@@ -2,6 +2,8 @@ import moment from 'moment-timezone';
 
 import { TIME_UNITS, DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES } from '@/constants';
 
+import { getLocaleTimezone } from '@/helpers/date/date';
+
 /**
  * Convert a date interval string to moment date object
  *
@@ -9,7 +11,7 @@ import { TIME_UNITS, DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES } f
  * @param {string} type
  * @returns {Moment}
  */
-export function parseStringToDateInterval(dateString, type) {
+export const convertStringToDateInterval = (dateString, type) => {
   const preparedDateString = dateString.toLowerCase().trim();
   const matches = preparedDateString.match(/^now(([+--])(\d+)([hdwmy]{1}))?(\/([hdwmy]{1}))?$/);
 
@@ -43,7 +45,7 @@ export function parseStringToDateInterval(dateString, type) {
   }
 
   throw new Error('Date string pattern not recognized');
-}
+};
 
 /**
  * Parse date in every formats to moment object
@@ -53,7 +55,7 @@ export function parseStringToDateInterval(dateString, type) {
  * @param {string} format
  * @return {number | moment.Moment}
  */
-export const parseDateInterval = (date, type, format) => {
+export const convertDateIntervalToMoment = (date, type, format) => {
   if (typeof date === 'number') {
     return moment.unix(date);
   }
@@ -61,11 +63,22 @@ export const parseDateInterval = (date, type, format) => {
   const momentDate = moment(date, format, true);
 
   if (!momentDate.isValid()) {
-    return parseStringToDateInterval(date, type);
+    return convertStringToDateInterval(date, type);
   }
 
   return momentDate;
 };
+
+/**
+ * Convert date interval to timestamp unix system.
+ *
+ * @param {number} date
+ * @param {string} type
+ * @param {string} format
+ * @return {number}
+ */
+export const convertDateIntervalToTimestamp = (date, type, format) => convertDateIntervalToMoment(date, type, format)
+  .unix();
 
 /**
  * Convert from value to timestamp or moment
@@ -74,7 +87,24 @@ export const parseDateInterval = (date, type, format) => {
  * @param {string} format
  * @return {number | moment.Moment}
  */
-export const parseStartDate = (date, format) => parseDateInterval(date, DATETIME_INTERVAL_TYPES.start, format);
+export const convertStartDateIntervalToMoment = (date, format) => convertDateIntervalToMoment(
+  date,
+  DATETIME_INTERVAL_TYPES.start,
+  format,
+);
+
+/**
+ * Convert from value to timestamp or moment
+ *
+ * @param {LocalDate} date
+ * @param {string} format
+ * @return {number | moment.Moment}
+ */
+export const convertStartDateIntervalToTimestamp = (date, format) => convertDateIntervalToTimestamp(
+  date,
+  DATETIME_INTERVAL_TYPES.start,
+  format,
+);
 
 /**
  * Convert to value to timestamp or moment
@@ -83,7 +113,24 @@ export const parseStartDate = (date, format) => parseDateInterval(date, DATETIME
  * @param {string} format
  * @return {number | moment.Moment}
  */
-export const parseStopDate = (date, format) => parseDateInterval(date, DATETIME_INTERVAL_TYPES.stop, format);
+export const convertStopDateIntervalToMoment = (date, format) => convertDateIntervalToMoment(
+  date,
+  DATETIME_INTERVAL_TYPES.stop,
+  format,
+);
+
+/**
+ * Convert to value to timestamp or moment
+ *
+ * @param {LocalDate} date
+ * @param {string} format
+ * @return {number | moment.Moment}
+ */
+export const convertStopDateIntervalToTimestamp = (date, format) => convertDateIntervalToTimestamp(
+  date,
+  DATETIME_INTERVAL_TYPES.stop,
+  format,
+);
 
 /**
  * Prepare date to date object
@@ -94,20 +141,20 @@ export const parseStopDate = (date, format) => parseDateInterval(date, DATETIME_
  * @param {string} [format = DATETIME_FORMATS.dateTimePicker]
  * @returns {Date}
  */
-export function prepareDateToObject(
+export const convertDateIntervalToDateObject = (
   date,
   type,
   unit = 'hour',
   format = DATETIME_FORMATS.dateTimePicker,
-) {
-  const momentDate = parseDateInterval(date, type, format);
+) => {
+  const momentDate = convertDateIntervalToMoment(date, type, format);
 
   if (momentDate.isValid()) {
     return momentDate.startOf(unit).toDate();
   }
 
   return null;
-}
+};
 
 /**
  * Prepare start of stats interval for month period unit
@@ -115,9 +162,7 @@ export function prepareDateToObject(
  * @param {Date|Moment|number} start
  * @returns Moment
  */
-export function prepareStatsStartForMonthPeriod(start) {
-  return moment.utc(start).startOf('month').tz(moment.tz.guess());
-}
+export const prepareStatsStartForMonthPeriod = start => moment.utc(start).startOf('month').tz(getLocaleTimezone());
 
 /**
  * Prepare stop of stats interval for month period unit
@@ -125,16 +170,16 @@ export function prepareStatsStartForMonthPeriod(start) {
  * @param {Date|Moment|number} stop
  * @returns Moment
  */
-export function prepareStatsStopForMonthPeriod(stop) {
+export const prepareStatsStopForMonthPeriod = (stop) => {
   const startOfStopMonthUtc = moment.utc(stop).startOf('month');
   const startOfCurrentMonthUtc = moment.utc().startOf('month');
 
   if (startOfStopMonthUtc.isSame(startOfCurrentMonthUtc)) {
-    return startOfStopMonthUtc.add(1, 'month').tz(moment.tz.guess());
+    return startOfStopMonthUtc.add(1, 'month').tz(getLocaleTimezone());
   }
 
-  return startOfStopMonthUtc.tz(moment.tz.guess());
-}
+  return startOfStopMonthUtc.tz(getLocaleTimezone());
+};
 
 /**
  * Find range object

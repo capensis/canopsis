@@ -1,7 +1,7 @@
 import {
   convertDateToTimestampByTimezone,
-  getLocalTimezone,
-  convertTimestampToDateObjectByTimezone,
+  getLocaleTimezone,
+  convertDateToDateObjectByTimezone,
 } from '@/helpers/date/date';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
 
@@ -24,17 +24,17 @@ import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
  * Convert pbehavior exception data to date exception form
  *
  * @param {Object} [exception = {}]
- * @param {string} [timezone = getLocalTimezone()]
+ * @param {string} [timezone = getLocaleTimezone()]
  * @return {Object}
  */
-export function pbehaviorExceptionToForm(exception = {}, timezone = getLocalTimezone()) {
+export function pbehaviorExceptionToForm(exception = {}, timezone = getLocaleTimezone()) {
   return {
     name: exception.name || '',
     description: exception.description || '',
     exdates: exception.exdates
       ? addKeyInEntities(exception.exdates.map(({ begin, end, type }) => ({
-        begin: convertTimestampToDateObjectByTimezone(begin, timezone),
-        end: convertTimestampToDateObjectByTimezone(end, timezone),
+        begin: convertDateToDateObjectByTimezone(begin, timezone),
+        end: convertDateToDateObjectByTimezone(end, timezone),
         type: { ...type },
       })))
       : [],
@@ -46,10 +46,10 @@ export function pbehaviorExceptionToForm(exception = {}, timezone = getLocalTime
  * Convert exception form to pbehavior exception data
  *
  * @param {Object} [exceptionForm = {}]
- * @param {string} [timezone = getLocalTimezone()]
+ * @param {string} [timezone = getLocaleTimezone()]
  * @return {Object}
  */
-export function formToPbehaviorException(exceptionForm = {}, timezone = getLocalTimezone()) {
+export function formToPbehaviorException(exceptionForm = {}, timezone = getLocaleTimezone()) {
   const { exdates, ...form } = exceptionForm;
 
   return {

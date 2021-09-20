@@ -101,7 +101,7 @@ export const getWeekdayNumber = date => convertDateToMoment(date).isoWeekday();
  *
  * @return {string}
  */
-export const getLocalTimezone = () => moment.tz.guess();
+export const getLocaleTimezone = () => moment.tz.guess();
 
 /**
  * Subtract value from date by unit
@@ -139,17 +139,17 @@ export const addUnitToDate = (date, value = 0, unit = TIME_UNITS.second) => conv
 export const convertDateToDateObject = (date, format) => convertDateToMoment(date, format).toDate();
 
 /**
- * Convert timestamp from source timezone to local timezone with time keeping
+ * Convert date from source timezone to local timezone with time keeping
  *
  * @param {LocalDate} timestamp
  * @param {string} sourceTimezone
- * @param {string} [localTimezone = getLocalTimezone()]
+ * @param {string} [localTimezone = getLocaleTimezone()]
  * @returns {Object}
  */
-export const convertTimestampToMomentByTimezone = (
+export const convertDateToMomentByTimezone = (
   timestamp,
-  sourceTimezone = getLocalTimezone(),
-  localTimezone = getLocalTimezone(),
+  sourceTimezone = getLocaleTimezone(),
+  localTimezone = getLocaleTimezone(),
 ) => {
   const dateObject = convertDateToMoment(timestamp);
 
@@ -168,20 +168,20 @@ export const convertTimestampToMomentByTimezone = (
  * @param {string} [localTimezone]
  * @return {Date}
  */
-export const convertTimestampToDateObjectByTimezone = (
+export const convertDateToDateObjectByTimezone = (
   timestamp,
   sourceTimezone,
   localTimezone,
-) => convertTimestampToMomentByTimezone(timestamp, sourceTimezone, localTimezone).toDate();
+) => convertDateToMomentByTimezone(timestamp, sourceTimezone, localTimezone).toDate();
 
 /**
  * Convert date to timestamp with keep time
  *
  * @param {Date|number|moment.Moment} date
- * @param {string} [timezone = getLocalTimezone()]
+ * @param {string} [timezone = getLocaleTimezone()]
  * @returns {number}
  */
-export const convertDateToTimestampByTimezone = (date, timezone = getLocalTimezone()) => convertDateToMoment(date)
+export const convertDateToTimestampByTimezone = (date, timezone = getLocaleTimezone()) => convertDateToMoment(date)
   .tz(timezone, true)
   .unix();
 
@@ -193,7 +193,7 @@ export const convertDateToTimestampByTimezone = (date, timezone = getLocalTimezo
  * @returns {boolean}
  */
 export const isStartOfDay = (date, unit = 'seconds') => {
-  const dateMoment = moment(date);
+  const dateMoment = convertDateToMoment(date);
 
   return dateMoment.clone().startOf('day').diff(dateMoment, unit) === 0;
 };
@@ -206,7 +206,7 @@ export const isStartOfDay = (date, unit = 'seconds') => {
  * @returns {boolean}
  */
 export const isEndOfDay = (date, unit = 'seconds') => {
-  const dateMoment = moment(date);
+  const dateMoment = convertDateToMoment(date);
 
   return dateMoment.clone().endOf('day').diff(dateMoment, unit) === 0;
 };
@@ -259,7 +259,7 @@ export const convertDateToStringWithFormatForToday = (date, format, defaultValue
  * @return {string}
  */
 export const convertDateToTimezoneDateString = (date, timezone, format, defaultValue) => convertDateToString(
-  convertTimestampToMomentByTimezone(date, timezone),
+  convertDateToMomentByTimezone(date, timezone),
   format,
   defaultValue,
 );
@@ -421,5 +421,14 @@ export const convertDateToEndOfDayTimestamp = date => convertDateToEndOfDayMomen
  * @return {Date}
  */
 export const convertDateToEndOfDayDateObject = date => convertDateToEndOfDayMoment(date).toDate();
+
+/**
+ * Check date is same day or before
+ *
+ * @param {LocalDate} left
+ * @param {LocalDate} right
+ * @return {boolean}
+ */
+export const isSameOrBeforeDate = (left, right) => convertDateToMoment(left).isSameOrBefore(right);
 
 export default convertDateToMoment;

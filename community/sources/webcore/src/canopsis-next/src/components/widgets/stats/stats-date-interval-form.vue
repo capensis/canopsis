@@ -36,11 +36,12 @@
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
 import {
-  parseDateInterval,
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
   prepareStatsStopForMonthPeriod,
   prepareStatsStartForMonthPeriod,
 } from '@/helpers/date/date-intervals';
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDateToString, isSameOrBeforeDate } from '@/helpers/date/date';
 
 import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 
@@ -111,10 +112,10 @@ export default {
       getMessage: () => this.$t('modals.statsDateInterval.errors.endDateLessOrEqualStartDate'),
       validate: (value, [otherValue]) => {
         try {
-          const convertedStop = parseDateInterval(value, 'stop', DATETIME_FORMATS.dateTimePicker);
-          const convertedStart = parseDateInterval(otherValue, 'start', DATETIME_FORMATS.dateTimePicker);
+          const convertedStop = convertStopDateIntervalToTimestamp(value, DATETIME_FORMATS.dateTimePicker);
+          const convertedStart = convertStartDateIntervalToTimestamp(otherValue, DATETIME_FORMATS.dateTimePicker);
 
-          return !convertedStop.isSameOrBefore(convertedStart);
+          return !isSameOrBeforeDate(convertedStop, convertedStart);
         } catch (err) {
           return true; // TODO: problem with i18n: https://github.com/baianat/vee-validate/issues/2025
         }

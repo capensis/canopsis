@@ -6,7 +6,7 @@ import {
   convertDateToTimestamp,
   convertDateToStartOfUnitString,
   convertDateToEndOfUnitTimestamp,
-  convertTimestampToMomentByTimezone,
+  convertDateToMomentByTimezone,
 } from '@/helpers/date/date';
 
 /**
@@ -124,8 +124,8 @@ export function getSpanForTimestamps({
   end,
   timezone,
 }) {
-  const startMoment = convertTimestampToMomentByTimezone(start, timezone);
-  const endMoment = convertTimestampToMomentByTimezone(end, timezone);
+  const startMoment = convertDateToMomentByTimezone(start, timezone);
+  const endMoment = convertDateToMomentByTimezone(end, timezone);
   const startDay = new Day(startMoment);
   const endDay = new Day(endMoment);
 

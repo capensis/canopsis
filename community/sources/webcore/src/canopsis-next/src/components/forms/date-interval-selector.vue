@@ -38,7 +38,7 @@
 <script>
 import { TIME_UNITS, QUICK_RANGES, DATETIME_FORMATS } from '@/constants';
 
-import { prepareDateToObject, findQuickRangeValue } from '@/helpers/date/date-intervals';
+import { convertDateIntervalToDateObject, findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { convertDateToStartOfUnitString, subtractUnitFromDate } from '@/helpers/date/date';
 
 import { formMixin } from '@/mixins/form';
@@ -153,7 +153,7 @@ export default {
   },
   methods: {
     preparerDateToObjectGetter(type) {
-      return date => prepareDateToObject(date, type, this.roundHours ? 'hour' : 'minute');
+      return date => convertDateIntervalToDateObject(date, type, this.roundHours ? 'hour' : 'minute');
     },
   },
 };
