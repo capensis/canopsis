@@ -77,6 +77,8 @@
 <script>
 import { isNumber } from 'lodash';
 
+import { convertDateToString } from '@/helpers/date/date';
+
 export default {
   inject: ['$validator'],
   model: {
@@ -124,25 +126,25 @@ export default {
 
     junitSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.junit),
+        launchedAt: convertDateToString(this.history.junit),
       });
     },
 
     remediationSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.remediation),
+        launchedAt: convertDateToString(this.history.remediation),
       });
     },
 
     pbehaviorSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.pbehavior),
+        launchedAt: convertDateToString(this.history.pbehavior),
       });
     },
 
     healthCheckSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.health_check),
+        launchedAt: convertDateToString(this.history.health_check),
       });
     },
 
@@ -151,7 +153,7 @@ export default {
 
       const result = [
         this.$t('storageSetting.history.scriptLaunched', {
-          launchedAt: this.$options.filters.date(time),
+          launchedAt: convertDateToString(time),
         }),
       ];
 
@@ -175,7 +177,7 @@ export default {
 
       const result = [
         this.$t('storageSetting.history.scriptLaunched', {
-          launchedAt: this.$options.filters.date(time),
+          launchedAt: convertDateToString(time),
         }),
       ];
 

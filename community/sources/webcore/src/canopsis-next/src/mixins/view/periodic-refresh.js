@@ -2,6 +2,7 @@ import { get } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
 
+import { convertDurationToString } from '@/helpers/date/duration';
 import uid from '@/helpers/uid';
 import Observer from '@/services/observer';
 
@@ -82,7 +83,7 @@ export default {
 
   computed: {
     periodicRefreshProgressFormatted() {
-      return this.$options.filters.duration(
+      return convertDurationToString(
         this.periodicRefreshProgress,
         DATETIME_FORMATS.refreshFieldFormat,
       );
