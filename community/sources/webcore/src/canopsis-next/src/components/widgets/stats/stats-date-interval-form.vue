@@ -40,6 +40,7 @@ import {
   prepareStatsStopForMonthPeriod,
   prepareStatsStartForMonthPeriod,
 } from '@/helpers/date/date-intervals';
+import { convertDateToString } from '@/helpers/date/date';
 
 import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 
@@ -100,8 +101,8 @@ export default {
 
     monthIntervalMessage() {
       return this.$t('modals.statsDateInterval.info.monthPeriodUnit', {
-        start: this.$options.filters.date(this.dateObjectValues.start, 'long', false),
-        stop: this.$options.filters.date(this.dateObjectValues.stop, 'long', false),
+        start: convertDateToString(this.dateObjectValues.start),
+        stop: convertDateToString(this.dateObjectValues.stop),
       });
     },
   },

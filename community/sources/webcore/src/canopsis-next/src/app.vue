@@ -17,9 +17,9 @@ import { createNamespacedHelpers } from 'vuex';
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
 
-import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
-import TheSideBars from '@/components/side-bars/the-sidebars.vue';
-import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
+import { convertDateToString } from '@/helpers/date/date';
+
+import localStorageService from '@/services/local-storage';
 
 import { authMixin } from '@/mixins/auth';
 import systemMixin from '@/mixins/system';
@@ -27,9 +27,11 @@ import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesViewStatsMixin } from '@/mixins/entities/view-stats';
 import entitiesUserMixin from '@/mixins/entities/user';
 
-import '@/assets/styles/main.scss';
+import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
+import TheSideBars from '@/components/side-bars/the-sidebars.vue';
+import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
 
-import localStorageService from '@/services/local-storage';
+import '@/assets/styles/main.scss';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
@@ -118,7 +120,7 @@ export default {
         text: this.$t('remediationInstructionExecute.popups.wasPaused', {
           instructionName: execution.instruction_name,
           alarmName: execution.alarm_name,
-          date: this.$options.filters.date(execution.paused, 'long', true),
+          date: convertDateToString(execution.paused),
         }),
       }));
     },

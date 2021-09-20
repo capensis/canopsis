@@ -41,6 +41,7 @@ import { Validator } from 'vee-validate';
 import { PAYLOAD_VARIABLE_REGEXP } from '@/constants';
 
 import { convertPayloadToJson } from '@/helpers/payload-json';
+import { stringifyJson } from '@/helpers/json';
 
 import { isValidJson } from '@/plugins/validator/helpers/is-valid-json';
 
@@ -175,7 +176,7 @@ export default {
       try {
         return this.variables
           ? convertPayloadToJson(value, 4)
-          : this.$options.filters.json(value);
+          : stringifyJson(value);
       } catch (err) {
         this.$popups.error({ text: this.$t('errors.default') });
 
