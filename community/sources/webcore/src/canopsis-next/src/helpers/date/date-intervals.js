@@ -48,12 +48,12 @@ export function parseStringToDateInterval(dateString, type) {
 /**
  * Parse date in every formats to moment object
  *
- * @param date
- * @param type
- * @param format
- * @return {*}
+ * @param {number | string | moment.Moment }date
+ * @param {string} type
+ * @param {string} format
+ * @return {number | moment.Moment}
  */
-export function dateParse(date, type, format) {
+export const dateParse = (date, type, format) => {
   if (typeof date === 'number') {
     return moment.unix(date);
   }
@@ -65,10 +65,24 @@ export function dateParse(date, type, format) {
   }
 
   return momentDate;
-}
+};
 
+/**
+ * Convert from value to timestamp or moment
+ *
+ * @param {LocalDate} date
+ * @param {string} format
+ * @return {number | moment.Moment}
+ */
 export const parseStartDate = (date, format) => dateParse(date, DATETIME_INTERVAL_TYPES.start, format);
 
+/**
+ * Convert to value to timestamp or moment
+ *
+ * @param {LocalDate} date
+ * @param {string} format
+ * @return {number | moment.Moment}
+ */
 export const parseStopDate = (date, format) => dateParse(date, DATETIME_INTERVAL_TYPES.stop, format);
 
 /**

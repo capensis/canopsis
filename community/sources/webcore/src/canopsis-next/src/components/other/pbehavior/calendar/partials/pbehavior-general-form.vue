@@ -66,7 +66,6 @@
 
 <script>
 import { get } from 'lodash';
-import moment from 'moment-timezone';
 
 import { DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
@@ -74,7 +73,11 @@ import {
   isStartOfDay,
   isEndOfDay,
   convertDateToStartOfDayDateObject,
-  convertDateToEndOfDayDateObject, convertDateToString,
+  convertDateToEndOfDayDateObject,
+  convertDateToString,
+  addUnitToDate,
+  convertDateToDateObject,
+  convertDateToEndOfUnitDateObject,
 } from '@/helpers/date/date';
 
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
@@ -154,13 +157,15 @@ export default {
         this.updateField('tstop', null);
       } else if (tstart) {
         const unit = this.fullDay ? 'day' : 'hour';
-        const tstopMoment = moment(tstart).add(1, unit);
 
-        if (this.fullDay) {
-          tstopMoment.endOf(unit);
-        }
+        const tstop = addUnitToDate(tstart, 1, unit);
+        const tstopDate = convertDateToDateObject(
+          this.fullDay
+            ? convertDateToEndOfUnitDateObject(tstop, unit)
+            : tstop,
+        );
 
-        this.updateField('tstop', tstopMoment.toDate());
+        this.updateField('tstop', tstopDate);
       }
     },
     fullDay() {

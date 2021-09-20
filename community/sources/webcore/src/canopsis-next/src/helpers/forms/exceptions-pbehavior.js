@@ -1,7 +1,6 @@
 import {
-  convertTimestampToMomentByTimezone,
   convertDateToTimestampByTimezone,
-  getLocalTimezone,
+  getLocalTimezone, convertTimestampToDateObjectByTimezone,
 } from '@/helpers/date/date';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
 
@@ -33,8 +32,8 @@ export function pbehaviorExceptionToForm(exception = {}, timezone = getLocalTime
     description: exception.description || '',
     exdates: exception.exdates
       ? addKeyInEntities(exception.exdates.map(({ begin, end, type }) => ({
-        begin: convertTimestampToMomentByTimezone(begin, timezone).toDate(),
-        end: convertTimestampToMomentByTimezone(end, timezone).toDate(),
+        begin: convertTimestampToDateObjectByTimezone(begin, timezone),
+        end: convertTimestampToDateObjectByTimezone(end, timezone),
         type: { ...type },
       })))
       : [],

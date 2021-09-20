@@ -15,7 +15,7 @@ import {
 import uid from '@/helpers/uid';
 import {
   convertDateToTimestampByTimezone,
-  convertTimestampToMomentByTimezone,
+  convertTimestampToDateObjectByTimezone,
   getLocalTimezone,
 } from '@/helpers/date/date';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/entities';
@@ -140,8 +140,8 @@ export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, en
 export const exdateToForm = (exdate, timezone = getLocalTimezone()) => ({
   ...exdate,
   key: uid(),
-  begin: convertTimestampToMomentByTimezone(exdate.begin, timezone).toDate(),
-  end: convertTimestampToMomentByTimezone(exdate.end, timezone).toDate(),
+  begin: convertTimestampToDateObjectByTimezone(exdate.begin, timezone),
+  end: convertTimestampToDateObjectByTimezone(exdate.end, timezone),
 });
 
 /**
@@ -193,8 +193,8 @@ export const pbehaviorToForm = (
     name: pbehavior.name || '',
     type: cloneDeep(pbehavior.type),
     reason: cloneDeep(pbehavior.reason),
-    tstart: pbehavior.tstart ? convertTimestampToMomentByTimezone(pbehavior.tstart, timezone).toDate() : null,
-    tstop: pbehavior.tstop ? convertTimestampToMomentByTimezone(pbehavior.tstop, timezone).toDate() : null,
+    tstart: pbehavior.tstart ? convertTimestampToDateObjectByTimezone(pbehavior.tstart, timezone) : null,
+    tstop: pbehavior.tstop ? convertTimestampToDateObjectByTimezone(pbehavior.tstop, timezone) : null,
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     exceptions: pbehavior.exceptions ? addKeyInEntities(cloneDeep(pbehavior.exceptions)) : [],
     comments: pbehavior.comments ? addKeyInEntities(cloneDeep(pbehavior.comments)) : [],

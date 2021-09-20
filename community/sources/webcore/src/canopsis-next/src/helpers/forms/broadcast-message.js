@@ -1,6 +1,6 @@
 import { DEFAULT_BROADCAST_MESSAGE_COLOR } from '@/constants';
 
-import { convertDateToDateObject, getDateTimestamp } from '@/helpers/date/date';
+import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/date';
 
 /**
  * @typedef {Object} Broadcast
@@ -37,6 +37,6 @@ export const messageToForm = (broadcastMessage = {}) => ({
  */
 export const formToMessage = (form = {}) => ({
   ...form,
-  start: getDateTimestamp(form.start),
-  end: getDateTimestamp(form.end),
+  start: convertDateToTimestamp(form.start),
+  end: convertDateToTimestamp(form.end),
 });
