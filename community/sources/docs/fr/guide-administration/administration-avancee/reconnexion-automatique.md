@@ -15,7 +15,7 @@ ReconnectTimeoutMilliseconds = 8
 - `ReconnectRetries` représente le nombre de tentatives de reconnexion en cas d'erreur, 3 par défaut.
 - `ReconnectTimeoutMilliseconds` est le délai **minimum** entre chaque tentative. Par défaut, il est de 8 millisecondes et on parle de délai minimum car celui-ci double à chaque tentative de reconnexion. Soit, avec la configuration par défaut, 8 ms avant le premier essai de reconnexion, 16 ms avant le second, 32 ms avant le troisième.
 
-Ce mécanisme de reconnexion automatique est utilisé par MongoDB, Redis, RabbitMQ, les moteurs Canopsis ainsi que les services `canopsis-api` et [`external-job-executor`](../remediation/index.md#architecture).
+Ce mécanisme de reconnexion automatique est utilisé par MongoDB, Redis, RabbitMQ, les moteurs Canopsis ainsi que les services `canopsis-api`.
 
 ## MongoDB
 
