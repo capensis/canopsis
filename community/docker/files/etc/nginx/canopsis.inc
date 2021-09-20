@@ -1,1 +1,0 @@
-../../../../deploy-ansible/playbook/roles/canopsis/templates/nginx/canopsis.j2
