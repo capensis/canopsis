@@ -110,8 +110,7 @@ export const API_ROUTES = {
     upload: '/uploadmib',
   },
   infos: {
-    login: '/api/v4/internal/login_info',
-    app: '/api/v4/internal/app_info',
+    app: '/api/v4/app-info',
     userInterface: '/api/v4/internal/user_interface',
   },
   associativeTable: '/api/v4/associativetable',

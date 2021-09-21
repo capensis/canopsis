@@ -60,14 +60,13 @@ export default {
 
         if (formIsValid) {
           await this.login(this.form);
-          await this.fetchAppInfos();
 
           if (this.$route.query.redirect && this.$route.query.redirect !== ROUTES.home) {
             this.$router.push(this.$route.query.redirect);
           } else if (this.currentUser.defaultview) {
             this.$router.push({
               name: ROUTES_NAMES.view,
-              params: { id: this.currentUser.defaultview },
+              params: { id: this.currentUser.defaultview._id },
             });
           } else {
             this.$router.push({ name: ROUTES_NAMES.home });
