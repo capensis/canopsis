@@ -30,7 +30,8 @@ server {
 	root /opt/canopsis/var/www/src/canopsis-next/dist/;
 	
 	set $canopsis_api_url {{ CPS_API_URL }}; # see /etc/nginx/resolvers.inc if you modify this
-	server_name {{ CPS_SERVER_NAME }};
+	set $canopsis_server_name {{ CPS_SERVER_NAME }};
+	server_name $canopsis_server_name;
 
 	# Un comment the next line to enable https
 	#include /etc/nginx/https.inc;
