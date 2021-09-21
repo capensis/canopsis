@@ -581,7 +581,7 @@
           "checksum": 1,
           "crecord_type": "right"
         },
-        "api_engine": {
+        "api_healthcheck": {
             "checksum": 1,
             "crecord_type": "right"
         },
