@@ -59,10 +59,9 @@ server {
 
 	# Redirect API calls to canopsis-api. /backend depends on the baseURL
 	# setting of request.js.
-	location /backend/api/v4/ws {
-		set $api_uri $1;
+	location /api/v4/ws {
 		include /etc/nginx/cors.inc;
-		proxy_pass $canopsis_api_url$api_uri$is_args$args;
+		proxy_pass $canopsis_api_url/api/v4/ws$is_args$args;
 		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 		proxy_read_timeout 90s;
@@ -74,10 +73,14 @@ server {
 		proxy_set_header Connection "Upgrade";
 	}
 	
-	location ~ ^/backend(/.*) {
-		set $api_uri $1;
+	location ~ ^/backend(/(?:api|rest)(/.*)) {
+		return 308 $1;
+	}
+
+	location ~ ^/(?:api|rest)/ {
 		include /etc/nginx/cors.inc;
-		proxy_pass $canopsis_api_url$api_uri$is_args$args;
+		proxy_http_version 1.1;
+		proxy_pass $canopsis_api_url;
 		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 		proxy_read_timeout 90s;
@@ -85,7 +88,6 @@ server {
 		proxy_no_cache 1;
 		proxy_cache_bypass 1;
 	}
-
 	
 
 	# Serve static files directly through Nginx by default
