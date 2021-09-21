@@ -1,16 +1,21 @@
+import { validationErrorsMixinCreator } from '@/mixins/form';
+
 /**
  * Create submittable mixin for components
  *
- * @param {string} [method='submit'] - name of submit method which we will wrap into try catch block
- * @param {string} [property='submitting'] - property name for submitting flag functional
- * @param {string} [computedProperty='isDisabled'] - computed property name for buttons disabling
+ * @param {string} [formField = 'form'] - name of form field which we will use in the validationErrorsMixinCreator mixin
+ * @param {string} [method = 'submit'] - name of submit method which we will wrap into try catch block
+ * @param {string} [property = 'submitting'] - property name for submitting flag functional
+ * @param {string} [computedProperty = 'isDisabled'] - computed property name for buttons disabling
  * @returns {{data(): *, computed: {}, created(): void}}
  */
 export const submittableMixinCreator = ({
+  formField = 'form',
   method = 'submit',
   property = 'submitting',
   computedProperty = 'isDisabled',
 } = {}) => ({
+  mixins: [validationErrorsMixinCreator({ formField })],
   data() {
     return {
       [property]: false,
@@ -26,10 +31,15 @@ export const submittableMixinCreator = ({
 
           await sourceSubmit.apply(this, args);
         } catch (err) {
-          console.warn(err);
-          const message = Object.values(err).join('\n');
+          const hasFormErrors = this.setFormErrors(err);
 
-          this.$popups.error({ text: message || err.details || this.$t('errors.default') });
+          if (!hasFormErrors) {
+            console.error(err);
+
+            const message = Object.values(err).join('\n');
+
+            this.$popups.error({ text: message || err.details || this.$t('errors.default') });
+          }
         } finally {
           this[property] = false;
         }

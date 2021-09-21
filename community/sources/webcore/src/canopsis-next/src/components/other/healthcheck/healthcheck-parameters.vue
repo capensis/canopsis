@@ -46,13 +46,9 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          await this.updateHealthcheckParameters({ data: this.form });
+        await this.updateHealthcheckParameters({ data: this.form });
 
-          this.$popups.success({ text: this.$t('success.default') });
-        } catch (err) {
-          this.setFormErrors(err);
-        }
+        this.$popups.success({ text: this.$t('success.default') });
       }
     },
   },

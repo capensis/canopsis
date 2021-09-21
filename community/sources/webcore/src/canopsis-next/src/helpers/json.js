@@ -20,7 +20,7 @@ export const stringifyJson = (json, indents = 4, defaultValue = '{}') => {
 
     return JSON.stringify(JSON.parse(json), null, indents);
   } catch (err) {
-    console.warn(err);
+    console.error(err);
 
     return defaultValue;
   }

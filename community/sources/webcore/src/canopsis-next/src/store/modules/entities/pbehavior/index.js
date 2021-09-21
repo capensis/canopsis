@@ -94,7 +94,7 @@ export default {
       } catch (err) {
         commit(types.FETCH_BY_ID_FAILED, err);
 
-        console.warn(err);
+        console.error(err);
       }
     },
 

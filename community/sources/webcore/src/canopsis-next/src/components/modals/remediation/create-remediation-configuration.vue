@@ -23,7 +23,6 @@ import {
 } from '@/helpers/forms/remediation-configuration';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -43,7 +42,6 @@ export default {
   },
   mixins: [
     modalInnerMixin,
-    validationErrorsMixinCreator(),
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -62,15 +60,11 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          if (this.config.action) {
-            await this.config.action(formToRemediationConfiguration(this.form));
-          }
-
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(err);
+        if (this.config.action) {
+          await this.config.action(formToRemediationConfiguration(this.form));
         }
+
+        this.$modals.hide();
       }
     },
   },

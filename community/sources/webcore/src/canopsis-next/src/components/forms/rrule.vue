@@ -221,7 +221,7 @@ export default {
       try {
         rRule = rrulestr(this.rrule);
       } catch (err) {
-        console.warn(err);
+        console.error(err);
       }
     }
 
@@ -331,7 +331,7 @@ export default {
           }
         }
       } catch (err) {
-        console.warn(err);
+        console.error(err);
       }
     },
   },

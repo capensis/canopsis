@@ -17,7 +17,6 @@
 import { notificationsSettingsToForm, formToNotificationsSettings } from '@/helpers/forms/notification';
 
 import { entitiesNotificationSettingsMixin } from '@/mixins/entities/notification-settings';
-import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { submittableMixinCreator } from '@/mixins/submittable';
 
 import NotificationsSettingsForm from './form/notifications-settings-form.vue';
@@ -30,9 +29,8 @@ export default {
     NotificationsSettingsForm,
   },
   mixins: [
-    submittableMixinCreator(),
     entitiesNotificationSettingsMixin,
-    validationErrorsMixinCreator(),
+    submittableMixinCreator(),
   ],
   data() {
     return {
@@ -43,24 +41,20 @@ export default {
     this.fetchNotificationsSettings();
   },
   methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        try {
-          await this.updateNotificationSettings({ data: formToNotificationsSettings(this.form) });
-
-          this.$popups.success({ text: this.$t('success.default') });
-        } catch (err) {
-          this.setFormErrors(err);
-        }
-      }
-    },
-
     async fetchNotificationsSettings() {
       const notificationsSettings = await this.fetchNotificationSettingsWithoutStore();
 
       this.form = notificationsSettingsToForm(notificationsSettings);
+    },
+
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        await this.updateNotificationSettings({ data: formToNotificationsSettings(this.form) });
+
+        this.$popups.success({ text: this.$t('success.default') });
+      }
     },
   },
 };
