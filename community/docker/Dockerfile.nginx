@@ -6,7 +6,7 @@ RUN export FORCE_COLOR=0 NPM_CONFIG_COLOR=false NPM_CONFIG_PROGRESS=false NPM_CO
 
 FROM nginx:1.20.1-alpine
 
-RUN mkdir -p /etc/nginx/ssl
+RUN mkdir -p -m 0750 /etc/nginx/ssl
 
 RUN apk --no-cache add openssl
 

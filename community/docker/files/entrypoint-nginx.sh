@@ -6,7 +6,7 @@ then
 	sed -i -e "s,#include /etc/nginx/https.inc;,include /etc/nginx/https.inc;,g" /etc/nginx/conf.d/default.conf
 	if [ ! -f /etc/nginx/ssl/cert.crt ] && [ ! -f /etc/nginx/ssl/key.key ]
 	then
-		openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+		openssl req -x509 -nodes -days 730 -newkey rsa:2048 -sha256 \
 			-keyout /etc/nginx/ssl/key.key \
 			-out /etc/nginx/ssl/cert.crt \
 			-subj "/CN=${CPS_SERVER_NAME}"

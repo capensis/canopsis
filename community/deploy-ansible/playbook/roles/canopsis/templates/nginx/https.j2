@@ -19,8 +19,9 @@ ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDS
 ssl_prefer_server_ciphers off;
 
 
-if ($scheme = 'http'){
-	return 302 https://$server_name$request_uri;
+set $need_http_upgrade "$https$http_upgrade_insecure_requests";
+if ($need_http_upgrade = "1") {
+	return 307 https://$host$request_uri;
 }
 
 
