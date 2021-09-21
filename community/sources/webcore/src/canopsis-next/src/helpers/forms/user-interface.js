@@ -1,6 +1,8 @@
 import { DEFAULT_APP_TITLE, DEFAULT_LOCALE, POPUP_AUTO_CLOSE_DELAY } from '@/config';
-import { durationToForm, formToDuration } from '@/helpers/date/duration';
+
 import { TIME_UNITS } from '@/constants';
+
+import { durationToForm, formToDuration } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} PopupTimeout

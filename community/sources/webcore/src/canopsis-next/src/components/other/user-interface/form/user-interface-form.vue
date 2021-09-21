@@ -25,24 +25,34 @@
         v-validate="'numeric|min_value:1'",
         :label="$t('userInterface.maxMatchedItems')",
         :error-messages="errors.collect('max_matched_items')",
+        :min="1",
         type="number",
         name="max_matched_items"
       )
-        v-tooltip(slot="append", left)
-          v-icon(slot="activator") help
-          div(v-html="$t('userInterface.tooltips.maxMatchedItems')")
+        c-help-icon(
+          slot="append",
+          :text="$t('userInterface.tooltips.maxMatchedItems')",
+          color="grey darken-1",
+          icon="help",
+          left
+        )
     v-layout(row)
       v-text-field(
         v-field.number="form.check_count_request_timeout",
         v-validate="'numeric|min_value:1'",
         :label="$t('userInterface.checkCountRequestTimeout')",
         :error-messages="errors.collect('check_count_request_timeout')",
+        :min="1",
         type="number",
         name="check_count_request_timeout"
       )
-        v-tooltip(slot="append", left)
-          v-icon(slot="activator") help
-          div(v-html="$t('userInterface.tooltips.checkCountRequestTimeout')")
+        c-help-icon(
+          slot="append",
+          :text="$t('userInterface.tooltips.checkCountRequestTimeout')",
+          color="grey darken-1",
+          icon="help",
+          left
+        )
     v-layout(row)
       c-timezone-field(v-field="form.timezone", disabled)
     v-layout(row)
