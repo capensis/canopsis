@@ -1268,6 +1268,13 @@
         "desc": "Healthcheck"
     },
     {
+        "_id": "api_message_rate_stats_read",
+        "crecord_name": "api_message_rate_stats_read",
+        "loader_id": "api_message_rate_stats_read",
+        "crecord_type": "action",
+        "desc": "Message rate statistics"
+    },
+    {
         "_id": "api_execution",
         "loader_id": "api_execution",
         "crecord_name": "api_execution",

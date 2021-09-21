@@ -585,6 +585,10 @@
             "checksum": 1,
             "crecord_type": "right"
         },
+        "api_message_rate_stats_read": {
+            "checksum": 1,
+            "crecord_type": "right"
+        },
         "api_execution": {
           "checksum": 1,
           "crecord_type": "right"
