@@ -28,7 +28,7 @@ server {
 	listen [::]:80;
 
 	root /opt/canopsis/var/www/src/canopsis-next/dist/;
-	
+
 	set $canopsis_api_url {{ CPS_API_URL }}; # see /etc/nginx/resolvers.inc if you modify this
 	set $canopsis_server_name {{ CPS_SERVER_NAME }};
 	server_name $canopsis_server_name;
@@ -72,7 +72,7 @@ server {
 		proxy_set_header Upgrade $http_upgrade;
 		proxy_set_header Connection "Upgrade";
 	}
-	
+
 	location ~ ^/backend(/(?:api|rest)(/.*)) {
 		return 308 $1;
 	}
@@ -88,7 +88,7 @@ server {
 		proxy_no_cache 1;
 		proxy_cache_bypass 1;
 	}
-	
+
 
 	# Serve static files directly through Nginx by default
 	location / {

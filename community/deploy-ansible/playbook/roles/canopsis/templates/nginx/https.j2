@@ -23,5 +23,3 @@ set $need_http_upgrade "$https$http_upgrade_insecure_requests";
 if ($need_http_upgrade = "1") {
 	return 307 https://$host$request_uri;
 }
-
-
