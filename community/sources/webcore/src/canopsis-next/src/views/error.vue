@@ -22,7 +22,7 @@ export default {
     authMixin,
     entitiesInfoMixin,
     pollingMixinCreator({
-      method: 'fetchInfos',
+      method: 'fetchInfo',
       delay: LOGIN_INFOS_FETCHING_INTERVAL,
       startOnMount: true,
     }),
@@ -38,12 +38,12 @@ export default {
     },
   },
   mounted() {
-    this.fetchInfos();
+    this.fetchInfo();
   },
   methods: {
-    async fetchInfos() {
+    async fetchInfo() {
       try {
-        await this.fetchLoginInfos();
+        await this.fetchAppInfo();
 
         if (!isEmpty(this.currentUser)) {
           this.$router.replace({

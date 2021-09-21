@@ -23,14 +23,14 @@ import { TIME_UNITS } from '@/constants';
  * @property {string} timezone
  * @property {boolean} allow_change_severity_to_info
  * @property {PopupTimeout} popup_timeout
- * @property {string} logo
+ * @property {string} [logo]
  * @property {number} [max_matched_items]
  * @property {number} [check_count_request_timeout]
  */
 /**
  * @typedef {UserInterface} UserInterfaceForm
  * @property {PopupTimeoutForm} popup_timeout
- * @property {!File} logo
+ * @property {!File} [logo]
  */
 
 /**

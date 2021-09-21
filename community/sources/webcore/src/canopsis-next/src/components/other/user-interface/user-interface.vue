@@ -51,16 +51,12 @@ export default {
       form: null,
     };
   },
-  mounted() {
-    this.fetchUserInterface();
+  async mounted() {
+    await this.fetchAppInfo();
+
+    this.form = userInterfaceToForm(this.appInfo);
   },
   methods: {
-    async fetchUserInterface() {
-      await this.fetchAppInfos();
-
-      this.form = userInterfaceToForm(this.userInterface);
-    },
-
     async submit() {
       try {
         const isValid = await this.$validator.validateAll();
@@ -73,7 +69,7 @@ export default {
           }
 
           await this.updateUserInterface({ data });
-          await this.fetchAppInfos();
+          await this.fetchAppInfo();
 
           this.setTitle();
 
@@ -89,7 +85,7 @@ export default {
     reset() {
       this.$refs.userForm.reset();
 
-      this.fetchUserInterface();
+      this.form = userInterfaceToForm(this.appInfo);
     },
   },
 };
