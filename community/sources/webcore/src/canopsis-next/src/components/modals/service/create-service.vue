@@ -24,7 +24,6 @@ import { serviceToForm, formToService } from '@/helpers/forms/service';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 
 import ServiceForm from '@/components/other/service/form/service-form.vue';
@@ -42,7 +41,6 @@ export default {
     entitiesContextEntityMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
-    validationErrorsMixinCreator(),
   ],
   data() {
     return {
@@ -59,21 +57,11 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          const data = formToService(this.form);
+        await this.config.action(formToService(this.form));
 
-          await this.config.action(data);
-
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(err);
-        }
+        this.$modals.hide();
       }
     },
   },
 };
 </script>
-
-<style>
-
-</style>

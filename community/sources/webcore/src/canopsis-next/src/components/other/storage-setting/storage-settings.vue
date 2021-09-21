@@ -23,7 +23,6 @@ import { MODALS } from '@/constants';
 import { formToDataStorageSettings, dataStorageSettingsToForm } from '@/helpers/forms/data-storage';
 
 import { submittableMixinCreator } from '@/mixins/submittable';
-import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { entitiesDataStorageSettingsMixin } from '@/mixins/entities/data-storage';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 
@@ -35,10 +34,9 @@ export default {
   },
   components: { StorageSettingsForm },
   mixins: [
-    submittableMixinCreator(),
-    validationErrorsMixinCreator(),
     entitiesDataStorageSettingsMixin,
     entitiesContextEntityMixin,
+    submittableMixinCreator(),
   ],
   data() {
     return {
@@ -78,13 +76,9 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          await this.updateDataStorageSettings({ data: formToDataStorageSettings(this.form) });
+        await this.updateDataStorageSettings({ data: formToDataStorageSettings(this.form) });
 
-          this.$popups.success({ text: this.$t('success.default') });
-        } catch (err) {
-          this.setFormErrors(err);
-        }
+        this.$popups.success({ text: this.$t('success.default') });
       }
     },
   },

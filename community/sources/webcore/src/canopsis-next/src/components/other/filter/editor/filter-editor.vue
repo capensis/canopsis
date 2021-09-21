@@ -287,7 +287,7 @@ export default {
       try {
         this.advancedJson = formToFilter(this.form);
       } catch (err) {
-        console.warn(err);
+        console.error(err);
 
         this.$popups.error({ text: this.$t('errors.default') });
       }
@@ -299,7 +299,7 @@ export default {
 
         this.advancedJson = advancedJson;
       } catch (err) {
-        console.warn(err);
+        console.error(err);
 
         /**
          * We need to use setTimeout instead of $nextTick here because we already used reset inside json-field

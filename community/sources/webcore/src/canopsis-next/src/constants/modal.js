@@ -71,7 +71,6 @@ export const MODALS = {
   remediationInstructionApproval: 'remediation-instruction-approval',
   imageViewer: 'image-viewer',
   imagesViewer: 'images-viewer',
-  patterns: 'patterns',
   rate: 'rate',
   createScenario: 'create-scenario',
   stateSetting: 'state-setting',

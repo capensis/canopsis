@@ -27,7 +27,6 @@ import { userToForm, formToUser } from '@/helpers/forms/user';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 
 import UserForm from '@/components/other/users/form/user-form.vue';
 
@@ -46,7 +45,6 @@ export default {
     modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
-    validationErrorsMixinCreator(),
   ],
   data() {
     return {
@@ -67,13 +65,9 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          await this.config.action(formToUser(this.form));
+        await this.config.action(formToUser(this.form));
 
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(err);
-        }
+        this.$modals.hide();
       }
     },
   },
