@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"go.mongodb.org/mongo-driver/bson"
@@ -145,9 +146,9 @@ func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf,
 }
 
 func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterfaceConf) error {
-	defaultInterval := IntervalUnit{
-		Interval: defaultPopupInterval,
-		Unit:     "s",
+	defaultInterval := types.DurationWithUnit{
+		Seconds: defaultPopupInterval,
+		Unit:    "s",
 	}
 
 	if model.PopupTimeout == nil {

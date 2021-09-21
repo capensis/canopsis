@@ -7993,17 +7993,6 @@ var doc = `{
                 }
             }
         },
-        "appinfo.IntervalUnit": {
-            "type": "object",
-            "properties": {
-                "interval": {
-                    "type": "integer"
-                },
-                "unit": {
-                    "type": "string"
-                }
-            }
-        },
         "appinfo.JobConfigType": {
             "type": "object",
             "properties": {
@@ -8048,11 +8037,11 @@ var doc = `{
             "properties": {
                 "error": {
                     "type": "object",
-                    "$ref": "#/definitions/appinfo.IntervalUnit"
+                    "$ref": "#/definitions/types.DurationWithUnit"
                 },
                 "info": {
                     "type": "object",
-                    "$ref": "#/definitions/appinfo.IntervalUnit"
+                    "$ref": "#/definitions/types.DurationWithUnit"
                 }
             }
         },

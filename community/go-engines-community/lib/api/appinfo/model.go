@@ -8,14 +8,9 @@ type VersionConf struct {
 	Version string `json:"version" bson:"version"`
 }
 
-type IntervalUnit struct {
-	Interval uint   `json:"interval" bson:"interval"`
-	Unit     string `json:"unit" bson:"unit" binding:"oneof=s h m"`
-}
-
 type PopupTimeout struct {
-	Info  *IntervalUnit `json:"info,omitempty" bson:"info,omitempty"`
-	Error *IntervalUnit `json:"error,omitempty" bson:"error,omitempty"`
+	Info  *types.DurationWithUnit `json:"info,omitempty" bson:"info,omitempty"`
+	Error *types.DurationWithUnit `json:"error,omitempty" bson:"error,omitempty"`
 }
 
 type UserInterfaceConf struct {

@@ -496,13 +496,6 @@ definitions:
       version:
         type: string
     type: object
-  appinfo.IntervalUnit:
-    properties:
-      interval:
-        type: integer
-      unit:
-        type: string
-    type: object
   appinfo.JobConfigType:
     properties:
       auth_type:
@@ -532,10 +525,10 @@ definitions:
   appinfo.PopupTimeout:
     properties:
       error:
-        $ref: '#/definitions/appinfo.IntervalUnit'
+        $ref: '#/definitions/types.DurationWithUnit'
         type: object
       info:
-        $ref: '#/definitions/appinfo.IntervalUnit'
+        $ref: '#/definitions/types.DurationWithUnit'
         type: object
     type: object
   appinfo.RemediationConf:
