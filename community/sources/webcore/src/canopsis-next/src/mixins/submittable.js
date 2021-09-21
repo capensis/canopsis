@@ -31,9 +31,9 @@ export const submittableMixinCreator = ({
 
           await sourceSubmit.apply(this, args);
         } catch (err) {
-          const hasFormErrors = this.setFormErrors(err);
+          const wasSet = this.setFormErrors(err);
 
-          if (!hasFormErrors) {
+          if (!wasSet) {
             console.error(err);
 
             const message = Object.values(err).join('\n');
