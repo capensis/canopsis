@@ -474,6 +474,9 @@ definitions:
         type: string
       language:
         type: string
+      login:
+        $ref: '#/definitions/appinfo.LoginConf'
+        type: object
       login_page_description:
         type: string
       logo:
@@ -507,7 +510,7 @@ definitions:
       name:
         type: string
     type: object
-  appinfo.LoginConfig:
+  appinfo.LoginConf:
     properties:
       casconfig:
         $ref: '#/definitions/appinfo.LoginConfigMethod'
@@ -524,21 +527,6 @@ definitions:
       enable:
         type: boolean
       title:
-        type: string
-    type: object
-  appinfo.LoginConfigResponse:
-    properties:
-      edition:
-        type: string
-      login_config:
-        $ref: '#/definitions/appinfo.LoginConfig'
-        type: object
-      stack:
-        type: string
-      user_interface:
-        $ref: '#/definitions/appinfo.UserInterfaceConf'
-        type: object
-      version:
         type: string
     type: object
   appinfo.PopupTimeout:
@@ -3894,6 +3882,23 @@ paths:
       summary: Find all alarms
       tags:
       - alarms
+  /app-info:
+    get:
+      description: Get application information
+      operationId: internal-get-app-info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/appinfo.AppInfoResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get application information
+      tags:
+      - internal
   /associativetable:
     delete:
       description: Delete associativetable by name
@@ -3905,7 +3910,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4056,7 +4062,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4144,7 +4151,8 @@ paths:
         required: true
         type: array
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4238,7 +4246,8 @@ paths:
         required: true
         type: array
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4500,7 +4509,8 @@ paths:
       produces:
       - application/json
       responses:
-        "202": {}
+        "202":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -4635,7 +4645,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4811,7 +4822,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -5019,7 +5031,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5209,7 +5222,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5377,7 +5391,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5486,43 +5501,13 @@ paths:
       summary: Count entities and alarm matching patterns
       tags:
       - idlerules
-  /internal/app_info:
-    get:
-      description: Get application information
-      operationId: internal-get-app-info
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/appinfo.AppInfoResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Get application information
-      tags:
-      - internal
-  /internal/login_info:
-    get:
-      description: Get login information
-      operationId: internal-get-login-info
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/appinfo.LoginConfigResponse'
-      summary: Get login information
-      tags:
-      - internal
   /internal/user_interface:
     delete:
       description: delete user interface
       operationId: internal-delete-user-interface
       responses:
-        "204": {}
+        "204":
+          description: ""
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -5764,7 +5749,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5872,7 +5858,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -5964,7 +5951,8 @@ paths:
       produces:
       - application/octet-stream
       responses:
-        "200": {}
+        "200":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6072,7 +6060,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -6279,7 +6268,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -6451,7 +6441,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6766,7 +6757,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6934,7 +6926,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7102,7 +7095,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7373,7 +7367,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7541,7 +7536,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -7638,7 +7634,8 @@ paths:
       produces:
       - application/json
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7832,7 +7829,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:

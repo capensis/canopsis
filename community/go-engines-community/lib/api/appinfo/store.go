@@ -16,10 +16,10 @@ import (
 const defaultPopupInterval = 3 //seconds
 
 type Store interface {
-	RetrieveLoginConfig(ctx context.Context) (LoginConfig, error)
+	RetrieveLoginConfig(ctx context.Context) (LoginConf, error)
 	RetrieveUserInterfaceConfig(ctx context.Context) (UserInterfaceConf, error)
 	RetrieveVersionConfig(ctx context.Context) (VersionConf, error)
-	RetrieveTimezoneConf(ctx context.Context) (TimezoneConf, error)
+	RetrieveTimezoneConfig(ctx context.Context) (TimezoneConf, error)
 	RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error)
 	UpdateUserInterfaceConfig(ctx context.Context, conf *UserInterfaceConf) error
 	DeleteUserInterfaceConfig(ctx context.Context) error
@@ -40,8 +40,8 @@ func NewStore(db mongo.DbClient, authProviders []string) Store {
 	}
 }
 
-func (s *store) RetrieveLoginConfig(ctx context.Context) (LoginConfig, error) {
-	var login = LoginConfig{}
+func (s *store) RetrieveLoginConfig(ctx context.Context) (LoginConf, error) {
+	var login = LoginConf{}
 	for _, p := range s.authProviders {
 		switch p {
 		case security.AuthMethodLdap:
@@ -94,7 +94,7 @@ func (s *store) RetrieveVersionConfig(ctx context.Context) (VersionConf, error) 
 	return version, err
 }
 
-func (s *store) RetrieveTimezoneConf(ctx context.Context) (TimezoneConf, error) {
+func (s *store) RetrieveTimezoneConfig(ctx context.Context) (TimezoneConf, error) {
 	var tz TimezoneConf
 	conf := config.CanopsisConf{}
 	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.ConfigKeyName}).Decode(&conf)

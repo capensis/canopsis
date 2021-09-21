@@ -48,10 +48,11 @@ type AppInfoResponse struct {
 	UserInterfaceConf
 	TimezoneConf
 	VersionConf
-	Remediation RemediationConf `json:"remediation"`
+	Login       LoginConf        `json:"login"`
+	Remediation *RemediationConf `json:"remediation,omitempty"`
 }
 
-type LoginConfig struct {
+type LoginConf struct {
 	CasConfig  LoginConfigMethod `json:"casconfig,omitempty"`
 	LdapConfig LoginConfigMethod `json:"ldapconfig,omitempty"`
 	SamlConfig LoginConfigMethod `json:"saml2config,omitempty"`
@@ -60,10 +61,4 @@ type LoginConfig struct {
 type LoginConfigMethod struct {
 	Title  string `json:"title,omitempty"`
 	Enable bool   `json:"enable"`
-}
-
-type LoginConfigResponse struct {
-	LoginConfig       LoginConfig       `json:"login_config"`
-	UserInterfaceConf UserInterfaceConf `json:"user_interface"`
-	VersionConf
 }
