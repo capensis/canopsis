@@ -30,7 +30,11 @@
 import { DATETIME_FORMATS, QUICK_RANGES } from '@/constants';
 
 import { convertDateToString, convertDateToTimestamp, getNowTimestamp, getWeekdayNumber } from '@/helpers/date/date';
-import { findQuickRangeValue, convertStartDateIntervalToMoment, convertStopDateIntervalToMoment } from '@/helpers/date/date-intervals';
+import {
+  findQuickRangeValue,
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from '@/helpers/date/date-intervals';
 
 import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
 
@@ -67,11 +71,11 @@ export default {
     },
 
     intervalFromAsTimestamp() {
-      return convertDateToTimestamp(convertStartDateIntervalToMoment(this.interval.from, DATETIME_FORMATS.datePicker));
+      return convertStartDateIntervalToTimestamp(this.interval.from, DATETIME_FORMATS.datePicker);
     },
 
     intervalToAsTimestamp() {
-      return convertDateToTimestamp(convertStopDateIntervalToMoment(this.interval.to, DATETIME_FORMATS.datePicker));
+      return convertStopDateIntervalToTimestamp(this.interval.to, DATETIME_FORMATS.datePicker);
     },
 
     intervalFromString() {
@@ -161,12 +165,8 @@ export default {
         return true;
       }
 
-      const startTimestamp = convertDateToTimestamp(
-        convertStartDateIntervalToMoment(start, DATETIME_FORMATS.datePicker),
-      );
-      const stopTimestamp = convertDateToTimestamp(
-        convertStopDateIntervalToMoment(start, DATETIME_FORMATS.datePicker),
-      );
+      const startTimestamp = convertStartDateIntervalToTimestamp(start, DATETIME_FORMATS.datePicker);
+      const stopTimestamp = convertStopDateIntervalToTimestamp(start, DATETIME_FORMATS.datePicker);
 
       return this.isGreaterMinDate(startTimestamp)
         && this.isAllowedAccumulatedFromDate(startTimestamp)
