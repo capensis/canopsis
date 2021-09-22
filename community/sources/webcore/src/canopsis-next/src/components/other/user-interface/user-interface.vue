@@ -24,7 +24,6 @@ import { getFileDataUrlContent } from '@/helpers/file/file-select';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { submittableMixinCreator } from '@/mixins/submittable';
-import { validationErrorsMixinCreator } from '@/mixins/form';
 
 import UserInterfaceForm from './form/user-interface-form.vue';
 
@@ -38,7 +37,6 @@ export default {
   mixins: [
     entitiesInfoMixin,
     submittableMixinCreator(),
-    validationErrorsMixinCreator(),
   ],
   props: {
     disabled: {
@@ -58,27 +56,23 @@ export default {
   },
   methods: {
     async submit() {
-      try {
-        const isValid = await this.$validator.validateAll();
+      const isValid = await this.$validator.validateAll();
 
-        if (isValid) {
-          const data = formToUserInterface(this.form);
+      if (isValid) {
+        const data = formToUserInterface(this.form);
 
-          if (this.form.logo) {
-            data.logo = await getFileDataUrlContent(this.form.logo);
-          }
-
-          await this.updateUserInterface({ data });
-          await this.fetchAppInfo();
-
-          this.setTitle();
-
-          this.$popups.success({ text: this.$t('success.default') });
-
-          this.reset();
+        if (this.form.logo) {
+          data.logo = await getFileDataUrlContent(this.form.logo);
         }
-      } catch (err) {
-        this.setFormErrors(err);
+
+        await this.updateUserInterface({ data });
+        await this.fetchAppInfo();
+
+        this.setTitle();
+
+        this.$popups.success({ text: this.$t('success.default') });
+
+        this.reset();
       }
     },
 

@@ -4,7 +4,7 @@
       span {{ testSuite.name }}
     template(slot="text")
       v-layout(v-if="testSuiteHistoryPending", justify-center)
-        v-progress-circular(indeterminate, color="primary")
+        v-progress-circular(color="primary", indeterminate)
       test-suite-history(v-else, :test-suite-history="testSuiteHistory")
     template(slot="actions")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}

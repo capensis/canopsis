@@ -6,7 +6,7 @@
       template(slot="text")
         v-fade-transition
           v-layout(v-if="!remediationInstructionApproval", justify-center)
-            v-progress-circular(indeterminate, color="primary")
+            v-progress-circular(color="primary", indeterminate)
           v-layout(v-else, column)
             remediation-instruction-approval-alert(
               :approval="remediationInstructionApproval.approval"

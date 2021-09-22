@@ -9,7 +9,7 @@
           :execution-instruction="executionInstruction"
         )
         v-layout(v-else, justify-center)
-          v-progress-circular(indeterminate, color="primary")
+          v-progress-circular(color="primary", indeterminate)
 </template>
 
 <script>
