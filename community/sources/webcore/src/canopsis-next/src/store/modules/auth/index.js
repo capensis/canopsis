@@ -91,12 +91,12 @@ export default {
         }
 
         return commit(types.FETCH_USER_COMPLETED, currentUser);
-      } catch (error) {
-        if (EXCLUDED_SERVER_ERROR_STATUSES.includes(error.status)) {
+      } catch (err) {
+        if (EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
           dispatch('logout');
         }
 
-        throw error;
+        throw err;
       }
     },
 

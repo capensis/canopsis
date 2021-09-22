@@ -61,19 +61,10 @@ export default {
     },
   },
   actions: {
-    async fetchListWithoutStore({ dispatch }, { params, withoutCatch = false }) {
-      try {
-        return request.get(API_ROUTES.alarmList, { params });
-      } catch (err) {
-        if (withoutCatch) {
-          throw err;
-        }
-
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
-
-        return { alarms: [], total: 0 };
-      }
+    async fetchListWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.alarmList, { params });
     },
+
     async fetchList({ commit, dispatch }, { widgetId, params, withoutPending } = {}) {
       try {
         await useRequestCancelling(async (source) => {

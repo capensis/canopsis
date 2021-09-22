@@ -47,6 +47,7 @@ export default {
         return JSON.stringify(this.config.value, undefined, 4);
       } catch (err) {
         console.error(err);
+
         return '';
       }
     },

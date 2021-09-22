@@ -16,7 +16,6 @@ import { MODALS } from '@/constants';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 
 import { dynamicInfoToForm, formToDynamicInfo } from '@/helpers/forms/dynamic-info';
 
@@ -34,7 +33,6 @@ export default {
     modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
-    validationErrorsMixinCreator(),
   ],
   data() {
     return {
@@ -55,15 +53,11 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          if (this.config.action) {
-            await this.config.action(formToDynamicInfo(this.form));
-          }
-
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(err);
+        if (this.config.action) {
+          await this.config.action(formToDynamicInfo(this.form));
         }
+
+        this.$modals.hide();
       }
     },
   },

@@ -203,7 +203,6 @@ export default {
 
         if (isEmpty(this.query.filters)) {
           let { data: alarms } = await this.fetchAlarmsListWithoutStore({
-            withoutCatch: true,
             params: query,
           });
 
@@ -215,7 +214,6 @@ export default {
           this.alarmsCollections = [];
         } else {
           const results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
-            withoutCatch: true,
             params: {
               ...query,
               filter,

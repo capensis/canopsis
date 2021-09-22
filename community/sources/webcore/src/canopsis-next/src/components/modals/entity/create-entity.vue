@@ -25,7 +25,6 @@ import { MODALS } from '@/constants';
 import { entityToForm, formToEntity } from '@/helpers/forms/entity';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -46,7 +45,6 @@ export default {
     modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
-    validationErrorsMixinCreator(),
   ],
   data() {
     return {
@@ -63,13 +61,9 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          await this.config.action(formToEntity(this.form));
+        await this.config.action(formToEntity(this.form));
 
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(err);
-        }
+        this.$modals.hide();
       }
     },
 
