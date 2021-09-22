@@ -33,7 +33,7 @@ server {
 	set $canopsis_server_name {{ CPS_SERVER_NAME }};
 	server_name $canopsis_server_name;
 
-	# Un comment the next line to enable https
+	# Uncomment the next line to enable HTTPS
 	#include /etc/nginx/https.inc;
 
 	# Work around issue canopsis#1858
@@ -57,40 +57,43 @@ server {
 		return 301 /;
 	}
 
-	# Redirect API calls to canopsis-api. /backend depends on the baseURL
-	# setting of request.js.
+	# /api/v4/ws is like /api/ below, but it needs websocket upgrades as well
+	# (and thus, HTTPS if you effectively use this)
 	location /api/v4/ws {
 		include /etc/nginx/cors.inc;
 		proxy_pass $canopsis_api_url/api/v4/ws$is_args$args;
 		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 		proxy_read_timeout 90s;
+		proxy_http_version 1.1;
 		# Never cache API calls
 		proxy_no_cache 1;
 		proxy_cache_bypass 1;
-		proxy_http_version 1.1;
 		proxy_set_header Upgrade $http_upgrade;
 		proxy_set_header Connection "Upgrade";
 	}
 
+	# Gone after Canopsis 4.4, but preserve compatibility for people who
+	# did calls to the API through /backend/api
 	location ~ ^/backend(/(?:api|rest)(/.*)) {
 		return 308 $1;
 	}
 
+	# Redirect all API calls to canopsis-api
 	location ~ ^/(?:api|rest)/ {
 		include /etc/nginx/cors.inc;
 		proxy_pass $canopsis_api_url;
 		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 		proxy_read_timeout 90s;
+		proxy_http_version 1.1;
 		# Never cache API calls
 		proxy_no_cache 1;
 		proxy_cache_bypass 1;
-		proxy_http_version 1.1;
 	}
 
 
-	# Serve static files directly through Nginx by default
+	# Serve static files (and the Vue.js router) directly
 	location / {
 		include /etc/nginx/cors.inc;
 		try_files $uri $uri/ /index.html;
