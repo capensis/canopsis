@@ -46,8 +46,8 @@
                 "title": "Ressource"
               },
               {
-                "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"watcher\"\n        }\n    ]\n}",
-                "title": "Observateur"
+                "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"service\"\n        }\n    ]\n}",
+                "title": "Service"
               }
             ],
             "itemsPerPage": 10,

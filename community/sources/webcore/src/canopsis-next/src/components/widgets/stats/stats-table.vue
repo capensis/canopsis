@@ -16,7 +16,7 @@
         td(v-for="(property, key) in widget.parameters.stats")
           template(v-if="isStatNotEmpty(item[key])")
             td(v-if="property.stat.value === $constants.STATS_TYPES.currentState.value")
-              c-alarm-chip(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
+              c-alarm-chip(:value="item[key].value")
             td(v-else)
               v-layout(align-center)
                 div {{ item[key].value | formatValue(property.stat.value) }}

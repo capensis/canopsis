@@ -4835,5 +4835,289 @@
       "infos_rule_version": {
       }
     }
+  },
+  {
+    "_id": "test-alarm-multi-sort-get-1",
+    "d": "test-alarm-multi-sort-get-resource-1/test-alarm-multi-sort-get-component",
+    "t": 1000000000,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+        "m": "test-alarm-multi-sort-get alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+        "m": "test-alarm-multi-sort-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+          "m": "test-alarm-multi-sort-get alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+          "m": "test-alarm-multi-sort-get alarm",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1597033041,
+          "a": "system",
+          "m": "comment test-alarm-multi-sort-get",
+          "role": "admin",
+          "val": 0,
+          "initiator": "user"
+        }
+      ],
+      "component": "test-alarm-multi-sort-get-component",
+      "connector": "test-alarm-multi-sort-get-connector",
+      "connector_name": "test-alarm-multi-sort-get-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-multi-sort-get alarm",
+      "output": "test-alarm-multi-sort-get alarm",
+      "initial_long_output": "",
+      "long_output": "test-alarm-multi-sort-get-correlation-search",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1000000000,
+      "resource": "test-alarm-multi-sort-get-resource-1",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-multi-sort-get-2",
+    "d": "test-alarm-multi-sort-get-resource-2/test-alarm-multi-sort-get-component",
+    "t": 1000000001,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+        "m": "test-alarm-multi-sort-get alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+        "m": "test-alarm-multi-sort-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+          "m": "test-alarm-multi-sort-get alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+          "m": "test-alarm-multi-sort-get alarm",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1597033041,
+          "a": "system",
+          "m": "comment test-alarm-multi-sort-get",
+          "role": "admin",
+          "val": 0,
+          "initiator": "user"
+        }
+      ],
+      "component": "test-alarm-multi-sort-get-component",
+      "connector": "test-alarm-multi-sort-get-connector",
+      "connector_name": "test-alarm-multi-sort-get-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-multi-sort-get alarm",
+      "output": "test-alarm-multi-sort-get alarm",
+      "initial_long_output": "",
+      "long_output": "test-alarm-multi-sort-get-correlation-search",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1000000003,
+      "resource": "test-alarm-multi-sort-get-resource-2",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-multi-sort-get-3",
+    "d": "test-alarm-multi-sort-get-resource-3/test-alarm-multi-sort-get-component",
+    "t": 1000000001,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+        "m": "test-alarm-multi-sort-get alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+        "m": "test-alarm-multi-sort-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+          "m": "test-alarm-multi-sort-get alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+          "m": "test-alarm-multi-sort-get alarm",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1597033041,
+          "a": "system",
+          "m": "comment test-alarm-multi-sort-get",
+          "role": "admin",
+          "val": 0,
+          "initiator": "user"
+        }
+      ],
+      "component": "test-alarm-multi-sort-get-component",
+      "connector": "test-alarm-multi-sort-get-connector",
+      "connector_name": "test-alarm-multi-sort-get-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-multi-sort-get alarm",
+      "output": "test-alarm-multi-sort-get alarm",
+      "initial_long_output": "",
+      "long_output": "test-alarm-multi-sort-get-correlation-search",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1000000002,
+      "resource": "test-alarm-multi-sort-get-resource-3",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-multi-sort-get-4",
+    "d": "test-alarm-multi-sort-get-resource-4/test-alarm-multi-sort-get-component",
+    "t": 1000000002,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+        "m": "test-alarm-multi-sort-get alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+        "m": "test-alarm-multi-sort-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+          "m": "test-alarm-multi-sort-get alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-alarm-multi-sort-get-connector.test-alarm-multi-sort-get-connectorname",
+          "m": "test-alarm-multi-sort-get alarm",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1597033041,
+          "a": "system",
+          "m": "comment test-alarm-multi-sort-get",
+          "role": "admin",
+          "val": 0,
+          "initiator": "user"
+        }
+      ],
+      "component": "test-alarm-multi-sort-get-component",
+      "connector": "test-alarm-multi-sort-get-connector",
+      "connector_name": "test-alarm-multi-sort-get-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-multi-sort-get alarm",
+      "output": "test-alarm-multi-sort-get alarm",
+      "initial_long_output": "",
+      "long_output": "test-alarm-multi-sort-get-correlation-search",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1000000004,
+      "resource": "test-alarm-multi-sort-get-resource-4",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
   }
 ]
