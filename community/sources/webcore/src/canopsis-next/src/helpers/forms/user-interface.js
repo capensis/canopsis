@@ -32,7 +32,7 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
 /**
  * @typedef {UserInterface} UserInterfaceForm
  * @property {PopupTimeoutForm} popup_timeout
- * @property {!File} [logo]
+ * @property {File} [logo]
  */
 
 /**
@@ -77,7 +77,7 @@ export const userInterfaceToForm = (userInterface = {}) => ({
 });
 
 /**
- *
+ * Convert popupTimeoutForm to userInterface popupTimeout
  *
  * @param {PopupTimeoutForm | {}} [popupTimeout = {}]
  * @return {PopupTimeout}

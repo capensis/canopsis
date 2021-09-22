@@ -25,7 +25,6 @@ import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/forms/meta-a
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
 
@@ -44,7 +43,6 @@ export default {
     modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
-    validationErrorsMixinCreator(),
   ],
   data() {
     return {
@@ -65,13 +63,9 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          await this.config.action(formToMetaAlarmRule(this.form));
+        await this.config.action(formToMetaAlarmRule(this.form));
 
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(err);
-        }
+        this.$modals.hide();
       }
     },
   },

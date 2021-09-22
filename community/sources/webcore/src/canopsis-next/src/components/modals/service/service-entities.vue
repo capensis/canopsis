@@ -17,7 +17,7 @@
         v-layout(v-else, column)
           v-flex(xs12)
             v-layout(justify-center)
-              v-progress-circular(indeterminate, color="primary")
+              v-progress-circular(color="primary", indeterminate)
     template(slot="actions")
       v-alert.ma-0.pa-1.pr-2(
         :value="events.queue.length",
