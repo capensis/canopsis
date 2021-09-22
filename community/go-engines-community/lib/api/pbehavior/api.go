@@ -331,9 +331,7 @@ func (a *api) Update(c *gin.Context) {
 // @Router /pbehaviors/{id} [patch]
 func (a *api) Patch(c *gin.Context) {
 	req := PatchRequest{}
-	var err error
-	var reqBody []byte
-	reqBody, err = io.ReadAll(c.Request.Body)
+	reqBody, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return

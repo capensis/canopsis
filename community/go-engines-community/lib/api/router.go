@@ -332,6 +332,7 @@ func RegisterRoutes(
 			pbehaviorRouter.PATCH(
 				"/:id",
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
+				middleware.SetAuthor(),
 				pbehaviorApi.Patch)
 			pbehaviorRouter.DELETE(
 				"/:id",

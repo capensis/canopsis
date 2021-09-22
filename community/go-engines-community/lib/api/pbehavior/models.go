@@ -50,6 +50,7 @@ type UpdateRequest struct {
 }
 
 type PatchRequest struct {
+	Author     string                             `json:"author" swaggerignore:"true"`
 	Enabled    *bool                              `json:"enabled"`
 	Filter     interface{}                        `json:"filter"`
 	Name       *string                            `json:"name"`

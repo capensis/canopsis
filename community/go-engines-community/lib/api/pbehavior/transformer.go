@@ -165,6 +165,7 @@ func (t *modelTransformer) transformExceptionsToModel(ctx context.Context, ids [
 
 func (t *modelTransformer) Patch(ctx context.Context, req PatchRequest, model *Response) error {
 	var err error
+	model.Author = req.Author
 	if req.Enabled != nil {
 		model.Enabled = *req.Enabled
 	}

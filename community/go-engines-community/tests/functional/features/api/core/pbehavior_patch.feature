@@ -35,7 +35,8 @@ Feature: update a PBehavior
     Then the response body should contain:
     """
       {
-        "name": "test-pbehavior-to-patch-1-name-new"
+        "name": "test-pbehavior-to-patch-1-name-new",
+        "author": "root"
       }
     """
 
