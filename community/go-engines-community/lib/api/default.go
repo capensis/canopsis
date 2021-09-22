@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"os"
 	"time"
@@ -142,6 +143,13 @@ func Default(
 	}
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
 
+	// Create and compute scenario priority intervals.
+	scenarioPriorityIntervals := action.NewPriorityIntervals()
+	err = scenarioPriorityIntervals.Recalculate(ctx, dbClient.Collection(mongo.ScenarioMongoCollection))
+	if err != nil {
+		return nil, err
+	}
+
 	// Create csv exporter.
 	exportExecutor := export.NewTaskExecutor(dbClient, logger)
 
@@ -211,6 +219,7 @@ func Default(
 			amqpChannel,
 			jobQueue,
 			userInterfaceConfigProvider,
+			scenarioPriorityIntervals,
 			logger,
 		)
 	})

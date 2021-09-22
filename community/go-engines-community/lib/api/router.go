@@ -41,6 +41,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -114,6 +115,7 @@ func RegisterRoutes(
 	publisher amqp.Publisher,
 	jobQueue contextgraph.JobQueue,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
+	scenarioPriorityIntervals action.PriorityIntervals,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -747,7 +749,7 @@ func RegisterRoutes(
 
 		scenarioRouter := protected.Group("/scenarios")
 		{
-			scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger)
+			scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, scenarioPriorityIntervals)
 			scenarioRouter.POST(
 				"",
 				middleware.Authorize(authObjAction, permCreate, enforcer),
@@ -774,6 +776,16 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(authObjAction, permDelete, enforcer),
 				scenarioAPI.Delete,
+			)
+			scenarioRouter.GET(
+				"/minimal_priority",
+				middleware.Authorize(authObjAction, permRead, enforcer),
+				scenarioAPI.GetMinimalPriority,
+			)
+			scenarioRouter.POST(
+				"/check_priority",
+				middleware.Authorize(authObjAction, permRead, enforcer),
+				scenarioAPI.CheckPriority,
 			)
 		}
 

@@ -1,27 +1,36 @@
 package scenario
 
 import (
-	"net/http"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type api struct {
-	store        Store
-	actionLogger logger.ActionLogger
+	store                Store
+	actionLogger         logger.ActionLogger
+	priorityIntervals    action.PriorityIntervals
+}
+
+type API interface {
+	GetMinimalPriority(c *gin.Context)
+	CheckPriority(c *gin.Context)
+	common.CrudAPI
 }
 
 func NewApi(
 	store Store,
 	actionLogger logger.ActionLogger,
-) common.CrudAPI {
+	intervals action.PriorityIntervals,
+) API {
 	return &api{
-		store:        store,
-		actionLogger: actionLogger,
+		store:             store,
+		actionLogger:      actionLogger,
+		priorityIntervals: intervals,
 	}
 }
 
@@ -119,6 +128,8 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
+	a.priorityIntervals.Take(scenario.Priority)
+
 	err = a.actionLogger.Action(c, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeScenario,
@@ -151,6 +162,15 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
+	oldScenario, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+	if err != nil {
+		panic(err)
+	}
+	if oldScenario == nil {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -159,15 +179,17 @@ func (a *api) Update(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey)
 	setActionParameterAuthor(&request.EditRequest, userId.(string))
 
-	scenario, err := a.store.Update(c.Request.Context(), request)
+	newScenario, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
-
-	if scenario == nil {
+	if newScenario == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
+
+	a.priorityIntervals.Restore(oldScenario.Priority)
+	a.priorityIntervals.Take(newScenario.Priority)
 
 	err = a.actionLogger.Action(c, logger.LogEntry{
 		Action:    logger.ActionUpdate,
@@ -178,7 +200,7 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	c.JSON(http.StatusOK, scenario)
+	c.JSON(http.StatusOK, newScenario)
 }
 
 // Delete scenario by id
@@ -194,6 +216,16 @@ func (a *api) Update(c *gin.Context) {
 // @Router /scenarios/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
+
+	scenario, err := a.store.GetOneBy(c.Request.Context(), id)
+	if err != nil {
+		panic(err)
+	}
+	if scenario == nil {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
 	ok, err := a.store.Delete(c.Request.Context(), id)
 
 	if err != nil {
@@ -205,6 +237,8 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
+	a.priorityIntervals.Restore(scenario.Priority)
+
 	err = a.actionLogger.Action(c, logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypeScenario,
@@ -215,6 +249,58 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// Get minimal priority
+// @Summary Get minimal priority
+// @Description Get minimal priority
+// @Tags scenarios
+// @ID scenarios-get-minimal-priority
+// @Produce json
+// @Security ApiKeyAuth
+// @Security BasicAuth
+// @Success 200 {object} GetMinimalPriorityResponse
+// @Router /scenarios/minimal_priority [get]
+func (a *api) GetMinimalPriority(c *gin.Context) {
+	c.JSON(http.StatusOK, GetMinimalPriorityResponse{
+		Priority: a.priorityIntervals.GetMinimal(),
+	})
+}
+
+// Check priority
+// @Summary Check priority
+// @Description Check priority
+// @Tags scenarios
+// @ID scenarios-check-priority
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Security BasicAuth
+// @Param body body CheckPriorityRequest true "body"
+// @Success 200 {object} CheckPriorityResponse
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /scenarios/check_priority [post]
+func (a *api) CheckPriority(c *gin.Context) {
+	request := CheckPriorityRequest{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	valid, err := a.store.IsPriorityValid(c.Request.Context(), request.Priority)
+	if err != nil {
+		panic(err)
+	}
+
+	recommendedPriority := 0
+	if !valid {
+		recommendedPriority = a.priorityIntervals.GetMinimal()
+	}
+
+	c.JSON(http.StatusOK, CheckPriorityResponse{
+		Valid:               valid,
+		RecommendedPriority: recommendedPriority,
+	})
 }
 
 func setActionParameterAuthor(request *EditRequest, value string) {
