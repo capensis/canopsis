@@ -2,9 +2,7 @@ package pbehavior
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"io"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -331,35 +329,27 @@ func (a *api) Update(c *gin.Context) {
 // @Router /pbehaviors/{id} [patch]
 func (a *api) Patch(c *gin.Context) {
 	req := PatchRequest{}
-	reqBody, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	err = json.Unmarshal(reqBody, &req)
+	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, req))
 		return
 	}
-
-	keys, err := a.getProvidedKeys(reqBody)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, req))
-		return
-	}
+	ctx := c.Request.Context()
 
 	var model *Response
-	if a.hasValidationFields(keys, []string{"tstart", "tstop", "type"}) {
+	if req.Start != nil || req.Stop.isSet || req.Type != nil {
 		// Patching fields having constraint validation will retry
 		// until snapshot is matching or retry count reached
-		var updated = false
+		updated := false
 		retried := 0
 		for !updated && retried < 5 {
-			model, err = a.store.GetOneBy(c.Request.Context(), bson.M{"_id": c.Param("id")})
+			model, err = a.store.GetOneBy(ctx, bson.M{"_id": c.Param("id")})
 			if err != nil || model == nil {
 				c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 				return
+			}
+			if model.Stop != nil && model.Stop.IsZero() {
+				model.Stop = nil
 			}
 			snapshot := bson.M{
 				"_id":    model.ID,
@@ -369,23 +359,23 @@ func (a *api) Patch(c *gin.Context) {
 			}
 
 			// Clear tstop field when tstop is defined as null in request body
-			if a.hasValidationFields(keys, []string{"tstop"}) {
+			if req.Stop.isSet && req.Stop.CpsTime == nil {
 				model.Stop = nil
 			}
 
-			err = a.transformer.Patch(c.Request.Context(), req, model)
+			err = a.transformer.Patch(ctx, req, model)
 			if err != nil {
 				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 				return
 			}
 
 			// Validation
-			if model.Type.Type != pbehavior.TypePause && (model.Stop == nil ||
-				!model.Stop.After(model.Start.Time)) {
+			if model.Type.Type != pbehavior.TypePause && model.Stop == nil ||
+				(model.Stop != nil && model.Stop.Before(model.Start.Time)) {
 				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("invalid fields start, stop, type")))
 				return
 			}
-			updated, err = a.store.UpdateByFilter(c.Request.Context(), model, snapshot)
+			updated, err = a.store.UpdateByFilter(ctx, model, snapshot)
 			if err != nil {
 				panic(err)
 			}
@@ -523,29 +513,4 @@ func (a *api) sendComputeTask(task pbehavior.ComputeTask) {
 			Str("pbehavior", task.PbehaviorID).
 			Msg("fail to start pbehavior recompute")
 	}
-}
-
-func (a *api) getProvidedKeys(data []byte) ([]string, error) {
-	m := make(map[string]interface{})
-	err := json.Unmarshal(data, &m)
-	if err != nil {
-		return nil, err
-	}
-
-	result := make([]string, 0)
-	for key := range m {
-		result = append(result, key)
-	}
-	return result, nil
-}
-
-func (a *api) hasValidationFields(keys []string, fields []string) bool {
-	for _, key := range keys {
-		for _, field := range fields {
-			if key == field {
-				return true
-			}
-		}
-	}
-	return false
 }

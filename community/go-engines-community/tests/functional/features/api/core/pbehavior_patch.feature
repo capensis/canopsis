@@ -66,13 +66,40 @@ Feature: update a PBehavior
           "filter": "{\"$or\":[{\"name\":\"test-new-filter\"}]}"
       }
     """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "filter": "Filter is invalid entity filter."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
+    """
+      {
+        "filter":{
+          "$and":[
+            {
+              "name": "another test filter"
+            }
+          ]
+        }
+      }
+    """
     Then the response code should be 200
     When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
     Then the response code should be 200
     Then the response body should contain:
     """
       {
-        "filter": "{\"$or\":[{\"name\":\"test-new-filter\"}]}"
+        "filter":{
+          "$and":[
+            {
+              "name": "another test filter"
+            }
+          ]
+        }
       }
     """
   
@@ -153,6 +180,56 @@ Feature: update a PBehavior
       }
     """
 
+  Scenario: PATCH a valid PBehavior with pause type and null stop to the new stop value less than start
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-2:
+    """
+      {
+          "tstop": 1592215336
+      }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+      {
+        "error": "invalid fields start, stop, type"
+      }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-2:
+    """
+      {
+          "tstop": -300
+      }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+      {
+        "error": "invalid fields start, stop, type"
+      }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-2:
+    """
+      {
+          "tstop": 1592215339
+      }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+      {
+        "tstop": 1592215339
+      }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+      {
+        "tstop": 1592215339
+      }
+    """
+
   Scenario: PATCH a valid PBehavior with new exceptions value
     When I am admin
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
@@ -202,6 +279,23 @@ Feature: update a PBehavior
         "type": "test-pause-type-to-patch-pbehavior"
       }
     """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+      {
+        "errors": {
+            "tstop": "Stop should be greater than Start."
+        }
+      }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
+    """
+      {
+        "tstart": 1111111112,
+        "tstop": 1111111113,
+        "type": "test-pause-type-to-patch-pbehavior"
+      }
+    """
     Then the response code should be 200
     When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
     Then the response code should be 200
@@ -209,7 +303,7 @@ Feature: update a PBehavior
     """
       {
         "tstart": 1111111112,
-        "tstop": 1111111111,
+        "tstop": 1111111113,
         "type": {
           "_id": "test-pause-type-to-patch-pbehavior",
           "name": "test-pause-type-to-patch-pbehavior-name",
@@ -239,8 +333,20 @@ Feature: update a PBehavior
       }
     """
 
-  Scenario: PATCH a valid PBehavior having invalid tstart/tstop with type active
+  Scenario: PATCH a valid PBehavior having a valid tstart/tstop with type active
     When I am admin
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+      {
+        "tstart": 1111111112,
+        "tstop": null,
+        "type": {
+          "type": "pause"
+        }
+      }
+    """
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
     """
       {
@@ -251,7 +357,9 @@ Feature: update a PBehavior
     Then the response body should contain:
     """
       {
-        "error": "invalid fields start, stop, type"
+        "errors": {
+          "tstop": "Stop is missing."
+        }
       }
     """
 

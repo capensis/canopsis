@@ -617,5 +617,20 @@
     ],
     "created": 1592215337,
     "updated": 1592215337
+  },
+  {
+    "_id": "test-pbehavior-to-patch-2",
+    "author": "test-pbehavior-to-patch-2-author",
+    "comments": [],
+    "enabled": true,
+    "filter": "{\"$and\":[{\"name\":\"test-filter\"}]}",
+    "name": "test-pbehavior-to-patch-2-name",
+    "reason": "test-reason-to-patch-pbehavior",
+    "rrule": "test-pbehavior-to-patch-2-rrule",
+    "tstart": 1592215337,
+    "tstop": null,
+    "type_": "test-default-pause-type",
+    "created": 1592215337,
+    "updated": 1592215337
   }
 ]

@@ -181,8 +181,8 @@ func (t *modelTransformer) Patch(ctx context.Context, req PatchRequest, model *R
 	if req.Start != nil {
 		model.Start = req.Start
 	}
-	if req.Stop != nil {
-		model.Stop = req.Stop
+	if req.Stop.isSet {
+		model.Stop = req.Stop.CpsTime
 	}
 	if req.Type != nil {
 		var pbhType *pbehavior.Type

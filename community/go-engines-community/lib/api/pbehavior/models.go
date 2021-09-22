@@ -57,7 +57,7 @@ type PatchRequest struct {
 	Reason     *string                            `json:"reason"`
 	RRule      *string                            `json:"rrule"`
 	Start      *types.CpsTime                     `json:"tstart" swaggertype:"integer"`
-	Stop       *types.CpsTime                     `json:"tstop" swaggertype:"integer"`
+	Stop       NullableTime                       `json:"tstop" swaggertype:"integer"`
 	Type       *string                            `json:"type"`
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
@@ -116,6 +116,24 @@ func (f *Filter) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
 
 func (f Filter) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	return mongobson.MarshalValue(f.v)
+}
+
+type NullableTime struct {
+	*types.CpsTime
+	isSet bool
+}
+
+func (t *NullableTime) UnmarshalJSON(data []byte) error {
+	t.isSet = true
+	if string(data) == "null" {
+		return nil
+	}
+	temp := &types.CpsTime{}
+	if err := json.Unmarshal(data, temp); err != nil {
+		return err
+	}
+	t.CpsTime = temp
+	return nil
 }
 
 type AggregationResult struct {
