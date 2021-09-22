@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.my-2(v-if="!form", justify-center)
-    v-progress-circular(indeterminate, color="primary")
+    v-progress-circular(color="primary", indeterminate)
   v-flex(v-else)
     v-layout(row)
       v-flex.text-xs-center

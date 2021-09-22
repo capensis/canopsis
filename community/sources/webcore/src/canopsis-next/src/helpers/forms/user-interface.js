@@ -77,7 +77,7 @@ export const userInterfaceToForm = (userInterface = {}) => ({
 });
 
 /**
- *
+ * Convert popupTimeoutForm to userInterface popupTimeout
  *
  * @param {PopupTimeoutForm | {}} [popupTimeout = {}]
  * @return {PopupTimeout}

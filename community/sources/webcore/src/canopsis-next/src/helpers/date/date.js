@@ -216,6 +216,8 @@ export const formatDate = (date, format) => convertTimestampToMoment(date).forma
 
 /**
  * Return all available timezones
+ *
+ * @return {Array}
  */
 export const getTimezones = () => moment.tz.names();
 
