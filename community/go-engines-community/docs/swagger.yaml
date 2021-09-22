@@ -1250,6 +1250,17 @@ definitions:
     items:
       $ref: '#/definitions/export.Field'
     type: array
+  file.File:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      filename:
+        type: string
+      mediatype:
+        type: string
+    type: object
   http.Response:
     properties:
       body:
@@ -3905,7 +3916,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4056,7 +4068,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4144,7 +4157,8 @@ paths:
         required: true
         type: array
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4238,7 +4252,8 @@ paths:
         required: true
         type: array
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4500,7 +4515,8 @@ paths:
       produces:
       - application/json
       responses:
-        "202": {}
+        "202":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -4635,7 +4651,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4811,7 +4828,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -5019,7 +5037,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5209,7 +5228,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5284,6 +5304,135 @@ paths:
       summary: Update eventfilter by id
       tags:
       - eventfilters
+  /file:
+    get:
+      consumes:
+      - application/json
+      description: Get list of file objects by ID
+      operationId: files-list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/file.File'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - JWTAuth: []
+      - JWTQueryAuth: []
+      - BasicAuth: []
+      summary: List files by ID
+      tags:
+      - files
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload files
+      operationId: file-upload
+      parameters:
+      - description: request
+        in: formData
+        name: files
+        required: true
+        type: string
+      - description: file visibility
+        in: query
+        name: public
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/file.File'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Upload files
+      tags:
+      - files
+  /file/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete file by ID
+      operationId: files-delete
+      parameters:
+      - description: file id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Delete file
+      tags:
+      - files
+    get:
+      consumes:
+      - application/json
+      description: Get file content by ID or download with file name
+      operationId: files-get
+      parameters:
+      - description: file id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - JWTQueryAuth: []
+      - BasicAuth: []
+      summary: Get file by ID
+      tags:
+      - files
   /idle-rules:
     get:
       consumes:
@@ -5377,7 +5526,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5522,7 +5672,8 @@ paths:
       description: delete user interface
       operationId: internal-delete-user-interface
       responses:
-        "204": {}
+        "204":
+          description: ""
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -5764,7 +5915,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5872,7 +6024,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -5964,7 +6117,8 @@ paths:
       produces:
       - application/octet-stream
       responses:
-        "200": {}
+        "200":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6072,7 +6226,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -6279,7 +6434,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -6451,7 +6607,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6766,7 +6923,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6934,7 +7092,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7102,7 +7261,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7373,7 +7533,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7541,7 +7702,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -7638,7 +7800,8 @@ paths:
       produces:
       - application/json
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7832,7 +7995,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -8025,4 +8189,12 @@ securityDefinitions:
     type: apiKey
   BasicAuth:
     type: basic
+  JWTAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  JWTQueryAuth:
+    in: query
+    name: token
+    type: apiKey
 swagger: "2.0"

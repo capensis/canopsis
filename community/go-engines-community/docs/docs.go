@@ -656,7 +656,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -916,7 +918,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1067,7 +1071,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1218,7 +1224,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1538,7 +1546,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "202": {},
+                    "202": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -1860,7 +1870,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2144,7 +2156,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -2483,7 +2497,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2792,7 +2808,223 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/file": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "JWTQueryAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get list of file objects by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "List files by ID",
+                "operationId": "files-list",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/file.File"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Upload files",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Upload files",
+                "operationId": "file-upload",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "request",
+                        "name": "files",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "file visibility",
+                        "name": "public",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/file.File"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/file/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "JWTQueryAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get file content by ID or download with file name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Get file by ID",
+                "operationId": "files-get",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "file id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete file by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Delete file",
+                "operationId": "files-delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "file id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3119,7 +3351,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3243,7 +3477,9 @@ var doc = `{
                 "summary": "delete user interface",
                 "operationId": "internal-delete-user-interface",
                 "responses": {
-                    "204": {}
+                    "204": {
+                        "description": ""
+                    }
                 }
             }
         },
@@ -3588,7 +3824,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3866,7 +4104,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -3911,7 +4151,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {},
+                    "200": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4189,7 +4431,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4517,7 +4761,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4850,7 +5096,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5306,7 +5554,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5578,7 +5828,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5850,7 +6102,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6291,7 +6545,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6563,7 +6819,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -6616,7 +6874,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7034,7 +7294,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -9086,6 +9348,23 @@ var doc = `{
             "type": "array",
             "items": {
                 "$ref": "#/definitions/export.Field"
+            }
+        },
+        "file.File": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "filename": {
+                    "type": "string"
+                },
+                "mediatype": {
+                    "type": "string"
+                }
             }
         },
         "http.Response": {
@@ -12217,6 +12496,16 @@ var doc = `{
         },
         "BasicAuth": {
             "type": "basic"
+        },
+        "JWTAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+        "JWTQueryAuth": {
+            "type": "apiKey",
+            "name": "token",
+            "in": "query"
         }
     }
 }`

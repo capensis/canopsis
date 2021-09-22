@@ -183,6 +183,12 @@ PrefetchSize = 0
 ReconnectTimeoutMilliseconds = 8
 ReconnectRetries = 3
 
+# It's required to restart api and engines after canopsis-reconfigure updates mongodb
+# to catch up following parameters.
+[Canopsis.file]
+# Local storage for Upload artifacts. Upload artifacts are used in Administration -> Parameters.
+Upload = "/opt/canopsis/var/lib/upload-files"
+
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.alarm]
 FlappingFreqLimit = 0

@@ -206,6 +206,7 @@ func Default(
 			amqpChannel,
 			jobQueue,
 			userInterfaceConfigProvider,
+			cfg.File.Upload,
 			logger,
 		)
 	})
