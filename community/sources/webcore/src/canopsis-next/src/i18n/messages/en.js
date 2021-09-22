@@ -23,6 +23,7 @@ import {
   ALARMS_OPENED_VALUES,
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_NAMES,
+  GROUPS_NAVIGATION_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -260,12 +261,6 @@ export default {
     boolean: 'Boolean',
     null: 'Null',
     array: 'Array',
-  },
-  user: {
-    role: 'Role',
-    defaultView: 'Default view',
-    seeProfile: 'See profile',
-    selectDefaultView: 'Select default view',
   },
   context: {
     impacts: 'Impacts',
@@ -1784,34 +1779,6 @@ export default {
       storageSettings: 'Storage settings',
       notificationsSettings: 'Notifications settings',
     },
-    interfaceLanguage: 'Interface language',
-    groupsNavigationType: {
-      title: 'Groups navigation type',
-      items: {
-        sideBar: 'Side bar',
-        topBar: 'Top bar',
-      },
-    },
-    userInterfaceForm: {
-      title: 'User interface',
-      fields: {
-        appTitle: 'App title',
-        language: 'Default user interface language',
-        footer: 'Login footer',
-        description: 'Login page description',
-        logo: 'Logo',
-        infoPopupTimeout: 'Info popup timeout',
-        errorPopupTimeout: 'Error popup timeout',
-        popupTimeoutUnit: 'Unit',
-        allowChangeSeverityToInfo: 'Allow change severity to info',
-        maxMatchedItems: 'Max matched items',
-        checkCountRequestTimeout: 'Check max matched items request timeout (seconds)',
-      },
-      tooltips: {
-        maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
-        checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',
-      },
-    },
   },
   view: {
     errors: {
@@ -2307,22 +2274,21 @@ export default {
   },
 
   users: {
-    table: {
-      username: 'Username',
-      firstName: 'First name',
-      lastName: 'Last name',
-      role: 'Role',
-      enabled: 'Enabled',
-      auth: 'Auth',
-    },
-    fields: {
-      username: 'Username',
-      firstName: 'First name',
-      lastName: 'Last name',
-      email: 'Email',
-      password: 'Password',
-      language: 'User interface language',
-      role: 'Role',
+    seeProfile: 'See profile',
+    selectDefaultView: 'Select default view',
+    username: 'Username',
+    firstName: 'First name',
+    lastName: 'Last name',
+    email: 'Email',
+    role: 'Role',
+    enabled: 'Enabled',
+    password: 'Password',
+    language: 'User interface language',
+    auth: 'Auth',
+    navigationType: 'Groups navigation type',
+    navigationTypes: {
+      [GROUPS_NAVIGATION_TYPES.sideBar]: 'Side bar',
+      [GROUPS_NAVIGATION_TYPES.topBar]: 'Top bar',
     },
   },
 
@@ -2594,6 +2560,24 @@ export default {
     patterns: {
       countOverLimit: 'The patterns you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
       countRequestError: 'The request to entities count by the patterns was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
+    },
+  },
+
+  userInterface: {
+    title: 'User interface',
+    appTitle: 'App title',
+    language: 'Default user interface language',
+    footer: 'Login footer',
+    description: 'Login page description',
+    logo: 'Logo',
+    infoPopupTimeout: 'Info popup timeout',
+    errorPopupTimeout: 'Error popup timeout',
+    allowChangeSeverityToInfo: 'Allow change severity to info',
+    maxMatchedItems: 'Max matched items',
+    checkCountRequestTimeout: 'Check max matched items request timeout (seconds)',
+    tooltips: {
+      maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
+      checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',
     },
   },
 

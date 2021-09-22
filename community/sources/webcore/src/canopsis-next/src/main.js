@@ -122,6 +122,8 @@ import CPriorityField from '@/components/forms/fields/c-priority-field.vue';
 import CQuickDateIntervalField from '@/components/forms/fields/c-quick-date-interval-field.vue';
 import CEnabledDurationField from '@/components/forms/fields/c-enabled-duration-field.vue';
 import CEnabledLimitField from '@/components/forms/fields/c-enabled-limit-field.vue';
+import CTimezoneField from '@/components/forms/fields/c-timezone-field.vue';
+import CLanguageField from '@/components/forms/fields/c-language-field.vue';
 
 /**
  * Icons
@@ -301,6 +303,8 @@ Vue.component('c-priority-field', CPriorityField);
 Vue.component('c-quick-date-interval-field', CQuickDateIntervalField);
 Vue.component('c-enabled-duration-field', CEnabledDurationField);
 Vue.component('c-enabled-limit-field', CEnabledLimitField);
+Vue.component('c-timezone-field', CTimezoneField);
+Vue.component('c-language-field', CLanguageField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
 Vue.component('c-responsive-list', CResponsiveList);

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.my-2(justify-center)
-    v-progress-circular(v-if="!form", indeterminate, color="primary")
+    v-progress-circular(v-if="!form", color="primary", indeterminate)
     v-flex(v-else, offset-xs1, md10)
       v-form(@submit.prevent="submit")
         notifications-settings-form(v-model="form")

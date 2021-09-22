@@ -9,21 +9,10 @@
 </template>
 
 <script>
-import moment from 'moment-timezone';
-
-import { formBaseMixin } from '@/mixins/form';
+import { getTimezones } from '@/helpers/date/date';
 
 export default {
-  $_veeValidate: {
-    value() {
-      return this.value;
-    },
-    name() {
-      return this.name;
-    },
-  },
   inject: ['$validator'],
-  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -52,7 +41,7 @@ export default {
     },
 
     timezones() {
-      return moment.tz.names();
+      return getTimezones();
     },
   },
 };
