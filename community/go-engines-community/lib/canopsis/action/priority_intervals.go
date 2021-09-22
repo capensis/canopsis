@@ -15,7 +15,6 @@ type priorityIntervals struct {
 }
 
 type PriorityIntervals interface {
-	Reset()
 	Recalculate(ctx context.Context, collection mongo.DbCollection) error
 	Take(priority int)
 	RestoreAndTake(oldPriority, newPriority int)
@@ -31,14 +30,6 @@ func NewPriorityIntervals() PriorityIntervals {
 		sortedKeys: []int{1},
 		mx:         sync.Mutex{},
 	}
-}
-
-func (pi *priorityIntervals) Reset() {
-	pi.mx.Lock()
-	defer pi.mx.Unlock()
-
-	pi.intervals = map[int]int{1: 0}
-	pi.sortedKeys = []int{1}
 }
 
 func (pi *priorityIntervals) Recalculate(ctx context.Context, collection mongo.DbCollection) error {
@@ -100,6 +91,10 @@ func (pi *priorityIntervals) takePriority(priority int) {
 		return
 	}
 
+	rightIntervalIndex := sort.Search(len(pi.sortedKeys), func(i int) bool {
+		return pi.sortedKeys[i] >= priority
+	})
+
 	hitUpperBound, ok := pi.intervals[priority]
 	if ok {
 		/**
@@ -108,34 +103,24 @@ func (pi *priorityIntervals) takePriority(priority int) {
 		*/
 
 		delete(pi.intervals, priority)
-		keyIdx := sort.Search(len(pi.sortedKeys), func(i int) bool {
-			return pi.sortedKeys[i] >= priority
-		})
-
 		if priority == hitUpperBound {
 			// if it's a point, remove from keys
-			pi.sortedKeys = append(pi.sortedKeys[:keyIdx], pi.sortedKeys[keyIdx+1:]...)
+			pi.sortedKeys = append(pi.sortedKeys[:rightIntervalIndex], pi.sortedKeys[rightIntervalIndex+1:]...)
 			return
 		}
 
 		// if it's an interval, increase lower bound
 		pi.intervals[priority+1] = hitUpperBound
-		pi.sortedKeys[keyIdx] = priority + 1
+		pi.sortedKeys[rightIntervalIndex] = priority + 1
 		return
 	}
 
 	/**
 	if key doesn't exist in the map that means that we've hit an interval or an upper bound
 	so we need to divide the interval into two intervals with exclusion of the point that we've hit
-	ex: given (1;10) and we hit 5 should divide into (1;4) and (6;10)
 	*/
 
-	// find the lower bound of an interval that we've hit
-	rightIntervalIndex := sort.Search(len(pi.sortedKeys), func(i int) bool {
-		return pi.sortedKeys[i] >= priority
-	})
-
-	// only right interval case
+	// Check if we've already take this point: only right interval case
 	if rightIntervalIndex-1 < 0 && priority < pi.sortedKeys[rightIntervalIndex] {
 		// can't take an already taken point
 		return
@@ -144,7 +129,7 @@ func (pi *priorityIntervals) takePriority(priority int) {
 	leftLowerBound := pi.sortedKeys[rightIntervalIndex-1]
 	leftUpperBound := pi.intervals[leftLowerBound]
 
-	// between intervals case
+	// Check if we've already take this point: between intervals case
 	if leftUpperBound != 0 && leftUpperBound < priority {
 		// can't take an already taken point
 		return
@@ -156,7 +141,9 @@ func (pi *priorityIntervals) takePriority(priority int) {
 		return
 	}
 
-	// build two new intervals
+	// If we've hit inside the interval, then we need to divide it to two new intervals with exclusion of priority point(p)
+	// ex: (1; p; 10) = (1; p-1) and (p+1; 10)
+
 	pi.intervals[priority+1] = leftUpperBound
 	pi.intervals[leftLowerBound] = priority - 1
 	pi.sortedKeys = append(pi.sortedKeys[:rightIntervalIndex], append([]int{priority + 1}, pi.sortedKeys[rightIntervalIndex:]...)...)
@@ -183,8 +170,8 @@ func (pi *priorityIntervals) restorePriority(priority int) {
 		/**
 		it means that left interval doesn't exist,
 		so we have 2 options:
-		1. Create a point.
-		2. Merge the point with the right interval, if distance between them = 1
+		1. Create a point. ex: {[1, 1]; [3, +inf)}
+		2. Merge the point with the right interval, if distance between them = 1. ex: {[1, 1]; [2, +inf)} = [1, +inf)
 		*/
 
 		rightLowerBound := pi.sortedKeys[rightIntervalIndex]
@@ -222,6 +209,8 @@ func (pi *priorityIntervals) restorePriority(priority int) {
 	mergeLeft := leftUpperBound+1 == priority
 	mergeRight := rightLowerBound-1 == priority
 
+	// if distances between left and right intervals = 1, then merge both intervals
+	//ex: p = 6, {[3, 5]; [p, p]; [7, +inf)} => [3, +inf)
 	if mergeLeft && mergeRight {
 		//merge two intervals
 		pi.intervals[leftLowerBound] = rightUpperBound
@@ -231,6 +220,8 @@ func (pi *priorityIntervals) restorePriority(priority int) {
 		return
 	}
 
+	// if distances between left = 1, then merge with left
+	//ex: p = 6, {[3, 5]; [p, p]; [8, +inf)} = {[3, p]; [8, +inf)}
 	if mergeLeft {
 		//increment left upper bound
 		pi.intervals[leftLowerBound] = priority
@@ -238,6 +229,8 @@ func (pi *priorityIntervals) restorePriority(priority int) {
 		return
 	}
 
+	//otherwise with right
+	//ex: p = 6, {[3, 4]; [p, p]; [7, +inf)} = {[3, 4], [p, +inf)}
 	if mergeRight {
 		//decrement right lower bound
 		pi.intervals[priority] = rightUpperBound
@@ -247,7 +240,7 @@ func (pi *priorityIntervals) restorePriority(priority int) {
 		return
 	}
 
-	//create a point
+	//if both distances > 1 => don't merge, create a point
 	pi.intervals[priority] = priority
 	pi.sortedKeys = append([]int{priority}, pi.sortedKeys[rightIntervalIndex:]...)
 }
