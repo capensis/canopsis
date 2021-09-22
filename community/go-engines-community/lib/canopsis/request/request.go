@@ -9,7 +9,7 @@ import (
 )
 
 func CreateRequest(ctx context.Context, params Parameters) (*http.Request, error) {
-	request, err := http.NewRequestWithContext(ctx, params.Method, params.URL, bytes.NewBuffer([]byte(params.Payload)))
+	request, err := http.NewRequestWithContext(ctx, params.Method, params.URL, bytes.NewBufferString(params.Payload))
 	if err != nil {
 		return nil, err
 	}

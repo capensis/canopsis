@@ -148,9 +148,6 @@ func (p *actionProcessor) executeTpl(tplText string, params TemplateParameters, 
 
 func setEntityInfo(entity types.Entity, value interface{}, name, description string) (types.Entity, bool) {
 	info, ok := entity.Infos[name]
-	if !ok {
-		info = types.Info{}
-	}
 
 	entityUpdated := false
 	valueChanged := !ok || info.Value != value

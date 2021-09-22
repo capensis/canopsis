@@ -56,7 +56,7 @@ type Rule struct {
 	Priority     int                               `bson:"priority" json:"priority"`
 	Enabled      bool                              `bson:"enabled" json:"enabled"`
 	Config       RuleConfig                        `bson:"config" json:"config"`
-	ExternalData map[string]ExternalDataParameters `bson:"external_data,omitempty" json:"external_data,omitempty"`
+	ExternalData map[string]ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
 	Created      *types.CpsTime                    `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated      *types.CpsTime                    `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
