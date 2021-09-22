@@ -217,7 +217,7 @@ export default {
     },
   },
   variableTypes: {
-    string: 'Chaîne de caracthères',
+    string: 'Chaîne de caractères',
     number: 'Nombre',
     boolean: 'Booléen',
     null: 'Nul',
@@ -324,7 +324,7 @@ export default {
     actions: {
       titles: {
         ack: 'Acquitter',
-        fastAck: 'Acquittement rapide',
+        fastAck: 'Acquitter rapidement',
         ackRemove: 'Annuler l\'acquittement',
         pbehavior: 'Définir un comportement périodique',
         snooze: 'Mettre en veille',
@@ -901,7 +901,7 @@ export default {
     service: {
       actionPending: 'action(s) en attente',
       refreshEntities: 'Rafraîchir la liste des entités',
-      editPbehaviors: 'Éditer les comportements périodique',
+      editPbehaviors: 'Éditer les comportements périodiques',
       entity: {
         tabs: {
           info: 'Info',
@@ -1273,7 +1273,7 @@ export default {
         title: 'Créer une liste de lecture',
       },
       edit: {
-        title: 'Éditée une liste de lecture',
+        title: 'Éditer une liste de lecture',
       },
       duplicate: {
         title: 'Dupliquer une liste de lecture',
@@ -1699,7 +1699,7 @@ export default {
     corelId: 'Identifiant de corrélation',
     corelIdHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
       '<i>Quelques exemples:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
-    corelStatus: 'Satut de corrélation',
+    corelStatus: 'Statut de corrélation',
     corelStatusHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
       '<i>Quelques exemples:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
     corelParent: 'Corrélation parent',
@@ -1958,7 +1958,7 @@ export default {
     },
     [ENGINES_NAMES.pbehavior]: {
       title: 'Pbehavior',
-      description: 'Vérifie si l\'alarme est un comportement périodique',
+      description: 'Vérifie si l\'alarme est concernée par un comportement périodique',
     },
     [ENGINES_NAMES.action]: {
       title: 'Action',
@@ -2013,7 +2013,7 @@ export default {
       [REMEDIATION_INSTRUCTION_TYPES.auto]: 'Automatique',
     },
     tooltips: {
-      endpoint: 'Le point de terminaison doit être une requête qui attend une réponse Oui/Non',
+      endpoint: 'Le point de terminaison doit être une question qui appelle une réponse Oui/Non',
     },
     table: {
       rating: 'Évaluation',
@@ -2102,7 +2102,7 @@ export default {
     instructionChanged: 'L\'instruction a été modifiée',
     actions: {
       needRate: 'Notez-le!',
-      rate: 'Noter',
+      rate: 'Évaluer',
     },
   },
 
@@ -2307,7 +2307,7 @@ export default {
       deleteEntity: 'Supprimer définitivement les entités désactivées de l\'archive',
       archiveDependencies: 'Supprimer également les entités impactantes et dépendantes',
       archiveDependenciesHelp: 'Pour les connecteurs, tous les composants et toutes les ressources impactants et dépendants seront archivés ou supprimés pour toujours. Pour les composants, toutes les ressources dépendantes seront également archivées ou supprimées pour toujours.',
-      cleanStorage: 'Rangement propre',
+      cleanStorage: 'Nettoyer le stockage',
       confirmation: {
         title: 'Supprimer les entités désactivées ?',
         archive: 'Voulez-vous vraiment archiver toutes les entités désactivées ? Cette action ne peut pas être annulée.',
@@ -2392,12 +2392,12 @@ export default {
      */
     [USERS_PERMISSIONS.technical.exploitation.eventFilter]: {
       title: 'Filtre d\'événements',
-      message: 'Ce filtre d\'événements est une fonctionnalité du moteur CHE et qui permet la définition de règles de traitement des événements.',
+      message: 'Le filtre d\'événements est une fonctionnalité du moteur CHE et qui permet la définition de règles de traitement des événements.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: {
       title: 'Informations dynamiques',
-      message: 'Les informations dynamiques de Canopsis sont utilisés pour enrichire les alarmes. Ces enrichissements sont définies par des règles indiquant dans quelles conditions les informations doivent être présentées sur une alarme. ',
+      message: 'Les informations dynamiques de Canopsis sont utilisés pour enrichire les alarmes. Ces enrichissements sont définis par des règles indiquant dans quelles conditions les informations doivent être présentées sur une alarme. ',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
@@ -2496,7 +2496,7 @@ export default {
     },
     patterns: {
       countOverLimit: 'Le modèle que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr?',
-      countRequestError: 'Le calcul du nombre d\'entités ciblées par le modèle s\'est terminée avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr?',
+      countRequestError: 'Le calcul du nombre d\'entités ciblées par le modèle s\'est terminé avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr?',
     },
   },
 
