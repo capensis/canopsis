@@ -162,15 +162,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$networkGraphHeight: calc(100vh - 230px);
-$networkGraphMinHeight: 100px;
-
 .network-graph {
   position: relative;
   width: 100%;
-  height: $networkGraphHeight;
-  min-height: $networkGraphMinHeight;
-  overflow: hidden;
+  height: 100%;
 
   &__tooltip {
     transform: translate(-50%, -100%) !important;
