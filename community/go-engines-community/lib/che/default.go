@@ -33,7 +33,7 @@ func NewEngine(
 	mongoClient mongo.DbClient,
 	pgPool postgres.Pool,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
-	ExternalDataContainer *eventfilter.ExternalDataContainer,
+	externalDataContainer *eventfilter.ExternalDataContainer,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
@@ -70,8 +70,8 @@ func NewEngine(
 	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(ExternalDataContainer))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(ExternalDataContainer, eventfilter.NewActionProcessor()))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor()))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 
