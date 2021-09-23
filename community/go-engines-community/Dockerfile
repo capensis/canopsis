@@ -39,5 +39,9 @@ FROM final_container AS canopsis-api
 EXPOSE 8082
 
 FROM final_container AS engine-remediation
+ARG CANOPSIS_EDITION
+USER root
 RUN mkdir -p /opt/canopsis/share && chown canopsis:canopsis /opt/canopsis/share
-COPY config /opt/canopsis/share/config
+COPY community/go-engines-community/config /opt/canopsis/share/config/
+RUN cp /opt/canopsis/share/config/canopsis.${CANOPSIS_EDITION}.toml /opt/canopsis/share/config/canopsis.toml
+USER canopsis:canopsis

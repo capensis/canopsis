@@ -8,7 +8,7 @@ VPATH = $(dir $(MAIN_MAKEFILE))
 # Where to put the built binaries
 OUTPUT_DIR = $(ROOT_DIR)/build
 
-CANOPSIS_EDITION = "community"
+CANOPSIS_EDITION = community
 
 # List of cmds/engines to build and install (eg : canopsis-api connector-junit ...)
 CMDS = $(notdir $(wildcard $(ROOT_DIR)/cmd/*))
@@ -38,7 +38,7 @@ LDFLAGS:=-ldflags "\
 # Use the trimpath option so that the logs do not contain the absolute paths to
 # the source files.
 # This makes the log lines shorter, and independent from the build machine.
-GO_BUILD_FLAGS:= #-gcflags="all=-trimpath \"${GOPATH}/src\""
+GO_BUILD_FLAGS:= -mod=mod #-gcflags="all=-trimpath \"${GOPATH}/src\""
 GO_BUILD_CUSTOM_FLAGS=
 
 # Export configuration env variables to the go compiler
@@ -56,6 +56,7 @@ DOCKER_TAG = $(VERSION)
 DOCKER_ALPINE_VERSION = 3.13
 DOCKER_GOLANG_VERSION = 1.16.4
 DOCKERFILE_PATH = $(dir $(CURRENT_MAKEFILE))Dockerfile
+DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
 .PHONY: build docker_images
 build: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
@@ -111,8 +112,8 @@ canopsis.toml:
 .PHONY: docker_alpine_updated docker_builder $(DOCKER_TARGETS)
 docker_alpine_updated: $(MONOREPO_ROOT)/.dockerignore
 	docker build \
-		$(if $(DOCKER_NO_CACHE),--no-cache,--cache-from alpine_updated:latest) \
-		-t alpine_updated:latest \
+		$(if $(DOCKER_NO_CACHE),--no-cache,--cache-from $(DOCKER_IMAGE_BASE_PATH)/alpine_updated:latest) \
+		-t $(DOCKER_IMAGE_BASE_PATH)/alpine_updated:latest \
 		--target alpine_updated \
 		--build-arg "ALPINE_VERSION=${DOCKER_ALPINE_VERSION}" \
 		--build-arg "CANOPSIS_EDITION=${CANOPSIS_EDITION}" \
@@ -122,10 +123,10 @@ docker_alpine_updated: $(MONOREPO_ROOT)/.dockerignore
 
 docker_builder: $(MONOREPO_ROOT)/.dockerignore docker_alpine_updated
 	docker build \
-		-t canopsis_go_bin:latest \
+		-t $(DOCKER_IMAGE_BASE_PATH)/canopsis_go_bin:latest \
 		--target builder \
-		--cache-from alpine_updated:latest \
-		$(if $(DOCKER_NO_CACHE),,--cache-from canopsis_go_bin:latest) \
+		--cache-from $(DOCKER_IMAGE_BASE_PATH)/alpine_updated:latest \
+		$(if $(DOCKER_NO_CACHE),,--cache-from $(DOCKER_IMAGE_BASE_PATH)/canopsis_go_bin:latest) \
 		--build-arg "ALPINE_VERSION=${DOCKER_ALPINE_VERSION}" \
 		--build-arg "CANOPSIS_EDITION=${CANOPSIS_EDITION}" \
 		--build-arg "GOLANG_VERSION=${DOCKER_GOLANG_VERSION}" \
@@ -134,11 +135,11 @@ docker_builder: $(MONOREPO_ROOT)/.dockerignore docker_alpine_updated
 
 $(DOCKER_TARGETS): TARGET=final_container
 $(DOCKER_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker_alpine_updated docker_builder
-	docker build -t "$(subst docker_,,$@):$(DOCKER_TAG)" \
+	docker build -t "$(DOCKER_IMAGE_BASE_PATH)/$(subst docker_,,$@):$(DOCKER_TAG)" \
 		--build-arg CMD="$(subst docker_,,$@)" \
 		--target $(TARGET) \
-		--cache-from alpine_updated:latest \
-		--cache-from canopsis_go_bin:latest \
+		--cache-from $(DOCKER_IMAGE_BASE_PATH)/alpine_updated:latest \
+		--cache-from $(DOCKER_IMAGE_BASE_PATH)/canopsis_go_bin:latest \
 		$(if $(DOCKER_NO_CACHE),,--cache-from "$(subst docker_,,$@):$(DOCKER_TAG)") \
 		--build-arg "ALPINE_VERSION=${DOCKER_ALPINE_VERSION}" \
 		--build-arg "CANOPSIS_EDITION=${CANOPSIS_EDITION}" \
