@@ -81,9 +81,33 @@ func (s *store) Insert(ctx context.Context, model *Response) error {
 	doc.ID = model.ID
 	doc.Created = now
 	doc.Updated = now
-	_, err = s.dbCollection.InsertOne(ctx, doc)
-	if err != nil {
-		return err
+
+	if model.Stop != nil {
+		doc.Stop = nil
+	}
+
+	if model.Stop == nil {
+		m := make(map[string]interface{})
+		p, err := bson.Marshal(doc)
+		if err != nil {
+			return err
+		}
+
+		err = bson.Unmarshal(p, &m)
+		if err != nil {
+			return err
+		}
+
+		delete(m, "tstop")
+		_, err = s.dbCollection.InsertOne(ctx, m)
+		if err != nil {
+			return err
+		}
+	} else {
+		_, err = s.dbCollection.InsertOne(ctx, doc)
+		if err != nil {
+			return err
+		}
 	}
 
 	model.Created = &now
