@@ -11,7 +11,7 @@ La configuration HTTPS proposée dans Nginx vous permet :
 * de bénéficier des [Websockets](https://developer.mozilla.org/fr/docs/Web/API/WebSockets_API) et donc de la nouvelle fonctionnalité Healthcheck apparue avec Canopsis 4.4.0.
 
 !!! note
-    Les prérequis pour ces fonctionnalités sont les suivantes :
+    Les prérequis pour ces fonctionnalités sont les suivants :
 
     * assigner un [FQDN](https://fr.wikipedia.org/wiki/Fully_qualified_domain_name) à votre service web Canopsis (ex : `canopsis.mon-si.fr`) ;
     * avoir un navigateur [officiellement pris en charge](../../guide-utilisation/limitations/index.md#compatibilite-des-anciens-navigateurs) et raisonnablement récent ;
@@ -50,6 +50,8 @@ La configuration Nginx proposée par défaut s'attend à ce que ces fichiers soi
     Par mesure de sécurité, veillez à ce que le répertoire `/etc/nginx/ssl` soit bien attribué à `root:root` et qu'il dispose bien de permissions restreintes `0700`.
 
 === "Paquets CentOS 7"
+
+    TODO
 
 === "Docker Compose"
 
