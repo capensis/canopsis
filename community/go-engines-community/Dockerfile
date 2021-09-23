@@ -26,22 +26,19 @@ RUN make build
 
 # Create the final container
 FROM alpine_updated AS final_container
+ARG CANOPSIS_EDITION
+
 RUN adduser -D canopsis
+RUN mkdir -p /opt/canopsis/share && chown canopsis:canopsis /opt/canopsis/share
+COPY community/go-engines-community/config /opt/canopsis/share/config/
+RUN cp /opt/canopsis/share/config/canopsis.${CANOPSIS_EDITION}.toml /opt/canopsis/share/config/canopsis.toml
 USER canopsis:canopsis
+
 ENTRYPOINT /engine
 
-ARG CANOPSIS_EDITION
 COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/canopsis.toml /
 ARG CMD
 COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /engine
 
 FROM final_container AS canopsis-api
 EXPOSE 8082
-
-FROM final_container AS engine-remediation
-ARG CANOPSIS_EDITION
-USER root
-RUN mkdir -p /opt/canopsis/share && chown canopsis:canopsis /opt/canopsis/share
-COPY community/go-engines-community/config /opt/canopsis/share/config/
-RUN cp /opt/canopsis/share/config/canopsis.${CANOPSIS_EDITION}.toml /opt/canopsis/share/config/canopsis.toml
-USER canopsis:canopsis
