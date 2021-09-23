@@ -65,14 +65,14 @@ export const updateDateLocaleMessages = (language, messages) => {
 };
 
 /**
- * Return diff between two days
+ * Return diff between two dates
  *
  * @param {LocalDate} left
  * @param {LocalDate} right
  * @param {string} unit
  * @return {number}
  */
-export const getDiffBetweenDate = (left, right, unit = TIME_UNITS.second) => convertDateToMoment(left)
+export const getDiffBetweenDates = (left, right, unit = TIME_UNITS.second) => convertDateToMoment(left)
   .diff(convertDateToMoment(right), unit);
 
 /**

@@ -36,12 +36,15 @@ import {
   convertStopDateIntervalToTimestamp,
 } from '@/helpers/date/date-intervals';
 
+import { formMixin } from '@/mixins/form';
+
 import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
 
 export default {
   components: {
     DatePickerField,
   },
+  mixins: [formMixin],
   model: {
     event: 'input',
     prop: 'interval',
@@ -175,11 +178,11 @@ export default {
     },
 
     updateFromDate(from) {
-      this.$emit('input', { ...this.interval, from });
+      this.updateField('from', from);
     },
 
     updateToDate(to) {
-      this.$emit('input', { ...this.interval, to });
+      this.updateField('to', to);
     },
   },
 };

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { getDiffBetweenDate } from '@/helpers/date/date';
+import { getDiffBetweenDates } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 
 export default {
@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     durationDiff() {
-      return getDiffBetweenDate(Date.now(), this.value);
+      return getDiffBetweenDates(Date.now(), this.value);
     },
 
     message() {
