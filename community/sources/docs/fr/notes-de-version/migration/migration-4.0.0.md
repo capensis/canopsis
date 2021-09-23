@@ -203,7 +203,7 @@ Les changements architecturaux étant nombreux, une **coupure du service** doit 
     
     Si vous bénéficiez d'une souscription Canopsis Pro, rapprochez-vous de votre contact habituel pour obtenir plus d'information sur la mise à jour de ces fichiers.
     
-    Dans le fichier `.env`, assurez-vous de bien avoir `CANOPSIS_IMAGE_TAG=4.0.0`, ainsi que les nouvelles variables `CPS_API_URL` et `CPS_OLD_API_URL`. La variable `CPS_WEBSERVER=1` doit aussi être renommée en `CPS_OLD_API=1` là où elle était déjà utilisée.
+    Dans le fichier `compose.env`, assurez-vous de bien avoir `CANOPSIS_IMAGE_TAG=4.0.0`, ainsi que les nouvelles variables `CPS_API_URL` et `CPS_OLD_API_URL`. La variable `CPS_WEBSERVER=1` doit aussi être renommée en `CPS_OLD_API=1` là où elle était déjà utilisée.
 
     **Note :** si vous utilisiez le conteneur `canopsis/uiv3`, celui-ci n'est plus disponible et doit être remplacé par l'image `canopsis/nginx`. Notez aussi que le conteneur `init` a été renommé en `reconfigure`, et faites aussi attention à la chaîne `provisionning` (deux *n*) qui a été corrigée en `provisioning` (un seul *n*) dans ce fichier.
 

@@ -22,21 +22,11 @@ Votre installation de Canopsis doit obligatoirement comporter les adresses et do
 | Variable d'environnement | Valeur par défaut | Utilité |
 |:-------------------------|-------------------|---------|
 | `CPS_AMQP_URL` | (vide) | Une URI de connexion RabbitMQ (cf. [Spécification d'URI RabbitMQ](https://www.rabbitmq.com/uri-spec.html)) |
+| `CPS_API_URL` | (vide) | Une URI de connexion API Canopsis |
 | `CPS_INFLUX_URL` | (vide) | Une URI de connexion InfluxDB (pas de spécification officielle) |
 | `CPS_MONGO_URL` | (vide) | Une URI de connexion MongoDB (cf. [Spécification d'URI MongoDB](https://docs.mongodb.com/v3.6/reference/connection-string/)) |
+| `CPS_OLD_API_URL` | (vide) | Ancienne URI de connexion API Canopsis |
 | `CPS_REDIS_URL` | (vide) | Une URI de connexion Redis (cf. [Spécification d'URI Redis](https://www.iana.org/assignments/uri-schemes/prov/redis)) |
-
-### Chemin d'accès au fichier de configuration global (`canopsis.toml`)
-
-Les différents moteurs et binaires Go ont besoin d'un fichier de configuration `canopsis.toml`. La variable `CPS_DEFAULT_CFG` permet de leur indiquer le chemin où se trouve ce fichier.
-
-| Variable d'environnement | Valeur par défaut | Utilité |
-|:-------------------------|-------------------|---------|
-| `CPS_DEFAULT_CFG` | `canopsis.toml` (dans le répertoire courant) | Chemin d'accès vers le fichier de configuration `canopsis.toml` |
-
-En installation Docker, elle est surchargée en `/canopsis.toml`. En installation par paquets, elle vaut `/opt/canopsis/etc/canopsis.toml` (`canoctl deploy` se charge de renseigner cette valeur dans l'unité systemd `canopsis-engine-go@.service`).
-
-Il est recommandé de ne pas modifier cette valeur.
 
 ### Tentatives de connexion aux services externes
 
