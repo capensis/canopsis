@@ -27,6 +27,7 @@ type Store interface {
 	GetOneBy(filter bson.M) (*PBehavior, error)
 	GetEIDs(pbhID string, request EIDsListRequest) (AggregationEIDsResult, error)
 	Update(model *PBehavior) (bool, error)
+	UpdateByFilter(model *PBehavior, filters bson.M) (bool, error)
 	Delete(id string) (bool, error)
 }
 
@@ -223,12 +224,11 @@ func (s *store) GetOneBy(filter bson.M) (*PBehavior, error) {
 	}
 	pipeline = append(pipeline, GetNestedObjectsPipeline()...)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
-
 	if err != nil {
 		return nil, err
 	}
-
 	defer cursor.Close(ctx)
+
 	if cursor.Next(ctx) {
 		var pbh PBehavior
 		err = cursor.Decode(&pbh)
@@ -320,6 +320,58 @@ func (s *store) Update(model *PBehavior) (bool, error) {
 		ctx,
 		bson.M{"_id": model.ID},
 		bson.M{"$set": doc},
+	)
+	if err != nil {
+		return false, err
+	}
+
+	updatedModel, err := s.GetOneBy(bson.M{"_id": model.ID})
+	if err != nil {
+		return false, err
+	}
+
+	*model = *updatedModel
+
+	return result.MatchedCount > 0, nil
+}
+
+func (s *store) UpdateByFilter(model *PBehavior, filters bson.M) (bool, error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	doc, err := s.transformModelToDocument(model)
+	if err != nil {
+		return false, err
+	}
+
+	doc.Updated = libtypes.NewCpsTime(time.Now().Unix())
+
+	var update bson.M
+	if model.Stop == nil {
+		m := make(map[string]interface{})
+		p, err := bson.Marshal(doc)
+		if err != nil {
+			return false, err
+		}
+
+		err = bson.Unmarshal(p, &m)
+		if err != nil {
+			return false, err
+		}
+
+		delete(m, "tstop")
+		update = bson.M{
+			"$set":   m,
+			"$unset": bson.M{"tstop": 1},
+		}
+	} else {
+		update = bson.M{"$set": doc}
+	}
+
+	result, err := s.dbCollection.UpdateOne(
+		ctx,
+		filters,
+		update,
 	)
 	if err != nil {
 		return false, err

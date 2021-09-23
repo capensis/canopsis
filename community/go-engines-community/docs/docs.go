@@ -2479,6 +2479,66 @@ var doc = `{
                         }
                     }
                 }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Patch partial set of behavior attributes by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Patch partial set of behavior attributes by id",
+                "operationId": "pbehaviors-patch-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pbehavior id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.PatchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.PBehavior"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/pbehaviors/{id}/eids": {
@@ -3806,20 +3866,6 @@ var doc = `{
                 }
             }
         },
-        "entity.Info": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "object"
-                }
-            }
-        },
         "entity.ExportRequest": {
             "type": "object",
             "properties": {
@@ -3854,6 +3900,20 @@ var doc = `{
                 },
                 "status": {
                     "type": "integer"
+                }
+            }
+        },
+        "entity.Info": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "object"
                 }
             }
         },
@@ -3947,22 +4007,7 @@ var doc = `{
         "heartbeat.Heartbeat": {
             "type": "object",
             "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "created": {
-                    "type": "integer"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "expected_interval": {
-                    "type": "integer"
-                },
-                "name": {
+                "expectedInterval": {
                     "type": "string"
                 },
                 "output": {
@@ -3973,9 +4018,6 @@ var doc = `{
                     "additionalProperties": {
                         "type": "string"
                     }
-                },
-                "updated": {
-                    "type": "integer"
                 }
             }
         },
@@ -4209,6 +4251,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmStepRefPattern"
                 },
+                "children": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringArrayPattern"
+                },
                 "component": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
@@ -4266,6 +4312,10 @@ var doc = `{
                 "output": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "parents": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringArrayPattern"
                 },
                 "resolved": {
                     "type": "object",
@@ -4520,6 +4570,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/utils.OptionalStringArray"
                 },
+                "isEmpty": {
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalBool"
+                },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
@@ -4534,6 +4588,31 @@ var doc = `{
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
                     "$ref": "#/definitions/utils.OptionalRegexp"
+                },
+                "unexpectedFields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.StringArrayPattern": {
+            "type": "object",
+            "properties": {
+                "hasEvery": {
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalStringArray"
+                },
+                "hasNot": {
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalStringArray"
+                },
+                "hasOneOf": {
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalStringArray"
+                },
+                "isEmpty": {
+                    "type": "object",
+                    "$ref": "#/definitions/utils.OptionalBool"
                 },
                 "unexpectedFields": {
                     "type": "object",
@@ -4720,15 +4799,25 @@ var doc = `{
                 }
             }
         },
-        "pbehavior.Filter": {
-            "type": "object"
+        "pbehavior.Exdate": {
+            "type": "object",
+            "properties": {
+                "begin": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "end": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
         },
         "pbehavior.PBehavior": {
             "type": "object",
             "properties": {
-                "_id": {
-                    "type": "string"
-                },
                 "author": {
                     "type": "string"
                 },
@@ -4737,7 +4826,8 @@ var doc = `{
                     "$ref": "#/definitions/pbehavior.Comments"
                 },
                 "created": {
-                    "type": "integer"
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
                 },
                 "enabled": {
                     "type": "boolean"
@@ -4745,29 +4835,76 @@ var doc = `{
                 "exceptions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehaviorexception.Exception"
+                        "type": "string"
                     }
                 },
                 "exdates": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehaviorexception.Exdate"
+                        "$ref": "#/definitions/pbehavior.Exdate"
                     }
                 },
                 "filter": {
-                    "type": "object",
-                    "$ref": "#/definitions/pbehavior.Filter"
+                    "type": "string"
                 },
-                "is_active_status": {
-                    "description": "IsActiveStatus represents if pbehavior is in action for current time.",
-                    "type": "boolean"
+                "id": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
                 "reason": {
+                    "type": "string"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "start": {
                     "type": "object",
-                    "$ref": "#/definitions/pbehaviorreason.Reason"
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "stop": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                }
+            }
+        },
+        "pbehavior.PatchRequest": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.ExdateRequest"
+                    }
+                },
+                "filter": {
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
                 },
                 "rrule": {
                     "type": "string"
@@ -4779,11 +4916,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "type": {
-                    "type": "object",
-                    "$ref": "#/definitions/pbehavior.Type"
-                },
-                "updated": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -5276,6 +5409,19 @@ var doc = `{
                 "type_name": {
                     "description": "TypeName is Name of pbehavior.Type.",
                     "type": "string"
+                }
+            }
+        },
+        "utils.OptionalBool": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the bool. It should only be taken into\naccount if Set is true.",
+                    "type": "boolean"
                 }
             }
         },

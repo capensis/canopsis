@@ -2,6 +2,8 @@ package pbehavior
 
 import (
 	"errors"
+	"net/http"
+
 	"git.canopsis.net/canopsis/go-engines/lib/api/common"
 	"git.canopsis.net/canopsis/go-engines/lib/api/logger"
 	"git.canopsis.net/canopsis/go-engines/lib/api/pagination"
@@ -10,11 +12,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	"net/http"
 )
 
 type API interface {
 	common.CrudAPI
+	Patch(c *gin.Context)
 	ListByEntityID(c *gin.Context)
 	GetEIDs(c *gin.Context)
 }
@@ -39,7 +41,7 @@ func NewApi(
 		store:        store,
 		computeChan:  computeChan,
 		actionLogger: actionLogger,
-		logger:      logger,
+		logger:       logger,
 	}
 }
 
@@ -289,6 +291,125 @@ func (a *api) Update(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
+	}
+
+	err = a.actionLogger.Action(c, logger.LogEntry{
+		Action:    logger.ActionUpdate,
+		ValueType: logger.ValueTypePbehavior,
+		ValueID:   model.ID,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	a.sendComputeTask(pbehavior.ComputeTask{
+		PbehaviorID:   model.ID,
+		OperationType: pbehavior.OperationUpdate,
+	})
+
+	c.JSON(http.StatusOK, model)
+}
+
+// Patch partial set of behavior's attributes by id
+// @Summary Patch partial set of behavior attributes by id
+// @Description Patch partial set of behavior attributes by id
+// @Tags pbehaviors
+// @ID pbehaviors-patch-by-id
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Security BasicAuth
+// @Param id path string true "pbehavior id"
+// @Param body body PatchRequest true "body"
+// @Success 200 {object} PBehavior
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Failure 404 {object} common.ErrorResponse
+// @Router /pbehaviors/{id} [patch]
+func (a *api) Patch(c *gin.Context) {
+	req := PatchRequest{}
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, req))
+		return
+	}
+
+	var model *PBehavior
+	if req.Start != nil || req.Stop.isSet || req.Type != nil {
+		// Patching fields having constraint validation will retry
+		// until snapshot is matching or retry count reached
+		updated := false
+		retried := 0
+		for !updated && retried < 5 {
+			model, err = a.store.GetOneBy(bson.M{"_id": c.Param("id")})
+			if err != nil || model == nil {
+				c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+				return
+			}
+			if model.Stop != nil && model.Stop.IsZero() {
+				model.Stop = nil
+			}
+			snapshot := bson.M{
+				"_id":    model.ID,
+				"tstart": model.Start,
+				"tstop":  model.Stop,
+				"type_":  model.Type.ID,
+			}
+
+			// Clear tstop field when tstop is defined as null in request body
+			if req.Stop.isSet && req.Stop.CpsTime == nil {
+				model.Stop = nil
+			}
+
+			err = a.transformer.Patch(req, model)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+				return
+			}
+
+			// Validation
+			if model.Type.Type != pbehavior.TypePause && model.Stop == nil ||
+				(model.Stop != nil && model.Stop.Before(model.Start.Time)) {
+				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("invalid fields start, stop, type")))
+				return
+			}
+			updated, err = a.store.UpdateByFilter(model, snapshot)
+			if err != nil {
+				panic(err)
+			}
+			if updated {
+				break
+			}
+			retried++
+		}
+
+		if !updated {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NewErrorResponse(errors.New("max update retry reached")))
+			return
+		}
+	} else {
+		// Patching fields that doesn't need to be validated will be executed once
+		var ok bool
+		model, err = a.store.GetOneBy(bson.M{"_id": c.Param("id")})
+		if err != nil || model == nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			return
+		}
+
+		err = a.transformer.Patch(req, model)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+
+		ok, err = a.store.Update(model)
+		if err != nil {
+			panic(err)
+		}
+
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			return
+		}
 	}
 
 	err = a.actionLogger.Action(c, logger.LogEntry{

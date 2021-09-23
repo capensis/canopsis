@@ -14,6 +14,7 @@ import (
 type ModelTransformer interface {
 	TransformCreateRequestToModel(request CreateRequest) (*PBehavior, error)
 	TransformUpdateRequestToModel(request UpdateRequest) (*PBehavior, error)
+	Patch(req PatchRequest, model *PBehavior) error
 }
 
 type modelTransformer struct {
@@ -166,4 +167,58 @@ func (t *modelTransformer) transformExceptionsToModel(ids []string) ([]pbehavior
 	}
 
 	return exceptions, nil
+}
+
+func (t *modelTransformer) Patch(req PatchRequest, model *PBehavior) error {
+	var err error
+	if req.Author != nil {
+		model.Author = *req.Author
+	}
+	if req.Enabled != nil {
+		model.Enabled = *req.Enabled
+	}
+	if req.Filter != nil {
+		model.Filter = NewFilter(req.Filter)
+	}
+	if req.Name != nil {
+		model.Name = *req.Name
+	}
+	if req.RRule != nil {
+		model.RRule = *req.RRule
+	}
+	if req.Start != nil {
+		model.Start = req.Start
+	}
+	if req.Stop.isSet {
+		model.Stop = req.Stop.CpsTime
+	}
+	if req.Type != nil {
+		var pbhType *pbehavior.Type
+		if pbhType, err = t.transformTypeToModel(*req.Type); err != nil {
+			return err
+		}
+		model.Type = pbhType
+	}
+	if req.Reason != nil {
+		var reason *apireason.Reason
+		if reason, err = t.transformReasonToModel(*req.Reason); err != nil {
+			return err
+		}
+		model.Reason = reason
+	}
+	if len(req.Exdates) > 0 {
+		var exdates []pbehaviorexception.Exdate
+		if exdates, err = t.exceptionTransformer.TransformExdatesRequestToModel(req.Exdates); err != nil {
+			return err
+		}
+		model.Exdates = exdates
+	}
+	if len(req.Exceptions) > 0 {
+		var exceptions []pbehaviorexception.Exception
+		if exceptions, err = t.transformExceptionsToModel(req.Exceptions); err != nil {
+			return err
+		}
+		model.Exceptions = exceptions
+	}
+	return err
 }

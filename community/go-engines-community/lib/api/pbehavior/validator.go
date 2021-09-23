@@ -2,7 +2,9 @@ package pbehavior
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/go-engines/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
 	"git.canopsis.net/canopsis/go-engines/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
@@ -40,36 +42,56 @@ func (v *Validator) ValidateCreateRequest(sl validator.StructLevel) {
 }
 
 func (v *Validator) ValidateEditRequest(sl validator.StructLevel) {
-	request := sl.Current().Interface().(EditRequest)
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	var (
+		rType   *string
+		rStart  *types.CpsTime
+		rStop   *types.CpsTime
+		rFilter interface{}
+	)
+	slr := sl.Current().Interface()
+	switch r := slr.(type) {
+	case EditRequest:
+		rType = &r.Type
+		rStart = &r.Start
+		rStop = r.Stop
+		rFilter = r.Filter
+	case PatchRequest:
+		rType = r.Type
+		rStart = r.Start
+		rFilter = r.Filter
+		if r.Stop.isSet {
+			rStop = r.Stop.CpsTime
+		}
+	}
+
 	// Only pause pbehavior have optional Stop
-	if request.Stop == nil && request.Type != "" {
+	if rStop == nil && rType != nil && *rType != "" {
 		foundType := pbehavior.Type{}
 		err := v.dbClient.Collection(pbehavior.TypeCollectionName).
-			FindOne(ctx, bson.M{"_id": request.Type}).Decode(&foundType)
+			FindOne(ctx, bson.M{"_id": rType}).Decode(&foundType)
 		if err == nil {
 			if foundType.Type != pbehavior.TypePause {
-				sl.ReportError(request.Stop, "Stop", "Stop", "required", "")
+				sl.ReportError(rStop, "Stop", "Stop", "required", "")
 			}
 		} else if err == mongodriver.ErrNoDocuments {
-			sl.ReportError(request.Stop, "Type", "Type", "not_exist", "")
+			sl.ReportError(rStop, "Type", "Type", "not_exist", "")
 		} else {
 			panic(err)
 		}
 	}
 	// Stop must be > Start
-	if request.Stop != nil && request.Stop.Before(request.Start.Time) {
-		sl.ReportError(request.Stop, "Stop", "Stop", "gtfield", "Start")
+	if rStop != nil && rStart != nil && rStop.Before(rStart.Time) {
+		sl.ReportError(rStop, "Stop", "Stop", "gtfield", "Start")
 	}
 	// Filter must be valid mongo filter
-	if request.Filter != nil {
+	if rFilter != nil {
 		_, err := v.dbClient.Collection(validationCollection).
-			Find(ctx, request.Filter)
+			Find(ctx, rFilter)
 		if err != nil {
-			sl.ReportError(request.Stop, "Filter", "Filter", "entityfilter", "Filter")
+			sl.ReportError(rStop, "Filter", "Filter", "entityfilter", "Filter")
 		}
 	}
 }

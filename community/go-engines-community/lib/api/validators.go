@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/go-engines/lib/api/common"
 	"git.canopsis.net/canopsis/go-engines/lib/api/heartbeat"
 	"git.canopsis.net/canopsis/go-engines/lib/api/pagination"
@@ -30,7 +31,7 @@ func RegisterValidators(client mongo.DbClient) {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterStructValidation(common.ValidateFilteredQuery, pagination.FilteredQuery{})
 		v.RegisterStructValidation(pbhRequestValidator.ValidateCreateRequest, pbehaviorapi.CreateRequest{})
-		v.RegisterStructValidation(pbhRequestValidator.ValidateEditRequest, pbehaviorapi.EditRequest{})
+		v.RegisterStructValidation(pbhRequestValidator.ValidateEditRequest, pbehaviorapi.EditRequest{}, pbehaviorapi.PatchRequest{})
 		v.RegisterStructValidation(reasonValidator.ValidateReasonCreateRequest, pbehaviorreason.CreateRequest{})
 		v.RegisterStructValidation(reasonValidator.ValidateReasonUpdateRequest, pbehaviorreason.UpdateRequest{})
 		v.RegisterStructValidation(typeValidator.ValidateTypeCreateRequest, pbehaviortype.CreateRequest{})
