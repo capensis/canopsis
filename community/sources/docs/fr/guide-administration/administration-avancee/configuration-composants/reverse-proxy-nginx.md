@@ -20,13 +20,14 @@ Actuellement, cette configuration apporte :
 
 ## Configuration additionnelle
 
-Vous pouvez compléter le fichier de configuration fourni, ou créer un nouveau fichier `.conf` dans le répertoire `/etc/nginx/conf.d/`, comportant vos propres ajouts.
+### Activation d'HTTPS, HTTP/2 et les Websockets
 
-Vous pouvez notamment vous en servir afin :
+À partir de Canopsis 4.4.0, une configuration activant HTTPS, HTTP/2 et les Websockets est disponible, mais désactivée par défaut.
 
-*  [d'ajouter des certificats HTTPS](https://nginx.org/en/docs/http/configuring_https_servers.html) ;
-*  [d'activer le protocole HTTP/2](https://nginx.org/en/docs/http/ngx_http_v2_module.html) ;
-*  [d'ajouter des entêtes](https://nginx.org/en/docs/http/ngx_http_headers_module.html) dont vous pourriez avoir besoin ;
-*  etc.
+Consultez le [Guide d'activation d'HTTPS](../../webserver/https.md) pour en savoir plus.
 
-Canopsis ne supporte néanmoins que la configuration Nginx proposée par défaut.
+### Modifications personnelles
+
+Vous pouvez compléter le fichier de configuration fourni, ou créer un nouveau fichier `.conf` dans le répertoire `/etc/nginx/conf.d/`, comportant vos propres ajouts. Veillez à toujours vous synchroniser avec la dernière configugration officielle de Nginx après chaque mise à jour de Canopsis.
+
+Notez cependant que Canopsis ne supporte que la configuration Nginx proposée par défaut.
