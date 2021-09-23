@@ -85,6 +85,9 @@ func RegisterValidators(client mongo.DbClient) {
 		pbhExistReasonValidator.Validate(ctx, sl)
 		pbhExistTypeValidator.Validate(ctx, sl)
 	}, pbehavior.EditRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		pbhValidator.ValidateEditRequest(ctx, sl)
+	}, pbehavior.PatchRequest{})
 
 	pbhReasonUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "ID")
 	pbhReasonUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Name")

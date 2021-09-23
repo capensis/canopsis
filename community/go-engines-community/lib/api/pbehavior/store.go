@@ -26,6 +26,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, filter bson.M) (*Response, error)
 	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
 	Update(ctx context.Context, model *Response) (bool, error)
+	UpdateByFilter(ctx context.Context, model *Response, filters bson.M) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	Count(context.Context, Filter, int) (*CountFilterResult, error)
 }
@@ -324,6 +325,55 @@ func (s *store) Update(ctx context.Context, model *Response) (bool, error) {
 	result, err := s.dbCollection.UpdateOne(
 		ctx,
 		bson.M{"_id": model.ID},
+		update,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	updatedModel, err := s.GetOneBy(ctx, bson.M{"_id": model.ID})
+	if err != nil {
+		return false, err
+	}
+
+	*model = *updatedModel
+
+	return result.MatchedCount > 0, nil
+}
+
+func (s *store) UpdateByFilter(ctx context.Context, model *Response, filters bson.M) (bool, error) {
+	doc, err := s.transformModelToDocument(model)
+	if err != nil {
+		return false, err
+	}
+
+	doc.Updated = libtypes.NewCpsTime(time.Now().Unix())
+
+	var update bson.M
+	if model.Stop == nil {
+		m := make(map[string]interface{})
+		p, err := bson.Marshal(doc)
+		if err != nil {
+			return false, err
+		}
+
+		err = bson.Unmarshal(p, &m)
+		if err != nil {
+			return false, err
+		}
+
+		delete(m, "tstop")
+		update = bson.M{
+			"$set":   m,
+			"$unset": bson.M{"tstop": 1},
+		}
+	} else {
+		update = bson.M{"$set": doc}
+	}
+
+	result, err := s.dbCollection.UpdateOne(
+		ctx,
+		filters,
 		update,
 	)
 	if err != nil {

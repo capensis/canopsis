@@ -89,5 +89,31 @@
       }
     ],
     "created": 1592215037
+  },
+  {
+    "_id": "test-exception-to-patch-pbehavior",
+    "name": "test-exception-to-patch-pbehavior-name",
+    "description": "test-exception-to-patch-pbehavior-description",
+    "exdates": [
+      {
+        "begin": 1592215337,
+        "end": 1592215337,
+        "type": "test-active-type-to-patch-pbehavior"
+      }
+    ],
+    "created": 1592215337
+  },
+  {
+    "_id": "test-exception-to-patch-pbehavior-new",
+    "name": "test-exception-to-patch-pbehavior-new-name",
+    "description": "test-exception-to-patch-pbehavior-new-description",
+    "exdates": [
+      {
+        "begin": 1592215337,
+        "end": 1592215337,
+        "type": "test-pause-type-to-patch-pbehavior"
+      }
+    ],
+    "created": 1592215337
   }
 ]
