@@ -9,7 +9,7 @@ security:
   auth_providers:
     - basic
     - apikey
-    - ldap
+#    - ldap
 #    - saml
 
 #  saml:
