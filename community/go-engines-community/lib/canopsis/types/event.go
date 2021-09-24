@@ -199,6 +199,7 @@ type Event struct {
 	// Execution is used only for instruction events: EventTypeInstructionStarted, EventTypeInstructionCompleted, etc..
 	Execution string `bson:"execution,omitempty" json:"execution,omitempty"`
 
+	// TODO: should be refactored
 	IsEntityUpdated bool `bson:"-" json:"-"`
 }
 
