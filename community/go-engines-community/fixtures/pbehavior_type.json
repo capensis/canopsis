@@ -214,5 +214,21 @@
     "type": "maintenance",
     "priority": 27,
     "icon_name": "test-type-to-edit-idle-rule-icon"
+  },
+  {
+    "_id": "test-active-type-to-patch-pbehavior",
+    "name": "test-active-type-to-patch-pbehavior-name",
+    "description": "test-active-type-to-patch-pbehavior-description",
+    "type": "active",
+    "priority": 28,
+    "icon_name": "test-active-type-to-patch-pbehavior-icon"
+  },
+  {
+    "_id": "test-pause-type-to-patch-pbehavior",
+    "name": "test-pause-type-to-patch-pbehavior-name",
+    "description": "test-pause-type-to-patch-pbehavior-description",
+    "type": "pause",
+    "priority": 29,
+    "icon_name": "test-pause-type-to-patch-pbehavior-icon"
   }
 ]
