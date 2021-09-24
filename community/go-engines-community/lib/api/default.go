@@ -2,6 +2,8 @@ package api
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"os"
 	"time"
 
@@ -126,6 +128,13 @@ func Default(
 		logger,
 	)
 
+	entityCleanerTaskChan := make(chan entity.CleanTask)
+	disabledEntityCleaner := entity.NewDisabledCleaner(
+		entity.NewStore(dbClient),
+		datastorage.NewAdapter(dbClient),
+		logger,
+	)
+
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
 	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 	if err != nil && err != mongodriver.ErrNoDocuments {
@@ -142,6 +151,7 @@ func Default(
 		func(ctx context.Context) error {
 			close(pbhComputeChan)
 			close(entityPublChan)
+			close(entityCleanerTaskChan)
 
 			var resErr error
 			err := dbClient.Disconnect(ctx)
@@ -194,6 +204,7 @@ func Default(
 			pbhService,
 			pbhComputeChan,
 			entityPublChan,
+			entityCleanerTaskChan,
 			engine.NewRunInfoManager(engineRedisSession),
 			exportExecutor,
 			apilogger.NewActionLogger(dbClient, logger),
@@ -227,6 +238,9 @@ func Default(
 	})
 	api.AddWorker("entity event publish", func(ctx context.Context) {
 		entityServiceEventPublisher.Publish(ctx, entityPublChan)
+	})
+	api.AddWorker("entity cleaner", func(ctx context.Context) {
+		disabledEntityCleaner.RunCleanerProcess(ctx, entityCleanerTaskChan)
 	})
 	api.AddWorker("import job", func(ctx context.Context) {
 		importWorker.Run(ctx)

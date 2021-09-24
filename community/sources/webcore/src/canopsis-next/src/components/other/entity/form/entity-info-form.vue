@@ -50,7 +50,7 @@ import { get, isArray } from 'lodash';
 
 import uid from '@/helpers/uid';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],

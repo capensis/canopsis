@@ -30,7 +30,7 @@
         v-select(
           v-model="range",
           :items="quickRanges",
-          :label="$t('settings.statsDateInterval.fields.quickRanges')",
+          :label="$t('quickRanges.title')",
           return-object
         )
 </template>
@@ -38,11 +38,11 @@
 <script>
 import moment from 'moment';
 
-import { STATS_DURATION_UNITS, STATS_QUICK_RANGES, DATETIME_FORMATS } from '@/constants';
+import { STATS_DURATION_UNITS, QUICK_RANGES, DATETIME_FORMATS } from '@/constants';
 
 import { prepareDateToObject, findRange } from '@/helpers/date/date-intervals';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 
@@ -120,10 +120,10 @@ export default {
     },
 
     quickRanges() {
-      return Object.values(STATS_QUICK_RANGES).map(range => ({
+      return Object.values(QUICK_RANGES).map(range => ({
         ...range,
 
-        text: this.$t(`settings.statsDateInterval.quickRanges.${range.value}`),
+        text: this.$t(`quickRanges.types.${range.value}`),
       }));
     },
 

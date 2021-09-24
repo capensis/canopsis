@@ -108,6 +108,7 @@ func RegisterRoutes(
 	pbhService libpbehavior.Service,
 	pbhComputeChan chan<- libpbehavior.ComputeTask,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
+	entityCleanerTaskChan chan<- entity.CleanTask,
 	runInfoManager engine.RunInfoManager,
 	exportExecutor export.TaskExecutor,
 	actionLogger logger.ActionLogger,
@@ -224,7 +225,7 @@ func RegisterRoutes(
 			)
 		}
 
-		entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor)
+		entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -328,6 +329,11 @@ func RegisterRoutes(
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
 				middleware.SetAuthor(),
 				pbehaviorApi.Update)
+			pbehaviorRouter.PATCH(
+				"/:id",
+				middleware.Authorize(authObjPbh, permUpdate, enforcer),
+				middleware.SetAuthor(),
+				pbehaviorApi.Patch)
 			pbehaviorRouter.DELETE(
 				"/:id",
 				middleware.Authorize(authObjPbh, permDelete, enforcer),
@@ -354,11 +360,17 @@ func RegisterRoutes(
 		}
 		entityRouter := protected.Group("/entities")
 		{
-			entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor)
+			entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
 			entityRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
 				entityAPI.List,
+			)
+
+			entityRouter.POST(
+				"/clean",
+				middleware.Authorize(authObjEntity, permDelete, enforcer),
+				entityAPI.Clean,
 			)
 
 			entityRouter.GET(

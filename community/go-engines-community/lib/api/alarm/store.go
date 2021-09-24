@@ -3,8 +3,8 @@ package alarm
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"reflect"
 	"regexp"
 	"sort"
@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -40,7 +41,8 @@ type Store interface {
 }
 
 type store struct {
-	dbCollection                     mongo.DbCollection
+	mainDbCollection                 mongo.DbCollection
+	resolvedDbCollection             mongo.DbCollection
 	dbInstructionCollection          mongo.DbCollection
 	dbInstructionExecutionCollection mongo.DbCollection
 	fieldsAliases                    map[string]string
@@ -57,7 +59,8 @@ type store struct {
 
 func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
 	s := &store{
-		dbCollection:                     dbClient.Collection(mongo.AlarmMongoCollection),
+		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
+		resolvedDbCollection:             dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
 		dbInstructionCollection:          dbClient.Collection(mongo.InstructionMongoCollection),
 		dbInstructionExecutionCollection: dbClient.Collection(mongo.InstructionExecutionMongoCollection),
 		fieldsAliases: map[string]string{
@@ -127,18 +130,28 @@ func (s *store) insertDeferred(r FilterRequest, pipeline *[]bson.M, project []bs
 }
 
 func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error) {
+	collection := s.mainDbCollection
+	if r.GetOpenedFilter() == OnlyResolved {
+		collection = s.resolvedDbCollection
+	}
+
 	pipeline := make([]bson.M, 0)
 	s.addNestedObjects(r.FilterRequest, &pipeline)
 	err := s.addFilter(ctx, r.FilterRequest, &pipeline)
 	if err != nil {
 		return nil, err
 	}
-	sort := s.getSort(r.ListRequest)
+
+	sort, err := s.getSort(r.ListRequest)
+	if err != nil {
+		return nil, err
+	}
+
 	entitiesToProject := s.resetEntities(r.ListRequest, &pipeline)
 	project := s.getProject(r.ListRequest, entitiesToProject)
 	project = s.insertDeferred(r.FilterRequest, &pipeline, project)
 	project = s.adjustSort(sort, project)
-	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+	cursor, err := collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
 		sort,
@@ -164,7 +177,7 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 		return nil, err
 	}
 
-	if r.WithInstructions {
+	if r.WithInstructions || r.GetOpenedFilter() != OnlyResolved {
 		err = s.fillAssignedInstructions(ctx, &result)
 		if err != nil {
 			return nil, err
@@ -184,6 +197,11 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 }
 
 func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
+	collection := s.mainDbCollection
+	if r.GetOpenedFilter() == OnlyResolved {
+		collection = s.resolvedDbCollection
+	}
+
 	pipeline := make([]bson.M, 0)
 	s.addNestedObjects(r, &pipeline)
 	err := s.addFilter(ctx, r, &pipeline)
@@ -253,7 +271,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 		bson.M{"$replaceRoot": bson.M{"newRoot": "$counts"}},
 	)
 
-	cursor, err := s.dbCollection.Aggregate(ctx, aggregationPipeline)
+	cursor, err := collection.Aggregate(ctx, aggregationPipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -277,6 +295,11 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 }
 
 func (s *store) fillChildren(ctx context.Context, r ListRequest, result *AggregationResult) error {
+	collection := s.mainDbCollection
+	if r.GetOpenedFilter() == OnlyResolved {
+		collection = s.resolvedDbCollection
+	}
+
 	childrenIds := make([]string, 0)
 	for i := range result.Data {
 		if result.Data[i].ChildrenIDs != nil {
@@ -300,9 +323,15 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 		{"d": bson.M{"$in": childrenIds}},
 	}}})
 	s.addNestedObjects(r.FilterRequest, &pipeline)
-	pipeline = append(pipeline, s.getSort(r))
+
+	sortExpr, err := s.getSort(r)
+	if err != nil {
+		return err
+	}
+
+	pipeline = append(pipeline, sortExpr)
 	pipeline = append(pipeline, s.getProject(r, false)...)
-	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
+	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return err
 	}
@@ -500,7 +529,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		{"$replaceRoot": bson.M{"newRoot": "$ids"}},
 	}
 
-	assignedInstructionsCursor, err := s.dbCollection.Aggregate(
+	assignedInstructionsCursor, err := s.mainDbCollection.Aggregate(
 		ctx,
 		pipeline,
 	)
@@ -705,8 +734,8 @@ func (s *store) addFilter(ctx context.Context, r FilterRequest, pipeline *[]bson
 	match := make([]bson.M, 0)
 	s.addStartFromFilter(r, &match)
 	s.addStartToFilter(r, &match)
-	s.addOnlyOpenedFilter(r, &match)
-	s.addOnlyResolvedFilter(r, &match)
+	s.addOpenedFilter(r, &match)
+
 	replacedKeys, err := s.addQueryFilter(r, &match)
 	if err != nil {
 		return err
@@ -762,20 +791,12 @@ func (s *store) addStartToFilter(r FilterRequest, match *[]bson.M) {
 	*match = append(*match, bson.M{"t": bson.M{"$lte": r.StartTo}})
 }
 
-func (s *store) addOnlyOpenedFilter(r FilterRequest, match *[]bson.M) {
-	if !r.OnlyOpened || r.OnlyResolved {
+func (s *store) addOpenedFilter(r FilterRequest, match *[]bson.M) {
+	if r.GetOpenedFilter() != OnlyOpened {
 		return
 	}
 
 	*match = append(*match, bson.M{"v.resolved": bson.M{"$exists": false}})
-}
-
-func (s *store) addOnlyResolvedFilter(r FilterRequest, match *[]bson.M) {
-	if !r.OnlyResolved || r.OnlyOpened {
-		return
-	}
-
-	*match = append(*match, bson.M{"v.resolved": bson.M{"$exists": true}})
 }
 
 func (s *store) addQueryFilter(r FilterRequest, match *[]bson.M) ([]string, error) {
@@ -1163,7 +1184,11 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 	return pipeline
 }
 
-func (s *store) getSort(r ListRequest) bson.M {
+func (s *store) getSort(r ListRequest) (bson.M, error) {
+	if len(r.MultiSort) != 0 {
+		return s.getMultiSort(r.MultiSort)
+	}
+
 	sortBy := s.resolveAlias(r.SortBy)
 	sort := r.Sort
 
@@ -1178,7 +1203,38 @@ func (s *store) getSort(r ListRequest) bson.M {
 		}
 	}
 
-	return common.GetSortQuery(sortBy, sort)
+	return common.GetSortQuery(sortBy, sort), nil
+}
+
+func (s *store) getMultiSort(multiSort []string) (bson.M, error) {
+	idExist := false
+
+	q := bson.D{}
+
+	for _, multiSortValue := range multiSort {
+		multiSortData := strings.Split(multiSortValue, ",")
+		if len(multiSortData) != 2 {
+			return nil, errors.New("length of multi_sort value should be equal 2")
+		}
+
+		sortBy := s.resolveAlias(multiSortData[0])
+		sortDir := 1
+		if multiSortData[1] == common.SortDesc {
+			sortDir = -1
+		}
+
+		if sortBy == "_id" {
+			idExist = true
+		}
+
+		q = append(q, bson.E{Key: sortBy, Value: sortDir})
+	}
+
+	if !idExist {
+		q = append(q, bson.E{Key: "_id", Value: 1})
+	}
+
+	return bson.M{"$sort": q}, nil
 }
 
 func (s *store) getCausesPipeline() []bson.M {

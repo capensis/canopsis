@@ -15,7 +15,7 @@ import { isEmpty } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import formMixin from '@/mixins/form/object';
+import { formMixin } from '@/mixins/form';
 
 export default {
   mixins: [formMixin],

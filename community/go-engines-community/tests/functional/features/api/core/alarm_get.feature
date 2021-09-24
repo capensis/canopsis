@@ -499,6 +499,141 @@ Feature: Get alarms
     }
     """
 
+  Scenario: given get multi sort request should return sorted alarms by t and last_event_date
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-multi-sort-get&multi_sort[]=t,asc&multi_sort[]=v.last_event_date,desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-multi-sort-get-1",
+          "t": 1000000000,
+          "v": {
+            "last_event_date": 1000000000
+          }
+        },
+        {
+          "_id": "test-alarm-multi-sort-get-2",
+          "t": 1000000001,
+          "v": {
+            "last_event_date": 1000000003
+          }
+        },
+        {
+          "_id": "test-alarm-multi-sort-get-3",
+          "t": 1000000001,
+          "v": {
+            "last_event_date": 1000000002
+          }
+        },
+        {
+          "_id": "test-alarm-multi-sort-get-4",
+          "t": 1000000002,
+          "v": {
+            "last_event_date": 1000000004
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-multi-sort-get&multi_sort[]=t,asc&multi_sort[]=v.last_event_date,asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-multi-sort-get-1",
+          "t": 1000000000,
+          "v": {
+            "last_event_date": 1000000000
+          }
+        },
+        {
+          "_id": "test-alarm-multi-sort-get-3",
+          "t": 1000000001,
+          "v": {
+            "last_event_date": 1000000002
+          }
+        },
+        {
+          "_id": "test-alarm-multi-sort-get-2",
+          "t": 1000000001,
+          "v": {
+            "last_event_date": 1000000003
+          }
+        },
+        {
+          "_id": "test-alarm-multi-sort-get-4",
+          "t": 1000000002,
+          "v": {
+            "last_event_date": 1000000004
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
+
+  Scenario: given get multi sort with simple sort is not allowed
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-multi-sort-get&multi_sort[]=t,asc&multi_sort[]=v.last_event_date,desc&sort_key=v.duration&sort_dir=desc
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "sort_key": "Can't be present both SortBy and MultiSort."
+      }
+    }
+    """
+
+  Scenario: given get with invalid multi sort
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-multi-sort-get&multi_sort[]=t,asc&multi_sort[]=v.last_event_date
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "multi_sort": "Invalid multi_sort value."
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-multi-sort-get&multi_sort[]=t,asc&multi_sort[]=v.last_event_date,bad
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "multi_sort": "Invalid multi_sort value."
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-multi-sort-get&multi_sort[]=t,asc&multi_sort[]=v.last_event_date,desc,extra
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "multi_sort": "Invalid multi_sort value."
+      }
+    }
+    """
+
   Scenario: given get time inverval request should return alarms which were created
   in this time interval.
     When I am admin
@@ -548,9 +683,9 @@ Feature: Get alarms
     }
     """
 
-  Scenario: given get resolved request should return only resolved alarms
+  Scenario: given get recent resolved request should return only recent resolved alarms and opened
     When I am admin
-    When I do GET /api/v4/alarms?search=test-alarm-get&resolved=true
+    When I do GET /api/v4/alarms?search=test-alarm-get
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -558,6 +693,36 @@ Feature: Get alarms
       "data": [
         {
           "_id": "test-alarm-get-4"
+        },
+        {
+          "_id": "test-alarm-get-3"
+        },
+        {
+          "_id": "test-alarm-get-2"
+        },
+        {
+          "_id": "test-alarm-get-1"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
+
+  Scenario: given get resolved request should return only resolved alarms
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-get&opened=false
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-get-resolved-collection"
         }
       ],
       "meta": {

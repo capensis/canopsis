@@ -31,9 +31,6 @@
         "models_exploitation_snmpRule": {
             "checksum": 15
         },
-        "models_exploitation_heartbeat": {
-            "checksum": 15
-        },
         "models_exploitation_dynamicInfo": {
             "checksum": 15
         },
@@ -41,6 +38,12 @@
           "checksum": 15
         },
         "models_exploitation_scenario": {
+          "checksum": 15
+        },
+        "models_exploitation_idleRules": {
+          "checksum": 15
+        },
+        "models_notification_instructionStats": {
           "checksum": 15
         },
         "tabs_showeditionmenu" : {
@@ -542,10 +545,6 @@
           "checksum": 15,
           "crecord_type": "right"
         },
-        "api_heartbeat": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
         "api_entityservice": {
           "checksum": 15,
           "crecord_type": "right"
@@ -653,6 +652,14 @@
         "api_datastorage_update": {
           "checksum": 1,
           "crecord_type": "right"
+        },
+        "api_notification": {
+          "checksum": 1,
+          "crecord_type": "right"
+        },
+        "api_instruction_approve": {
+          "checksum": 1,
+          "crecord_type": "right"
         }
       },
     "defaultview": "875df4c2-027b-4549-8add-e20ed7ff7d4f"
@@ -725,6 +732,37 @@
         "listalarm_addFilter": {
             "checksum": 1,
             "desc": ""
+        },
+        "api_viewgroup": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_playlist": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_acl": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "api_app_info_read": {
+            "checksum": 1,
+            "crecord_type": "right"
+        },
+        "api_associative_table": {
+            "checksum": 4,
+            "crecord_type": "right"
+        },
+        "models_userview": {
+            "checksum": 4
+        },
+        "api_alarm_read": {
+            "checksum": 1,
+            "crecord_type": "right"
+        },
+        "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
+            "checksum": 4,
+            "crecord_type": "right"
         }
     },
     "defaultview": "view.current_alarms"
@@ -769,6 +807,37 @@
         "listalarm_listFilters": {
             "checksum": 1,
             "desc": ""
+        },
+        "api_viewgroup": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_playlist": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_acl": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "api_app_info_read": {
+            "checksum": 1,
+            "crecord_type": "right"
+        },
+        "api_associative_table": {
+            "checksum": 4,
+            "crecord_type": "right"
+        },
+        "models_userview": {
+            "checksum": 4
+        },
+        "api_alarm_read": {
+            "checksum": 1,
+            "crecord_type": "right"
+        },
+        "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
+            "checksum": 4,
+            "crecord_type": "right"
         }
     },
     "defaultview": "view.current_alarms"
@@ -777,10 +846,6 @@
     "rights": {
         "tabs_showeditionmenu" : {
             "checksum": 1
-        },
-        "actionbutton_current": {
-            "checksum": 15,
-            "desc": ""
         },
         "menu_aclconfig": {
             "checksum": 15,
@@ -857,6 +922,37 @@
         "listalarm_addFilter": {
             "checksum": 1,
             "desc": ""
+        },
+        "api_viewgroup": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_playlist": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_acl": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "api_app_info_read": {
+            "checksum": 1,
+            "crecord_type": "right"
+        },
+        "api_associative_table": {
+            "checksum": 4,
+            "crecord_type": "right"
+        },
+        "models_userview": {
+            "checksum": 4
+        },
+        "api_alarm_read": {
+            "checksum": 1,
+            "crecord_type": "right"
+        },
+        "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
+            "checksum": 4,
+            "crecord_type": "right"
         }
     },
     "defaultview": "view.current_alarms"
@@ -870,6 +966,89 @@
         "listalarm_listFilters": {
             "checksum": 1,
             "desc": ""
+        },
+        "api_alarmfilter": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_idlerule": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_eventfilter": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_action": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_webhook": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_metaalarmrule": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_dynamicinfos": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_heartbeat": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_view": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_pbehavior": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_pbehaviortype": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_pbehaviorreason": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_pbehaviorexception": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_viewgroup": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_playlist": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_acl": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "api_app_info_read": {
+            "checksum": 1,
+            "crecord_type": "right"
+        },
+        "api_associative_table": {
+            "checksum": 4,
+            "crecord_type": "right"
+        },
+        "models_userview": {
+            "checksum": 4
+        },
+        "api_alarm_read": {
+            "checksum": 1,
+            "crecord_type": "right"
+        },
+        "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
+            "checksum": 4,
+            "crecord_type": "right"
         }
     },
     "defaultview": "view.current_alarms"
@@ -878,6 +1057,18 @@
     "rights": {
         "view_norights": {
             "checksum": 5,
+            "desc": ""
+        },
+        "api_viewgroup": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_playlist": {
+            "checksum": 4,
+            "desc": ""
+        },
+        "api_acl": {
+            "checksum": 1,
             "desc": ""
         }
     },

@@ -24,6 +24,25 @@ Feature: Get and update data storage config
           "seconds": 1728000,
           "unit": "d"
         }
+      },
+      "alarm": {
+        "archive_after": {
+          "enabled": true,
+          "seconds": 864000,
+          "unit": "d"
+        },
+        "delete_after": {
+          "enabled": true,
+          "seconds": 1728000,
+          "unit": "d"
+        }
+      },
+      "pbehavior": {
+        "delete_after": {
+          "enabled": true,
+          "seconds": 1728000,
+          "unit": "d"
+        }
       }
     }
     """
@@ -50,11 +69,33 @@ Feature: Get and update data storage config
             "seconds": 1728000,
             "unit": "d"
           }
+        },
+        "alarm": {
+          "archive_after": {
+            "enabled": true,
+            "seconds": 864000,
+            "unit": "d"
+          },
+          "delete_after": {
+            "enabled": true,
+            "seconds": 1728000,
+            "unit": "d"
+          }
+        },
+        "pbehavior": {
+          "delete_after": {
+            "enabled": true,
+            "seconds": 1728000,
+            "unit": "d"
+          }
         }
       },
       "history": {
         "junit": null,
-        "remediation": null
+        "remediation": null,
+        "alarm": null,
+        "entity": null,
+        "pbehavior": null
       }
     }
     """
@@ -82,11 +123,33 @@ Feature: Get and update data storage config
             "seconds": 1728000,
             "unit": "d"
           }
+        },
+        "alarm": {
+          "archive_after": {
+            "enabled": true,
+            "seconds": 864000,
+            "unit": "d"
+          },
+          "delete_after": {
+            "enabled": true,
+            "seconds": 1728000,
+            "unit": "d"
+          }
+        },
+        "pbehavior": {
+          "delete_after": {
+            "enabled": true,
+            "seconds": 1728000,
+            "unit": "d"
+          }
         }
       },
       "history": {
         "junit": null,
-        "remediation": null
+        "remediation": null,
+        "alarm": null,
+        "entity": null,
+        "pbehavior": null
       }
     }
     """
@@ -105,11 +168,21 @@ Feature: Get and update data storage config
         "remediation": {
           "accumulate_after": null,
           "delete_after": null
+        },
+        "alarm": {
+          "archive_after": null,
+          "delete_after": null
+        },
+        "pbehavior": {
+          "delete_after": null
         }
       },
       "history": {
         "junit": null,
-        "remediation": null
+        "remediation": null,
+        "alarm": null,
+        "entity": null,
+        "pbehavior": null
       }
     }
     """
@@ -125,11 +198,21 @@ Feature: Get and update data storage config
         "remediation": {
           "accumulate_after": null,
           "delete_after": null
+        },
+        "alarm": {
+          "archive_after": null,
+          "delete_after": null
+        },
+        "pbehavior": {
+          "delete_after": null
         }
       },
       "history": {
         "junit": null,
-        "remediation": null
+        "remediation": null,
+        "alarm": null,
+        "entity": null,
+        "pbehavior": null
       }
     }
     """
@@ -157,6 +240,51 @@ Feature: Get and update data storage config
     {
       "errors": {
         "remediation.delete_after": "DeleteAfter should be greater than AccumulateAfter."
+      }
+    }
+    """
+    When I do PUT /api/v4/data-storage:
+    """
+    {
+      "alarm": {
+        "archive_after": {
+          "seconds": 864000,
+          "unit": "d"
+        },
+        "delete_after": {
+          "seconds": 864000,
+          "unit": "d"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "alarm.delete_after": "DeleteAfter should be greater than ArchiveAfter."
+      }
+    }
+    """
+    When I do PUT /api/v4/data-storage:
+    """
+    {
+      "alarm": {
+        "delete_after": {
+          "enabled": true,
+          "seconds": 864000,
+          "unit": "d"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "alarm.archive_after": "ArchiveAfter is required when DeleteAfter is defined."
       }
     }
     """

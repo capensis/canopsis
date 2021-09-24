@@ -15,6 +15,7 @@
               :label="$t('remediationInstructions.endpoint')",
               :name="name",
               :error-messages="errors.collect(name)",
+              :disabled="disabled",
               box
             )
               v-tooltip(slot="append", left)
@@ -36,6 +37,10 @@ export default {
     value: {
       type: String,
       default: '',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

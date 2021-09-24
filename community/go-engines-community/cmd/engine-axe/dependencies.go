@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -183,6 +184,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			Encoder:                json.NewEncoder(),
 			Decoder:                json.NewDecoder(),
 			Logger:                 logger,
+			PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
 		},
 		logger,
 	))
@@ -223,6 +225,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			ChannelPub:         channelPub,
 			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), logger),
+			AlarmAdapter:       alarm.NewAdapter(dbClient),
 			Encoder:            json.NewEncoder(),
 			IdleAlarmService: idlealarm.NewService(
 				idlerule.NewRuleAdapter(dbClient),
@@ -235,6 +238,19 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			),
 			AlarmConfigProvider: alarmConfigProvider,
 			Logger:              logger,
+		},
+		logger,
+	))
+	engineAxe.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisClient),
+		redis.AxeResolvedArchiverPeriodicalLockKey,
+		&resolvedArchiverWorker{
+			PeriodicalInterval:        time.Hour,
+			TimezoneConfigProvider:    timezoneConfigProvider,
+			DataStorageConfigProvider: config.NewDataStorageConfigProvider(cfg, logger),
+			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
+			AlarmAdapter:              alarm.NewAdapter(dbClient),
+			Logger:                    logger,
 		},
 		logger,
 	))

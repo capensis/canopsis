@@ -37,6 +37,17 @@ type ExportRequest struct {
 	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
 }
 
+type CleanRequest struct {
+	Archive             *bool `json:"archive" bson:"archive" binding:"required"`
+	ArchiveDependencies bool  `json:"archive_dependencies" bson:"archive_dependencies"`
+}
+
+type CleanTask struct {
+	Archive             *bool
+	ArchiveDependencies bool
+	UserID              string
+}
+
 type ExportResponse struct {
 	ID     string `json:"_id"`
 	Status int    `json:"status"`

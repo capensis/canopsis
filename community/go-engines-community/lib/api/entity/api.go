@@ -2,12 +2,13 @@ package entity
 
 import (
 	"context"
-	"net/http"
-
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
+	"net/http"
 )
 
 type API interface {
@@ -15,6 +16,7 @@ type API interface {
 	StartExport(c *gin.Context)
 	GetExport(c *gin.Context)
 	DownloadExport(c *gin.Context)
+	Clean(c *gin.Context)
 }
 
 type api struct {
@@ -22,11 +24,15 @@ type api struct {
 	exportExecutor      export.TaskExecutor
 	defaultExportFields export.Fields
 	exportSeparators    map[string]rune
+	cleanTaskChan       chan<- CleanTask
+	logger              zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	exportExecutor export.TaskExecutor,
+	cleanTaskChan chan<- CleanTask,
+	logger zerolog.Logger,
 ) API {
 	fields := []string{"_id", "name", "type", "enabled", "depends", "impact"}
 	defaultExportFields := make(export.Fields, len(fields))
@@ -43,6 +49,8 @@ func NewApi(
 		defaultExportFields: defaultExportFields,
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
+		cleanTaskChan: cleanTaskChan,
+		logger:        logger,
 	}
 }
 
@@ -201,4 +209,37 @@ func (a *api) DownloadExport(c *gin.Context) {
 	c.Header("Content-Type", "text/csv")
 	c.ContentType()
 	c.File(t.File)
+}
+
+// Clean disabled entities
+// @Summary Clean disabled entities
+// @Description Clean disabled entities
+// @Tags entities
+// @ID entities-clean
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Security BasicAuth
+// @Param request query CleanRequest true "request"
+// @Success 202
+// @Failure 400 {object} common.ErrorResponse
+// @Router /entities/clean [post]
+func (a *api) Clean(c *gin.Context) {
+	var r CleanRequest
+	if err := c.ShouldBindJSON(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	select {
+	case a.cleanTaskChan <- CleanTask{
+		Archive:             r.Archive,
+		ArchiveDependencies: r.ArchiveDependencies,
+		UserID:              c.MustGet(auth.UserKey).(string),
+	}:
+	default:
+		a.logger.Debug().Msg("cleaning in progress, skip")
+	}
+
+	c.Status(http.StatusAccepted)
 }

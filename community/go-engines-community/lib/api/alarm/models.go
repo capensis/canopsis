@@ -9,6 +9,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
+const (
+	OnlyOpened = iota
+	OpenedAndRecentResolved
+	OnlyResolved
+)
+
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
@@ -16,11 +22,12 @@ type ListRequestWithPagination struct {
 
 type ListRequest struct {
 	FilterRequest
-	WithSteps        bool   `form:"with_steps" json:"with_steps"`
-	WithChildren     bool   `form:"with_consequences" json:"with_consequences"`
-	WithInstructions bool   `form:"with_instructions" json:"with_instructions"`
-	Sort             string `form:"sort_dir" json:"sort_dir" binding:"oneoforempty=asc desc"`
-	SortBy           string `form:"sort_key" json:"sort_key"`
+	WithSteps        bool     `form:"with_steps" json:"with_steps"`
+	WithChildren     bool     `form:"with_consequences" json:"with_consequences"`
+	WithInstructions bool     `form:"with_instructions" json:"with_instructions"`
+	MultiSort        []string `form:"multi_sort[]" json:"multi_sort[]"`
+	Sort             string   `form:"sort_dir" json:"sort_dir" binding:"oneoforempty=asc desc"`
+	SortBy           string   `form:"sort_key" json:"sort_key"`
 }
 
 type FilterRequest struct {
@@ -33,8 +40,7 @@ type BaseFilterRequest struct {
 	Search                  string         `form:"search" json:"search"`
 	StartFrom               *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
 	StartTo                 *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
-	OnlyOpened              bool           `form:"opened" json:"opened"`
-	OnlyResolved            bool           `form:"resolved" json:"resolved"`
+	Opened                  *bool          `form:"opened" json:"opened"`
 	OnlyParents             bool           `form:"correlation" json:"correlation"`
 	OnlyManual              bool           `form:"manual" json:"manual"`
 	Category                string         `form:"category" json:"category"`
@@ -42,6 +48,18 @@ type BaseFilterRequest struct {
 	ExcludeInstructionTypes []int          `form:"exclude_instruction_types[]" json:"exclude_instruction_types"`
 	IncludeInstructions     []string       `form:"include_instructions[]" json:"include_instructions"`
 	ExcludeInstructions     []string       `form:"exclude_instructions[]" json:"exclude_instructions"`
+}
+
+func (r FilterRequest) GetOpenedFilter() int {
+	if r.Opened == nil {
+		return OpenedAndRecentResolved
+	}
+
+	if *r.Opened {
+		return OnlyOpened
+	}
+
+	return OnlyResolved
 }
 
 type ExportRequest struct {

@@ -24,7 +24,7 @@
 import Draggable from 'vuedraggable';
 import { MODALS } from '@/constants';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form/array';
 
 import EventFilterRuleActionsListItem from './partials/event-filter-rule-actions-list-item.vue';
 

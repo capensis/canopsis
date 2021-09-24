@@ -24,7 +24,7 @@ import { serviceToForm, formToService } from '@/helpers/forms/service';
 import { submittableMixin } from '@/mixins/submittable';
 import { confirmableModalMixin } from '@/mixins/confirmable-modal';
 import { validationErrorsMixin } from '@/mixins/form/validation-errors';
-import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 
 import ServiceForm from '@/components/other/service/form/service-form.vue';
 

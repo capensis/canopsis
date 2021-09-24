@@ -5,7 +5,7 @@ const { mapActions, mapGetters } = createNamespacedHelpers('remediationInstructi
 /**
  * @mixin
  */
-export default {
+export const entitiesRemediationInstructionsMixin = {
   computed: {
     ...mapGetters({
       remediationInstructions: 'items',

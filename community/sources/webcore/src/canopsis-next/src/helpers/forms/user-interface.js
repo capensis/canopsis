@@ -25,10 +25,12 @@ import { DEFAULT_APP_TITLE, DEFAULT_LOCALE } from '@/config';
  * @property {boolean} allow_change_severity_to_info
  * @property {PopupTimeout} popup_timeout
  * @property {number} [max_matched_items]
+ * @property {number} [check_count_request_timeout]
  */
 /**
  * @typedef {UserInterface} UserInterfaceForm
  * @property {number | string} [max_matched_items]
+ * @property {number | string} [check_count_request_timeout]
  */
 
 /**
@@ -76,6 +78,10 @@ export const formToUserInterface = (form = {}) => {
 
   if (isNumber(form.max_matched_items)) {
     userInterface.max_matched_items = form.max_matched_items;
+  }
+
+  if (isNumber(form.check_count_request_timeout)) {
+    userInterface.check_count_request_timeout = form.check_count_request_timeout;
   }
 
   return userInterface;

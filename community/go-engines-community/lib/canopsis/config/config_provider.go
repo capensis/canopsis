@@ -56,8 +56,10 @@ type AlarmConfig struct {
 	DisplayNameScheme     *template.Template
 	displayNameSchemeText string
 	OutputLength          int
+	LongOutputLength      int
 	// DisableActionSnoozeDelayOnPbh ignores Pbh state to resolve snoozed with Action alarm while is True
 	DisableActionSnoozeDelayOnPbh bool
+	TimeToKeepResolvedAlarms      time.Duration
 }
 
 type TimezoneConfig struct {
@@ -97,16 +99,26 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 		EnableLastEventDate:           parseBool(cfg.Alarm.EnableLastEventDate, "EnableLastEventDate", sectionName, logger),
 		CancelAutosolveDelay:          parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
 		DisableActionSnoozeDelayOnPbh: parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
+		TimeToKeepResolvedAlarms:      parseTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, 0, "TimeToKeepResolvedAlarms", sectionName, logger),
 	}
 	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDefaultNameScheme, "DisplayNameScheme", sectionName, logger)
 
 	if cfg.Alarm.OutputLength <= 0 {
-		logger.Warn().Msgf("OutputLength of %s config section is not set or less than 1: the event's output and long_output won't be truncated", sectionName)
+		logger.Warn().Msg("OutputLength of alarm config section is not set or less than 1: the event's output won't be truncated")
 	} else {
 		conf.OutputLength = cfg.Alarm.OutputLength
 		logger.Info().
 			Int("value", conf.OutputLength).
 			Msgf("OutputLength of %s config section is used", sectionName)
+	}
+
+	if cfg.Alarm.LongOutputLength <= 0 {
+		logger.Warn().Msg("LongOutputLength of alarm config section is not set or less than 1: the event's long_output won't be truncated")
+	} else {
+		conf.LongOutputLength = cfg.Alarm.LongOutputLength
+		logger.Info().
+			Int("value", conf.LongOutputLength).
+			Msg("LongOutputLength of alarm config section is used")
 	}
 
 	return &BaseAlarmConfigProvider{
@@ -171,6 +183,13 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
 	d, ok = parseUpdatedTimeDurationBySeconds(cfg.Alarm.StealthyInterval, p.conf.StealthyInterval, "StealthyInterval", sectionName, p.logger)
 	if ok {
 		p.conf.StealthyInterval = d
+	}
+
+	d, ok = parseUpdatedTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, p.conf.TimeToKeepResolvedAlarms, "TimeToKeepResolvedAlarms", sectionName, p.logger)
+	if ok {
+		p.mx.Lock()
+		p.conf.TimeToKeepResolvedAlarms = d
+		p.mx.Unlock()
 	}
 
 	b, ok := parseUpdatedBool(cfg.Alarm.EnableLastEventDate, p.conf.EnableLastEventDate, "EnableLastEventDate", sectionName, p.logger)

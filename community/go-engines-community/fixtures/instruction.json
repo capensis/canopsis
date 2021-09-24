@@ -3493,5 +3493,27 @@
       }
     ],
     "steps": []
+  },
+  {
+    "_id": "test-instruction-to-stats-executions-get-with-resolved-alarms-1",
+    "type": 0,
+    "name": "test-instruction-to-stats-executions-get-with-resolved-alarms-1-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-executions-get-with-resolved-alarms-1-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203,
+    "users": ["test-user-to-stats-instruction-get"]
   }
 ]

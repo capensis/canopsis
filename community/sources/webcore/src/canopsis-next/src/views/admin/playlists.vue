@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    c-the-page-header {{ $t('common.playlists') }}
+    c-page-header
     playlists-list(
       :playlists="playlists",
       :pending="playlistsPending",

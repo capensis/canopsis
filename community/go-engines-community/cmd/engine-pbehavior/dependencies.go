@@ -2,9 +2,12 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -13,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type Options struct {
@@ -36,6 +38,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
+	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel, err := amqpConnection.Channel()
 	if err != nil {
@@ -228,10 +231,29 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
+	enginePbehavior.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisSession),
+		redis.PbehaviorCleanPeriodicalLockKey,
+		&cleanPeriodicalWorker{
+			PeriodicalInterval:        time.Hour,
+			TimezoneConfigProvider:    timezoneConfigProvider,
+			DataStorageConfigProvider: dataStorageConfigProvider,
+			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
+			PbehaviorCleaner:          pbehavior.NewCleaner(dbClient, logger),
+			Logger:                    logger,
+		},
+		logger,
+	))
 	enginePbehavior.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		timezoneConfigProvider,
+		logger,
+	))
+	enginePbehavior.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		config.NewAdapter(dbClient),
+		dataStorageConfigProvider,
 		logger,
 	))
 

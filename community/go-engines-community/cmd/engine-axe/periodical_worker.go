@@ -22,6 +22,7 @@ type periodicalWorker struct {
 	PeriodicalInterval  time.Duration
 	ChannelPub          libamqp.Channel
 	AlarmService        libalarm.Service
+	AlarmAdapter        libalarm.Adapter
 	Encoder             encoding.Encoder
 	IdleAlarmService    idlealarm.Service
 	AlarmConfigProvider config.AlarmConfigProvider
@@ -40,6 +41,15 @@ func (w *periodicalWorker) Work(parentCtx context.Context) error {
 	defer cancel()
 
 	alarmConfig := w.AlarmConfigProvider.Get()
+	if alarmConfig.TimeToKeepResolvedAlarms > 0 {
+		w.Logger.Debug().Msg("Delete outdated resolved alarms")
+
+		err := w.AlarmAdapter.DeleteResolvedAlarms(ctx, alarmConfig.TimeToKeepResolvedAlarms)
+		if err != nil {
+			return err
+		}
+	}
+
 	// Resolve the alarms whose state is info.
 	w.Logger.Debug().Msg("Closing alarms")
 	closed, err := w.AlarmService.ResolveAlarms(ctx, alarmConfig)

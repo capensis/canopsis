@@ -3,9 +3,10 @@ package alarm
 import (
 	"context"
 	"errors"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"math"
+	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -18,18 +19,24 @@ const (
 	AlarmCollectionName = libmongo.AlarmMongoCollection
 )
 
+const bulkMaxSize = 10000
+
 type mongoAdapter struct {
-	dbCollection libmongo.DbCollection
+	mainDbCollection     libmongo.DbCollection
+	resolvedDbCollection libmongo.DbCollection
+	archivedDbCollection libmongo.DbCollection
 }
 
 func NewAdapter(dbClient libmongo.DbClient) Adapter {
 	return &mongoAdapter{
-		dbCollection: dbClient.Collection(AlarmCollectionName),
+		mainDbCollection:     dbClient.Collection(libmongo.AlarmMongoCollection),
+		resolvedDbCollection: dbClient.Collection(libmongo.ResolvedAlarmMongoCollection),
+		archivedDbCollection: dbClient.Collection(libmongo.ArchivedAlarmMongoCollection),
 	}
 }
 
 func (a mongoAdapter) Insert(ctx context.Context, alarm types.Alarm) error {
-	_, err := a.dbCollection.InsertOne(ctx, alarm)
+	_, err := a.mainDbCollection.InsertOne(ctx, alarm)
 	if err != nil {
 		return err
 	}
@@ -38,7 +45,7 @@ func (a mongoAdapter) Insert(ctx context.Context, alarm types.Alarm) error {
 }
 
 func (a mongoAdapter) Update(ctx context.Context, alarm types.Alarm) error {
-	res, err := a.dbCollection.UpdateOne(ctx, bson.M{"_id": alarm.ID}, bson.M{"$set": alarm})
+	res, err := a.mainDbCollection.UpdateOne(ctx, bson.M{"_id": alarm.ID}, bson.M{"$set": alarm})
 	if err != nil {
 		return err
 	}
@@ -56,7 +63,7 @@ func (a mongoAdapter) PartialUpdateOpen(ctx context.Context, alarm *types.Alarm)
 		return nil
 	}
 
-	res, err := a.dbCollection.UpdateOne(ctx, bson.M{
+	res, err := a.mainDbCollection.UpdateOne(ctx, bson.M{
 		"_id": alarm.ID,
 		"$or": []bson.M{
 			{"v.resolved": nil},
@@ -101,7 +108,7 @@ func (a mongoAdapter) PartialMassUpdateOpen(ctx context.Context, alarms []types.
 		alarms[idx] = alarm
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err = a.dbCollection.BulkWrite(ctx, writeModels)
+			_, err = a.mainDbCollection.BulkWrite(ctx, writeModels)
 			if err != nil {
 				return err
 			}
@@ -111,7 +118,7 @@ func (a mongoAdapter) PartialMassUpdateOpen(ctx context.Context, alarms []types.
 	}
 
 	if len(writeModels) > 0 {
-		_, err = a.dbCollection.BulkWrite(ctx, writeModels)
+		_, err = a.mainDbCollection.BulkWrite(ctx, writeModels)
 	}
 
 	return err
@@ -236,7 +243,7 @@ func (a mongoAdapter) GetOpenedMetaAlarm(ctx context.Context, ruleId string, val
 		query["v.meta_value_path"] = valuePath
 	}
 
-	err := a.dbCollection.FindOne(ctx, query, options.FindOne().SetSort(bson.M{"v.creation_date": -1})).Decode(&al)
+	err := a.mainDbCollection.FindOne(ctx, query, options.FindOne().SetSort(bson.M{"v.creation_date": -1})).Decode(&al)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return al, errt.NewNotFound(err)
@@ -256,7 +263,7 @@ func (a mongoAdapter) GetLastAlarm(ctx context.Context, connector, connectorName
 		"v.connector":      connector,
 		"v.connector_name": connectorName,
 	}
-	err := a.dbCollection.FindOne(ctx, query, options.FindOne().SetSort(bson.M{"v.creation_date": -1})).Decode(&alarm)
+	err := a.mainDbCollection.FindOne(ctx, query, options.FindOne().SetSort(bson.M{"v.creation_date": -1})).Decode(&alarm)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return alarm, errt.NewNotFound(err)
@@ -345,7 +352,7 @@ func (a mongoAdapter) MassUpdate(ctx context.Context, alarms []types.Alarm, notU
 			SetUpdate(bson.M{"$set": alarm})
 	}
 
-	_, err := a.dbCollection.BulkWrite(ctx, models)
+	_, err := a.mainDbCollection.BulkWrite(ctx, models)
 	if err != nil {
 		return err
 	}
@@ -359,7 +366,7 @@ func (a mongoAdapter) MassPartialUpdateOpen(ctx context.Context, updatedAlarm *t
 		return nil
 	}
 
-	res, err := a.dbCollection.UpdateMany(ctx, bson.M{
+	res, err := a.mainDbCollection.UpdateMany(ctx, bson.M{
 		"_id": bson.M{"$in": alarmID},
 		"$or": []bson.M{
 			{"v.resolved": nil},
@@ -381,7 +388,7 @@ func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 	ctx context.Context,
 	time types.CpsTime,
 ) (libmongo.Cursor, error) {
-	return a.dbCollection.Aggregate(ctx, []bson.M{
+	return a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"v.status.val": bson.M{"$ne": types.AlarmStatusNoEvents},
 			"v.resolved":   nil,
@@ -414,7 +421,7 @@ func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 }
 
 func (a mongoAdapter) GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) ([]types.Alarm, error) {
-	cursor, err := a.dbCollection.Aggregate(ctx, []bson.M{
+	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"v.state.val":  bson.M{"$ne": types.AlarmStateOK},
 			"v.status.val": types.AlarmStatusNoEvents,
@@ -456,10 +463,13 @@ func (a mongoAdapter) CountResolvedAlarm(ctx context.Context, entityIDs []string
 }
 
 func (a mongoAdapter) GetLastAlarmByEntityID(ctx context.Context, entityID string) (*types.Alarm, error) {
-	cursor, err := a.dbCollection.Find(ctx, bson.M{"d": entityID}, options.Find().SetSort(bson.M{"t": -1}))
+	cursor, err := a.mainDbCollection.Find(ctx, bson.M{"d": entityID}, options.Find().SetSort(bson.M{"t": -1}))
 	if err != nil {
 		return nil, err
 	}
+
+	defer cursor.Close(ctx)
+
 	if cursor.Next(ctx) {
 		alarm := &types.Alarm{}
 		err := cursor.Decode(alarm)
@@ -470,11 +480,28 @@ func (a mongoAdapter) GetLastAlarmByEntityID(ctx context.Context, entityID strin
 		return alarm, nil
 	}
 
-	return nil, cursor.Close(ctx)
+	resolvedCursor, err := a.resolvedDbCollection.Find(ctx, bson.M{"d": entityID}, options.Find().SetSort(bson.M{"t": -1}))
+	if err != nil {
+		return nil, err
+	}
+
+	defer resolvedCursor.Close(ctx)
+
+	if resolvedCursor.Next(ctx) {
+		alarm := &types.Alarm{}
+		err := resolvedCursor.Decode(alarm)
+		if err != nil {
+			return nil, err
+		}
+
+		return alarm, nil
+	}
+
+	return nil, nil
 }
 
 func (a mongoAdapter) getAlarmsWithEntity(ctx context.Context, filter bson.M) ([]types.AlarmWithEntity, error) {
-	cursor, err := a.dbCollection.Aggregate(ctx, []bson.M{
+	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": filter},
 		{"$project": bson.M{
 			"alarm": "$$ROOT",
@@ -505,7 +532,7 @@ func (a mongoAdapter) getAlarmsWithEntity(ctx context.Context, filter bson.M) ([
 }
 
 func (a mongoAdapter) getAlarms(ctx context.Context, filter bson.M) ([]types.Alarm, error) {
-	cursor, err := a.dbCollection.Find(ctx, filter)
+	cursor, err := a.mainDbCollection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -520,12 +547,12 @@ func (a mongoAdapter) getAlarms(ctx context.Context, filter bson.M) ([]types.Ala
 }
 
 func (a mongoAdapter) getAlarmsCount(ctx context.Context, filter bson.M) (int64, error) {
-	return a.dbCollection.CountDocuments(ctx, filter)
+	return a.mainDbCollection.CountDocuments(ctx, filter)
 }
 
 func (a mongoAdapter) getAlarmWithErr(ctx context.Context, filter bson.M) (types.Alarm, error) {
 	alarm := types.Alarm{}
-	err := a.dbCollection.FindOne(ctx, filter).Decode(&alarm)
+	err := a.mainDbCollection.FindOne(ctx, filter).Decode(&alarm)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return alarm, errt.NewNotFound(err)
@@ -537,4 +564,104 @@ func (a mongoAdapter) getAlarmWithErr(ctx context.Context, filter bson.M) (types
 	alarm.Value.Transform()
 
 	return alarm, nil
+}
+
+func (a mongoAdapter) DeleteResolvedAlarms(ctx context.Context, duration time.Duration) error {
+	_, err := a.mainDbCollection.DeleteMany(ctx, bson.M{
+		"v.resolved": bson.M{"$lte": time.Now().Unix() - int64(duration.Seconds())},
+	})
+
+	return err
+}
+
+func (a mongoAdapter) DeleteArchivedResolvedAlarms(ctx context.Context, duration time.Duration) (int64, error) {
+	return a.archivedDbCollection.DeleteMany(ctx, bson.M{
+		"v.resolved": bson.M{"$lte": time.Now().Unix() - int64(duration.Seconds())},
+	})
+}
+
+func (a *mongoAdapter) CopyAlarmToResolvedCollection(ctx context.Context, alarm types.Alarm) error {
+	_, err := a.resolvedDbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": alarm.ID},
+		bson.M{"$set": alarm},
+		options.Update().SetUpsert(true),
+	)
+
+	return err
+}
+
+func (a *mongoAdapter) ArchiveResolvedAlarms(ctx context.Context, duration time.Duration) (int64, error) {
+	writeModels := make([]mongo.WriteModel, 0, bulkMaxSize)
+	archivedIds := make([]string, 0, bulkMaxSize)
+
+	cursor, err := a.resolvedDbCollection.Find(ctx, bson.M{
+		"v.resolved": bson.M{"$lte": time.Now().Unix() - int64(duration.Seconds())},
+	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	defer cursor.Close(ctx)
+
+	var archived int64
+
+	for cursor.Next(ctx) {
+		var alarm types.Alarm
+		err := cursor.Decode(&alarm)
+		if err != nil {
+			return 0, err
+		}
+
+		writeModels = append(
+			writeModels,
+			mongo.NewUpdateOneModel().
+				SetFilter(bson.M{"_id": alarm.ID}).
+				SetUpdate(bson.M{"$set": alarm}).
+				SetUpsert(true),
+		)
+
+		archivedIds = append(archivedIds, alarm.ID)
+
+		if len(writeModels) == bulkMaxSize {
+			res, err := a.archivedDbCollection.BulkWrite(ctx, writeModels)
+			if err != nil {
+				return 0, err
+			}
+
+			archived = archived + res.UpsertedCount
+
+			_, err = a.resolvedDbCollection.DeleteMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": archivedIds}},
+			)
+			if err != nil {
+				return 0, err
+			}
+
+			writeModels = writeModels[:0]
+			archivedIds = archivedIds[:0]
+		}
+	}
+
+	if len(writeModels) != 0 {
+		res, err := a.archivedDbCollection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return 0, err
+		}
+
+		archived = archived + res.UpsertedCount
+
+		_, err = a.resolvedDbCollection.DeleteMany(
+			ctx,
+			bson.M{"_id": bson.M{"$in": archivedIds}},
+		)
+
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return archived, nil
 }

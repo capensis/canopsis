@@ -3,7 +3,12 @@
     v-progress-circular(indeterminate, color="primary")
   v-flex(v-else, offset-xs1, md10)
     v-form(@submit.prevent="submit")
-      storage-settings-form(v-model="form", :history="history")
+      storage-settings-form(
+        v-model="form",
+        :history="history",
+        @clean-entities="cleanEntities"
+      )
+      v-divider.mt-3
       v-layout.mt-3(row, justify-end)
         v-btn.primary.mr-0(
           :disabled="isDisabled",
@@ -13,11 +18,14 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import { formToDataStorageSettings, dataStorageSettingsToForm } from '@/helpers/forms/data-storage';
 
 import { submittableMixin } from '@/mixins/submittable';
 import { validationErrorsMixin } from '@/mixins/form/validation-errors';
 import { entitiesDataStorageSettingsMixin } from '@/mixins/entities/data-storage';
+import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 
 import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form.vue';
 
@@ -30,6 +38,7 @@ export default {
     submittableMixin(),
     validationErrorsMixin(),
     entitiesDataStorageSettingsMixin,
+    entitiesContextEntityMixin,
   ],
   data() {
     return {
@@ -44,6 +53,27 @@ export default {
     this.history = dataStorageSettings.history;
   },
   methods: {
+    cleanEntities() {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          title: this.$t('storageSetting.entity.confirmation.title'),
+          text: this.form.entity.archive
+            ? this.$t('storageSetting.entity.confirmation.archive')
+            : this.$t('storageSetting.entity.confirmation.delete'),
+          action: async () => {
+            await this.cleanEntitiesData({ data: this.form.entity });
+
+            this.$popups.success({ text: this.$t('success.default') });
+
+            const { history } = await this.fetchDataStorageSettingsWithoutStore();
+
+            this.history = history;
+          },
+        },
+      });
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 

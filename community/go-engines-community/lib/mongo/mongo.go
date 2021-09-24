@@ -62,6 +62,11 @@ const (
 	// Instruction statistics collections
 	InstructionWeekStatsMongoCollection = "instruction_week_stats"
 	InstructionModStatsMongoCollection  = "instruction_mod_stats"
+	// Data storage alarm collections
+	ResolvedAlarmMongoCollection = "resolved_alarms"
+	ArchivedAlarmMongoCollection = "archived_alarms"
+	// Data storage entity collections
+	ArchivedEntitiesMongoCollection = "archived_entities"
 )
 
 type SingleResultHelper interface {

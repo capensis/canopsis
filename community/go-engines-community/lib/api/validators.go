@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
@@ -11,8 +12,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
@@ -86,6 +87,9 @@ func RegisterValidators(client mongo.DbClient) {
 		pbhExistReasonValidator.Validate(ctx, sl)
 		pbhExistTypeValidator.Validate(ctx, sl)
 	}, pbehavior.EditRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		pbhValidator.ValidateEditRequest(ctx, sl)
+	}, pbehavior.PatchRequest{})
 
 	pbhReasonUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "ID")
 	pbhReasonUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Name")
@@ -223,5 +227,6 @@ func RegisterValidators(client mongo.DbClient) {
 	}, idlerule.EditRequest{})
 	v.RegisterStructValidation(idlerule.ValidateCountPatternRequest, idlerule.CountByPatternRequest{})
 
+	v.RegisterStructValidation(alarm.ValidateListRequest, alarm.ListRequest{})
 	v.RegisterStructValidation(datastorage.ValidateConfig, libdatastorage.Config{})
 }

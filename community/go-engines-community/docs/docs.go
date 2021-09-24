@@ -175,11 +175,6 @@ var doc = `{
                         "in": "query"
                     },
                     {
-                        "type": "boolean",
-                        "name": "resolved",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "search",
                         "in": "query"
@@ -367,7 +362,7 @@ var doc = `{
                         "BasicAuth": []
                     }
                 ],
-                "description": "Get paginated list of alarms",
+                "description": "Get paginated list of alarms. Use parameters \"multi_sort[]=field_1,asc\u0026multi_sort[]=field_2,desc\u0026multi_sort[]=field_3,asc\" to sort list by multiple fields. \"sort_key\", \"sort_dir\" are left for compatibility with older ways of sorting",
                 "consumes": [
                     "application/json"
                 ],
@@ -451,6 +446,15 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "multi_sort[]",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "name": "opened",
                         "in": "query"
@@ -463,11 +467,6 @@ var doc = `{
                     {
                         "type": "boolean",
                         "name": "paginate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "resolved",
                         "in": "query"
                     },
                     {
@@ -1506,6 +1505,54 @@ var doc = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/entities/clean": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Clean disabled entities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Clean disabled entities",
+                "operationId": "entities-clean",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "name": "archive",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "archive_dependencies",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
                         }
                     }
                 }
@@ -4800,6 +4847,66 @@ var doc = `{
                         }
                     }
                 }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Patch partial set of behavior attributes by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Patch partial set of behavior attributes by id",
+                "operationId": "pbehaviors-patch-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pbehavior id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.PatchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/pbehaviors/{id}/entities": {
@@ -7476,9 +7583,6 @@ var doc = `{
                 "opened": {
                     "type": "boolean"
                 },
-                "resolved": {
-                    "type": "boolean"
-                },
                 "search": {
                     "type": "string"
                 },
@@ -7559,9 +7663,6 @@ var doc = `{
                     "type": "boolean"
                 },
                 "opened": {
-                    "type": "boolean"
-                },
-                "resolved": {
                     "type": "boolean"
                 },
                 "search": {
@@ -7650,6 +7751,12 @@ var doc = `{
                 "manual": {
                     "type": "boolean"
                 },
+                "multi_sort[]": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "opened": {
                     "type": "boolean"
                 },
@@ -7657,9 +7764,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "paginate": {
-                    "type": "boolean"
-                },
-                "resolved": {
                     "type": "boolean"
                 },
                 "search": {
@@ -7996,6 +8100,9 @@ var doc = `{
                 }
             }
         },
+        "bson.M": {
+            "$ref": "#/definitions/primitive.M"
+        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -8185,7 +8292,29 @@ var doc = `{
         "datastorage.Config": {
             "type": "object",
             "properties": {
+                "alarm": {
+                    "type": "object",
+                    "properties": {
+                        "archive_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        },
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
                 "junit": {
+                    "type": "object",
+                    "properties": {
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
+                "pbehavior": {
                     "type": "object",
                     "properties": {
                         "delete_after": {
@@ -8225,11 +8354,50 @@ var doc = `{
         "datastorage.History": {
             "type": "object",
             "properties": {
+                "alarm": {
+                    "type": "object",
+                    "$ref": "#/definitions/datastorage.HistoryWithCount"
+                },
+                "entity": {
+                    "type": "object",
+                    "$ref": "#/definitions/datastorage.HistoryWithCount"
+                },
                 "junit": {
+                    "type": "integer"
+                },
+                "pbehavior": {
                     "type": "integer"
                 },
                 "remediation": {
                     "type": "integer"
+                }
+            }
+        },
+        "datastorage.HistoryWithCount": {
+            "type": "object",
+            "properties": {
+                "archived": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.CleanRequest": {
+            "type": "object",
+            "required": [
+                "archive"
+            ],
+            "properties": {
+                "archive": {
+                    "type": "boolean"
+                },
+                "archive_dependencies": {
+                    "type": "boolean"
                 }
             }
         },
@@ -9249,6 +9417,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmStepRefPattern"
                 },
+                "children": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringArrayPattern"
+                },
                 "component": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
@@ -9306,6 +9478,10 @@ var doc = `{
                 "output": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "parents": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringArrayPattern"
                 },
                 "resolved": {
                     "type": "object",
@@ -9678,6 +9854,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.OptionalStringArray"
                 },
+                "isEmpty": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalBool"
+                },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
@@ -9692,6 +9872,31 @@ var doc = `{
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
                     "$ref": "#/definitions/types.OptionalRegexp"
+                },
+                "unexpectedFields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.StringArrayPattern": {
+            "type": "object",
+            "properties": {
+                "hasEvery": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "hasNot": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "hasOneOf": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "isEmpty": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalBool"
                 },
                 "unexpectedFields": {
                     "type": "object",
@@ -9915,6 +10120,47 @@ var doc = `{
                 }
             }
         },
+        "pbehavior.PatchRequest": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.ExdateRequest"
+                    }
+                },
+                "filter": {
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "pbehavior.Response": {
             "type": "object",
             "properties": {
@@ -9953,6 +10199,9 @@ var doc = `{
                 "is_active_status": {
                     "description": "IsActiveStatus represents if pbehavior is in action for current time.",
                     "type": "boolean"
+                },
+                "last_alarm_date": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -10352,6 +10601,10 @@ var doc = `{
                     "type": "integer"
                 }
             }
+        },
+        "primitive.M": {
+            "type": "object",
+            "additionalProperties": true
         },
         "role.CreateRequest": {
             "type": "object",
@@ -11129,6 +11382,12 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "related_parents": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "resolved": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
@@ -11237,6 +11496,19 @@ var doc = `{
                 },
                 "unit": {
                     "type": "string"
+                }
+            }
+        },
+        "types.OptionalBool": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the bool. It should only be taken into\naccount if Set is true.",
+                    "type": "boolean"
                 }
             }
         },
