@@ -1,7 +1,6 @@
 package api
 
 import (
-	"git.canopsis.net/canopsis/go-engines/lib/api/logger"
 	"time"
 
 	"git.canopsis.net/canopsis/go-engines/lib/api/account"
@@ -11,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/go-engines/lib/api/entity"
 	"git.canopsis.net/canopsis/go-engines/lib/api/export"
 	"git.canopsis.net/canopsis/go-engines/lib/api/heartbeat"
+	"git.canopsis.net/canopsis/go-engines/lib/api/logger"
 	"git.canopsis.net/canopsis/go-engines/lib/api/middleware"
 	"git.canopsis.net/canopsis/go-engines/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/go-engines/lib/api/pbehaviorcomment"
@@ -210,6 +210,10 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
 				pbehaviorApi.Update)
+			pbehaviorRouter.PATCH(
+				"/:id",
+				middleware.Authorize(authObjPbh, permUpdate, enforcer),
+				pbehaviorApi.Patch)
 			pbehaviorRouter.DELETE(
 				"/:id",
 				middleware.Authorize(authObjPbh, permDelete, enforcer),

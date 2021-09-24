@@ -492,15 +492,6 @@ definitions:
       type:
         type: string
     type: object
-  entity.Info:
-    properties:
-      description:
-        type: string
-      name:
-        type: string
-      value:
-        type: object
-    type: object
   entity.ExportRequest:
     properties:
       active_columns[]:
@@ -524,6 +515,15 @@ definitions:
         type: string
       status:
         type: integer
+    type: object
+  entity.Info:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      value:
+        type: object
     type: object
   heartbeat.BulkDeleteRequest:
     properties:
@@ -587,17 +587,7 @@ definitions:
     type: object
   heartbeat.Heartbeat:
     properties:
-      _id:
-        type: string
-      author:
-        type: string
-      created:
-        type: integer
-      description:
-        type: string
-      expected_interval:
-        type: integer
-      name:
+      expectedInterval:
         type: string
       output:
         type: string
@@ -605,8 +595,6 @@ definitions:
         additionalProperties:
           type: string
         type: object
-      updated:
-        type: integer
     type: object
   heartbeat.UpdateRequest:
     properties:
@@ -804,6 +792,9 @@ definitions:
       canceled:
         $ref: '#/definitions/pattern.AlarmStepRefPattern'
         type: object
+      children:
+        $ref: '#/definitions/pattern.StringArrayPattern'
+        type: object
       component:
         $ref: '#/definitions/pattern.StringPattern'
         type: object
@@ -846,6 +837,9 @@ definitions:
         type: object
       output:
         $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      parents:
+        $ref: '#/definitions/pattern.StringArrayPattern'
         type: object
       resolved:
         $ref: '#/definitions/pattern.TimeRefPattern'
@@ -1091,6 +1085,9 @@ definitions:
       hasOneOf:
         $ref: '#/definitions/utils.OptionalStringArray'
         type: object
+      isEmpty:
+        $ref: '#/definitions/utils.OptionalBool'
+        type: object
       lt:
         $ref: '#/definitions/utils.OptionalInt64'
         description: |-
@@ -1108,6 +1105,24 @@ definitions:
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        type: object
+    type: object
+  pattern.StringArrayPattern:
+    properties:
+      hasEvery:
+        $ref: '#/definitions/utils.OptionalStringArray'
+        type: object
+      hasNot:
+        $ref: '#/definitions/utils.OptionalStringArray'
+        type: object
+      hasOneOf:
+        $ref: '#/definitions/utils.OptionalStringArray'
+        type: object
+      isEmpty:
+        $ref: '#/definitions/utils.OptionalBool'
         type: object
       unexpectedFields:
         additionalProperties: true
@@ -1278,41 +1293,79 @@ definitions:
     - tstart
     - type
     type: object
-  pbehavior.Filter:
+  pbehavior.Exdate:
+    properties:
+      begin:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      end:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      type:
+        type: string
     type: object
   pbehavior.PBehavior:
     properties:
-      _id:
-        type: string
       author:
         type: string
       comments:
         $ref: '#/definitions/pbehavior.Comments'
         type: object
       created:
-        type: integer
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       enabled:
         type: boolean
       exceptions:
         items:
-          $ref: '#/definitions/pbehaviorexception.Exception'
+          type: string
         type: array
       exdates:
         items:
-          $ref: '#/definitions/pbehaviorexception.Exdate'
+          $ref: '#/definitions/pbehavior.Exdate'
         type: array
       filter:
-        $ref: '#/definitions/pbehavior.Filter'
-        type: object
-      is_active_status:
-        description: IsActiveStatus represents if pbehavior is in action for current
-          time.
-        type: boolean
+        type: string
+      id:
+        type: string
       name:
         type: string
       reason:
-        $ref: '#/definitions/pbehaviorreason.Reason'
+        type: string
+      rrule:
+        type: string
+      start:
+        $ref: '#/definitions/types.CpsTime'
         type: object
+      stop:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      type:
+        type: string
+      updated:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+    type: object
+  pbehavior.PatchRequest:
+    properties:
+      author:
+        type: string
+      enabled:
+        type: boolean
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      filter:
+        type: object
+      name:
+        type: string
+      reason:
+        type: string
       rrule:
         type: string
       tstart:
@@ -1320,10 +1373,7 @@ definitions:
       tstop:
         type: integer
       type:
-        $ref: '#/definitions/pbehavior.Type'
-        type: object
-      updated:
-        type: integer
+        type: string
     type: object
   pbehavior.Type:
     properties:
@@ -1658,6 +1708,17 @@ definitions:
       type_name:
         description: TypeName is Name of pbehavior.Type.
         type: string
+    type: object
+  utils.OptionalBool:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the bool. It should only be taken into
+          account if Set is true.
+        type: boolean
     type: object
   utils.OptionalInt64:
     properties:
@@ -3370,6 +3431,44 @@ paths:
       - ApiKeyAuth: []
       - BasicAuth: []
       summary: Get pbehavior by id
+      tags:
+      - pbehaviors
+    patch:
+      consumes:
+      - application/json
+      description: Patch partial set of behavior attributes by id
+      operationId: pbehaviors-patch-by-id
+      parameters:
+      - description: pbehavior id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehavior.PatchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehavior.PBehavior'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Patch partial set of behavior attributes by id
       tags:
       - pbehaviors
     put:
