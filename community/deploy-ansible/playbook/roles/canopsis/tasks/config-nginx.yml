@@ -45,3 +45,17 @@
     owner: root
     group: root
     mode: 0644
+
+- name: Deploy Rundeck configuration file for Nginx
+  template:
+    src: nginx/rundeck.j2
+    dest: /etc/nginx/rundeck.inc
+    owner: root
+    group: root
+    mode: 0644
+  vars:
+    # Note: requiring a local resolver to resolve localhost seems excessive, so just give 127.0.0.1
+    # to Nginx in this case, which should be OK in most setups.
+    RUNDECK_GRAILS_URL: "http://127.0.0.1/rundeck"
+    # Note: this will do, as a default catch-all value, as long as we don't enable HTTPS by default.
+    NGINX_URL: "http://nginx"
