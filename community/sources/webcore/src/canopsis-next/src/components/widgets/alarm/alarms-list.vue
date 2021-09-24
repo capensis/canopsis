@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(data-test="tableWidget")
+  div
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
         c-advanced-search-field(
@@ -18,7 +18,6 @@
         )
       v-flex
         filter-selector(
-          data-test="tableFilterSelector",
           :label="$t('settings.selectAFilter')",
           :filters="viewFilters",
           :locked-filters="widgetViewFilters",
@@ -41,7 +40,6 @@
         )
       v-flex
         v-chip.primary.white--text(
-          data-test="resetAlarmsDateInterval",
           v-if="activeRange",
           close,
           label,
@@ -63,7 +61,6 @@
         )
     v-layout(row, wrap, align-center)
       c-pagination(
-        data-test="topPagination",
         v-if="hasColumns",
         :page="query.page",
         :limit="query.limit",
@@ -97,13 +94,11 @@
 </template>
 
 <script>
-import { omit, pick, isEmpty, isObject } from 'lodash';
+import { omit, pick, isEmpty, isObject, isEqual } from 'lodash';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
-
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -118,6 +113,8 @@ import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widge
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
 import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
@@ -287,18 +284,20 @@ export default {
 
     async fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
       if (this.hasColumns) {
-        const query = this.getQuery();
+        const params = this.getQuery();
 
         if ((isPeriodicRefresh || isQueryNonceUpdate) && !isEmpty(this.$refs.alarmsTable.expanded)) {
-          query.with_steps = true;
+          params.with_steps = true;
         }
 
-        await this.fetchAlarmsList({
-          widgetId: this.widget._id,
-          params: query,
-        });
+        if (!this.alarmsPending || !isEqual(params, this.alarmsFetchingParams)) {
+          await this.fetchAlarmsList({
+            widgetId: this.widget._id,
+            params,
+          });
 
-        this.refreshExpanded();
+          this.refreshExpanded();
+        }
       }
     },
 
