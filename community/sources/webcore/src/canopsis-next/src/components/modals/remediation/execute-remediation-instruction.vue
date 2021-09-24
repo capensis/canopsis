@@ -36,7 +36,7 @@ export default {
     authMixin,
     entitiesRemediationInstructionExecutionMixin,
     entitiesInfoMixin,
-    pollingMixinCreator({ method: 'pingInstructionExecution', startOnMount: true }),
+    pollingMixinCreator({ method: 'pingInstructionExecution' }),
   ],
   data() {
     const { execution } = this.modal.config.assignedInstruction;
