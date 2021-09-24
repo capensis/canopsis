@@ -197,6 +197,7 @@ export default {
     graph: 'Graph | Graphs',
     systemStatus: 'System status',
     downloadAsPng: 'Download as PNG',
+    rating: 'Rating',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -2159,7 +2160,6 @@ export default {
     executionCount: 'Number of\nexecutions',
     alarmStates: 'Alarms affected by state',
     okAlarmStates: 'Number of resulting\nOK states',
-    rating: 'Rating',
     notAvailable: 'N/a',
     instructionChanged: 'The instruction has been changed',
     actions: {
@@ -2518,6 +2518,10 @@ export default {
       title: 'Healthcheck',
       message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
     },
+    [USERS_PERMISSIONS.technical.kpi]: {
+      title: 'KPI',
+      message: '',
+    },
 
     /**
      * Admin general
@@ -2578,6 +2582,14 @@ export default {
     tooltips: {
       maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
       checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',
+    },
+  },
+
+  kpi: {
+    tabs: {
+      dataSlices: 'Data slices',
+      detailedMetrics: 'Detailed metrics',
+      sliPatterns: 'SLI patterns',
     },
   },
 

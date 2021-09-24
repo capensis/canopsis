@@ -46,6 +46,9 @@
         "models_healthcheck": {
           "checksum": 1
         },
+        "models_kpi": {
+          "checksum": 1
+        },
         "models_notification_instructionStats": {
           "checksum": 15
         },
