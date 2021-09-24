@@ -121,6 +121,7 @@ export default {
     permissionsWithDefaultType() {
       return [
         USERS_PERMISSIONS.technical.healthcheck,
+        USERS_PERMISSIONS.technical.kpi,
       ];
     },
   },
