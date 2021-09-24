@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 import {
   ENTITIES_STATES,
   EVENT_DEFAULT_ORIGIN,
@@ -7,6 +5,8 @@ import {
   EVENT_INITIATORS,
   MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS,
 } from '@/constants';
+
+import { getNowTimestamp } from '@/helpers/date/date';
 
 /**
  * @typedef {
@@ -106,7 +106,7 @@ export const prepareEventByAlarm = (type, alarm, data = {}) => {
     state: alarm.v.state.val,
     event_type: type,
     crecord_type: type,
-    timestamp: moment().unix(),
+    timestamp: getNowTimestamp(),
     resource: alarm.v.resource,
     ref_rk: `${alarm.v.resource}/${alarm.v.component}`,
     origin: EVENT_DEFAULT_ORIGIN,

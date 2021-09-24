@@ -1,5 +1,4 @@
 import { get, omit, cloneDeep, isObject, groupBy } from 'lodash';
-import moment from 'moment';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
@@ -8,7 +7,7 @@ import {
   WIDGET_TYPES,
   ALARM_STATS_CALENDAR_COLORS,
   STATS_TYPES,
-  STATS_DURATION_UNITS,
+  TIME_UNITS,
   QUICK_RANGES,
   STATS_DISPLAY_MODE,
   STATS_DISPLAY_MODE_PARAMETERS,
@@ -27,6 +26,7 @@ import {
 
 import { widgetToForm } from '@/helpers/forms/widgets/common';
 import { alarmListWidgetDefaultParametersToForm } from '@/helpers/forms/widgets/alarm';
+import { convertDateToString } from '@/helpers/date/date';
 
 import uuid from './uuid';
 import uid from './uid';
@@ -157,7 +157,7 @@ export function generateWidgetByType(type) {
         mfilter: {},
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: QUICK_RANGES.thisMonthSoFar.start,
           tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
@@ -171,7 +171,7 @@ export function generateWidgetByType(type) {
         mfilter: {},
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: QUICK_RANGES.thisMonthSoFar.start,
           tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
@@ -185,7 +185,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: QUICK_RANGES.thisMonthSoFar.start,
           tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
@@ -213,7 +213,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: QUICK_RANGES.thisMonthSoFar.start,
           tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
@@ -239,7 +239,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: 'now/d',
           tstop: 'now/d',
         },
@@ -260,7 +260,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: QUICK_RANGES.thisMonthSoFar.start,
           tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
@@ -459,5 +459,5 @@ export const getIdFromEntity = (entity, idField = '_id') => (isObject(entity) ? 
 export const groupAlarmSteps = (steps) => {
   const orderedSteps = [...steps].reverse();
 
-  return groupBy(orderedSteps, step => moment.unix(step.t).format(DATETIME_FORMATS.short));
+  return groupBy(orderedSteps, step => convertDateToString(step.t, DATETIME_FORMATS.short));
 };

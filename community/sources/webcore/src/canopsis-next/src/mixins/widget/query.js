@@ -1,9 +1,12 @@
 import { omit, pick, isEqual } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, SORT_ORDERS } from '@/constants';
+import { DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
 
-import { dateParse } from '@/helpers/date/date-intervals';
+import {
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from '@/helpers/date/date-intervals';
 
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
@@ -93,15 +96,11 @@ export default {
       } = this.query;
 
       if (tstart) {
-        const convertedTstart = dateParse(tstart, DATETIME_INTERVAL_TYPES.start, DATETIME_FORMATS.dateTimePicker);
-
-        query.tstart = convertedTstart.unix();
+        query.tstart = convertStartDateIntervalToTimestamp(tstart, DATETIME_FORMATS.dateTimePicker);
       }
 
       if (tstop) {
-        const convertedTstop = dateParse(tstop, DATETIME_INTERVAL_TYPES.stop, DATETIME_FORMATS.dateTimePicker);
-
-        query.tstop = convertedTstop.unix();
+        query.tstop = convertStopDateIntervalToTimestamp(tstop, DATETIME_FORMATS.dateTimePicker);
       }
 
       if (sortKey) {

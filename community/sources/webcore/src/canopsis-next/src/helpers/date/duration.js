@@ -223,3 +223,29 @@ export const convertDurationToString = (duration, format = DEFAULT_DURATION_FORM
 
   return moment.duration(durationValue, unit).format(resultFormat, { trim: 'both final' }) || '0s';
 };
+
+/**
+ * Convert duration to interval object
+ *
+ * @param duration
+ * @return {{unit: string, interval: number}}
+ */
+export const convertDurationToIntervalObject = (duration) => {
+  const durationUnits = [
+    TIME_UNITS.year,
+    TIME_UNITS.month,
+    TIME_UNITS.week,
+    TIME_UNITS.week,
+    TIME_UNITS.day,
+    TIME_UNITS.hour,
+    TIME_UNITS.minute,
+    TIME_UNITS.second,
+  ];
+
+  const durationType = durationUnits.find(unit => moment.duration(duration, 'seconds').as(unit) % 1 === 0);
+
+  return {
+    interval: moment.duration(duration, 'seconds').as(durationType),
+    unit: durationType,
+  };
+};

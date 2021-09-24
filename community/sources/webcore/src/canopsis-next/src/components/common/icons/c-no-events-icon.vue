@@ -5,11 +5,7 @@
 </template>
 
 <script>
-import moment from 'moment-timezone';
-
-import { TIME_UNITS } from '@/constants';
-
-import { convertTimestampToMoment } from '@/helpers/date/date';
+import { getDiffBetweenDates } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 
 export default {
@@ -49,7 +45,7 @@ export default {
   },
   computed: {
     durationDiff() {
-      return moment().diff(convertTimestampToMoment(this.value), TIME_UNITS.second);
+      return getDiffBetweenDates(Date.now(), this.value);
     },
 
     message() {

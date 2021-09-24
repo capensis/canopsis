@@ -13,12 +13,15 @@
 </template>
 
 <script>
-import { MODALS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
+import { MODALS, DATETIME_FORMATS, QUICK_RANGES } from '@/constants';
 
-import { dateParse } from '@/helpers/date/date-intervals';
 import {
-  convertDateToEndOfDayMoment,
-  convertDateToStartOfDayMoment,
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from '@/helpers/date/date-intervals';
+import {
+  convertDateToEndOfDayTimestamp,
+  convertDateToStartOfDayTimestamp,
 } from '@/helpers/date/date';
 
 import { authMixin } from '@/mixins/auth';
@@ -70,16 +73,14 @@ export default {
       const params = this.getQuery();
       params.with_flags = true;
 
-      params.from = convertDateToStartOfDayMoment(dateParse(
+      params.from = convertDateToStartOfDayTimestamp(convertStartDateIntervalToTimestamp(
         this.pagination.interval.from,
-        DATETIME_INTERVAL_TYPES.start,
         DATETIME_FORMATS.datePicker,
-      )).unix();
-      params.to = convertDateToEndOfDayMoment(dateParse(
+      ));
+      params.to = convertDateToEndOfDayTimestamp(convertStopDateIntervalToTimestamp(
         this.pagination.interval.to,
-        DATETIME_INTERVAL_TYPES.stop,
         DATETIME_FORMATS.datePicker,
-      )).unix();
+      ));
 
       this.fetchRemediationInstructionStatsList({ params });
     },

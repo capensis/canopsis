@@ -26,12 +26,12 @@
 
 <script>
 import { get, isEmpty, omit } from 'lodash';
-import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 
 import { DATETIME_FORMATS, MODALS, MAX_LIMIT } from '@/constants';
 
+import { convertDateToString } from '@/helpers/date/date';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/dayspan';
 import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 
@@ -161,8 +161,8 @@ export default {
 
         opened: this.widget.parameters.opened,
         liveReporting: {
-          tstart: moment.unix(meta.tstart).format(DATETIME_FORMATS.dateTimePicker),
-          tstop: moment.unix(meta.tstop).format(DATETIME_FORMATS.dateTimePicker),
+          tstart: convertDateToString(meta.tstart, DATETIME_FORMATS.dateTimePicker),
+          tstop: convertDateToString(meta.tstop, DATETIME_FORMATS.dateTimePicker),
         },
       };
 
