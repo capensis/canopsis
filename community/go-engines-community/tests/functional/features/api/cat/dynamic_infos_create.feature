@@ -22,6 +22,7 @@ Feature: Create an dynamic-infos
       "name": "dynamic_infos_3",
       "alarm_patterns": null,
       "description": "test dynamic infos",
+      "enabled": true,
       "infos": [
         {
           "name": "type",
@@ -58,6 +59,7 @@ Feature: Create an dynamic-infos
       "author": "root",
       "alarm_patterns": null,
       "description": "test dynamic infos",
+      "enabled": true,
       "infos": [
         {
           "name": "type",
@@ -95,6 +97,7 @@ Feature: Create an dynamic-infos
       "author": "root",
       "alarm_patterns": null,
       "description": "test dynamic infos",
+      "enabled": true,
       "infos": [
         {
           "name": "type",
@@ -137,6 +140,7 @@ Feature: Create an dynamic-infos
           "author": "root",
           "alarm_patterns": null,
           "description": "test dynamic infos",
+          "enabled": true,
           "infos": [
             {
               "name": "type",
@@ -182,6 +186,7 @@ Feature: Create an dynamic-infos
       "name": "Consigne sur réception mail Mainteneur",
       "alarm_patterns": null,
       "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+      "enabled": true,
       "infos": [
         {
           "name": "name"
@@ -220,6 +225,7 @@ Feature: Create an dynamic-infos
       "author": "root",
       "alarm_patterns": null,
       "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+      "enabled": true,
       "infos": [
         {
           "name": "name",
@@ -252,6 +258,7 @@ Feature: Create an dynamic-infos
       "name": "Consigne sur réception mail Mainteneur",
       "alarm_patterns": null,
       "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+      "enabled": true,
       "infos": [
         {
           "name": "name",
@@ -283,6 +290,7 @@ Feature: Create an dynamic-infos
       "name": "Consigne sur réception mail Mainteneur",
       "alarm_patterns": null,
       "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+      "enabled": true,
       "infos": [
         {
           "name": "name",
@@ -318,6 +326,7 @@ Feature: Create an dynamic-infos
               }
       ],
       "description" : "Desc",
+      "enabled": true,
       "infos" : [
               {
                       "name" : "Name",
