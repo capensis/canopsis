@@ -5677,7 +5677,7 @@ var doc = `{
                 }
             }
         },
-        "/scenarios/check_priority": {
+        "/scenarios/check-priority": {
             "post": {
                 "security": [
                     {
@@ -5726,7 +5726,7 @@ var doc = `{
                 }
             }
         },
-        "/scenarios/minimal_priority": {
+        "/scenarios/minimal-priority": {
             "get": {
                 "security": [
                     {

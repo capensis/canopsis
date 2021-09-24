@@ -5661,7 +5661,7 @@
                 }
             }
         },
-        "/scenarios/check_priority": {
+        "/scenarios/check-priority": {
             "post": {
                 "security": [
                     {
@@ -5710,7 +5710,7 @@
                 }
             }
         },
-        "/scenarios/minimal_priority": {
+        "/scenarios/minimal-priority": {
             "get": {
                 "security": [
                     {

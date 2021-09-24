@@ -8,6 +8,8 @@ import (
 	"sync"
 )
 
+const inf = 0
+
 type priorityIntervals struct {
 	intervals  map[int]int // key - lower bound, value - upper bound
 	sortedKeys []int       // map may be not sorted, so we have an additional slice to keep keys sorted.
@@ -26,7 +28,7 @@ type PriorityIntervals interface {
 
 func NewPriorityIntervals() PriorityIntervals {
 	return &priorityIntervals{
-		intervals:  map[int]int{1: 0}, // 0 means +inf
+		intervals:  map[int]int{1: inf},
 		sortedKeys: []int{1},
 		mx:         sync.Mutex{},
 	}
@@ -36,7 +38,7 @@ func (pi *priorityIntervals) Recalculate(ctx context.Context, collection mongo.D
 	pi.mx.Lock()
 	defer pi.mx.Unlock()
 
-	pi.intervals = map[int]int{1: 0}
+	pi.intervals = map[int]int{1: inf}
 	pi.sortedKeys = []int{1}
 
 	var objPriority struct {
@@ -48,11 +50,13 @@ func (pi *priorityIntervals) Recalculate(ctx context.Context, collection mongo.D
 		return err
 	}
 
+	defer cursor.Close(ctx)
+
 	for cursor.Next(ctx) {
 		err := cursor.Decode(&objPriority)
 		if err != nil {
 			// if err, don't save what was calculated, since it won't be valid
-			pi.intervals = map[int]int{1: 0}
+			pi.intervals = map[int]int{1: inf}
 			pi.sortedKeys = []int{1}
 
 			return err
@@ -61,7 +65,7 @@ func (pi *priorityIntervals) Recalculate(ctx context.Context, collection mongo.D
 		pi.takePriority(objPriority.Priority)
 	}
 
-	return cursor.Close(ctx)
+	return nil
 }
 
 func (pi *priorityIntervals) Take(priority int) {
@@ -130,7 +134,7 @@ func (pi *priorityIntervals) takePriority(priority int) {
 	leftUpperBound := pi.intervals[leftLowerBound]
 
 	// Check if we've already take this point: between intervals case
-	if leftUpperBound != 0 && leftUpperBound < priority {
+	if leftUpperBound != inf && leftUpperBound < priority {
 		// can't take an already taken point
 		return
 	}
@@ -195,7 +199,7 @@ func (pi *priorityIntervals) restorePriority(priority int) {
 		return
 	}
 
-	if leftUpperBound == 0 || leftUpperBound > priority {
+	if leftUpperBound == inf || leftUpperBound > priority {
 		//we're already inside the interval, just return
 		return
 	}

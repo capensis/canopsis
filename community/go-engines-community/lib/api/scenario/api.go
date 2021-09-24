@@ -260,7 +260,7 @@ func (a *api) Delete(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Success 200 {object} GetMinimalPriorityResponse
-// @Router /scenarios/minimal_priority [get]
+// @Router /scenarios/minimal-priority [get]
 func (a *api) GetMinimalPriority(c *gin.Context) {
 	c.JSON(http.StatusOK, GetMinimalPriorityResponse{
 		Priority: a.priorityIntervals.GetMinimal(),
@@ -279,7 +279,7 @@ func (a *api) GetMinimalPriority(c *gin.Context) {
 // @Param body body CheckPriorityRequest true "body"
 // @Success 200 {object} CheckPriorityResponse
 // @Failure 400 {object} common.ValidationErrorResponse
-// @Router /scenarios/check_priority [post]
+// @Router /scenarios/check-priority [post]
 func (a *api) CheckPriority(c *gin.Context) {
 	request := CheckPriorityRequest{}
 	if err := c.ShouldBind(&request); err != nil {

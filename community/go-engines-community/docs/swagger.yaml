@@ -7069,7 +7069,7 @@ paths:
       summary: Update scenario by id
       tags:
       - scenarios
-  /scenarios/check_priority:
+  /scenarios/check-priority:
     post:
       consumes:
       - application/json
@@ -7099,7 +7099,7 @@ paths:
       summary: Check priority
       tags:
       - scenarios
-  /scenarios/minimal_priority:
+  /scenarios/minimal-priority:
     get:
       description: Get minimal priority
       operationId: scenarios-get-minimal-priority

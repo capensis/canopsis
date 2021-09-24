@@ -778,12 +778,12 @@ func RegisterRoutes(
 				scenarioAPI.Delete,
 			)
 			scenarioRouter.GET(
-				"/minimal_priority",
+				"/minimal-priority",
 				middleware.Authorize(authObjAction, permRead, enforcer),
 				scenarioAPI.GetMinimalPriority,
 			)
 			scenarioRouter.POST(
-				"/check_priority",
+				"/check-priority",
 				middleware.Authorize(authObjAction, permRead, enforcer),
 				scenarioAPI.CheckPriority,
 			)
