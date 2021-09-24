@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
@@ -328,6 +329,11 @@ func RegisterRoutes(
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
 				middleware.SetAuthor(),
 				pbehaviorApi.Update)
+			pbehaviorRouter.PATCH(
+				"/:id",
+				middleware.Authorize(authObjPbh, permUpdate, enforcer),
+				middleware.SetAuthor(),
+				pbehaviorApi.Patch)
 			pbehaviorRouter.DELETE(
 				"/:id",
 				middleware.Authorize(authObjPbh, permDelete, enforcer),
