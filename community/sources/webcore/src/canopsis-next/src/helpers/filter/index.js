@@ -57,7 +57,7 @@ export function getMainFilterAndCondition(widget, userPreference) {
   let mainFilter = userMainFilter;
   let condition = userMainFilterCondition;
 
-  if (isEmpty(mainFilter) && !isEmpty(widgetMainFilter) && widgetMainFilterUpdatedAt >= userMainFilterUpdatedAt) {
+  if (!isEmpty(widgetMainFilter) && widgetMainFilterUpdatedAt >= userMainFilterUpdatedAt) {
     mainFilter = widgetMainFilter;
     condition = widgetMainFilterCondition;
   }
