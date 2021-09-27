@@ -795,6 +795,10 @@ func (s *store) addStartToFilter(r FilterRequest, match *[]bson.M) {
 }
 
 func (s *store) getTimeField(r FilterRequest) string {
+	if r.TimeField == "t" {
+		return r.TimeField
+	}
+
 	if r.TimeField == "" {
 		if r.GetOpenedFilter() == OnlyResolved {
 			return defaultTimeFieldResolved

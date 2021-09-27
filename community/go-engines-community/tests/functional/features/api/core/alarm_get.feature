@@ -2004,6 +2004,48 @@ Feature: Get alarms
       }
     }
     """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&time_field=t&tstart=2000000000&tstop=2000000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-1"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&time_field=t&tstart=2000000010&tstop=2000000020&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-2"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
     When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&time_field=creation_date&tstart=1900000000&tstop=1900000010&sort_key=v.resource&sort_dir=asc
     Then the response code should be 200
     Then the response body should contain:
