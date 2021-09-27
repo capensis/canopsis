@@ -1334,7 +1334,8 @@
         "loader_id": "api_acl",
         "crecord_name": "api_acl",
         "crecord_type": "action",
-        "desc": "Roles, permissions, users"
+        "desc": "Roles, permissions, users",
+        "type": "CRUD"
     },
     {
         "_id": "api_state_settings",
