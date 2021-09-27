@@ -34,6 +34,9 @@ const (
 )
 
 const linkFetchTimeout = 30 * time.Second
+const valuePrefix = "v."
+const defaultTimeFieldOpened = "t"
+const defaultTimeFieldResolved = "v.resolved"
 
 type Store interface {
 	Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error)
@@ -780,7 +783,7 @@ func (s *store) addStartFromFilter(r FilterRequest, match *[]bson.M) {
 		return
 	}
 
-	*match = append(*match, bson.M{"t": bson.M{"$gte": r.StartFrom}})
+	*match = append(*match, bson.M{s.getTimeField(r): bson.M{"$gte": r.StartFrom}})
 }
 
 func (s *store) addStartToFilter(r FilterRequest, match *[]bson.M) {
@@ -788,7 +791,19 @@ func (s *store) addStartToFilter(r FilterRequest, match *[]bson.M) {
 		return
 	}
 
-	*match = append(*match, bson.M{"t": bson.M{"$lte": r.StartTo}})
+	*match = append(*match, bson.M{s.getTimeField(r): bson.M{"$lte": r.StartTo}})
+}
+
+func (s *store) getTimeField(r FilterRequest) string {
+	if r.TimeField == "" {
+		if r.GetOpenedFilter() == OnlyResolved {
+			return defaultTimeFieldResolved
+		}
+
+		return defaultTimeFieldOpened
+	}
+
+	return fmt.Sprintf("%s%s", valuePrefix, r.TimeField)
 }
 
 func (s *store) addOpenedFilter(r FilterRequest, match *[]bson.M) {

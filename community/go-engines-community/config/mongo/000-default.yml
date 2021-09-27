@@ -54,6 +54,11 @@ indexes:
         background: true
 
   periodical_alarm:
+    t_1:
+      keys:
+        t: 1
+      options:
+        background: true
     d_1:
       keys:
         d: 1
@@ -73,7 +78,21 @@ indexes:
         v.resolved: 1
       options:
         background: true
-
+    v.creation_date_1:
+      keys:
+        v.creation_date: 1
+      options:
+        background: true
+    v.last_event_date_1:
+      keys:
+        v.last_event_date: 1
+      options:
+        background: true
+    v.last_update_date_1:
+      keys:
+        v.last_update_date: 1
+      options:
+        background: true
   default_pbehavior:
     eids_1:
       keys:
