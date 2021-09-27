@@ -54,6 +54,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    public: {
+      type: Boolean,
+      default: false,
+    },
     extraButtons: {
       type: Array,
       default: () => [],
@@ -114,7 +118,7 @@ export default {
         insertImageAsBase64URI: false,
         format: 'json',
         filesVariableName: 'files',
-        url: FILE_BASE_URL,
+        url: `${FILE_BASE_URL}?public=${this.public}`,
         headers: { Authorization: `Bearer ${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}` },
         prepareData: this.uploaderPrepareData,
         isSuccess: this.uploaderIsSuccess,
@@ -210,7 +214,7 @@ export default {
      * @returns {boolean}
      */
     uploaderIsSuccess(response) {
-      return response.files;
+      return response.length;
     },
 
     /**
@@ -220,8 +224,7 @@ export default {
      * @returns {{msg: *, baseurl: string, files: (*|*[]), error: *}}
      */
     uploaderProcess(response) {
-      const { filesVariableName } = this.editor.options.uploader;
-      const files = response[filesVariableName].filter(file => !file.error);
+      const files = response.filter(file => !file.error);
 
       return {
         files,
@@ -257,17 +260,20 @@ export default {
      */
     uploaderDefaultHandlerSuccess(response) {
       if (response.files && response.files.length) {
-        response.files.forEach((file, index) => {
-          const [tagName, attr] = response.isImages && response.isImages[index] ? ['img', 'src'] : ['a', 'href'];
-          const attrValue = isString(file) ? file : response.baseurl + file.id;
+        response.files.forEach((file) => {
+          const [tagName, attr] = file.mediatype && file.mediatype.startsWith('image')
+            ? ['img', 'src']
+            : ['a', 'href'];
+
+          const attrValue = isString(file) ? file : response.baseurl + file._id;
           const elm = this.editor.create.inside.element(tagName);
 
           elm.setAttribute(attr, attrValue);
 
-          if (tagName === 'a' && file.fileName) {
+          if (tagName === 'a' && file.filename) {
             elm.setAttribute('target', '_blank');
 
-            elm.innerText = file.fileName;
+            elm.innerText = file.filename;
           }
 
           if (tagName === 'img') {
@@ -318,9 +324,9 @@ export default {
       const uploadHandler = ({ baseurl, files = [] } = {}) => {
         for (let i = 0; i < files.length; i += 1) {
           const file = files[i];
-          const url = baseurl + file.id;
+          const url = baseurl + file._id;
 
-          insertLink(url, file.fileName);
+          insertLink(url, file.filename);
         }
 
         close();
@@ -367,7 +373,7 @@ export default {
       const uploadHandler = async ({ baseurl, files = [] } = {}) => {
         for (let i = 0; i < files.length; i += 1) {
           const file = files[i];
-          const url = baseurl + file.id;
+          const url = baseurl + file._id;
 
           // eslint-disable-next-line no-await-in-loop
           await editor.selection.insertImage(url, null, editor.options.imageDefaultWidth);

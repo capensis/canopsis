@@ -2,6 +2,7 @@
   text-editor(
     v-field="value",
     :label="label",
+    :public="public",
     :buttons="buttons",
     :extraButtons="extraButtons",
     :config="config",
@@ -42,6 +43,10 @@ export default {
     label: {
       type: String,
       default: '',
+    },
+    public: {
+      type: Boolean,
+      default: false,
     },
     buttons: {
       type: Array,

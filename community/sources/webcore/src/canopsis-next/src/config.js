@@ -100,6 +100,7 @@ export const API_ROUTES = {
   users: '/api/v4/users',
   roles: '/api/v4/roles',
   eventFilterRules: '/api/v4/eventfilter/rules',
+  file: '/api/v4/file',
   snmpRule: {
     list: '/snmprule',
     create: '/snmprule/put',
@@ -153,7 +154,6 @@ export const API_ROUTES = {
   /**
    * Cat routes
    */
-  file: '/api/v4/cat/file',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
   remediation: {
