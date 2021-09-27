@@ -38,9 +38,10 @@ type Security interface {
 	RegisterCallbackRoutes(router gin.IRouter)
 	// GetAuthMiddleware returns corresponding config auth middlewares.
 	GetAuthMiddleware() []gin.HandlerFunc
-	// GetQueryTokenAuthMiddleware returns auth middleware by query token for cases when header
-	// auth cannot be used.
-	GetQueryTokenAuthMiddleware() []gin.HandlerFunc
+	// GetWebsocketAuthMiddleware returns auth middlewares for websocket.
+	GetWebsocketAuthMiddleware() []gin.HandlerFunc
+	// GetFileAuthMiddleware returns auth middlewares for files.
+	GetFileAuthMiddleware() []gin.HandlerFunc
 	GetSessionStore() libsession.Store
 	GetConfig() libsecurity.Config
 	GetPasswordEncoder() password.Encoder
@@ -153,10 +154,18 @@ func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
 	}
 }
 
-func (s *security) GetQueryTokenAuthMiddleware() []gin.HandlerFunc {
+func (s *security) GetWebsocketAuthMiddleware() []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		middleware.Auth([]libsecurity.HttpProvider{
 			httpprovider.NewQueryTokenProvider(s.GetTokenService(), s.GetTokenStore(), s.newUserProvider(), s.Logger),
+		}),
+	}
+}
+
+func (s *security) GetFileAuthMiddleware() []gin.HandlerFunc {
+	return []gin.HandlerFunc{
+		middleware.Auth([]libsecurity.HttpProvider{
+			httpprovider.NewCookieProvider(s.GetTokenService(), s.GetTokenStore(), s.newUserProvider(), s.Logger),
 		}),
 	}
 }

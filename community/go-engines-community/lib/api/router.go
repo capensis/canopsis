@@ -1023,7 +1023,7 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjFile, permCreate, enforcer),
 				fileAPI.Create,
 			)
-			getFileRouter := fileRouter.Group("", security.GetQueryTokenAuthMiddleware()...)
+			getFileRouter := fileRouter.Group("", security.GetFileAuthMiddleware()...)
 			getFileRouter.GET(
 				"",
 				fileAPI.List,
@@ -1060,7 +1060,7 @@ func RegisterWebsocketRoutes(
 	hub websocket.Hub,
 	security Security,
 ) {
-	authMiddleware := security.GetQueryTokenAuthMiddleware()
+	authMiddleware := security.GetWebsocketAuthMiddleware()
 	protected := router.Group("/api/v4/ws")
 	{
 		protected.Use(authMiddleware...)
