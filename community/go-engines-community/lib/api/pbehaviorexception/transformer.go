@@ -21,7 +21,6 @@ func NewModelTransformer(dbClient mongo.DbClient) ModelTransformer {
 }
 
 type modelTransformer struct {
-	dbClient       mongo.DbClient
 	typeCollection mongo.DbCollection
 }
 

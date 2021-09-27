@@ -29,14 +29,16 @@ type ServiceChanges struct {
 }
 
 type store struct {
-	dbCollection      mongo.DbCollection
-	alarmDbCollection mongo.DbCollection
+	dbCollection              mongo.DbCollection
+	alarmDbCollection         mongo.DbCollection
+	resolvedAlarmDbCollection mongo.DbCollection
 }
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		dbCollection:      db.Collection(mongo.EntityMongoCollection),
-		alarmDbCollection: db.Collection(mongo.AlarmMongoCollection),
+		dbCollection:              db.Collection(mongo.EntityMongoCollection),
+		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
+		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
 	}
 }
 
@@ -118,7 +120,7 @@ func (s *store) GetDependencies(ctx context.Context, id string, q pagination.Que
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		q,
 		pipeline,
-		bson.M{"$sort": bson.D{{"impact_state", -1}, {"entity._id", 1}}},
+		bson.M{"$sort": bson.D{{Key: "impact_state", Value: -1}, {Key: "entity._id", Value: 1}}},
 		projectPipeline,
 	))
 	if err != nil {
@@ -197,7 +199,7 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		q,
 		pipeline,
-		bson.M{"$sort": bson.D{{"impact_state", -1}, {"entity._id", 1}}},
+		bson.M{"$sort": bson.D{{Key: "impact_state", Value: -1}, {Key: "entity._id", Value: 1}}},
 		projectPipeline,
 	))
 	if err != nil {
@@ -318,6 +320,10 @@ func (s *store) Delete(ctx context.Context, id string) (bool, *types.Alarm, erro
 	}
 	// Delete resolved alarms.
 	_, err = s.alarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
+	if err != nil {
+		return false, nil, err
+	}
+	_, err = s.resolvedAlarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
 	if err != nil {
 		return false, nil, err
 	}

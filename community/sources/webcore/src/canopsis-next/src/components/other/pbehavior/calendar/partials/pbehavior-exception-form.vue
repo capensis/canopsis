@@ -26,7 +26,7 @@ import { MODALS } from '@/constants';
 
 import uid from '@/helpers/uid';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 import PbehaviorExceptionField from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-field.vue';
 import PbehaviorExceptionList from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-list.vue';

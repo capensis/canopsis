@@ -191,11 +191,6 @@ services:
     env_file:
       - compose.env
     restart: unless-stopped
-  heartbeat:
-    image: canopsis/engine-heartbeat:${CANOPSIS_TAG}
-    env_file:
-      - compose.env
-    restart: unless-stopped
   service:
     image: canopsis/engine-service:${CANOPSIS_TAG}
     env_file:

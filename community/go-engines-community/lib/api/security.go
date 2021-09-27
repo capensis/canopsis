@@ -155,7 +155,7 @@ func (s *security) casLoginHandler() gin.HandlerFunc {
 			return
 		}
 
-		casConfig, err := s.newConfigProvider().LoadCasConfig()
+		casConfig, err := s.newConfigProvider().LoadCasConfig(c.Request.Context())
 		if err != nil {
 			panic(err)
 		}

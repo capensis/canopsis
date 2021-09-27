@@ -1,15 +1,12 @@
 package types_test
 
 import (
-	gogob "encoding/gob"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"testing"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/gob"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/msgpack"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
@@ -301,75 +298,6 @@ func TestCpsNumber(t *testing.T) {
 	})
 }
 
-func TestGOBCpsTime(t *testing.T) {
-	Convey("Given time.Now()", t, func() {
-		x := types.CpsTime{Time: time.Time{}}
-		gogob.Register(x)
-		now := types.CpsTime{Time: time.Now()}
-		encoder := gob.NewEncoder()
-		b, err := encoder.Encode(now)
-		So(err, ShouldBeNil)
-
-		Convey("Decode encoded CpsTime", func() {
-			decoder := gob.NewDecoder()
-			var oldnow types.CpsTime
-			err := decoder.Decode(b, &oldnow)
-			So(err, ShouldBeNil)
-			So(now.Equal(oldnow.Time), ShouldBeTrue)
-		})
-	})
-}
-
-func TestMsgPackCpsTime(t *testing.T) {
-	Convey("Given time.Now()", t, func() {
-		now := types.CpsTime{Time: time.Now()}
-		encoder := msgpack.NewEncoder()
-		b, err := encoder.Encode(now)
-		So(err, ShouldBeNil)
-
-		Convey("Decode encoded CpsTime", func() {
-			var oldnow types.CpsTime
-			decoder := msgpack.NewDecoder()
-			err := decoder.Decode(b, &oldnow)
-			So(err, ShouldBeNil)
-			So(now.Equal(oldnow.Time), ShouldBeTrue)
-		})
-	})
-}
-
-func TestMsgPackCpsNumber(t *testing.T) {
-	Convey("Int", t, func() {
-		i := types.CpsNumber(10)
-		encoder := msgpack.NewEncoder()
-		b, err := encoder.Encode(i)
-		So(err, ShouldBeNil)
-
-		Convey("decode", func() {
-			var di types.CpsNumber
-			dec := msgpack.NewDecoder()
-			err := dec.Decode(b, &di)
-			So(err, ShouldBeNil)
-			So(di.Float64(), ShouldEqual, 10)
-		})
-	})
-}
-
-func TestMsgPackCpsDuration(t *testing.T) {
-	Convey("Duration", t, func() {
-		d := types.CpsDuration(time.Second * 10)
-		enc := msgpack.NewEncoder()
-		b, err := enc.Encode(d)
-		So(err, ShouldBeNil)
-
-		Convey("decode", func() {
-			var dd types.CpsDuration
-			dec := msgpack.NewDecoder()
-			err := dec.Decode(b, &dd)
-			So(err, ShouldBeNil)
-			So(dd.Duration().Seconds(), ShouldEqual, 10)
-		})
-	})
-}
 func TestBinaryCpsTime(t *testing.T) {
 	Convey("Given time.Now()", t, func() {
 		t := types.CpsTime{Time: time.Now()}

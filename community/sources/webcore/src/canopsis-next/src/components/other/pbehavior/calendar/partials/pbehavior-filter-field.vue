@@ -28,7 +28,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { ENTITIES_TYPES, MODALS } from '@/constants';
 
-import formMixin from '@/mixins/form/object';
+import { formMixin } from '@/mixins/form';
 
 const { mapActions } = createNamespacedHelpers('pbehavior');
 
@@ -104,7 +104,7 @@ export default {
         } = await this.fetchPbehaviorEntitiesCountWithoutStore({ data: { filter } });
 
         if (overLimit) {
-          this.countAlertMessage = this.$t('pbehavior.alerts.countOverLimit', { count: totalCount });
+          this.countAlertMessage = this.$t('entitiesCountAlerts.filter.countOverLimit', { count: totalCount });
           this.countAlertShown = true;
 
           return;
@@ -112,7 +112,7 @@ export default {
 
         this.countAlertShown = false;
       } catch (err) {
-        this.countAlertMessage = this.$t('pbehavior.alerts.countRequestError');
+        this.countAlertMessage = this.$t('entitiesCountAlerts.filter.countRequestError');
         this.countAlertShown = true;
       } finally {
         this.countPending = false;

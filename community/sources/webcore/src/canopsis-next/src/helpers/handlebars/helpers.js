@@ -2,9 +2,10 @@ import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash'
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
-import dateFilter from '@/filters/date';
-import durationFilter from '@/filters/duration';
-import { DATETIME_FORMATS, ENTITY_INFOS_TYPE } from '@/constants';
+import { DATETIME_FORMATS } from '@/constants';
+
+import { durationToString } from '@/helpers/date/duration';
+import { convertDateToString } from '@/helpers/date/date';
 
 import i18n from '@/i18n';
 
@@ -34,7 +35,7 @@ export function timestampHelper(date) {
   let result = '';
 
   if (date) {
-    result = dateFilter(date, 'long');
+    result = convertDateToString(date, 'long');
   }
 
   return result;
@@ -61,11 +62,11 @@ export function internalLinkHelper(options) {
  * First example: {{duration 120}} -> 2 mins
  * Second example: {{duration 12000}} -> 3 hrs 20 mins
  *
- * @param second
+ * @param {number} seconds
  * @returns {String}
  */
-export function durationHelper(second) {
-  return durationFilter(second, undefined, DATETIME_FORMATS.refreshFieldFormat);
+export function durationHelper(seconds) {
+  return durationToString(seconds, DATETIME_FORMATS.refreshFieldFormat);
 }
 
 /**
@@ -77,7 +78,7 @@ export function durationHelper(second) {
  * @returns {Handlebars.SafeString}
  */
 export function alarmStateHelper(state) {
-  return new Handlebars.SafeString(`<c-alarm-chip type="${ENTITY_INFOS_TYPE.state}" value="${state}"></c-alarm-chip>`);
+  return new Handlebars.SafeString(`<c-alarm-chip value="${state}"></c-alarm-chip>`);
 }
 
 /**

@@ -60,6 +60,7 @@ export default {
       const params = {
         limit: 1,
         correlation: !!alarm.consequences || !!alarm.causes,
+        with_instructions: true,
       };
 
       if (alarm.v.steps) {

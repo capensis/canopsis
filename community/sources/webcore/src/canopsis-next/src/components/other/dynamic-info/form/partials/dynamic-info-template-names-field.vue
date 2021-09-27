@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 import { generateTemplateFormName } from '@/helpers/forms/dynamic-info-template';
 

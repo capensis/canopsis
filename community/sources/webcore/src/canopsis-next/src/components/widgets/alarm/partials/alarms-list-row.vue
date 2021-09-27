@@ -15,9 +15,7 @@
             hide-details
           )
         v-layout(v-if="hasAlarmInstruction", align-center)
-          v-tooltip(top)
-            v-icon(slot="activator", size="16", color="black") assignment
-            span {{ $t('alarmList.instructionInfoPopup') }}
+          alarm-list-row-icon(:alarm="alarm")
         v-layout(v-if="expandable", :class="{ 'ml-3': !hasAlarmInstruction }", align-center)
           c-expand-btn(
             :class="expandButtonClass",
@@ -52,12 +50,14 @@ import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-pa
 
 import ActionsPanel from '../actions/actions-panel.vue';
 import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
+import AlarmListRowIcon from './alarms-list-row-icon.vue';
 
 export default {
   inject: ['$system'],
   components: {
     ActionsPanel,
     AlarmColumnValue,
+    AlarmListRowIcon,
   },
   mixins: [widgetExpandPanelAlarm],
   model: {
@@ -114,9 +114,19 @@ export default {
     },
 
     hasAlarmInstruction() {
-      const { assigned_instructions: assignedInstructions = [] } = this.alarm;
+      const { children_instructions: childrenInstructions = false } = this.parentAlarm || {};
+      const {
+        assigned_instructions: assignedInstructions = [],
+        is_auto_instruction_running: isAutoInstructionRunning = false,
+        is_manual_instruction_waiting_result: isManualInstructionWaitingResult = false,
+        is_all_auto_instructions_completed: isAutoInstructionCompleted = false,
+      } = this.alarm;
 
-      return assignedInstructions.length;
+      return assignedInstructions.length
+          || isAutoInstructionRunning
+          || isAutoInstructionCompleted
+          || isManualInstructionWaitingResult
+          || childrenInstructions;
     },
 
     isResolvedAlarm() {

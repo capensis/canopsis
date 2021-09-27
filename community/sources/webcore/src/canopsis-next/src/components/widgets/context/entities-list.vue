@@ -37,6 +37,13 @@
             @update:condition="updateSelectedCondition",
             @update:filters="updateFilters"
           )
+        v-flex
+          v-checkbox(
+            :input-value="query.no_events",
+            :label="$t('context.noEventsFilter')",
+            color="primary",
+            @change="updateNoEvents"
+          )
         v-flex(v-if="hasAccessToCreateEntity")
           context-fab
         v-flex(v-if="hasAccessToExportAsCsv")
@@ -99,7 +106,7 @@ import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetExportMixinCreator from '@/mixins/widget/export';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
-import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 import { permissionsWidgetsContextEntityFilters } from '@/mixins/permissions/widgets/context-entity/filters';
 import { permissionsWidgetsContextEntityCategory } from '@/mixins/permissions/widgets/context-entity/category';
@@ -183,6 +190,20 @@ export default {
     this.columnsFiltersPending = false;
   },
   methods: {
+    updateNoEvents(noEvents) {
+      this.updateWidgetPreferencesInUserPreference({
+        ...this.userPreference.widget_preferences,
+
+        noEvents,
+      });
+
+      this.query = {
+        ...this.query,
+
+        no_events: noEvents,
+      };
+    },
+
     updateCategory(category) {
       const categoryId = category && category._id;
 

@@ -23,7 +23,7 @@
 <script>
 import { COUNTERS_LIMIT } from '@/constants';
 
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
 

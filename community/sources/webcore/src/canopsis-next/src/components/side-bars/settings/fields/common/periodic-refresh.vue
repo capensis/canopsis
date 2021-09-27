@@ -10,8 +10,7 @@
 <script>
 import { TIME_UNITS } from '@/constants';
 
-import formMixin from '@/mixins/form';
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
 

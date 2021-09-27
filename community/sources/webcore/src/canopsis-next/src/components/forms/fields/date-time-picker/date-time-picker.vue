@@ -34,7 +34,7 @@ import { isDate } from 'lodash';
 
 import { updateTime, updateDate } from '@/helpers/date/date-time-picker';
 
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 import TimePickerField from '../time-picker/time-picker-field.vue';
 

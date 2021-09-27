@@ -1,5 +1,7 @@
 package appinfo
 
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+
 type VersionConf struct {
 	Edition string `json:"edition" bson:"edition"`
 	Stack   string `json:"stack" bson:"stack"`
@@ -33,14 +35,20 @@ type TimezoneConf struct {
 }
 
 type RemediationConf struct {
-	JobExecutorFetchTimeoutSeconds int64 `json:"jobexecutorfetchtimeoutseconds,omitempty" bson:"jobexecutorfetchtimeoutseconds"`
+	PauseManualInstructionInterval types.DurationWithUnit `json:"pause_manual_instruction_interval"`
+	JobConfigTypes                 []JobConfigType        `json:"job_config_types"`
+}
+
+type JobConfigType struct {
+	Name     string `json:"name"`
+	AuthType string `json:"auth_type"`
 }
 
 type AppInfoResponse struct {
 	UserInterfaceConf
 	TimezoneConf
 	VersionConf
-	RemediationConf
+	Remediation RemediationConf `json:"remediation"`
 }
 
 type LoginConfig struct {

@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"runtime/trace"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -15,8 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
-	"runtime/trace"
-	"time"
 )
 
 type messageProcessor struct {
@@ -69,7 +70,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	alarmConfig := p.AlarmConfigProvider.Get()
 	event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
-	event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.OutputLength)
+	event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
 	updatedEntityServices := libcontext.UpdatedEntityServices{}
 
 	// Process event by event filters.
@@ -156,7 +157,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	// Find entity if still empty.
 	if event.Entity == nil {
-		event.Entity, err = p.EnrichmentCenter.Get(event)
+		event.Entity, err = p.EnrichmentCenter.Get(ctx, event)
 		if err != nil {
 			if engine.IsConnectionError(err) {
 				return nil, err
@@ -170,7 +171,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	event.AddedToServices = append(event.AddedToServices, updatedEntityServices.AddedTo...)
 	event.RemovedFromServices = append(event.RemovedFromServices, updatedEntityServices.RemovedFrom...)
 
-	err = p.publishComponentInfosUpdatedEvents(updatedEntityServices.UpdatedComponentInfosResources)
+	err = p.publishComponentInfosUpdatedEvents(ctx, updatedEntityServices.UpdatedComponentInfosResources)
 	if err != nil {
 		return nil, err
 	}
@@ -199,13 +200,13 @@ func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
 // component infos of resources have been updated on component event.
 // It's not possible to immediately process such resources  since only component entity
 // is locked by engine fifo and resource entity can be updated by another event in parallel.
-func (p *messageProcessor) publishComponentInfosUpdatedEvents(resources []string) error {
+func (p *messageProcessor) publishComponentInfosUpdatedEvents(ctx context.Context, resources []string) error {
 	if len(resources) == 0 {
 		return nil
 	}
 
 	alarms := make([]types.Alarm, 0)
-	err := p.AlarmAdapter.GetOpenedAlarmsByIDs(resources, &alarms)
+	err := p.AlarmAdapter.GetOpenedAlarmsByIDs(ctx, resources, &alarms)
 	if err != nil {
 		if engine.IsConnectionError(err) {
 			return err

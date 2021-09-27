@@ -38,7 +38,7 @@ import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
 
 import { entitiesFilterHintsMixin } from '@/mixins/entities/associative-table/filter-hints';
 import entitiesEntityCategoryMixin from '@/mixins/entities/entity-category';
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 import FilterGroup from './partial/filter-group.vue';
 

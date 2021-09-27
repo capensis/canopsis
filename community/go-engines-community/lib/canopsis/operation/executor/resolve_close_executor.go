@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"context"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"time"
@@ -14,6 +15,7 @@ type resolveCloseExecutor struct {
 }
 
 func (e *resolveCloseExecutor) Exec(
+	_ context.Context,
 	_ types.Operation,
 	alarm *types.Alarm,
 	_ types.CpsTime,

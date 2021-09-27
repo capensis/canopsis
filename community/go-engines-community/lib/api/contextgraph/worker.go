@@ -82,7 +82,7 @@ func (w *worker) Run(ctx context.Context) {
 			job := w.importQueue.Pop()
 
 			if job.ID != "" {
-				err := w.reporter.ReportOngoing(job)
+				err := w.reporter.ReportOngoing(ctx, job)
 				if err != nil {
 					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
 
@@ -107,14 +107,14 @@ func (w *worker) Run(ctx context.Context) {
 						resultState = types.AlarmStateMinor
 					}
 
-					err = w.reporter.ReportError(job, stats.ExecTime, err)
+					err = w.reporter.ReportError(ctx, job, stats.ExecTime, err)
 					if err != nil {
 						w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
 					}
 				} else {
 					w.logger.Info().Str("job_id", job.ID).Msg("Import-ctx: import done")
 
-					err = w.reporter.ReportDone(job, stats)
+					err = w.reporter.ReportDone(ctx, job, stats)
 					if err != nil {
 						w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
 					}

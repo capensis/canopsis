@@ -31,7 +31,7 @@ import { isBoolean, isNumber, isNan, isArray, isUndefined, isEmpty, isNull, pick
 
 import { FILTER_INPUT_TYPES } from '@/constants';
 
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 export default {
   $_veeValidate: {

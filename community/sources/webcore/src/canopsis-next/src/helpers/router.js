@@ -33,16 +33,16 @@ export function getAppInfoValuePromiseByKey(key) {
  * @returns {Promise<boolean>}
  */
 export async function checkAppInfoAccessForRoute(to = {}) {
-  const { requiresRight } = to.meta;
+  const { requiresPermission } = to.meta;
 
-  if (!requiresRight) {
+  if (!requiresPermission) {
     return true;
   }
 
-  const rightId = isFunction(requiresRight.id) ? requiresRight.id(to) : requiresRight.id;
-  const rightAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[rightId];
+  const permissionId = isFunction(requiresPermission.id) ? requiresPermission.id(to) : requiresPermission.id;
+  const permissionAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[permissionId];
 
-  if (!rightAppInfoRules) {
+  if (!permissionAppInfoRules) {
     return true;
   }
 
@@ -56,7 +56,7 @@ export async function checkAppInfoAccessForRoute(to = {}) {
     stack,
   };
 
-  if (isMatch(appInfo, rightAppInfoRules)) {
+  if (isMatch(appInfo, permissionAppInfoRules)) {
     return true;
   }
 
@@ -72,14 +72,14 @@ export async function checkAppInfoAccessForRoute(to = {}) {
  * @returns {Promise<boolean>}
  */
 export async function checkUserAccessForRoute(to = {}) {
-  const { requiresRight, requiresLogin } = to.meta;
+  const { requiresPermission, requiresLogin } = to.meta;
 
-  if (!requiresLogin || !requiresRight) {
+  if (!requiresLogin || !requiresPermission) {
     return true;
   }
 
-  const permissionId = isFunction(requiresRight.id) ? requiresRight.id(to) : requiresRight.id;
-  const permissionAction = requiresRight.action ? requiresRight.action : CRUD_ACTIONS.read;
+  const permissionId = isFunction(requiresPermission.id) ? requiresPermission.id(to) : requiresPermission.id;
+  const permissionAction = requiresPermission.action ? requiresPermission.action : CRUD_ACTIONS.read;
 
   let currentUser = store.getters['auth/currentUser'];
 

@@ -1,6 +1,6 @@
 import { isParent } from '@/helpers/vue-base';
 
-export default {
+export const validationChildrenMixin = {
   computed: {
     childrenFields() {
       return this.$validator ? this.$validator.fields.items.filter(({ vm }) => isParent(vm, this)) : [];
@@ -28,3 +28,5 @@ export default {
     },
   },
 };
+
+export default validationChildrenMixin;
