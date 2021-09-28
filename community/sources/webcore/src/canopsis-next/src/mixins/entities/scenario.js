@@ -16,6 +16,7 @@ export default {
       createScenario: 'create',
       updateScenario: 'update',
       removeScenario: 'remove',
+      checkScenarioPriority: 'checkPriority',
     }),
   },
 };

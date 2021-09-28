@@ -2119,6 +2119,15 @@ export default {
   },
 
   scenario: {
+    triggers: 'Triggers',
+    emitTrigger: 'Emit trigger',
+    withAuth: 'Do you need auth fields?',
+    emptyResponse: 'Empty response',
+    isRegexp: 'The value can be a RegExp',
+    headerKey: 'Header key',
+    headerValue: 'Header value',
+    key: 'Key',
+    skipVerify: 'Ignore HTTPS certificate verification',
     headers: 'Headers',
     declareTicket: 'Declare ticket',
     workflow: 'Workflow if this action didn’t match:',
@@ -2152,22 +2161,12 @@ export default {
       [ACTION_TYPES.cancel]: 'Cancel',
       [ACTION_TYPES.webhook]: 'Webhook',
     },
-    fields: {
-      triggers: 'Triggers',
-      emitTrigger: 'Emit trigger',
-      withAuth: 'Do you need auth fields?',
-      emptyResponse: 'Empty response',
-      isRegexp: 'The value can be a RegExp',
-      headerKey: 'Header key',
-      headerValue: 'Header value',
-      key: 'Key',
-      skipVerify: 'Ignore HTTPS certificate verification',
-    },
     tabs: {
       pattern: 'Pattern',
     },
     errors: {
       actionRequired: 'Please add at least one action',
+      priorityExist: 'The priority of current scenario is already in use. Do you want to change the current scenario priority to {priority}?',
     },
   },
 

@@ -2119,6 +2119,15 @@ export default {
   },
 
   scenario: {
+    triggers: 'Triggers',
+    emitTrigger: 'Émettre un trigger',
+    withAuth: 'Avez-vous besoin de champs d\'authentification ?',
+    emptyResponse: 'Réponse vide',
+    isRegexp: 'La valeur peut être une RegExp',
+    headerKey: "Clé d'en-tête",
+    headerValue: "Valeur d'en-tête",
+    key: 'Clé',
+    skipVerify: 'Ne pas vérifier les certificats HTTPS',
     headers: 'En-têtes',
     declareTicket: 'Déclarer un ticket',
     workflow: 'Workflow si cette action ne correspond pas :',
@@ -2152,22 +2161,12 @@ export default {
       [ACTION_TYPES.cancel]: 'Cancel',
       [ACTION_TYPES.webhook]: 'Webhook',
     },
-    fields: {
-      triggers: 'Triggers',
-      emitTrigger: 'Émettre un trigger',
-      withAuth: 'Avez-vous besoin de champs d\'authentification ?',
-      emptyResponse: 'Réponse vide',
-      isRegexp: 'La valeur peut être une RegExp',
-      headerKey: "Clé d'en-tête",
-      headerValue: "Valeur d'en-tête",
-      key: 'Clé',
-      skipVerify: 'Ne pas vérifier les certificats HTTPS',
-    },
     tabs: {
       pattern: 'Pattern',
     },
     errors: {
       actionRequired: 'Veuillez ajouter au moins une action',
+      priorityExist: 'The priority of current scenario is already in use. Do you want to change the current scenario priority to {priority}?',
     },
   },
 

@@ -129,7 +129,10 @@ export const API_ROUTES = {
   saml: {
     auth: '/saml/auth',
   },
-  scenarios: '/api/v4/scenarios',
+  scenario: {
+    scenarios: '/api/v4/scenarios',
+    checkPriority: '/api/v4/scenarios/check-priority',
+  },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings/',
   dataStorage: '/api/v4/data-storage',
