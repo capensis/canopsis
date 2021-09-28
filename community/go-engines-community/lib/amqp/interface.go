@@ -31,4 +31,5 @@ type Channel interface {
 	QueueDeclare(name string, durable, autoDelete, exclusive, noWait bool, args amqp.Table) (amqp.Queue, error)
 	QueueBind(name, key, exchange string, noWait bool, args amqp.Table) error
 	QueuePurge(name string, noWait bool) (int, error)
+	QueueInspect(name string) (amqp.Queue, error)
 }

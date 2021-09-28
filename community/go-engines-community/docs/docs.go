@@ -3269,6 +3269,91 @@ var doc = `{
                 }
             }
         },
+        "/logged-user-count": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get logged user count",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get logged user count",
+                "operationId": "auth-logged-user-count",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Log in",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Log in",
+                "operationId": "auth-login",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.loginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.loginResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "description": "Log out",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Log out",
+                "operationId": "auth-logout",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/message-rate-stats": {
             "get": {
                 "security": [
@@ -3306,31 +3391,6 @@ var doc = `{
                     },
                     {
                         "type": "integer",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "paginate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort_by",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "to",
                         "in": "query",
                         "required": true
@@ -3340,22 +3400,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/common.PaginatedListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/messageratestats.StatsResponse"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/messageratestats.StatsListResponse"
                         }
                     },
                     "400": {
@@ -5941,7 +5986,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.sessionsCountResponse"
+                            "$ref": "#/definitions/sessionauth.sessionsCountResponse"
                         }
                     },
                     "400": {
@@ -6677,6 +6722,152 @@ var doc = `{
                 "responses": {
                     "204": {
                         "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/view-stats": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get list of view stats",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "view-stats"
+                ],
+                "summary": "Find view stats",
+                "operationId": "view-stats-find-all",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "name": "isActive",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "usernames",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/viewstats.listResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create view stats",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "view-stats"
+                ],
+                "summary": "Create view stats",
+                "operationId": "view-stats-create",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/viewstats.pingResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/view-stats/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update view stats by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "view-stats"
+                ],
+                "summary": "Update view stats by id",
+                "operationId": "view-stats-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "view stats id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/viewstats.pingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/viewstats.pingResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
@@ -8031,11 +8222,26 @@ var doc = `{
         "associativetable.Content": {
             "type": "object"
         },
-        "auth.sessionsCountResponse": {
+        "auth.loginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.loginResponse": {
             "type": "object",
             "properties": {
-                "count": {
-                    "type": "integer"
+                "access_token": {
+                    "type": "string"
                 }
             }
         },
@@ -8099,9 +8305,6 @@ var doc = `{
                     "type": "integer"
                 }
             }
-        },
-        "bson.M": {
-            "$ref": "#/definitions/primitive.M"
         },
         "common.ErrorResponse": {
             "type": "object",
@@ -8305,6 +8508,15 @@ var doc = `{
                         }
                     }
                 },
+                "health_check": {
+                    "type": "object",
+                    "properties": {
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
                 "junit": {
                     "type": "object",
                     "properties": {
@@ -8361,6 +8573,9 @@ var doc = `{
                 "entity": {
                     "type": "object",
                     "$ref": "#/definitions/datastorage.HistoryWithCount"
+                },
+                "health_check": {
+                    "type": "integer"
                 },
                 "junit": {
                     "type": "integer"
@@ -9210,33 +9425,37 @@ var doc = `{
                 "interval": {
                     "type": "string"
                 },
-                "limit": {
-                    "type": "integer"
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "paginate": {
-                    "type": "boolean"
-                },
-                "sort": {
-                    "type": "string"
-                },
-                "sort_by": {
-                    "type": "string"
-                },
                 "to": {
                     "type": "integer"
+                }
+            }
+        },
+        "messageratestats.StatsListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/messageratestats.StatsResponse"
+                    }
+                },
+                "meta": {
+                    "type": "object",
+                    "properties": {
+                        "deleted_before": {
+                            "type": "integer"
+                        }
+                    }
                 }
             }
         },
         "messageratestats.StatsResponse": {
             "type": "object",
             "properties": {
-                "_id": {
+                "rate": {
                     "type": "integer"
                 },
-                "received": {
+                "time": {
                     "type": "integer"
                 }
             }
@@ -10602,10 +10821,6 @@ var doc = `{
                 }
             }
         },
-        "primitive.M": {
-            "type": "object",
-            "additionalProperties": true
-        },
         "role.CreateRequest": {
             "type": "object",
             "required": [
@@ -11106,6 +11321,14 @@ var doc = `{
                 }
             }
         },
+        "sessionauth.sessionsCountResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                }
+            }
+        },
         "statesettings.JUnitThresholds": {
             "type": "object",
             "required": [
@@ -11184,6 +11407,50 @@ var doc = `{
                     "type": "number"
                 },
                 "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "stats.Stats": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "id_beaker_session": {
+                    "description": "Deprecated",
+                    "type": "string"
+                },
+                "last_ping": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "last_visible_path": {
+                    "type": "object"
+                },
+                "last_visible_ping": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "session_id": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "tab_duration": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "username": {
+                    "description": "Deprecated",
+                    "type": "string"
+                },
+                "visible_duration": {
                     "type": "integer"
                 }
             }
@@ -11648,6 +11915,10 @@ var doc = `{
                 "_id": {
                     "type": "string"
                 },
+                "defaultview": {
+                    "type": "object",
+                    "$ref": "#/definitions/user.View"
+                },
                 "name": {
                     "type": "string"
                 }
@@ -12028,6 +12299,65 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/viewgroup.View"
                     }
+                }
+            }
+        },
+        "viewstats.listRequest": {
+            "type": "object",
+            "properties": {
+                "isActive": {
+                    "type": "boolean"
+                },
+                "startedAfter": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "stoppedBefore": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "usernames": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "viewstats.listResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/stats.Stats"
+                    }
+                }
+            }
+        },
+        "viewstats.pingRequest": {
+            "type": "object",
+            "required": [
+                "path",
+                "visible"
+            ],
+            "properties": {
+                "path": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "visible": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "viewstats.pingResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
                 }
             }
         }

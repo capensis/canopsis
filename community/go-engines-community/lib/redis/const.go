@@ -3,6 +3,10 @@ package redis
 import "time"
 
 const (
+	KeyDelimiter = "$$"
+
+	RunInfoKey = "engine-run-info"
+
 	PbehaviorPeriodicalLockKey      = "pbehavior-periodical-lock-key"
 	PbehaviorCleanPeriodicalLockKey = "pbehavior-clean-periodical-lock-key"
 	RecomputeLockKey                = "pbehavior-recompute-lock-key"
@@ -14,6 +18,8 @@ const (
 
 	AxePeriodicalLockKey                 = "axe-periodical-lock-key"
 	AxeResolvedArchiverPeriodicalLockKey = "axe-resolved-archiver-periodical-lock-key"
+
+	FifoDeleteOutdatedRatesLockKey = "fifo-delete-outdated-rates-lock-key"
 
 	ChePeriodicalLockKey = "che-periodical-lock-key"
 

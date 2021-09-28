@@ -50,6 +50,7 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 	config.SetDbClientRetry(mongoClient, cfg)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
+	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	entityAdapter := entity.NewAdapter(mongoClient)
 	eventFilterAdapter := eventfilter.NewAdapter(mongoClient)
 	entityServiceAdapter := entityservice.NewAdapter(mongoClient)
@@ -184,11 +185,8 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 	engine.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisSession),
-		libengine.RunInfo{
-			Name:         canopsis.CheEngineName,
-			ConsumeQueue: options.ConsumeFromQueue,
-			PublishQueue: options.PublishToQueue,
-		},
+		libengine.NewInstanceRunInfo(canopsis.CheEngineName, options.ConsumeFromQueue, options.PublishToQueue),
+		amqpChannel,
 		logger,
 	))
 	engine.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(

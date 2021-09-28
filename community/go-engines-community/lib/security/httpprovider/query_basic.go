@@ -5,18 +5,19 @@ import (
 	"net/http"
 )
 
-// queryProvider implements a Query Authentication provider.
+// queryBasicProvider implements a Query Authentication provider.
 // It validates user using security provider.
-type queryProvider struct {
+type queryBasicProvider struct {
 	provider security.Provider
 }
 
-// NewQueryProvider creates new provider.
-func NewQueryProvider(p security.Provider) security.HttpProvider {
-	return &queryProvider{provider: p}
+// NewQueryBasicProvider creates new provider.
+// Deprecated : use Basic Auth.
+func NewQueryBasicProvider(p security.Provider) security.HttpProvider {
+	return &queryBasicProvider{provider: p}
 }
 
-func (p *queryProvider) Auth(r *http.Request) (*security.User, error, bool) {
+func (p *queryBasicProvider) Auth(r *http.Request) (*security.User, error, bool) {
 	q := r.URL.Query()
 	username := q.Get("username")
 	password := q.Get("password")
