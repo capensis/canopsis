@@ -22,7 +22,7 @@ import { formToScenario, scenarioToForm, scenarioErrorToForm } from '@/helpers/f
 import { validationErrorsMixin } from '@/mixins/form/validation-errors';
 import { submittableMixin } from '@/mixins/submittable';
 import { confirmableModalMixin } from '@/mixins/confirmable-modal';
-import entitiesScenarioMixin from '@/mixins/entities/scenario';
+import { entitiesScenarioMixin } from '@/mixins/entities/scenario';
 
 import ScenarioForm from '@/components/other/scenario/form/scenario-form.vue';
 

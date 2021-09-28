@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('scenario');
 
-export default {
+export const entitiesScenarioMixin = {
   computed: {
     ...mapGetters({
       scenariosMeta: 'meta',
