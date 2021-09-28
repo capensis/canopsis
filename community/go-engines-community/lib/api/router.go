@@ -123,6 +123,7 @@ func RegisterRoutes(
 	authApi := auth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
+		logger,
 	)
 	router.POST("/auth", authApi.LoginHandler())
 	sessionStatsApi := sessionstats.NewApi(sessionStore, stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
