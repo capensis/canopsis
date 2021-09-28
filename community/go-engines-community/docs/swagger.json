@@ -8091,9 +8091,6 @@
                 }
             }
         },
-        "bson.M": {
-            "$ref": "#/definitions/primitive.M"
-        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -10595,10 +10592,6 @@
                     "type": "integer"
                 }
             }
-        },
-        "primitive.M": {
-            "type": "object",
-            "additionalProperties": true
         },
         "role.CreateRequest": {
             "type": "object",

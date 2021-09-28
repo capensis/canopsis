@@ -8107,9 +8107,6 @@ var doc = `{
                 }
             }
         },
-        "bson.M": {
-            "$ref": "#/definitions/primitive.M"
-        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -10611,10 +10608,6 @@ var doc = `{
                     "type": "integer"
                 }
             }
-        },
-        "primitive.M": {
-            "type": "object",
-            "additionalProperties": true
         },
         "role.CreateRequest": {
             "type": "object",

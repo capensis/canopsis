@@ -642,8 +642,6 @@ definitions:
     - message
     - start
     type: object
-  bson.M:
-    $ref: '#/definitions/primitive.M'
   common.ErrorResponse:
     properties:
       error:
@@ -2526,9 +2524,6 @@ definitions:
         type: array
       updated:
         type: integer
-    type: object
-  primitive.M:
-    additionalProperties: true
     type: object
   role.CreateRequest:
     properties:
