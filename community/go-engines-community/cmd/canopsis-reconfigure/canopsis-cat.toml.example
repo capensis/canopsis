@@ -287,6 +287,7 @@ EnableLastEventDate = false
 CancelAutosolveDelay = "1h"
 DisplayNameScheme = "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}"
 OutputLength = 255
+LongOutputLength = 1024
 DisableActionSnoozeDelayOnPbh = false
 # TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
 TimeToKeepResolvedAlarms = "720h"

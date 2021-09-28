@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -33,12 +34,14 @@ func NewApi(
 	cookieName string,
 	cookieMaxAge int,
 	cookieSecure bool,
+	logger zerolog.Logger,
 ) API {
 	return &api{
 		tokenService: tokenService,
 		tokenStore:   tokenStore,
 		providers:    providers,
 		sessionStore: sessionStore,
+		logger:       logger,
 
 		cookieName:   cookieName,
 		cookieMaxAge: cookieMaxAge,
@@ -50,6 +53,7 @@ type api struct {
 	tokenService token.Service
 	tokenStore   token.Store
 	providers    []security.Provider
+	logger       zerolog.Logger
 
 	cookieName   string
 	cookieMaxAge int
@@ -82,7 +86,7 @@ func (a *api) Login(c *gin.Context) {
 	for _, p := range a.providers {
 		user, err = p.Auth(c.Request.Context(), request.Username, request.Password)
 		if err != nil {
-			panic(err)
+			a.logger.Err(err).Msg("Auth provider error")
 		}
 
 		if user != nil {

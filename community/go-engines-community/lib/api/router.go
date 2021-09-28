@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
@@ -82,8 +83,6 @@ const (
 
 	authPermAlarmRead = apisecurity.PermAlarmRead
 
-	authAcl = apisecurity.PermAcl
-
 	authObjStateSettings = apisecurity.PermStateSettings
 
 	authDataStorageRead   = apisecurity.PermDataStorageRead
@@ -148,10 +147,12 @@ func RegisterRoutes(
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
 		security.GetCookieOptions().Secure,
+		logger,
 	)
 	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
+		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())
 	sessionStatsApi := sessionstats.NewApi(sessionStore, stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
@@ -200,38 +201,62 @@ func RegisterRoutes(
 
 		userRouter := protected.Group("/users")
 		{
-			userRouter.Use(middleware.Authorize(authAcl, permCan, enforcer))
 			userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger)
 			userRouter.POST("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
 				userApi.Create,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
-			userRouter.GET("", userApi.List)
-			userRouter.GET("/:id", userApi.Get)
+			userRouter.GET("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				userApi.List,
+			)
+			userRouter.GET("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				userApi.Get,
+			)
 			userRouter.PUT("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
 				userApi.Update,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
-			userRouter.DELETE("/:id", userApi.Delete)
+			userRouter.DELETE("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer),
+				userApi.Delete,
+			)
 		}
 		roleRouter := protected.Group("/roles")
 		{
-			roleRouter.Use(middleware.Authorize(authAcl, permCan, enforcer))
 			roleApi := role.NewApi(role.NewStore(dbClient), actionLogger)
-			roleRouter.POST("", roleApi.Create)
-			roleRouter.GET("", roleApi.List)
-			roleRouter.GET("/:id", roleApi.Get)
+			roleRouter.POST("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
+				roleApi.Create,
+			)
+			roleRouter.GET("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				roleApi.List,
+			)
+			roleRouter.GET("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				roleApi.Get,
+			)
 			roleRouter.PUT("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
 				roleApi.Update,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
-			roleRouter.DELETE("/:id", roleApi.Delete)
+			roleRouter.DELETE("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer),
+				roleApi.Delete,
+			)
 		}
 		permissionRouter := protected.Group("/permissions")
 		{
-			permissionRouter.Use(middleware.Authorize(authAcl, permCan, enforcer))
 			permissionApi := permission.NewApi(permission.NewStore(dbClient))
-			permissionRouter.GET("", permissionApi.List)
+			permissionRouter.GET("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				permissionApi.List,
+			)
 		}
 
 		alarmAPI := alarm.NewApi(alarm.NewStore(dbClient, GetLegacyURL()), exportExecutor, timezoneConfigProvider)
@@ -374,6 +399,11 @@ func RegisterRoutes(
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
 				middleware.SetAuthor(),
 				pbehaviorApi.Update)
+			pbehaviorRouter.PATCH(
+				"/:id",
+				middleware.Authorize(authObjPbh, permUpdate, enforcer),
+				middleware.SetAuthor(),
+				pbehaviorApi.Patch)
 			pbehaviorRouter.DELETE(
 				"/:id",
 				middleware.Authorize(authObjPbh, permDelete, enforcer),
