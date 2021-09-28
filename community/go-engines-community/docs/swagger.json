@@ -8290,9 +8290,6 @@
                 }
             }
         },
-        "bson.M": {
-            "$ref": "#/definitions/primitive.M"
-        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -10808,10 +10805,6 @@
                 }
             }
         },
-        "primitive.M": {
-            "type": "object",
-            "additionalProperties": true
-        },
         "role.CreateRequest": {
             "type": "object",
             "required": [
@@ -11905,6 +11898,10 @@
             "properties": {
                 "_id": {
                     "type": "string"
+                },
+                "defaultview": {
+                    "type": "object",
+                    "$ref": "#/definitions/user.View"
                 },
                 "name": {
                     "type": "string"

@@ -8306,9 +8306,6 @@ var doc = `{
                 }
             }
         },
-        "bson.M": {
-            "$ref": "#/definitions/primitive.M"
-        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -10824,10 +10821,6 @@ var doc = `{
                 }
             }
         },
-        "primitive.M": {
-            "type": "object",
-            "additionalProperties": true
-        },
         "role.CreateRequest": {
             "type": "object",
             "required": [
@@ -11921,6 +11914,10 @@ var doc = `{
             "properties": {
                 "_id": {
                     "type": "string"
+                },
+                "defaultview": {
+                    "type": "object",
+                    "$ref": "#/definitions/user.View"
                 },
                 "name": {
                     "type": "string"

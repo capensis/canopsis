@@ -652,8 +652,6 @@ definitions:
     - message
     - start
     type: object
-  bson.M:
-    $ref: '#/definitions/primitive.M'
   common.ErrorResponse:
     properties:
       error:
@@ -2545,9 +2543,6 @@ definitions:
       updated:
         type: integer
     type: object
-  primitive.M:
-    additionalProperties: true
-    type: object
   role.CreateRequest:
     properties:
       defaultview:
@@ -3304,6 +3299,9 @@ definitions:
     properties:
       _id:
         type: string
+      defaultview:
+        $ref: '#/definitions/user.View'
+        type: object
       name:
         type: string
     type: object
