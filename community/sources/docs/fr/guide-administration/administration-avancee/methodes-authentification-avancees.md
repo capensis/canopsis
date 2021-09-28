@@ -12,20 +12,20 @@ La configuration de l'authentification se fait au moyen d'une requête sur l’A
 
 Voici la liste de paramètres nécessaires à la configuration LDAP :
 
-| Attribut      | Description                                                                                                                                | Exemple                                                        |
-|---------------|--------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
-| ldap_uri      | Chaîne de connexion LDAP                                                                                                                   | ldaps://ldap.example.com                                       |
-| max_tls_ver   | La version maximale de TLS qui est acceptable                                                                                              | tls12                                                          |
-| host          | Adresse du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations*                                    | ldap.example.com                                               |
-| port          | Port d'écoute du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations*                              | 389                                                            |
-| admin_dn      | Bind DN : DN du compte utilisé pour lire l'annuaire                                                                                        | uid=svccanopsis,ou=Special,dc=example,dc=com                   |
-| admin_passwd  | Bind password : mot de passe pour authentifier le Bind DN sur l'annuaire                                                                   |                                                                |
-| user_dn       | DN de base où rechercher les utilisateurs                                                                                                  | ou=People,dc=example,dc=com                                    |
-| ufilter       | Filtre de recherche pour les utilisateurs <br> La valeur de l'utilisateur est présentée dans une variable notée `%s`                       | uid=%s                                                         |
-| username_attr | Attribut portant l'identifiant utilisateur dans l'objet de l'annuaire                                                                           | uid                                                            |
-| attrs         | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
-| default_role  | Rôle Canopsis par défaut au moment de la première connexion                                                                                | Visualisation                                                  |
-| skip_verify  | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)                                                                                | true                                                  |
+| Attribut        | Description                                                                                                                                | Exemple                                                        |
+|-----------------|--------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
+| ldap_uri        | Chaîne de connexion LDAP                                                                                                                   | `ldaps://ldap.example.com`                                     |
+| max_tls_ver     | La version maximale de TLS qui est acceptable                                                                                              | `tls10` ou `tls11` ou `tls12` ou `tls13`                       |
+| host            | Adresse du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations*                                    | `ldap.example.com`                                             |
+| port            | Port d'écoute du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations*                              | `389`                                                          |
+| admin_dn        | Bind DN : DN du compte utilisé pour lire l'annuaire                                                                                        | `uid=svccanopsis,ou=Special,dc=example,dc=com`                 |
+| admin_passwd    | Bind password : mot de passe pour authentifier le Bind DN sur l'annuaire                                                                   |                                                                |
+| user_dn         | DN de base où rechercher les utilisateurs                                                                                                  | `ou=People,dc=example,dc=com`                                  |
+| ufilter         | Filtre de recherche pour les utilisateurs <br> La valeur de l'utilisateur est présentée dans une variable notée `%s`                       | `uid=%s`                                                       |
+| username_attr   | Attribut portant l'identifiant utilisateur dans l'objet de l'annuaire                                                                      | `uid`                                                          |
+| attrs           | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
+| default_role    | Rôle Canopsis par défaut au moment de la première connexion                                                                                | `Visualisation`                                                |
+| skip_verify     | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)                                         | `true`                                                         |
 
 #### Récupération de la configuration courante
 
