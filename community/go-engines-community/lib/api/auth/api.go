@@ -6,6 +6,7 @@ import (
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
+	"github.com/rs/zerolog"
 	"net/http"
 )
 
@@ -21,16 +22,19 @@ type API interface {
 func NewApi(
 	sessionStore libsession.Store,
 	providers []security.Provider,
+	logger zerolog.Logger,
 ) API {
 	return &api{
 		sessionStore: sessionStore,
 		providers:    providers,
+		logger:       logger,
 	}
 }
 
 type api struct {
 	sessionStore libsession.Store
 	providers    []security.Provider
+	logger       zerolog.Logger
 }
 
 func (a *api) LoginHandler() gin.HandlerFunc {
@@ -48,7 +52,7 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 		for _, p := range a.providers {
 			user, err = p.Auth(c.Request.Context(), request.Username, request.Password)
 			if err != nil {
-				panic(err)
+				a.logger.Err(err).Msg("Auth provider error")
 			}
 
 			if user != nil {

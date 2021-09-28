@@ -50,16 +50,6 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
-    createMassFastAckEvent() {
-      let eventData = {};
-
-      if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
-        eventData = { output: this.widget.parameters.fastAckOutput.value };
-      }
-
-      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.items, eventData);
-    },
-
     showActionModal(name) {
       return () => this.$modals.show({
         name,

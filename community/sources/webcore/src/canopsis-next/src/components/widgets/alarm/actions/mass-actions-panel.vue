@@ -123,12 +123,21 @@ export default {
       return {
         itemsType: ENTITIES_TYPES.alarm,
         itemsIds: this.itemsIds,
-        afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
       };
     },
   },
 
   methods: {
+    clearItems() {
+      this.$emit('clear:items');
+    },
+
+    afterSubmit() {
+      this.clearItems();
+
+      return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
+    },
+
     showAddPbehaviorModal() {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
@@ -136,6 +145,7 @@ export default {
           filter: {
             _id: { $in: this.items.map(item => item.entity._id) },
           },
+          afterSubmit: this.clearItems,
         },
       });
     },
@@ -172,6 +182,18 @@ export default {
           title: this.$t('modals.createManualMetaAlarm.title'),
         },
       });
+    },
+
+    async createMassFastAckEvent() {
+      let eventData = {};
+
+      if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
+        eventData = { output: this.widget.parameters.fastAckOutput.value };
+      }
+
+      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.items, eventData);
+
+      return this.clearItems();
     },
   },
 };

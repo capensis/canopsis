@@ -642,6 +642,8 @@ definitions:
     - message
     - start
     type: object
+  bson.M:
+    $ref: '#/definitions/primitive.M'
   common.ErrorResponse:
     properties:
       error:
@@ -2198,6 +2200,33 @@ definitions:
     required:
     - filter
     type: object
+  pbehavior.PatchRequest:
+    properties:
+      enabled:
+        type: boolean
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      filter:
+        type: object
+      name:
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    type: object
   pbehavior.Response:
     properties:
       _id:
@@ -2495,6 +2524,9 @@ definitions:
         type: array
       updated:
         type: integer
+    type: object
+  primitive.M:
+    additionalProperties: true
     type: object
   role.CreateRequest:
     properties:
@@ -3810,7 +3842,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -3961,7 +3994,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4049,7 +4083,8 @@ paths:
         required: true
         type: array
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4143,7 +4178,8 @@ paths:
         required: true
         type: array
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4405,7 +4441,8 @@ paths:
       produces:
       - application/json
       responses:
-        "202": {}
+        "202":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -4540,7 +4577,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4716,7 +4754,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -4924,7 +4963,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5114,7 +5154,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5282,7 +5323,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5427,7 +5469,8 @@ paths:
       description: delete user interface
       operationId: internal-delete-user-interface
       responses:
-        "204": {}
+        "204":
+          description: ""
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -5637,7 +5680,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5745,7 +5789,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -5837,7 +5882,8 @@ paths:
       produces:
       - application/octet-stream
       responses:
-        "200": {}
+        "200":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5945,7 +5991,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -6152,7 +6199,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -6324,7 +6372,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6359,6 +6408,44 @@ paths:
       - ApiKeyAuth: []
       - BasicAuth: []
       summary: Get pbehavior by id
+      tags:
+      - pbehaviors
+    patch:
+      consumes:
+      - application/json
+      description: Patch partial set of behavior attributes by id
+      operationId: pbehaviors-patch-by-id
+      parameters:
+      - description: pbehavior id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehavior.PatchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehavior.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Patch partial set of behavior attributes by id
       tags:
       - pbehaviors
     put:
@@ -6639,7 +6726,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6807,7 +6895,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6975,7 +7064,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7246,7 +7336,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7414,7 +7505,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -7511,7 +7603,8 @@ paths:
       produces:
       - application/json
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7615,7 +7708,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
