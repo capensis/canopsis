@@ -2166,7 +2166,7 @@ export default {
     },
     errors: {
       actionRequired: 'Veuillez ajouter au moins une action',
-      priorityExist: 'The priority of current scenario is already in use. Do you want to change the current scenario priority to {priority}?',
+      priorityExist: 'La priorité du scénario actuel est déjà utilisée. Voulez-vous changer la priorité actuelle du scénario en {priority} ?',
     },
   },
 
