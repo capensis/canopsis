@@ -158,22 +158,16 @@
       v-flex(xs10)
         p {{ recurrenceRuleText }}
     v-layout(row)
-      v-alert(:value="errors.has('rRule')", type="error")
-        span {{ errors.first('rRule') }}
+      v-alert(:value="errors.has('recurrenceRule')", type="error")
+        span {{ errors.first('recurrenceRule') }}
 </template>
 
 <script>
 import { RRule, rrulestr } from 'rrule';
 import { mapValues, pickBy } from 'lodash';
 
-import { recurrenceRuleToFormAdvancedOptions, recurrenceRuleToFormOptions } from '@/helpers/forms/rrule';
+import { recurrenceRuleToFormAdvancedOptions, recurrenceRuleToFormOptions } from '@/helpers/forms/recurrence-rule';
 
-/**
- * RRule form component
- *
- * @event rrule#input
- * @type {Object|null} - RRule object
- */
 export default {
   inject: ['$validator'],
   model: {
@@ -282,7 +276,7 @@ export default {
 
         if (!this.errors.has('rRule') && !this.recurrenceRuleObject.isFullyConvertibleToText()) {
           this.errors.add({
-            field: 'rRule',
+            field: 'recurrenceRule',
             msg: this.$t('recurrenceRule.errors.main'),
           });
         } else {

@@ -52,7 +52,9 @@ export default {
     bottom: {
       type: Boolean,
       required: false,
-      default: true,
+      default() {
+        return !this.top && !this.right && !this.left;
+      },
     },
     left: {
       type: Boolean,

@@ -9,7 +9,7 @@
         v-btn(slot="activator", icon)
           v-icon(color="grey darken-1") info
         span {{ form.rrule }}
-      c-action-btn(type="delete", top, @click="showConfirmRemoveRecurrenceRuleModal")
+      c-action-btn(type="delete", @click="showConfirmRemoveRecurrenceRuleModal")
 </template>
 
 <script>

@@ -22,7 +22,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import RecurrenceRuleForm from '@/components/forms/rrule.vue';
+import RecurrenceRuleForm from '@/components/forms/recurrence-rule.vue';
 import PbehaviorExceptionForm from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-form.vue';
 
 import { submittableMixin } from '@/mixins/submittable';
