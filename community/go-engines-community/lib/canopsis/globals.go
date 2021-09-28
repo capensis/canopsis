@@ -63,4 +63,7 @@ const (
 	RemediationRPCConsumerName       = "remediation_rpc"
 	RemediationRPCQueueServerName    = "Engine_remediation_rpc_server"
 	RemediationRPCQueueServerJobName = "Engine_remediation_rpc_server_job"
+
+	MetricsRPCConsumerName           = "metrics_rpc"
+	MetricsRPCQueueServerName        = "Engine_metrics_rpc_server"
 )
