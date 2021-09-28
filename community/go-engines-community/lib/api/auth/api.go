@@ -45,6 +45,7 @@ type api struct {
 	tokenService token.Service
 	tokenStore   token.Store
 	providers    []security.Provider
+	logger       zerolog.Logger
 
 	sessionStore session.Store
 }

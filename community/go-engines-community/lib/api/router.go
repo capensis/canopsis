@@ -141,6 +141,7 @@ func RegisterRoutes(
 		security.GetTokenStore(),
 		security.GetAuthProviders(),
 		security.GetSessionStore(),
+		logger,
 	)
 	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
