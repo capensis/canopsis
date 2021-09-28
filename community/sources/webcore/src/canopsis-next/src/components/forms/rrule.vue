@@ -1,199 +1,172 @@
 <template lang="pug">
   div
     v-layout(row)
-      v-switch(
-        v-model="showRRule",
-        :label="$t('modals.createPbehavior.steps.rrule.fields.rRuleQuestion')",
-        data-test="pbehaviorRuleSwitcher",
-        color="primary"
-      )
-    template(v-if="showRRule")
-      v-layout(row)
-        v-tabs.r-rule-tabs(v-model="activeTab", centered, fixed-tabs, slider-color="primary")
-          v-tab(data-test="pbehaviorSimple", href="#simple") {{ $t('rRule.tabs.simple') }}
-          v-tab(data-test="pbehaviorAdvanced", href="#advanced") {{ $t('rRule.tabs.advanced') }}
-          v-tab-item(value="simple")
-            div
-              div(data-test="pbehaviorFrequency")
-                v-select(
-                  v-model="form.rRuleOptions.freq",
-                  :label="$t('rRule.fields.freq')",
-                  :items="frequencies",
-                  @input="changeRRuleOption"
-                )
-              div(data-test="pbehaviorByWeekDay")
-                v-chip-group(
-                  v-model="form.rRuleOptions.byweekday",
-                  :items="weekDays",
-                  :label="$t('rRule.fields.byweekday')",
-                  multiple,
-                  @change="changeRRuleOption"
-                )
-              div
+      v-tabs.recurrence-rule-tabs(centered, fixed-tabs, slider-color="primary")
+        v-tab {{ $t('recurrenceRule.tabs.simple') }}
+        v-tab-item
+          v-layout(column)
+            v-select(
+              v-model="form.recurrenceRuleOptions.freq",
+              :label="$t('recurrenceRule.freq')",
+              :items="frequencies",
+              @input="changeRecurrenceRuleOption"
+            )
+            v-chip-group(
+              v-model="form.recurrenceRuleOptions.byweekday",
+              :items="weekDays",
+              :label="$t('recurrenceRule.byweekday')",
+              multiple,
+              @change="changeRecurrenceRuleOption"
+            )
+            v-text-field(
+              v-model.number="form.recurrenceRuleOptions.count",
+              v-validate="'numeric|min_value:1'",
+              :label="$t('recurrenceRule.count')",
+              :error-messages="errors.collect('count')",
+              type="number",
+              name="count",
+              min="1",
+              @input="changeRecurrenceRuleOption"
+            )
+            v-text-field(
+              v-model.number="form.recurrenceRuleOptions.interval",
+              v-validate="'numeric|min_value:1'",
+              :label="$t('recurrenceRule.interval')",
+              :error-messages="errors.collect('interval')",
+              type="number",
+              name="interval",
+              min="1",
+              @input="changeRecurrenceRuleOption"
+            )
+
+        v-tab {{ $t('recurrenceRule.tabs.advanced') }}
+        v-tab-item
+          v-layout(column)
+            v-select(
+              v-model="form.recurrenceRuleOptions.wkst",
+              :label="$t('recurrenceRule.wkst')",
+              :items="weekDays",
+              @input="changeRecurrenceRuleOption"
+            )
+            v-select(
+              v-model="form.recurrenceRuleOptions.bymonth",
+              :label="$t('recurrenceRule.bymonth')",
+              :items="months",
+              multiple,
+              chips,
+              @input="changeRecurrenceRuleOption"
+            )
+            v-tooltip(left, max-width="250")
+              div(slot="activator")
                 v-text-field(
-                  v-model.number="form.rRuleOptions.count",
-                  v-validate="'numeric|min_value:1'",
-                  :label="$t('rRule.fields.count')",
-                  :error-messages="errors.collect('count')",
-                  data-test="pbehaviorRepeat",
-                  type="number",
-                  name="count",
-                  min="1",
-                  @input="changeRRuleOption"
+                  v-model="form.advancedRecurrenceRuleOptions.bysetpos",
+                  v-validate="{ regex: advancedFieldRegex }",
+                  :label="$t('recurrenceRule.bysetpos')",
+                  :error-messages="errors.collect('bysetpos')",
+                  :hint="$t('recurrenceRule.advancedHint')",
+                  name="bysetpos",
+                  persistent-hint,
+                  @input="changeRecurrenceRuleOption"
                 )
-              div
+              span {{ $t('recurrenceRule.tooltips.bysetpos') }}
+            v-tooltip(left, max-width="250")
+              div(slot="activator")
                 v-text-field(
-                  v-model.number="form.rRuleOptions.interval",
-                  v-validate="'numeric|min_value:1'",
-                  :label="$t('rRule.fields.interval')",
-                  :error-messages="errors.collect('interval')",
-                  data-test="pbehaviorInterval",
-                  type="number",
-                  name="interval",
-                  min="1",
-                  @input="changeRRuleOption"
+                  v-model="form.advancedRecurrenceRuleOptions.bymonthday",
+                  v-validate="{ regex: advancedFieldRegex }",
+                  :label="$t('recurrenceRule.bymonthday')",
+                  :error-messages="errors.collect('bymonthday')",
+                  :hint="$t('recurrenceRule.advancedHint')",
+                  name="bymonthday",
+                  persistent-hint,
+                  @input="changeRecurrenceRuleOption"
                 )
-          v-tab-item(value="advanced")
-            div
-              div(data-test="pbehaviorWeekStart")
-                v-select(
-                  v-model="form.rRuleOptions.wkst",
-                  :label="$t('rRule.fields.wkst')",
-                  :items="weekDays",
-                  @input="changeRRuleOption"
+              span {{ $t('recurrenceRule.tooltips.bymonthday') }}
+            v-tooltip(left, max-width="250")
+              div(slot="activator")
+                v-text-field(
+                  v-model="form.advancedRecurrenceRuleOptions.byyearday",
+                  v-validate="{ regex: advancedFieldRegex }",
+                  :label="$t('recurrenceRule.byyearday')",
+                  :error-messages="errors.collect('byyearday')",
+                  :hint="$t('recurrenceRule.advancedHint')",
+                  name="byyearday",
+                  persistent-hint,
+                  @input="changeRecurrenceRuleOption"
                 )
-              div(data-test="pbehaviorByMonth")
-                v-select(
-                  v-model="form.rRuleOptions.bymonth",
-                  :label="$t('rRule.fields.bymonth')",
-                  :items="months",
-                  multiple,
-                  chips,
-                  @input="changeRRuleOption"
+              span {{ $t('recurrenceRule.tooltips.byyearday') }}
+            v-tooltip(left, max-width="250")
+              div(slot="activator")
+                v-text-field(
+                  v-model="form.advancedRecurrenceRuleOptions.byweekno",
+                  v-validate="{ regex: advancedFieldRegex }",
+                  :label="$t('recurrenceRule.byweekno')",
+                  :error-messages="errors.collect('byweekno')",
+                  :hint="$t('recurrenceRule.advancedHint')",
+                  name="byweekno",
+                  persistent-hint,
+                  @input="changeRecurrenceRuleOption"
                 )
-              div
-                v-tooltip(left, max-width="250")
-                  div(slot="activator")
-                    v-text-field(
-                      v-model="form.advancedRRuleOptions.bysetpos",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      :label="$t('rRule.fields.bysetpos.label')",
-                      :error-messages="errors.collect('bysetpos')",
-                      :hint="$t('rRule.advancedHint')",
-                      data-test="pbehaviorBySetPos",
-                      name="bysetpos",
-                      persistent-hint,
-                      @input="changeRRuleOption"
-                    )
-                  span {{ $t('rRule.fields.bysetpos.tooltip') }}
-              div
-                v-tooltip(left, max-width="250")
-                  div(slot="activator")
-                    v-text-field(
-                      v-model="form.advancedRRuleOptions.bymonthday",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      :label="$t('rRule.fields.bymonthday.label')",
-                      :error-messages="errors.collect('bymonthday')",
-                      :hint="$t('rRule.advancedHint')",
-                      data-test="pbehaviorByMonthDay",
-                      name="bymonthday",
-                      persistent-hint,
-                      @input="changeRRuleOption"
-                    )
-                  span {{ $t('rRule.fields.bymonthday.tooltip') }}
-              div
-                v-tooltip(left, max-width="250")
-                  div(slot="activator")
-                    v-text-field(
-                      v-model="form.advancedRRuleOptions.byyearday",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      :label="$t('rRule.fields.byyearday.label')",
-                      :error-messages="errors.collect('byyearday')",
-                      :hint="$t('rRule.advancedHint')",
-                      data-test="pbehaviorByYearDay",
-                      name="byyearday",
-                      persistent-hint,
-                      @input="changeRRuleOption"
-                    )
-                  span {{ $t('rRule.fields.byyearday.tooltip') }}
-              div
-                v-tooltip(left, max-width="250")
-                  div(slot="activator")
-                    v-text-field(
-                      v-model="form.advancedRRuleOptions.byweekno",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      :label="$t('rRule.fields.byweekno.label')",
-                      :error-messages="errors.collect('byweekno')",
-                      :hint="$t('rRule.advancedHint')",
-                      data-test="pbehaviorByWeekNo",
-                      name="byweekno",
-                      persistent-hint,
-                      @input="changeRRuleOption"
-                    )
-                  span {{ $t('rRule.fields.byweekno.tooltip') }}
-              div
-                v-tooltip(left, max-width="250")
-                  div(slot="activator")
-                    v-text-field(
-                      v-model="form.advancedRRuleOptions.byhour",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      :label="$t('rRule.fields.byhour.label')",
-                      :error-messages="errors.collect('byhour')",
-                      :hint="$t('rRule.advancedHint')",
-                      data-test="pbehaviorByHour",
-                      name="byhour",
-                      persistent-hint,
-                      @input="changeRRuleOption"
-                    )
-                  span {{ $t('rRule.fields.byhour.tooltip') }}
-              div
-                v-tooltip(left, max-width="250")
-                  div(slot="activator")
-                    v-text-field(
-                      v-model="form.advancedRRuleOptions.byminute",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      :label="$t('rRule.fields.byminute.label')",
-                      :error-messages="errors.collect('byminute')",
-                      :hint="$t('rRule.advancedHint')",
-                      data-test="pbehaviorByMinute",
-                      name="byminute",
-                      persistent-hint,
-                      @input="changeRRuleOption"
-                    )
-                  span {{ $t('rRule.fields.byminute.tooltip') }}
-              div
-                v-tooltip(left, max-width="250")
-                  div(slot="activator")
-                    v-text-field(
-                      v-model="form.advancedRRuleOptions.bysecond",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      :label="$t('rRule.fields.bysecond.label')",
-                      :error-messages="errors.collect('bysecond')",
-                      :hint="$t('rRule.advancedHint')",
-                      data-test="pbehaviorBySecond",
-                      name="bysecond",
-                      persistent-hint,
-                      @input="changeRRuleOption"
-                    )
-                  span {{ $t('rRule.fields.bysecond.tooltip') }}
-      v-layout(row)
-        v-flex(xs2)
-          strong {{ $t('rRule.stringLabel') }}
-        v-flex(xs10)
-          p {{ rRuleString }}
-      v-layout(row)
-        v-flex(xs2)
-          strong {{ $t('rRule.textLabel') }}
-        v-flex(xs10)
-          p {{ rRuleText }}
-      v-layout(row)
-        v-alert(:value="errors.has('rRule')", type="error")
-          span {{ errors.first('rRule') }}
+              span {{ $t('recurrenceRule.tooltips.byweekno') }}
+            v-tooltip(left, max-width="250")
+              div(slot="activator")
+                v-text-field(
+                  v-model="form.advancedRecurrenceRuleOptions.byhour",
+                  v-validate="{ regex: advancedFieldRegex }",
+                  :label="$t('recurrenceRule.byhour')",
+                  :error-messages="errors.collect('byhour')",
+                  :hint="$t('recurrenceRule.advancedHint')",
+                  name="byhour",
+                  persistent-hint,
+                  @input="changeRecurrenceRuleOption"
+                )
+              span {{ $t('recurrenceRule.tooltips.byhour') }}div
+            v-tooltip(left, max-width="250")
+              div(slot="activator")
+                v-text-field(
+                  v-model="form.advancedRecurrenceRuleOptions.byminute",
+                  v-validate="{ regex: advancedFieldRegex }",
+                  :label="$t('recurrenceRule.byminute')",
+                  :error-messages="errors.collect('byminute')",
+                  :hint="$t('recurrenceRule.advancedHint')",
+                  name="byminute",
+                  persistent-hint,
+                  @input="changeRecurrenceRuleOption"
+                )
+              span {{ $t('recurrenceRule.tooltips.byminute') }}
+            v-tooltip(left, max-width="250")
+              div(slot="activator")
+                v-text-field(
+                  v-model="form.advancedRecurrenceRuleOptions.bysecond",
+                  v-validate="{ regex: advancedFieldRegex }",
+                  :label="$t('recurrenceRule.bysecond')",
+                  :error-messages="errors.collect('bysecond')",
+                  :hint="$t('recurrenceRule.advancedHint')",
+                  name="bysecond",
+                  persistent-hint,
+                  @input="changeRecurrenceRuleOption"
+                )
+              span {{ $t('recurrenceRule.tooltips.bysecond') }}
+    v-layout(row)
+      v-flex(xs2)
+        strong {{ $t('recurrenceRule.stringLabel') }}
+      v-flex(xs10)
+        p {{ recurrenceRuleString }}
+    v-layout(row)
+      v-flex(xs2)
+        strong {{ $t('recurrenceRule.textLabel') }}
+      v-flex(xs10)
+        p {{ recurrenceRuleText }}
+    v-layout(row)
+      v-alert(:value="errors.has('rRule')", type="error")
+        span {{ errors.first('rRule') }}
 </template>
 
 <script>
 import { RRule, rrulestr } from 'rrule';
-import { mapValues, pickBy, isArray } from 'lodash';
+import { mapValues, pickBy } from 'lodash';
+
+import { recurrenceRuleToFormAdvancedOptions, recurrenceRuleToFormOptions } from '@/helpers/forms/rrule';
 
 /**
  * RRule form component
@@ -203,49 +176,6 @@ import { mapValues, pickBy, isArray } from 'lodash';
  */
 export default {
   inject: ['$validator'],
-  filters: {
-    rRuleToFormOptions(rRule) {
-      const { origOptions } = rRule;
-
-      return {
-        freq: origOptions.freq || '',
-        count: origOptions.count || '',
-        interval: origOptions.interval || '',
-        byweekday: origOptions.byweekday ? origOptions.byweekday.map(v => v.weekday) : [],
-        wkst: origOptions.wkst ? origOptions.wkst.weekday : '',
-        bymonth: origOptions.bymonth || [],
-      };
-    },
-
-    rRuleToFormAdvancedOptions(rRule) {
-      const { origOptions } = rRule;
-      const optionPreparer = (v) => {
-        if (v) {
-          return (isArray(v) ? v.join(',') : String(v));
-        }
-
-        return '';
-      };
-
-      return {
-        bysetpos: optionPreparer(origOptions.bysetpos),
-        bymonthday: optionPreparer(origOptions.bymonthday),
-        byyearday: optionPreparer(origOptions.byyearday),
-        byweekno: optionPreparer(origOptions.byweekno),
-        byhour: optionPreparer(origOptions.byhour),
-        byminute: optionPreparer(origOptions.byminute),
-        bysecond: optionPreparer(origOptions.bysecond),
-      };
-    },
-
-    formOptionsToRRuleOptions(options) {
-      return pickBy(options, v => v !== '');
-    },
-
-    formAdvancedOptionsToRRuleOptions(options) {
-      return mapValues(options, o => o.split(',').filter(v => v));
-    },
-  },
   model: {
     prop: 'rrule',
     event: 'input',
@@ -256,29 +186,27 @@ export default {
     },
   },
   data() {
-    let rRule;
+    let recurrenceRule;
 
     if (this.rrule) {
       try {
-        rRule = rrulestr(this.rrule);
+        recurrenceRule = rrulestr(this.rrule);
       } catch (err) {
-        console.warn(err);
+        console.error(err);
       }
     }
 
-    if (!rRule) {
-      rRule = new RRule({
+    if (!recurrenceRule) {
+      recurrenceRule = new RRule({
         freq: RRule.DAILY,
       });
     }
 
     return {
-      activeTab: 'simple',
-      showRRule: !!this.rrule,
-      rRuleObject: rRule,
+      recurrenceRuleObject: recurrenceRule,
       form: {
-        rRuleOptions: this.$options.filters.rRuleToFormOptions(rRule),
-        advancedRRuleOptions: this.$options.filters.rRuleToFormAdvancedOptions(rRule),
+        recurrenceRuleOptions: recurrenceRuleToFormOptions(recurrenceRule.origOptions),
+        advancedRecurrenceRuleOptions: recurrenceRuleToFormAdvancedOptions(recurrenceRule.origOptions),
       },
     };
   },
@@ -289,62 +217,55 @@ export default {
 
     frequencies() {
       return [
-        { text: 'Secondly', value: RRule.SECONDLY },
-        { text: 'Minutely', value: RRule.MINUTELY },
-        { text: 'Hourly', value: RRule.HOURLY },
-        { text: 'Daily', value: RRule.DAILY },
-        { text: 'Weekly', value: RRule.WEEKLY },
-        { text: 'Monthly', value: RRule.MONTHLY },
-        { text: 'Yearly', value: RRule.YEARLY },
+        { text: this.$t('common.timeFrequencies.secondly'), value: RRule.SECONDLY },
+        { text: this.$t('common.timeFrequencies.minutely'), value: RRule.MINUTELY },
+        { text: this.$t('common.timeFrequencies.hourly'), value: RRule.HOURLY },
+        { text: this.$t('common.timeFrequencies.daily'), value: RRule.DAILY },
+        { text: this.$t('common.timeFrequencies.weekly'), value: RRule.WEEKLY },
+        { text: this.$t('common.timeFrequencies.monthly'), value: RRule.MONTHLY },
+        { text: this.$t('common.timeFrequencies.yearly'), value: RRule.YEARLY },
       ];
     },
 
     weekDays() {
       return [
-        { text: 'Monday', value: RRule.MO.weekday },
-        { text: 'Tuesday', value: RRule.TU.weekday },
-        { text: 'Wednesday', value: RRule.WE.weekday },
-        { text: 'Thursday', value: RRule.TH.weekday },
-        { text: 'Friday', value: RRule.FR.weekday },
-        { text: 'Saturday', value: RRule.SA.weekday },
-        { text: 'Sunday', value: RRule.SU.weekday },
+        { text: this.$t('common.weekDays.monday'), value: RRule.MO.weekday },
+        { text: this.$t('common.weekDays.tuesday'), value: RRule.TU.weekday },
+        { text: this.$t('common.weekDays.wednesday'), value: RRule.WE.weekday },
+        { text: this.$t('common.weekDays.thursday'), value: RRule.TH.weekday },
+        { text: this.$t('common.weekDays.friday'), value: RRule.FR.weekday },
+        { text: this.$t('common.weekDays.saturday'), value: RRule.SA.weekday },
+        { text: this.$t('common.weekDays.sunday'), value: RRule.SU.weekday },
       ];
     },
 
     months() {
       return [
-        { text: 'January', value: 1 },
-        { text: 'February', value: 2 },
-        { text: 'March', value: 3 },
-        { text: 'April', value: 4 },
-        { text: 'May', value: 5 },
-        { text: 'June', value: 6 },
-        { text: 'July', value: 7 },
-        { text: 'August', value: 8 },
-        { text: 'September', value: 9 },
-        { text: 'October', value: 10 },
-        { text: 'November', value: 11 },
-        { text: 'December', value: 12 },
+        { text: this.$t('common.months.january'), value: 1 },
+        { text: this.$t('common.months.february'), value: 2 },
+        { text: this.$t('common.months.march'), value: 3 },
+        { text: this.$t('common.months.april'), value: 4 },
+        { text: this.$t('common.months.may'), value: 5 },
+        { text: this.$t('common.months.june'), value: 6 },
+        { text: this.$t('common.months.july'), value: 7 },
+        { text: this.$t('common.months.august'), value: 8 },
+        { text: this.$t('common.months.september'), value: 9 },
+        { text: this.$t('common.months.october'), value: 10 },
+        { text: this.$t('common.months.november'), value: 11 },
+        { text: this.$t('common.months.december'), value: 12 },
       ];
     },
 
-    rRuleString() {
-      return this.rRuleObject.toString();
+    recurrenceRuleString() {
+      return this.recurrenceRuleObject.toString();
     },
 
-    rRuleText() {
-      return this.rRuleObject.toText();
+    recurrenceRuleText() {
+      return this.recurrenceRuleObject.toText();
     },
   },
-  watch: {
-    showRRule(value) {
-      if (!value) {
-        this.errors.remove('rRule');
-        this.$emit('input', '');
-      } else {
-        this.changeRRuleOption();
-      }
-    },
+  mounted() {
+    this.changeRecurrenceRuleOption();
   },
   methods: {
     /**
@@ -352,27 +273,25 @@ export default {
      * If RRule isn't valid then add error message to visible RRule field
      * Else remove errors and $emit changes
      */
-    changeRRuleOption() {
+    changeRecurrenceRuleOption() {
       try {
-        this.rRuleObject = new RRule({
-          ...this.$options.filters.formOptionsToRRuleOptions(this.form.rRuleOptions),
-          ...this.$options.filters.formAdvancedOptionsToRRuleOptions(this.form.advancedRRuleOptions),
+        this.recurrenceRuleObject = new RRule({
+          ...pickBy(this.form.recurrenceRuleOptions, v => v !== ''),
+          ...mapValues(this.form.advancedRecurrenceRuleOptions, o => o.split(',').filter(v => v)),
         });
 
-        if (!this.errors.has('rRule') && !this.rRuleObject.isFullyConvertibleToText()) {
+        if (!this.errors.has('rRule') && !this.recurrenceRuleObject.isFullyConvertibleToText()) {
           this.errors.add({
             field: 'rRule',
-            msg: this.$t('rRule.errors.main'),
+            msg: this.$t('recurrenceRule.errors.main'),
           });
         } else {
           this.errors.remove('rRule');
 
-          if (this.showRRule) {
-            this.$emit('input', this.rRuleString.replace(/.*RRULE:/, ''));
-          }
+          this.$emit('input', this.recurrenceRuleString.replace(/.*RRULE:/, ''));
         }
       } catch (err) {
-        console.warn(err);
+        console.error(err);
       }
     },
   },
@@ -380,7 +299,7 @@ export default {
 </script>
 
 <style scoped>
-  .r-rule-tabs {
+  .recurrence-rule-tabs {
     width: 100%;
   }
 

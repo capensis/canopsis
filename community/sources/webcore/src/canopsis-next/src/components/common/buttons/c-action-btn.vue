@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-tooltip(bottom)
+  v-tooltip(:top="top", :right="right", :bottom="bottom", :left="left")
     slot(slot="activator", name="button")
       v-btn.mx-1(
         slot="activator",
@@ -40,6 +40,23 @@ export default {
     loading: {
       type: Boolean,
       default: false,
+    },
+    top: {
+      type: Boolean,
+      required: false,
+    },
+    right: {
+      type: Boolean,
+      required: false,
+    },
+    bottom: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    left: {
+      type: Boolean,
+      required: false,
     },
   },
   computed: {
