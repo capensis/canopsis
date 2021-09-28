@@ -2827,9 +2827,6 @@ var doc = `{
                         "JWTAuth": []
                     },
                     {
-                        "JWTQueryAuth": []
-                    },
-                    {
                         "BasicAuth": []
                     }
                 ],
@@ -2936,14 +2933,37 @@ var doc = `{
                 }
             }
         },
+        "/file-access": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Get file access",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get file access",
+                "operationId": "auth-get-file-access",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/file/{id}": {
             "get": {
                 "security": [
                     {
                         "JWTAuth": []
-                    },
-                    {
-                        "JWTQueryAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -3549,6 +3569,11 @@ var doc = `{
         },
         "/logout": {
             "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
                 "description": "Log out",
                 "consumes": [
                     "application/json"
@@ -12501,11 +12526,6 @@ var doc = `{
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
-        },
-        "JWTQueryAuth": {
-            "type": "apiKey",
-            "name": "token",
-            "in": "query"
         }
     }
 }`

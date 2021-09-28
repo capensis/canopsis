@@ -92,11 +92,16 @@ func Default(
 		return nil, err
 	}
 
+	cookieOptions := CookieOptions{
+		FileAccessName: "token",
+		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
+		Secure:         secureSession,
+	}
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
-	sessionStore.Options.MaxAge = int(sessionStoreSessionMaxAge.Seconds())
-	sessionStore.Options.Secure = secureSession
+	sessionStore.Options.MaxAge = cookieOptions.MaxAge
+	sessionStore.Options.Secure = cookieOptions.Secure
 	apiConfigProvider := config.NewApiConfigProvider(cfg, logger)
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
 
 	proxyAccessConfig, err := proxy.LoadAccessConfig(configDir)
 	if err != nil {

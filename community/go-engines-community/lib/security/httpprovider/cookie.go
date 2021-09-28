@@ -11,14 +11,13 @@ import (
 	"github.com/rs/zerolog"
 )
 
-const cookieToken = "token"
-
 // cookieProvider implements a Cookie Token Authentication provider.
 // It must be used only for file access.
 type cookieProvider struct {
 	tokenService token.Service
 	tokenStore   token.Store
 	userProvider security.UserProvider
+	cookieName   string
 	logger       zerolog.Logger
 }
 
@@ -26,18 +25,20 @@ func NewCookieProvider(
 	tokenService token.Service,
 	tokenStore token.Store,
 	userProvider security.UserProvider,
+	cookieName string,
 	logger zerolog.Logger,
 ) security.HttpProvider {
 	return &cookieProvider{
 		tokenService: tokenService,
 		tokenStore:   tokenStore,
 		userProvider: userProvider,
+		cookieName:   cookieName,
 		logger:       logger,
 	}
 }
 
 func (p *cookieProvider) Auth(r *http.Request) (*security.User, error, bool) {
-	cookie, err := r.Cookie(cookieToken)
+	cookie, err := r.Cookie(p.cookieName)
 	if err != nil {
 		if errors.Is(err, http.ErrNoCookie) {
 			return nil, nil, false

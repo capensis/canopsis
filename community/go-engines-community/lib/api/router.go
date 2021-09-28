@@ -145,6 +145,9 @@ func RegisterRoutes(
 		security.GetTokenStore(),
 		security.GetAuthProviders(),
 		security.GetSessionStore(),
+		security.GetCookieOptions().FileAccessName,
+		security.GetCookieOptions().MaxAge,
+		security.GetCookieOptions().Secure,
 	)
 	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
@@ -185,6 +188,7 @@ func RegisterRoutes(
 		protected.GET("/account/me", account.NewApi(account.NewStore(dbClient)).Me)
 		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
 		protected.GET("/sessions-count", sessionauthApi.GetSessionsCount())
+		protected.GET("/file-access", authApi.GetFileAccess)
 
 		viewStatsRouter := protected.Group("/view-stats")
 		{

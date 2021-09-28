@@ -5334,7 +5334,6 @@ paths:
               type: object
       security:
       - JWTAuth: []
-      - JWTQueryAuth: []
       - BasicAuth: []
       summary: List files by ID
       tags:
@@ -5373,6 +5372,22 @@ paths:
       summary: Upload files
       tags:
       - files
+  /file-access:
+    get:
+      consumes:
+      - application/json
+      description: Get file access
+      operationId: auth-get-file-access
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - JWTAuth: []
+      summary: Get file access
+      tags:
+      - auth
   /file/{id}:
     delete:
       consumes:
@@ -5428,7 +5443,6 @@ paths:
             $ref: '#/definitions/common.ErrorResponse'
       security:
       - JWTAuth: []
-      - JWTQueryAuth: []
       - BasicAuth: []
       summary: Get file by ID
       tags:
@@ -5760,6 +5774,8 @@ paths:
       responses:
         "204":
           description: ""
+      security:
+      - JWTAuth: []
       summary: Log out
       tags:
       - auth
@@ -8192,9 +8208,5 @@ securityDefinitions:
   JWTAuth:
     in: header
     name: Authorization
-    type: apiKey
-  JWTQueryAuth:
-    in: query
-    name: token
     type: apiKey
 swagger: "2.0"

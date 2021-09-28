@@ -2811,9 +2811,6 @@
                         "JWTAuth": []
                     },
                     {
-                        "JWTQueryAuth": []
-                    },
-                    {
                         "BasicAuth": []
                     }
                 ],
@@ -2920,14 +2917,37 @@
                 }
             }
         },
+        "/file-access": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Get file access",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get file access",
+                "operationId": "auth-get-file-access",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/file/{id}": {
             "get": {
                 "security": [
                     {
                         "JWTAuth": []
-                    },
-                    {
-                        "JWTQueryAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -3533,6 +3553,11 @@
         },
         "/logout": {
             "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
                 "description": "Log out",
                 "consumes": [
                     "application/json"
@@ -12485,11 +12510,6 @@
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
-        },
-        "JWTQueryAuth": {
-            "type": "apiKey",
-            "name": "token",
-            "in": "query"
         }
     }
 }

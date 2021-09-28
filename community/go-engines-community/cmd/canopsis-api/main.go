@@ -33,10 +33,6 @@ import (
 // @securityDefinitions.apikey JWTAuth
 // @in header
 // @name Authorization
-
-// @securityDefinitions.apikey JWTQueryAuth
-// @in query
-// @name token
 func main() {
 	var flags Flags
 	flags.ParseArgs()

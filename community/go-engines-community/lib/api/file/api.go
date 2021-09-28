@@ -73,7 +73,6 @@ func (a *api) Create(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security JWTAuth
-// @Security JWTQueryAuth
 // @Security BasicAuth
 // @Param id path string true "file id"
 // @Success 200 {object} http.Response
@@ -116,7 +115,6 @@ func (a *api) Get(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security JWTAuth
-// @Security JWTQueryAuth
 // @Security BasicAuth
 // @Success 200 {object} []File
 // @Failure 400 {object} common.ValidationErrorResponse
