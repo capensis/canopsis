@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, orderBy } from 'lodash';
 
 import queryWidgetMixin from '@/mixins/widget/query';
 import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
@@ -28,9 +28,20 @@ export default {
     },
 
     displayedAlarms() {
-      const { page, limit } = this.query;
+      const {
+        page,
+        limit,
+        sortKey,
+        sortDir = '',
+      } = this.query;
 
-      return this.alarms.slice((page - 1) * limit, page * limit);
+      let { alarms } = this;
+
+      if (sortKey) {
+        alarms = orderBy(alarms, [sortKey], [sortDir.toLowerCase()]);
+      }
+
+      return alarms.slice((page - 1) * limit, page * limit);
     },
   },
   mounted() {

@@ -11,7 +11,7 @@
 <script>
 import moment from 'moment-timezone';
 
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 export default {
   $_veeValidate: {

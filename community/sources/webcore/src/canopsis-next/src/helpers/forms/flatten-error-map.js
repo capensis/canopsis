@@ -2,11 +2,15 @@ import { zipObjectDeep } from 'lodash';
 import flatten from 'flat';
 
 /**
+ * @typedef {Object.<string, string | string[]>} FlattenErrors
+ */
+
+/**
  * Map flatten errors object.
  *
- * @param {Object} errors
+ * @param {FlattenErrors} errors
  * @param {function} map
- * @return {Object}
+ * @return {FlattenErrors}
  */
 export const flattenErrorMap = (errors = {}, map) => {
   const errorsKeys = Object.keys(errors);

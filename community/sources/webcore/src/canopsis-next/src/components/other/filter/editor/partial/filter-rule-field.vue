@@ -27,7 +27,7 @@
 <script>
 import { get, isObject, isString, isUndefined } from 'lodash';
 
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 export default {
   filters: {

@@ -68,6 +68,7 @@ type ScenarioExecution struct {
 	Tries            int64                  `json:"t"`
 	Header           map[string]string      `json:"h,omitempty"`
 	Response         map[string]interface{} `json:"r,omitempty"`
+	AdditionalData   AdditionalData         `json:"ad"`
 }
 
 type ScenarioResult struct {
@@ -83,6 +84,13 @@ type ExecuteScenariosTask struct {
 	Entity               types.Entity
 	Alarm                types.Alarm
 	AckResources         bool
+	AdditionalData       AdditionalData
+}
+
+type AdditionalData struct {
+	AlarmChangeType types.AlarmChangeType `json:"alarm_change_type"`
+	Author          string                `json:"author"`
+	Initiator       string                `json:"initiator"`
 }
 
 type Execution struct {

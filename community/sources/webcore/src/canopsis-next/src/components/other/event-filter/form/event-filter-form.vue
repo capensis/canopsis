@@ -21,14 +21,7 @@
       :error-messages="errors.collect('description')",
       name="description"
     )
-    v-text-field(
-      v-field.number="form.priority",
-      v-validate="'required'",
-      :error-messages="errors.collect('priority')",
-      :label="$t('common.priority')",
-      name="priority",
-      type="number"
-    )
+    c-priority-field(v-model="form.priority")
     c-enabled-field(v-field="form.enabled")
     patterns-list(v-field="form.patterns")
 </template>
@@ -36,7 +29,7 @@
 <script>
 import { EVENT_FILTER_RULE_TYPES } from '@/constants';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 

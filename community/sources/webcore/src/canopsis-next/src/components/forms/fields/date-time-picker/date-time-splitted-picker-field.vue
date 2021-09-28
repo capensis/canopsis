@@ -40,7 +40,7 @@
 import { convertTimestampToMoment } from '@/helpers/date/date';
 import { updateTime, updateDate } from '@/helpers/date/date-time-picker';
 
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
 import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';

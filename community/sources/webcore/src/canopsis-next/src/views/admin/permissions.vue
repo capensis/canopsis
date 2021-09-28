@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container.admin-rights
-    c-the-page-header {{ $t('common.rights') }}
+    c-page-header
     div.position-relative
       v-fade-transition
         v-layout.white.progress(v-show="pending", column)
@@ -210,7 +210,7 @@ export default {
 
       if (changedRole) {
         /**
-           * If we have changes for role but we don't have changes for right
+           * If we have changes for role but we don't have changes for permission
            */
         this.$set(changedRole, permission._id, nextActions);
       } else {
@@ -222,7 +222,7 @@ export default {
     },
 
     /**
-     * Fetch rights and roles lists
+     * Fetch permissions and roles lists
      *
      * @returns void
      */

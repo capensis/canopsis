@@ -31,7 +31,9 @@
         "type": "test-type-to-pbh-edit-1"
       }
     ],
-    "exceptions": ["test-exception-to-pbh-edit"],
+    "exceptions": [
+      "test-exception-to-pbh-edit"
+    ],
     "created": 1592215337,
     "updated": 1592215337
   },
@@ -81,7 +83,9 @@
         "type": "test-type-to-pbh-edit-1"
       }
     ],
-    "exceptions": ["test-exception-to-pbh-edit"],
+    "exceptions": [
+      "test-exception-to-pbh-edit"
+    ],
     "created": 1592215338,
     "updated": 1592215338
   },
@@ -223,9 +227,12 @@
         "type": "test-type-to-pbh-edit-1"
       }
     ],
-    "exceptions": ["test-exception-to-pbh-edit"],
+    "exceptions": [
+      "test-exception-to-pbh-edit"
+    ],
     "created": 1592215337,
-    "updated": 1592215337
+    "updated": 1592215337,
+    "last_alarm_date": 1592215337
   },
   {
     "_id": "test-pbehavior-to-update-invalid",
@@ -252,8 +259,8 @@
     "tstart": 1591172881,
     "tstop": 1591536400,
     "type_": "test-type-to-pbh-edit-1",
-    "exdates":[],
-    "exceptions":[],
+    "exdates": [],
+    "exceptions": [],
     "created": 1592215337,
     "updated": 1592215337
   },
@@ -289,7 +296,9 @@
         "type": "test-type-to-pbh-edit-2"
       }
     ],
-    "exceptions": ["test-exception-to-delete-used-by-pbehavior"],
+    "exceptions": [
+      "test-exception-to-delete-used-by-pbehavior"
+    ],
     "created": 1592215337,
     "updated": 1592215337
   },
@@ -325,7 +334,9 @@
         "type": "test-type-to-pbh-edit-2"
       }
     ],
-    "exceptions": ["test-exception-to-delete-used-by-pbehavior"],
+    "exceptions": [
+      "test-exception-to-delete-used-by-pbehavior"
+    ],
     "created": 1592215337,
     "updated": 1592215337
   },
@@ -506,7 +517,9 @@
         "type": "test-type-to-pbh-edit-1"
       }
     ],
-    "exceptions": ["test-exception-to-pbh-edit"],
+    "exceptions": [
+      "test-exception-to-pbh-edit"
+    ],
     "created": 1592215337,
     "updated": 1592215337
   },
@@ -557,7 +570,9 @@
     "tstop": 2591536400,
     "type_": "test-type-to-pbh-edit-1",
     "exdates": [],
-    "exceptions": ["test-exception-to-get-2"],
+    "exceptions": [
+      "test-exception-to-get-2"
+    ],
     "created": 1592215337,
     "updated": 1592215337
   },
@@ -575,6 +590,46 @@
     "type_": "test-type-to-pbh-edit-1",
     "exdates": [],
     "exceptions": [],
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-pbehavior-to-patch-1",
+    "author": "test-pbehavior-to-patch-1-author",
+    "comments": [],
+    "enabled": true,
+    "filter": "{\"$and\":[{\"name\":\"test-filter\"}]}",
+    "name": "test-pbehavior-to-patch-1-name",
+    "reason": "test-reason-to-patch-pbehavior",
+    "rrule": "test-pbehavior-to-patch-1-rrule",
+    "tstart": 1592215337,
+    "tstop": 1592215338,
+    "type_": "test-active-type-to-patch-pbehavior",
+    "exdates": [
+      {
+        "begin": 1592215337,
+        "end": 1592215338,
+        "type": "test-active-type-to-patch-pbehavior"
+      }
+    ],
+    "exceptions": [
+      "test-exception-to-patch-pbehavior"
+    ],
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-pbehavior-to-patch-2",
+    "author": "test-pbehavior-to-patch-2-author",
+    "comments": [],
+    "enabled": true,
+    "filter": "{\"$and\":[{\"name\":\"test-filter\"}]}",
+    "name": "test-pbehavior-to-patch-2-name",
+    "reason": "test-reason-to-patch-pbehavior",
+    "rrule": "test-pbehavior-to-patch-2-rrule",
+    "tstart": 1592215337,
+    "tstop": null,
+    "type_": "test-default-pause-type",
     "created": 1592215337,
     "updated": 1592215337
   }

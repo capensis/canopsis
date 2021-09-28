@@ -47,7 +47,7 @@
 <script>
 import uid from '@/helpers/uid';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import PatternRuleAdvancedFieldForm from './pattern-rule-advanced-field-form.vue';
 

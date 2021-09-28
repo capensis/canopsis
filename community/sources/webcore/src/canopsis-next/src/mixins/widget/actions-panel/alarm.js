@@ -5,13 +5,12 @@ import {
   EVENT_ENTITY_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   CRUD_ACTIONS,
-  STATS_QUICK_RANGES,
+  QUICK_RANGES,
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
-import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
 import { authMixin } from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
@@ -48,20 +47,6 @@ export const widgetActionsPanelAlarmMixin = {
           ...this.modalConfig,
           action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.item, data),
         },
-      });
-    },
-
-    async createMassFastAckEvent() {
-      let eventData = {};
-
-      if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
-        eventData = { output: this.widget.parameters.fastAckOutput.value };
-      }
-
-      const ackEventData = prepareEventsByAlarms(EVENT_ENTITY_TYPES.ack, this.items, eventData);
-
-      await this.createEventAction({
-        data: ackEventData,
       });
     },
 
@@ -186,17 +171,14 @@ export const widgetActionsPanelAlarmMixin = {
        * Default value for liveReporting is last 30 days
        */
       widget.parameters.liveReporting = {
-        tstart: STATS_QUICK_RANGES.last30Days.start,
-        tstop: STATS_QUICK_RANGES.last30Days.stop,
+        tstart: QUICK_RANGES.last30Days.start,
+        tstop: QUICK_RANGES.last30Days.stop,
       };
 
       /**
-       * Default value for alarmsStateFilter
+       * Default value for opened
        */
-      widget.parameters.alarmsStateFilter = {
-        opened: false,
-        resolved: true,
-      };
+      widget.parameters.opened = false;
 
       /**
        * Special entity filter for alarms list modal
@@ -220,17 +202,6 @@ export const widgetActionsPanelAlarmMixin = {
           title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
           eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
           parentsIds: [get(this.parentAlarm, 'd')],
-        },
-      });
-    },
-
-    showRateInstructionModal(instructionExecuteId) {
-      this.$modals.show({
-        name: MODALS.rate,
-        config: {
-          title: this.$t('modals.rateInstruction.title'),
-          text: this.$t('modals.rateInstruction.text'),
-          action: data => this.rateRemediationInstructionExecution({ id: instructionExecuteId, data }),
         },
       });
     },

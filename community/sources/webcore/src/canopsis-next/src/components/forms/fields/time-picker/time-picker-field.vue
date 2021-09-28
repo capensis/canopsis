@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 export default {
   mixins: [formBaseMixin],

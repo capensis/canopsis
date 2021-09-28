@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
@@ -114,7 +115,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						return
 					}
 
-					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AckResources)
+					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData)
 					return
 				}
 
@@ -139,16 +140,17 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					}
 
 					e.taskChannel <- Task{
-						Source:       "input listener",
-						Action:       execution.ActionExecutions[step].Action,
-						Alarm:        task.Alarm,
-						Entity:       task.Entity,
-						Step:         step,
-						ExecutionID:  execution.ID,
-						ScenarioID:   execution.ScenarioID,
-						AckResources: execution.AckResources,
-						Header:       execution.Header,
-						Response:     execution.Response,
+						Source:         "input listener",
+						Action:         execution.ActionExecutions[step].Action,
+						Alarm:          task.Alarm,
+						Entity:         task.Entity,
+						Step:           step,
+						ExecutionID:    execution.ID,
+						ScenarioID:     execution.ScenarioID,
+						AckResources:   execution.AckResources,
+						Header:         execution.Header,
+						Response:       execution.Response,
+						AdditionalData: task.AdditionalData,
 					}
 
 					return
@@ -387,6 +389,11 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			AckResources: scenarioExecution.AckResources,
 			Header:       scenarioExecution.Header,
 			Response:     scenarioExecution.Response,
+			AdditionalData: AdditionalData{
+				AlarmChangeType: taskRes.AlarmChangeType,
+				Author:          canopsis.DefaultEventAuthor,
+				Initiator:       scenarioExecution.AdditionalData.Initiator,
+			},
 		}
 
 		select {
@@ -422,7 +429,7 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 	}
 
 	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AckResources)
+		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData)
 	}
 
 	return true, nil
@@ -455,14 +462,18 @@ func (e *redisBasedManager) processEmittedTrigger(
 	}
 
 	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, alarm, entity, ackResource)
+		e.startExecution(ctx, scenario, alarm, entity, ackResource, AdditionalData{
+			AlarmChangeType: types.AlarmChangeType(trigger),
+			Author:          canopsis.DefaultEventAuthor,
+			Initiator:       types.InitiatorSystem,
+		})
 	}
 
 	return nil
 }
 
 func (e *redisBasedManager) startExecution(ctx context.Context, scenario Scenario,
-	alarm types.Alarm, entity types.Entity, ackResources bool) {
+	alarm types.Alarm, entity types.Entity, ackResources bool, data AdditionalData) {
 	e.logger.Debug().Msgf("Execute scenario = %s for alarm = %s", alarm.ID, scenario.ID)
 	var executions []Execution
 	for _, action := range scenario.Actions {
@@ -482,6 +493,7 @@ func (e *redisBasedManager) startExecution(ctx context.Context, scenario Scenari
 		ActionExecutions: executions,
 		LastUpdate:       time.Now().Unix(),
 		AckResources:     ackResources,
+		AdditionalData:   data,
 	})
 	if err != nil {
 		e.logger.Err(err).Msg("cannot save execution")
@@ -493,14 +505,15 @@ func (e *redisBasedManager) startExecution(ctx context.Context, scenario Scenari
 	}
 
 	e.taskChannel <- Task{
-		Source:       "input listener",
-		Action:       scenario.Actions[0],
-		Alarm:        alarm,
-		Entity:       entity,
-		Step:         0,
-		ExecutionID:  executionID,
-		ScenarioID:   scenario.ID,
-		AckResources: ackResources,
+		Source:         "input listener",
+		Action:         scenario.Actions[0],
+		Alarm:          alarm,
+		Entity:         entity,
+		Step:           0,
+		ExecutionID:    executionID,
+		ScenarioID:     scenario.ID,
+		AckResources:   ackResources,
+		AdditionalData: data,
 	}
 
 }

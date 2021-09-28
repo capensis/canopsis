@@ -14,10 +14,10 @@
 <script>
 import { isUndefined } from 'lodash';
 
-import baseFormMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 export default {
-  mixins: [baseFormMixin],
+  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'change',

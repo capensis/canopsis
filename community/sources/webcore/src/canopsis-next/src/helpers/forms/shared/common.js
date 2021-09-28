@@ -74,3 +74,11 @@ export const infosToArray = (infos = {}) => Object.entries(infos).map(([name, in
   name,
   ...info,
 }));
+
+/**
+ * Convert enabled field to form
+ *
+ * @param {boolean} [enabled = true]
+ * @return {boolean}
+ */
+export const enabledToForm = (enabled = true) => enabled;

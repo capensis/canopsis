@@ -20,7 +20,7 @@ import { MODALS } from '@/constants';
 
 import uid from '@/helpers/uid';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 import RemediationInstructionsFiltersList
   from '@/components/other/remediation/instructions-filter/remediation-instructions-filters-list.vue';
