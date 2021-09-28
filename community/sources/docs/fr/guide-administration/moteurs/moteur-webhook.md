@@ -117,7 +117,7 @@ Lorsque le service appelé par le webhook répond une erreur (Code erreur HTTP !
   * `delay` représente le délai avant une nouvelle tentative.   
   * `http_timeout` représente le délai d'attente d'une réponse.
 
-Les valeurs de ces paramètres sont exprimés en secondes.
+Les valeurs de ces paramètres sont exprimées en secondes.
 
 Ces paramètres sont présents dans la configuration de chaque webhook. 
 
