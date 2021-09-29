@@ -64,6 +64,7 @@ Le driver permet de peupler le référentiel interne Canopsis en vue de l’enri
 | Service Now | Version [Madrid](https://www.servicenow.fr/) | Pro | Non | Version ≥ 3.25 |
 | Easyvista | [Easyvista](https://www.easyvista.com/fr) | Pro | Non | Version ≥ 3.25 |
 | CSV | Sources de données CSV spécifiques | Pro | Non | Version ≥ 3.25 |
+| [API](drivers/driver-api.md) | Source de données via API externe | Pro | Oui | Version ≥ 4.3 |
 
 ## Notifications
 
