@@ -6,8 +6,8 @@
       field-filter-editor(
         data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
-        :hiddenFields="['title']",
-        :entitiesType="$constants.ENTITIES_TYPES.entity"
+        :hidden-fields="['title']",
+        :entities-type="$constants.ENTITIES_TYPES.entity"
       )
       v-divider
       field-text-editor(
@@ -16,9 +16,9 @@
         :title="$t('settings.templateEditor')"
       )
       v-divider
-      v-list-group(v-if="edition === $constants.CANOPSIS_EDITION.cat", data-test="textWidgetStats")
+      v-list-group(v-if="isCatVersion", data-test="textWidgetStats")
         v-list-tile(slot="activator") {{ $t('settings.stats') }}
-          .font-italic.caption.ml-1 ({{ $t('common.optional') }})
+          div.font-italic.caption.ml-1 ({{ $t('common.optional') }})
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-stats-selector(v-model="settings.widget.parameters.stats")
           v-divider
@@ -33,7 +33,7 @@ import { cloneDeep } from 'lodash';
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldDateInterval from './fields/stats/date-interval.vue';
