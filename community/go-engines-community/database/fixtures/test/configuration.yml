@@ -23,6 +23,7 @@ configuration:
       enablelasteventdate: true
       flappingfreqlimit: 0
       flappinginterval: 0
+      longoutputlength: 1024
       outputlength: 255
       stealthyinterval: 0
     api:

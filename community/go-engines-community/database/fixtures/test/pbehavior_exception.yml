@@ -62,3 +62,21 @@ pbehavior_exception:
       end: 1591167901
       type: test-type-to-delete-linked-to-exception
     name: Exception to type delete
+  pbehavior_exception_8:
+    _id: test-exception-to-patch-pbehavior
+    created: 1592215337
+    description: test-exception-to-patch-pbehavior-description
+    exdates:
+    - begin: 1592215337
+      end: 1592215337
+      type: test-active-type-to-patch-pbehavior
+    name: test-exception-to-patch-pbehavior-name
+  pbehavior_exception_9:
+    _id: test-exception-to-patch-pbehavior-new
+    created: 1592215337
+    description: test-exception-to-patch-pbehavior-new-description
+    exdates:
+    - begin: 1592215337
+      end: 1592215337
+      type: test-pause-type-to-patch-pbehavior
+    name: test-exception-to-patch-pbehavior-new-name

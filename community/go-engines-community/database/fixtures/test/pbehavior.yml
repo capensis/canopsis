@@ -160,7 +160,6 @@ pbehavior:
       message: asdasd
       ts: 1592215337
     created: 1592215337
-    last_alarm_date: 1592215337
     enabled: true
     exceptions:
     - test-exception-to-pbh-edit
@@ -169,6 +168,7 @@ pbehavior:
       end: 1591167601
       type: test-type-to-pbh-edit-1
     filter: '{"$and":[{"name":"test filter"}]}'
+    last_alarm_date: 1592215337
     name: "1"
     reason: test-reason-1
     rrule: ""
@@ -466,4 +466,38 @@ pbehavior:
     tstart: 1591172881
     tstop: 2591536400
     type_: test-type-to-pbh-edit-1
+    updated: 1592215337
+  pbehavior_22:
+    _id: test-pbehavior-to-patch-1
+    author: test-pbehavior-to-patch-1-author
+    comments: []
+    created: 1592215337
+    enabled: true
+    exceptions:
+    - test-exception-to-patch-pbehavior
+    exdates:
+    - begin: 1592215337
+      end: 1592215338
+      type: test-active-type-to-patch-pbehavior
+    filter: '{"$and":[{"name":"test-filter"}]}'
+    name: test-pbehavior-to-patch-1-name
+    reason: test-reason-to-patch-pbehavior
+    rrule: test-pbehavior-to-patch-1-rrule
+    tstart: 1592215337
+    tstop: 1592215338
+    type_: test-active-type-to-patch-pbehavior
+    updated: 1592215337
+  pbehavior_23:
+    _id: test-pbehavior-to-patch-2
+    author: test-pbehavior-to-patch-2-author
+    comments: []
+    created: 1592215337
+    enabled: true
+    filter: '{"$and":[{"name":"test-filter"}]}'
+    name: test-pbehavior-to-patch-2-name
+    reason: test-reason-to-patch-pbehavior
+    rrule: test-pbehavior-to-patch-2-rrule
+    tstart: 1592215337
+    tstop: null
+    type_: test-default-pause-type
     updated: 1592215337

@@ -6,6 +6,7 @@ dynamic_infos:
     creation_date: 1581423405
     description: 'Consigne pour les alertes reçu depuis un mail des mainteneurs suivants
       : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE'
+    enabled: true
     entity_patterns:
     - infos:
         alert_name:
@@ -28,6 +29,7 @@ dynamic_infos:
     author: root
     creation_date: 1581504657
     description: le service d’import des postes dans l’annuaire ne fonctionne pas
+    enabled: true
     entity_patterns:
     - infos:
         alert_name:
@@ -51,6 +53,7 @@ dynamic_infos:
     creation_date: 1581423405
     description: 'Consigne pour les alertes reçu depuis un mail des mainteneurs suivants
       : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE'
+    enabled: true
     infos:
     - name: type
       value: consigne
@@ -67,6 +70,7 @@ dynamic_infos:
     creation_date: 1581423405
     description: 'Consigne pour les alertes reçu depuis un mail des mainteneurs suivants
       : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE'
+    enabled: true
     infos:
     - name: type
       value: consigne

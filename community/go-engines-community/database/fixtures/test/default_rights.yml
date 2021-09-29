@@ -7,6 +7,7 @@ default_rights:
     _id: api_acl
     crecord_name: api_acl
     crecord_type: action
+    type: CRUD
   default_rights_3:
     _id: api_alarm_read
     crecord_name: api_alarm_read
@@ -34,6 +35,11 @@ default_rights:
   default_rights_8:
     _id: api_idlerule
     crecord_name: api_idlerule
+    crecord_type: action
+    type: CRUD
+  default_rights_9:
+    _id: api_webhook
+    crecord_name: api_webhook
     crecord_type: action
     type: CRUD
   default_rights_10:
@@ -177,7 +183,7 @@ default_rights:
     crecord_type: role
     rights:
       api_acl:
-        checksum: 1
+        checksum: 15
         crecord_type: right
       api_action:
         checksum: 15
@@ -284,6 +290,9 @@ default_rights:
       api_viewgroup:
         checksum: 15
         crecord_type: right
+      api_webhook:
+        checksum: 15
+        crecord_type: right
       test-playlist-to-delete:
         checksum: 1
         crecord_type: right
@@ -370,10 +379,16 @@ default_rights:
     crecord_name: manager
     crecord_type: role
     rights:
+      api_acl:
+        checksum: 15
+        crecord_type: right
       api_action:
         checksum: 15
         crecord_type: right
       api_alarm_read:
+        checksum: 1
+        crecord_type: right
+      api_app_info_read:
         checksum: 1
         crecord_type: right
       api_entity:
@@ -410,6 +425,15 @@ default_rights:
         checksum: 15
         crecord_type: right
       api_pbehaviortype:
+        checksum: 15
+        crecord_type: right
+      api_playlist:
+        checksum: 4
+        crecord_type: right
+      api_viewgroup:
+        checksum: 4
+        crecord_type: right
+      api_webhook:
         checksum: 15
         crecord_type: right
   default_rights_43:
@@ -574,6 +598,7 @@ default_rights:
     _id: test-role-to-edit-user
     crecord_name: test-role-to-edit-user
     crecord_type: role
+    defaultview: test-view-to-edit-user
     description: test-role-to-edit-user-description
     rights:
       test-permission-to-edit-user-1:

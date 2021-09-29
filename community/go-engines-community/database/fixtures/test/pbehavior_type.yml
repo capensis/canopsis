@@ -188,3 +188,17 @@ pbehavior_type:
     name: test-type-to-edit-idle-rule-name
     priority: 27
     type: maintenance
+  pbehavior_type_28:
+    _id: test-active-type-to-patch-pbehavior
+    description: test-active-type-to-patch-pbehavior-description
+    icon_name: test-active-type-to-patch-pbehavior-icon
+    name: test-active-type-to-patch-pbehavior-name
+    priority: 28
+    type: active
+  pbehavior_type_29:
+    _id: test-pause-type-to-patch-pbehavior
+    description: test-pause-type-to-patch-pbehavior-description
+    icon_name: test-pause-type-to-patch-pbehavior-icon
+    name: test-pause-type-to-patch-pbehavior-name
+    priority: 29
+    type: pause
