@@ -23,6 +23,7 @@ type API interface {
 	Login(c *gin.Context)
 	Logout(c *gin.Context)
 	GetLoggedUserCount(c *gin.Context)
+	GetFileAccess(c *gin.Context)
 }
 
 func NewApi(
@@ -30,6 +31,9 @@ func NewApi(
 	tokenStore token.Store,
 	providers []security.Provider,
 	sessionStore session.Store,
+	cookieName string,
+	cookieMaxAge int,
+	cookieSecure bool,
 	logger zerolog.Logger,
 ) API {
 	return &api{
@@ -38,6 +42,11 @@ func NewApi(
 		providers:    providers,
 		sessionStore: sessionStore,
 		logger:       logger,
+
+		cookieName:     cookieName,
+		cookieMaxAge:   cookieMaxAge,
+		cookieSecure:   cookieSecure,
+		cookieSameSite: http.SameSiteNoneMode,
 	}
 }
 
@@ -46,6 +55,11 @@ type api struct {
 	tokenStore   token.Store
 	providers    []security.Provider
 	logger       zerolog.Logger
+
+	cookieName     string
+	cookieMaxAge   int
+	cookieSecure   bool
+	cookieSameSite http.SameSite
 
 	sessionStore session.Store
 }
@@ -116,16 +130,15 @@ func (a *api) Login(c *gin.Context) {
 // @ID auth-logout
 // @Accept json
 // @Produce json
+// @Security JWTAuth
 // @Success 204
 // @Router /logout [post]
 func (a *api) Logout(c *gin.Context) {
-	header := c.GetHeader(headerAuthorization)
-	if len(header) < len(bearerPrefix) || !strings.EqualFold(header[:len(bearerPrefix)], bearerPrefix) {
+	tokenString := getToken(c)
+	if tokenString == "" {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 		return
 	}
-
-	tokenString := strings.TrimSpace(header[len(bearerPrefix):])
 	ok, err := a.tokenStore.Delete(c.Request.Context(), tokenString)
 	if err != nil {
 		panic(err)
@@ -136,6 +149,8 @@ func (a *api) Logout(c *gin.Context) {
 		return
 	}
 
+	c.SetSameSite(a.cookieSameSite)
+	c.SetCookie(a.cookieName, tokenString, -1, "", "", a.cookieSecure, false)
 	c.Status(http.StatusNoContent)
 }
 
@@ -165,4 +180,45 @@ func (a *api) GetLoggedUserCount(c *gin.Context) {
 	c.JSON(http.StatusOK, loggedUserCountResponse{
 		Count: count + sessionCount,
 	})
+}
+
+// Get file access
+// @Summary Get file access
+// @Description Get file access
+// @Tags auth
+// @ID auth-get-file-access
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Success 204
+// @Router /file-access [get]
+func (a *api) GetFileAccess(c *gin.Context) {
+	tokenString := getToken(c)
+	if tokenString == "" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		return
+	}
+
+	ok, err := a.tokenStore.Exists(c.Request.Context(), tokenString)
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		return
+	}
+
+	c.SetSameSite(a.cookieSameSite)
+	c.SetCookie(a.cookieName, tokenString, a.cookieMaxAge, "", "", a.cookieSecure, false)
+	c.Status(http.StatusNoContent)
+}
+
+func getToken(c *gin.Context) string {
+	header := c.GetHeader(headerAuthorization)
+	if len(header) < len(bearerPrefix) || !strings.EqualFold(header[:len(bearerPrefix)], bearerPrefix) {
+		return ""
+	}
+
+	return strings.TrimSpace(header[len(bearerPrefix):])
 }
