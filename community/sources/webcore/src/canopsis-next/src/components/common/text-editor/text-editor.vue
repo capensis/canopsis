@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { isString } from 'lodash';
+import { isString, get } from 'lodash';
 import { Jodit } from 'jodit';
 
 import 'jodit/build/jodit.min.css';
@@ -30,15 +30,24 @@ const {
 } = Jodit;
 
 /**
- * We need to replace this method to avoid the problem with CORS
+ * We need to replace this method to avoid the problem with CORS and to validate files
  */
 const originalSend = Ajax.prototype.send;
 
 Ajax.prototype.send = function send(...args) {
-  delete this.options.headers['X-REQUESTED-WITH'];
-  this.options.withCredentials = false;
+  try {
+    const fileValidator = get(this, 'jodit.options.uploader.fileValidator');
 
-  return originalSend.call(this, ...args);
+    if (fileValidator) {
+      this.options.data.forEach(fileValidator);
+    }
+
+    delete this.options.headers['X-REQUESTED-WITH'];
+
+    return originalSend.call(this, ...args);
+  } catch (err) {
+    return Promise.reject(err);
+  }
 };
 
 export default {
@@ -70,11 +79,10 @@ export default {
       type: Array,
       default: () => [],
     },
-  },
-  data() {
-    return {
-      editor: null,
-    };
+    maxFileSize: {
+      type: Number,
+      required: false,
+    },
   },
   computed: {
     hasError() {
@@ -126,7 +134,7 @@ export default {
         getMessage: this.uploaderGetMessage,
         error: this.uploaderError,
         defaultHandlerSuccess: this.uploaderDefaultHandlerSuccess,
-        defaultHandlerError: this.uploaderDefaultHandlerError,
+        fileValidator: this.uploaderFileValidator,
       };
     },
 
@@ -147,21 +155,21 @@ export default {
   },
   watch: {
     value(newValue) {
-      if (this.editor.value !== newValue) {
-        this.editor.setEditorValue(newValue);
+      if (this.$editor.value !== newValue) {
+        this.$editor.setEditorValue(newValue);
       }
     },
   },
   mounted() {
-    this.editor = new Jodit(this.$refs.textEditor, this.editorConfig);
-    this.editor.setEditorValue(this.value);
-    this.editor.events.on('change', this.onChange);
+    this.$editor = new Jodit(this.$refs.textEditor, this.editorConfig);
+    this.$editor.setEditorValue(this.value);
+    this.$editor.events.on('change', this.onChange);
   },
   beforeDestroy() {
-    this.editor.events.off('change', this.onChange);
-    this.editor.destruct();
+    this.$editor.events.off('change', this.onChange);
+    this.$editor.destruct();
 
-    delete this.editor;
+    delete this.$editor;
   },
   methods: {
     /**
@@ -241,8 +249,9 @@ export default {
      * @return {string}
      */
     uploaderGetMessage(response) {
-      return response.files.filter(file => file.error).join(' ');
+      return response.filter(file => file.error).join(' ');
     },
+
 
     /**
      * Uploader error handler
@@ -250,7 +259,7 @@ export default {
      * @param {Object} err
      */
     uploaderError(err) {
-      this.editor.events.fire('errorPopap', [err, 'error', 7000]);
+      this.$editor.events.fire('errorMessage', err.message, 'error', 7000);
     },
 
     /**
@@ -266,7 +275,7 @@ export default {
             : ['a', 'href'];
 
           const attrValue = isString(file) ? file : response.baseurl + file._id;
-          const elm = this.editor.create.inside.element(tagName);
+          const elm = this.$editor.create.inside.element(tagName);
 
           elm.setAttribute(attr, attrValue);
 
@@ -277,21 +286,22 @@ export default {
           }
 
           if (tagName === 'img') {
-            this.editor.selection.insertImage(elm, null, this.editor.options.imageDefaultWidth);
+            this.$editor.selection.insertImage(elm, null, this.$editor.options.imageDefaultWidth);
           } else {
-            this.editor.selection.insertNode(elm);
+            this.$editor.selection.insertNode(elm);
           }
         });
       }
     },
 
-    /**
-     * Uploader default handler for error
-     *
-     * @param {Object} response
-     */
-    uploaderDefaultHandlerError(response) {
-      this.editor.events.fire('errorPopap', [this.editor.options.getMessage(response)]);
+    uploaderFileValidator(file) {
+      if (!this.maxFileSize) {
+        return;
+      }
+
+      if (file instanceof File && file.size > this.maxFileSize) {
+        throw new Error(this.$t('validation.messages.size', [null, this.maxFileSize / 1024]));
+      }
     },
 
     /**
@@ -441,6 +451,14 @@ export default {
     .jodit_workplace {
       border-color: currentColor;
     }
+  }
+
+  & /deep/ .jodit_toolbar_popup {
+    z-index: 25;
+  }
+
+  & /deep/ .jodit_error_box_for_messages .error {
+     color: white;
   }
 }
 </style>
