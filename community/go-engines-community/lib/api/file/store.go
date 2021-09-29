@@ -17,7 +17,6 @@ import (
 
 const (
 	contentType = "Content-Type"
-	sizeLimit   = 300 * 1024 * 1024
 )
 
 // Store interface consists of helpers for api handlers
@@ -32,19 +31,21 @@ type Store interface {
 type store struct {
 	dbCollection mongo.DbCollection
 	storage      file.Storage
+	sizeLimit    int64
 }
 
 // NewStore initializes Store implementation.
-func NewStore(dbClient mongo.DbClient, storage file.Storage) Store {
+func NewStore(dbClient mongo.DbClient, storage file.Storage, sizeLimit int64) Store {
 	return &store{
 		dbCollection: dbClient.Collection(mongo.FileMongoCollection),
 		storage:      storage,
+		sizeLimit:    sizeLimit,
 	}
 }
 
 // Create parses form data from request and stores files and linked database records
 func (s *store) Create(ctx context.Context, isPublic bool, form *multipart.Form) ([]File, error) {
-	files, err := validateFormRequest(form)
+	files, err := s.validateFormRequest(form)
 	if err != nil {
 		return nil, err
 	}
@@ -159,13 +160,16 @@ func (s *store) storeFiles(isPublic bool, files []*multipart.FileHeader) ([]File
 	return models, nil
 }
 
-func validateFormRequest(form *multipart.Form) ([]*multipart.FileHeader, error) {
+func (s *store) validateFormRequest(form *multipart.Form) ([]*multipart.FileHeader, error) {
 	files := make([]*multipart.FileHeader, 0)
 
-	for _, headers := range form.File {
-		for _, header := range headers {
-			if header.Size > sizeLimit {
-				return nil, fmt.Errorf("file size exceeds limit %d", header.Size)
+	for field, headers := range form.File {
+		for i, header := range headers {
+			if s.sizeLimit > 0 && header.Size > s.sizeLimit {
+				return nil, ValidationError{
+					field: fmt.Sprintf("%s[%d]", field, i),
+					error: fmt.Sprintf("file size %d exceeds limit %d", header.Size, s.sizeLimit),
+				}
 			}
 
 			files = append(files, header)

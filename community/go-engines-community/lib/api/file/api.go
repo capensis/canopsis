@@ -1,6 +1,7 @@
 package file
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -59,6 +60,16 @@ func (a *api) Create(c *gin.Context) {
 
 	res, err := a.store.Create(c.Request.Context(), request.Public, form)
 	if err != nil {
+		validationError := ValidationError{}
+		if errors.As(err, &validationError) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{
+				Errors: map[string]string{
+					validationError.field: validationError.Error(),
+				},
+			})
+			return
+		}
+
 		panic(err)
 	}
 
