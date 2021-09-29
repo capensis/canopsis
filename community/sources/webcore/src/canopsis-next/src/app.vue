@@ -90,7 +90,11 @@ export default {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
           this.$socket.connect(`${SOCKET_URL}?token=${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
-          await this.fetchAppInfos();
+
+          await Promise.all([
+            this.fetchAppInfos(),
+            this.filesAccess(),
+          ]);
 
           this.setSystemData({
             timezone: this.timezone,

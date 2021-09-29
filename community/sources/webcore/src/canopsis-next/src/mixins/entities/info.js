@@ -30,6 +30,7 @@ export const entitiesInfoMixin = {
       casConfig: 'casConfig',
       samlConfig: 'samlConfig',
       timezone: 'timezone',
+      fileUploadMaxSize: 'fileUploadMaxSize',
       remediationJobConfigTypes: 'remediationJobConfigTypes',
       remediationPauseManualInstructionIntervalSeconds: 'remediationPauseManualInstructionIntervalSeconds',
     }),

@@ -65,6 +65,7 @@ export default {
         return Promise.all([
           dispatch('viewStats/create', null, { root: true }),
           dispatch('fetchCurrentUser'),
+          dispatch('filesAccess'),
         ]);
       } catch (err) {
         console.error(err);
@@ -72,6 +73,10 @@ export default {
 
         throw err;
       }
+    },
+
+    filesAccess() {
+      return request.get(API_ROUTES.fileAccess);
     },
 
     async fetchCurrentUser({ commit, dispatch, state }) {
