@@ -160,6 +160,13 @@ db.default_rights.insertMany([
         crecord_type: "action",
         desc: "Event",
     },
+    {
+        _id: "api_engine",
+        loader_id: "api_engine",
+        crecord_name: "api_engine",
+        crecord_type: "action",
+        desc: "Engine Info",
+    },
 ]);
 db.default_rights.find({
     "crecord_name": {
@@ -171,6 +178,7 @@ db.default_rights.find({
             "api_alarm_update",
             "api_alarm_delete",
             "api_event",
+            "api_engine",
         ],
     }
 }).forEach(function (doc) {
