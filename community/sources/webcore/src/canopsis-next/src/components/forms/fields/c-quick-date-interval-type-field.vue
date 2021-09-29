@@ -5,7 +5,7 @@
     :label="$t('quickRanges.title')",
     :hide-details="hideDetails",
     return-object,
-    @input="updateRange"
+    @input="updateModel($event)"
   )
 </template>
 
@@ -50,11 +50,6 @@ export default {
           ...range,
           text: this.$t(`quickRanges.types.${range.value}`),
         }));
-    },
-  },
-  methods: {
-    updateRange(range) {
-      this.updateModel(range);
     },
   },
 };
