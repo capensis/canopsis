@@ -147,6 +147,13 @@ func (a *api) Logout(c *gin.Context) {
 		return
 	}
 
+	for _, cookie := range c.Request.Cookies() {
+		if cookie.Path == "" {
+			cookie.Path = "/"
+		}
+		cookie.MaxAge = -1
+		http.SetCookie(c.Writer, cookie)
+	}
 	c.Status(http.StatusNoContent)
 }
 
