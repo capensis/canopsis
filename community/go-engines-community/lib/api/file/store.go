@@ -31,15 +31,15 @@ type Store interface {
 type store struct {
 	dbCollection mongo.DbCollection
 	storage      file.Storage
-	sizeLimit    int64
+	maxSize      int64
 }
 
 // NewStore initializes Store implementation.
-func NewStore(dbClient mongo.DbClient, storage file.Storage, sizeLimit int64) Store {
+func NewStore(dbClient mongo.DbClient, storage file.Storage, maxSize int64) Store {
 	return &store{
 		dbCollection: dbClient.Collection(mongo.FileMongoCollection),
 		storage:      storage,
-		sizeLimit:    sizeLimit,
+		maxSize:      maxSize,
 	}
 }
 
@@ -165,10 +165,10 @@ func (s *store) validateFormRequest(form *multipart.Form) ([]*multipart.FileHead
 
 	for field, headers := range form.File {
 		for i, header := range headers {
-			if s.sizeLimit > 0 && header.Size > s.sizeLimit {
+			if s.maxSize > 0 && header.Size > s.maxSize {
 				return nil, ValidationError{
 					field: fmt.Sprintf("%s[%d]", field, i),
-					error: fmt.Sprintf("file size %d exceeds limit %d", header.Size, s.sizeLimit),
+					error: fmt.Sprintf("file size %d exceeds limit %d", header.Size, s.maxSize),
 				}
 			}
 

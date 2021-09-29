@@ -272,7 +272,7 @@ ReconnectRetries = 3
 [Canopsis.file]
 # Local storage for Upload artifacts. Upload artifacts are used in Remedaiton and Administration -> Parameters.
 Upload = "/opt/canopsis/var/lib/upload-files"
-UploadMaxLimit = 314572800 # 300Mb
+UploadMaxSize = 314572800 # 300Mb
 # Local storage for Junit artifacts.
 Junit = "/opt/canopsis/var/lib/junit-files"
 # Temporary local storage for Junit data which are uploaded by API.

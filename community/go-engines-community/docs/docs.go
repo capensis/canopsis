@@ -8275,6 +8275,9 @@ var doc = `{
                 "edition": {
                     "type": "string"
                 },
+                "file_upload_max_size": {
+                    "type": "integer"
+                },
                 "footer": {
                     "type": "string"
                 },

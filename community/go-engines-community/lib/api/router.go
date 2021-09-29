@@ -1051,7 +1051,7 @@ func RegisterRoutes(
 			fileAPI := file.NewApi(enforcer, file.NewStore(dbClient, libfile.NewStorage(
 				filesRoot,
 				libfile.NewEtagEncoder(),
-			), conf.File.UploadMaxLimit))
+			), conf.File.UploadMaxSize))
 			fileRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjFile, permCreate, enforcer),
