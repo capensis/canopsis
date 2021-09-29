@@ -43,9 +43,10 @@ func NewApi(
 		sessionStore: sessionStore,
 		logger:       logger,
 
-		cookieName:   cookieName,
-		cookieMaxAge: cookieMaxAge,
-		cookieSecure: cookieSecure,
+		cookieName:     cookieName,
+		cookieMaxAge:   cookieMaxAge,
+		cookieSecure:   cookieSecure,
+		cookieSameSite: http.SameSiteNoneMode,
 	}
 }
 
@@ -55,9 +56,10 @@ type api struct {
 	providers    []security.Provider
 	logger       zerolog.Logger
 
-	cookieName   string
-	cookieMaxAge int
-	cookieSecure bool
+	cookieName     string
+	cookieMaxAge   int
+	cookieSecure   bool
+	cookieSameSite http.SameSite
 
 	sessionStore session.Store
 }
@@ -152,6 +154,7 @@ func (a *api) Logout(c *gin.Context) {
 			cookie.Path = "/"
 		}
 		cookie.MaxAge = -1
+		cookie.SameSite = a.cookieSameSite
 		http.SetCookie(c.Writer, cookie)
 	}
 	c.Status(http.StatusNoContent)
@@ -212,7 +215,7 @@ func (a *api) GetFileAccess(c *gin.Context) {
 		return
 	}
 
-	c.SetSameSite(http.SameSiteNoneMode)
+	c.SetSameSite(a.cookieSameSite)
 	c.SetCookie(a.cookieName, tokenString, a.cookieMaxAge, "", "", a.cookieSecure, false)
 	c.Status(http.StatusNoContent)
 }
