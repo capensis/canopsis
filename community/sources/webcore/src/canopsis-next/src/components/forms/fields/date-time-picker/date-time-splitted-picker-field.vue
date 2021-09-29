@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { convertTimestampToMoment } from '@/helpers/date/date';
+import { convertDateToMoment } from '@/helpers/date/date';
 import { updateTime, updateDate } from '@/helpers/date/date-time-picker';
 
 import { formBaseMixin } from '@/mixins/form';
@@ -52,7 +52,7 @@ export default {
         return this.value;
       }
 
-      return convertTimestampToMoment(this.value).startOf('minute').toDate();
+      return convertDateToMoment(this.value).startOf('minute').toDate();
     },
 
     name() {

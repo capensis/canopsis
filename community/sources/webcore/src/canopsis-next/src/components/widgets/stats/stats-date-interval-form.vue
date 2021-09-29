@@ -21,8 +21,8 @@
       ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
       date-interval-selector.my-1(
         v-field="form",
-        :tstopRules="tstopRules",
-        roundHours,
+        :tstop-rules="tstopRules",
+        round-hours,
         @update:startObjectValue="updateStartObjectValue",
         @update:stopObjectValue="updateStopObjectValue"
       )
@@ -33,10 +33,10 @@
 </template>
 
 <script>
-import { DATETIME_FORMATS, STATS_DURATION_UNITS } from '@/constants';
+import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
 import {
-  dateParse,
+  convertDateIntervalToMoment,
   prepareStatsStopForMonthPeriod,
   prepareStatsStartForMonthPeriod,
 } from '@/helpers/date/date-intervals';
@@ -77,25 +77,25 @@ export default {
       return [
         {
           text: this.$tc('common.times.hour'),
-          value: STATS_DURATION_UNITS.hour,
+          value: TIME_UNITS.hour,
         },
         {
           text: this.$tc('common.times.day'),
-          value: STATS_DURATION_UNITS.day,
+          value: TIME_UNITS.day,
         },
         {
           text: this.$tc('common.times.week'),
-          value: STATS_DURATION_UNITS.week,
+          value: TIME_UNITS.week,
         },
         {
           text: this.$tc('common.times.month'),
-          value: STATS_DURATION_UNITS.month,
+          value: TIME_UNITS.month,
         },
       ];
     },
 
     isPeriodMonth() {
-      return this.form.periodUnit === STATS_DURATION_UNITS.month;
+      return this.form.periodUnit === TIME_UNITS.month;
     },
 
     monthIntervalMessage() {
@@ -110,8 +110,8 @@ export default {
       getMessage: () => this.$t('modals.statsDateInterval.errors.endDateLessOrEqualStartDate'),
       validate: (value, [otherValue]) => {
         try {
-          const convertedStop = dateParse(value, 'stop', DATETIME_FORMATS.dateTimePicker);
-          const convertedStart = dateParse(otherValue, 'start', DATETIME_FORMATS.dateTimePicker);
+          const convertedStop = convertDateIntervalToMoment(value, 'stop', DATETIME_FORMATS.dateTimePicker);
+          const convertedStart = convertDateIntervalToMoment(otherValue, 'start', DATETIME_FORMATS.dateTimePicker);
 
           return !convertedStop.isSameOrBefore(convertedStart);
         } catch (err) {

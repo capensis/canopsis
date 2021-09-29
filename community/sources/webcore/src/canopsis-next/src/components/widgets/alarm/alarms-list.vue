@@ -100,7 +100,7 @@ import { omit, pick, isEmpty } from 'lodash';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
-import { findRange } from '@/helpers/date/date-intervals';
+import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
@@ -187,7 +187,7 @@ export default {
       const { tstart, tstop } = this.query;
 
       if (tstart || tstop) {
-        return findRange(tstart, tstop);
+        return findQuickRangeValue(tstart, tstop);
       }
 
       return null;
@@ -284,7 +284,7 @@ export default {
       this.$modals.show({
         name: MODALS.editLiveReporting,
         config: {
-          ...pick(this.query, ['tstart', 'tstop']),
+          ...pick(this.query, ['tstart', 'tstop', 'time_field']),
           action: params => this.query = { ...this.query, ...params },
         },
       });

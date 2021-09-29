@@ -17,12 +17,10 @@
     )
       v-icon(slot="append", color="black") calendar_today
     v-flex(xs2)
-      v-select.ml-4(
+      c-quick-date-interval-type-field.ml-4(
         v-model="range",
-        :items="quickRanges",
-        :label="$t('quickRanges.title')",
-        hide-details,
-        return-object
+        :custom-filter="isAllowedQuickRange",
+        hide-details
       )
 </template>
 
@@ -32,7 +30,9 @@ import moment from 'moment';
 import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
 
 import { getNowTimestamp } from '@/helpers/date/date';
-import { findRange, dateParse } from '@/helpers/date/date-intervals';
+import { convertDateIntervalToMoment } from '@/helpers/date/date-intervals';
+
+import { formMixin } from '@/mixins/form';
 
 import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
 
@@ -40,6 +40,7 @@ export default {
   components: {
     DatePickerField,
   },
+  mixins: [formMixin],
   model: {
     event: 'input',
     prop: 'interval',
@@ -86,13 +87,15 @@ export default {
 
     range: {
       get() {
-        const range = findRange(this.interval.from, this.interval.to);
-
-        return this.quickRanges.find(({ value }) => value === range.value);
+        return {
+          start: this.interval.from,
+          stop: this.interval.to,
+        };
       },
+
       set({ start, stop }) {
         if (start && stop) {
-          this.$emit('input', {
+          this.updateModel({
             ...this.interval,
             from: start,
             to: stop,
@@ -103,7 +106,7 @@ export default {
   },
   methods: {
     convertIntervalFieldToMoment(date, type = DATETIME_INTERVAL_TYPES.start) {
-      return dateParse(date, type, DATETIME_FORMATS.datePicker);
+      return convertDateIntervalToMoment(date, type, DATETIME_FORMATS.datePicker);
     },
 
     convertIntervalFromFieldToMoment(date) {
@@ -175,17 +178,11 @@ export default {
     },
 
     updateFromDate(from) {
-      this.$emit('input', {
-        ...this.interval,
-        from,
-      });
+      this.updateField('from', from);
     },
 
     updateToDate(to) {
-      this.$emit('input', {
-        ...this.interval,
-        to,
-      });
+      this.updateField('to', to);
     },
   },
 };

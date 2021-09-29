@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 
-import { STATS_DURATION_UNITS, DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES } from '@/constants';
+import { TIME_UNITS, DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES } from '@/constants';
 
 /**
  * Convert a date interval string to moment date object
@@ -24,7 +24,7 @@ export function parseStringToDateInterval(dateString, type) {
     const deltaMethod = operator === '+' ? 'add' : 'subtract';
 
     if (roundUnit) {
-      if (roundUnit === STATS_DURATION_UNITS.month) {
+      if (roundUnit === TIME_UNITS.month) {
         roundUnit = roundUnit.toUpperCase();
       }
 
@@ -33,7 +33,7 @@ export function parseStringToDateInterval(dateString, type) {
 
 
     if (deltaValue && deltaUnit) {
-      if (deltaUnit === STATS_DURATION_UNITS.month) {
+      if (deltaUnit === TIME_UNITS.month) {
         deltaUnit = deltaUnit.toUpperCase();
       }
 
@@ -54,7 +54,7 @@ export function parseStringToDateInterval(dateString, type) {
  * @param format
  * @return {*}
  */
-export function dateParse(date, type, format) {
+export const convertDateIntervalToMoment = (date, type, format) => {
   if (typeof date === 'number') {
     return moment.unix(date);
   }
@@ -66,7 +66,7 @@ export function dateParse(date, type, format) {
   }
 
   return momentDate;
-}
+};
 
 /**
  * Prepare date to date object
@@ -77,20 +77,20 @@ export function dateParse(date, type, format) {
  * @param {string} [format = DATETIME_FORMATS.dateTimePicker]
  * @returns {Date}
  */
-export function prepareDateToObject(
+export const convertDateIntervalToDateObject = (
   date,
   type,
   unit = 'hour',
   format = DATETIME_FORMATS.dateTimePicker,
-) {
-  const momentDate = dateParse(date, type, format);
+) => {
+  const momentDate = convertDateIntervalToMoment(date, type, format);
 
   if (momentDate.isValid()) {
     return momentDate.startOf(unit).toDate();
   }
 
   return null;
-}
+};
 
 /**
  * Prepare start of stats interval for month period unit
@@ -128,7 +128,10 @@ export function prepareStatsStopForMonthPeriod(stop) {
  * @param {Object} defaultValue
  * @returns {Object}
  */
-export function findRange(start, stop, ranges = QUICK_RANGES, defaultValue = QUICK_RANGES.custom) {
-  return Object.values(ranges)
-    .find(range => start === range.start && stop === range.stop) || defaultValue;
-}
+export const findQuickRangeValue = (
+  start,
+  stop,
+  ranges = QUICK_RANGES,
+  defaultValue = QUICK_RANGES.custom,
+) => Object.values(ranges)
+  .find(range => start === range.start && stop === range.stop) || defaultValue;

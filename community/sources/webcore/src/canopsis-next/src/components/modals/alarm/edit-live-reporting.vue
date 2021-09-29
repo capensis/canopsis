@@ -22,9 +22,9 @@
 </template>
 
 <script>
-import moment from 'moment';
-
 import { MODALS, DATETIME_FORMATS } from '@/constants';
+
+import { convertDateToString } from '@/helpers/date/date';
 
 import { submittableMixin } from '@/mixins/submittable';
 import { confirmableModalMixin } from '@/mixins/confirmable-modal';
@@ -53,6 +53,7 @@ export default {
       form: {
         tstart: config.tstart || '',
         tstop: config.tstop || '',
+        time_field: config.time_field || '',
       },
     };
   },
@@ -68,7 +69,7 @@ export default {
       const rules = { required: true };
 
       if (this.tstart) {
-        rules.after = [moment(this.tstart).format(DATETIME_FORMATS.dateTimePicker)];
+        rules.after = [convertDateToString(this.tstart, DATETIME_FORMATS.dateTimePicker)];
         rules.date_format = DATETIME_FORMATS.veeValidateDateTimeFormat;
       }
 

@@ -23,7 +23,7 @@
 <script>
 import { pick } from 'lodash';
 
-import { MODALS, STATS_DURATION_UNITS, QUICK_RANGES } from '@/constants';
+import { MODALS, TIME_UNITS, QUICK_RANGES } from '@/constants';
 
 import { submittableMixin } from '@/mixins/submittable';
 import { confirmableModalMixin } from '@/mixins/confirmable-modal';
@@ -46,7 +46,7 @@ export default {
     const { interval } = this.modal.config;
     const defaultPeriodForm = {
       periodValue: 1,
-      periodUnit: STATS_DURATION_UNITS.hour,
+      periodUnit: TIME_UNITS.hour,
     };
 
     const defaultDateSelectorForm = {

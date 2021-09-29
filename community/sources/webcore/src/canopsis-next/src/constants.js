@@ -646,13 +646,6 @@ export const STATS_TYPES = {
   },
 };
 
-export const STATS_DURATION_UNITS = {
-  hour: 'h',
-  day: 'd',
-  week: 'w',
-  month: 'm',
-};
-
 export const STATS_CRITICITY = {
   ok: 'ok',
   minor: 'minor',
@@ -1929,4 +1922,12 @@ export const ALARMS_OPENED_VALUES = {
   opened: true,
   all: null,
   resolved: false,
+};
+
+export const ALARM_INTERVAL_FIELDS = {
+  timestamp: 't',
+  creationDate: 'creation_date',
+  resolved: 'resolved',
+  lastUpdateDate: 'last_update_date',
+  lastEventDate: 'last_event_date',
 };

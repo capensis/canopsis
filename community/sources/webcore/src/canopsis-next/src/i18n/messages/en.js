@@ -2343,6 +2343,7 @@ export default {
 
   quickRanges: {
     title: 'Quick ranges',
+    timeField: 'Time field',
     types: {
       [QUICK_RANGES.custom.value]: 'Custom',
       [QUICK_RANGES.last2Days.value]: 'Last 2 days',

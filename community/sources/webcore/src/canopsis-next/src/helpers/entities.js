@@ -8,7 +8,7 @@ import {
   WIDGET_TYPES,
   STATS_CALENDAR_COLORS,
   STATS_TYPES,
-  STATS_DURATION_UNITS,
+  TIME_UNITS,
   QUICK_RANGES,
   STATS_DISPLAY_MODE,
   STATS_DISPLAY_MODE_PARAMETERS,
@@ -157,7 +157,7 @@ export function generateWidgetByType(type) {
         mfilter: {},
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: QUICK_RANGES.thisMonthSoFar.start,
           tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
@@ -171,7 +171,7 @@ export function generateWidgetByType(type) {
         mfilter: {},
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: QUICK_RANGES.thisMonthSoFar.start,
           tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
@@ -185,7 +185,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: QUICK_RANGES.thisMonthSoFar.start,
           tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
@@ -213,7 +213,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: QUICK_RANGES.thisMonthSoFar.start,
           tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
@@ -239,7 +239,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: 'now/d',
           tstop: 'now/d',
         },
@@ -260,7 +260,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: QUICK_RANGES.thisMonthSoFar.start,
           tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
