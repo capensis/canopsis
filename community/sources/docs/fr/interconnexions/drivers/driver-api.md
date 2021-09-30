@@ -30,7 +30,27 @@ Seul l'authentification basique est supportée.
 
 Le format de fichier de configuration supporté est le Yaml. Ce fichier de configuration doit être entièrement rédigé à partir du JSON retourné par l'API externe.
 
-Un exemple de fichier de configuration est disponible sur le dépôt [Canopsis Pro](https://git.canopsis.net/canopsis/canopsis-pro/-/tree/develop/pro/go-engines-pro/config/import-context-graph/api.yml.example). Ou alors consulter l'exemple ci-après.
+Un exemple de fichier de configuration est disponible sur le dépôt [Canopsis Pro](https://git.canopsis.net/canopsis/canopsis-pro/-/tree/develop/pro/go-engines-pro/config/import-context-graph/api.yml.example). Ou alors consulter l'exemple [ci-après](#exemple).
+
+Ce fichier de configuration doit comprendre trois blocs:
+
+ * `api` qui permet d'indiquer les propriétés de la requête HTTP à envoyer à l'API
+ * `import` qui permet de spécifier les paramètres de l'import
+ * `mapping` qui permet de spécifier les associations entre les champs de l'entité et la réponse de l'API
+
+Concernant les types d'actions d'import:
+
+  *  `action`: Action effectuée sur l'entité reçu de la réponse de l'API
+     *  `create`: Création de l'entité en base
+     *  `set`: La même chose que `create` mais peut être partielle si l'API ne retourne pas tous les champs
+     *  `update`: Mise à jour de l'entité en base. Si l'entité n'existe pas, aucune modification ne sera appliqué
+     *  `enable`: Active l'entité (passage à `true` du champs `enable` de l'entité en base)
+  *  `missing_action`: Action effectuée sur les entités manquantes de la réponse de l'API
+     *  `delete`: Suppression de l'entité en base
+     *  `disable`: Désactive l'entité (action inverse de l'action `enable`)
+     *  vide: le paramètre `missing_action` peut ne pas avoir d'action et donc ne rien faire
+
+Pour plus de détails, se référer à la documentation d'[import de context graph](../../guide-developpement/api/api-v2-import.md).
 
 ### Exemple
 
@@ -75,7 +95,7 @@ import:
   action: create
   # Définit le type d'action à effectuer sur les entités manquantes de la réponse de l'API
   # Les entités manquantes sont trouvées par source d'import
-  # Valeurs possible : delete, disable, empty
+  # Valeurs possible : delete, disable ou vide
   missing_action: disable
 
 # Ce bloc spécifie l'association entre les champs de l'entité et la réponse de l'API
