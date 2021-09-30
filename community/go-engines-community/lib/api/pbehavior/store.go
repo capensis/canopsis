@@ -82,10 +82,8 @@ func (s *store) Insert(ctx context.Context, model *Response) error {
 	doc.Created = now
 	doc.Updated = now
 
-	if model.Stop != nil {
-		doc.Stop = nil
-	}
-
+	// If model.Stop is nill, insert to mongo using map so that
+	// tstop field can be cleared
 	if model.Stop == nil {
 		m := make(map[string]interface{})
 		p, err := bson.Marshal(doc)
