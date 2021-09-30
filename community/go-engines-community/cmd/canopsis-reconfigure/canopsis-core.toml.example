@@ -89,6 +89,22 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
+name = "Engine_axe_watcher_rpc_client"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
+name = "Engine_axe_pbehavior_rpc_client"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
 name = "Engine_che"
 durable = true
 autoDelete = false
@@ -144,6 +160,14 @@ noWait = false
   # args =
 
 [[RabbitMQ.queues]]
+name = "Engine_watcher_rpc_server"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
 name = "Engine_pbehavior"
 durable = true
 autoDelete = false
@@ -155,6 +179,14 @@ noWait = false
   exchange = "amq.direct"
   noWait = false
   # args =
+
+[[RabbitMQ.queues]]
+name = "Engine_pbehavior_rpc_server"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
 
 [Canopsis.global]
 PrefetchCount = 10000
