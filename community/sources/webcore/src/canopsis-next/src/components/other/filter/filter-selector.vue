@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { isEmpty, omit } from 'lodash';
+import { isEmpty, isUndefined, omit } from 'lodash';
 
 import { ENTITIES_TYPES, MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
@@ -225,7 +225,11 @@ export default {
 
       const newValue = this.isMultiple ? selectedFilters : selectedFilters[0];
 
-      return this.$emit('update:filters', filters.map(removeSelectedProperty), newValue);
+      this.$emit('update:filters', filters.map(removeSelectedProperty));
+
+      if (!isUndefined(newValue)) {
+        this.$emit('input', newValue);
+      }
     },
 
     isFilterEqual(firstFilter, secondFilter) {
