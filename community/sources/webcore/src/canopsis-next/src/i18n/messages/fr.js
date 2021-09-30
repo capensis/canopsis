@@ -259,6 +259,10 @@ export default {
     entityInfo: {
       valueAsList: 'Changer le type de valeur en liste',
     },
+    fab: {
+      common: 'Ajouter une nouvelle entité',
+      addService: 'Ajouter une nouvelle entité de service',
+    },
   },
   search: {
     alarmAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
