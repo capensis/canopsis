@@ -30,8 +30,9 @@ export const confirmableModalMixin = ({
     provide() {
       return {
         $closeModal: () => {
-          this[clickOutsideHandlerMethodKey]();
-          this[clickOutsideCloseMethodKey]();
+          if (this[clickOutsideHandlerMethodKey]()) {
+            this[clickOutsideCloseMethodKey]();
+          }
         },
       };
     },
