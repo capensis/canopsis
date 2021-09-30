@@ -21,6 +21,7 @@ Feature: Update a dynamic-infos
       "name": "test-dynamic-infos-to-update",
       "alarm_patterns": null,
       "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+      "enabled": true,
       "infos": [
         {
           "name": "type",
@@ -53,6 +54,7 @@ Feature: Update a dynamic-infos
       "author": "root",
       "alarm_patterns": null,
       "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+      "enabled": true,
       "infos": [
         {
           "name": "type",
@@ -91,6 +93,7 @@ Feature: Update a dynamic-infos
           "author": "root",
           "alarm_patterns": null,
           "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+          "enabled": true,
           "infos": [
             {
               "name": "type",
@@ -130,6 +133,7 @@ Feature: Update a dynamic-infos
       "name": "dynamic_info_1",
       "alarm_patterns": null,
       "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+      "enabled": true,
       "infos": [
         {
           "name": "type",
@@ -166,6 +170,7 @@ Feature: Update a dynamic-infos
       "name": "dynamic_info_1",
       "alarm_patterns": null,
       "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+      "enabled": true,
       "infos": [
         {
           "name": "type",
@@ -202,6 +207,7 @@ Feature: Update a dynamic-infos
       "name": "dynamic_info_1",
       "alarm_patterns": null,
       "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+      "enabled": true,
       "infos": [
         {
           "name": "type",
@@ -239,6 +245,7 @@ Feature: Update a dynamic-infos
               }
       ],
       "description" : "Desc",
+      "enabled": true,
       "infos" : [
               {
                       "name" : "Name",

@@ -25,8 +25,9 @@ type UserInterfaceConf struct {
 	CheckCountRequestTimeout  int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout" binding:"gt=0"`
 }
 
-type TimezoneConf struct {
-	Timezone string `json:"timezone,omitempty" bson:"timezone"`
+type GlobalConf struct {
+	Timezone          string `json:"timezone,omitempty"`
+	FileUploadMaxSize int64  `json:"file_upload_max_size"`
 }
 
 type RemediationConf struct {
@@ -41,7 +42,7 @@ type JobConfigType struct {
 
 type AppInfoResponse struct {
 	UserInterfaceConf
-	TimezoneConf
+	GlobalConf
 	VersionConf
 	Login       LoginConf        `json:"login"`
 	Remediation *RemediationConf `json:"remediation,omitempty"`

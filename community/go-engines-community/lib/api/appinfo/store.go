@@ -20,7 +20,7 @@ type Store interface {
 	RetrieveLoginConfig(ctx context.Context) (LoginConf, error)
 	RetrieveUserInterfaceConfig(ctx context.Context) (UserInterfaceConf, error)
 	RetrieveVersionConfig(ctx context.Context) (VersionConf, error)
-	RetrieveTimezoneConfig(ctx context.Context) (TimezoneConf, error)
+	RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error)
 	RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error)
 	UpdateUserInterfaceConfig(ctx context.Context, conf *UserInterfaceConf) error
 	DeleteUserInterfaceConfig(ctx context.Context) error
@@ -95,20 +95,21 @@ func (s *store) RetrieveVersionConfig(ctx context.Context) (VersionConf, error) 
 	return version, err
 }
 
-func (s *store) RetrieveTimezoneConfig(ctx context.Context) (TimezoneConf, error) {
-	var tz TimezoneConf
+func (s *store) RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error) {
 	conf := config.CanopsisConf{}
 	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.ConfigKeyName}).Decode(&conf)
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
-			return tz, nil
+			return GlobalConf{}, nil
 		}
 
-		return tz, err
+		return GlobalConf{}, err
 	}
 
-	tz.Timezone = conf.Timezone.Timezone
-	return tz, nil
+	return GlobalConf{
+		Timezone:          conf.Timezone.Timezone,
+		FileUploadMaxSize: conf.File.UploadMaxSize,
+	}, nil
 }
 
 func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error) {

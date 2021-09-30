@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
@@ -19,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
@@ -49,6 +51,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -79,8 +82,6 @@ const (
 	authObjPlaylist  = apisecurity.ObjPlaylist
 
 	authPermAlarmRead = apisecurity.PermAlarmRead
-
-	authAcl = apisecurity.PermAcl
 
 	authObjStateSettings = apisecurity.PermStateSettings
 
@@ -130,6 +131,7 @@ func RegisterRoutes(
 	publisher amqp.Publisher,
 	jobQueue contextgraph.JobQueue,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
+	filesRoot string,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -140,10 +142,15 @@ func RegisterRoutes(
 		security.GetTokenStore(),
 		security.GetAuthProviders(),
 		security.GetSessionStore(),
+		security.GetCookieOptions().FileAccessName,
+		security.GetCookieOptions().MaxAge,
+		security.GetCookieOptions().Secure,
+		logger,
 	)
 	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
+		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())
 	sessionStatsApi := sessionstats.NewApi(sessionStore, stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
@@ -180,6 +187,7 @@ func RegisterRoutes(
 		protected.GET("/account/me", account.NewApi(account.NewStore(dbClient)).Me)
 		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
 		protected.GET("/sessions-count", sessionauthApi.GetSessionsCount())
+		protected.GET("/file-access", authApi.GetFileAccess)
 
 		viewStatsRouter := protected.Group("/view-stats")
 		{
@@ -191,38 +199,62 @@ func RegisterRoutes(
 
 		userRouter := protected.Group("/users")
 		{
-			userRouter.Use(middleware.Authorize(authAcl, permCan, enforcer))
 			userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger)
 			userRouter.POST("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
 				userApi.Create,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
-			userRouter.GET("", userApi.List)
-			userRouter.GET("/:id", userApi.Get)
+			userRouter.GET("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				userApi.List,
+			)
+			userRouter.GET("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				userApi.Get,
+			)
 			userRouter.PUT("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
 				userApi.Update,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
-			userRouter.DELETE("/:id", userApi.Delete)
+			userRouter.DELETE("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer),
+				userApi.Delete,
+			)
 		}
 		roleRouter := protected.Group("/roles")
 		{
-			roleRouter.Use(middleware.Authorize(authAcl, permCan, enforcer))
 			roleApi := role.NewApi(role.NewStore(dbClient), actionLogger)
-			roleRouter.POST("", roleApi.Create)
-			roleRouter.GET("", roleApi.List)
-			roleRouter.GET("/:id", roleApi.Get)
+			roleRouter.POST("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
+				roleApi.Create,
+			)
+			roleRouter.GET("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				roleApi.List,
+			)
+			roleRouter.GET("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				roleApi.Get,
+			)
 			roleRouter.PUT("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
 				roleApi.Update,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
-			roleRouter.DELETE("/:id", roleApi.Delete)
+			roleRouter.DELETE("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer),
+				roleApi.Delete,
+			)
 		}
 		permissionRouter := protected.Group("/permissions")
 		{
-			permissionRouter.Use(middleware.Authorize(authAcl, permCan, enforcer))
 			permissionApi := permission.NewApi(permission.NewStore(dbClient))
-			permissionRouter.GET("", permissionApi.List)
+			permissionRouter.GET("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				permissionApi.List,
+			)
 		}
 
 		alarmAPI := alarm.NewApi(alarm.NewStore(dbClient, GetLegacyURL()), exportExecutor, timezoneConfigProvider)
@@ -365,6 +397,11 @@ func RegisterRoutes(
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
 				middleware.SetAuthor(),
 				pbehaviorApi.Update)
+			pbehaviorRouter.PATCH(
+				"/:id",
+				middleware.Authorize(authObjPbh, permUpdate, enforcer),
+				middleware.SetAuthor(),
+				pbehaviorApi.Patch)
 			pbehaviorRouter.DELETE(
 				"/:id",
 				middleware.Authorize(authObjPbh, permDelete, enforcer),
@@ -999,6 +1036,33 @@ func RegisterRoutes(
 				"/count",
 				middleware.Authorize(authObjPbh, permCreate, enforcer),
 				idleRuleAPI.CountPatterns)
+		}
+
+		fileRouter := protected.Group("/file")
+		{
+			fileAPI := file.NewApi(enforcer, file.NewStore(dbClient, libfile.NewStorage(
+				filesRoot,
+				libfile.NewEtagEncoder(),
+			), conf.File.UploadMaxSize))
+			fileRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjFile, permCreate, enforcer),
+				fileAPI.Create,
+			)
+			getFileRouter := fileRouter.Group("", security.GetFileAuthMiddleware()...)
+			getFileRouter.GET(
+				"",
+				fileAPI.List,
+			)
+			getFileRouter.GET(
+				"/:id",
+				fileAPI.Get,
+			)
+			fileRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjFile, permDelete, enforcer),
+				fileAPI.Delete,
+			)
 		}
 	}
 }

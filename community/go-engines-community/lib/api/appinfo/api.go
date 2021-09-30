@@ -62,7 +62,7 @@ func (a *api) GetAppInfo(c *gin.Context) {
 		}
 
 		if ok {
-			response.TimezoneConf, err = a.store.RetrieveTimezoneConfig(c.Request.Context())
+			response.GlobalConf, err = a.store.RetrieveGlobalConfig(c.Request.Context())
 			if err != nil {
 				panic(err)
 			}

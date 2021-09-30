@@ -25,7 +25,8 @@
       "enablelasteventdate": true,
       "cancelautosolvedelay": "1h",
       "displaynamescheme": "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}",
-      "outputlength": 255
+      "outputlength": 255,
+      "longoutputlength": 1024
     },
     "global": {
       "prefetchcount": 10000,

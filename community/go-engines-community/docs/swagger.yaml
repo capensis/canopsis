@@ -470,6 +470,8 @@ definitions:
         type: integer
       edition:
         type: string
+      file_upload_max_size:
+        type: integer
       footer:
         type: string
       language:
@@ -1231,6 +1233,17 @@ definitions:
     items:
       $ref: '#/definitions/export.Field'
     type: array
+  file.File:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      filename:
+        type: string
+      mediatype:
+        type: string
+    type: object
   http.Response:
     properties:
       body:
@@ -2198,6 +2211,33 @@ definitions:
         type: object
     required:
     - filter
+    type: object
+  pbehavior.PatchRequest:
+    properties:
+      enabled:
+        type: boolean
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      filter:
+        type: object
+      name:
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
     type: object
   pbehavior.Response:
     properties:
@@ -3253,6 +3293,9 @@ definitions:
     properties:
       _id:
         type: string
+      defaultview:
+        $ref: '#/definitions/user.View'
+        type: object
       name:
         type: string
     type: object
@@ -5291,6 +5334,149 @@ paths:
       summary: Update eventfilter by id
       tags:
       - eventfilters
+  /file:
+    get:
+      consumes:
+      - application/json
+      description: Get list of file objects by ID
+      operationId: files-list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/file.File'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: List files by ID
+      tags:
+      - files
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload files
+      operationId: file-upload
+      parameters:
+      - description: request
+        in: formData
+        name: files
+        required: true
+        type: string
+      - description: file visibility
+        in: query
+        name: public
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/file.File'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Upload files
+      tags:
+      - files
+  /file-access:
+    get:
+      consumes:
+      - application/json
+      description: Get file access
+      operationId: auth-get-file-access
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - JWTAuth: []
+      summary: Get file access
+      tags:
+      - auth
+  /file/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete file by ID
+      operationId: files-delete
+      parameters:
+      - description: file id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Delete file
+      tags:
+      - files
+    get:
+      consumes:
+      - application/json
+      description: Get file content by ID or download with file name
+      operationId: files-get
+      parameters:
+      - description: file id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get file by ID
+      tags:
+      - files
   /idle-rules:
     get:
       consumes:
@@ -5587,6 +5773,8 @@ paths:
       responses:
         "204":
           description: ""
+      security:
+      - JWTAuth: []
       summary: Log out
       tags:
       - auth
@@ -6470,6 +6658,44 @@ paths:
       - ApiKeyAuth: []
       - BasicAuth: []
       summary: Get pbehavior by id
+      tags:
+      - pbehaviors
+    patch:
+      consumes:
+      - application/json
+      description: Patch partial set of behavior attributes by id
+      operationId: pbehaviors-patch-by-id
+      parameters:
+      - description: pbehavior id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehavior.PatchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehavior.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Patch partial set of behavior attributes by id
       tags:
       - pbehaviors
     put:
@@ -8016,4 +8242,8 @@ securityDefinitions:
     type: apiKey
   BasicAuth:
     type: basic
+  JWTAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
