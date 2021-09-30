@@ -408,6 +408,10 @@ definitions:
         type: integer
       manual:
         type: boolean
+      multi_sort[]:
+        items:
+          type: string
+        type: array
       opened:
         type: boolean
       page:
@@ -638,6 +642,8 @@ definitions:
     - message
     - start
     type: object
+  bson.M:
+    $ref: '#/definitions/primitive.M'
   common.ErrorResponse:
     properties:
       error:
@@ -1567,6 +1573,9 @@ definitions:
       canceled:
         $ref: '#/definitions/pattern.AlarmStepRefPattern'
         type: object
+      children:
+        $ref: '#/definitions/pattern.StringArrayPattern'
+        type: object
       component:
         $ref: '#/definitions/pattern.StringPattern'
         type: object
@@ -1609,6 +1618,9 @@ definitions:
         type: object
       output:
         $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      parents:
+        $ref: '#/definitions/pattern.StringArrayPattern'
         type: object
       resolved:
         $ref: '#/definitions/pattern.TimeRefPattern'
@@ -1945,6 +1957,9 @@ definitions:
       hasOneOf:
         $ref: '#/definitions/types.OptionalStringArray'
         type: object
+      isEmpty:
+        $ref: '#/definitions/types.OptionalBool'
+        type: object
       lt:
         $ref: '#/definitions/types.OptionalInt64'
         description: |-
@@ -1962,6 +1977,24 @@ definitions:
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        type: object
+    type: object
+  pattern.StringArrayPattern:
+    properties:
+      hasEvery:
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      hasNot:
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      hasOneOf:
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      isEmpty:
+        $ref: '#/definitions/types.OptionalBool'
         type: object
       unexpectedFields:
         additionalProperties: true
@@ -2166,6 +2199,33 @@ definitions:
         type: object
     required:
     - filter
+    type: object
+  pbehavior.PatchRequest:
+    properties:
+      enabled:
+        type: boolean
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      filter:
+        type: object
+      name:
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
     type: object
   pbehavior.Response:
     properties:
@@ -2464,6 +2524,9 @@ definitions:
         type: array
       updated:
         type: integer
+    type: object
+  primitive.M:
+    additionalProperties: true
     type: object
   role.CreateRequest:
     properties:
@@ -2994,6 +3057,10 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      related_parents:
+        items:
+          type: string
+        type: array
       resolved:
         $ref: '#/definitions/types.CpsTime'
         type: object
@@ -3069,6 +3136,17 @@ definitions:
     required:
     - seconds
     - unit
+    type: object
+  types.OptionalBool:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the bool. It should only be taken into
+          account if Set is true.
+        type: boolean
     type: object
   types.OptionalInt64:
     properties:
@@ -3640,7 +3718,9 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get paginated list of alarms
+      description: Get paginated list of alarms. Use parameters "multi_sort[]=field_1,asc&multi_sort[]=field_2,desc&multi_sort[]=field_3,asc"
+        to sort list by multiple fields. "sort_key", "sort_dir" are left for compatibility
+        with older ways of sorting
       operationId: alarms-find-all
       parameters:
       - collectionFormat: multi
@@ -3688,6 +3768,12 @@ paths:
       - in: query
         name: manual
         type: boolean
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: multi_sort[]
+        type: array
       - in: query
         name: opened
         type: boolean
@@ -6322,6 +6408,44 @@ paths:
       - ApiKeyAuth: []
       - BasicAuth: []
       summary: Get pbehavior by id
+      tags:
+      - pbehaviors
+    patch:
+      consumes:
+      - application/json
+      description: Patch partial set of behavior attributes by id
+      operationId: pbehaviors-patch-by-id
+      parameters:
+      - description: pbehavior id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehavior.PatchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehavior.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Patch partial set of behavior attributes by id
       tags:
       - pbehaviors
     put:

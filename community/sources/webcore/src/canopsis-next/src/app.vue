@@ -16,6 +16,8 @@ import { isEmpty } from 'lodash';
 
 import { MAX_LIMIT } from '@/constants';
 
+import { reloadPageWithTrailingSlashes } from '@/helpers/url';
+
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import TheSideBars from '@/components/side-bars/the-sidebars.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
@@ -56,6 +58,9 @@ export default {
 
       return this.$route.fullPath;
     },
+  },
+  beforeCreate() {
+    reloadPageWithTrailingSlashes();
   },
   created() {
     this.registerCurrentUserOnceWatcher();

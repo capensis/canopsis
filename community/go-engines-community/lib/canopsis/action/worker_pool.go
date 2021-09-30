@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
-	"sync"
 )
 
 const (
@@ -20,16 +21,17 @@ const (
 )
 
 type Task struct {
-	Source       string
-	Action       Action
-	Alarm        types.Alarm
-	Entity       types.Entity
-	Step         int
-	ExecutionID  string
-	ScenarioID   string
-	AckResources bool
-	Header       map[string]string
-	Response     map[string]interface{}
+	Source         string
+	Action         Action
+	Alarm          types.Alarm
+	Entity         types.Entity
+	Step           int
+	ExecutionID    string
+	ScenarioID     string
+	AckResources   bool
+	Header         map[string]string
+	Response       map[string]interface{}
+	AdditionalData AdditionalData
 }
 
 type TaskResult struct {
@@ -229,11 +231,12 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 	}
 
 	err := params.Template(map[string]interface{}{
-		"Alarm":    task.Alarm,
-		"Entity":   task.Entity,
-		"Children": children,
-		"Response": task.Response,
-		"Header":   task.Header,
+		"Alarm":          task.Alarm,
+		"Entity":         task.Entity,
+		"Children":       children,
+		"Response":       task.Response,
+		"Header":         task.Header,
+		"AdditionalData": task.AdditionalData,
 	})
 	if err != nil {
 		return nil, err

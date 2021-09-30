@@ -11,7 +11,6 @@ import {
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
-import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
 import { authMixin } from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
@@ -48,20 +47,6 @@ export const widgetActionsPanelAlarmMixin = {
           ...this.modalConfig,
           action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.item, data),
         },
-      });
-    },
-
-    async createMassFastAckEvent() {
-      let eventData = {};
-
-      if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
-        eventData = { output: this.widget.parameters.fastAckOutput.value };
-      }
-
-      const ackEventData = prepareEventsByAlarms(EVENT_ENTITY_TYPES.ack, this.items, eventData);
-
-      await this.createEventAction({
-        data: ackEventData,
       });
     },
 
@@ -191,12 +176,9 @@ export const widgetActionsPanelAlarmMixin = {
       };
 
       /**
-       * Default value for alarmsStateFilter
+       * Default value for opened
        */
-      widget.parameters.alarmsStateFilter = {
-        opened: false,
-        resolved: true,
-      };
+      widget.parameters.opened = false;
 
       /**
        * Special entity filter for alarms list modal

@@ -1924,3 +1924,9 @@ export const DOCUMENTATION_LINKS = {
 };
 
 export const REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME = ['basic-auth'];
+
+export const ALARMS_OPENED_VALUES = {
+  opened: true,
+  all: null,
+  resolved: false,
+};
