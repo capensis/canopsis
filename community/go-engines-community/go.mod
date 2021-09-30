@@ -23,7 +23,6 @@ require (
 	github.com/cucumber/godog v0.11.0
 	github.com/cucumber/messages-go/v10 v10.0.3
 	github.com/dlclark/regexp2 v1.4.0
-	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/go-playground/locales v0.13.0
@@ -56,6 +55,7 @@ require (
 	golang.org/x/net v0.0.0-20210525063256-abc453219eb5
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
 	golang.org/x/text v0.3.6
+	golang.org/x/tools v0.1.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
 
