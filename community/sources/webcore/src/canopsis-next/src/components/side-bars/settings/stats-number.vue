@@ -3,13 +3,16 @@
     v-list.pt-0(expand)
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-date-interval(v-model="settings.widget.parameters.dateInterval", :hiddenFields="['periodValue']")
+      field-date-interval(
+        v-model="settings.widget.parameters.dateInterval",
+        :hidden-fields="['periodValue']"
+      )
       v-divider
       field-filter-editor(
         data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
-        :hiddenFields="['title']",
-        :entitiesType="$constants.ENTITIES_TYPES.entity"
+        :hidden-fields="['title']",
+        :entities-type="$constants.ENTITIES_TYPES.entity"
       )
       v-divider
       field-stat-selector(v-model="settings.widget.parameters.stat")
@@ -29,8 +32,9 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
+
+import { widgetSettingsMixin } from '@/mixins/widget/settings';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldDateInterval from './fields/stats/date-interval.vue';
