@@ -8,8 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
@@ -48,8 +46,6 @@ type ComputeTask struct {
 // cancelableComputer recomputes pbehaviors.
 type cancelableComputer struct {
 	logger       zerolog.Logger
-	lockClient   redis.LockClient
-	redisStore   redis.Store
 	service      Service
 	dbClient     mongo.DbClient
 	eventManager EventManager
@@ -60,8 +56,6 @@ type cancelableComputer struct {
 
 // NewCancelableComputer creates new computer.
 func NewCancelableComputer(
-	lockClient redis.LockClient,
-	redisStore redis.Store,
 	service Service,
 	dbClient mongo.DbClient,
 	publisher libamqp.Publisher,
@@ -72,8 +66,6 @@ func NewCancelableComputer(
 ) Computer {
 	return &cancelableComputer{
 		logger:       logger,
-		lockClient:   lockClient,
-		redisStore:   redisStore,
 		service:      service,
 		dbClient:     dbClient,
 		eventManager: eventManager,
@@ -160,58 +152,15 @@ func (c *cancelableComputer) computePbehavior(
 	pbehaviorID string,
 	operationType int,
 ) {
-	computeLock, err := c.lockClient.Obtain(
-		ctx,
-		redis.RecomputeLockKey,
-		redis.RecomputeLockDuration,
-		&redislock.Options{
-			RetryStrategy: redislock.LinearBackoff(time.Second),
-		},
-	)
-	if err != nil {
-		c.logger.Err(err).Msg("API pbehavior recompute: obtain redlock failed! Skip recompute")
-		return
-	}
-	c.logger.Debug().Msg("API pbehavior recompute: obtain redlock")
-	defer func() {
-		if computeLock != nil {
-			err := computeLock.Release(ctx)
-			if err != nil {
-				if err == redislock.ErrLockNotHeld {
-					c.logger.Err(err).Msg("API pbehavior recompute: the pbehavior's frames computing took more time than redlock ttl, the data might be inconsistent")
-				} else {
-					c.logger.Warn().Msg("API pbehavior recompute: failed to manually release compute-lock, the lock will be released by ttl")
-				}
-			} else {
-				c.logger.Debug().Msg("API pbehavior recompute: release redlock")
-			}
-		}
-	}()
-
-	ok, err := c.redisStore.Restore(ctx, c.service)
-	if err != nil || !ok {
-		if err == nil {
-			err = fmt.Errorf("pbehavior intervals are not computed, cache is empty")
-		}
-
-		c.logger.Err(err).Msgf("API pbehavior recompute failed")
-		return
-	}
-
+	var err error
 	if pbehaviorID == "" {
-		err = c.service.Compute(ctx, c.service.GetSpan())
+		err = c.service.Recompute(ctx)
 	} else {
-		err = c.service.Recompute(ctx, pbehaviorID)
+		err = c.service.RecomputeByID(ctx, pbehaviorID)
 	}
 
 	if err != nil {
 		c.logger.Err(err).Msgf("API pbehavior recompute failed")
-		return
-	}
-
-	err = c.redisStore.Save(ctx, c.service)
-	if err != nil {
-		c.logger.Err(err).Msg("API pbehavior recompute: save pbehavior's frames to redis failed! The data might be inconsistent")
 		return
 	}
 
@@ -288,7 +237,7 @@ func (c *cancelableComputer) sendAlarmEvents(ctx context.Context, cursor mongo.C
 			return err
 		}
 
-		resolveResult, err := c.service.Resolve(ctx, &alarm.Entity, now)
+		resolveResult, err := c.service.Resolve(ctx, alarm.Entity.ID, now)
 		if err != nil {
 			c.logger.Err(err).Msg("API pbehavior recompute: cannot resolve pbehavior for entity")
 			return err

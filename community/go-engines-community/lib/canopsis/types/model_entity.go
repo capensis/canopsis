@@ -35,10 +35,10 @@ type Info struct {
 
 // Entity ...
 type Entity struct {
-	ID                   string          `bson:"_id" json:"_id"`
-	Name                 string          `bson:"name" json:"name"`
-	Description          string          `bson:"description" json:"description"`
-	Impacts              []string        `bson:"impact" json:"impact"`
+	ID          string   `bson:"_id" json:"_id"`
+	Name        string   `bson:"name" json:"name"`
+	Description string   `bson:"description" json:"description"`
+	Impacts     []string `bson:"impact" json:"impact"`
 	// impacted_services field is only for connectors, see entity service RecomputeIdleSince method
 	ImpactedServices     []string        `bson:"impacted_services" json:"-"`
 	Depends              []string        `bson:"depends" json:"depends"`
@@ -56,8 +56,8 @@ type Entity struct {
 		// Only for Service.
 		// WatchedCount is count of unresolved alarms.
 		WatchedCount int64 `bson:"watched_count"`
-		// WatchedPbheaviorCount contains counters of unresolved and in pbehavior alarms.
-		WatchedPbheaviorCount map[string]int64 `bson:"watched_pbehavior_count"`
+		// WatchedPbehaviorCount contains counters of unresolved and in pbehavior alarms.
+		WatchedPbehaviorCount map[string]int64 `bson:"watched_pbehavior_count"`
 		// WatchedNotAckedCount is count of unresolved and not acked and active (by pbehavior) alarms.
 		WatchedNotAckedCount int64 `bson:"watched_not_acked_count"`
 	} `bson:"alarms_cumulative_data,omitempty" json:"-"`
