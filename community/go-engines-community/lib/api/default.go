@@ -5,8 +5,6 @@ import (
 	"os"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
@@ -94,15 +92,16 @@ func Default(
 		return nil, err
 	}
 
-	// flapping rule
-	flappingRuleAdapter := flappingrule.NewAdapter(dbClient)
-	flappingRule := flappingrule.SetThenGetFlappingCheck(flappingRuleAdapter, ctx, 0, logger)
-
+	cookieOptions := CookieOptions{
+		FileAccessName: "token",
+		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
+		Secure:         secureSession,
+	}
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
-	sessionStore.Options.MaxAge = int(sessionStoreSessionMaxAge.Seconds())
-	sessionStore.Options.Secure = secureSession
+	sessionStore.Options.MaxAge = cookieOptions.MaxAge
+	sessionStore.Options.Secure = cookieOptions.Secure
 	apiConfigProvider := config.NewApiConfigProvider(cfg, logger)
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
 
 	proxyAccessConfig, err := proxy.LoadAccessConfig(configDir)
 	if err != nil {
@@ -212,6 +211,7 @@ func Default(
 			amqpChannel,
 			jobQueue,
 			userInterfaceConfigProvider,
+			cfg.File.Upload,
 			logger,
 		)
 	})

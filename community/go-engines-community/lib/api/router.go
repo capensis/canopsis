@@ -22,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
@@ -52,6 +53,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -136,6 +138,7 @@ func RegisterRoutes(
 	publisher amqp.Publisher,
 	jobQueue contextgraph.JobQueue,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
+	filesRoot string,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -146,6 +149,9 @@ func RegisterRoutes(
 		security.GetTokenStore(),
 		security.GetAuthProviders(),
 		security.GetSessionStore(),
+		security.GetCookieOptions().FileAccessName,
+		security.GetCookieOptions().MaxAge,
+		security.GetCookieOptions().Secure,
 		logger,
 	)
 	sessionauthApi := sessionauth.NewApi(
@@ -188,6 +194,7 @@ func RegisterRoutes(
 		protected.GET("/account/me", account.NewApi(account.NewStore(dbClient)).Me)
 		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
 		protected.GET("/sessions-count", sessionauthApi.GetSessionsCount())
+		protected.GET("/file-access", authApi.GetFileAccess)
 
 		viewStatsRouter := protected.Group("/view-stats")
 		{
@@ -1042,6 +1049,33 @@ func RegisterRoutes(
 				"/count",
 				middleware.Authorize(authObjPbh, permCreate, enforcer),
 				idleRuleAPI.CountPatterns)
+		}
+
+		fileRouter := protected.Group("/file")
+		{
+			fileAPI := file.NewApi(enforcer, file.NewStore(dbClient, libfile.NewStorage(
+				filesRoot,
+				libfile.NewEtagEncoder(),
+			), conf.File.UploadMaxSize))
+			fileRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjFile, permCreate, enforcer),
+				fileAPI.Create,
+			)
+			getFileRouter := fileRouter.Group("", security.GetFileAuthMiddleware()...)
+			getFileRouter.GET(
+				"",
+				fileAPI.List,
+			)
+			getFileRouter.GET(
+				"/:id",
+				fileAPI.Get,
+			)
+			fileRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjFile, permDelete, enforcer),
+				fileAPI.Delete,
+			)
 		}
 
 		baggotRuleAPI := baggotrule.NewApi(
