@@ -9,7 +9,7 @@ import moment from 'moment-timezone';
 
 import { TIME_UNITS } from '@/constants';
 
-import { convertTimestampToMoment } from '@/helpers/date/date';
+import { convertDateToMoment } from '@/helpers/date/date';
 
 export default {
   props: {
@@ -48,7 +48,7 @@ export default {
   },
   computed: {
     durationDiff() {
-      return moment().diff(convertTimestampToMoment(this.value), TIME_UNITS.second);
+      return moment().diff(convertDateToMoment(this.value), TIME_UNITS.second);
     },
 
     message() {

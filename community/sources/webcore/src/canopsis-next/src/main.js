@@ -306,6 +306,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
     [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
     [MODALS.pbehaviorPlanning]: { fullscreen: true, lazy: true, persistent: true },
+    [MODALS.pbehaviorRecurrenceRule]: { fullscreen: true, lazy: true, persistent: true },
     [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
     [MODALS.createRemediationInstruction]: { maxWidth: 960 },
     [MODALS.remediationInstructionApproval]: { maxWidth: 960 },

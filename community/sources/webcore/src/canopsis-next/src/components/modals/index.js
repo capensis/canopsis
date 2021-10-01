@@ -53,6 +53,7 @@ export { default as CreateCommentEvent } from './common/create-comment-event.vue
 export { default as CreatePlaylist } from './admin/create-playlist.vue';
 export { default as ManagePlaylistTabs } from './admin/manage-playlist-tabs.vue';
 export { default as PbehaviorPlanning } from './pbehavior/pbehavior-planning.vue';
+export { default as PbehaviorRecurrenceRule } from './pbehavior/pbehavior-recurrence-rule.vue';
 export { default as SelectExceptionsLists } from './pbehavior/select-exceptions-lists.vue';
 export { default as CreateRecurrenceRule } from './pbehavior/create-recurrence-rule.vue';
 export { default as PbehaviorRecurrentChangesConfirmation } from './pbehavior/pbehavior-recurrent-changes-confirmation.vue';
