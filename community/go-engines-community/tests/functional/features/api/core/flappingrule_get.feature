@@ -11,35 +11,7 @@ Feature: Get a flapping rule
     {
       "data": [
         {
-          "_id": "test-flapping-rule-to-get-2",
-          "author": {
-            "_id": "root",
-            "name": "root"
-          },
-          "created": 1619083533,
-          "description": "flapping rule 2",
-          "flapping_interval": {
-            "seconds": 23,
-            "unit": "s"
-          },
-          "flapping_freq_limit": 5,
-          "alarm_patterns": null,
-          "updated": 1619083533,
-          "priority": 1
-        },
-        {
           "_id": "test-flapping-rule-to-get-1",
-          "author": {
-            "_id": "root",
-            "name": "root"
-          },
-          "created": 1619083733,
-          "description": "flapping rule 1",
-          "flapping_interval": {
-            "seconds": 10,
-            "unit": "s"
-          },
-          "flapping_freq_limit": 3,
           "alarm_patterns": [
             {
               "v": {
@@ -47,8 +19,52 @@ Feature: Get a flapping rule
               }
             }
           ],
-          "updated": 1619083733,
-          "priority": 0
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
+          "created": 1619083733,
+          "description": "test-flapping-rule-to-get-1-description",
+          "duration": {
+            "seconds": 0,
+            "unit": ""
+          },
+          "entity_patterns": [
+            {
+              "name": "test-flapping-rule-to-get-1-resource"
+            }
+          ],
+          "freq_limit": 3,
+          "priority": 0,
+          "updated": 1619083733
+        },
+        {
+          "_id": "test-flapping-rule-to-get-2",
+          "alarm_patterns": [
+            {
+              "v": {
+                "connector": "test-flapping-rule-to-get-2-pattern"
+              }
+            }
+          ],
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
+          "created": 1619083733,
+          "description": "test-flapping-rule-to-get-2-description",
+          "duration": {
+            "seconds": 0,
+            "unit": ""
+          },
+          "entity_patterns": [
+            {
+              "name": "test-flapping-rule-to-get-2-resource"
+            }
+          ],
+          "freq_limit": 3,
+          "priority": 1,
+          "updated": 1619083733
         }
       ],
       "meta": {
@@ -68,17 +84,6 @@ Feature: Get a flapping rule
     """json
     {
       "_id": "test-flapping-rule-to-get-1",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "created": 1619083733,
-      "description": "flapping rule 1",
-      "flapping_interval": {
-        "seconds": 10,
-        "unit": "s"
-      },
-      "flapping_freq_limit": 3,
       "alarm_patterns": [
         {
           "v": {
@@ -86,8 +91,24 @@ Feature: Get a flapping rule
           }
         }
       ],
-      "updated": 1619083733,
-      "priority": 0
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "created": 1619083733,
+      "description": "test-flapping-rule-to-get-1-description",
+      "duration": {
+        "seconds": 0,
+        "unit": ""
+      },
+      "entity_patterns": [
+        {
+          "name": "test-flapping-rule-to-get-1-resource"
+        }
+      ],
+      "freq_limit": 3,
+      "priority": 0,
+      "updated": 1619083733
     }
     """
 

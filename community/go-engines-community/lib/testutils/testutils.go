@@ -1,10 +1,9 @@
 package testutils
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"os"
 	"testing"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 )
 
 // Testutils constants

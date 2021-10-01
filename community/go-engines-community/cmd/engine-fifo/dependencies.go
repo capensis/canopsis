@@ -2,14 +2,11 @@ package main
 
 import (
 	"context"
-	"time"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
@@ -17,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
+	"time"
 )
 
 type Options struct {
@@ -60,8 +58,6 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		json.NewEncoder(),
 		options.EnableMetaAlarmProcessing,
 	)
-	flappingRuleAdapter := flappingrule.NewAdapter(mongoClient)
-	flappingRule := flappingrule.SetThenGetFlappingCheck(flappingRuleAdapter, ctx, 0, logger)
 	statsCh := make(chan statistics.Message)
 	statsSender := ratelimit.NewStatsSender(statsCh, logger)
 	statsListener := statistics.NewStatsListener(
@@ -179,7 +175,6 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker(flappingRule)
 
 	return engine
 }

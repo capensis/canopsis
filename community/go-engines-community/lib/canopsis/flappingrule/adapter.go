@@ -1,6 +1,6 @@
 package flappingrule
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/flappingrule/adapter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule Adapter
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/flappingrule/rule.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule Adapter
 
 import (
 	"context"
@@ -10,9 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Adapter interface is used to implement an storage ruleAdapter.
+// Adapter interface is used to implement a storage adapter.
 type Adapter interface {
-	// Get returns all flappingRules.
 	Get(ctx context.Context) ([]Rule, error)
 }
 
@@ -20,7 +19,7 @@ type mongoAdapter struct {
 	collection mongo.DbCollection
 }
 
-// NewAdapter creates new rules ruleAdapter.
+// NewAdapter creates new rule adapter.
 func NewAdapter(client mongo.DbClient) Adapter {
 	return &mongoAdapter{
 		collection: client.Collection(mongo.FlappingRuleMongoCollection),
@@ -43,5 +42,5 @@ func (a *mongoAdapter) Get(ctx context.Context) ([]Rule, error) {
 		return nil, err
 	}
 
-	return rules, err
+	return rules, nil
 }

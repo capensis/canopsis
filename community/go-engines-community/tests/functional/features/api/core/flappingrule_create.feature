@@ -7,8 +7,7 @@ Feature: Create an flapping rule
     When I do POST /api/v4/flapping-rules:
     """json
     {
-      "_id": "test-flapping-rule-to-create-1",
-      "description": "test create 1",
+      "description": "test-flapping-rule-to-create-1-description",
       "alarm_patterns": [
         {
           "v": {
@@ -16,11 +15,16 @@ Feature: Create an flapping rule
           }
         }
       ],
-      "flapping_interval": {
+      "entity_patterns": [
+        {
+          "name": "test-flapping-rule-to-create-1-resource"
+        }
+      ],
+      "duration": {
         "seconds": 10,
         "unit": "s"
       },
-      "flapping_freq_limit": 3,
+      "freq_limit": 3,
       "priority": 5
     }
     """
@@ -28,12 +32,11 @@ Feature: Create an flapping rule
     Then the response body should contain:
     """json
     {
-      "_id": "test-flapping-rule-to-create-1",
       "author": {
         "_id": "root",
         "name": "root"
       },
-      "description": "test create 1",
+      "description": "test-flapping-rule-to-create-1-description",
       "alarm_patterns": [
         {
           "v": {
@@ -41,11 +44,16 @@ Feature: Create an flapping rule
           }
         }
       ],
-      "flapping_interval": {
+      "entity_patterns": [
+        {
+          "name": "test-flapping-rule-to-create-1-resource"
+        }
+      ],
+      "duration": {
         "seconds": 10,
         "unit": "s"
       },
-      "flapping_freq_limit": 3,
+      "freq_limit": 3,
       "priority": 5
     }
     """
@@ -54,12 +62,11 @@ Feature: Create an flapping rule
     Then the response body should contain:
     """json
     {
-      "_id": "test-flapping-rule-to-create-1",
       "author": {
         "_id": "root",
         "name": "root"
       },
-      "description": "test create 1",
+      "description": "test-flapping-rule-to-create-1-description",
       "alarm_patterns": [
         {
           "v": {
@@ -67,11 +74,16 @@ Feature: Create an flapping rule
           }
         }
       ],
-      "flapping_interval": {
+      "entity_patterns": [
+        {
+          "name": "test-flapping-rule-to-create-1-resource"
+        }
+      ],
+      "duration": {
         "seconds": 10,
         "unit": "s"
       },
-      "flapping_freq_limit": 3,
+      "freq_limit": 3,
       "priority": 5
     }
     """
@@ -81,20 +93,24 @@ Feature: Create an flapping rule
     When I do POST /api/v4/flapping-rules:
     """json
     {
-      "_id": "test-flapping-rule-to-create-2",
-      "description": "test create 2",
+      "description": "test-flapping-rule-to-create-2-priority-1-description",
       "alarm_patterns": [
         {
           "v": {
-            "component": "test-flapping-rule-to-create-2-pattern"
+            "component": "test-flapping-rule-to-create-2-priority-1-pattern"
           }
         }
       ],
-      "flapping_interval": {
+      "entity_patterns": [
+        {
+          "name": "test-flapping-rule-to-create-2-priority-1-resource"
+        }
+      ],
+      "duration": {
         "seconds": 10,
         "unit": "s"
       },
-      "flapping_freq_limit": 3,
+      "freq_limit": 3,
       "priority": 5
     }
     """
@@ -102,30 +118,41 @@ Feature: Create an flapping rule
     When I do POST /api/v4/flapping-rules:
     """json
     {
-      "_id": "test-flapping-rule-to-create-3",
-      "description": "test create 3",
+      "description": "test-flapping-rule-to-create-2-priority-2-description",
       "alarm_patterns": [
         {
           "v": {
-            "component": "test-flapping-rule-to-create-3-pattern"
+            "component": "test-flapping-rule-to-create-2-priority-2-pattern"
           }
         }
       ],
-      "flapping_interval": {
+      "entity_patterns": [
+        {
+          "name": "test-flapping-rule-to-create-2-priority-2-resource"
+        }
+      ],
+      "duration": {
         "seconds": 10,
         "unit": "s"
       },
-      "flapping_freq_limit": 3,
+      "freq_limit": 3,
       "priority": 5
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/flapping-rules/test-flapping-rule-to-create-2
+    When I do GET /api/v4/flapping-rules?search=test-flapping-rule-to-create-2&sort_by=priority&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "priority": 6
+      "data": [
+        {
+          "description": "test-flapping-rule-to-create-2-priority-2-description"
+        },
+        {
+          "description": "test-flapping-rule-to-create-2-priority-1-description"
+        }
+      ]
     }
     """
 
@@ -141,16 +168,18 @@ Feature: Create an flapping rule
     """json
     {
       "errors": {
+        "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
+        "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
         "description": "Description is missing.",
-        "flapping_freq_limit": "FlappingFreqLimit is missing.",
-        "flapping_interval.seconds": "Seconds is missing.",
-        "flapping_interval.unit": "Unit is missing.",
+        "freq_limit": "FreqLimit is missing.",
+        "duration.seconds": "Seconds is missing.",
+        "duration.unit": "Unit is missing.",
         "priority": "Priority is missing."
       }
     }
     """
 
-  Scenario: given create request with wrong alarm patterns format should return bad request
+  Scenario: given create request with invalid patterns format should return bad request
     When I am admin
     When I do POST /api/v4/flapping-rules:
     """json
@@ -161,6 +190,11 @@ Feature: Create an flapping rule
             "component_name": "ram"
           }
         }
+      ],
+      "entity_patterns": [
+        {
+          "component_name": "ram"
+        }
       ]
     }
     """
@@ -169,7 +203,8 @@ Feature: Create an flapping rule
     """json
     {
       "errors": {
-        "alarm_patterns":"Invalid alarm patterns."
+        "alarm_patterns":"Invalid alarm pattern list.",
+        "entity_patterns":"Invalid entity pattern list."
       }
     }
     """

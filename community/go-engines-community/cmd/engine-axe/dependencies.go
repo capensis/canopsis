@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/baggotrule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -20,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation/executor"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statsng"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
@@ -57,9 +58,6 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 
-	flappingRuleAdapter := flappingrule.NewAdapter(dbClient)
-	flappingRule := flappingrule.SetThenGetFlappingCheck(flappingRuleAdapter, ctx, options.PeriodicalWaitTime, logger)
-
 	serviceRpcClient := engine.NewRPCClient(
 		canopsis.AxeRPCConsumerName,
 		canopsis.ServiceRPCQueueServerName,
@@ -72,6 +70,8 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		amqpChannel,
 		logger,
 	)
+
+	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider)
 
 	statsService := statsng.NewService(
 		m.DepAMQPChannelPub(amqpConnection),
@@ -92,7 +92,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			PublishCh:                amqpChannel,
 			ServiceRpc:               serviceRpcClient,
-			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, statsService),
+			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, statsService),
 			Decoder:                  json.NewDecoder(),
 			Encoder:                  json.NewEncoder(),
 			Logger:                   logger,
@@ -171,7 +171,8 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 				entity.NewAdapter(dbClient),
 				correlation.NewRuleAdapter(dbClient),
 				alarmConfigProvider,
-				m.depOperationExecutor(dbClient, alarmConfigProvider, statsService),
+				m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, statsService),
+				alarmStatusService,
 				redis.NewLockClient(corrRedisClient),
 				logger,
 			),
@@ -196,10 +197,12 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			ServiceRpc:               serviceRpcClient,
 			PbhRpc:                   pbhRpcClient,
 			AlarmAdapter:             alarm.NewAdapter(dbClient),
-			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, statsService),
-			Encoder:                  json.NewEncoder(),
-			Decoder:                  json.NewDecoder(),
-			Logger:                   logger,
+			Executor: m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService,
+
+				statsService),
+			Encoder: json.NewEncoder(),
+			Decoder: json.NewDecoder(),
+			Logger:  logger,
 		},
 		logger,
 	))
@@ -218,13 +221,10 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		&periodicalWorker{
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			ChannelPub:         amqpChannel,
-			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), logger),
+			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, logger),
 			AlarmAdapter:       alarm.NewAdapter(dbClient),
-			AlarmBaggotService: baggotrule.NewService(
-				baggotrule.NewAdapter(dbClient),
-				alarm.NewAdapter(dbClient),
-				logger),
-			Encoder: json.NewEncoder(),
+			AlarmStatusService: alarmStatusService,
+			Encoder:            json.NewEncoder(),
 			IdleAlarmService: idlealarm.NewService(
 				idlerule.NewRuleAdapter(dbClient),
 				alarm.NewAdapter(dbClient),
@@ -264,7 +264,6 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		timezoneConfigProvider,
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker(flappingRule)
 
 	return engineAxe
 }
@@ -277,6 +276,7 @@ type DependencyMaker struct {
 func (m DependencyMaker) depOperationExecutor(
 	dbClient mongo.DbClient,
 	configProvider config.AlarmConfigProvider,
+	alarmStatusService alarmstatus.Service,
 	statsService statsng.Service,
 ) operation.Executor {
 	entityAdapter := entity.NewAdapter(dbClient)
@@ -285,13 +285,13 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeAckremove, executor.NewAckRemoveExecutor(configProvider))
 	container.Set(types.EventTypeActivate, executor.NewActivateExecutor())
 	container.Set(types.EventTypeAssocTicket, executor.NewAssocTicketExecutor())
-	container.Set(types.EventTypeCancel, executor.NewCancelExecutor(configProvider))
-	container.Set(types.EventTypeChangestate, executor.NewChangeStateExecutor(configProvider))
+	container.Set(types.EventTypeCancel, executor.NewCancelExecutor(configProvider, alarmStatusService))
+	container.Set(types.EventTypeChangestate, executor.NewChangeStateExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeComment, executor.NewCommentExecutor(configProvider))
 	container.Set(types.EventTypeDeclareTicket, executor.NewDeclareTicketExecutor())
 	container.Set(types.EventTypeDeclareTicketWebhook, executor.NewDeclareTicketWebhookExecutor(configProvider))
 	container.Set(types.EventTypeDone, executor.NewDoneExecutor(configProvider))
-	container.Set(types.EventTypeKeepstate, executor.NewChangeStateExecutor(configProvider))
+	container.Set(types.EventTypeKeepstate, executor.NewChangeStateExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypePbhEnter, executor.NewPbhEnterExecutor(configProvider))
 	container.Set(types.EventTypePbhLeave, executor.NewPbhLeaveExecutor(configProvider))
 	container.Set(types.EventTypePbhLeaveAndEnter, executor.NewPbhLeaveAndEnterExecutor(configProvider))
@@ -300,9 +300,9 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeResolveClose, executor.NewResolveStatExecutor(executor.NewResolveCloseExecutor(), entityAdapter, statsService))
 	container.Set(types.EventTypeEntityToggled, executor.NewResolveStatExecutor(executor.NewResolveDisabledExecutor(), entityAdapter, statsService))
 	container.Set(types.EventTypeSnooze, executor.NewSnoozeExecutor(configProvider))
-	container.Set(types.EventTypeUncancel, executor.NewUncancelExecutor(configProvider))
+	container.Set(types.EventTypeUncancel, executor.NewUncancelExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeUnsnooze, executor.NewUnsnoozeExecutor())
-	container.Set(types.EventTypeUpdateStatus, executor.NewUpdateStatusExecutor(configProvider))
+	container.Set(types.EventTypeUpdateStatus, executor.NewUpdateStatusExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeInstructionStarted, executor.NewInstructionExecutor())
 	container.Set(types.EventTypeInstructionPaused, executor.NewInstructionExecutor())
 	container.Set(types.EventTypeInstructionResumed, executor.NewInstructionExecutor())

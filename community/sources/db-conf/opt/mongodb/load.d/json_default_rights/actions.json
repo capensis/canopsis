@@ -1416,5 +1416,19 @@
         "crecord_name": "api_instruction_approve",
         "crecord_type": "action",
         "desc": "Instruction approve"
+    },
+    {
+        "_id": "api_resolve_rule",
+        "crecord_name": "api_resolve_rule",
+        "crecord_type": "action",
+        "desc": "Resolve rule",
+        "type": "CRUD"
+    },
+    {
+        "_id": "api_flapping_rule",
+        "crecord_name": "api_flapping_rule",
+        "crecord_type": "action",
+        "desc": "Flapping rule",
+        "type": "CRUD"
     }
 ]

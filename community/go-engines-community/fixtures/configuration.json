@@ -19,7 +19,7 @@
     "_id": "global_config",
     "alarm": {
       "stealthyinterval": 0,
-      "enablelasteventdate": false,
+      "enablelasteventdate": true,
       "cancelautosolvedelay": "1h",
       "displaynamescheme": "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}",
       "outputlength": 255,

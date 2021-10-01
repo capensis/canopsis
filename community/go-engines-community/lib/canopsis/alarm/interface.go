@@ -35,18 +35,18 @@ type Adapter interface {
 	GetAlarmsWithSnoozeMark(ctx context.Context) ([]types.Alarm, error)
 
 	// GetAlarmsWithFlappingStatus returns all alarms whose status is flapping
-	GetAlarmsWithFlappingStatus(ctx context.Context) ([]types.Alarm, error)
+	GetAlarmsWithFlappingStatus(ctx context.Context) ([]types.AlarmWithEntity, error)
 
 	// GetAllOpenedResourceAlarmsByComponent returns all ongoing alarms for component
 	GetAllOpenedResourceAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
 	// GetUnacknowledgedAlarmsByComponent returns all ongoing alarms which have
 	// not been acknowledged, given a component's name.
-	GetUnacknowledgedAlarmsByComponent(ctx context.Context, component string) ([]types.Alarm, error)
+	GetUnacknowledgedAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
 	// GetAlarmsWithoutTicketByComponent returns all ongoing alarms which do
 	// not have a ticket, given a component's name.
-	GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.Alarm, error)
+	GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
 	GetOpenedAlarmByAlarmId(ctx context.Context, id string) (types.Alarm, error)
 
@@ -55,12 +55,11 @@ type Adapter interface {
 	GetOpenedAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error)
 
 	GetOpenedMetaAlarm(ctx context.Context, ruleId string, valuePath string) (types.Alarm, error)
+	GetOpenedMetaAlarmWithEntity(ctx context.Context, ruleId string, valuePath string) (types.AlarmWithEntity, error)
 
 	// GetLastAlarm find the last alarm with an id
 	GetLastAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error)
-
-	// GetUnresolved returns all alarms that have v.resolved to null or absent field.
-	GetUnresolved(ctx context.Context) ([]types.Alarm, error)
+	GetLastAlarmWithEntity(ctx context.Context, connector, connectorName, id string) (types.AlarmWithEntity, error)
 
 	// GetOpenedAlarmsByIDs gets ongoing alarms related the provided entity ids
 	GetOpenedAlarmsByIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
@@ -107,6 +106,9 @@ type EventProcessor interface {
 }
 
 type Service interface {
+	// ResolveClosed close ok alarms.
+	ResolveClosed(ctx context.Context) ([]types.Alarm, error)
+
 	// ResolveCancels close canceled alarms when time has expired
 	ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
 
@@ -118,5 +120,5 @@ type Service interface {
 
 	// UpdateFlappingAlarms updates the status of the flapping alarms, removing
 	// the flapping status if needed.
-	UpdateFlappingAlarms(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
+	UpdateFlappingAlarms(ctx context.Context) ([]types.Alarm, error)
 }

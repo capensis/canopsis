@@ -4,49 +4,58 @@ Feature: Update an flapping rule
 
   Scenario: given update request should update flapping rule
     When I am admin
-    Then I do PUT /api/v4/flapping-rules/test-flapping-rule-to-update:
+    Then I do PUT /api/v4/flapping-rules/test-flapping-rule-to-update-1:
     """json
     {
-      "_id": "whatever",
-      "description": "updated flapping rule",
-      "flapping_interval": {
-        "seconds": 200,
-        "unit": "m"
-      },
-      "flapping_freq_limit": 15,
+      "description": "test-flapping-rule-to-update-1-description-updated",
       "alarm_patterns": [
         {
           "v": {
-            "connector": "test-flapping-rule-to-update-pattern-updated"
+            "component": "test-flapping-rule-to-update-1-pattern-updated"
           }
         }
       ],
-      "priority": 7
+      "entity_patterns": [
+        {
+          "name": "test-flapping-rule-to-update-1-resource-updated"
+        }
+      ],
+      "duration": {
+        "seconds": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
     }
     """
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-flapping-rule-to-update",
       "author": {
         "_id": "root",
         "name": "root"
       },
-      "description": "updated flapping rule",
-      "flapping_interval": {
-        "seconds": 200,
-        "unit": "m"
-      },
-      "flapping_freq_limit": 15,
+      "created": 1619083733,
+      "description": "test-flapping-rule-to-update-1-description-updated",
       "alarm_patterns": [
         {
           "v": {
-            "connector": "test-flapping-rule-to-update-pattern-updated"
+            "component": "test-flapping-rule-to-update-1-pattern-updated"
           }
         }
       ],
-      "priority": 7
+      "entity_patterns": [
+        {
+          "name": "test-flapping-rule-to-update-1-resource-updated"
+        }
+      ],
+      "duration": {
+        "seconds": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
     }
     """
 
@@ -64,20 +73,25 @@ Feature: Update an flapping rule
     When I do PUT /api/v4/flapping-rules/test-flapping-rule-not-found:
     """json
     {
-      "description": "updated flapping rule",
-      "flapping_interval": {
-        "seconds": 50,
-        "unit": "s"
-      },
-      "flapping_freq_limit": 13,
+      "description": "test-flapping-rule-to-update-2-description-updated",
       "alarm_patterns": [
         {
           "v": {
-            "connector": "test-flapping-rule-to-update-pattern-updated"
+            "component": "test-flapping-rule-to-update-2-pattern-updated"
           }
         }
       ],
-      "priority": 1
+      "entity_patterns": [
+        {
+          "name": "test-flapping-rule-to-update-2-resource-updated"
+        }
+      ],
+      "duration": {
+        "seconds": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
     }
     """
     Then the response code should be 404
@@ -99,10 +113,12 @@ Feature: Update an flapping rule
     """json
     {
       "errors": {
+        "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
+        "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
         "description": "Description is missing.",
-        "flapping_freq_limit": "FlappingFreqLimit is missing.",
-        "flapping_interval.seconds": "Seconds is missing.",
-        "flapping_interval.unit": "Unit is missing.",
+        "freq_limit": "FreqLimit is missing.",
+        "duration.seconds": "Seconds is missing.",
+        "duration.unit": "Unit is missing.",
         "priority": "Priority is missing."
       }
     }

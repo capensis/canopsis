@@ -7,18 +7,16 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
-	logger       zerolog.Logger
 }
 
-// Create flappingrule
-// @Summary Create flappingrule
-// @Description Create flappingrule
+// Create flapping rule
+// @Summary Create flapping rule
+// @Description Create flapping rule
 // @Tags flappingrules
 // @ID flappingrules-create
 // @Accept json
@@ -26,9 +24,9 @@ type api struct {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param body body CreateRequest true "body"
-// @Success 201 {object} CreateRequest
+// @Success 201 {object} Response
 // @Failure 400 {object} common.ErrorResponse
-// @Router /baggot-rules [post]
+// @Router /flapping-rules [post]
 func (a api) Create(c *gin.Context) {
 	request := CreateRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -36,7 +34,7 @@ func (a api) Create(c *gin.Context) {
 		return
 	}
 
-	rule, err := a.store.Insert(c.Request.Context(), &request)
+	rule, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -53,9 +51,9 @@ func (a api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, rule)
 }
 
-// Find all flappingrule
-// @Summary Find all flappingrule
-// @Description Get paginated list of flappingrule
+// Find all flapping rule
+// @Summary Find all flapping rule
+// @Description Get paginated list of flapping rule
 // @Tags flappingrules
 // @ID flappingrules-find-all
 // @Accept json
@@ -65,9 +63,9 @@ func (a api) Create(c *gin.Context) {
 // @Param page query integer true "current page"
 // @Param limit query integer true "items per page"
 // @Param search query string false "search query"
-// @Success 200 {object} common.PaginatedListResponse{data=[]CreateRequest}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 // @Failure 400 {object} common.ErrorResponse
-// @Router /baggot-rules [get]
+// @Router /flapping-rules [get]
 func (a api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
@@ -91,21 +89,20 @@ func (a api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Get flappingrule by id
-// @Summary Get flappingrule by id
-// @Description Get flappingrule by id
+// Get flapping rule by id
+// @Summary Get flapping rule by id
+// @Description Get flapping rule by id
 // @Tags flappingrules
 // @ID flappingrules-get-by-id
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param id path string true "flappingrule id"
-// @Success 200 {object} CreateRequest
+// @Param id path string true "flapping rule id"
+// @Success 200 {object} Response
 // @Failure 404 {object} common.ErrorResponse
-// @Router /baggot-rules/{id} [get]
+// @Router /flapping-rules/{id} [get]
 func (a api) Get(c *gin.Context) {
 	rule, err := a.store.GetById(c.Request.Context(), c.Param("id"))
-
 	if err != nil {
 		panic(err)
 	}
@@ -118,21 +115,21 @@ func (a api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, rule)
 }
 
-// Update flappingrule by id
-// @Summary Update flappingrule by id
-// @Description Update flappingrule by id
+// Update flapping rule by id
+// @Summary Update flapping rule by id
+// @Description Update flapping rule by id
 // @Tags flappingrules
 // @ID flappingrules-update-by-id
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param id path string true "flappingrule id"
-// @Param body body CreateRequest true "body"
-// @Success 200 {object} CreateRequest
+// @Param id path string true "flapping rule id"
+// @Param body body UpdateRequest true "body"
+// @Success 200 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
-// @Router /baggot-rules/{id} [put]
+// @Router /flapping-rules/{id} [put]
 func (a api) Update(c *gin.Context) {
 	var request UpdateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -140,10 +137,8 @@ func (a api) Update(c *gin.Context) {
 		return
 	}
 
-	var data = request.CreateRequest
-	data.ID = c.Param("id")
-	rule, err := a.store.Update(c.Request.Context(), &data)
-
+	request.ID = c.Param("id")
+	rule, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -156,7 +151,7 @@ func (a api) Update(c *gin.Context) {
 	err = a.actionLogger.Action(c, logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeFlappingRule,
-		ValueID:   data.ID,
+		ValueID:   rule.ID,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
@@ -165,17 +160,17 @@ func (a api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, rule)
 }
 
-// Delete flappingrule by id
-// @Summary Delete flappingrule by id
-// @Description Delete flappingrule by id
+// Delete flapping rule by id
+// @Summary Delete flapping rule by id
+// @Description Delete flapping rule by id
 // @Tags flappingrules
 // @ID flappingrules-delete-by-id
 // @Security ApiKeyAuth
 // @Security BasicAuth`
-// @Param id path string true "flappingrule id"
+// @Param id path string true "flapping rule id"
 // @Success 204
 // @Failure 404 {object} common.ErrorResponse
-// @Router /baggot-rules/{id} [delete]
+// @Router /flapping-rules/{id} [delete]
 func (a api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -202,11 +197,9 @@ func (a api) Delete(c *gin.Context) {
 func NewApi(
 	store Store,
 	actionLogger logger.ActionLogger,
-	logger zerolog.Logger,
 ) common.CrudAPI {
 	return &api{
 		store:        store,
 		actionLogger: actionLogger,
-		logger:       logger,
 	}
 }

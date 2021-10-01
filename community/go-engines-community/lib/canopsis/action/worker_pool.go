@@ -245,6 +245,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 	return &types.RPCWebhookEvent{
 		Parameters:   *params,
 		Alarm:        &task.Alarm,
+		Entity:       &task.Entity,
 		AckResources: task.AckResources,
 		Header:       task.Header,
 		Response:     task.Response,

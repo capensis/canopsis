@@ -1,24 +1,23 @@
-Feature: Create an baggot rule
-  I need to be able to create a baggot rule
-  Only admin should be able to create a baggot rule
+Feature: Create an resolve rule
+  I need to be able to create a resolve rule
+  Only admin should be able to create a resolve rule
 
   Scenario: given create request should return ok
     When I am admin
-    When I do POST /api/v4/baggot-rules:
+    When I do POST /api/v4/resolve-rules:
     """json
     {
-      "_id": "test-baggot-rule-to-create-1",
-      "description": "test create 1",
+      "description": "test-resolve-rule-to-create-1-description",
       "alarm_patterns": [
         {
           "v": {
-            "component": "test-baggot-rule-to-create-1-pattern"
+            "component": "test-resolve-rule-to-create-1-pattern"
           }
         }
       ],
-      "entity_patterns":[
+      "entity_patterns": [
         {
-          "name": "test-baggot-rule-to-create-1-pattern"
+          "name": "test-resolve-rule-to-create-1-resource"
         }
       ],
       "duration": {
@@ -32,22 +31,21 @@ Feature: Create an baggot rule
     Then the response body should contain:
     """json
     {
-      "_id": "test-baggot-rule-to-create-1",
       "author": {
         "_id": "root",
         "name": "root"
       },
-      "description": "test create 1",
+      "description": "test-resolve-rule-to-create-1-description",
       "alarm_patterns": [
         {
           "v": {
-            "component": "test-baggot-rule-to-create-1-pattern"
+            "component": "test-resolve-rule-to-create-1-pattern"
           }
         }
       ],
-      "entity_patterns":[
+      "entity_patterns": [
         {
-          "name": "test-baggot-rule-to-create-1-pattern"
+          "name": "test-resolve-rule-to-create-1-resource"
         }
       ],
       "duration": {
@@ -57,27 +55,26 @@ Feature: Create an baggot rule
       "priority": 5
     }
     """
-    When I do GET /api/v4/baggot-rules/{{ .lastResponse._id }}
+    When I do GET /api/v4/resolve-rules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-baggot-rule-to-create-1",
       "author": {
         "_id": "root",
         "name": "root"
       },
-      "description": "test create 1",
+      "description": "test-resolve-rule-to-create-1-description",
       "alarm_patterns": [
         {
           "v": {
-            "component": "test-baggot-rule-to-create-1-pattern"
+            "component": "test-resolve-rule-to-create-1-pattern"
           }
         }
       ],
-      "entity_patterns":[
+      "entity_patterns": [
         {
-          "name": "test-baggot-rule-to-create-1-pattern"
+          "name": "test-resolve-rule-to-create-1-resource"
         }
       ],
       "duration": {
@@ -90,21 +87,20 @@ Feature: Create an baggot rule
 
   Scenario: given create request should update priority of next rules
     When I am admin
-    When I do POST /api/v4/baggot-rules:
+    When I do POST /api/v4/resolve-rules:
     """json
     {
-      "_id": "test-baggot-rule-to-create-2",
-      "description": "test create 2",
+      "description": "test-resolve-rule-to-create-2-priority-1-description",
       "alarm_patterns": [
         {
           "v": {
-            "component": "test-baggot-rule-to-create-2-pattern"
+            "component": "test-resolve-rule-to-create-2-priority-1-pattern"
           }
         }
       ],
-      "entity_patterns":[
+      "entity_patterns": [
         {
-          "name": "test-baggot-rule-to-create-2-pattern"
+          "name": "test-resolve-rule-to-create-2-priority-1-resource"
         }
       ],
       "duration": {
@@ -115,21 +111,20 @@ Feature: Create an baggot rule
     }
     """
     Then the response code should be 201
-    When I do POST /api/v4/baggot-rules:
+    When I do POST /api/v4/resolve-rules:
     """json
     {
-      "_id": "test-baggot-rule-to-create-3",
-      "description": "test create 3",
+      "description": "test-resolve-rule-to-create-2-priority-2-description",
       "alarm_patterns": [
         {
           "v": {
-            "component": "test-baggot-rule-to-create-3-pattern"
+            "component": "test-resolve-rule-to-create-2-priority-2-pattern"
           }
         }
       ],
-      "entity_patterns":[
+      "entity_patterns": [
         {
-          "name": "test-baggot-rule-to-create-2-pattern"
+          "name": "test-resolve-rule-to-create-2-priority-2-resource"
         }
       ],
       "duration": {
@@ -140,18 +135,25 @@ Feature: Create an baggot rule
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/baggot-rules/test-baggot-rule-to-create-2
+    When I do GET /api/v4/resolve-rules?search=test-resolve-rule-to-create-2&sort_by=priority
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "priority": 6
+      "data": [
+        {
+          "description": "test-resolve-rule-to-create-2-priority-2-description"
+        },
+        {
+          "description": "test-resolve-rule-to-create-2-priority-1-description"
+        }
+      ]
     }
     """
 
   Scenario: given create request with missing fields should return bad request
     When I am admin
-    When I do POST /api/v4/baggot-rules:
+    When I do POST /api/v4/resolve-rules:
     """json
     {
     }
@@ -161,6 +163,8 @@ Feature: Create an baggot rule
     """json
     {
       "errors": {
+        "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
+        "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
         "description": "Description is missing.",
         "duration.seconds": "Seconds is missing.",
         "duration.unit": "Unit is missing.",
@@ -169,9 +173,9 @@ Feature: Create an baggot rule
     }
     """
 
-  Scenario: given create request with wrong alarm patterns format should return bad request
+  Scenario: given create request with invalid patterns format should return bad request
     When I am admin
-    When I do POST /api/v4/baggot-rules:
+    When I do POST /api/v4/resolve-rules:
     """json
     {
       "alarm_patterns": [
@@ -179,6 +183,11 @@ Feature: Create an baggot rule
           "v": {
             "component_name": "ram"
           }
+        }
+      ],
+      "entity_patterns": [
+        {
+          "component_name": "ram"
         }
       ]
     }
@@ -188,44 +197,27 @@ Feature: Create an baggot rule
     """json
     {
       "errors": {
-        "alarm_patterns":"Invalid alarm patterns."
-      }
-    }
-    """
-
-  Scenario: given create request with wrong entity patterns format should return bad request
-    When I am admin
-    When I do POST /api/v4/baggot-rules:
-    """json
-    {
-      "entity_patterns": [{"test": "test"}]
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "entity_patterns":"Invalid entity patterns."
+        "alarm_patterns": "Invalid alarm pattern list.",
+        "entity_patterns": "Invalid entity pattern list."
       }
     }
     """
 
   Scenario: given create request and no auth user should not allow access
-    When I do POST /api/v4/baggot-rules
+    When I do POST /api/v4/resolve-rules
     Then the response code should be 401
 
   Scenario: given create request and auth user by api key without permissions should not allow access
     When I am noperms
-    When I do POST /api/v4/baggot-rules
+    When I do POST /api/v4/resolve-rules
     Then the response code should be 403
 
   Scenario: given create request with already exists id should return error
     When I am admin
-    When I do POST /api/v4/baggot-rules:
+    When I do POST /api/v4/resolve-rules:
     """json
     {
-      "_id": "test-baggot-rule-to-check-unique"
+      "_id": "test-resolve-rule-to-check-unique"
     }
     """
     Then the response code should be 400

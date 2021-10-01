@@ -71,7 +71,7 @@ const (
 
 	TokenMongoCollection = "token"
 
-	BaggotRuleMongoCollection   = "baggot_rule"
+	ResolveRuleMongoCollection  = "resolve_rule"
 	FlappingRuleMongoCollection = "flapping_rule"
 )
 

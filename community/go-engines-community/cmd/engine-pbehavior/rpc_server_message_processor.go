@@ -62,6 +62,7 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 
 	return p.getRpcEvent(types.RPCPBehaviorResultEvent{
 		Alarm:    event.Alarm,
+		Entity:   event.Entity,
 		PbhEvent: *pbhEvent,
 		Error:    nil,
 	})

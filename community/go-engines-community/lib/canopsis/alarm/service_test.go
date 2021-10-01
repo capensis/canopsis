@@ -6,6 +6,9 @@ import (
 	"testing"
 	"time"
 
+	mock_alarmstatus "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarmstatus"
+	mock_resolverule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/resolverule"
+
 	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -100,14 +103,18 @@ func TestService_ResolveDone(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
-			alarmAdapterMock.
+			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
+			mockResolveRuleAdapter := mock_resolverule.NewMockAdapter(ctrl)
+			mockAlarmStatusService := mock_alarmstatus.NewMockService(ctrl)
+			mockAlarmAdapter.
 				EXPECT().
 				GetAlarmsWithDoneMark(gomock.Any()).
 				Return(dataset.findAlarms, dataset.findError)
 
 			service := alarm.NewService(
-				alarmAdapterMock,
+				mockAlarmAdapter,
+				mockResolveRuleAdapter,
+				mockAlarmStatusService,
 				log.NewLogger(true),
 			)
 
@@ -210,14 +217,18 @@ func TestService_ResolveCancels(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
-			alarmAdapterMock.
+			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
+			mockResolveRuleAdapter := mock_resolverule.NewMockAdapter(ctrl)
+			mockAlarmStatusService := mock_alarmstatus.NewMockService(ctrl)
+			mockAlarmAdapter.
 				EXPECT().
 				GetAlarmsWithCancelMark(gomock.Any()).
 				Return(dataset.findAlarms, dataset.findError)
 
 			service := alarm.NewService(
-				alarmAdapterMock,
+				mockAlarmAdapter,
+				mockResolveRuleAdapter,
+				mockAlarmStatusService,
 				log.NewLogger(true),
 			)
 
@@ -320,14 +331,18 @@ func TestService_ResolveSnoozes(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
-			alarmAdapterMock.
+			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
+			mockResolveRuleAdapter := mock_resolverule.NewMockAdapter(ctrl)
+			mockAlarmStatusService := mock_alarmstatus.NewMockService(ctrl)
+			mockAlarmAdapter.
 				EXPECT().
 				GetAlarmsWithSnoozeMark(gomock.Any()).
 				Return(dataset.findAlarms, dataset.findError)
 
 			service := alarm.NewService(
-				alarmAdapterMock,
+				mockAlarmAdapter,
+				mockResolveRuleAdapter,
+				mockAlarmStatusService,
 				log.NewLogger(true),
 			)
 

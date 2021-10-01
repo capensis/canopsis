@@ -6,25 +6,19 @@ import (
 )
 
 type Rule struct {
-	ID                string                   `bson:"_id"`
-	FlappingInterval  types.DurationWithUnit   `bson:"flapping_interval"`
-	FlappingFreqLimit int                      `bson:"flapping_freq_limit"`
-	AlarmPatterns     pattern.AlarmPatternList `bson:"alarm_patterns"`
-	Updated           *types.CpsTime           `bson:"updated"`
-	Priority          int                      `bson:"priority"`
+	ID             string                    `bson:"_id"`
+	Description    string                    `bson:"description"`
+	FreqLimit      int                       `bson:"freq_limit"`
+	Duration       types.DurationWithUnit    `bson:"duration"`
+	AlarmPatterns  pattern.AlarmPatternList  `bson:"alarm_patterns"`
+	EntityPatterns pattern.EntityPatternList `bson:"entity_patterns"`
+	Priority       int                       `bson:"priority"`
+	Author         string                    `bson:"author"`
+	Created        types.CpsTime             `bson:"created"`
+	Updated        types.CpsTime             `bson:"updated"`
 }
 
-// Matches returns true if alrs and entity match time condition and field patterns.
-func (r *Rule) Matches(alarm *types.Alarm) bool {
-	return r.AlarmPatterns.Matches(alarm)
-}
-
-// LoadRulesReport is a struct containing the rules that have been added,
-// modified, or removed between two calls of the Service.LoadRules method.
-type LoadRulesReport struct {
-	Unchanged  []Rule
-	Added      []Rule
-	Modified   []Rule
-	Removed    []Rule
-	FailParsed []Rule
+// Matches returns true if alarm and entity match field patterns.
+func (r *Rule) Matches(alarm types.AlarmWithEntity) bool {
+	return r.AlarmPatterns.Matches(&alarm.Alarm) && r.EntityPatterns.Matches(&alarm.Entity)
 }

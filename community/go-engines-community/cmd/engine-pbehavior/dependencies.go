@@ -10,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -47,9 +46,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhLockerClient := redis.NewLockClient(pbhRedisSession)
 	store := redis.NewStore(pbhRedisSession, "pbehaviors", 0)
-
-	flappingRuleAdapter := flappingrule.NewAdapter(dbClient)
-	flappingRule := flappingrule.SetThenGetFlappingCheck(flappingRuleAdapter, ctx, options.PeriodicalWaitTime, logger)
 
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
 	eventManager := pbehavior.NewEventManager()
@@ -253,7 +249,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		dataStorageConfigProvider,
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(flappingRule)
 
 	return enginePbehavior
 }

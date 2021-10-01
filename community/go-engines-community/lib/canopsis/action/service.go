@@ -84,13 +84,13 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 				}
 
 				event := &types.Event{
-					Connector:               alarm.Value.Connector,
-					ConnectorName:           alarm.Value.ConnectorName,
-					Component:               alarm.Value.Component,
-					Resource:                alarm.Value.Resource,
-					Alarm:                   &alarm,
-					MetaAlarmParents:        &alarm.Value.Parents,
-					MetaAlarmChildren:       &alarm.Value.Children,
+					Connector:         alarm.Value.Connector,
+					ConnectorName:     alarm.Value.ConnectorName,
+					Component:         alarm.Value.Component,
+					Resource:          alarm.Value.Resource,
+					Alarm:             &alarm,
+					MetaAlarmParents:  &alarm.Value.Parents,
+					MetaAlarmChildren: &alarm.Value.Children,
 					// need it for fifo metaalarm lock
 					MetaAlarmRelatedParents: result.Alarm.Value.RelatedParents,
 				}
@@ -141,7 +141,6 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		} else {
 			err = s.delayedScenarioManager.PauseDelayedScenarios(ctx, alarm)
 		}
-
 		if err != nil {
 			return err
 		}

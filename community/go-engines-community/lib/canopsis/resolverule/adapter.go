@@ -1,19 +1,17 @@
-package baggotrule
+package resolverule
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/baggotrule/adapter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/baggotrule Adapter
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/resolverule/rule.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule Adapter
 
 import (
 	"context"
 
-	"go.mongodb.org/mongo-driver/mongo/options"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Adapter interface is used to implement an storage ruleAdapter.
+// Adapter interface is used to implement a storage adapter.
 type Adapter interface {
-	// Get returns all baggotRules.
 	Get(ctx context.Context) ([]Rule, error)
 }
 
@@ -21,10 +19,10 @@ type mongoAdapter struct {
 	collection mongo.DbCollection
 }
 
-// NewAdapter creates new rules ruleAdapter.
+// NewAdapter creates new rule adapter.
 func NewAdapter(client mongo.DbClient) Adapter {
 	return &mongoAdapter{
-		collection: client.Collection(mongo.BaggotRuleMongoCollection),
+		collection: client.Collection(mongo.ResolveRuleMongoCollection),
 	}
 }
 
@@ -44,5 +42,5 @@ func (a *mongoAdapter) Get(ctx context.Context) ([]Rule, error) {
 		return nil, err
 	}
 
-	return rules, err
+	return rules, nil
 }
