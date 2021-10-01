@@ -218,13 +218,15 @@ func (m DependencyMaker) getDefaultStatsService(logger zerolog.Logger, cfg confi
 
 func (m DependencyMaker) getIdleAlarmService(ctx context.Context, logger zerolog.Logger, cfg config.CanopsisConf) idlealarm.Service {
 	client := m.DepMongoClient(cfg)
-
+	redisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	service := idlealarm.NewService(
 		idlerule.NewRuleAdapter(client),
 		alarm.NewAdapter(client),
 		entity.NewAdapter(client),
-		redis.NewStore(m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg), "pbehaviors", 0),
-		pbehavior.NewService(pbehavior.NewModelProvider(client), pbehavior.NewEntityMatcher(client), logger),
+		pbehavior.NewEntityTypeResolver(
+			pbehavior.NewStore(redisClient, json.NewEncoder(), json.NewDecoder()),
+			pbehavior.NewComputedEntityMatcher(client, redisClient, json.NewEncoder(), json.NewDecoder()),
+		),
 		json.NewEncoder(),
 		logger,
 	)

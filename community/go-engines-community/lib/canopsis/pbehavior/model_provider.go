@@ -11,9 +11,9 @@ import (
 type ModelProvider interface {
 	// GetTypes returns types by id.
 	GetTypes(ctx context.Context) (map[string]*Type, error)
-	// GetPbehaviors returns pbehaviors by id.
+	// GetEnabledPbehaviors returns pbehaviors by id.
 	GetEnabledPbehaviors(ctx context.Context) (map[string]*PBehavior, error)
-	// GetPbehavior returns pbehavior.
+	// GetEnabledPbehavior returns pbehavior.
 	GetEnabledPbehavior(ctx context.Context, id string) (*PBehavior, error)
 	// GetExceptions returns exceptions by id.
 	GetExceptions(ctx context.Context) (map[string]*Exception, error)
@@ -31,10 +31,7 @@ func NewModelProvider(dbClient mongo.DbClient) ModelProvider {
 	return &modelProvider{dbClient: dbClient}
 }
 
-func (p *modelProvider) GetTypes(parentCtx context.Context) (map[string]*Type, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
+func (p *modelProvider) GetTypes(ctx context.Context) (map[string]*Type, error) {
 	cursor, err := p.dbClient.Collection(TypeCollectionName).Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
@@ -57,10 +54,7 @@ func (p *modelProvider) GetTypes(parentCtx context.Context) (map[string]*Type, e
 	return typesByID, nil
 }
 
-func (p *modelProvider) GetEnabledPbehaviors(parentCtx context.Context) (map[string]*PBehavior, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
+func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context) (map[string]*PBehavior, error) {
 	coll := p.dbClient.Collection(PBehaviorCollectionName)
 	cursor, err := coll.Find(ctx, bson.M{"enabled": true})
 	if err != nil {
@@ -83,10 +77,7 @@ func (p *modelProvider) GetEnabledPbehaviors(parentCtx context.Context) (map[str
 	return pbehaviorsByID, nil
 }
 
-func (p *modelProvider) GetEnabledPbehavior(parentCtx context.Context, id string) (*PBehavior, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
+func (p *modelProvider) GetEnabledPbehavior(ctx context.Context, id string) (*PBehavior, error) {
 	coll := p.dbClient.Collection(PBehaviorCollectionName)
 	res := coll.FindOne(ctx, bson.M{"_id": id, "enabled": true})
 	if err := res.Err(); err != nil {
@@ -105,10 +96,7 @@ func (p *modelProvider) GetEnabledPbehavior(parentCtx context.Context, id string
 	return &pbehavior, nil
 }
 
-func (p *modelProvider) GetExceptions(parentCtx context.Context) (map[string]*Exception, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
+func (p *modelProvider) GetExceptions(ctx context.Context) (map[string]*Exception, error) {
 	cursor, err := p.dbClient.Collection(ExceptionCollectionName).Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
@@ -130,10 +118,7 @@ func (p *modelProvider) GetExceptions(parentCtx context.Context) (map[string]*Ex
 	return exceptionsByID, nil
 }
 
-func (p *modelProvider) GetReasons(parentCtx context.Context) (map[string]*Reason, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
+func (p *modelProvider) GetReasons(ctx context.Context) (map[string]*Reason, error) {
 	cursor, err := p.dbClient.Collection(ReasonCollectionName).Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err

@@ -4,9 +4,9 @@ import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	mock_pbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/pbehavior"
+	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/redis"
 	"github.com/golang/mock/gomock"
 	"testing"
 	"time"
@@ -14,34 +14,44 @@ import (
 
 func TestService(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	defer func() {
-		ctrl.Finish()
-	}()
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	for suiteName, suiteData := range dataSetsForService() {
 		for caseName, data := range suiteData.cases {
 			mockProvider := newMockModelProvider(ctrl, suiteData)
-			mockEntityMatcher := mock_pbehavior.NewMockEntityMatcher(ctrl)
+			mockEntityMatcher := mock_pbehavior.NewMockComputedEntityMatcher(ctrl)
+			mockStore := mock_pbehavior.NewMockStore(ctrl)
+			mockLockClient := mock_redis.NewMockLockClient(ctrl)
+			mockLock := mock_redis.NewMockLock(ctrl)
+			mockLockClient.EXPECT().Obtain(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+				Return(mockLock, nil)
+			mockLock.EXPECT().Release(gomock.Any()).Return(nil)
+			mockStore.EXPECT().GetSpan(gomock.Any()).Return(timespan.Span{}, pbehavior.ErrNoComputed)
+			mockStore.EXPECT().SetSpan(gomock.Any(), gomock.Any()).Return(nil)
+			mockStore.EXPECT().SetComputed(gomock.Any(), gomock.Any()).Return(nil)
+			mockEntityMatcher.EXPECT().LoadAll(gomock.Any(), gomock.Any()).Return(nil)
 			mockEntityMatcher.
 				EXPECT().
-				MatchAll(gomock.Any(), gomock.Any(), gomock.Any()).
-				DoAndReturn(func(_ interface{}, _ interface{}, filters map[string]string) (map[string]bool, error) {
-					res := make(map[string]bool, len(filters))
-					for key := range filters {
-						res[key] = true
+				Match(gomock.Any(), gomock.Any()).
+				DoAndReturn(func(_ context.Context, _ string) ([]string, error) {
+					ids := make([]string, len(suiteData.pbehaviors))
+					for i, v := range suiteData.pbehaviors {
+						ids[i] = v.ID
 					}
 
-					return res, nil
-				})
+					return ids, nil
+				}).MinTimes(0).MaxTimes(1)
 
-			service := pbehavior.NewService(mockProvider, mockEntityMatcher, log.NewTestLogger())
-			err := service.Compute(context.Background(), data.date)
+			service := pbehavior.NewService(mockProvider, mockEntityMatcher, mockStore, mockLockClient)
+			_, err := service.Compute(ctx, data.date)
 			if err != nil {
 				t.Errorf("%s %s: expected no error but got %v", suiteName, caseName, err)
 				continue
 			}
 
-			r, err := service.Resolve(context.Background(), &suiteData.entity, data.t)
+			r, err := service.Resolve(ctx, suiteData.entityID, data.t)
 			if err != nil {
 				t.Errorf("[Resolve] %s %s: expected no error but got %v", suiteName, caseName, err)
 				continue
@@ -115,7 +125,7 @@ type serviceSuiteDataSet struct {
 	types      []pbehavior.Type
 	exceptions []pbehavior.Exception
 	reasons    []pbehavior.Reason
-	entity     types.Entity
+	entityID   string
 	cases      map[string]serviceCaseDataSet
 }
 
@@ -178,9 +188,7 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 		mostPriorityMaintenanceType,
 		pauseType,
 	}
-	entity := types.Entity{
-		ID: "entity1",
-	}
+	entityID := "entity1"
 
 	return map[string]serviceSuiteDataSet{
 		"Given single maintenance behavior": {
@@ -192,8 +200,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Type:  maintenanceType.ID,
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"and date during behavior and time before behavior Should return default active type": {
 					date:     timespan.New(genTime("01-06-2020 00:00"), genTime("02-06-2020 00:00")),
@@ -236,8 +244,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Type:  pauseType.ID,
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"and date during behavior and time before behavior Should return default active type": {
 					date:     timespan.New(genTime("01-06-2020 00:00"), genTime("02-06-2020 00:00")),
@@ -266,8 +274,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Type:  maintenanceType.ID,
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"and date during behavior and time before behavior Should return default active type": {
 					date:     timespan.New(genTime("02-06-2020 00:00"), genTime("03-06-2020 00:00")),
@@ -306,8 +314,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Type:  maintenanceType.ID,
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"and date during activity of behavior Should return behavior maintenance type": {
 					date:     timespan.New(genTime("08-06-2020 00:00"), genTime("09-06-2020 00:00")),
@@ -340,8 +348,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Type:  activeType.ID,
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"and date during behavior and time before behavior Should return default inactive type": {
 					date:     timespan.New(genTime("01-06-2020 00:00"), genTime("02-06-2020 00:00")),
@@ -425,8 +433,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Type:  activeType.ID,
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"and date during behavior and time before behavior Should return default inactive type": {
 					date:     timespan.New(genTime("02-06-2020 00:00"), genTime("03-06-2020 00:00")),
@@ -465,8 +473,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Type:  activeType.ID,
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"and date during activity of behavior Should return behavior active type": {
 					date:     timespan.New(genTime("08-06-2020 00:00"), genTime("09-06-2020 00:00")),
@@ -507,8 +515,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Type:  maintenanceType.ID,
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"and time in pbh1 and in pbh2 Should return pbh1 type": {
 					date:     timespan.New(genTime("05-06-2020 00:00"), genTime("06-06-2020 00:00")),
@@ -551,8 +559,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Type:  maintenanceType.ID,
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"and time in pbh1 and in pbh2 Should return pbh2 type": {
 					date:     timespan.New(genTime("05-06-2020 00:00"), genTime("06-06-2020 00:00")),
@@ -607,7 +615,7 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					},
 				},
 			},
-			entity: entity,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"and time in pbh1 and in pbh2 Should return pbh2 type": {
 					date:     timespan.New(genTime("05-06-2020 00:00"), genTime("06-06-2020 00:00")),
@@ -655,8 +663,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Type:  maintenanceType.ID,
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"and time in pbh1 and in pbh2 Should return pbh1 type": {
 					date:     timespan.New(genTime("05-06-2020 00:00"), genTime("06-06-2020 00:00")),
@@ -711,7 +719,7 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					},
 				},
 			},
-			entity: entity,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"and time in pbh1 and in pbh2 Should return pbh1 type": {
 					date:     timespan.New(genTime("05-06-2020 00:00"), genTime("06-06-2020 00:00")),
@@ -752,8 +760,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Created: types.CpsTime{Time: genTime("01-01-2020 12:00")},
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"should return the newest pbh's type": {
 					date:     timespan.New(genTime("01-06-2020 09:00"), genTime("01-06-2020 12:00")),
@@ -779,8 +787,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Created: types.CpsTime{Time: genTime("01-01-2020 10:00")},
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"should return the newest pbh's type": {
 					date:     timespan.New(genTime("01-06-2020 09:00"), genTime("01-06-2020 12:00")),
@@ -806,8 +814,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Created: types.CpsTime{Time: genTime("01-01-2020 10:00")},
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"should return pbehavior type by greatest pbehavior id": {
 					date:     timespan.New(genTime("01-06-2020 09:00"), genTime("01-06-2020 12:00")),
@@ -833,8 +841,8 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Created: types.CpsTime{Time: genTime("01-01-2020 10:00")},
 				},
 			},
-			types:  pbhTypes,
-			entity: entity,
+			types:    pbhTypes,
+			entityID: entityID,
 			cases: map[string]serviceCaseDataSet{
 				"should return pbehavior type by greatest pbehavior id": {
 					date:     timespan.New(genTime("01-06-2020 09:00"), genTime("01-06-2020 12:00")),
