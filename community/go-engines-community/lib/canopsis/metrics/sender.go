@@ -39,7 +39,7 @@ const ResolveDurationEntity = "resolve_duration_entity"
 const ResolveDurationSlice = "resolve_duration_slice"
 
 type Parameters struct {
-	Value float64 `json:"add"`
+	Value float64 `json:"value"`
 }
 
 type Event struct {
