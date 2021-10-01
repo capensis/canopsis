@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
@@ -185,6 +186,13 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			Decoder:                json.NewDecoder(),
 			Logger:                 logger,
 			PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
+			MetricsSender: metrics.NewSender(
+				canopsis.MetricsExchangeName,
+				canopsis.MetricsQueueName,
+				channelPub,
+				json.NewEncoder(),
+				logger,
+			),
 		},
 		logger,
 	))
