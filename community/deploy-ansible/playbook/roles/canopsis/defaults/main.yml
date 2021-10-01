@@ -66,8 +66,6 @@ canopsis_core_go_engines:
   -
     name: engine-fifo
   -
-    name: engine-heartbeat
-  -
     name: engine-pbehavior
   -
     name: engine-service
