@@ -104,12 +104,10 @@ func Default(
 	}
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
-	pbhStore := libredis.NewStore(pbhRedisSession, libredis.PbehaviorKey, 0)
-	pbhService := libpbehavior.NewService(
-		libpbehavior.NewModelProvider(dbClient),
-		libpbehavior.NewEntityMatcher(dbClient),
-		logger,
-	)
+	pbhEntityMatcher := libpbehavior.NewComputedEntityMatcher(dbClient, pbhRedisSession, json.NewEncoder(), json.NewDecoder())
+	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
+	pbhService := libpbehavior.NewService(libpbehavior.NewModelProvider(dbClient), pbhEntityMatcher, pbhStore, libredis.NewLockClient(pbhRedisSession))
+	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, pbhEntityMatcher)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
 	entityServiceEventPublisher := entityservice.NewEventPublisher(
@@ -200,8 +198,7 @@ func Default(
 			enforcer,
 			dbClient,
 			timezoneConfigProvider,
-			pbhStore,
-			pbhService,
+			pbhEntityTypeResolver,
 			pbhComputeChan,
 			entityPublChan,
 			entityCleanerTaskChan,
@@ -224,8 +221,6 @@ func Default(
 	})
 	api.AddWorker("pbehavior compute", func(ctx context.Context) {
 		pbhComputer := libpbehavior.NewCancelableComputer(
-			libredis.NewLockClient(pbhRedisSession),
-			pbhStore,
 			pbhService,
 			dbClient,
 			amqpChannel,
