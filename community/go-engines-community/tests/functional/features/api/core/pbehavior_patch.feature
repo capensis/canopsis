@@ -130,7 +130,7 @@ Feature: update a PBehavior
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
     """
       {
-          "rrule": "test-pbehavior-to-patch-1-rrule-new"
+        "rrule": "FREQ=YEARLY"
       }
     """
     Then the response code should be 200
@@ -139,7 +139,7 @@ Feature: update a PBehavior
     Then the response body should contain:
     """
       {
-        "rrule": "test-pbehavior-to-patch-1-rrule-new"
+        "rrule": "FREQ=YEARLY"
       }
     """
 
