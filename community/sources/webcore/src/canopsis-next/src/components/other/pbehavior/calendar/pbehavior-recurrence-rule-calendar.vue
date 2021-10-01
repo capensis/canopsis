@@ -83,7 +83,6 @@ export default {
         to,
       });
 
-
       this.timespans = await this.fetchTimespansListWithoutStore({ data: timespan });
 
       this.pending = false;
