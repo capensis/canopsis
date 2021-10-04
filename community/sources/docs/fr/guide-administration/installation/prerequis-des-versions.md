@@ -16,8 +16,6 @@ Python         | 2.7 et 3   |
 
 Pour rappel, SELinux n'est pas supporté. 
 
-Le support de l'IPv6 est possible à condition de le configurer.
-
 ## Prérequis composants Canopsis
 
 Composant | Versions         |

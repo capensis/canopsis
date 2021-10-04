@@ -40,4 +40,3 @@ Définition des objets:
  * Canopsis : Machine qui héberge Canopsis
  * MongoDB : Machine(s) qui héberge(nt) MongoDB
 
-Ces flux sont valable en IPv4 comme en IPv6 si ce dernier est configuré.
