@@ -178,12 +178,12 @@
                   span {{ $t('rRule.fields.bysecond.tooltip') }}
       v-layout(row)
         v-flex(xs2)
-          strong {{ $t('rRule.stringLabel') }}
+          strong {{ $t('common.recurrence') }}
         v-flex(xs10)
           p {{ rRuleString }}
       v-layout(row)
         v-flex(xs2)
-          strong {{ $t('rRule.textLabel') }}
+          strong {{ $t('common.summary') }}
         v-flex(xs10)
           p {{ rRuleText }}
       v-layout(row)

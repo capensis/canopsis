@@ -1,10 +1,9 @@
 <template lang="pug">
-  v-layout.test-suite-summary-row.pt-2(column)
-    v-layout(row)
-      v-flex.test-suite-summary-row--label
-        h4.subheading.font-weight-bold {{ label }}
-      v-flex
-        slot {{ value }}
+  v-layout.c-information-block-row.pt-2(row)
+    v-flex.c-information-block-row--label
+      h4.subheading.font-weight-bold {{ label }}
+    v-flex
+      slot {{ value }}
 </template>
 
 <script>
@@ -23,8 +22,9 @@ export default {
 </script>
 
 <style lang="scss">
-.test-suite-summary-row {
+.c-information-block-row {
   &--label {
+    min-width: 160px;
     max-width: 160px;
   }
 }

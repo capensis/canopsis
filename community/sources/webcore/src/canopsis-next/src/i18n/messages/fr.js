@@ -188,6 +188,7 @@ export default {
     dismiss: 'Rejeter',
     approve: 'Approuver',
     summary: 'Résumé',
+    recurrence: 'Résumé',
     statistics: 'Statistiques',
     action: 'Action',
     actions: {
@@ -1544,8 +1545,6 @@ export default {
   },
   rRule: {
     advancedHint: 'Séparer les nombres par une virgule',
-    textLabel: 'Récurrence',
-    stringLabel: 'Résumé',
     tabs: {
       simple: 'Simple',
       advanced: 'Avancé',

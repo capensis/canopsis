@@ -188,6 +188,7 @@ export default {
     dismiss: 'Dismiss',
     approve: 'Approve',
     summary: 'Summary',
+    recurrence: 'Recurrence',
     statistics: 'Statistics',
     action: 'Action',
     actions: {
@@ -1544,8 +1545,6 @@ export default {
   },
   rRule: {
     advancedHint: 'Separate numbers with a comma',
-    textLabel: 'Summary',
-    stringLabel: 'Recurrence',
     tabs: {
       simple: 'Simple',
       advanced: 'Advanced',

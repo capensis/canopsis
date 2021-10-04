@@ -61,6 +61,7 @@ import CTablePagination from '@/components/common/pagination/c-table-pagination.
 import CAlertOverlay from '@/components/common/overlay/c-alert-overlay.vue';
 import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
 import CDraggableStepNumber from '@/components/common/drag-drop/c-draggable-step-number.vue';
+import CInformationBlockRow from '@/components/common/block/c-information-block-row.vue';
 import CHelpIcon from '@/components/common/icons/c-help-icon.vue';
 import CNoEventsIcon from '@/components/common/icons/c-no-events-icon.vue';
 
@@ -274,6 +275,7 @@ Vue.component('c-instruction-type-field', CInstructionTypeField);
 Vue.component('c-priority-field', CPriorityField);
 Vue.component('c-quick-date-interval-field', CQuickDateIntervalField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
+Vue.component('c-information-block-row', CInformationBlockRow);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
