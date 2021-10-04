@@ -685,96 +685,42 @@ definitions:
           type: string
         type: object
     type: object
-  contextgraph.ConfigurationItem:
+  contextgraph.ImportJob:
     properties:
       _id:
         type: string
-      action:
-        type: string
-      action_properties:
-        type: object
-      category:
-        type: string
-      enabled:
-        type: boolean
-      entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
-        type: object
-      impact_level:
-        type: integer
-      infos:
-        additionalProperties: true
-        type: object
-      measurements:
-        items:
-          type: object
-        type: array
-      name:
-        type: string
-      output_template:
-        type: string
-      type:
-        type: string
-    type: object
-  contextgraph.ImportJob:
-    properties:
       creation:
         type: string
-      execTime:
-        type: string
-      id:
+      exec_time:
         type: string
       info:
         type: string
+      source:
+        type: string
       stats:
-        $ref: '#/definitions/contextgraph.JobStats'
+        $ref: '#/definitions/importcontextgraph.Stats'
         type: object
       status:
         type: string
     type: object
-  contextgraph.ImportResponse:
-    properties:
-      _id:
-        type: string
-    type: object
-  contextgraph.JobStats:
-    properties:
-      deleted:
-        type: integer
-      updated:
-        type: integer
-    type: object
-  contextgraph.Link:
-    properties:
-      _id:
-        type: string
-      action:
-        type: string
-      action_properties:
-        type: object
-      from:
-        items:
-          type: string
-        type: array
-      infos:
-        additionalProperties: true
-        type: object
-      to:
-        type: string
-    type: object
-  contextgraph.Request:
+  contextgraph.ImportRequest:
     properties:
       json:
         properties:
           cis:
             items:
-              $ref: '#/definitions/contextgraph.ConfigurationItem'
+              $ref: '#/definitions/importcontextgraph.ConfigurationItem'
             type: array
           links:
             items:
-              $ref: '#/definitions/contextgraph.Link'
+              $ref: '#/definitions/importcontextgraph.Link'
             type: array
         type: object
+    type: object
+  contextgraph.ImportResponse:
+    properties:
+      _id:
+        type: string
     type: object
   datastorage.Config:
     properties:
@@ -1411,6 +1357,62 @@ definitions:
       updated:
         $ref: '#/definitions/types.CpsTime'
         type: object
+    type: object
+  importcontextgraph.ConfigurationItem:
+    properties:
+      _id:
+        type: string
+      action:
+        type: string
+      action_properties:
+        type: object
+      category:
+        type: string
+      enabled:
+        type: boolean
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      impact_level:
+        type: integer
+      infos:
+        additionalProperties: true
+        type: object
+      measurements:
+        items:
+          type: object
+        type: array
+      name:
+        type: string
+      output_template:
+        type: string
+      type:
+        type: string
+    type: object
+  importcontextgraph.Link:
+    properties:
+      _id:
+        type: string
+      action:
+        type: string
+      action_properties:
+        type: object
+      from:
+        items:
+          type: string
+        type: array
+      infos:
+        additionalProperties: true
+        type: object
+      to:
+        type: string
+    type: object
+  importcontextgraph.Stats:
+    properties:
+      deleted:
+        type: integer
+      updated:
+        type: integer
     type: object
   messageratestats.ListRequest:
     properties:
@@ -4373,12 +4375,17 @@ paths:
       description: Create import task
       operationId: contextgraph-import-create-import
       parameters:
+      - description: source
+        in: query
+        name: source
+        required: true
+        type: string
       - description: body
         in: body
         name: body
         required: true
         schema:
-          $ref: '#/definitions/contextgraph.Request'
+          $ref: '#/definitions/contextgraph.ImportRequest'
       produces:
       - application/json
       responses:

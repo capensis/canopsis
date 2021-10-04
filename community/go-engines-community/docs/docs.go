@@ -1260,12 +1260,19 @@ var doc = `{
                 "operationId": "contextgraph-import-create-import",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "source",
+                        "name": "source",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "description": "body",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/contextgraph.Request"
+                            "$ref": "#/definitions/contextgraph.ImportRequest"
                         }
                     }
                 ],
@@ -8596,123 +8603,34 @@ var doc = `{
                 }
             }
         },
-        "contextgraph.ConfigurationItem": {
+        "contextgraph.ImportJob": {
             "type": "object",
             "properties": {
                 "_id": {
                     "type": "string"
                 },
-                "action": {
-                    "type": "string"
-                },
-                "action_properties": {
-                    "type": "object"
-                },
-                "category": {
-                    "type": "string"
-                },
-                "enabled": {
-                    "type": "boolean"
-                },
-                "entity_patterns": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.EntityPatternList"
-                },
-                "impact_level": {
-                    "type": "integer"
-                },
-                "infos": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "measurements": {
-                    "type": "array",
-                    "items": {
-                        "type": "object"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output_template": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "contextgraph.ImportJob": {
-            "type": "object",
-            "properties": {
                 "creation": {
                     "type": "string"
                 },
-                "execTime": {
-                    "type": "string"
-                },
-                "id": {
+                "exec_time": {
                     "type": "string"
                 },
                 "info": {
                     "type": "string"
                 },
+                "source": {
+                    "type": "string"
+                },
                 "stats": {
                     "type": "object",
-                    "$ref": "#/definitions/contextgraph.JobStats"
+                    "$ref": "#/definitions/importcontextgraph.Stats"
                 },
                 "status": {
                     "type": "string"
                 }
             }
         },
-        "contextgraph.ImportResponse": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "contextgraph.JobStats": {
-            "type": "object",
-            "properties": {
-                "deleted": {
-                    "type": "integer"
-                },
-                "updated": {
-                    "type": "integer"
-                }
-            }
-        },
-        "contextgraph.Link": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "action": {
-                    "type": "string"
-                },
-                "action_properties": {
-                    "type": "object"
-                },
-                "from": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "infos": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "to": {
-                    "type": "string"
-                }
-            }
-        },
-        "contextgraph.Request": {
+        "contextgraph.ImportRequest": {
             "type": "object",
             "properties": {
                 "json": {
@@ -8721,16 +8639,24 @@ var doc = `{
                         "cis": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/contextgraph.ConfigurationItem"
+                                "$ref": "#/definitions/importcontextgraph.ConfigurationItem"
                             }
                         },
                         "links": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/contextgraph.Link"
+                                "$ref": "#/definitions/importcontextgraph.Link"
                             }
                         }
                     }
+                }
+            }
+        },
+        "contextgraph.ImportResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
                 }
             }
         },
@@ -9667,6 +9593,90 @@ var doc = `{
                 "updated": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                }
+            }
+        },
+        "importcontextgraph.ConfigurationItem": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "action": {
+                    "type": "string"
+                },
+                "action_properties": {
+                    "type": "object"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "impact_level": {
+                    "type": "integer"
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "measurements": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "output_template": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "importcontextgraph.Link": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "action": {
+                    "type": "string"
+                },
+                "action_properties": {
+                    "type": "object"
+                },
+                "from": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "importcontextgraph.Stats": {
+            "type": "object",
+            "properties": {
+                "deleted": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
                 }
             }
         },
