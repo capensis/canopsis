@@ -11,32 +11,28 @@ import (
 
 const DefaultSlice = "default_slice"
 
-const TotalAlarmNumberEntity = "total_alarm_number_entity"
-const TotalAlarmNumberSlice = "total_alarm_number_slice"
-
-const PbhAlarmNumberEntity = "pbh_alarm_number_entity"
-const PbhAlarmNumberSlice = "pbh_alarm_number_slice"
-
-const InstructionAlarmNumberEntity = "instruction_alarm_number_entity"
-const InstructionAlarmNumberSlice = "instruction_alarm_number_slice"
-
-const TicketAlarmNumberEntity = "ticket_alarm_number_entity"
-const TicketAlarmNumberSlice = "ticket_alarm_number_slice"
-
-const CorrelationAlarmNumberEntity = "correlation_alarm_number_entity"
-const CorrelationAlarmNumberSlice = "correlation_alarm_number_slice"
-
-const AckAlarmNumberEntity = "ack_alarm_number_entity"
-const AckAlarmNumberSlice = "ack_alarm_number_slice"
-
-const CancelAckAlarmNumberEntity = "cancel_ack_alarm_number_entity"
-const CancelAckAlarmNumberSlice = "cancel_ack_alarm_number_slice"
-
-const AckDurationEntity = "ack_duration_entity"
-const AckDurationSlice = "ack_duration_slice"
-
-const ResolveDurationEntity = "resolve_duration_entity"
-const ResolveDurationSlice = "resolve_duration_slice"
+const (
+	TotalAlarmNumberEntity        = "total_alarm_number_entity"
+	TotalAlarmNumberSlice         = "total_alarm_number_slice"
+	NonDisplayedAlarmNumberEntity = "non_displayed_alarm_number_entity"
+	NonDisplayedAlarmNumberSlice  = "non_displayed_alarm_number_slice"
+	PbhAlarmNumberEntity          = "pbh_alarm_number_entity"
+	PbhAlarmNumberSlice           = "pbh_alarm_number_slice"
+	InstructionAlarmNumberEntity  = "instruction_alarm_number_entity"
+	InstructionAlarmNumberSlice   = "instruction_alarm_number_slice"
+	TicketAlarmNumberEntity       = "ticket_alarm_number_entity"
+	TicketAlarmNumberSlice        = "ticket_alarm_number_slice"
+	CorrelationAlarmNumberEntity  = "correlation_alarm_number_entity"
+	CorrelationAlarmNumberSlice   = "correlation_alarm_number_slice"
+	AckAlarmNumberEntity          = "ack_alarm_number_entity"
+	AckAlarmNumberSlice           = "ack_alarm_number_slice"
+	CancelAckAlarmNumberEntity    = "cancel_ack_alarm_number_entity"
+	CancelAckAlarmNumberSlice     = "cancel_ack_alarm_number_slice"
+	AckDurationEntity             = "ack_duration_entity"
+	AckDurationSlice              = "ack_duration_slice"
+	ResolveDurationEntity         = "resolve_duration_entity"
+	ResolveDurationSlice          = "resolve_duration_slice"
+)
 
 type Parameters struct {
 	Value float64 `json:"value"`
@@ -112,6 +108,8 @@ func (s *sender) HandleMetricsByEvent(event types.Event) {
 			Type:   PbhAlarmNumberSlice,
 			Labels: prometheus.Labels{"slice": DefaultSlice},
 		})
+
+		s.sendNonDisplayedMetric(*alarm, *entity)
 	case types.AlarmChangeTypeAssocTicket:
 		foundStep := false
 		for _, step := range alarm.Value.Steps {
@@ -149,7 +147,15 @@ func (s *sender) HandleMetricsByEvent(event types.Event) {
 			Labels: prometheus.Labels{"slice": DefaultSlice, "username": author},
 		})
 
-		ackDuration := alarm.Value.ACK.Timestamp.Sub(alarm.Value.CreationDate.Time).Seconds()
+		beginTime := alarm.Value.CreationDate.Time
+		for i := len(alarm.Value.Steps) - 1; i > -1; i-- {
+			if alarm.Value.Steps[i].Type == types.AlarmStepAckRemove {
+				beginTime = alarm.Value.Steps[i].Timestamp.Time
+				break
+			}
+		}
+
+		ackDuration := alarm.Value.ACK.Timestamp.Sub(beginTime).Seconds()
 		s.sendMetric(Event{
 			Type:       AckDurationEntity,
 			Labels:     prometheus.Labels{"entityID": entityID, "category": category, "username": author},
@@ -193,6 +199,8 @@ func (s *sender) HandleMetricsByEvent(event types.Event) {
 			Type:   InstructionAlarmNumberSlice,
 			Labels: prometheus.Labels{"slice": DefaultSlice},
 		})
+
+		s.sendNonDisplayedMetric(*alarm, *entity)
 	case types.AlarmChangeTypeResolve:
 		if alarm.Value.Resolved == nil {
 			return
@@ -213,6 +221,40 @@ func (s *sender) HandleMetricsByEvent(event types.Event) {
 	}
 }
 
+func (s *sender) IsNonDisplayedSent(steps types.AlarmSteps) bool {
+	//assuming that a new alarm has only two steps: stateinc and statusinc
+	if len(steps) < 3 {
+		return false
+	}
+
+	// if an alarm is crated under a Pbh, then the third step is pbhenter with the same timestamp
+	if steps[2].Type == types.AlarmStepPbhEnter && steps[1].Timestamp == steps[2].Timestamp {
+		return true
+	}
+
+	for _, step := range steps[2:len(steps)-1] {
+		if step.Type == types.AlarmStepMetaAlarmAttach || step.Type == types.AlarmStepAutoInstructionStart {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (s *sender) sendNonDisplayedMetric(alarm types.Alarm, entity types.Entity) {
+	if !s.IsNonDisplayedSent(alarm.Value.Steps) {
+		s.sendMetric(Event{
+			Type:   NonDisplayedAlarmNumberEntity,
+			Labels: prometheus.Labels{"entityID": entity.ID, "category": entity.Category},
+		})
+
+		s.sendMetric(Event{
+			Type:   NonDisplayedAlarmNumberSlice,
+			Labels: prometheus.Labels{"slice": DefaultSlice},
+		})
+	}
+}
+
 func (s *sender) HandleMetricForMetaalarmChild(child types.AlarmWithEntity) {
 	s.sendMetric(Event{
 		Type:   CorrelationAlarmNumberEntity,
@@ -223,6 +265,8 @@ func (s *sender) HandleMetricForMetaalarmChild(child types.AlarmWithEntity) {
 		Type:   CorrelationAlarmNumberSlice,
 		Labels: prometheus.Labels{"slice": DefaultSlice},
 	})
+
+	s.sendNonDisplayedMetric(child.Alarm, child.Entity)
 }
 
 func (s *sender) sendMetric(event Event) {
