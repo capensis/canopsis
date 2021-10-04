@@ -220,14 +220,16 @@ $mobileBreakpoint: 450px;
   }
 }
 
-.c-word-break {
-  &-all {
-    word-break: break-all;
-  }
-}
-
-.c-word-wrap {
+.c-word {
   &-break {
-    word-wrap: break-word;
+    &-all {
+      word-break: break-all;
+    }
+  }
+
+  &-wrap {
+    &-break {
+      word-wrap: break-word;
+    }
   }
 }
