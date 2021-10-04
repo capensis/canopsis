@@ -33,7 +33,7 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  * Convert alarm status rule object to form compatible object
  *
  * @param {AlarmStatusRule | {}} [rule = {}]
- * @param {boolean | {}} [flapping = false]
+ * @param {boolean} [flapping = false]
  * @return {AlarmStatusRuleForm}
  */
 export const alarmStatusRuleToForm = (rule = {}, flapping = false) => {
