@@ -329,7 +329,7 @@ Il est aussi recommandé, en parallèle, de [vous rendre sur l'interface web Rab
 Le script suivant permet de transformer vos pbehaviors existants, au format attendu par les pbehaviors v4. Il doit être exécuté là où un client `mongo` est disponible et capable d'accéder au service MongoDB, qui doit être lancée.
 
 ```sh
-curl -O -L https://git.canopsis.net/canopsis/go-engines/-/raw/4.0.0/database/migrations/planning/003_migrate_pbehaviors.js
+curl -O -L https://git.canopsis.net/canopsis/canopsis-community/-/raw/release-4.3/community/go-engines-community/database/migrations/release4.0/003_migrate_pbehaviors.js
 mongo -u cpsmongo -p canopsis canopsis < 003_migrate_pbehaviors.js
 ```
 
@@ -351,7 +351,7 @@ Veuillez noter également que le filtre d'alarmes `has_active_pb` a été suppri
 Le script suivant permet de transformer vos webhooks existants, afin de les rendre compatibles avec le nouveau format des comportements périodiques. Il doit être exécuté là où un client `mongo` est disponible et capable d'accéder à la base de données.
 
 ```sh
-curl -O -L https://git.canopsis.net/canopsis/go-engines/-/raw/4.0.0/database/migrations/planning/001_add_disable_during_periods_to_webhooks.js 
+curl -O -L https://git.canopsis.net/canopsis/canopsis-community/-/raw/release-4.3/community/go-engines-community/database/migrations/release4.0/001_add_disable_during_periods_to_webhooks.js
 mongo -u cpsmongo -p canopsis canopsis < 001_add_disable_during_periods_to_webhooks.js 
 ```
 
@@ -376,8 +376,8 @@ Si votre installation utilise une connexion de type CAS, LDAP ou SAML2, vous dev
 Le script suivant permet de transformer vos utilisateurs externes existants, afin de les rendre compatibles avec le nouveau système d'authentification LDAP. Il doit être exécuté là où un client `mongo` est disponible et capable d'accéder à la base de données.
 
 ```sh
-curl -O -L https://git.canopsis.net/canopsis/go-engines/-/raw/feat/4.0.2-hotfix/database/migrations/user/001_migrate_user_external_id.js
-mongo -u cpsmongo -p canopsis canopsis < 001_migrate_user_external_id.js
+curl -O -L https://git.canopsis.net/canopsis/canopsis-community/-/raw/release-4.3/community/go-engines-community/database/migrations/release4.0/004_migrate_user_external_id.js 
+mongo -u cpsmongo -p canopsis canopsis < 004_migrate_user_external_id.js
 ```
 
 Une fois cette migration terminée, vous devriez obtenir un résultat de ce type :
