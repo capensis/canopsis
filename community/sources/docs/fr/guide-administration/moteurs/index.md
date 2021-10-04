@@ -23,7 +23,6 @@ La plupart des moteurs « nouvelle génération » de Canopsis sont écrits en
 | [`engine-correlation`](moteur-correlation.md) | Applique et gère les règles de corrélation | ✅ |
 | [`engine-dynamic-infos`](moteur-dynamic-infos.md)| Enrichit les alarmes | ✅ |
 | [`engine-fifo`](moteur-fifo.md) | Garantit la cohérence et l'ordre des évènements entrant dans Canopsis | |
-| [`engine-heartbeat`](moteur-heartbeat.md)  | Surveille des entités, et lève des alarmes en cas d'absence d'information | |
 | [`engine-pbehavior`](moteur-pbehavior.md) | Gère les comportements périodiques | |
 | [`engine-watcher`](moteur-watcher.md)| Calcule les états des observateurs | |
 | [`engine-webhook`](moteur-webhook.md) | Gère le système de webhooks vers des services externes | ✅ |
@@ -63,6 +62,7 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | `cleaner_events` (Python) | `engine-che` (Go) |
 | `context` (Python) | `engine-che` (Go) |
 | `context-graph` (Python) | `engine-che` (Go) |
+| `engine-heartbeat` (Go) | Utilisation des Idle rules |
 | `engine-stat` (Go) | `statsng` (Python) ⇒ n/a |
 | `eventstore` (Python) | n/a |
 | `event_filter` (Python) | `engine-che` (Go) |

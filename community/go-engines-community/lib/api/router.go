@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
@@ -46,7 +47,6 @@ import (
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
@@ -103,8 +103,7 @@ func RegisterRoutes(
 	enforcer libsecurity.Enforcer,
 	dbClient mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
-	pbhStore redis.Store,
-	pbhService libpbehavior.Service,
+	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
 	pbhComputeChan chan<- libpbehavior.ComputeTask,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
 	entityCleanerTaskChan chan<- entity.CleanTask,
@@ -122,6 +121,7 @@ func RegisterRoutes(
 	authApi := auth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
+		logger,
 	)
 	router.POST("/auth", authApi.LoginHandler())
 	sessionStatsApi := sessionstats.NewApi(sessionStore, stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
@@ -295,8 +295,7 @@ func RegisterRoutes(
 			pbehavior.NewStore(
 				dbClient,
 				libpbehavior.NewEntityMatcher(dbClient),
-				pbhStore,
-				pbhService,
+				pbhEntityTypeResolver,
 				timezoneConfigProvider,
 			),
 			pbhComputeChan,
@@ -328,6 +327,11 @@ func RegisterRoutes(
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
 				middleware.SetAuthor(),
 				pbehaviorApi.Update)
+			pbehaviorRouter.PATCH(
+				"/:id",
+				middleware.Authorize(authObjPbh, permUpdate, enforcer),
+				middleware.SetAuthor(),
+				pbehaviorApi.Patch)
 			pbehaviorRouter.DELETE(
 				"/:id",
 				middleware.Authorize(authObjPbh, permDelete, enforcer),
@@ -522,8 +526,7 @@ func RegisterRoutes(
 				GetLegacyURL(),
 				statsStore,
 				timezoneConfigProvider,
-				pbhStore,
-				pbhService,
+				pbhEntityTypeResolver,
 			))
 			weatherRouter.GET(
 				"",

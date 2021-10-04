@@ -17,6 +17,8 @@ import { createNamespacedHelpers } from 'vuex';
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
 
+import { reloadPageWithTrailingSlashes } from '@/helpers/url';
+
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import TheSideBars from '@/components/side-bars/the-sidebars.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
@@ -63,6 +65,9 @@ export default {
     shownNavigation() {
       return ![ROUTES_NAMES.login, ROUTES_NAMES.error].includes(this.$route.name);
     },
+  },
+  beforeCreate() {
+    reloadPageWithTrailingSlashes();
   },
   created() {
     this.registerCurrentUserOnceWatcher();
