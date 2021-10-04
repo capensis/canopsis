@@ -68,6 +68,9 @@ type Entity struct {
 	LastIdleRuleApply string `bson:"last_idle_rule_apply,omitempty" json:"last_idle_rule_apply,omitempty"`
 	// IdleSince represents since when entity didn't receive any events.
 	IdleSince *CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty"`
+
+	ImportSource string   `bson:"import_source,omitempty" json:"import_source"`
+	Imported     *CpsTime `bson:"imported,omitempty" json:"imported"`
 }
 
 func (e *Entity) GetUpsertMongoBson(newImpacts []string, newDepends []string) bson.M {

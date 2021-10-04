@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
@@ -50,16 +49,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
-	amqpChannel, err := amqpConnection.Channel()
-	if err != nil {
-		panic(err)
-	}
-
-	channelPub, err := amqpConnection.Channel()
-	if err != nil {
-		panic(fmt.Errorf("dependency error: amqp publish channel: %v", err))
-	}
-
+	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	corrRedisClient := m.DepRedisSession(ctx, redis.CorrelationLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
@@ -95,7 +85,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		cfg.Global.PrefetchSize,
 		&rpcPBehaviorClientMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			PublishCh:                channelPub,
+			PublishCh:                amqpChannel,
 			ServiceRpc:               serviceRpcClient,
 			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, statsService),
 			Decoder:                  json.NewDecoder(),
@@ -106,6 +96,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		logger,
 	)
 
+	rpcPublishQueues := make([]string, 0)
 	var remediationRpcClient engine.RPCClient
 	if options.WithRemediation {
 		remediationRpcClient = engine.NewRPCClient(
@@ -118,6 +109,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			amqpChannel,
 			logger,
 		)
+		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
 	}
 
 	engineAxe := engine.New(
@@ -211,11 +203,8 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 	engineAxe.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisClient),
-		engine.RunInfo{
-			Name:         canopsis.AxeExchangeName,
-			ConsumeQueue: canopsis.AxeQueueName,
-			PublishQueue: options.PublishToQueue,
-		},
+		engine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
+		amqpChannel,
 		logger,
 	))
 	engineAxe.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
@@ -223,7 +212,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		redis.AxePeriodicalLockKey,
 		&periodicalWorker{
 			PeriodicalInterval: options.PeriodicalWaitTime,
-			ChannelPub:         channelPub,
+			ChannelPub:         amqpChannel,
 			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), logger),
 			AlarmAdapter:       alarm.NewAdapter(dbClient),
 			Encoder:            json.NewEncoder(),

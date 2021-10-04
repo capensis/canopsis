@@ -5,7 +5,7 @@ Feature: Update a user
   Scenario: given update request should update user
     When I am admin
     Then I do PUT /api/v4/users/test-user-to-update-1:
-    """
+    """json
     {
       "name": "test-user-to-update-1-updated",
       "firstname": "test-user-to-update-1-firstname-updated",
@@ -23,7 +23,7 @@ Feature: Update a user
     """
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-user-to-update-1",
       "authkey": "5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424",
@@ -39,7 +39,11 @@ Feature: Update a user
       "name": "test-user-to-update-1-updated",
       "role": {
         "_id": "test-role-to-edit-user",
-        "name": "test-role-to-edit-user"
+        "name": "test-role-to-edit-user",
+        "defaultview": {
+          "_id": "test-view-to-edit-user",
+          "title": "test-view-to-edit-user-title"
+        }
       },
       "source": "",
       "ui_groups_navigation_type": "top-bar",
@@ -53,7 +57,7 @@ Feature: Update a user
   Scenario: given update request with password should auth user by base auth
     When I am admin
     Then I do PUT /api/v4/users/test-user-to-update-2:
-    """
+    """json
     {
       "password": "test-password-updated",
       "name": "test-user-to-update-2",
@@ -74,7 +78,7 @@ Feature: Update a user
     When I do GET /api/v4/account/me
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-user-to-update-2",
       "name": "test-user-to-update-2"
@@ -93,7 +97,7 @@ Feature: Update a user
   Scenario: given invalid update request should return errors
     When I am admin
     When I do PUT /api/v4/users/test-user-to-update:
-    """
+    """json
     {
       "role": "not-exist",
       "defaultview": "not-exist"
@@ -101,7 +105,7 @@ Feature: Update a user
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "defaultview": "DefaultView doesn't exist.",
@@ -116,7 +120,7 @@ Feature: Update a user
   Scenario: given update request with not exist id should return not found error
     When I am admin
     When I do PUT /api/v4/users/test-user-not-found:
-    """
+    """json
     {
       "name": "test-user-to-update-name",
       "firstname": "test-user-to-update-firstname-updated",
@@ -131,7 +135,7 @@ Feature: Update a user
     """
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }
@@ -140,14 +144,14 @@ Feature: Update a user
   Scenario: given create request with already exists name should return error
     When I am admin
     When I do PUT /api/v4/users/notexit:
-    """
+    """json
     {
       "name": "test-user-to-check-unique-name-name"
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
           "name": "Name already exists."
@@ -158,14 +162,14 @@ Feature: Update a user
   Scenario: given create request with already exists id should return error
     When I am admin
     When I do PUT /api/v4/users/notexit:
-    """
+    """json
     {
       "name": "test-user-to-check-unique-name"
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
           "name": "Name already exists."
