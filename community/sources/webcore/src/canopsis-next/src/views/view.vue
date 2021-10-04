@@ -185,7 +185,7 @@ export default {
   created() {
     document.addEventListener('keydown', this.keyDownListener);
     this.registerViewOnceWatcher();
-    this.$periodicRefresh.subscribe(this.refreshView);
+    this.$periodicRefresh.register(this.refreshView);
   },
 
   mounted() {
@@ -195,7 +195,7 @@ export default {
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
-    this.$periodicRefresh.unsubscribe(this.refreshView);
+    this.$periodicRefresh.unregister(this.refreshView);
   },
 
   methods: {

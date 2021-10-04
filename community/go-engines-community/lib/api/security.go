@@ -40,11 +40,20 @@ type Security interface {
 	GetAuthMiddleware() []gin.HandlerFunc
 	// GetWebsocketAuthMiddleware returns auth middlewares for websocket.
 	GetWebsocketAuthMiddleware() []gin.HandlerFunc
+	// GetFileAuthMiddleware returns auth middlewares for files.
+	GetFileAuthMiddleware() []gin.HandlerFunc
 	GetSessionStore() libsession.Store
 	GetConfig() libsecurity.Config
 	GetPasswordEncoder() password.Encoder
 	GetTokenService() token.Service
 	GetTokenStore() token.Store
+	GetCookieOptions() CookieOptions
+}
+
+type CookieOptions struct {
+	FileAccessName string
+	MaxAge         int
+	Secure         bool
 }
 
 type security struct {
@@ -55,6 +64,8 @@ type security struct {
 	Logger       zerolog.Logger
 
 	apiConfigProvider config.ApiConfigProvider
+
+	cookieOptions CookieOptions
 }
 
 // NewSecurity creates new security.
@@ -64,6 +75,7 @@ func NewSecurity(
 	sessionStore libsession.Store,
 	enforcer libsecurity.Enforcer,
 	apiConfigProvider config.ApiConfigProvider,
+	cookieOptions CookieOptions,
 	logger zerolog.Logger,
 ) Security {
 	return &security{
@@ -72,6 +84,8 @@ func NewSecurity(
 		SessionStore: sessionStore,
 		enforcer:     enforcer,
 		Logger:       logger,
+
+		cookieOptions: cookieOptions,
 
 		apiConfigProvider: apiConfigProvider,
 	}
@@ -160,6 +174,15 @@ func (s *security) GetWebsocketAuthMiddleware() []gin.HandlerFunc {
 	}
 }
 
+func (s *security) GetFileAuthMiddleware() []gin.HandlerFunc {
+	return []gin.HandlerFunc{
+		middleware.Auth([]libsecurity.HttpProvider{
+			httpprovider.NewCookieProvider(s.GetTokenService(), s.GetTokenStore(),
+				s.newUserProvider(), s.cookieOptions.FileAccessName, s.Logger),
+		}),
+	}
+}
+
 func (s *security) GetSessionStore() libsession.Store {
 	return s.SessionStore
 }
@@ -179,6 +202,10 @@ func (s *security) GetTokenService() token.Service {
 }
 func (s *security) GetTokenStore() token.Store {
 	return token.NewMongoStore(s.DbClient, s.Logger)
+}
+
+func (s *security) GetCookieOptions() CookieOptions {
+	return s.cookieOptions
 }
 
 type casLoginRequest struct {

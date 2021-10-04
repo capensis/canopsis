@@ -19,33 +19,15 @@ Feature: get healthcheck engines' order
     """
     {
       "nodes": [
-        {
-          "name": "engine-fifo"
-        },
-        {
-          "name": "engine-che"
-        },
-        {
-          "name": "engine-pbehavior"
-        },
-        {
-          "name": "engine-axe"
-        },
-        {
-          "name": "engine-axe"
-        },
-        {
-          "name": "engine-correlation"
-        },
-        {
-          "name": "engine-service"
-        },
-        {
-          "name": "engine-dynamic-infos"
-        },
-        {
-          "name": "engine-action"
-        }
+        "engine-fifo",
+        "engine-che",
+        "engine-pbehavior",
+        "engine-axe",
+        "engine-axe",
+        "engine-correlation",
+        "engine-service",
+        "engine-dynamic-infos",
+        "engine-action"
       ],
       "edges": [
         {

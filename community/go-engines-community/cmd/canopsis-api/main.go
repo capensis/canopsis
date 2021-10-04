@@ -29,6 +29,10 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name x-canopsis-authkey
+
+// @securityDefinitions.apikey JWTAuth
+// @in header
+// @name Authorization
 func main() {
 	var flags Flags
 	flags.ParseArgs()

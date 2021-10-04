@@ -53,9 +53,10 @@ type SectionImportCtx struct {
 }
 
 type SectionFile struct {
-	Remediation string `toml:"Remediation"`
-	Junit       string `toml:"Junit"`
-	JunitApi    string `toml:"JunitApi"`
+	Upload        string `toml:"Upload"`
+	UploadMaxSize int64  `toml:"UploadMaxSize"`
+	Junit         string `toml:"Junit"`
+	JunitApi      string `toml:"JunitApi"`
 }
 
 type SectionDataStorage struct {

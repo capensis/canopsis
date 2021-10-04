@@ -1260,12 +1260,19 @@ var doc = `{
                 "operationId": "contextgraph-import-create-import",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "source",
+                        "name": "source",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "description": "body",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/contextgraph.Request"
+                            "$ref": "#/definitions/contextgraph.ImportRequest"
                         }
                     }
                 ],
@@ -2820,6 +2827,240 @@ var doc = `{
                 }
             }
         },
+        "/file": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get list of file objects by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "List files by ID",
+                "operationId": "files-list",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/file.File"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Upload files",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Upload files",
+                "operationId": "file-upload",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "request",
+                        "name": "files",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "file visibility",
+                        "name": "public",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/file.File"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-access": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Get file access",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get file access",
+                "operationId": "auth-get-file-access",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/file/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get file content by ID or download with file name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Get file by ID",
+                "operationId": "files-get",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "file id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete file by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Delete file",
+                "operationId": "files-delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "file id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/idle-rules": {
             "get": {
                 "security": [
@@ -3335,6 +3576,11 @@ var doc = `{
         },
         "/logout": {
             "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
                 "description": "Log out",
                 "consumes": [
                     "application/json"
@@ -8036,6 +8282,9 @@ var doc = `{
                 "edition": {
                     "type": "string"
                 },
+                "file_upload_max_size": {
+                    "type": "integer"
+                },
                 "footer": {
                     "type": "string"
                 },
@@ -8354,123 +8603,34 @@ var doc = `{
                 }
             }
         },
-        "contextgraph.ConfigurationItem": {
+        "contextgraph.ImportJob": {
             "type": "object",
             "properties": {
                 "_id": {
                     "type": "string"
                 },
-                "action": {
-                    "type": "string"
-                },
-                "action_properties": {
-                    "type": "object"
-                },
-                "category": {
-                    "type": "string"
-                },
-                "enabled": {
-                    "type": "boolean"
-                },
-                "entity_patterns": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.EntityPatternList"
-                },
-                "impact_level": {
-                    "type": "integer"
-                },
-                "infos": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "measurements": {
-                    "type": "array",
-                    "items": {
-                        "type": "object"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output_template": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "contextgraph.ImportJob": {
-            "type": "object",
-            "properties": {
                 "creation": {
                     "type": "string"
                 },
-                "execTime": {
-                    "type": "string"
-                },
-                "id": {
+                "exec_time": {
                     "type": "string"
                 },
                 "info": {
                     "type": "string"
                 },
+                "source": {
+                    "type": "string"
+                },
                 "stats": {
                     "type": "object",
-                    "$ref": "#/definitions/contextgraph.JobStats"
+                    "$ref": "#/definitions/importcontextgraph.Stats"
                 },
                 "status": {
                     "type": "string"
                 }
             }
         },
-        "contextgraph.ImportResponse": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "contextgraph.JobStats": {
-            "type": "object",
-            "properties": {
-                "deleted": {
-                    "type": "integer"
-                },
-                "updated": {
-                    "type": "integer"
-                }
-            }
-        },
-        "contextgraph.Link": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "action": {
-                    "type": "string"
-                },
-                "action_properties": {
-                    "type": "object"
-                },
-                "from": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "infos": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "to": {
-                    "type": "string"
-                }
-            }
-        },
-        "contextgraph.Request": {
+        "contextgraph.ImportRequest": {
             "type": "object",
             "properties": {
                 "json": {
@@ -8479,16 +8639,24 @@ var doc = `{
                         "cis": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/contextgraph.ConfigurationItem"
+                                "$ref": "#/definitions/importcontextgraph.ConfigurationItem"
                             }
                         },
                         "links": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/contextgraph.Link"
+                                "$ref": "#/definitions/importcontextgraph.Link"
                             }
                         }
                     }
+                }
+            }
+        },
+        "contextgraph.ImportResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
                 }
             }
         },
@@ -9196,6 +9364,23 @@ var doc = `{
                 "$ref": "#/definitions/export.Field"
             }
         },
+        "file.File": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "filename": {
+                    "type": "string"
+                },
+                "mediatype": {
+                    "type": "string"
+                }
+            }
+        },
         "http.Response": {
             "type": "object",
             "properties": {
@@ -9408,6 +9593,90 @@ var doc = `{
                 "updated": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                }
+            }
+        },
+        "importcontextgraph.ConfigurationItem": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "action": {
+                    "type": "string"
+                },
+                "action_properties": {
+                    "type": "object"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "impact_level": {
+                    "type": "integer"
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "measurements": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "output_template": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "importcontextgraph.Link": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "action": {
+                    "type": "string"
+                },
+                "action_properties": {
+                    "type": "object"
+                },
+                "from": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "importcontextgraph.Stats": {
+            "type": "object",
+            "properties": {
+                "deleted": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
                 }
             }
         },
@@ -12370,6 +12639,11 @@ var doc = `{
         },
         "BasicAuth": {
             "type": "basic"
+        },
+        "JWTAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

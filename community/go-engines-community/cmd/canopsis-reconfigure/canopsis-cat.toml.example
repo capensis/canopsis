@@ -270,7 +270,9 @@ ReconnectRetries = 3
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
 [Canopsis.file]
-Remediation = "/opt/canopsis/var/lib/remediation-files"
+# Local storage for Upload artifacts. Upload artifacts are used in Remedaiton and Administration -> Parameters.
+Upload = "/opt/canopsis/var/lib/upload-files"
+UploadMaxSize = 314572800 # 300Mb
 # Local storage for Junit artifacts.
 Junit = "/opt/canopsis/var/lib/junit-files"
 # Temporary local storage for Junit data which are uploaded by API.

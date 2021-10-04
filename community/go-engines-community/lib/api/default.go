@@ -19,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -92,11 +93,16 @@ func Default(
 		return nil, err
 	}
 
+	cookieOptions := CookieOptions{
+		FileAccessName: "token",
+		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
+		Secure:         secureSession,
+	}
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
-	sessionStore.Options.MaxAge = int(sessionStoreSessionMaxAge.Seconds())
-	sessionStore.Options.Secure = secureSession
+	sessionStore.Options.MaxAge = cookieOptions.MaxAge
+	sessionStore.Options.Secure = cookieOptions.Secure
 	apiConfigProvider := config.NewApiConfigProvider(cfg, logger)
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
 
 	proxyAccessConfig, err := proxy.LoadAccessConfig(configDir)
 	if err != nil {
@@ -105,12 +111,10 @@ func Default(
 	}
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
-	pbhStore := libredis.NewStore(pbhRedisSession, libredis.PbehaviorKey, 0)
-	pbhService := libpbehavior.NewService(
-		libpbehavior.NewModelProvider(dbClient),
-		libpbehavior.NewEntityMatcher(dbClient),
-		logger,
-	)
+	pbhEntityMatcher := libpbehavior.NewComputedEntityMatcher(dbClient, pbhRedisSession, json.NewEncoder(), json.NewDecoder())
+	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
+	pbhService := libpbehavior.NewService(libpbehavior.NewModelProvider(dbClient), pbhEntityMatcher, pbhStore, libredis.NewLockClient(pbhRedisSession))
+	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, pbhEntityMatcher)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
 	entityServiceEventPublisher := entityservice.NewEventPublisher(
@@ -122,10 +126,10 @@ func Default(
 	jobQueue := contextgraph.NewJobQueue()
 	importWorker := contextgraph.NewImportWorker(
 		cfg,
-		dbClient,
-		contextgraph.NewRMQPublisher(json.NewEncoder(), amqpChannel),
+		contextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 		contextgraph.NewMongoStatusReporter(dbClient),
 		jobQueue,
+		importcontextgraph.NewWorker(dbClient, importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel)),
 		logger,
 	)
 
@@ -195,8 +199,7 @@ func Default(
 			enforcer,
 			dbClient,
 			timezoneConfigProvider,
-			pbhStore,
-			pbhService,
+			pbhEntityTypeResolver,
 			pbhComputeChan,
 			entityPublChan,
 			entityCleanerTaskChan,
@@ -206,6 +209,7 @@ func Default(
 			amqpChannel,
 			jobQueue,
 			userInterfaceConfigProvider,
+			cfg.File.Upload,
 			logger,
 		)
 	})
@@ -219,8 +223,6 @@ func Default(
 	})
 	api.AddWorker("pbehavior compute", func(ctx context.Context) {
 		pbhComputer := libpbehavior.NewCancelableComputer(
-			libredis.NewLockClient(pbhRedisSession),
-			pbhStore,
 			pbhService,
 			dbClient,
 			amqpChannel,

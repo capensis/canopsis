@@ -35,7 +35,7 @@ func (a *api) GetAppInfo(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	tz, err := a.store.RetrieveTimezoneConf(c.Request.Context())
+	global, err := a.store.RetrieveGlobalConf(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
@@ -49,7 +49,7 @@ func (a *api) GetAppInfo(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, AppInfoResponse{
 		UserInterfaceConf: userInterface,
-		TimezoneConf:      tz,
+		GlobalConf:        global,
 		VersionConf:       version,
 		Remediation:       remediation,
 	})
@@ -102,8 +102,8 @@ func (a *api) LoginInfo(c *gin.Context) {
 // @Router /internal/user_interface [put]
 func (a *api) UpdateUserInterface(c *gin.Context) {
 	request := UserInterfaceConf{
-		MaxMatchedItems:           config.DefaultMaxMatchedItems,
-		CheckCountRequestTimeout:  config.DefaultCheckCountRequestTimeout,
+		MaxMatchedItems:          config.DefaultMaxMatchedItems,
+		CheckCountRequestTimeout: config.DefaultCheckCountRequestTimeout,
 	}
 
 	if err := c.ShouldBind(&request); err != nil {

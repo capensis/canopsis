@@ -1,18 +1,18 @@
 class Observer {
   constructor() {
-    this.subscribers = [];
+    this.handlers = [];
   }
 
-  subscribe(callback) {
-    this.subscribers.push(callback);
+  register(handler) {
+    this.handlers.push(handler);
   }
 
-  unsubscribe(callback) {
-    this.subscribers = this.subscribers.filter(subscriber => callback !== subscriber);
+  unregister(handler) {
+    this.handlers = this.handlers.filter(h => h !== handler);
   }
 
   async notify() {
-    await Promise.all(this.subscribers.map(subscriber => subscriber()));
+    await Promise.all(this.handlers.map(subscriber => subscriber()));
   }
 }
 

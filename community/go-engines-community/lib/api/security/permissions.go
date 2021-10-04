@@ -46,4 +46,6 @@ const (
 	PermMessageRateStatsRead = "api_message_rate_stats_read"
 
 	PermHealthcheck = "api_healthcheck"
+
+	ObjFile = "api_file"
 )
