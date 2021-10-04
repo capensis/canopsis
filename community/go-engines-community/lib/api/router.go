@@ -47,7 +47,6 @@ import (
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
@@ -104,8 +103,7 @@ func RegisterRoutes(
 	enforcer libsecurity.Enforcer,
 	dbClient mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
-	pbhStore redis.Store,
-	pbhService libpbehavior.Service,
+	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
 	pbhComputeChan chan<- libpbehavior.ComputeTask,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
 	entityCleanerTaskChan chan<- entity.CleanTask,
@@ -297,8 +295,7 @@ func RegisterRoutes(
 			pbehavior.NewStore(
 				dbClient,
 				libpbehavior.NewEntityMatcher(dbClient),
-				pbhStore,
-				pbhService,
+				pbhEntityTypeResolver,
 				timezoneConfigProvider,
 			),
 			pbhComputeChan,
@@ -529,8 +526,7 @@ func RegisterRoutes(
 				GetLegacyURL(),
 				statsStore,
 				timezoneConfigProvider,
-				pbhStore,
-				pbhService,
+				pbhEntityTypeResolver,
 			))
 			weatherRouter.GET(
 				"",

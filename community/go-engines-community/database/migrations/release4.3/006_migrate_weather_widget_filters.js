@@ -1,4 +1,15 @@
 (function () {
+    var deprecatedFilterKeyMap = {
+        "entity_id": "_id",
+        "display_name": "name",
+        "tileIcon": "icon",
+        "tileSecondaryIcon": "secondary_icon",
+        "watcher_pbehavior": "pbehaviors",
+        "isActionRequired": "has_open_alarm",
+        "isAllEntitiesPaused": "is_grey",
+        "isWatcherPaused": "is_grey",
+    };
+
     db.views.find().forEach(function (doc) {
         if (!doc.tabs || doc.tabs.length === 0) {
             return;
@@ -17,10 +28,10 @@
                 }
 
                 if (widget.parameters.mfilter) {
+                    var key = "tabs." + tabIndex + ".widgets." + widgetIndex + ".parameters";
                     if (widget.parameters.mfilter.filter) {
                         var filter = JSON.parse(widget.parameters.mfilter.filter);
                         var newFilter = replaceFilters(filter);
-                        var key = "tabs." + tabIndex + ".widgets." + widgetIndex + ".parameters";
                         set[key + ".mainFilter"] = {
                             title: "Default",
                             filter: JSON.stringify(newFilter),
@@ -31,6 +42,17 @@
 
                     unset[key + ".mfilter"] = ""
                 }
+                ["blockTemplate", "entityTemplate", "modalTemplate"].forEach(function (templateItem, idx) {
+                    var newTemplate = widget.parameters[templateItem];
+                    if (newTemplate) {
+                        for(var oldName in deprecatedFilterKeyMap) {
+                            newTemplate = newTemplate.replace(oldName, deprecatedFilterKeyMap[oldName]);
+                        }
+                        if (newTemplate !== widget.parameters[templateItem]) {
+                            set[key + "." + templateItem] = newTemplate;
+                        }
+                    }
+                })
             });
         });
 
@@ -48,17 +70,6 @@
     });
 
     function replaceFilters(filter) {
-        var deprecatedFilterKeyMap = {
-            "entity_id": "_id",
-            "display_name": "name",
-            "tileIcon": "icon",
-            "tileSecondaryIcon": "secondary_icon",
-            "watcher_pbehavior": "pbehaviors",
-            "isActionRequired": "has_open_alarm",
-            "isAllEntitiesPaused": "is_grey",
-            "isWatcherPaused": "is_grey",
-        };
-
         if (filter && Array.isArray(filter)) {
             var newFilter = [];
             filter.forEach(function (item) {

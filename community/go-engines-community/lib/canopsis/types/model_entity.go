@@ -56,8 +56,8 @@ type Entity struct {
 		// Only for Service.
 		// WatchedCount is count of unresolved alarms.
 		WatchedCount int64 `bson:"watched_count"`
-		// WatchedPbheaviorCount contains counters of unresolved and in pbehavior alarms.
-		WatchedPbheaviorCount map[string]int64 `bson:"watched_pbehavior_count"`
+		// WatchedPbehaviorCount contains counters of unresolved and in pbehavior alarms.
+		WatchedPbehaviorCount map[string]int64 `bson:"watched_pbehavior_count"`
 		// WatchedNotAckedCount is count of unresolved and not acked and active (by pbehavior) alarms.
 		WatchedNotAckedCount int64 `bson:"watched_not_acked_count"`
 	} `bson:"alarms_cumulative_data,omitempty" json:"-"`

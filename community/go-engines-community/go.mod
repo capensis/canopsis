@@ -53,6 +53,7 @@ require (
 	github.com/valyala/fastjson v1.6.3
 	go.mongodb.org/mongo-driver v1.7.1
 	golang.org/x/net v0.0.0-20210825183410-e898025ed96a
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/sys v0.0.0-20210831042530-f4d43177bf5e // indirect
 	golang.org/x/text v0.3.7
 	golang.org/x/tools v0.1.5 // indirect
