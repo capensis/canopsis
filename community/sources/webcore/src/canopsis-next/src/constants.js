@@ -45,6 +45,8 @@ export const ENTITIES_TYPES = {
   testSuiteHistory: 'testSuiteHistory',
   stateSetting: 'stateSetting',
   idleRules: 'idleRules',
+  flappingRules: 'flappingRules',
+  resolveRules: 'resolveRules',
 };
 
 export const MODALS = {
@@ -126,6 +128,7 @@ export const MODALS = {
   stateSetting: 'state-setting',
   testSuite: 'test-suite',
   createIdleRule: 'create-idle-rule',
+  createAlarmStatusRule: 'create-alarm-status-rule',
   healthcheckEngine: 'healthcheck-engine',
   healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
 };
@@ -866,6 +869,8 @@ export const USERS_PERMISSIONS = {
       metaAlarmRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_metaAlarmRule`,
       scenario: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_scenario`,
       idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
+      flappingRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_flappingRules`,
+      resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
@@ -1915,6 +1920,8 @@ export const ROUTES_NAMES = {
   exploitationMetaAlarmRules: 'exploitation-meta-alarm-rules',
   exploitationScenarios: 'exploitation-scenarios',
   exploitationIdleRules: 'exploitation-idle-rules',
+  exploitationFlappingRules: 'exploitation-flapping-rules',
+  exploitationResolveRules: 'exploitation-resolve-rules',
   notificationInstructionStats: 'notification-instruction-stats',
 };
 
@@ -1941,6 +1948,8 @@ export const ROUTES = {
   exploitationMetaAlarmRules: '/exploitation/meta-alarm-rule',
   exploitationScenarios: '/exploitation/scenarios',
   exploitationIdleRules: '/exploitation/idle-rules',
+  exploitationFlappingRules: '/exploitation/flapping-rules',
+  exploitationResolveRules: '/exploitation/resolve-rules',
   notificationInstructionStats: '/notification/instruction-stats',
 };
 
