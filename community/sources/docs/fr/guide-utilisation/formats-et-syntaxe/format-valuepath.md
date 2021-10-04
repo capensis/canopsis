@@ -1,12 +1,12 @@
 # Format de syntaxe des valuepath
 
-Les règles de correlation des alarmes comprennent des chemins d'accès aux valeurs (`valuepath`) sur lesquels se baser pour effectuer le regroupement d'alarmes.
+Les règles de corrélation des alarmes comprennent des chemins d'accès aux valeurs (`valuepath`) sur lesquels se baser pour effectuer le regroupement d'alarmes.
 
 Canopsis est conçu pour exprimer facilement ces `valuepath` sous la forme d'une série de composants séparés par le caractère `.`. Mais pas seulement, d'autres caractères ont une signification particulière, notamment `|`, `#`, `@`, `\` et `?`.
 
-Voici un exemple d'alarme.
+Voici un exemple d'évènement fictif.
 
-```json
+``` json
 {
   "connector": "zabbix01",
   "connector_name": "zabbix01",
@@ -27,11 +27,13 @@ Voici un exemple d'alarme.
 }
 ```
 
-## Basique
+Cet exemple fictif est volontairement complexe afin de mieux illustrer les différentes expressions possibles.
 
-Dans la plus part des cas, vous voudrez simplement récupérer des valeurs par nom d'objet ou index de tableau.
+### Expressions basiques
 
-| Chemin | Resultat |
+Dans la plupart des cas, vous voudrez simplement récupérer des valeurs par nom d'objet ou index de tableau.
+
+| Chemin | Résultat |
 |--------|----------|
 | `server.hostname` | `"st-par-edge1"` |
 | `location` | `"Equinix PA3"` |
@@ -44,11 +46,11 @@ Dans la plus part des cas, vous voudrez simplement récupérer des valeurs par n
 | `peers.#.name` | `["Amazon","Microsoft","Netflix"]` |
 | `peers.1.asn` | `8075` |
 
-## Avancé
+### Expressions Avancées
 
 Vous pouvez également interroger un tableau pour trouver la première correspondance en utilisant `#(...)`, ou trouver toutes les correspondances avec `#(...)#`. Les requêtes prennent en charge les opérateurs de comparaison `==`, `!=`, `<`, `<=`, `>`, `>=` et les opérateurs de correspondance simple `%` (similaire) et `!%` (non similaire).
 
-| Chemin | Resultat |
+| Chemin | Résultat |
 |--------|----------|
 | `peers.#(link=="100G").name` | `"Microsoft"` |
 | `peers.#(link=="100G")#.name` | `["Microsoft","Netflix"]` |
@@ -56,6 +58,47 @@ Vous pouvez également interroger un tableau pour trouver la première correspon
 | `peers.#(name%"A*").asn` | `16509` |
 | `peers.#(name!%"A*").asn` | `8075` |
 | `peers.#(ip.#(%"37.49.237.*"))#.name` | `["Amazon","Microsoft","Netflix"]` |
+
+### Exemple évènement réaliste
+
+Voici un exemple d'évènement plus représentatif d'un cas réel.
+
+``` json
+{
+    "connector": "connector_test_meta_alarmes",
+    "connector_name": "test_meta",
+    "source_type" : "resource",
+    "event_type" : "check",
+    "component" : "SRV-META",
+    "resource" : "cpu_1",
+    "state" : 2,
+    "customer": "customer_1",
+    "location": "location_1"
+}
+```
+
+Pour regrouper les événements par `customer` et `location`, il suffira de définir les `value_paths` suivantes:
+
+``` json hl_lines="8 9"
+{
+    "name": "Test groupement par chemins de valeur",
+    "type": "valuegroup",
+    "config": {
+        "time_interval": 120,
+        "threshold_count": 2,
+        "value_paths": [ 
+            "entity.infos.customer.value", 
+            "entity.infos.location.value" 
+        ]
+    }
+}
+```
+
+Cette syntaxe est aussi valable dans l'interface web de Canopsis pour l'ajout de colonnes dans les méta-alarmes du widget bac à alarmes.
+
+![](img/value-path_column.png)
+
+![](img/value-path_alarms.png)
 
 ## Aller plus loin
 
