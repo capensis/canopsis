@@ -9,7 +9,7 @@
       name="column",
       return-object
     )
-    text-editor(
+    text-editor-field(
       v-field="form.template",
       v-validate="'required'",
       :error-messages="errors.collect('template')",
@@ -18,11 +18,11 @@
 </template>
 
 <script>
-import TextEditor from '@/components/common/text-editor/text-editor.vue';
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { TextEditor },
+  components: { TextEditorField },
   model: {
     prop: 'form',
     event: 'input',

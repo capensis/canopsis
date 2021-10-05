@@ -3,6 +3,7 @@ package file
 import (
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -48,6 +49,31 @@ func (s *storage) Copy(id, src string) (string, error) {
 
 	dest := filepath.Join(path, id)
 	err = CopyFile(src, dest)
+	if err != nil {
+		return "", err
+	}
+
+	return hashPath, nil
+}
+
+func (s *storage) CopyReader(id string, src io.Reader) (hashPath string, err error) {
+	path, hashPath, err := s.createDestDir()
+	if err != nil {
+		return "", err
+	}
+
+	dest := filepath.Join(path, id)
+	destFile, err := os.Create(dest)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = io.Copy(destFile, src)
+	if err != nil {
+		return "", err
+	}
+
+	err = destFile.Close()
 	if err != nil {
 		return "", err
 	}

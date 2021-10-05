@@ -23,6 +23,10 @@ func NewBaseProvider(p security.UserProvider, e password.Encoder) security.Provi
 	}
 }
 
+func (p *baseProvider) GetName() string {
+	return ""
+}
+
 func (p *baseProvider) Auth(ctx context.Context, username, password string) (*security.User, error) {
 	user, err := p.userProvider.FindByUsername(ctx, username)
 	if err != nil {
