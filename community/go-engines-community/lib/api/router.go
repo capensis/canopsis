@@ -93,8 +93,6 @@ const (
 
 	authAssociativeTable = apisecurity.ObjAssociativeTable
 
-	authAppInfoRead = apisecurity.PermAppInfoRead
-
 	authUserInterfaceUpdate = apisecurity.PermUserInterfaceUpdate
 	authUserInterfaceDelete = apisecurity.PermUserInterfaceDelete
 
@@ -650,16 +648,10 @@ func RegisterRoutes(
 				eventApi.Send)
 		}
 
-		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, security.GetConfig().Security.AuthProviders))
+		appInfoApi := appinfo.NewApi(enforcer, appinfo.NewStore(dbClient, security.GetConfig().Security.AuthProviders))
+		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
 		{
-			appInfoRouter.GET("login_info", appInfoApi.LoginInfo)
-			appInfoRouter.GET(
-				"app_info",
-				middleware.Authorize(authAppInfoRead, permCan, enforcer),
-				appInfoApi.GetAppInfo,
-			)
-
 			appInfoRouter.PUT(
 				"user_interface",
 				middleware.Authorize(authUserInterfaceUpdate, permCan, enforcer),
