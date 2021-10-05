@@ -93,7 +93,6 @@ describe('c-advanced-search-field', () => {
 
     const updateQueryEvents = wrapper.emitted('update:query');
 
-    expect(updateQueryEvents).toBeTruthy();
     expect(updateQueryEvents).toHaveLength(1);
   });
 
@@ -116,7 +115,6 @@ describe('c-advanced-search-field', () => {
 
     const updateQueryEvents = wrapper.emitted('update:query');
 
-    expect(updateQueryEvents).toBeTruthy();
     expect(updateQueryEvents).toHaveLength(1);
     expect(updateQueryEvents[0]).toEqual([{
       page: 1,
@@ -144,7 +142,6 @@ describe('c-advanced-search-field', () => {
 
     const updateQueryEvents = wrapper.emitted('update:query');
 
-    expect(updateQueryEvents).toBeTruthy();
     expect(updateQueryEvents).toHaveLength(1);
     expect(updateQueryEvents[0]).toEqual([{
       page: 1,
@@ -165,7 +162,6 @@ describe('c-advanced-search-field', () => {
 
     const updateQueryEvents = wrapper.emitted('update:query');
 
-    expect(updateQueryEvents).toBeTruthy();
     expect(updateQueryEvents).toHaveLength(1);
     expect(updateQueryEvents[0]).toEqual([{}]);
   });
@@ -188,7 +184,6 @@ describe('c-advanced-search-field', () => {
 
     const updateQueryEvents = wrapper.emitted('update:query');
 
-    expect(updateQueryEvents).toBeTruthy();
     expect(updateQueryEvents).toHaveLength(1);
     expect(updateQueryEvents[0]).toEqual([{
       page: 1,
@@ -211,7 +206,6 @@ describe('c-advanced-search-field', () => {
 
     const updateQueryEvents = wrapper.emitted('update:query');
 
-    expect(updateQueryEvents).toBeTruthy();
     expect(updateQueryEvents).toHaveLength(1);
     expect(updateQueryEvents[0]).toEqual([{}]);
   });

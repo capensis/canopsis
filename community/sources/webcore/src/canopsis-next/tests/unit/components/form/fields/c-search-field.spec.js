@@ -28,7 +28,7 @@ const stubs = {
         class="v-text-field"
         :value="value"
         @input="$emit('input', $event.target.value)"
-        @keydown="$emit('keydown', $event)"
+        @keydown="$listeners.keydown"
       />
     `,
   },
@@ -76,9 +76,10 @@ describe('c-search-field', () => {
 
     input.setValue(value);
 
-    expect(wrapper.emitted('input')).toBeTruthy();
-    expect(wrapper.emitted('input').length).toBe(1);
-    expect(wrapper.emitted('input')[0]).toEqual([value]);
+    const inputEvents = wrapper.emitted('input');
+
+    expect(inputEvents).toHaveLength(1);
+    expect(inputEvents[0]).toEqual([value]);
   });
 
   it('Keyup without enter key on input element', () => {
@@ -89,7 +90,9 @@ describe('c-search-field', () => {
 
     input.trigger('keyup');
 
-    expect(wrapper.emitted('submit')).toBeUndefined();
+    const submitEvents = wrapper.emitted('submit');
+
+    expect(submitEvents).toBeUndefined();
   });
 
   it('Keyup with enter key on input element', async () => {
@@ -102,8 +105,7 @@ describe('c-search-field', () => {
 
     const submitEvents = wrapper.emitted('submit');
 
-    expect(submitEvents).toBeTruthy();
-    expect(submitEvents.length).toBe(1);
+    expect(submitEvents).toHaveLength(1);
   });
 
   it('Submit search button is the first button', () => {
@@ -137,8 +139,9 @@ describe('c-search-field', () => {
 
     submitButton.trigger('click');
 
-    expect(wrapper.emitted('submit')).toBeTruthy();
-    expect(wrapper.emitted('submit').length).toBe(1);
+    const submitEvents = wrapper.emitted('submit');
+
+    expect(submitEvents).toHaveLength(1);
   });
 
   it('Click on clear button', () => {
@@ -152,13 +155,10 @@ describe('c-search-field', () => {
     const inputEvents = wrapper.emitted('input');
     const clearEvents = wrapper.emitted('clear');
 
-    expect(inputEvents).toBeTruthy();
     expect(inputEvents).toHaveLength(1);
     expect(inputEvents[0]).toEqual(['']);
 
-    expect(clearEvents).toBeTruthy();
-    expect(clearEvents.length).toBe(1);
-    expect(wrapper.emittedByOrder().map(e => e.name)).toEqual(['input', 'clear']);
+    expect(clearEvents).toHaveLength(1);
   });
 
   it('Renders `c-search-field` correctly', () => {
