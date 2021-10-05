@@ -39,7 +39,7 @@ export default {
     validationErrorsMixin(),
   ],
   data() {
-    const { rule = {}, flapping = false } = this.modal.config;
+    const { rule, flapping } = this.modal.config;
 
     return {
       form: alarmStatusRuleToForm(rule, flapping),
