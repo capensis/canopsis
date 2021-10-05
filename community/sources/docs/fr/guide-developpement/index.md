@@ -23,7 +23,6 @@ Ces nouvelles API suivent l'[OpenAPI Specification 2.0](https://github.com/OAI/
 * [`/api/v2/event`](api/api-v2-event.md) et [structure d'un évènement](struct-event.md)
 * [`/api/v2/eventfilter`](api/api-v2-event-filter.md)
 * [`/api/v2/healthcheck`](api/api-v2-healthcheck.md)
-* [`/api/v2/heartbeat`](api/api-v2-heartbeat.md)
 * [`/api/v2/metaalarmrule`](api/api-v2-meta-alarm-rule.md)
 * [`/api/v2/watcherng`](api/api-v2-watcherng.md)
 * [`/api/v2/weather`](api/api-v2-weather.md)

@@ -20,7 +20,7 @@
           :count="testSuite.disabled"
         )
         test-suite-summary-status-row(
-          :label="$t('common.errors')",
+          :label="$tc('common.error', 2)",
           :total="testSuite.total",
           :count="testSuite.errors"
         )

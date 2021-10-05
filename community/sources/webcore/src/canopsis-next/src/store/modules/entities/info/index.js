@@ -33,6 +33,7 @@ export default {
     maxMatchedItems: '',
     checkCountRequestTimeout: '',
     timezone: undefined,
+    fileUploadMaxSize: 0,
     remediation: {},
   },
   getters: {
@@ -54,6 +55,7 @@ export default {
     casConfig: state => state.casConfig,
     samlConfig: state => state.samlConfig,
     timezone: state => state.timezone,
+    fileUploadMaxSize: state => state.fileUploadMaxSize,
     remediation: state => state.remediation,
     remediationJobConfigTypes: state => get(state.remediation, 'job_config_types', []),
     remediationPauseManualInstructionIntervalSeconds: state =>
@@ -92,6 +94,7 @@ export default {
       stack,
       language,
       timezone,
+      fileUploadMaxSize,
       remediation,
     }) {
       state.version = version;
@@ -105,35 +108,32 @@ export default {
       state.stack = stack;
       state.language = language;
       state.timezone = timezone;
+      state.fileUploadMaxSize = fileUploadMaxSize;
       state.remediation = remediation;
     },
   },
   actions: {
     async fetchLoginInfos({ commit, dispatch }) {
-      try {
-        const {
-          version,
-          user_interface: userInterface,
-          login_config: loginConfig,
-        } = await request.get(API_ROUTES.infos.login);
+      const {
+        version,
+        user_interface: userInterface,
+        login_config: loginConfig,
+      } = await request.get(API_ROUTES.infos.login, { fullResponse: true });
 
-        const { language, popup_timeout: popupTimeout } = userInterface;
+      const { language, popup_timeout: popupTimeout } = userInterface;
 
-        commit(types.FETCH_LOGIN_INFOS, {
-          version,
-          userInterface: userInterface || {},
-          loginConfig: loginConfig || {},
-        });
+      commit(types.FETCH_LOGIN_INFOS, {
+        version,
+        userInterface: userInterface || {},
+        loginConfig: loginConfig || {},
+      });
 
-        if (language) {
-          dispatch('i18n/setGlobalLocale', language, { root: true });
-        }
+      if (language) {
+        dispatch('i18n/setGlobalLocale', language, { root: true });
+      }
 
-        if (popupTimeout) {
-          dispatch('setPopupTimeouts', { popupTimeout });
-        }
-      } catch (err) {
-        console.error(err);
+      if (popupTimeout) {
+        dispatch('setPopupTimeouts', { popupTimeout });
       }
     },
 
@@ -147,6 +147,7 @@ export default {
           max_matched_items: maxMatchedItems,
           check_count_request_timeout: checkCountRequestTimeout,
           allow_change_severity_to_info: allowChangeSeverityToInfo,
+          file_upload_max_size: fileUploadMaxSize,
           remediation,
           edition,
           stack,
@@ -168,6 +169,7 @@ export default {
             stack,
             language,
             timezone,
+            fileUploadMaxSize,
             remediation,
           },
         );

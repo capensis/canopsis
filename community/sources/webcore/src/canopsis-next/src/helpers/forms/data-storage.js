@@ -30,12 +30,18 @@ import { TIME_UNITS } from '@/constants';
  */
 
 /**
+ * @typedef {Object} DataStorageHealthCheckConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfig
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
  * @property {DataStorageAlarmConfig} alarm
  * @property {DataStorageEntityConfig} [entity]
  * @property {DataStoragePbehaviorConfig} pbehavior
+ * @property {DataStorageHealthCheckConfig} health_check
  */
 
 /**
@@ -51,6 +57,7 @@ import { TIME_UNITS } from '@/constants';
  * @property {number} remediation
  * @property {HistoryWithCount} alarm
  * @property {HistoryWithCount} entity
+ * @property {number} health_check
  */
 
 /**
@@ -86,12 +93,18 @@ import { TIME_UNITS } from '@/constants';
  */
 
 /**
+ * @typedef {Object} DataStorageHealthCheckConfigForm
+ * @property {DurationWithEnabledForm} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfigForm
  * @property {DataStorageJunitConfigForm} junit
  * @property {DataStorageRemediationConfigForm} remediation
  * @property {DataStorageAlarmConfigForm} alarm
  * @property {DataStorageAlarmConfigForm} entity
  * @property {DataStoragePbehaviorConfigForm} pbehavior
+ * @property {DataStorageHealthCheckConfigForm} health_check
  */
 
 /**
@@ -165,6 +178,18 @@ export const dataStorageEntitySettingsToForm = (entityConfig = {}) => ({
 });
 
 /**
+ * Convert data storage health check config to health check form object
+ *
+ * @param {DataStorageHealthCheckConfig} healthCheckConfig
+ * @return {DataStorageHealthCheckConfigForm}
+ */
+export const dataStorageHealthCheckSettingsToForm = (healthCheckConfig = {}) => ({
+  delete_after: healthCheckConfig.delete_after
+    ? durationWithEnabledToForm(healthCheckConfig.delete_after)
+    : { value: 6, unit: TIME_UNITS.month, enabled: false },
+});
+
+/**
  * Convert data storage object to data storage form
  *
  * @param {DataStorageConfig} dataStorage
@@ -176,6 +201,7 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   alarm: dataStorageAlarmSettingsToForm(dataStorage.alarm),
   entity: dataStorageEntitySettingsToForm(dataStorage.entity),
   pbehavior: dataStoragePbehaviorSettingsToForm(dataStorage.pbehavior),
+  health_check: dataStorageHealthCheckSettingsToForm(dataStorage.health_check),
 });
 
 /**
@@ -221,6 +247,16 @@ export const formToPbehaviorDataStorageSettings = (form = {}) => ({
 });
 
 /**
+ * Convert health check data storage form to health check data storage object
+ *
+ * @param {DataStorageHealthCheckConfigForm} form
+ * @return {DataStorageHealthCheckConfig}
+ */
+export const formToHealthCheckDataStorageSettings = (form = {}) => ({
+  delete_after: formToDurationWithEnabled(form.delete_after),
+});
+
+/**
  * Convert data storage form to data storage object
  *
  * @param {DataStorageConfigForm} form
@@ -231,4 +267,5 @@ export const formToDataStorageSettings = (form = {}) => ({
   remediation: formToRemediationDataStorageSettings(form.remediation),
   alarm: formToAlarmDataStorageSettings(form.alarm),
   pbehavior: formToPbehaviorDataStorageSettings(form.pbehavior),
+  health_check: formToHealthCheckDataStorageSettings(form.health_check),
 });

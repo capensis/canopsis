@@ -57,7 +57,7 @@ export const convertDurationToIntervalObject = (duration) => {
  * @param {string} [localTimezone = moment.tz.guess()]
  * @returns {Object}
  */
-export const convertTimestampToMomentByTimezone = (
+export const convertDateToMomentByTimezone = (
   timestamp,
   sourceTimezone = moment.tz.guess(),
   localTimezone = moment.tz.guess(),
@@ -206,5 +206,14 @@ export const subtractUnitFromDate = (date, value = 0, unit = TIME_UNITS.second) 
   .clone()
   .subtract(value, unit)
   .unix();
+
+/**
+ * Format date/timestamp/unix/moment to string format
+ *
+ * @param {Date|number|moment.Moment} date
+ * @param {string} format
+ * @return {string}
+ */
+export const formatDate = (date, format) => convertDateToMoment(date).format(format);
 
 export default convertDateToMoment;
