@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
+<v-toolbar-stub
+  class="white"
+  dense="true"
+  flat="true"
+  scrollthreshold="300"
+>
+  <v-text-field-stub
+    data-test="searchingTextField"
+    hide-details="hide-details"
+    single-line="single-line"
+    value="c-search-field"
+  />
+  <v-tooltip-stub
+    bottom="true"
+    closedelay="200"
+    contentclass=""
+    debounce="0"
+    fixed="true"
+    maxwidth="auto"
+    nudgebottom="0"
+    nudgeleft="0"
+    nudgeright="0"
+    nudgetop="0"
+    nudgewidth="0"
+    opendelay="200"
+    tag="span"
+  >
+    <v-btn-stub
+      activeclass="v-btn--active"
+      data-test="submitSearchButton"
+      icon="true"
+      tag="button"
+      type="button"
+    >
+      <v-icon-stub>
+        search
+      </v-icon-stub>
+    </v-btn-stub>
+    <span>
+      
+    </span>
+  </v-tooltip-stub>
+  <v-tooltip-stub
+    bottom="true"
+    closedelay="200"
+    contentclass=""
+    debounce="0"
+    fixed="true"
+    maxwidth="auto"
+    nudgebottom="0"
+    nudgeleft="0"
+    nudgeright="0"
+    nudgetop="0"
+    nudgewidth="0"
+    opendelay="200"
+    tag="span"
+  >
+    <v-btn-stub
+      activeclass="v-btn--active"
+      data-test="clearSearchButton"
+      icon="true"
+      tag="button"
+      type="button"
+    >
+      <v-icon-stub>
+        clear
+      </v-icon-stub>
+    </v-btn-stub>
+    <span>
+      
+    </span>
+  </v-tooltip-stub>
+</v-toolbar-stub>
+`;

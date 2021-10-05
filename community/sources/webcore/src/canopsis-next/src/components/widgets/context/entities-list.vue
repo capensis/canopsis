@@ -15,7 +15,7 @@
     )
       template(slot="toolbar", slot-scope="props")
         v-flex
-          c-advanced-search(
+          c-advanced-search-field(
             :query.sync="query",
             :columns="columns",
             :tooltip="$t('search.contextAdvancedSearch')"

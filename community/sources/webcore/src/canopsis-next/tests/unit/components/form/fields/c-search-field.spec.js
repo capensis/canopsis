@@ -12,21 +12,38 @@ const mocks = {
 
 const stubs = {
   'v-btn': {
-    template: '<button class="v-btn" @click="$listeners.click"><slot></slot></button>',
+    template: `
+      <button
+        class="v-btn"
+        @click="$listeners.click"
+      >
+        <slot />
+      </button>
+    `,
   },
   'v-text-field': {
     props: ['value'],
-    template: '<input class="v-text-field" :value="value" @input="$listeners.input($event.target.value)" @keyup="$listeners.keyup" />',
+    template: `
+      <input
+        class="v-text-field"
+        :value="value"
+        @input="$emit('input', $event.target.value)"
+        @keydown="$emit('keydown', $event)"
+      />
+    `,
   },
 };
 
 localVue.use(Vuetify);
 
 const factory = (options = {}) => shallowMount(CSearchField, {
-  localVue, mocks, stubs, ...options,
+  localVue,
+  mocks,
+  stubs,
+  ...options,
 });
 
-describe('SearchField', () => {
+describe('c-search-field', () => {
   it('Not empty value was pass into props and it was applied to input field', () => {
     const value = generateString();
 
@@ -34,6 +51,21 @@ describe('SearchField', () => {
     const input = wrapper.find('input.v-text-field');
 
     expect(input.element.value).toBe(value);
+  });
+
+  it('Input value was update, after prop change and it was applied to input field', async () => {
+    const value = generateString();
+    const newValue = generateString();
+
+    const wrapper = factory({ propsData: { value } });
+
+    wrapper.setProps({ value: newValue });
+
+    await localVue.nextTick();
+
+    const input = wrapper.find('input.v-text-field');
+
+    expect(input.element.value).toBe(newValue);
   });
 
   it('Set value into input element', () => {
@@ -60,34 +92,37 @@ describe('SearchField', () => {
     expect(wrapper.emitted('submit')).toBeUndefined();
   });
 
-  it('Keyup with enter key on input element', () => {
+  it('Keyup with enter key on input element', async () => {
     const value = generateString();
 
     const wrapper = factory({ propsData: { value } });
     const input = wrapper.find('input.v-text-field');
 
-    input.trigger('keyup.enter');
+    await input.trigger('keydown.enter');
 
-    expect(wrapper.emitted('submit')).toBeTruthy();
-    expect(wrapper.emitted('submit').length).toBe(1);
+    const submitEvents = wrapper.emitted('submit');
+
+    expect(submitEvents).toBeTruthy();
+    expect(submitEvents.length).toBe(1);
   });
 
-  it('Submit search button is the second element', () => {
+  it('Submit search button is the first button', () => {
     const value = generateString();
 
     const wrapper = factory({ propsData: { value } });
-    const submitButton = wrapper.find('.v-btn:nth-child(2)');
+    const submitButton = wrapper.findAll('.v-btn').at(0);
     const submitIcon = submitButton.find('v-icon-stub');
 
     expect(submitIcon).toBeTruthy();
     expect(submitIcon.text()).toBe('search');
   });
 
-  it('Clear search button is the third element', () => {
+  it('Clear search button is the second button', () => {
     const value = generateString();
 
     const wrapper = factory({ propsData: { value } });
-    const clearButton = wrapper.find('.v-btn:nth-child(3)');
+    const clearButton = wrapper.findAll('.v-btn').at(1);
+
     const clearIcon = clearButton.find('v-icon-stub');
 
     expect(clearIcon).toBeTruthy();
@@ -98,7 +133,7 @@ describe('SearchField', () => {
     const value = generateString();
 
     const wrapper = factory({ propsData: { value } });
-    const submitButton = wrapper.find('.v-btn:nth-child(2)');
+    const submitButton = wrapper.findAll('.v-btn').at(0);
 
     submitButton.trigger('click');
 
@@ -110,16 +145,29 @@ describe('SearchField', () => {
     const value = generateString();
 
     const wrapper = factory({ propsData: { value } });
-    const clearButton = wrapper.find('.v-btn:nth-child(3)');
+    const clearButton = wrapper.findAll('.v-btn').at(1);
 
     clearButton.trigger('click');
 
-    expect(wrapper.emitted('input')).toBeTruthy();
-    expect(wrapper.emitted('input').length).toBe(1);
-    expect(wrapper.emitted('input')[0]).toEqual(['']);
+    const inputEvents = wrapper.emitted('input');
+    const clearEvents = wrapper.emitted('clear');
 
-    expect(wrapper.emitted('clear')).toBeTruthy();
-    expect(wrapper.emitted('clear').length).toBe(1);
+    expect(inputEvents).toBeTruthy();
+    expect(inputEvents).toHaveLength(1);
+    expect(inputEvents[0]).toEqual(['']);
+
+    expect(clearEvents).toBeTruthy();
+    expect(clearEvents.length).toBe(1);
     expect(wrapper.emittedByOrder().map(e => e.name)).toEqual(['input', 'clear']);
+  });
+
+  it('Renders `c-search-field` correctly', () => {
+    const wrapper = shallowMount(CSearchField, {
+      localVue,
+      mocks,
+      propsData: { value: 'c-search-field' },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
   });
 });

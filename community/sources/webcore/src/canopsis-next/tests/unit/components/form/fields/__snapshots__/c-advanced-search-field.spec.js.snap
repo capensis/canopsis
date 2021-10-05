@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-advanced-search-field Renders \`c-advanced-search-field\` correctly 1`] = `
+<c-search-field-stub
+  value="c-advanced-search-field"
+>
+  <v-tooltip-stub
+    bottom="true"
+    closedelay="200"
+    contentclass=""
+    debounce="0"
+    fixed="true"
+    maxwidth="auto"
+    nudgebottom="0"
+    nudgeleft="0"
+    nudgeright="0"
+    nudgetop="0"
+    nudgewidth="0"
+    opendelay="200"
+    tag="span"
+  >
+    <v-btn-stub
+      activeclass="v-btn--active"
+      icon="true"
+      tag="button"
+      type="button"
+    >
+      <v-icon-stub>
+        help_outline
+      </v-icon-stub>
+    </v-btn-stub>
+    <div>
+      
+      
+      <span>
+        Tooltip content
+      </span>
+      
+    
+    </div>
+  </v-tooltip-stub>
+</c-search-field-stub>
+`;
