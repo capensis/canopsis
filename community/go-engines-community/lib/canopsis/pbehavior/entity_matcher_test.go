@@ -10,72 +10,6 @@ import (
 	"testing"
 )
 
-func TestEntityMatcher_Match_GivenMatchedEntity_ShouldReturnTrue(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	mockCursor := mock_mongo.NewMockCursor(ctrl)
-	mockCursor.EXPECT().Next(gomock.Any()).Return(true)
-	mockCursor.EXPECT().Close(gomock.Any())
-	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockDbCollection.
-		EXPECT().
-		Find(gomock.Any(), gomock.Eq([]bson.M{
-			{"$match": bson.M{"_id": "testid"}},
-			{"$match": bson.M{"name": "resource1"}},
-		})).
-		Return(mockCursor, nil)
-	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
-	mockDbClient.
-		EXPECT().
-		Collection(mongo.EntityMongoCollection).
-		Return(mockDbCollection)
-	entityID := "testid"
-
-	m := NewEntityMatcher(mockDbClient)
-	res, err := m.Match(context.Background(), entityID, "{\"name\": \"resource1\"}")
-
-	if err != nil {
-		t.Errorf("expected not error but got %v", err)
-	}
-
-	if !res {
-		t.Errorf("expected %v but got %v", true, res)
-	}
-}
-
-func TestEntityMatcher_Match_GivenNotMatchedEntity_ShouldReturnFalse(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	mockCursor := mock_mongo.NewMockCursor(ctrl)
-	mockCursor.EXPECT().Next(gomock.Any()).Return(false)
-	mockCursor.EXPECT().Close(gomock.Any())
-	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockDbCollection.
-		EXPECT().
-		Find(gomock.Any(), gomock.Eq([]bson.M{
-			{"$match": bson.M{"_id": "testid"}},
-			{"$match": bson.M{"name": "resource1"}},
-		})).
-		Return(mockCursor, nil)
-	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
-	mockDbClient.
-		EXPECT().
-		Collection(mongo.EntityMongoCollection).
-		Return(mockDbCollection)
-	entityID := "testid"
-
-	m := NewEntityMatcher(mockDbClient)
-	res, err := m.Match(context.Background(), entityID, "{\"name\": \"resource1\"}")
-
-	if err != nil {
-		t.Errorf("expected not error but got %v", err)
-	}
-
-	if res {
-		t.Errorf("expected %v but got %v", false, res)
-	}
-}
-
 func TestEntityMatcher_MatchAll(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -114,7 +48,7 @@ func TestEntityMatcher_MatchAll(t *testing.T) {
 	firstCall := mockDbCollection.
 		EXPECT().
 		Aggregate(gomock.Any(), gomock.Eq([]bson.M{
-			{"$match": bson.M{"_id": bson.M{"$in": []string{entityID}}}},
+			{"$match": bson.M{"_id": entityID}},
 			{"$facet": bson.M{
 				"pbh1": []bson.M{{"$match": bson.M{"name": "resource1"}}},
 				"pbh2": []bson.M{{"$match": bson.M{"name": "resource2"}}},
@@ -146,7 +80,7 @@ func TestEntityMatcher_MatchAll(t *testing.T) {
 	secondCall := mockDbCollection.
 		EXPECT().
 		Aggregate(gomock.Any(), gomock.Eq([]bson.M{
-			{"$match": bson.M{"_id": bson.M{"$in": []string{entityID}}}},
+			{"$match": bson.M{"_id": entityID}},
 			{"$facet": bson.M{
 				"pbh6": []bson.M{{"$match": bson.M{"name": "resource6"}}},
 				"pbh7": []bson.M{{"$match": bson.M{"name": "resource7"}}},

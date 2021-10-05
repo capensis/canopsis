@@ -1,6 +1,6 @@
-import ChartAnnotationPlugin from '@/externals/chart/plugins/annotation';
+import { ChartAnnotationPlugin } from '@/externals/chart/plugins/annotation';
 
-export default {
+export const chartAnnotationMixin = {
   created() {
     this.addPlugin(ChartAnnotationPlugin);
   },

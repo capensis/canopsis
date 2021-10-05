@@ -23,7 +23,6 @@ La plupart des moteurs « nouvelle génération » de Canopsis sont écrits en
 | [`engine-correlation`](moteur-correlation.md) | Applique et gère les règles de corrélation | ✅ |
 | [`engine-dynamic-infos`](moteur-dynamic-infos.md)| Enrichit les alarmes | ✅ |
 | [`engine-fifo`](moteur-fifo.md) | Garantit la cohérence et l'ordre des évènements entrant dans Canopsis | |
-| [`engine-heartbeat`](moteur-heartbeat.md)  | Surveille certaines entités et lève des alarmes en cas d'absence d'information | |
 | [`engine-pbehavior`](moteur-pbehavior.md) | Gère les comportements périodiques | |
 | [`engine-service`](moteur-service.md)| Calcule les états des [services](../../guide-utilisation/vocabulaire/index.md#service) | |
 | [`engine-webhook`](moteur-webhook.md) | Gère le système de webhooks vers des services externes | ✅ |
@@ -56,6 +55,14 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 
 | Moteur obsolète | Remplacé par |
 |-----------------|--------------|
+| `acknowledgement` (Python) | `engine-axe` (Go) |
+| `alerts` (Python) | `engine-axe`(Go)  |
+| `cancel` (Python) | `engine-axe` (Go) |
+| `cleaner_alerts` (Python) | `engine-che` (Go) |
+| `cleaner_events` (Python) | `engine-che` (Go) |
+| `context` (Python) | `engine-che` (Go) |
+| `context-graph` (Python) | `engine-che` (Go) |
+| `engine-heartbeat` (Go) | Utilisation des Idle rules |
 | `engine-stat` (Go) | `statsng` (Python) ⇒ n/a |
 | `engine-watcher` (Go) | `engine-service` (Go) |
 | `metric` (Python) | n/a |

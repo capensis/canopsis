@@ -13,7 +13,6 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchRoleWithoutStore: 'fetchItemWithoutStore',
       fetchRolesListWithoutStore: 'fetchListWithoutStore',
       fetchRolesList: 'fetchList',
       removeRole: 'remove',

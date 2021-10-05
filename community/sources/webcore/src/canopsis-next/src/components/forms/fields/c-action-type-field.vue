@@ -12,7 +12,7 @@
 <script>
 import { ACTION_TYPES, CAT_ACTION_TYPES } from '@/constants';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
   inject: ['$validator'],

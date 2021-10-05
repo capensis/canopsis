@@ -135,6 +135,14 @@ func (c *baseConnection) IsClosed() bool {
 	c.closedM.Lock()
 	defer c.closedM.Unlock()
 
+	if c.closed {
+		return c.closed
+	}
+
+	if c.amqpConn.IsClosed() {
+		c.closed = true
+	}
+
 	return c.closed
 }
 
@@ -338,6 +346,17 @@ func (ch *baseChannel) QueuePurge(name string, noWait bool) (int, error) {
 	err := ch.retry(func() error {
 		var err error
 		res, err = ch.amqpCh.QueuePurge(name, noWait)
+		return err
+	})
+
+	return res, err
+}
+
+func (ch *baseChannel) QueueInspect(name string) (amqp.Queue, error) {
+	var res amqp.Queue
+	err := ch.retry(func() error {
+		var err error
+		res, err = ch.amqpCh.QueueInspect(name)
 		return err
 	})
 
