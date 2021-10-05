@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
@@ -34,6 +35,10 @@ type API interface {
 	AddWorker(string, Worker)
 	// AddNoRoute adds handlers for no roure.
 	AddNoRoute([]gin.HandlerFunc)
+	// SetWebsocketHub sets websocket hub.
+	SetWebsocketHub(websocket.Hub)
+	// GetWebsocketHub gets websocket hub.
+	GetWebsocketHub() websocket.Hub
 }
 
 type api struct {
@@ -44,6 +49,8 @@ type api struct {
 	noRouteHandlers []gin.HandlerFunc
 	workers         map[string]Worker
 	waitGroup       sync.WaitGroup
+
+	websocketHub websocket.Hub
 }
 
 // New creates new api.
@@ -108,6 +115,13 @@ func (a *api) Run(ctx context.Context) (resErr error) {
 	}
 
 	return workersGroup.Wait()
+}
+
+func (a *api) SetWebsocketHub(v websocket.Hub) {
+	a.websocketHub = v
+}
+func (a *api) GetWebsocketHub() websocket.Hub {
+	return a.websocketHub
 }
 
 func (a *api) registerRoutes() http.Handler {

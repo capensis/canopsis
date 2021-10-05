@@ -130,6 +130,8 @@ func RegisterRoutes(
 	jobQueue contextgraph.JobQueue,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
 	filesRoot string,
+	websocketHub websocket.Hub,
+	broadcastMessageChan chan<- bool,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -140,6 +142,7 @@ func RegisterRoutes(
 		security.GetTokenStore(),
 		security.GetAuthProviders(),
 		security.GetSessionStore(),
+		websocketHub,
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
 		security.GetCookieOptions().Secure,
@@ -148,6 +151,8 @@ func RegisterRoutes(
 	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
+		websocketHub,
+		security.GetTokenStore(),
 		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())
@@ -182,9 +187,10 @@ func RegisterRoutes(
 	{
 		protected.Use(authMiddleware...)
 
+		protected.Group("/ws").GET("", websocket.NewApi(websocketHub).Handler)
+
 		protected.GET("/account/me", account.NewApi(account.NewStore(dbClient)).Me)
 		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
-		protected.GET("/sessions-count", sessionauthApi.GetSessionsCount())
 		protected.GET("/file-access", authApi.GetFileAccess)
 
 		viewStatsRouter := protected.Group("/view-stats")
@@ -756,6 +762,7 @@ func RegisterRoutes(
 		// broadcast message API
 		broadcastMessageApi := broadcastmessage.NewApi(
 			broadcastmessage.NewStore(dbClient),
+			broadcastMessageChan,
 			actionLogger,
 		)
 		broadcastMessageRouter := protected.Group("/broadcast-message")
@@ -1075,17 +1082,4 @@ func GetProxy(
 		middleware.ProxyAuthorize(enforcer, accessConfig),
 		ReverseProxyHandler(),
 	)
-}
-
-func RegisterWebsocketRoutes(
-	router gin.IRouter,
-	hub websocket.Hub,
-	security Security,
-) {
-	authMiddleware := security.GetWebsocketAuthMiddleware()
-	protected := router.Group("/api/v4/ws")
-	{
-		protected.Use(authMiddleware...)
-		protected.GET("", websocket.NewApi(hub).Handler)
-	}
 }

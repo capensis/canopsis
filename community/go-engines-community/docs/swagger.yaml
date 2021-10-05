@@ -2876,11 +2876,6 @@ definitions:
       links:
         type: object
     type: object
-  sessionauth.sessionsCountResponse:
-    properties:
-      count:
-        type: integer
-    type: object
   statesettings.JUnitThresholds:
     properties:
       errors:
@@ -7397,29 +7392,6 @@ paths:
       summary: Update scenario by id
       tags:
       - scenarios
-  /sessions-count:
-    get:
-      consumes:
-      - application/json
-      description: Get counts of active sessions
-      operationId: auth-get-session-counts
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/sessionauth.sessionsCountResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Get counts of active sessions
-      tags:
-      - auth
   /state-settings:
     get:
       consumes:
