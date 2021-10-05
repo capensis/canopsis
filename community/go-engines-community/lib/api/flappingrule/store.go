@@ -55,7 +55,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 		Duration:       request.Duration,
 		AlarmPatterns:  request.AlarmPatterns,
 		EntityPatterns: request.EntityPatterns,
-		Priority:       *request.Priority,
+		Priority:       request.Priority,
 		Author:         request.Author,
 		Created:        now,
 		Updated:        now,
@@ -64,7 +64,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 		return nil, err
 	}
 
-	err = s.updateFollowingPriorities(ctx, id, *request.Priority)
+	err = s.updateFollowingPriorities(ctx, id, request.Priority)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +150,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 			Duration:       request.Duration,
 			AlarmPatterns:  request.AlarmPatterns,
 			EntityPatterns: request.EntityPatterns,
-			Priority:       *request.Priority,
+			Priority:       request.Priority,
 			Author:         request.Author,
 			Created:        model.Created,
 			Updated:        now,
@@ -160,8 +160,8 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		return nil, err
 	}
 
-	if model.Priority != *request.Priority {
-		err := s.updateFollowingPriorities(ctx, request.ID, *request.Priority)
+	if model.Priority != request.Priority {
+		err := s.updateFollowingPriorities(ctx, request.ID, request.Priority)
 		if err != nil {
 			return nil, err
 		}

@@ -387,12 +387,13 @@ func (a Alarm) Closable(d time.Duration) bool {
 		return false
 	}
 
+	alarmState := a.Value.State.Value
 	ls, err := a.Value.Steps.Last()
-	if err == nil && a.Value.State.Value == AlarmStateOK && ls.Timestamp.Time.Before(time.Now().Add(-d)) {
+	if err == nil && alarmState == AlarmStateOK && ls.Timestamp.Time.Before(time.Now().Add(-d)) {
 		return true
 	}
 
-	if err != nil && a.Value.State.Value != AlarmStateOK {
+	if err != nil && alarmState != AlarmStateOK {
 		log.Printf("warning: alarm %s has empty steps but is not OK", a.ID)
 	}
 

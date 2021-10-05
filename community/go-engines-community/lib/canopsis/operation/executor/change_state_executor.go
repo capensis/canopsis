@@ -37,11 +37,12 @@ func (e *changeStateExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
-	if alarm.Value.State.Value == types.AlarmStateOK {
+	currentState := alarm.Value.State.Value
+	if currentState == types.AlarmStateOK {
 		return "", fmt.Errorf("cannot change ok state")
 	}
 
-	if alarm.Value.State.Value == params.State {
+	if currentState == params.State {
 		return "", nil
 	}
 

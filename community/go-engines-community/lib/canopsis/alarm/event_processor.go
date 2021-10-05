@@ -461,8 +461,11 @@ func (s *eventProcessor) processMetaAlarmCreateEvent(ctx context.Context, event 
 
 		for i := 0; i < len(childAlarms); i++ {
 			c := childAlarms[i]
-			if c.Value.State != nil && c.Value.State.Value > worstState {
-				worstState = c.Value.State.Value
+			if c.Value.State != nil {
+				childState := c.Value.State.Value
+				if childState > worstState {
+					worstState = childState
+				}
 			}
 		}
 		event.State = worstState
@@ -678,15 +681,16 @@ func (s *eventProcessor) updateMetaChildrenState(ctx context.Context, event *typ
 	updatedParents := make([]types.Alarm, 0, len(parents))
 	for _, metaAlarm := range parents {
 		maCurrentState := metaAlarm.Alarm.Value.State.Value
-		if event.Alarm.Value.State.Value > maCurrentState {
-			err := UpdateAlarmState(&metaAlarm.Alarm, metaAlarm.Entity, event.Alarm.Value.LastUpdateDate, event.Alarm.Value.State.Value, metaAlarm.Alarm.Value.Output, s.alarmStatusService)
+		alarmState := event.Alarm.Value.State.Value
+		if alarmState > maCurrentState {
+			err := UpdateAlarmState(&metaAlarm.Alarm, metaAlarm.Entity, event.Alarm.Value.LastUpdateDate, alarmState, metaAlarm.Alarm.Value.Output, s.alarmStatusService)
 			if err != nil {
 				s.logger.Error().Err(err).Msgf("error changestate meta-alarm from children %+v", event.Alarm)
 				return
 			}
 
 			updatedParents = append(updatedParents, metaAlarm.Alarm)
-		} else if event.Alarm.Value.State.Value < maCurrentState {
+		} else if alarmState < maCurrentState {
 			err := s.updateMetaAlarmToWorstState(ctx, &metaAlarm.Alarm, metaAlarm.Entity, []*types.Alarm{event.Alarm})
 			if err != nil {
 				s.logger.Error().Err(err).Msgf("error changestate meta-alarm from children %+v", event.Alarm)

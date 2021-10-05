@@ -13,7 +13,7 @@ type EditRequest struct {
 	Duration       types.DurationWithUnit    `json:"duration" binding:"required"`
 	AlarmPatterns  pattern.AlarmPatternList  `json:"alarm_patterns"`
 	EntityPatterns pattern.EntityPatternList `json:"entity_patterns"`
-	Priority       *int                      `json:"priority" binding:"required,min=0"`
+	Priority       int                       `json:"priority" binding:"required,gt=0"`
 	Author         string                    `json:"author" swaggerignore:"true"`
 }
 

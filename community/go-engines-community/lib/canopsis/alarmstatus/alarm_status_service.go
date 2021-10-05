@@ -58,8 +58,11 @@ func (s *service) ComputeStatus(alarm types.Alarm, entity types.Entity) types.Cp
 		return types.AlarmStatusStealthy
 	}
 
-	if alarm.Value.State != nil && alarm.Value.State.Value != types.AlarmStateOK {
-		return types.AlarmStatusOngoing
+	if alarm.Value.State != nil {
+		alarmState := alarm.Value.State.Value
+		if alarmState != types.AlarmStateOK {
+			return types.AlarmStatusOngoing
+		}
 	}
 
 	return types.AlarmStatusOff
