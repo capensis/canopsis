@@ -44,6 +44,9 @@
       "models_exploitation_idleRules": {
         "checksum": 15
       },
+      "models_healthcheck": {
+        "checksum": 1
+      },
       "models_notification_instructionStats": {
         "checksum": 15
       },
@@ -472,10 +475,6 @@
       },
       "models_remediationConfiguration": {
         "checksum": 15,
-        "desc": ""
-      },
-      "models_engine": {
-        "checksum": 1,
         "desc": ""
       },
       "common_variablesHelp": {

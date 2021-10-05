@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 	"sort"
-	"sync"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
-	"github.com/rs/zerolog"
 	"github.com/teambition/rrule-go"
+	"golang.org/x/sync/errgroup"
 )
 
 const (
@@ -20,13 +19,13 @@ const (
 	computePbehaviorsStep
 )
 
-const DefaultPoolSize = 10
+const DefaultPoolSize = 100
 
 // TypeComputer is used to compute periodical behavior timespans for provided interval.
 type TypeComputer interface {
 	// Compute calculates types for provided timespan.
-	Compute(ctx context.Context, span timespan.Span) (*ComputeResult, error)
-	Recompute(ctx context.Context, span timespan.Span, pbehaviorID string) (*ComputedPbehavior, error)
+	Compute(ctx context.Context, span timespan.Span) (ComputeResult, error)
+	Recompute(ctx context.Context, span timespan.Span, pbehaviorID string) (ComputedPbehavior, error)
 }
 
 // typeComputer computes periodical behavior timespans for provided interval.
@@ -34,7 +33,6 @@ type typeComputer struct {
 	modelProvider ModelProvider
 	// workerPoolSize restricts amount of goroutine which can be used during data computing.
 	workerPoolSize int
-	logger         zerolog.Logger
 }
 
 // ComputedPbehavior represents all computed types for periodical behavior.
@@ -63,7 +61,7 @@ type computedType struct {
 type ComputeResult struct {
 	computedPbehaviors map[string]ComputedPbehavior
 	typesByID          map[string]*Type
-	defaultTypes       map[string]string
+	defaultActiveType  string
 }
 
 // models contains all required models for computing.
@@ -77,7 +75,6 @@ type models struct {
 // NewTypeComputer creates new type resolver.
 func NewTypeComputer(
 	modelProvider ModelProvider,
-	logger zerolog.Logger,
 	workerPoolSize ...int,
 ) TypeComputer {
 	poolSize := DefaultPoolSize
@@ -90,7 +87,6 @@ func NewTypeComputer(
 
 	return &typeComputer{
 		modelProvider:  modelProvider,
-		logger:         logger,
 		workerPoolSize: poolSize,
 	}
 }
@@ -99,14 +95,13 @@ func NewTypeComputer(
 type pbhComputeResult struct {
 	id  string
 	res ComputedPbehavior
-	err error
 }
 
 // Compute fetches models from storage and computes data.
 func (c *typeComputer) Compute(
 	ctx context.Context,
 	span timespan.Span,
-) (*ComputeResult, error) {
+) (ComputeResult, error) {
 	stepChan := make(chan int, 1)
 	defer close(stepChan)
 	stepChan <- getPbehaviorsStep
@@ -114,21 +109,15 @@ func (c *typeComputer) Compute(
 	var (
 		pbehaviorsByID map[string]*PBehavior
 		models         models
-		computed       *ComputeResult
+		computed       ComputeResult
 		res            map[string]ComputedPbehavior
 	)
-
-	logPrefix := "TypeComputer::Compute:"
-	c.logger.Debug().Msgf("%s compute started", logPrefix)
-	defer c.logger.Debug().Msgf("%s compute finished", logPrefix)
 
 	for {
 		select {
 		case <-ctx.Done():
-			c.logger.Debug().Msgf("%s received STOP SIGNAL - abort", logPrefix)
-			return nil, ctx.Err()
+			return computed, nil
 		case step := <-stepChan:
-			c.logger.Debug().Msgf("%s step %v - begin", logPrefix, step)
 			nextStep := -1
 			var err error
 
@@ -136,6 +125,7 @@ func (c *typeComputer) Compute(
 			case getPbehaviorsStep:
 				pbehaviorsByID, err = c.modelProvider.GetEnabledPbehaviors(ctx)
 				if err != nil {
+					err = fmt.Errorf("cannot fetch pbehaviors: %w", err)
 					break
 				}
 
@@ -143,11 +133,13 @@ func (c *typeComputer) Compute(
 			case getTypesStep:
 				models.typesByID, err = c.modelProvider.GetTypes(ctx)
 				if err != nil {
+					err = fmt.Errorf("cannot fetch pbehavior types: %w", err)
 					break
 				}
 
 				models.defaultTypes, err = resolveDefaultTypes(models.typesByID)
 				if err != nil {
+					err = fmt.Errorf("cannot fetch defult pbehavior types: %w", err)
 					break
 				}
 
@@ -155,6 +147,7 @@ func (c *typeComputer) Compute(
 			case getExceptionsStep:
 				models.exceptionsByID, err = c.modelProvider.GetExceptions(ctx)
 				if err != nil {
+					err = fmt.Errorf("cannot fetch pbehavior exeptions: %w", err)
 					break
 				}
 
@@ -162,29 +155,28 @@ func (c *typeComputer) Compute(
 			case getReasonsStep:
 				models.reasonsByID, err = c.modelProvider.GetReasons(ctx)
 				if err != nil {
+					err = fmt.Errorf("cannot fetch pbehavior reasons: %w", err)
 					break
 				}
 
 				nextStep = computePbehaviorsStep
 			case computePbehaviorsStep:
-				res, err = c.computePbehaviors(ctx, span, pbehaviorsByID, models)
+				res, err = c.runWorkers(ctx, span, pbehaviorsByID, models)
 				if err != nil {
 					break
 				}
 
-				computed = &ComputeResult{
+				computed = ComputeResult{
 					computedPbehaviors: res,
 					typesByID:          models.typesByID,
-					defaultTypes:       models.defaultTypes,
+					defaultActiveType:  models.defaultTypes[TypeActive],
 				}
 			}
 
 			if err != nil {
-				c.logger.Debug().Msgf("%s step %v - error: %v", logPrefix, step, err)
-				return nil, err
+				return computed, err
 			}
 
-			c.logger.Debug().Msgf("%s step %v - end", logPrefix, step)
 			if nextStep == -1 {
 				return computed, nil
 			}
@@ -198,30 +190,31 @@ func (c *typeComputer) Recompute(
 	ctx context.Context,
 	span timespan.Span,
 	pbehaviorID string,
-) (*ComputedPbehavior, error) {
+) (ComputedPbehavior, error) {
 	stepChan := make(chan int, 1)
 	defer close(stepChan)
 	stepChan <- getPbehaviorsStep
 
 	var pbehavior *PBehavior
 	var models models
-	var computed *ComputedPbehavior
-	logPrefix := fmt.Sprintf("TypeComputer::Recompute:%s:", pbehaviorID)
+	var computed ComputedPbehavior
 
 	for {
 		select {
 		case <-ctx.Done():
-			c.logger.Debug().Msgf("%s received STOP SIGNAL - abort", logPrefix)
-			return nil, ctx.Err()
+			return computed, nil
 		case step := <-stepChan:
-			c.logger.Debug().Msgf("%s step %v - begin", logPrefix, step)
 			nextStep := -1
 			var err error
 
 			switch step {
 			case getPbehaviorsStep:
 				pbehavior, err = c.modelProvider.GetEnabledPbehavior(ctx, pbehaviorID)
-				if err != nil || pbehavior == nil {
+				if err != nil {
+					err = fmt.Errorf("cannot fetch pbehavior: %w", err)
+					break
+				}
+				if pbehavior == nil {
 					break
 				}
 
@@ -229,11 +222,13 @@ func (c *typeComputer) Recompute(
 			case getTypesStep:
 				models.typesByID, err = c.modelProvider.GetTypes(ctx)
 				if err != nil {
+					err = fmt.Errorf("cannot fetch pbehavior types: %w", err)
 					break
 				}
 
 				models.defaultTypes, err = resolveDefaultTypes(models.typesByID)
 				if err != nil {
+					err = fmt.Errorf("cannot fetch default pbehavior types: %w", err)
 					break
 				}
 
@@ -241,6 +236,7 @@ func (c *typeComputer) Recompute(
 			case getExceptionsStep:
 				models.exceptionsByID, err = c.modelProvider.GetExceptions(ctx)
 				if err != nil {
+					err = fmt.Errorf("cannot fetch pbehavior exceptions: %w", err)
 					break
 				}
 
@@ -248,6 +244,7 @@ func (c *typeComputer) Recompute(
 			case getReasonsStep:
 				models.reasonsByID, err = c.modelProvider.GetReasons(ctx)
 				if err != nil {
+					err = fmt.Errorf("cannot fetch pbehavior reasons: %w", err)
 					break
 				}
 
@@ -257,11 +254,9 @@ func (c *typeComputer) Recompute(
 			}
 
 			if err != nil {
-				c.logger.Debug().Msgf("%s step %v - error: %v", logPrefix, step, err)
-				return nil, err
+				return computed, err
 			}
 
-			c.logger.Debug().Msgf("%s step %v - end", logPrefix, step)
 			if nextStep == -1 {
 				return computed, nil
 			}
@@ -300,96 +295,59 @@ func resolveDefaultTypes(typesByID map[string]*Type) (map[string]string, error) 
 	return defaultTypes, nil
 }
 
-// computePbehaviors calculates Types for provided date concurrently.
-func (c *typeComputer) computePbehaviors(
-	ctx context.Context,
-	span timespan.Span,
-	pbehaviorsByID map[string]*PBehavior,
-	models models,
-) (map[string]ComputedPbehavior, error) {
-	resCh := c.runWorkers(ctx, span, pbehaviorsByID, models)
-	res := make(map[string]ComputedPbehavior)
-	var err error
-
-	for v := range resCh {
-		if v.err == nil {
-			res[v.id] = v.res
-		} else {
-			err = v.err
-		}
-	}
-
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
-}
-
 // runWorkers creates res chan and runs workers to fill it.
 func (c *typeComputer) runWorkers(
 	ctx context.Context,
 	span timespan.Span,
 	pbehaviorsByID map[string]*PBehavior,
 	models models,
-) <-chan pbhComputeResult {
+) (map[string]ComputedPbehavior, error) {
 	resCh := make(chan pbhComputeResult)
 	workerChan := c.createWorkerCh(ctx, pbehaviorsByID)
+	g, ctx := errgroup.WithContext(ctx)
 
-	go func() {
-		defer close(resCh)
-		wg := sync.WaitGroup{}
+	for worker := 0; worker < c.workerPoolSize; worker++ {
+		g.Go(func() error {
+			for {
+				select {
+				case <-ctx.Done():
+					return nil
+				case p, ok := <-workerChan:
+					if !ok {
+						return nil
+					}
 
-		for worker := 0; worker < c.workerPoolSize; worker++ {
-			wg.Add(1)
+					res, err := c.computePbehavior(p, span, models)
+					if err != nil {
+						return err
+					}
 
-			go func(ctx context.Context, id int) {
-				workerCtx, cancel := context.WithCancel(ctx)
-				defer cancel()
-				defer wg.Done()
-
-				logPrefix := fmt.Sprintf("TypeComputer::Compute: step %v - worker %d", computePbehaviorsStep, id)
-				c.logger.Debug().Msgf("%s started\n", logPrefix)
-				defer c.logger.Debug().Msgf("%s finished\n", logPrefix)
-
-				for {
-					select {
-					case <-workerCtx.Done():
+					if len(res.Types) > 0 {
 						resCh <- pbhComputeResult{
-							err: workerCtx.Err(),
+							id:  p.ID,
+							res: res,
 						}
-						c.logger.Debug().Msgf("%s context was cancelled\n", logPrefix)
-						return
-					case p, ok := <-workerChan:
-						if !ok {
-							return
-						}
-
-						c.logger.Debug().Msgf("%s received message from worker channel\n", logPrefix)
-						res, err := c.computePbehavior(p, span, models)
-						if err != nil {
-							resCh <- pbhComputeResult{
-								err: err,
-							}
-						} else if res != nil {
-							resCh <- pbhComputeResult{
-								id:  p.ID,
-								res: *res,
-							}
-
-							c.logger.Debug().Msgf("%s send result to channel\n", logPrefix)
-						}
-
-						c.logger.Debug().Msgf("%s finished message processing\n", logPrefix)
 					}
 				}
-			}(ctx, worker)
-		}
+			}
+		})
+	}
 
-		wg.Wait()
+	go func() {
+		_ = g.Wait() // check error in wrapper func
+		close(resCh)
 	}()
 
-	return resCh
+	res := make(map[string]ComputedPbehavior)
+	for v := range resCh {
+		res[v.id] = v.res
+	}
+
+	if err := g.Wait(); err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
 // createWorkerCh creates worker chan and fills it.
@@ -398,15 +356,12 @@ func (c *typeComputer) createWorkerCh(ctx context.Context, pbehaviorsByID map[st
 
 	go func() {
 		defer close(workerChan)
-		defer c.logger.Debug().Msgf("TypeComputer::Compute: %v - send is over, waiting workers to complete jobs\n", computePbehaviorsStep)
 
 		for _, pbehavior := range pbehaviorsByID {
 			select {
 			case <-ctx.Done():
-				c.logger.Debug().Msgf("TypeComputer::Compute: %v - stop workers\n", computePbehaviorsStep)
 				return
 			default:
-				c.logger.Debug().Msgf("TypeComputer::Compute: %v - send a work to worker channel\n", computePbehaviorsStep)
 				workerChan <- pbehavior
 			}
 		}
@@ -420,7 +375,7 @@ func (c *typeComputer) computePbehavior(
 	pbehavior *PBehavior,
 	span timespan.Span,
 	models models,
-) (*ComputedPbehavior, error) {
+) (ComputedPbehavior, error) {
 	var event Event
 	location := span.From().Location()
 	var stop time.Time
@@ -436,7 +391,7 @@ func (c *typeComputer) computePbehavior(
 	} else {
 		rOption, err := rrule.StrToROption(pbehavior.RRule)
 		if err != nil {
-			return nil, err
+			return ComputedPbehavior{}, err
 		}
 
 		event = NewRecEvent(pbehavior.Start.In(location), stop, rOption)
@@ -444,17 +399,17 @@ func (c *typeComputer) computePbehavior(
 
 	resByExdate, err := c.computeByExdate(pbehavior, event, span, models)
 	if err != nil {
-		return nil, err
+		return ComputedPbehavior{}, err
 	}
 
 	resByRrule, err := c.computeByRrule(pbehavior, event, span)
 	if err != nil {
-		return nil, err
+		return ComputedPbehavior{}, err
 	}
 
 	resByActiveType, err := c.computeByActiveType(pbehavior, event, span, models)
 	if err != nil {
-		return nil, err
+		return ComputedPbehavior{}, err
 	}
 
 	res := resByExdate
@@ -468,7 +423,7 @@ func (c *typeComputer) computePbehavior(
 			reasonName = reason.Name
 		}
 
-		return &ComputedPbehavior{
+		return ComputedPbehavior{
 			Filter:  pbehavior.Filter,
 			Name:    pbehavior.Name,
 			Reason:  reasonName,
@@ -477,7 +432,7 @@ func (c *typeComputer) computePbehavior(
 		}, nil
 	}
 
-	return nil, nil
+	return ComputedPbehavior{}, nil
 }
 
 // computeByExdate returns all time spans for pbehavior on the date which are defined by exdate.

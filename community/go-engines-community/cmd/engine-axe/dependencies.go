@@ -229,8 +229,10 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 				idlerule.NewRuleAdapter(dbClient),
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
-				redis.NewStore(pbhRedisClient, "pbehaviors", 0),
-				pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger),
+				pbehavior.NewEntityTypeResolver(
+					pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()),
+					pbehavior.NewComputedEntityMatcher(dbClient, pbhRedisClient, json.NewEncoder(), json.NewDecoder()),
+				),
 				json.NewEncoder(),
 				logger,
 			),
