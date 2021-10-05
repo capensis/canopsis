@@ -33,7 +33,7 @@ import { cloneDeep } from 'lodash';
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldDateInterval from './fields/stats/date-interval.vue';

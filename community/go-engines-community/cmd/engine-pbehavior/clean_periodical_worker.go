@@ -59,9 +59,9 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) error {
 	deleted, err := w.PbehaviorCleaner.Clean(ctx, d)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot accumulate week statistics")
+	} else if deleted > 0 {
+		w.Logger.Info().Int64("count", deleted).Msg("pbehaviors were deleted")
 	}
-
-	w.Logger.Info().Int64("count", deleted).Msg("pbehaviors were deleted")
 
 	err = w.LimitConfigAdapter.UpdateHistoryPbehavior(ctx, types.CpsTime{Time: now})
 	if err != nil {

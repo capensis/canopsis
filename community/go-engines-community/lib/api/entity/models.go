@@ -9,8 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
 
-const DefaultCategory = "default"
-
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
