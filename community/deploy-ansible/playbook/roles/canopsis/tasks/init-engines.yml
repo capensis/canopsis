@@ -1,20 +1,5 @@
 ---
-- name: Start and enable default Canopsis Python engines
-  systemd:
-    name: "canopsis-engine@{{ item.module }}-{{ item.name }}.service"
-    state: started
-    enabled: true
-  with_items: "{{ canopsis_core_python_engines }}"
-
 - name: Start and enable Canopsis Python engines (CAT additions)
-  systemd:
-    name: "canopsis-engine-cat@{{ item.module }}-{{ item.name }}.service"
-    state: started
-    enabled: true
-  with_items: "{{ canopsis_cat_python_additional_engines }}"
-  when: canopsis_edition == "cat"
-
-- name: Start and enable Canopsis Python engines (CAT additions, part 2)
   systemd:
     name: "canopsis-engine-cat@{{ item.name }}.service"
     state: started
@@ -65,11 +50,3 @@
     state: started
     enabled: true
   with_items: "{{ canopsis_core_other_default_services }}"
-
-- name: Start and enable other default Canopsis services (CAT additions)
-  systemd:
-    name: "canopsis-service@{{ item.name }}.service"
-    state: started
-    enabled: true
-  with_items: "{{ canopsis_cat_other_default_services }}"
-  when: canopsis_edition == "cat"

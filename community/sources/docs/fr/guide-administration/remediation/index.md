@@ -40,24 +40,6 @@ graph TD
 Le Job 1, selon sa configuration, sera distribué à l'ordonnanceur Rundeck ou
 AWX.
 
-## Architecture
-
-Lorsqu'un job est déclenché depuis une consigne dans Canopsis, il est placé
-dans une file d'attente.  
-Cette file d'attente est parcourue par un exécuteur de job,
-`external-job-executor`.
-
-```sh
-# ./external-job-executor -h
-Usage of ./external-job-executor:
-  -c string
-    	Configuration file path (default "/opt/canopsis/share/config/external-job-executor/externalapi.yml")
-  -d	debug
-```
-
-C'est ce composant qui est chargé de déclencher l'exécution du job auprès des
-ordonnanceurs de tâches, selon les différentes configurations définies.
-
 ## Configuration des ordonnanceurs
 
 Cette section présente la configuration à effectuer dans l'ordonnanceur et la

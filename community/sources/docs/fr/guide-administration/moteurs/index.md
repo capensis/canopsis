@@ -43,10 +43,7 @@ Certains moteurs et composants historiques de Canopsis sont écrits en Python.
 | Moteur | Rôle | Pro ? |
 |--------|------|:-----:|
 | [`kpi`](moteur-kpi.md) | Mise en place de statistiques sur les alarmes, entités et sessions | ✅ |
-| `scheduler` | Coordonne le travail destiné aux différents moteurs `task_*` | |
 | [`snmp`](moteur-snmp.md) | Gère les traps SNMP | ✅ |
-| [`task_ackcentreon`](moteur-task_ackcentreon.md) | Envoi d'ACK de Canopsis vers Centreon | ✅ |
-| `task_importctx` | Gestionnaire des imports de données en masse | |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
 ### Liste des anciens moteurs (non supportés)
@@ -69,8 +66,11 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | `metric` (Python) | n/a |
 | `pbehavior` (Python) | `engine-pbehavior` (Go) |
 | `perfdata` (Python) | `metric` (Python) ⇒ n/a |
+| `scheduler` (Python) | n/a |
 | `statsng` (Python) | n/a |
+| `task_ackcentreon` (Python) | ? |
 | `task_dataclean` (Python) | n/a |
+| `task_importctx` (Python) | APIv4 d'import |
 | `task_linklist` (Python) | Utilisation du [linkbuilder](../linkbuilder/index.md) |
 | `task_mail` (Python) | Utilisation d'un [Webhook](moteur-webhook.md) (Pro) vers un service d'envoi d'e-mails |
 | `ticket` | `engine-axe`(Go) |
