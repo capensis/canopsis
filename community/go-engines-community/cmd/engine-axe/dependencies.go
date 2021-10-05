@@ -211,6 +211,13 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Logger:                   logger,
+			MetricSender: metrics.NewSender(
+				canopsis.MetricsExchangeName,
+				canopsis.MetricsQueueName,
+				channelPub,
+				json.NewEncoder(),
+				logger,
+			),
 		},
 		logger,
 	))

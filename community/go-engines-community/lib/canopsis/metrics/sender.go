@@ -47,6 +47,7 @@ type Event struct {
 type Sender interface {
 	HandleMetricsByEvent(event types.Event)
 	HandleMetricForMetaalarmChild(child types.AlarmWithEntity)
+	HandleMetricForAxeRpc(alarm types.Alarm, entity types.Entity, alarmChange types.AlarmChangeType)
 }
 
 type sender struct {
@@ -100,12 +101,12 @@ func (s *sender) HandleMetricsByEvent(event types.Event) {
 		})
 	case types.AlarmChangeTypeCreateAndPbhEnter:
 		s.sendMetric(Event{
-			Type:   PbhAlarmNumberEntity,
+			Type:   TotalAlarmNumberEntity,
 			Labels: prometheus.Labels{"entityID": entityID, "category": category},
 		})
 
 		s.sendMetric(Event{
-			Type:   PbhAlarmNumberSlice,
+			Type:   TotalAlarmNumberSlice,
 			Labels: prometheus.Labels{"slice": DefaultSlice},
 		})
 
@@ -267,6 +268,35 @@ func (s *sender) HandleMetricForMetaalarmChild(child types.AlarmWithEntity) {
 	})
 
 	s.sendNonDisplayedMetric(child.Alarm, child.Entity)
+}
+
+func (s *sender) HandleMetricForAxeRpc(alarm types.Alarm, entity types.Entity, alarmChange types.AlarmChangeType) {
+	switch alarmChange {
+	case types.AlarmChangeTypeAck:
+		if alarm.Value.ACK == nil {
+			return
+		}
+
+		s.sendMetric(Event{
+			Type:   AckAlarmNumberEntity,
+			Labels: prometheus.Labels{"entityID": entity.ID, "category": entity.Category, "username": types.InitiatorSystem},
+		})
+
+		s.sendMetric(Event{
+			Type:   AckAlarmNumberSlice,
+			Labels: prometheus.Labels{"slice": DefaultSlice, "username": types.InitiatorSystem},
+		})
+	case types.AlarmChangeTypeAckremove:
+		s.sendMetric(Event{
+			Type:   CancelAckAlarmNumberEntity,
+			Labels: prometheus.Labels{"entityID": entity.ID, "category": entity.Category, "username": types.InitiatorSystem},
+		})
+
+		s.sendMetric(Event{
+			Type:   CancelAckAlarmNumberSlice,
+			Labels: prometheus.Labels{"slice": DefaultSlice, "username": types.InitiatorSystem},
+		})
+	}
 }
 
 func (s *sender) sendMetric(event Event) {
