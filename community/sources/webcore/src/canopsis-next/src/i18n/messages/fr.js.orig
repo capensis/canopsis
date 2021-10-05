@@ -172,8 +172,16 @@ export default {
     percent: 'Pourcent | Pourcentages',
     tests: 'Tests',
     total: 'Total',
+<<<<<<< HEAD
     errors: 'Erreurs',
-    failures: 'Échecs',
+    failures: 'Echecs',
+||||||| 5f604073fb
+    errors: 'Erreurs',
+    failures: 'Failures',
+=======
+    error: 'Erreur | Erreurs',
+    failures: 'Failures',
+>>>>>>> develop
     skipped: 'Ignoré',
     current: 'Actuel',
     average: 'Moyenne',
@@ -290,7 +298,7 @@ export default {
       '<p>Le "-" avant la recherche est obligatoire</p>\n' +
       '<p>Opérateurs:\n' +
       '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
-      '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n' +
+      '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Virgule flottante, "NULL"</p>\n' +
       '<dl><dt>Exemples :</dt><dt>- Name = "name_1"</dt>\n' +
       '    <dd>Entités dont le names est "name_1"</dd><dt>- Name="name_1" AND Type="service"</dt>\n' +
       '    <dd>Entités dont le names est "name_1" et la types est "service"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n' +
@@ -304,7 +312,7 @@ export default {
       '<p>Opérateurs:\n' +
       '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
       '<p>Pour effectuer une recherche dans les "modèles", utilisez le mot-clé "pattern" comme &lt;NomColonne&gt;</p>\n' +
-      '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n' +
+      '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Virgule flottante, "NULL"</p>\n' +
       '<dl><dt>Examples :</dt><dt>- description = "testdyninfo"</dt>\n' +
       '    <dd>Règles d\'Informations dynamiques dont la description est "testdyninfo"</dd><dt>- pattern = "SEARCHPATTERN1"</dt>\n' +
       '    <dd>Règles d\'Informations dynamiques dont un des modèles est "SEARCHPATTERN1"</dd><dt>- pattern LIKE "SEARCHPATTERN2"</dt>\n' +
@@ -341,7 +349,7 @@ export default {
         changeState: 'Changer et verrouiller la criticité',
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
-        groupRequest: 'Proposition de regroupement pour méta-alarmes',
+        groupRequest: 'Proposition de regroupement pour meta-alarmes',
         manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
         manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
         comment: 'Commenter l\'alarme',
@@ -478,7 +486,7 @@ export default {
     sortColumnNoData: 'Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
     columnNames: 'Nom des colonnes',
     exportColumnNames: 'Nom des colonnes à exporter',
-    groupColumnNames: 'Nom des colonnes des méta-alarmes',
+    groupColumnNames: 'Nom des colonnes des meta-alarmes',
     trackColumnNames: 'Suivre les colonnes de source d\'alarme',
     treeOfDependenciesColumnNames: 'Nom des colonnes pour l\'arborescence des dépendances',
     orderBy: 'Trier par',
@@ -784,10 +792,10 @@ export default {
       title: 'Annuler',
     },
     createGroupRequestEvent: {
-      title: 'Proposition de regroupement pour méta-alarmes',
+      title: 'Proposition de regroupement pour meta-alarmes',
     },
     createGroupEvent: {
-      title: 'Créer une méta-alarme',
+      title: 'Créer une meta-alarme',
     },
     createChangeStateEvent: {
       title: 'Changer la сriticité',
@@ -1176,7 +1184,7 @@ export default {
           },
         },
         moduleMibObjects: {
-          vars: 'Champ d\'association des variables SNMP',
+          vars: 'Champ d\'association des variables SNMP', // TODO
           regex: 'Expression régulière',
           formatter: 'Format (groupe de capture avec \\x)',
         },
@@ -1768,10 +1776,10 @@ export default {
         footer: 'Page d\'identification : pied de page',
         description: 'Page d\'identification : description',
         logo: 'Logo',
-        infoPopupTimeout: 'Délai d\'affichage pour les popups d\'informations',
-        errorPopupTimeout: 'Délai d\'affichage pour les popups d\'erreurs',
+        infoPopupTimeout: 'Délai d\'affichage pour les popup d\'informations',
+        errorPopupTimeout: 'Délai d\'affichage pour les popup d\'erreurs',
         popupTimeoutUnit: 'Unité',
-        allowChangeSeverityToInfo: 'Autorise le changement de criticité en Info',
+        allowChangeSeverityToInfo: 'Autorise les informations de criticité',
         maxMatchedItems: 'Maximum d\'éléments correspondants',
         checkCountRequestTimeout: 'Vérifier le délai d\'expiration maximal de la demande d\'éléments correspondants (secondes)',
       },
@@ -1898,11 +1906,11 @@ export default {
     },
     business: {
       [USER_PERMISSIONS_PREFIXES.business.common]: 'Droits communs',
-      [USER_PERMISSIONS_PREFIXES.business.alarmsList]: 'Droits pour le widget : Bac à alarmes',
-      [USER_PERMISSIONS_PREFIXES.business.context]: 'Droits pour le widget : Explorateur de contexte',
+      [USER_PERMISSIONS_PREFIXES.business.alarmsList]: 'Droits pour le widget: Bac à alarmes',
+      [USER_PERMISSIONS_PREFIXES.business.context]: 'Droits pour le widget: Explorateur de contexte',
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: 'Droits pour le widget: Météo des services',
-      [USER_PERMISSIONS_PREFIXES.business.counter]: 'Droits pour le widget : Compteur',
-      [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Droits pour le widget : Météo des tests',
+      [USER_PERMISSIONS_PREFIXES.business.counter]: 'Droits pour le widget: Compteur',
+      [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Droits pour le widget: Météo des tests',
     },
   },
 
@@ -1972,6 +1980,79 @@ export default {
         edgeLabel: 'Vérification de l\'état',
       },
 
+<<<<<<< HEAD
+    [ENGINES_NAMES.webhook]: {
+      title: 'Webhook',
+      description: 'Gère les webhooks',
+    },
+    [ENGINES_NAMES.fifo]: {
+      title: 'FIFO',
+      description: 'Gère la file d\'attente des événements et des alarmes',
+    },
+    [ENGINES_NAMES.axe]: {
+      title: 'AXE',
+      description: 'Crée des alarmes et effectue des actions avec elles',
+    },
+    [ENGINES_NAMES.che]: {
+      title: 'CHE',
+      description: 'Applique les filtres d\'événements et les entités créées',
+    },
+    [ENGINES_NAMES.pbehavior]: {
+      title: 'Pbehavior',
+      description: 'Vérifie si l\'alarme est concernée par un comportement périodique',
+    },
+    [ENGINES_NAMES.action]: {
+      title: 'Action',
+      description: 'Déclenche le lancement des actions',
+    },
+    [ENGINES_NAMES.service]: {
+      title: 'Service',
+      description: 'Met à jour les compteurs et génère service-events',
+    },
+    [ENGINES_NAMES.dynamicInfo]: {
+      title: 'Dynamic infos',
+      description: 'Ajoute des informations dynamiques à l\'alarme',
+    },
+    [ENGINES_NAMES.correlation]: {
+      title: 'Correlation',
+      description: 'Gère la corrélation',
+||||||| 5f604073fb
+    [ENGINES_NAMES.webhook]: {
+      title: 'Webhook',
+      description: 'Gère les webhooks',
+    },
+    [ENGINES_NAMES.fifo]: {
+      title: 'FIFO',
+      description: 'Gère la file d\'attente des événements et des alarmes',
+    },
+    [ENGINES_NAMES.axe]: {
+      title: 'AXE',
+      description: 'Crée des alarmes et effectue des actions avec elles',
+    },
+    [ENGINES_NAMES.che]: {
+      title: 'CHE',
+      description: 'Applique les filtres d\'événements et les entités créées',
+    },
+    [ENGINES_NAMES.pbehavior]: {
+      title: 'Pbehavior',
+      description: 'Vérifie si l\'alarme est sous PBehavior',
+    },
+    [ENGINES_NAMES.action]: {
+      title: 'Action',
+      description: 'Déclenche le lancement des actions',
+    },
+    [ENGINES_NAMES.service]: {
+      title: 'Service',
+      description: 'Met à jour les compteurs et génère service-events',
+    },
+    [ENGINES_NAMES.dynamicInfo]: {
+      title: 'Dynamic infos',
+      description: 'Ajoute des informations dynamiques à l\'alarme',
+    },
+    [ENGINES_NAMES.correlation]: {
+      title: 'Correlation',
+      description: 'Gère la corrélation',
+=======
       [HEALTHCHECK_SERVICES_NAMES.rabbit]: {
         name: 'RabbitMQ',
         edgeLabel: 'Vérification de l\'état',
@@ -2038,6 +2119,7 @@ export default {
       [HEALTHCHECK_ENGINES_NAMES.remediation]: {
         name: 'Remediation',
       },
+>>>>>>> develop
     },
   },
 
@@ -2208,7 +2290,7 @@ export default {
     actions: {
       [ACTION_TYPES.snooze]: 'Mettre en veille',
       [ACTION_TYPES.pbehavior]: 'Définir un comportement périodique',
-      [ACTION_TYPES.changeState]: 'Changer l\'état (Change et vérouille la criticité)',
+      [ACTION_TYPES.changeState]: 'Changer l\'état (Change et bloc la criticité)',
       [ACTION_TYPES.ack]: 'Acquitter',
       [ACTION_TYPES.ackremove]: 'Supprimer l\'acquittement',
       [ACTION_TYPES.assocticket]: 'Associer un ticket',
@@ -2330,7 +2412,7 @@ export default {
   },
 
   stateSetting: {
-    worstLabel: 'Le pire critère :',
+    worstLabel: 'Le pire critère:',
     worstHelpText: 'Canopsis compte l\'état pour chaque critère défini. L\'état final de la suite de tests JUnit est considéré comme le pire des états résultants.',
     criterion: 'Critère',
     serviceState: 'État du service',
@@ -2459,17 +2541,17 @@ export default {
      */
     [USERS_PERMISSIONS.technical.exploitation.eventFilter]: {
       title: 'Filtre d\'événements',
-      message: 'Le filtre d\'événements est une fonctionnalité du moteur CHE qui permet la définition de règles de traitement des événements.',
+      message: 'Le filtre d\'événements est une fonctionnalité du moteur CHE et qui permet la définition de règles de traitement des événements.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: {
       title: 'Informations dynamiques',
-      message: 'Les informations dynamiques de Canopsis sont utilisées pour enrichire les alarmes. Ces enrichissements sont définis par des règles indiquant dans quelles conditions les informations doivent être présentées sur une alarme.',
+      message: 'Les informations dynamiques de Canopsis sont utilisés pour enrichire les alarmes. Ces enrichissements sont définis par des règles indiquant dans quelles conditions les informations doivent être présentées sur une alarme. ',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
-      title: 'Règles de méta-alarme',
-      message: 'Les règles de méta-alarme peuvent être utilisées pour grouper les alarmes par types et critères (relation parent/enfant, intervalle de temps, etc).',
+      title: 'Règles de meta-alarme',
+      message: 'Les règles de meta-alarme peuvent être utilisées pour grouper les alarmes par types et critères (relation parent/enfant, intervalle de temps, etc).',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
@@ -2526,10 +2608,18 @@ export default {
     /**
      * Admin general
      */
+<<<<<<< HEAD
     [USERS_PERMISSIONS.technical.engine]: {
       title: 'Moteurs',
       message: 'Cette page contient les informations sur la séquence et la configuration des moteurs. Pour fonctionner correctement, la chaîne des moteurs doit être continue.',
     },
+||||||| 5f604073fb
+    [USERS_PERMISSIONS.technical.engine]: {
+      title: 'Engines',
+      message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
+    },
+=======
+>>>>>>> develop
     [USERS_PERMISSIONS.technical.parameters]: {
       title: 'Paramètres',
     },
@@ -2562,12 +2652,12 @@ export default {
 
   entitiesCountAlerts: {
     filter: {
-      countOverLimit: 'Le filtre que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
-      countRequestError: 'Le calcul du nombre d\'entités ciblées par le filtre s\'est terminée avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr ?',
+      countOverLimit: 'Le filtre que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr?',
+      countRequestError: 'Le calcul du nombre d\'entités ciblées par le filtre s\'est terminée avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr?',
     },
     patterns: {
-      countOverLimit: 'Le modèle que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
-      countRequestError: 'Le calcul du nombre d\'entités ciblées par le modèle s\'est terminé avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr ?',
+      countOverLimit: 'Le modèle que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr?',
+      countRequestError: 'Le calcul du nombre d\'entités ciblées par le modèle s\'est terminé avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr?',
     },
   },
 
