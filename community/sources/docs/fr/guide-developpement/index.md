@@ -27,9 +27,9 @@ L'API Canopsis peut être interrogée sur deux URLs différentes:
 
 > Remplacer `<canopsis>` par l'IP ou le nom de domaine du Canopsis déployé.
 
-Si l'API est interrogée via un navigateur (Firefox, Chrome, Safari, etc) ou un framework emulant un navigateur (Angular, Electron, etc) et dont les en-têtes CORS sont nécessaires, alors il faut utiliser l'URL du reverse-proxy Nginx.
+Si l'API est interrogée via un navigateur (Firefox, Chrome, Safari, etc) ou un framework emulant un navigateur (Angular, Electron, etc) et pour lesquels en-têtes CORS sont nécessaires, alors il faut utiliser l'URL du reverse-proxy Nginx.
 
-L'usage de l'URL du moteur `canopsis-api` est possible pour des requêtes dites "classiques", par exemple via des scripts, via l'outil `curl` ou encore via des webhooks de solutions externe.
+L'usage de l'URL du moteur `canopsis-api` est possible pour des requêtes dites "classiques", par exemple via des scripts, via l'outil `curl` ou encore via des webhooks de solutions externes.
 
 ## Collections de base de données
 
