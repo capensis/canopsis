@@ -128,7 +128,7 @@ export default {
     status: 'Statut',
     unit: 'Unité',
     delay: 'Intervalle',
-    begin: 'Commencer',
+    begin: 'Début',
     timezone: 'Fuseau horaire',
     reason: 'Raison',
     or: 'OU',
@@ -136,7 +136,7 @@ export default {
     priority: 'Priorité',
     clear: 'Nettoyer',
     deleteAll: 'Tout supprimer',
-    payload: 'Charge utile',
+    payload: 'Payload',
     output: 'Note',
     created: 'Date de création',
     updated: 'Date de dernière modification',
@@ -179,7 +179,7 @@ export default {
     average: 'Moyenne',
     information: 'Information | Informations',
     file: 'Fichier',
-    group: 'Grouper | Groupe',
+    group: 'Groupe | Groupes',
     view: 'Vue | Vues',
     tab: 'Onglet | Onglets',
     access: 'Accès',
@@ -464,7 +464,7 @@ export default {
       [SIDE_BARS.statsParetoSettings]: 'Paramètres du diagramme de Pareto',
       [SIDE_BARS.textSettings]: 'Paramètres du widget de texte',
       [SIDE_BARS.counterSettings]: 'Paramètres du widget de compteur',
-      [SIDE_BARS.testingWeatherSettings]: 'Tester la météo',
+      [SIDE_BARS.testingWeatherSettings]: 'Paramètres du widget scénario des tests',
     },
     openedTypes: {
       [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
@@ -639,7 +639,7 @@ export default {
         displayAsPriority: 'Afficher en priorité',
       },
     },
-    receiveByApi: 'Recevoir par l\'API',
+    receiveByApi: 'Réponse de l\'API',
     serverStorage: 'Stockage serveur',
     filenameRecognition: 'Reconnaissance du nom de fichier',
     resultDirectory: 'Stockage des résultats de test',
@@ -648,9 +648,9 @@ export default {
       helpText: 'Définir où les captures d\'écran sont stockées',
     },
     screenshotMask: {
-      title: 'Masque de nom de fichier de captures d\'écran',
+      title: 'Règle de nommage des fichiers capture d\'écran',
       helpText: '<dl>' +
-        '<dt>Définissez le masque de nom de fichier dont les captures d\'écran sont créées à l\'aide des variables suivantes:<dt>\n' +
+        '<dt>Définissez la règle de nommage des fichiers dont les captures d\'écran sont créées à l\'aide des variables suivantes:<dt>\n' +
         '<dd>- nom du cas de test %test_case%</dd>\n' +
         '<dd>- date (YYYY, MM, DD)</dd>\n' +
         '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
@@ -661,9 +661,9 @@ export default {
       helpText: 'Définir où la vidéo est stockée',
     },
     videoMask: {
-      title: 'Masque de nom de fichier de vidéos',
+      title: 'Règle de nommage des fichiers vidéo',
       helpText: '<dl>' +
-        '<dt>Définissez le masque de nom de fichier dont les vidéos sont créées à l\'aide des variables suivantes:<dt>\n' +
+        '<dt>Définissez la règle de nommage des fichiers dont les vidéos sont créées à l\'aide des variables suivantes:<dt>\n' +
         '<dd>- nom du cas de test %test_case%</dd>\n' +
         '<dd>- date (YYYY, MM, DD)</dd>\n' +
         '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
@@ -763,7 +763,7 @@ export default {
       fields: {
         ticket: 'Numéro du ticket',
         output: 'Note',
-        ackResources: 'Ressources de l\'acquittement',
+        ackResources: 'Acquitter les ressources',
       },
     },
     confirmAckWithTicket: {
@@ -970,7 +970,7 @@ export default {
           title: 'Compteur',
         },
         [WIDGET_TYPES.testingWeather]: {
-          title: 'Tester la météo',
+          title: 'Scénario des tests',
         },
       },
     },
@@ -1170,7 +1170,7 @@ export default {
         state: {
           title: 'Criticité',
           labels: {
-            toCustom: 'Pour personnaliser',
+            toCustom: 'Personnaliser',
             defineVar: 'Définir la variable SNMP correspondante',
             writeTemplate: 'Écrire un modèle',
           },
@@ -1296,13 +1296,13 @@ export default {
       manageTabs: 'Gérer les onglets',
     },
     pbehaviorPlanning: {
-      title: 'Comportement périodiques',
+      title: 'Comportements périodiques',
     },
     selectExceptionsLists: {
       title: 'Choisissez la liste des exceptions',
     },
     createRrule: {
-      title: 'Créer un récurrence',
+      title: 'Créer une récurrence',
     },
     createPbehaviorType: {
       title: 'Créer un type',
@@ -1403,8 +1403,8 @@ export default {
       errors: {
         invalidJSON: 'JSON non valide',
       },
-      addPayload: 'Ajouter une charge utile',
-      deletePayload: 'Supprimer la charge utile',
+      addPayload: 'Ajouter un payload',
+      deletePayload: 'Supprimer le payload',
       payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
         '<i>Quelques exemples:</i>' +
         '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
@@ -1661,7 +1661,7 @@ export default {
   filterSelector: {
     defaultFilter: 'Filtre par défaut',
     fields: {
-      mixFilters: 'Mix de filtres',
+      mixFilters: 'Mélanger les filtres',
     },
     buttons: {
       list: 'Gérer les filtres',
@@ -1694,7 +1694,7 @@ export default {
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
   },
   metaAlarmRule: {
-    outputTemplate: 'Modèle de sortie',
+    outputTemplate: 'Modèle de message',
     thresholdType: 'Type de seuil',
     thresholdRate: 'Taux de déclenchement',
     thresholdCount: 'Seuil de déclenchement',
@@ -1772,12 +1772,12 @@ export default {
         errorPopupTimeout: 'Délai d\'affichage pour les popups d\'erreurs',
         popupTimeoutUnit: 'Unité',
         allowChangeSeverityToInfo: 'Autorise le changement de criticité en Info',
-        maxMatchedItems: 'Maximum d\'éléments correspondants',
-        checkCountRequestTimeout: 'Vérifier le délai d\'expiration maximal de la demande d\'éléments correspondants (secondes)',
+        maxMatchedItems: 'Seuil d\'éléments avant avertissement',
+        checkCountRequestTimeout: 'Délai d\'expiration de la requête',
       },
       tooltips: {
-        maxMatchedItems: 'il doit avertir l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
-        checkCountRequestTimeout: 'il doit définir la valeur du délai d\'attente de la demande pour la vérification du nombre maximal d\'éléments correspondants',
+        maxMatchedItems: 'Avertit l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
+        checkCountRequestTimeout: 'Définit le délai d\'expiration (en secondes) de la demande d\'éléments correspondants',
       },
     },
   },
@@ -1902,7 +1902,7 @@ export default {
       [USER_PERMISSIONS_PREFIXES.business.context]: 'Droits pour le widget : Explorateur de contexte',
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: 'Droits pour le widget: Météo des services',
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Droits pour le widget : Compteur',
-      [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Droits pour le widget : Météo des tests',
+      [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Droits pour le widget : Scénario des tests',
     },
   },
 
@@ -1919,17 +1919,17 @@ export default {
     title: 'Dates d\'exception',
     create: 'Ajouter une date d\'exception',
     choose: 'Sélectionnez la liste d\'exclusion',
-    usingException: 'Ne peut pas être supprimé car il est en cours d\'utilisation',
-    emptyExceptions: 'Aucune exception ajoutée pour le moment',
+    usingException: 'Ne peut pas être supprimé car il est en cours d\'utilisation.',
+    emptyExceptions: 'Aucune exception ajoutée pour le moment.',
   },
 
   pbehaviorTypes: {
-    usingType: 'Le type ne peut être supprimé, car il est en cours d\'utilisation',
-    defaultType: 'Le type utilise la valeur par défaut, car il ne peut pas être modifié',
+    usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation/',
+    defaultType: 'Le type par défaut ne peut pas être modifié.',
   },
 
   pbehaviorReasons: {
-    usingReason: 'La raison ne peut pas être supprimée, car elle est en cours d\'utilisation',
+    usingReason: 'La raison ne peut pas être supprimée car elle est en cours d\'utilisation.',
   },
 
   planning: {
@@ -1979,11 +1979,11 @@ export default {
 
       [HEALTHCHECK_SERVICES_NAMES.redis]: {
         name: 'Redis',
-        edgeLabel: 'Données FIFO\nRedis vérifier',
+        edgeLabel: 'Données FIFO\nÉtat de Redis',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.events]: {
-        name: 'Events',
+        name: 'Événements',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.api]: {
@@ -1991,7 +1991,7 @@ export default {
       },
 
       [HEALTHCHECK_SERVICES_NAMES.enginesChain]: {
-        name: 'Engines chain',
+        name: 'Chaîne des moteurs',
       },
 
       [HEALTHCHECK_SERVICES_NAMES.healthcheck]: {
@@ -2004,7 +2004,7 @@ export default {
 
       [HEALTHCHECK_ENGINES_NAMES.fifo]: {
         name: 'FIFO',
-        edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
+        edgeLabel: 'État de RabbitMQ\nFlux entrant des KPIs',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.axe]: {
@@ -2028,15 +2028,15 @@ export default {
       },
 
       [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
-        name: 'Dynamic infos',
+        name: 'Infos dynamiques',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.correlation]: {
-        name: 'Correlation',
+        name: 'Corrélation',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.remediation]: {
-        name: 'Remediation',
+        name: 'Remédiation',
       },
     },
   },
@@ -2059,7 +2059,7 @@ export default {
     listJobs: 'Liste des tâches',
     endpointAvatar: 'EP',
     workflow: 'Si cette étape échoue :',
-    jobWorkflow: 'Workflow si cette tâche échoue:',
+    jobWorkflow: 'Comportement si cette tâche échoue:',
     remainingStep: 'Continuer avec les étapes restantes',
     remainingJob: 'Continuer avec la tâche restante',
     timeToComplete: 'Temps d\'exécution (estimation)',
@@ -2172,7 +2172,7 @@ export default {
   remediationPatterns: {
     tabs: {
       pbehaviorTypes: {
-        title: 'Types de comportement périodique',
+        title: 'Types de comportements périodiques',
         fields: {
           activeOnTypes: 'Actif sur les types',
           disabledOnTypes: 'Désactivé sur les types',
@@ -2184,7 +2184,7 @@ export default {
   scenario: {
     headers: 'En-têtes',
     declareTicket: 'Déclarer un ticket',
-    workflow: 'Workflow si cette action ne correspond pas :',
+    workflow: 'Comportement si cette action ne correspond pas :',
     remainingAction: 'Continuer avec les actions restantes',
     addAction: 'Ajouter une action',
     emptyActions: 'Aucune action ajoutée pour le moment',
@@ -2268,7 +2268,7 @@ export default {
     fields: {
       category: 'Catégorie',
       name: 'Nom',
-      outputTemplate: 'Modèle de sortie',
+      outputTemplate: 'Modèle de message',
       createCategory: 'Ajouter une catégorie',
       createCategoryHelp: 'Appuyez sur <kbd>enter</kbd> pour enregistrer',
     },
@@ -2281,7 +2281,7 @@ export default {
       lastName: 'Nom',
       role: 'Rôle',
       enabled: 'Actif',
-      auth: 'Auth',
+      auth: 'Type d\'auth.',
     },
     fields: {
       username: 'Identifiant utilisateur',
@@ -2298,7 +2298,7 @@ export default {
     xmlFeed: 'Flux XML',
     hostname: 'Nom d\'hôte',
     lastUpdate: 'Dernière mise à jour',
-    timeTaken: 'Temps pris',
+    timeTaken: 'Temps passé',
     totalTests: 'Total des tests',
     disabledTests: 'Tests désactivés',
     copyMessage: 'Copier le message système',
@@ -2307,14 +2307,14 @@ export default {
     systemOut: 'Retour système',
     systemOutMessage: 'Message de retour du système',
     compareWithHistorical: 'Comparer avec les données historiques',
-    className: 'Nom du cours',
+    className: 'Nom du test',
     line: 'Ligne',
     failureMessage: 'Message d\'échec',
-    noData: 'Aucun message système trouvé dans XML',
+    noData: 'Aucun message système trouvé dans le formulaire XML',
     tabs: {
       globalMessages: 'Messages globaux',
       gantt: 'Gantt',
-      details: 'Des détails',
+      details: 'Détails',
       screenshots: 'Captures d\'écran',
       videos: 'Vidéos',
     },
@@ -2322,7 +2322,7 @@ export default {
       [TEST_SUITE_STATUSES.passed]: 'Passé',
       [TEST_SUITE_STATUSES.skipped]: 'Ignoré',
       [TEST_SUITE_STATUSES.error]: 'En erreur',
-      [TEST_SUITE_STATUSES.failed]: 'Manqué',
+      [TEST_SUITE_STATUSES.failed]: 'Échoué',
     },
     popups: {
       systemMessageCopied: 'Message système copié dans le presse-papier',
@@ -2336,7 +2336,7 @@ export default {
     serviceState: 'État du service',
     methods: {
       [STATE_SETTING_METHODS.worst]: 'Pire',
-      [STATE_SETTING_METHODS.worstOfShare]: 'Pire de part', // TODO
+      [STATE_SETTING_METHODS.worstOfShare]: 'Pire des états',
     },
     states: {
       minor: 'Mineur',
@@ -2458,7 +2458,7 @@ export default {
      * Exploitation
      */
     [USERS_PERMISSIONS.technical.exploitation.eventFilter]: {
-      title: 'Filtre d\'événements',
+      title: 'Filtres d\'événements',
       message: 'Le filtre d\'événements est une fonctionnalité du moteur CHE qui permet la définition de règles de traitement des événements.',
     },
 
@@ -2489,9 +2489,7 @@ export default {
 
     [USERS_PERMISSIONS.technical.exploitation.snmpRule]: {
       title: 'Règles SNMP',
-      message: 'Le moteur SNMP autorise le traitement de traps SNMP remontées par le connecteur snmp2canopsis', 
-      // TODO
-      // Les règles SNMP peuvent être utilisées pour traiter les traps SNMP remontées par le connecteur snmp2canopsis au travers du moteur SNMP.
+      message: 'Les règles SNMP peuvent être utilisées pour traiter les traps SNMP remontées par le connecteur snmp2canopsis au travers du moteur SNMP.',
     },
 
     /**
@@ -2511,7 +2509,7 @@ export default {
      * Admin communications
      */
     [USERS_PERMISSIONS.technical.broadcastMessage]: {
-      title: 'Diffuser des messages',
+      title: 'Diffusion de messages',
       message: 'La diffusion de messages peut être utilisée pour afficher les bannières et les messages d\'information qui apparaîtront dans l\'interface de Canopsis.'
     },
     [USERS_PERMISSIONS.technical.playlist]: {
