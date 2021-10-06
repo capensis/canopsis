@@ -4,8 +4,6 @@
       span {{ config.pbehavior.name }}
     template(slot="text")
       pbehavior-recurrence-rule-calendar(:pbehavior="config.pbehavior")
-    template(slot="actions")
-      v-btn.primary {{ $t('common.submit') }}
 </template>
 
 <script>
