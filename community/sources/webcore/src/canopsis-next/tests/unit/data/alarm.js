@@ -1,8 +1,9 @@
 import Faker from 'faker';
 
 import { fakeTimestamp } from './date';
+import { fakeMeta } from '@/unit/data/request-data';
 
-const alarmFaker = () => ({
+export const fakeAlarm = () => ({
   _id: Faker.datatype.string(),
   t: fakeTimestamp(),
   entity: {
@@ -66,12 +67,9 @@ const alarmFaker = () => ({
   links: {},
 });
 
-export const fakeAlarms = (count, limit = 10, page = 1) => ({
-  data: Faker.datatype.array(count % limit).map(alarmFaker),
-  meta: {
-    page,
-    per_page: limit,
-    page_count: Math.floor(count / limit),
-    total_count: count,
-  },
+export const fakeAlarms = ({ count, limit = 10 } = {}) => Faker.datatype.array(count % limit).map(fakeAlarm);
+
+export const fakeAlarmsResponse = ({ count, limit = 10, page = 1 } = {}) => ({
+  data: fakeAlarms({ count, limit }),
+  meta: fakeMeta({ count, limit, page }),
 });

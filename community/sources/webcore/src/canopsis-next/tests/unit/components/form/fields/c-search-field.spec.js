@@ -6,6 +6,11 @@ import CSearchField from '@/components/forms/fields/c-search-field.vue';
 
 const localVue = createVueInstance();
 
+const mockData = {
+  search: Faker.lorem.words(),
+  newSearch: Faker.lorem.words(),
+};
+
 const stubs = {
   'v-btn': {
     template: `
@@ -38,47 +43,46 @@ const factory = (options = {}) => mount(CSearchField, {
 
 describe('c-search-field', () => {
   it('Not empty value was pass into props and it was applied to input field', () => {
-    const value = Faker.lorem.words();
+    const { search } = mockData;
 
-    const wrapper = factory({ propsData: { value } });
+    const wrapper = factory({ propsData: { value: search } });
     const input = wrapper.find('input.v-text-field');
 
-    expect(input.element.value).toBe(value);
+    expect(input.element.value).toBe(search);
   });
 
   it('Input value was update, after prop change and it was applied to input field', async () => {
-    const value = Faker.lorem.words();
-    const newValue = Faker.lorem.words();
+    const { search, newSearch } = mockData;
 
-    const wrapper = factory({ propsData: { value } });
+    const wrapper = factory({ propsData: { value: search } });
 
-    wrapper.setProps({ value: newValue });
+    wrapper.setProps({ value: newSearch });
 
     await localVue.nextTick();
 
     const input = wrapper.find('input.v-text-field');
 
-    expect(input.element.value).toBe(newValue);
+    expect(input.element.value).toBe(newSearch);
   });
 
   it('Set value into input element', () => {
-    const value = Faker.lorem.words();
+    const { search } = mockData;
 
     const wrapper = factory();
     const input = wrapper.find('input.v-text-field');
 
-    input.setValue(value);
+    input.setValue(search);
 
     const inputEvents = wrapper.emitted('input');
 
     expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0]).toEqual([value]);
+    expect(inputEvents[0]).toEqual([search]);
   });
 
   it('Keyup without enter key on input element', () => {
-    const value = Faker.lorem.words();
+    const { search } = mockData;
 
-    const wrapper = factory({ propsData: { value } });
+    const wrapper = factory({ propsData: { value: search } });
     const input = wrapper.find('input.v-text-field');
 
     input.trigger('keyup');
@@ -89,9 +93,9 @@ describe('c-search-field', () => {
   });
 
   it('Keyup with enter key on input element', async () => {
-    const value = Faker.lorem.words();
+    const { search } = mockData;
 
-    const wrapper = factory({ propsData: { value } });
+    const wrapper = factory({ propsData: { value: search } });
     const input = wrapper.find('input.v-text-field');
 
     await input.trigger('keydown.enter');
@@ -102,9 +106,9 @@ describe('c-search-field', () => {
   });
 
   it('Submit search button is the first button', () => {
-    const value = Faker.lorem.words();
+    const { search } = mockData;
 
-    const wrapper = factory({ propsData: { value } });
+    const wrapper = factory({ propsData: { value: search } });
     const submitButton = wrapper.findAll('.v-btn').at(0);
     const submitIcon = submitButton.find('v-icon-stub');
 
@@ -113,9 +117,9 @@ describe('c-search-field', () => {
   });
 
   it('Clear search button is the second button', () => {
-    const value = Faker.lorem.words();
+    const { search } = mockData;
 
-    const wrapper = factory({ propsData: { value } });
+    const wrapper = factory({ propsData: { value: search } });
     const clearButton = wrapper.findAll('.v-btn').at(1);
 
     const clearIcon = clearButton.find('v-icon-stub');
@@ -125,9 +129,9 @@ describe('c-search-field', () => {
   });
 
   it('Click on submit button', () => {
-    const value = Faker.lorem.words();
+    const { search } = mockData;
 
-    const wrapper = factory({ propsData: { value } });
+    const wrapper = factory({ propsData: { value: search } });
     const submitButton = wrapper.findAll('.v-btn').at(0);
 
     submitButton.trigger('click');
@@ -138,9 +142,9 @@ describe('c-search-field', () => {
   });
 
   it('Click on clear button', () => {
-    const value = Faker.lorem.words();
+    const { search } = mockData;
 
-    const wrapper = factory({ propsData: { value } });
+    const wrapper = factory({ propsData: { value: search } });
     const clearButton = wrapper.findAll('.v-btn').at(1);
 
     clearButton.trigger('click');

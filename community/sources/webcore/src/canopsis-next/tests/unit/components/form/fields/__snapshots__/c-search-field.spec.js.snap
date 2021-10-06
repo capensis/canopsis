@@ -10,6 +10,7 @@ exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
   <v-text-field-stub
     data-test="searchingTextField"
     hide-details="hide-details"
+    label="common.search"
     single-line="single-line"
     value="c-search-field"
   />
@@ -40,7 +41,7 @@ exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
       </v-icon-stub>
     </v-btn-stub>
     <span>
-      
+      search.submit
     </span>
   </v-tooltip-stub>
   <v-tooltip-stub
@@ -70,7 +71,7 @@ exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
       </v-icon-stub>
     </v-btn-stub>
     <span>
-      
+      search.clear
     </span>
   </v-tooltip-stub>
 </v-toolbar-stub>

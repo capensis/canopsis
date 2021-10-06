@@ -6,6 +6,18 @@ import CAdvancedSearchField from '@/components/forms/fields/c-advanced-search-fi
 
 const localVue = createVueInstance();
 
+const fakeTooltipText = Faker.lorem.words();
+
+const mockData = {
+  search: Faker.lorem.words(),
+  tooltipText: fakeTooltipText,
+  column: {
+    text: Faker.lorem.word(),
+    value: Faker.lorem.word(),
+  },
+  field: Faker.lorem.word(),
+};
+
 const stubs = {
   'c-search-field': {
     props: ['value'],
@@ -39,7 +51,7 @@ const factory = (options = {}) => mount(CAdvancedSearchField, {
 
 describe('c-advanced-search-field', () => {
   it('Pass default search into props and it was applied to input field', () => {
-    const search = Faker.lorem.words();
+    const { search } = mockData;
 
     const wrapper = factory({ propsData: { query: { search } } });
     const input = wrapper.find('input');
@@ -48,7 +60,7 @@ describe('c-advanced-search-field', () => {
   });
 
   it('Search hints was applied', () => {
-    const tooltipText = Faker.lorem.words();
+    const { tooltipText } = mockData;
     const wrapper = factory({
       propsData: {
         query: {},
@@ -61,9 +73,9 @@ describe('c-advanced-search-field', () => {
   });
 
   it('Search hints as html was applied', () => {
-    const tooltipContentText = Faker.lorem.words();
+    const { tooltipText } = mockData;
     const tooltip = `
-      <span class="tooltip-content-span">${tooltipContentText}</span>
+      <span class="tooltip-content-span">${tooltipText}</span>
     `;
     const wrapper = factory({
       propsData: {
@@ -73,11 +85,11 @@ describe('c-advanced-search-field', () => {
     });
     const tooltipSpanElement = wrapper.find('.tooltip-content-span');
 
-    expect(tooltipSpanElement.html()).toContain(tooltipContentText);
+    expect(tooltipSpanElement.html()).toContain(tooltipText);
   });
 
   it('Submit search button', () => {
-    const search = Faker.lorem.words();
+    const { search } = mockData;
 
     const wrapper = factory({ propsData: { query: { search } } });
     const input = wrapper.find('input');
@@ -90,16 +102,12 @@ describe('c-advanced-search-field', () => {
   });
 
   it('Submit search with search by column without columns', () => {
-    const column = {
-      text: Faker.lorem.word(),
-      value: Faker.lorem.word(),
-    };
-    const searchNameValue = Faker.lorem.words();
-    const search = `- ${column.text} = '${searchNameValue}'`;
+    const { column, search } = mockData;
+    const advancedSearch = `- ${column.text} = '${search}'`;
 
     const wrapper = factory({
       propsData: {
-        query: { search },
+        query: { search: advancedSearch },
       },
     });
     const submitButton = wrapper.find('.c-search-field_submit');
@@ -111,21 +119,17 @@ describe('c-advanced-search-field', () => {
     expect(updateQueryEvents).toHaveLength(1);
     expect(updateQueryEvents[0]).toEqual([{
       page: 1,
-      search: `${column.text} = '${searchNameValue}'`,
+      search: `${column.text} = '${search}'`,
     }]);
   });
 
   it('Submit search with search by column', () => {
-    const column = {
-      text: Faker.lorem.word(),
-      value: Faker.lorem.word(),
-    };
-    const searchNameValue = Faker.lorem.words();
-    const search = `- ${column.text} = '${searchNameValue}'`;
+    const { column, search } = mockData;
+    const advancedSearch = `- ${column.text} = '${search}'`;
 
     const wrapper = factory({
       propsData: {
-        query: { search },
+        query: { search: advancedSearch },
         columns: [column],
       },
     });
@@ -138,12 +142,12 @@ describe('c-advanced-search-field', () => {
     expect(updateQueryEvents).toHaveLength(1);
     expect(updateQueryEvents[0]).toEqual([{
       page: 1,
-      search: `${column.value} = '${searchNameValue}'`,
+      search: `${column.value} = '${search}'`,
     }]);
   });
 
   it('Clear search by click on button', () => {
-    const search = Faker.lorem.words();
+    const { search } = mockData;
     const wrapper = factory({
       propsData: {
         query: { search },
@@ -160,8 +164,7 @@ describe('c-advanced-search-field', () => {
   });
 
   it('Submit search with custom field name', () => {
-    const search = Faker.lorem.words();
-    const field = Faker.lorem.word();
+    const { search, field } = mockData;
     const wrapper = factory({
       propsData: {
         query: { [field]: '' },
@@ -185,8 +188,7 @@ describe('c-advanced-search-field', () => {
   });
 
   it('Clear search with custom field name', () => {
-    const search = Faker.lorem.words();
-    const field = Faker.lorem.word();
+    const { search, field } = mockData;
     const wrapper = factory({
       propsData: {
         query: { [field]: search },

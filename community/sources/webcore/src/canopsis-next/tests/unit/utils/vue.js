@@ -6,8 +6,8 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 Vue.use(Vuetify);
 
 const mocks = {
-  $t: () => {},
-  $tc: () => {},
+  $t: path => path,
+  $tc: (path, count) => `${path}:${count}`,
 };
 
 /**
