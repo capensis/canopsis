@@ -1,14 +1,10 @@
-import Vuetify from 'vuetify';
-import { generate as generateString } from 'randomstring';
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import Faker from 'faker';
+
+import { mount, createVueInstance } from '@/unit/utils/vue';
 
 import CAdvancedSearchField from '@/components/forms/fields/c-advanced-search-field.vue';
 
-const localVue = createLocalVue();
-
-const mocks = {
-  $t: () => {},
-};
+const localVue = createVueInstance();
 
 const stubs = {
   'c-search-field': {
@@ -35,18 +31,15 @@ const stubs = {
   },
 };
 
-localVue.use(Vuetify);
-
-const factory = (options = {}) => shallowMount(CAdvancedSearchField, {
+const factory = (options = {}) => mount(CAdvancedSearchField, {
   localVue,
-  mocks,
   stubs,
   ...options,
 });
 
 describe('c-advanced-search-field', () => {
   it('Pass default search into props and it was applied to input field', () => {
-    const search = generateString();
+    const search = Faker.lorem.words();
 
     const wrapper = factory({ propsData: { query: { search } } });
     const input = wrapper.find('input');
@@ -55,7 +48,7 @@ describe('c-advanced-search-field', () => {
   });
 
   it('Search hints was applied', () => {
-    const tooltipText = generateString();
+    const tooltipText = Faker.lorem.words();
     const wrapper = factory({
       propsData: {
         query: {},
@@ -68,7 +61,7 @@ describe('c-advanced-search-field', () => {
   });
 
   it('Search hints as html was applied', () => {
-    const tooltipContentText = generateString();
+    const tooltipContentText = Faker.lorem.words();
     const tooltip = `
       <span class="tooltip-content-span">${tooltipContentText}</span>
     `;
@@ -84,7 +77,7 @@ describe('c-advanced-search-field', () => {
   });
 
   it('Submit search button', () => {
-    const search = generateString();
+    const search = Faker.lorem.words();
 
     const wrapper = factory({ propsData: { query: { search } } });
     const input = wrapper.find('input');
@@ -97,12 +90,12 @@ describe('c-advanced-search-field', () => {
   });
 
   it('Submit search with search by column without columns', () => {
-    const nameColumn = {
-      text: 'Name',
-      value: 'name',
+    const column = {
+      text: Faker.lorem.word(),
+      value: Faker.lorem.word(),
     };
-    const searchNameValue = generateString();
-    const search = `- ${nameColumn.text} = '${searchNameValue}'`;
+    const searchNameValue = Faker.lorem.words();
+    const search = `- ${column.text} = '${searchNameValue}'`;
 
     const wrapper = factory({
       propsData: {
@@ -118,22 +111,22 @@ describe('c-advanced-search-field', () => {
     expect(updateQueryEvents).toHaveLength(1);
     expect(updateQueryEvents[0]).toEqual([{
       page: 1,
-      search: `${nameColumn.text} = '${searchNameValue}'`,
+      search: `${column.text} = '${searchNameValue}'`,
     }]);
   });
 
   it('Submit search with search by column', () => {
-    const nameColumn = {
-      text: 'Name',
-      value: 'name',
+    const column = {
+      text: Faker.lorem.word(),
+      value: Faker.lorem.word(),
     };
-    const searchNameValue = generateString();
-    const search = `- ${nameColumn.text} = '${searchNameValue}'`;
+    const searchNameValue = Faker.lorem.words();
+    const search = `- ${column.text} = '${searchNameValue}'`;
 
     const wrapper = factory({
       propsData: {
         query: { search },
-        columns: [nameColumn],
+        columns: [column],
       },
     });
     const submitButton = wrapper.find('.c-search-field_submit');
@@ -145,12 +138,12 @@ describe('c-advanced-search-field', () => {
     expect(updateQueryEvents).toHaveLength(1);
     expect(updateQueryEvents[0]).toEqual([{
       page: 1,
-      search: `${nameColumn.value} = '${searchNameValue}'`,
+      search: `${column.value} = '${searchNameValue}'`,
     }]);
   });
 
   it('Clear search by click on button', () => {
-    const search = generateString();
+    const search = Faker.lorem.words();
     const wrapper = factory({
       propsData: {
         query: { search },
@@ -167,8 +160,8 @@ describe('c-advanced-search-field', () => {
   });
 
   it('Submit search with custom field name', () => {
-    const search = generateString();
-    const field = generateString();
+    const search = Faker.lorem.words();
+    const field = Faker.lorem.word();
     const wrapper = factory({
       propsData: {
         query: { [field]: '' },
@@ -192,8 +185,8 @@ describe('c-advanced-search-field', () => {
   });
 
   it('Clear search with custom field name', () => {
-    const search = generateString();
-    const field = generateString();
+    const search = Faker.lorem.words();
+    const field = Faker.lorem.word();
     const wrapper = factory({
       propsData: {
         query: { [field]: search },
@@ -214,9 +207,8 @@ describe('c-advanced-search-field', () => {
     const tooltip = `
       <span>Tooltip content</span>
     `;
-    const wrapper = shallowMount(CAdvancedSearchField, {
+    const wrapper = mount(CAdvancedSearchField, {
       localVue,
-      mocks,
       stubs: ['c-search-field'],
       propsData: {
         query: { search: 'c-advanced-search-field' },

@@ -1,4 +1,3 @@
-import { createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import { cloneDeep } from 'lodash';
 import { normalize } from 'normalizr';
@@ -7,7 +6,10 @@ import entitiesPlugin, { types } from '@/store/plugins/entities';
 import { alarmSchema } from '@/store/schemas';
 import { ENTITIES_TYPES } from '@/constants';
 
-import { alarms } from './data';
+import { createVueInstance } from '@/unit/utils/vue';
+import { fakeAlarms } from '@/unit/data/alarm';
+
+const { data: alarms } = fakeAlarms(1);
 
 const storeConfig = {
   plugins: [entitiesPlugin],
@@ -15,7 +17,7 @@ const storeConfig = {
 
 describe('Entities plugin', () => {
   beforeAll(() => {
-    const localVue = createLocalVue();
+    const localVue = createVueInstance();
     localVue.use(Vuex);
   });
 

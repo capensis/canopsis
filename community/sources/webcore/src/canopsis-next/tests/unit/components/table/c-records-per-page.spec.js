@@ -1,29 +1,29 @@
-import Vuetify from 'vuetify';
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { mount, createVueInstance } from '@/unit/utils/vue';
 
 import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
 
 import CRecordsPerPage from '@/components/common/pagination/c-records-per-page.vue';
 
-const localVue = createLocalVue();
+const localVue = createVueInstance();
 
 const stubs = {
   'v-select': {
     props: ['value', 'items'],
-    template:
-      `<select class="v-select" :value="value" @change="$listeners.input($event.target.value)">
+    template: `
+      <select class="v-select" :value="value" @change="$listeners.input($event.target.value)">
         <option v-for="item in items" :key="item" :value="item">{{ item }}</option>
-       </select>`,
+      </select>
+    `,
   },
 };
 
-localVue.use(Vuetify);
-
-const factory = (options = {}) => shallowMount(CRecordsPerPage, {
-  localVue, stubs, ...options,
+const factory = (options = {}) => mount(CRecordsPerPage, {
+  localVue,
+  stubs,
+  ...options,
 });
 
-describe('RecordsPerPage', () => {
+describe('c-records-per-page', () => {
   it('Default items is equal to PAGINATION_PER_PAGE_VALUES', () => {
     const wrapper = factory();
 
@@ -83,8 +83,18 @@ describe('RecordsPerPage', () => {
 
     select.setValue(value);
 
-    expect(wrapper.emitted('input')).toBeTruthy();
-    expect(wrapper.emitted('input').length).toBe(1);
-    expect(wrapper.emitted('input')[0].map(e => parseInt(e, 10))).toEqual([value]);
+    const inputEvents = wrapper.emitted('input');
+
+    expect(inputEvents).toBeTruthy();
+    expect(inputEvents).toHaveLength(1);
+    expect(inputEvents[0].map(e => parseInt(e, 10))).toEqual([value]);
+  });
+
+  it('Renders `c-records-per-page` correctly', () => {
+    const wrapper = mount(CRecordsPerPage, {
+      localVue,
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
   });
 });

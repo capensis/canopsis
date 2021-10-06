@@ -1,6 +1,7 @@
 .DS_Store
 node_modules
 /dist
+/coverage
 
 # testing data
 /tests/e2e/reports/

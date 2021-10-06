@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-records-per-page Renders \`c-records-per-page\` correctly 1`] = `
+<v-select-stub
+  class="select pa-0"
+  dense="dense"
+  hide-details="hide-details"
+  items="5,10,20,50,100"
+  single-line="single-line"
+  value="10"
+/>
+`;

@@ -1,20 +1,18 @@
-import Vuetify from 'vuetify';
-import { generate as generateString } from 'randomstring';
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import Faker from 'faker';
+
+import { mount, createVueInstance } from '@/unit/utils/vue';
 
 import { EXPAND_DEFAULT_MAX_LETTERS } from '@/config';
 
 import CEllipsis from '@/components/common/table/c-ellipsis.vue';
 
-const localVue = createLocalVue();
+const localVue = createVueInstance();
 
-localVue.use(Vuetify);
+const factory = (options = {}) => mount(CEllipsis, { localVue, ...options });
 
-const factory = (options = {}) => shallowMount(CEllipsis, { localVue, ...options });
-
-describe('Ellipsis', () => {
+describe('c-ellipsis', () => {
   it('Text letters count less then EXPAND_DEFAULT_MAX_LETTERS', () => {
-    const text = generateString(EXPAND_DEFAULT_MAX_LETTERS - 1);
+    const text = Faker.datatype.string(EXPAND_DEFAULT_MAX_LETTERS - 1);
 
     const wrapper = factory({ propsData: { text } });
 
@@ -23,7 +21,7 @@ describe('Ellipsis', () => {
   });
 
   it('Text letters count more then EXPAND_DEFAULT_MAX_LETTERS', () => {
-    const text = generateString(EXPAND_DEFAULT_MAX_LETTERS + 1);
+    const text = Faker.datatype.string(EXPAND_DEFAULT_MAX_LETTERS + 1);
     const shortenText = text.substr(0, EXPAND_DEFAULT_MAX_LETTERS);
 
     const wrapper = factory({ propsData: { text } });
@@ -35,7 +33,7 @@ describe('Ellipsis', () => {
 
   it('Text letters count less then custom maxLetters', () => {
     const maxLetters = 5;
-    const text = generateString(maxLetters - 1);
+    const text = Faker.datatype.string(maxLetters - 1);
 
     const wrapper = factory({ propsData: { text, maxLetters } });
 
@@ -44,7 +42,7 @@ describe('Ellipsis', () => {
 
   it('Text letters count more then custom maxLetters', () => {
     const maxLetters = 5;
-    const text = generateString(maxLetters + 1);
+    const text = Faker.datatype.string(maxLetters + 1);
     const shortenText = text.substr(0, maxLetters);
 
     const wrapper = factory({ propsData: { text, maxLetters } });
@@ -55,7 +53,7 @@ describe('Ellipsis', () => {
   });
 
   it('Click on dots with text letters count more then EXPAND_DEFAULT_MAX_LETTERS', () => {
-    const text = generateString(EXPAND_DEFAULT_MAX_LETTERS + 1);
+    const text = Faker.datatype.string(EXPAND_DEFAULT_MAX_LETTERS + 1);
 
     const wrapper = factory({ propsData: { text } });
 
@@ -65,24 +63,43 @@ describe('Ellipsis', () => {
   });
 
   it('Click on text with text letters count less then EXPAND_DEFAULT_MAX_LETTERS', () => {
-    const text = generateString(EXPAND_DEFAULT_MAX_LETTERS - 1);
+    const text = Faker.datatype.string(EXPAND_DEFAULT_MAX_LETTERS - 1);
 
     const wrapper = factory({ propsData: { text } });
 
     wrapper.find('div > span').trigger('click');
 
-    expect(wrapper.emitted('textClicked')).toBeTruthy();
-    expect(wrapper.emitted('textClicked').length).toBe(1);
+    const textClickedEvents = wrapper.emitted('textClicked');
+
+    expect(textClickedEvents).toHaveLength(1);
   });
 
   it('Click on text with text letters count more then EXPAND_DEFAULT_MAX_LETTERS', () => {
-    const text = generateString(EXPAND_DEFAULT_MAX_LETTERS + 1);
+    const text = Faker.datatype.string(EXPAND_DEFAULT_MAX_LETTERS + 1);
 
     const wrapper = factory({ propsData: { text } });
 
     wrapper.find('div > span').trigger('click');
 
-    expect(wrapper.emitted('textClicked')).toBeTruthy();
-    expect(wrapper.emitted('textClicked').length).toBe(1);
+    const textClickedEvents = wrapper.emitted('textClicked');
+
+    expect(textClickedEvents).toHaveLength(1);
+  });
+
+  it('Renders `c-ellipsis` correctly', () => {
+    const text = `omnis esse recusandae magni similique porro quaerat alias vel deserunt porro voluptate
+      voluptatibus commodi sequi et qui fugiat exercitationem et et eligendi ad officia quis suscipit earum soluta
+      minima architecto numquam et voluptatibus quia officiis nulla veritatis soluta optio assumenda est fugiat est
+      suscipit inventore temporibus dolores quos dolorem doloremque autem qui sit ipsam praesentium esse sunt ut
+      molestiae nulla itaque voluptatem pariatur vel dolorum impedit asperiores numquam animi esse laborum in et
+      magnam nulla et consequatur facere sint nam facere sunt aut alias qui omnis rerum corporis totam quibusdam
+      nostrum mollitia quia vel amet pariatur eveniet explicabo quia ullam`;
+
+    const wrapper = mount(CEllipsis, {
+      localVue,
+      propsData: { text },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
   });
 });

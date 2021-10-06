@@ -1,14 +1,10 @@
-import Vuetify from 'vuetify';
-import { generate as generateString } from 'randomstring';
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import Faker from 'faker';
+
+import { mount, createVueInstance } from '@/unit/utils/vue';
 
 import CSearchField from '@/components/forms/fields/c-search-field.vue';
 
-const localVue = createLocalVue();
-
-const mocks = {
-  $t: () => {},
-};
+const localVue = createVueInstance();
 
 const stubs = {
   'v-btn': {
@@ -34,18 +30,15 @@ const stubs = {
   },
 };
 
-localVue.use(Vuetify);
-
-const factory = (options = {}) => shallowMount(CSearchField, {
+const factory = (options = {}) => mount(CSearchField, {
   localVue,
-  mocks,
   stubs,
   ...options,
 });
 
 describe('c-search-field', () => {
   it('Not empty value was pass into props and it was applied to input field', () => {
-    const value = generateString();
+    const value = Faker.lorem.words();
 
     const wrapper = factory({ propsData: { value } });
     const input = wrapper.find('input.v-text-field');
@@ -54,8 +47,8 @@ describe('c-search-field', () => {
   });
 
   it('Input value was update, after prop change and it was applied to input field', async () => {
-    const value = generateString();
-    const newValue = generateString();
+    const value = Faker.lorem.words();
+    const newValue = Faker.lorem.words();
 
     const wrapper = factory({ propsData: { value } });
 
@@ -69,7 +62,7 @@ describe('c-search-field', () => {
   });
 
   it('Set value into input element', () => {
-    const value = generateString();
+    const value = Faker.lorem.words();
 
     const wrapper = factory();
     const input = wrapper.find('input.v-text-field');
@@ -83,7 +76,7 @@ describe('c-search-field', () => {
   });
 
   it('Keyup without enter key on input element', () => {
-    const value = generateString();
+    const value = Faker.lorem.words();
 
     const wrapper = factory({ propsData: { value } });
     const input = wrapper.find('input.v-text-field');
@@ -96,7 +89,7 @@ describe('c-search-field', () => {
   });
 
   it('Keyup with enter key on input element', async () => {
-    const value = generateString();
+    const value = Faker.lorem.words();
 
     const wrapper = factory({ propsData: { value } });
     const input = wrapper.find('input.v-text-field');
@@ -109,7 +102,7 @@ describe('c-search-field', () => {
   });
 
   it('Submit search button is the first button', () => {
-    const value = generateString();
+    const value = Faker.lorem.words();
 
     const wrapper = factory({ propsData: { value } });
     const submitButton = wrapper.findAll('.v-btn').at(0);
@@ -120,7 +113,7 @@ describe('c-search-field', () => {
   });
 
   it('Clear search button is the second button', () => {
-    const value = generateString();
+    const value = Faker.lorem.words();
 
     const wrapper = factory({ propsData: { value } });
     const clearButton = wrapper.findAll('.v-btn').at(1);
@@ -132,7 +125,7 @@ describe('c-search-field', () => {
   });
 
   it('Click on submit button', () => {
-    const value = generateString();
+    const value = Faker.lorem.words();
 
     const wrapper = factory({ propsData: { value } });
     const submitButton = wrapper.findAll('.v-btn').at(0);
@@ -145,7 +138,7 @@ describe('c-search-field', () => {
   });
 
   it('Click on clear button', () => {
-    const value = generateString();
+    const value = Faker.lorem.words();
 
     const wrapper = factory({ propsData: { value } });
     const clearButton = wrapper.findAll('.v-btn').at(1);
@@ -162,9 +155,8 @@ describe('c-search-field', () => {
   });
 
   it('Renders `c-search-field` correctly', () => {
-    const wrapper = shallowMount(CSearchField, {
+    const wrapper = mount(CSearchField, {
       localVue,
-      mocks,
       propsData: { value: 'c-search-field' },
     });
 
