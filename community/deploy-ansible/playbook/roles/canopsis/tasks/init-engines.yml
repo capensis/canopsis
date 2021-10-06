@@ -50,3 +50,11 @@
     state: started
     enabled: true
   with_items: "{{ canopsis_core_other_default_services }}"
+
+- name: Start and enable other default Canopsis services (CAT additions)
+  systemd:
+    name: "canopsis-service@{{ item.name }}.service"
+    state: started
+    enabled: true
+  with_items: "{{ canopsis_cat_other_default_services }}"
+  when: canopsis_edition == "cat"

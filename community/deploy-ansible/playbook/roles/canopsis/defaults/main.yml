@@ -75,3 +75,8 @@ canopsis_core_other_default_services:
     name: canopsis-api
   -
     name: canopsis-oldapi
+
+# Default other CAT components
+canopsis_cat_other_default_services:
+  -
+    name: connector-junit
