@@ -1,5 +1,5 @@
 import moment from 'moment-timezone';
-import { isUndefined, cloneDeep, omit, isNumber } from 'lodash';
+import { cloneDeep, omit, isUndefined, isNumber, isEmpty } from 'lodash';
 
 import { ENTITIES_STATES, SCENARIO_ACTION_TYPES, TIME_UNITS } from '@/constants';
 
@@ -68,9 +68,9 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 /**
  * @typedef {Object} ScenarioActionWebhookParameters
  * @property {ScenarioActionWebhookRequestParameter} request
- * @property {Object} declare_ticket
- * @property {boolean} declare_ticket.empty_response
- * @property {boolean} declare_ticket.is_regexp
+ * @property {Object} [declare_ticket]
+ * @property {boolean} [declare_ticket.empty_response]
+ * @property {boolean} [declare_ticket.is_regexp]
  * @property {number} retry_count
  * @property {Duration} retry_delay
  */
@@ -343,11 +343,7 @@ export const scenarioToForm = (scenario = {}, timezone = moment.tz.guess()) => (
  */
 export const formToScenarioWebhookActionParameters = (parameters = {}) => {
   const webhook = {
-    declare_ticket: {
-      empty_response: parameters.empty_response,
-      is_regexp: parameters.is_regexp,
-      ...textPairsToObject(parameters.declare_ticket),
-    },
+    declare_ticket: null,
     request: {
       ...parameters.request,
       payload: parameters.request.payload,
@@ -358,6 +354,15 @@ export const formToScenarioWebhookActionParameters = (parameters = {}) => {
   if (parameters.retry.value) {
     webhook.retry_count = parameters.retry.count;
     webhook.retry_delay = formToDuration(parameters.retry);
+  }
+
+  if (parameters.empty_response || parameters.is_regexp || !isEmpty(parameters.declare_ticket)) {
+    webhook.declare_ticket = {
+      empty_response: parameters.empty_response,
+      is_regexp: parameters.is_regexp,
+
+      ...textPairsToObject(parameters.declare_ticket),
+    };
   }
 
   return webhook;
