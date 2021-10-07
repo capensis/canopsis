@@ -8,7 +8,7 @@ WORKDIR cmd/${BINARY_NAME}
 
 RUN make build && cp "build/${BINARY_NAME}" "/${BINARY_NAME}"
 
-FROM alpine:3.11.12
+FROM alpine:3.12.8
 
 ARG BINARY_NAME
 
