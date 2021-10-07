@@ -13,12 +13,15 @@ const (
 const (
 	WidgetParamJunitIsApi              = "is_api"
 	WidgetParamJunitDir                = "directory"
+	WidgetParamJunitReportFileRegexp   = "report_fileregexp"
 	WidgetParamJunitScreenshotDirs     = "screenshot_directories"
 	WidgetParamJunitScreenshotFilemask = "screenshot_filemask"
 	WidgetParamJunitVideoDirs          = "video_directories"
 	WidgetParamJunitVideoFilemask      = "video_filemask"
 	WidgetInternalParamJunitTestSuites = "test_suites"
 )
+
+const JunitReportFileRegexpSubexpName = "name"
 
 type Group struct {
 	ID       string        `bson:"_id"`
