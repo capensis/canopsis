@@ -2,12 +2,12 @@ package api
 
 import (
 	"context"
-	apilogger "git.canopsis.net/canopsis/go-engines/lib/api/logger"
 	"os"
 	"time"
 
 	"git.canopsis.net/canopsis/go-engines/lib/amqp"
 	"git.canopsis.net/canopsis/go-engines/lib/api/export"
+	apilogger "git.canopsis.net/canopsis/go-engines/lib/api/logger"
 	"git.canopsis.net/canopsis/go-engines/lib/api/middleware"
 	devmiddleware "git.canopsis.net/canopsis/go-engines/lib/api/middleware/dev"
 	"git.canopsis.net/canopsis/go-engines/lib/canopsis"
@@ -20,7 +20,6 @@ import (
 	libsecurity "git.canopsis.net/canopsis/go-engines/lib/security"
 	"git.canopsis.net/canopsis/go-engines/lib/security/proxy"
 	"git.canopsis.net/canopsis/go-engines/lib/security/session/mongostore"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -115,10 +114,6 @@ func Default(
 	// Create api.
 	api := New(addr, logger)
 	api.AddRouter(func(router gin.IRouter) {
-		corsConfig := cors.DefaultConfig()
-		corsConfig.AllowAllOrigins = true
-		corsConfig.AllowCredentials = true
-		router.Use(cors.New(corsConfig))
 		router.Use(middleware.Cache())
 
 		if test {
