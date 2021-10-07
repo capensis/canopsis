@@ -73,11 +73,7 @@ export default {
     },
 
     totalPages() {
-      if (this.total) {
-        return Math.ceil(this.total / this.limit) || 0;
-      }
-
-      return 0;
+      return Math.ceil(this.total / this.limit) || 0;
     },
 
     /**
