@@ -15,7 +15,6 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchRemediationJobExecution: 'fetchItem',
       createRemediationJobExecution: 'create',
     }),
   },

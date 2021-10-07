@@ -29,7 +29,6 @@ export const entitiesInfoMixin = {
       samlConfig: 'samlConfig',
       timezone: 'timezone',
       remediationJobConfigTypes: 'remediationJobConfigTypes',
-      remediationPauseManualInstructionIntervalSeconds: 'remediationPauseManualInstructionIntervalSeconds',
     }),
 
     isCatVersion() {

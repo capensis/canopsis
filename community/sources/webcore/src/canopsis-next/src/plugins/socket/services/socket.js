@@ -1,6 +1,10 @@
 import { find } from 'lodash';
 
-import { SOCKET_EVENTS_TYPES, MAX_RECONNECTS_COUNT } from '../constants';
+import {
+  REQUEST_MESSAGES_TYPES,
+  RESPONSE_MESSAGES_TYPES,
+  MAX_RECONNECTS_COUNT,
+} from '../constants';
 
 import SocketRoom from './socket-room';
 
@@ -127,42 +131,61 @@ class Socket {
    * Join to a room
    *
    * @param {string} room
-   * @returns {Socket}
+   * @returns {SocketRoom}
    */
   join(room) {
-    this.send({
-      room,
-      type: SOCKET_EVENTS_TYPES.join,
-    });
-
     if (!this.rooms[room]) {
       this.rooms[room] = new SocketRoom(room);
     } else {
       this.rooms[room].increment();
     }
 
-    return this;
+    this.send({
+      room,
+      type: REQUEST_MESSAGES_TYPES.join,
+    });
+
+    return this.rooms[room];
   }
 
   /**
    * Leave a room
    *
    * @param {string} room
-   * @returns {Socket}
+   * @returns {SocketRoom}
    */
   leave(room) {
-    this.send({
-      room,
-      type: SOCKET_EVENTS_TYPES.leave,
-    });
+    const socketRoom = this.rooms[room];
 
-    if (this.rooms[room]) {
-      this.rooms[room].decrement();
+    if (socketRoom) {
+      socketRoom.decrement();
 
-      if (!this.rooms[room].count) {
+      if (!socketRoom.count) {
         delete this.rooms[room];
       }
     }
+
+    if (socketRoom.joined) {
+      this.send({
+        room,
+        type: REQUEST_MESSAGES_TYPES.leave,
+      });
+    }
+
+    return socketRoom ?? new SocketRoom(room);
+  }
+
+  /**
+   * Authenticate by token
+   *
+   * @param {string} token
+   * @return {Socket}
+   */
+  authenticate(token) {
+    this.send({
+      token,
+      type: REQUEST_MESSAGES_TYPES.authenticate,
+    });
 
     return this;
   }
@@ -206,14 +229,26 @@ class Socket {
    */
   baseMessageHandler({ data }) {
     try {
-      const { room, msg, error } = JSON.parse(data);
+      const { type, room, msg, error } = JSON.parse(data);
 
       if (error) {
         throw error;
       }
 
-      if (this.rooms[room] && msg) {
-        this.rooms[room].call(null, msg);
+      const socketRoom = this.rooms[room];
+
+      if (!socketRoom) {
+        return;
+      }
+
+      if (type === RESPONSE_MESSAGES_TYPES.ok) {
+        if (msg) {
+          socketRoom.call(null, msg);
+        } else {
+          socketRoom.markJoin();
+        }
+      } else if (type === RESPONSE_MESSAGES_TYPES.close) {
+        socketRoom.markLeave();
       }
     } catch (err) {
       console.error(err);

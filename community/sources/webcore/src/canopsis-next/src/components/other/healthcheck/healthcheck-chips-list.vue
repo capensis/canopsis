@@ -67,16 +67,14 @@ export default {
   mounted() {
     this.fetchList();
 
-    this.$socket.join(SOCKET_ROOMS.healthcheckStatus);
     this.$socket
-      .getRoom(SOCKET_ROOMS.healthcheckStatus)
+      .join(SOCKET_ROOMS.healthcheckStatus)
       .addListener(this.setHealthcheckStatus);
   },
   beforeDestroy() {
     this.$socket
-      .getRoom(SOCKET_ROOMS.healthcheckStatus)
+      .leave(SOCKET_ROOMS.healthcheckStatus)
       .removeListener(this.setHealthcheckStatus);
-    this.$socket.leave(SOCKET_ROOMS.healthcheckStatus);
   },
   methods: {
     ...mapActions({

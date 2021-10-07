@@ -64,12 +64,14 @@ export default {
   mounted() {
     this.fetchList();
 
-    this.$socket.join(SOCKET_ROOMS.healthcheck);
-    this.$socket.getRoom(SOCKET_ROOMS.healthcheck).addListener(this.setData);
+    this.$socket
+      .join(SOCKET_ROOMS.healthcheck)
+      .addListener(this.setData);
   },
   beforeDestroy() {
-    this.$socket.getRoom(SOCKET_ROOMS.healthcheck).removeListener(this.setData);
-    this.$socket.leave(SOCKET_ROOMS.healthcheck);
+    this.$socket
+      .leave(SOCKET_ROOMS.healthcheck)
+      .removeListener(this.setData);
   },
   methods: {
     ...mapActions({

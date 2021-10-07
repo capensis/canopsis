@@ -71,6 +71,8 @@ export default {
   },
   async mounted() {
     try {
+      this.$socket.connect(SOCKET_URL);
+
       await this.fetchCurrentUser();
     } catch ({ status }) {
       if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(status)) {
@@ -85,13 +87,13 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchPausedExecutionsWithoutStore: 'fetchPausedExecutionsWithoutStore',
+      fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
     }),
 
     registerCurrentUserOnceWatcher() {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
-          this.$socket.connect(`${SOCKET_URL}?token=${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
+          this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
           await this.fetchAppInfo();
 
           this.setSystemData({

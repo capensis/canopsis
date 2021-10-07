@@ -4,26 +4,32 @@
       template(slot="title")
         span {{ config.assignedInstruction.name }}
       template(slot="text")
-        remediation-instruction-execute(
-          v-if="executionInstruction",
-          :execution-instruction="executionInstruction"
-        )
-        v-layout(v-else, justify-center)
-          v-progress-circular(color="primary", indeterminate)
+        v-fade-transition
+          remediation-instruction-execute(
+            v-if="instructionExecution",
+            :instruction-execution="instructionExecution",
+            @next-step="nextStep",
+            @next-operation="nextOperation",
+            @previous-operation="previousOperation",
+            @execute-job="executeJob"
+          )
+          v-layout(v-else, justify-center)
+            v-progress-circular(color="primary", indeterminate)
 </template>
 
 <script>
-import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
+import { createNamespacedHelpers } from 'vuex';
+
+import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES, SOCKET_ROOMS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { authMixin } from '@/mixins/auth';
-import { pollingMixinCreator } from '@/mixins/polling';
-import { entitiesInfoMixin } from '@/mixins/entities/info';
-import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
+
+const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
+const { mapActions: jobExecutionMapActions } = createNamespacedHelpers('remediationJobExecution');
 
 export default {
   name: MODALS.executeRemediationInstruction,
@@ -31,41 +37,43 @@ export default {
     ModalWrapper,
     RemediationInstructionExecute,
   },
-  mixins: [
-    modalInnerMixin,
-    authMixin,
-    entitiesRemediationInstructionExecutionMixin,
-    entitiesInfoMixin,
-    pollingMixinCreator({ method: 'pingInstructionExecution' }),
-  ],
+  mixins: [modalInnerMixin],
   data() {
-    const { execution } = this.modal.config.assignedInstruction;
-
     return {
-      executionInstructionId: execution && execution._id,
       pending: true,
+      instructionExecution: null,
     };
   },
   computed: {
-    executionInstruction() {
-      return this.getRemediationInstructionExecution(this.executionInstructionId);
+    instruction() {
+      return this.config.assignedInstruction;
     },
 
-    pollingDelay() {
-      return (this.remediationPauseManualInstructionIntervalSeconds - 1) * 1000;
+    instructionId() {
+      return this.instruction?._id;
+    },
+
+    instructionExecutionId() {
+      const { execution } = this.instruction;
+
+      return execution?._id ?? this.instructionExecution?._id;
+    },
+
+    socketRoomName() {
+      return `${SOCKET_ROOMS.execution}/${this.instructionExecutionId}`;
     },
   },
   watch: {
-    async executionInstruction(executionInstruction) {
-      if (executionInstruction.status !== REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running) {
+    async instructionExecution(instructionExecution) {
+      if (instructionExecution.status !== REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running) {
         const isFailedExecution = [
           REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed,
           REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted,
-        ].includes(executionInstruction.status);
+        ].includes(instructionExecution.status);
 
         const type = isFailedExecution ? 'failed' : 'success';
         const text = this.$t(`remediationInstructionExecute.popups.${type}`, {
-          instructionName: executionInstruction.name,
+          instructionName: instructionExecution.name,
         });
 
         if (isFailedExecution) {
@@ -74,10 +82,8 @@ export default {
           this.$popups.success({ text });
         }
 
-        this.stopPolling();
-
         if (this.config.onComplete) {
-          await this.config.onComplete(executionInstruction);
+          await this.config.onComplete(instructionExecution);
         }
 
         this.$modals.hide();
@@ -85,21 +91,108 @@ export default {
     },
   },
   async mounted() {
-    this.pending = true;
-
     await this.fetchInstructionExecution();
 
-    this.pending = false;
+    this.$socket
+      .on('error', this.socketErrorHandler)
+      .join(this.socketRoomName)
+      .addListener(this.setOperation);
+  },
+  beforeDestroy() {
+    this.$socket
+      .off('error', this.socketErrorHandler)
+      .leave(this.socketRoomName)
+      .removeListener(this.setOperation);
   },
   methods: {
-    async pingInstructionExecution() {
-      try {
-        if (!this.executionInstruction || this.pending) {
-          return;
-        }
+    ...mapActions({
+      fetchRemediationInstructionExecutionWithoutStore: 'fetchItemWithoutStore',
+      createRemediationInstructionExecution: 'create',
+      cancelRemediationInstructionExecution: 'cancel',
+      pauseRemediationInstructionExecution: 'pause',
+      nextStepRemediationInstructionExecution: 'nextStep',
+      nextOperationRemediationInstructionExecution: 'nextOperation',
+      previousOperationRemediationInstructionExecution: 'previousOperation',
+      resumeRemediationInstructionExecution: 'resume',
+    }),
 
-        await this.pingRemediationInstructionExecution({ id: this.executionInstruction._id });
+    ...jobExecutionMapActions({
+      createRemediationJobExecution: 'create',
+    }),
+
+    /**
+     * Goto next step
+     *
+     * @param {boolean} success
+     * @return {Promise<void>}
+     */
+    async nextStep(success = false) {
+      this.instructionExecution = await this.nextStepRemediationInstructionExecution({
+        id: this.instructionExecutionId,
+        data: { failed: !success },
+      });
+    },
+
+    /**
+     * Goto next operation
+     *
+     * @return {Promise<void>}
+     */
+    async nextOperation() {
+      this.instructionExecution = await this.nextOperationRemediationInstructionExecution({
+        id: this.instructionExecutionId,
+      });
+    },
+
+    /**
+     * Goto previous operation
+     *
+     * @return {Promise<void>}
+     */
+    async previousOperation() {
+      this.instructionExecution = await this.previousOperationRemediationInstructionExecution({
+        id: this.instructionExecutionId,
+      });
+    },
+
+    /**
+     * Execute special job by operation
+     *
+     * @param {RemediationJob} job
+     * @param {RemediationInstructionStepOperation} operation
+     * @return {Promise<void>}
+     */
+    async executeJob({ job, operation }) {
+      try {
+        const updatedJob = await this.createRemediationJobExecution({
+          data: {
+            execution: this.instructionExecutionId,
+            job: job.job_id,
+            operation: operation.operation_id,
+          },
+        });
+
+        this.setOperation({
+          ...operation,
+
+          jobs: operation.jobs.map(operationJob => (
+            operationJob.job_id === updatedJob.job_id
+              ? updatedJob
+              : operationJob
+          )),
+        });
       } catch (err) {
+        console.error(err);
+
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
+      }
+    },
+
+    /**
+     * Socket error handler (we need to use for connection checking)
+     */
+    socketErrorHandler() {
+      if (!this.$socket.isConnectionOpen) {
         this.$modals.hide();
         this.$popups.error({
           text: this.$t('remediationInstructionExecute.popups.connectionError'),
@@ -108,29 +201,52 @@ export default {
       }
     },
 
-    async createInstructionExecution() {
-      const { _id: instructionId } = this.config.assignedInstruction;
+    /**
+     * Set operation into current instructionExecution
+     *
+     * @param {RemediationInstructionStepOperation} operation
+     */
+    setOperation(operation) {
+      this.instructionExecution.steps.some((step) => {
+        const operationIndex = step.operations
+          .findIndex(({ operation_id: operationId }) => operationId === operation.operation_id);
 
-      const instructionExecution = await this.createRemediationInstructionExecution({
-        data: {
-          alarm: this.config.alarm._id,
-          instruction: instructionId,
-        },
+        const wasFound = operationIndex !== -1;
+
+        if (wasFound) {
+          this.$set(step.operations, operationIndex, operation);
+        }
+
+        return wasFound;
       });
-
-      this.executionInstructionId = instructionExecution._id;
     },
 
+    /**
+     * Fetch instruction execution method (create if not exists, resume or fetch if exists)
+     *
+     * @return {Promise<void>}
+     */
     async fetchInstructionExecution() {
       const { execution } = this.config.assignedInstruction;
 
       try {
+        this.pending = true;
+
         if (!execution) {
-          await this.createInstructionExecution();
+          this.instructionExecution = await this.createRemediationInstructionExecution({
+            data: {
+              alarm: this.config.alarm._id,
+              instruction: this.instructionId,
+            },
+          });
         } else if (execution.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused) {
-          await this.resumeRemediationInstructionExecution({ id: execution._id });
+          this.instructionExecution = await this.resumeRemediationInstructionExecution({
+            id: this.instructionExecutionId,
+          });
         } else {
-          await this.fetchRemediationInstructionExecution({ id: execution._id });
+          this.instructionExecution = await this.fetchRemediationInstructionExecutionWithoutStore({
+            id: this.instructionExecutionId,
+          });
         }
 
         if (this.config.onOpen) {
@@ -139,9 +255,27 @@ export default {
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
         this.$modals.hide();
+      } finally {
+        this.pending = false;
       }
     },
 
+    /**
+     * Confirmation modal hide method
+     *
+     * @return {Promise<void>}
+     */
+    async confirmationHide() {
+      if (this.config.onClose) {
+        await this.config.onClose();
+      }
+
+      this.$modals.hide();
+    },
+
+    /**
+     * Close handler
+     */
     close() {
       this.$modals.show({
         name: MODALS.confirmation,
@@ -149,26 +283,16 @@ export default {
           hideTitle: true,
           text: this.$t('remediationInstructionExecute.closeConfirmationText'),
           action: async () => {
-            await this.pauseRemediationInstructionExecution({ id: this.executionInstruction._id });
-
-            if (this.config.onClose) {
-              await this.config.onClose();
-            }
-
-            this.$modals.hide();
+            await this.pauseRemediationInstructionExecution({ id: this.instructionExecutionId });
+            await this.confirmationHide();
           },
           cancel: async (cancelled) => {
             if (!cancelled) {
               return;
             }
 
-            await this.cancelRemediationInstructionExecution({ id: this.executionInstruction._id });
-
-            if (this.config.onClose) {
-              await this.config.onClose();
-            }
-
-            this.$modals.hide();
+            await this.cancelRemediationInstructionExecution({ id: this.instructionExecutionId });
+            await this.confirmationHide();
           },
         },
       });

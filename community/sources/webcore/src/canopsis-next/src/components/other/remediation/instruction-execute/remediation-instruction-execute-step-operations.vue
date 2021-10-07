@@ -1,30 +1,26 @@
 <template lang="pug">
   v-layout(column)
-    remediation-instruction-execute-operation(
+    remediation-instruction-execute-step-operation(
       v-for="(operation, index) in operations",
       :key="operation.operation_id",
       :operation="operation",
       :operation-number="getOperationNumber(index)",
       :is-first-operation="!index",
       :is-first-step="isFirstStep",
-      :execution-id="executionId",
       @next="nextOperation(index)",
-      @previous="previousOperation"
+      @previous="previousOperation",
+      @execute-job="executeJob"
     )
 </template>
 
 <script>
 import { getLetterByIndex } from '@/helpers/string';
 
-import RemediationInstructionExecuteOperation from './remediation-instruction-execute-operation.vue';
+import RemediationInstructionExecuteStepOperation from './remediation-instruction-execute-step-operation.vue';
 
 export default {
-  components: { RemediationInstructionExecuteOperation },
+  components: { RemediationInstructionExecuteStepOperation },
   props: {
-    executionId: {
-      type: String,
-      required: true,
-    },
     operations: {
       type: Array,
       default: () => [],
@@ -46,13 +42,17 @@ export default {
     nextOperation(index) {
       const event = index === this.operations.length - 1
         ? 'finish'
-        : 'next';
+        : 'next-operation';
 
       this.$emit(event);
     },
 
     previousOperation() {
-      this.$emit('previous');
+      this.$emit('previous-operation');
+    },
+
+    executeJob(data) {
+      this.$emit('execute-job', data);
     },
   },
 };

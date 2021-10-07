@@ -99,6 +99,9 @@ export const SOCKET_ROOMS = {
   healthcheck: 'healthcheck',
   healthcheckStatus: 'healthcheck-status',
   messageRates: 'message-rates',
+  loggedUserCount: 'logged-user-count',
+  broadcastMessages: 'broadcast-messages',
+  execution: 'execution',
 };
 
 export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';

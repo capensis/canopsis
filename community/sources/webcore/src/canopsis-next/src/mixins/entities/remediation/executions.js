@@ -15,8 +15,9 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchPausedExecutionsWithoutStore: 'fetchPausedExecutionsWithoutStore',
+      fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
       fetchRemediationInstructionExecution: 'fetchItem',
+      fetchRemediationInstructionExecutionWithoutStore: 'fetchItemWithoutStore',
       createRemediationInstructionExecution: 'create',
       cancelRemediationInstructionExecution: 'cancel',
       nextOperationRemediationInstructionExecution: 'nextOperation',
