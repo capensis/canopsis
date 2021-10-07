@@ -1,0 +1,145 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] = `
+<v-tooltip-stub
+  bottom="true"
+  closedelay="200"
+  contentclass=""
+  debounce="0"
+  fixed="true"
+  maxwidth="auto"
+  nudgebottom="0"
+  nudgeleft="0"
+  nudgeright="0"
+  nudgetop="0"
+  nudgewidth="0"
+  opendelay="200"
+  tag="span"
+>
+  <template>
+    <v-btn-stub
+      activeclass="v-btn--active"
+      class="mx-1"
+      icon="true"
+      tag="button"
+      type="button"
+    >
+      <v-icon-stub
+        color="color"
+      >
+        test_icon
+      </v-icon-stub>
+    </v-btn-stub>
+  </template>
+  <span>
+    tooltip
+  </span>
+</v-tooltip-stub>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly. 1`] = `
+<v-tooltip-stub
+  bottom="true"
+  closedelay="200"
+  contentclass=""
+  debounce="0"
+  fixed="true"
+  maxwidth="auto"
+  nudgebottom="0"
+  nudgeleft="0"
+  nudgeright="0"
+  nudgetop="0"
+  nudgewidth="0"
+  opendelay="200"
+  tag="span"
+>
+  <template>
+    <v-btn-stub
+      activeclass="v-btn--active"
+      class="mx-1"
+      icon="true"
+      tag="button"
+      type="button"
+    >
+      <v-icon-stub>
+        edit
+      </v-icon-stub>
+    </v-btn-stub>
+  </template>
+  <span>
+    common.edit
+  </span>
+</v-tooltip-stub>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly. 2`] = `
+<v-tooltip-stub
+  bottom="true"
+  closedelay="200"
+  contentclass=""
+  debounce="0"
+  fixed="true"
+  maxwidth="auto"
+  nudgebottom="0"
+  nudgeleft="0"
+  nudgeright="0"
+  nudgetop="0"
+  nudgewidth="0"
+  opendelay="200"
+  tag="span"
+>
+  <template>
+    <v-btn-stub
+      activeclass="v-btn--active"
+      class="mx-1"
+      icon="true"
+      tag="button"
+      type="button"
+    >
+      <v-icon-stub>
+        file_copy
+      </v-icon-stub>
+    </v-btn-stub>
+  </template>
+  <span>
+    common.duplicate
+  </span>
+</v-tooltip-stub>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly. 3`] = `
+<v-tooltip-stub
+  bottom="true"
+  closedelay="200"
+  contentclass=""
+  debounce="0"
+  fixed="true"
+  maxwidth="auto"
+  nudgebottom="0"
+  nudgeleft="0"
+  nudgeright="0"
+  nudgetop="0"
+  nudgewidth="0"
+  opendelay="200"
+  tag="span"
+>
+  <template>
+    <v-btn-stub
+      activeclass="v-btn--active"
+      class="mx-1"
+      icon="true"
+      tag="button"
+      type="button"
+    >
+      <v-icon-stub
+        color="error"
+      >
+        delete
+      </v-icon-stub>
+    </v-btn-stub>
+  </template>
+  <span>
+    common.delete
+  </span>
+</v-tooltip-stub>
+`;
