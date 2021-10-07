@@ -1,0 +1,265 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-pagination Renders \`c-pagination\` on the bottom correctly 1`] = `
+<div
+  class="container text-xs-center"
+>
+  <v-layout-stub
+    align-center="align-center"
+    justify-center="justify-center"
+    tag="div"
+  >
+    <span
+      class="grey--text text--darken-1"
+    >
+      common.paginationItems:{"first":21,"last":30,"total":100}
+    </span>
+    <v-pagination-stub
+      data-test="vPagination"
+      length="10"
+      nexticon="$vuetify.icons.next"
+      previcon="$vuetify.icons.prev"
+      totalvisible="7"
+      value="3"
+    />
+  </v-layout-stub>
+</div>
+`;
+
+exports[`c-pagination Renders \`c-pagination\` on the top correctly 1`] = `
+<div
+  class="container text-xs-center py-1"
+>
+  <ul
+    class="v-pagination"
+  >
+    <li>
+      <button
+        class="v-pagination__navigation"
+        data-test="paginationPreviewButton"
+      >
+        <v-icon-stub>
+          chevron_left
+        </v-icon-stub>
+      </button>
+    </li>
+    <div
+      class="pagination-details"
+    >
+      3 / 10
+    </div>
+    <li>
+      <button
+        class="v-pagination__navigation"
+        data-test="paginationNextButton"
+      >
+        <v-icon-stub>
+          chevron_right
+        </v-icon-stub>
+      </button>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`c-pagination Renders \`c-pagination\` on the top with disabled buttons correctly 1`] = `
+<div
+  class="container text-xs-center py-1"
+>
+  <ul
+    class="v-pagination"
+  >
+    <li>
+      <button
+        class="v-pagination__navigation v-pagination__navigation--disabled"
+        data-test="paginationPreviewButton"
+        disabled="disabled"
+      >
+        <v-icon-stub>
+          chevron_left
+        </v-icon-stub>
+      </button>
+    </li>
+    <div
+      class="pagination-details"
+    >
+      1 / 1
+    </div>
+    <li>
+      <button
+        class="v-pagination__navigation v-pagination__navigation--disabled"
+        data-test="paginationNextButton"
+        disabled="disabled"
+      >
+        <v-icon-stub>
+          chevron_right
+        </v-icon-stub>
+      </button>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`c-pagination Renders \`c-pagination\` on the top with disabled next button correctly 1`] = `
+<div
+  class="container text-xs-center py-1"
+>
+  <ul
+    class="v-pagination"
+  >
+    <li>
+      <button
+        class="v-pagination__navigation"
+        data-test="paginationPreviewButton"
+      >
+        <v-icon-stub>
+          chevron_left
+        </v-icon-stub>
+      </button>
+    </li>
+    <div
+      class="pagination-details"
+    >
+      2 / 2
+    </div>
+    <li>
+      <button
+        class="v-pagination__navigation v-pagination__navigation--disabled"
+        data-test="paginationNextButton"
+        disabled="disabled"
+      >
+        <v-icon-stub>
+          chevron_right
+        </v-icon-stub>
+      </button>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`c-pagination Renders \`c-pagination\` on the top with disabled prev button correctly 1`] = `
+<div
+  class="container text-xs-center py-1"
+>
+  <ul
+    class="v-pagination"
+  >
+    <li>
+      <button
+        class="v-pagination__navigation v-pagination__navigation--disabled"
+        data-test="paginationPreviewButton"
+        disabled="disabled"
+      >
+        <v-icon-stub>
+          chevron_left
+        </v-icon-stub>
+      </button>
+    </li>
+    <div
+      class="pagination-details"
+    >
+      1 / 2
+    </div>
+    <li>
+      <button
+        class="v-pagination__navigation"
+        data-test="paginationNextButton"
+      >
+        <v-icon-stub>
+          chevron_right
+        </v-icon-stub>
+      </button>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`c-pagination Renders \`c-pagination\` with default props correctly 1`] = `
+<div
+  class="container text-xs-center"
+>
+  <v-layout-stub
+    align-center="align-center"
+    justify-center="justify-center"
+    tag="div"
+  >
+    <span
+      class="grey--text text--darken-1"
+    >
+      common.paginationItems:{"first":1,"last":1,"total":1}
+    </span>
+    <v-pagination-stub
+      data-test="vPagination"
+      length="1"
+      nexticon="$vuetify.icons.next"
+      previcon="$vuetify.icons.prev"
+      totalvisible="7"
+      value="1"
+    />
+  </v-layout-stub>
+</div>
+`;
+
+exports[`c-pagination Renders \`c-pagination\` with default props correctly 2`] = `
+<div
+  class="container text-xs-center"
+>
+  <v-layout-stub
+    align-center="align-center"
+    justify-center="justify-center"
+    tag="div"
+  >
+    <span
+      class="grey--text text--darken-1"
+    >
+      common.paginationItems:{"first":1,"last":1,"total":1}
+    </span>
+    <v-pagination-stub
+      data-test="vPagination"
+      length="1"
+      nexticon="$vuetify.icons.next"
+      previcon="$vuetify.icons.prev"
+      totalvisible="7"
+      value="1"
+    />
+  </v-layout-stub>
+</div>
+`;
+
+exports[`c-pagination Renders \`c-pagination\` with default props on the top correctly 1`] = `
+<div
+  class="container text-xs-center py-1"
+>
+  <ul
+    class="v-pagination"
+  >
+    <li>
+      <button
+        class="v-pagination__navigation v-pagination__navigation--disabled"
+        data-test="paginationPreviewButton"
+        disabled="disabled"
+      >
+        <v-icon-stub>
+          chevron_left
+        </v-icon-stub>
+      </button>
+    </li>
+    <div
+      class="pagination-details"
+    >
+      1 / 1
+    </div>
+    <li>
+      <button
+        class="v-pagination__navigation v-pagination__navigation--disabled"
+        data-test="paginationNextButton"
+        disabled="disabled"
+      >
+        <v-icon-stub>
+          chevron_right
+        </v-icon-stub>
+      </button>
+    </li>
+  </ul>
+</div>
+`;

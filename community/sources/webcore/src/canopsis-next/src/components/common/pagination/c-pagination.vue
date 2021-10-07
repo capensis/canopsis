@@ -13,7 +13,7 @@
       li
         button.v-pagination__navigation(
           data-test="paginationNextButton",
-          :disabled="page >= totalPages",
+          :disabled="isNextPageDisabled",
           :class="{ 'v-pagination__navigation--disabled': isNextPageDisabled }",
           @click="next"
         )

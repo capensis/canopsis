@@ -5,9 +5,11 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 
 Vue.use(Vuetify);
 
+const prepareTranslateValues = values => (values ? `:${JSON.stringify(values)}` : '');
+
 const mocks = {
-  $t: path => path,
-  $tc: (path, count) => `${path}:${count}`,
+  $t: (path, values) => `${path}${prepareTranslateValues(values)}`,
+  $tc: (path, count, values) => `${path}:${count}${prepareTranslateValues(values)}`,
 };
 
 /**
