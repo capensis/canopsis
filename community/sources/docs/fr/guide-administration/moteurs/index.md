@@ -23,7 +23,6 @@ La plupart des moteurs « nouvelle génération » de Canopsis sont écrits en
 | [`engine-correlation`](moteur-correlation.md) | Applique et gère les règles de corrélation | ✅ |
 | [`engine-dynamic-infos`](moteur-dynamic-infos.md)| Enrichit les alarmes | ✅ |
 | [`engine-fifo`](moteur-fifo.md) | Garantit la cohérence et l'ordre des évènements entrant dans Canopsis | |
-| [`engine-heartbeat`](moteur-heartbeat.md)  | Surveille certaines entités et lève des alarmes en cas d'absence d'information | |
 | [`engine-pbehavior`](moteur-pbehavior.md) | Gère les comportements périodiques | |
 | [`engine-service`](moteur-service.md)| Calcule les états des [services](../../guide-utilisation/vocabulaire/index.md#service) | |
 | [`engine-webhook`](moteur-webhook.md) | Gère le système de webhooks vers des services externes | ✅ |
@@ -44,10 +43,7 @@ Certains moteurs et composants historiques de Canopsis sont écrits en Python.
 | Moteur | Rôle | Exclusif à Canopsis Pro |
 |--------|------|:-----:|
 | [`kpi`](moteur-kpi.md) | Mise en place de statistiques sur les alarmes, entités et sessions | ✅ |
-| `scheduler` | Coordonne le travail destiné aux différents moteurs `task_*` | |
 | [`snmp`](moteur-snmp.md) | Gère les traps SNMP | ✅ |
-| [`task_ackcentreon`](moteur-task_ackcentreon.md) | Envoi d'ACK de Canopsis vers Centreon | ✅ |
-| `task_importctx` | Gestionnaire des imports de données en masse | |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
 ### Liste des anciens moteurs (non supportés)
@@ -56,11 +52,24 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 
 | Moteur obsolète | Remplacé par |
 |-----------------|--------------|
+| `acknowledgement` (Python) | `engine-axe` (Go) |
+| `alerts` (Python) | `engine-axe`(Go)  |
+| `cancel` (Python) | `engine-axe` (Go) |
+| `cleaner_alerts` (Python) | `engine-che` (Go) |
+| `cleaner_events` (Python) | `engine-che` (Go) |
+| `context` (Python) | `engine-che` (Go) |
+| `context-graph` (Python) | `engine-che` (Go) |
+| `engine-heartbeat` (Go) | Utilisation des Idle rules |
 | `engine-stat` (Go) | `statsng` (Python) ⇒ n/a |
 | `engine-watcher` (Go) | `engine-service` (Go) |
 | `metric` (Python) | n/a |
+| `pbehavior` (Python) | `engine-pbehavior` (Go) |
+| `perfdata` (Python) | `metric` (Python) ⇒ n/a |
+| `scheduler` (Python) | n/a |
 | `statsng` (Python) | n/a |
+| `task_ackcentreon` (Python) | ? |
 | `task_dataclean` (Python) | n/a |
+| `task_importctx` (Python) | APIv4 d'import |
 | `task_linklist` (Python) | Utilisation du [linkbuilder](../linkbuilder/index.md) |
 | `task_mail` (Python) | Utilisation d'un [Webhook](moteur-webhook.md) (Pro) vers un service d'envoi d'e-mails |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->

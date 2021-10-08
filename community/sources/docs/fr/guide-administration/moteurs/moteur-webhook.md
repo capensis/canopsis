@@ -112,20 +112,23 @@ Pour plus d'informations, vous pouvez consulter la [documentation sur les templa
 ### Tentatives en cas d'échec
 
 Lorsque le service appelé par le webhook répond une erreur (Code erreur HTTP != 200 ou timeout du service), plusieurs nouvelles tentatives sont effectuées avec un délai.  
-`count` représente le nombre de nouvelles tentatives.  
-`delay` et `unit` représentent le délai avant une nouvelle tentative.   
 
-`unit` est exprimé en "s" pour seconde, "m" pour minute, et "h" pour heure.
+  * `count` représente le nombre de nouvelles tentatives.  
+  * `delay` représente le délai avant une nouvelle tentative.   
+  * `http_timeout` représente le délai d'attente d'une réponse.
 
-Ces paramètres sont présents dans la configuration de chaque webhook.  
-Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).
+Les valeurs de ces paramètres sont exprimées en secondes.
 
-Exemple de fichier `webhook.conf` :
+Ces paramètres sont présents dans la configuration de chaque webhook. 
+
+Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath /opt/canopsis/etc/webhook.conf.toml` de la ligne de commande).
+
+Exemple de fichier `webhook.conf.toml`:
 
 ```ini
-count=5
-delay=1
-unit="m"
+count = 5
+delay = 60
+http_timeout = 10
 ```
 
 ### Données externes

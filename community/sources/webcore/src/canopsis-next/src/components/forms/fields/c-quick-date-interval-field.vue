@@ -114,6 +114,64 @@ export default {
       return this.convertIntervalFieldToMoment(date, DATETIME_INTERVAL_TYPES.stop);
     },
 
+    isGreaterMinDate(dateTimestamp) {
+      if (this.min) {
+        return dateTimestamp >= this.min;
+      }
+
+      return true;
+    },
+
+    isLessToDate(dateTimestamp) {
+      return dateTimestamp < this.intervalToAsMoment.unix();
+    },
+
+    isAllowedAccumulatedFromDate(dateTimestamp, weekday) {
+      return this.accumulatedBefore > dateTimestamp
+        /**
+         * NOTE: If the date is before the accumulation date, the data is grouped by week.
+         * In this case, we can only select Monday.
+         */
+        ? weekday === 1
+        : true;
+    },
+
+    isAllowedFromDate(date) {
+      const dateMoment = moment(date);
+      const dateTimestamp = dateMoment.unix();
+
+      return this.isLessToDate(dateTimestamp)
+        && this.isGreaterMinDate(dateTimestamp)
+        && this.isAllowedAccumulatedFromDate(dateTimestamp, dateMoment.isoWeekday());
+    },
+
+    isAllowedAccumulatedToDate(dateTimestamp, weekday) {
+      return this.accumulatedBefore > dateTimestamp
+        /**
+         * NOTE: If the date is before the accumulation date, the data is grouped by week.
+         * In this case, we can only select Sunday.
+         */
+        ? weekday === 7
+        : true;
+    },
+
+    isLessNowDate(dateTimestamp) {
+      return dateTimestamp <= getNowTimestamp();
+    },
+
+    isGreaterFromDate(dateTimestamp) {
+      return dateTimestamp > this.intervalFromAsMoment.unix();
+    },
+
+    isAllowedToDate(date) {
+      const dateMoment = moment(date);
+      const dateTimestamp = dateMoment.unix();
+
+      return this.isGreaterFromDate(dateTimestamp)
+        && this.isLessNowDate(dateTimestamp)
+        && this.isAllowedAccumulatedToDate(dateTimestamp, dateMoment.isoWeekday());
+    },
+
     isAllowedQuickRange({ start, stop }) {
       if (!start || !stop) {
         return true;
@@ -121,57 +179,13 @@ export default {
 
       const startMoment = this.convertIntervalFromFieldToMoment(start);
       const stopMoment = this.convertIntervalToFieldToMoment(stop);
+      const startTimestamp = startMoment.unix();
+      const stopTimestamp = stopMoment.unix();
 
-      return this.isAllowedFromDate(startMoment) && this.isAllowedToDate(stopMoment);
-    },
-
-    isAllowedAccumulatedFromDate(dateMoment) {
-      return this.accumulatedBefore > dateMoment.unix()
-        /**
-         * NOTE: If the date is before the accumulation date, the data is grouped by week.
-         * In this case, we can only select Monday.
-         */
-        ? dateMoment.isoWeekday() === 1
-        : true;
-    },
-
-    isAllowedFromDate(date) {
-      const dateMoment = moment(date);
-      const dateTimestamp = dateMoment.unix();
-      const toTimestamp = this.intervalToAsMoment.unix();
-
-      if (dateTimestamp > toTimestamp) {
-        return false;
-      }
-
-      if (this.min) {
-        return dateTimestamp >= this.min;
-      }
-
-      return this.isAllowedAccumulatedFromDate(dateMoment);
-    },
-
-    isAllowedAccumulatedToDate(dateMoment) {
-      return this.accumulatedBefore > dateMoment.unix()
-        /**
-         * NOTE: If the date is before the accumulation date, the data is grouped by week.
-         * In this case, we can only select Sunday.
-         */
-        ? dateMoment.isoWeekday() === 7
-        : true;
-    },
-
-    isAllowedToDate(date) {
-      const dateMoment = moment(date);
-      const dateTimestamp = dateMoment.unix();
-      const nowTimestamp = getNowTimestamp();
-      const fromTimestamp = this.intervalFromAsMoment.unix();
-
-      if (dateTimestamp < fromTimestamp || nowTimestamp < dateTimestamp) {
-        return false;
-      }
-
-      return this.isAllowedAccumulatedToDate(dateMoment);
+      return this.isGreaterMinDate(startTimestamp)
+        && this.isAllowedAccumulatedFromDate(startTimestamp, startMoment.isoWeekday())
+        && this.isLessNowDate(stopTimestamp)
+        && this.isAllowedAccumulatedToDate(stopTimestamp, stopMoment.isoWeekday());
     },
 
     updateFromDate(from) {

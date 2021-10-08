@@ -52,6 +52,7 @@
 
 <script>
 import { APP_HOST } from '@/config';
+import { ROUTES_NAMES } from '@/constants';
 
 import { removeTrailingSlashes } from '@/helpers/url';
 
@@ -113,7 +114,7 @@ export default {
   methods: {
     getPlaylistRouteById(id, userAction = false) {
       return {
-        name: 'playlist',
+        name: ROUTES_NAMES.playlist,
         params: { id, userAction },
         query: { autoplay: true },
       };
