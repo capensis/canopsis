@@ -31,7 +31,6 @@ RabbitMQ UI   | Interface web de RabbitMQ (recommandée)     | 15672/TCP        
 Gunicorn      | Interface web et API REST de Canopsis       | 8082/TCP              |
 Nginx         | Reverse proxy HTTP                          | 80/TCP                |
 Redis         | Serveur de cache                            | 6739/TCP              |
-InfluxDB      | Métriques                                   | 8086/TCP              |
 
 ### Détails
 
