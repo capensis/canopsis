@@ -260,7 +260,7 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_metrics_rpc_server"
+name = "Engine_metrics"
 durable = true
 autoDelete = false
 exclusive = false

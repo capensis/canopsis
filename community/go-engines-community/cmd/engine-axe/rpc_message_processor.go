@@ -7,6 +7,7 @@ import (
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -21,6 +22,7 @@ type rpcMessageProcessor struct {
 	ServiceRpc               engine.RPCClient
 	Executor                 operation.Executor
 	AlarmAdapter             libalarm.Adapter
+	MetricSender             metrics.Sender
 	Decoder                  encoding.Decoder
 	Encoder                  encoding.Encoder
 	Logger                   zerolog.Logger
@@ -133,6 +135,10 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 				p.logError(err, "RPC Message Processor: failed to send rpc call to engine-service", msg)
 			}
 		}
+	}
+
+	if event.Entity != nil {
+		go p.MetricSender.HandleMetricForAxeRpc(*alarm, *event.Entity, alarmChangeType)
 	}
 
 	return p.getRpcEvent(types.RPCAxeResultEvent{
