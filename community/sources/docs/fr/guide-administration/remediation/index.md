@@ -44,28 +44,22 @@ AWX.
 
 Lorsqu'un job est déclenché depuis une consigne dans Canopsis, il est placé
 dans une file d'attente.  
-Cette file d'attente est parcourue par un moteur, `engine-remediation`.
+Cette file d'attente est parcourue par un exécuteur de job,
+`external-job-executor`.
 
 ```sh
-# ./engine-remediation -h
-Usage of /opt/canopsis/bin/engine-remediation:
+# ./external-job-executor -h
+Usage of ./external-job-executor:
   -c string
-    	Configuration file path (default "/opt/canopsis/share/config/remediation/externalapi.yml")
+    	Configuration file path (default "/opt/canopsis/share/config/external-job-executor/externalapi.yml")
   -d	debug
-  -periodicalWaitTime duration
-    	Duration to wait between two run of periodical process (default 1m0s)
-  -printEventOnError
-    	Print event on processing error
-  -version
-    	version infos
 ```
 
 C'est ce composant qui est chargé de déclencher l'exécution du job auprès des
 ordonnanceurs de tâches, selon les différentes configurations définies.
-
 ## Configuration des ordonnanceurs
 
-Cette section présente la configuration à effectuer dans l'ordonnanceur et la
+Cette section présente la configuration à réaliser dans l'ordonnanceur et la
 liaison à ajouter dans Canopsis.
 
 Les opérations sont décrites séparément pour les deux ordonnanceurs supportés :
@@ -410,8 +404,8 @@ variables sont passées grâce au payload suivant :
     }
     ```
 
-L'envoi d'un commentaire dans l'alarme nécessite de fabriquer un [évènement de
-type commentaire][event-comment] avec un ensemble de champs (`component`,
+L'envoi d'un commentaire dans l'alarme nécessite de fabriquer un évènement de
+type `comment` avec un ensemble de champs (`component`,
 `resource`, `connector`, `connector_name`) qui identifie l'alarme.
 
 Dans le payload, il faut donc ajouter des options pour arriver à la structure
@@ -503,4 +497,3 @@ paramètres avancés du [widget bac à alarmes][baa].
 [remed-index]: ../../guide-utilisation/remediation/index.md
 [mise-en-oeuvre]: ../../guide-utilisation/remediation/mise-en-oeuvre.md
 [baa]: ../../guide-utilisation/interface/widgets/bac-a-alarmes/#parametres-du-widget
-[event-comment]: ../../guide-developpement/struct-event/#event-comment-structure

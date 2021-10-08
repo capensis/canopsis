@@ -162,21 +162,8 @@ module.exports = {
     return config;
   },
   devServer: {
-    proxy: {
-      '/backend': {
-        target: process.env.VUE_APP_API_HOST,
-        changeOrigin: true,
-        pathRewrite: { '^/backend': '' },
-        secure: false,
-        cookieDomainRewrite: '',
-      },
-      '/auth/external': {
-        target: process.env.VUE_APP_API_HOST,
-        changeOrigin: true,
-        secure: false,
-        cookieDomainRewrite: '',
-      },
-    },
+    host: 'localhost',
+    https: true,
     disableHostCheck: true,
     watchOptions: {
       aggregateTimeout: 300,

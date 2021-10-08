@@ -17,6 +17,7 @@ type Adapter interface {
 	UpdateHistoryAlarm(ctx context.Context, history HistoryWithCount) error
 	UpdateHistoryEntity(ctx context.Context, history HistoryWithCount) error
 	UpdateHistoryPbehavior(ctx context.Context, t types.CpsTime) error
+	UpdateHistoryHealthCheck(ctx context.Context, t types.CpsTime) error
 }
 
 type DataStorage struct {
@@ -39,6 +40,9 @@ type Config struct {
 	Pbehavior struct {
 		DeleteAfter *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"pbehavior" json:"pbehavior"`
+	HealthCheck struct {
+		DeleteAfter *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+	} `bson:"health_check" json:"health_check"`
 }
 
 type History struct {
@@ -47,6 +51,7 @@ type History struct {
 	Alarm       *HistoryWithCount `bson:"alarm" json:"alarm"`
 	Entity      *HistoryWithCount `bson:"entity" json:"entity"`
 	Pbehavior   *types.CpsTime    `bson:"pbehavior" json:"pbehavior" swaggertype:"integer"`
+	HealthCheck *types.CpsTime    `bson:"health_check" json:"health_check" swaggertype:"integer"`
 }
 
 type HistoryWithCount struct {

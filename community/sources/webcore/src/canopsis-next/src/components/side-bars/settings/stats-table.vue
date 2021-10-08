@@ -3,16 +3,19 @@
     v-list.pt-0(expand)
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-date-interval(v-model="settings.widget.parameters.dateInterval", :hiddenFields="['periodValue']")
+      field-date-interval(
+        v-model="settings.widget.parameters.dateInterval",
+        :hidden-fields="['periodValue']"
+      )
       v-divider
       field-filter-editor(
         data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
-        :hiddenFields="['title']",
-        :entitiesType="$constants.ENTITIES_TYPES.entity"
+        :hidden-fields="['title']",
+        :entities-type="$constants.ENTITIES_TYPES.entity"
       )
       v-divider
-      field-stats-selector(v-model="settings.widget.parameters.stats", required, withTrend, withSorting)
+      field-stats-selector(v-model="settings.widget.parameters.stats", required, with-trend, with-sorting)
       v-divider
       v-list-group(data-test="advancedSettings")
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
@@ -20,7 +23,7 @@
           field-default-sort-column(
             v-model="settings.widget.parameters.sort",
             :columns="defaultSortColumns",
-            :columnsLabel="$t('settings.columnName')"
+            :columns-label="$t('settings.columnName')"
           )
           v-divider
     v-btn.primary(data-test="submitStatsTable", @click="submit") {{ $t('common.save') }}

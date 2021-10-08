@@ -46,27 +46,37 @@ export default {
 
     vDataTablePagination: {
       get() {
-        const { sortDir, sortKey: sortBy, multiSortBy = [] } = this.query;
+        const { sortDir, sortKey: sortBy = null, multiSortBy = [] } = this.query;
         const descending = sortDir === SORT_ORDERS.desc;
 
         return { sortBy, descending, multiSortBy };
       },
 
       set(value) {
-        const { sortBy = null, descending = false, multiSortBy = [] } = value;
-        const oldQuery = pick(this.query, ['sortKey', 'sortDir', 'multiSortBy']);
+        const paginationKeys = ['sortBy', 'descending', 'multiSortBy'];
+        const newPagination = pick(value, paginationKeys);
+        const oldPagination = pick(this.vDataTablePagination, paginationKeys);
+
+        if (isEqual(newPagination, oldPagination)) {
+          return;
+        }
+
+        const {
+          sortBy = null,
+          descending = false,
+          multiSortBy = [],
+        } = newPagination;
+
         const newQuery = {
           sortKey: sortBy,
           sortDir: descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
           multiSortBy,
         };
 
-        if (!isEqual(oldQuery, newQuery)) {
-          this.query = {
-            ...this.query,
-            ...newQuery,
-          };
-        }
+        this.query = {
+          ...this.query,
+          ...newQuery,
+        };
       },
     },
   },

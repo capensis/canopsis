@@ -17,7 +17,7 @@ import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants'
 
 import { authMixin } from '@/mixins/auth';
 import { pollingMixinCreator } from '@/mixins/polling';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';

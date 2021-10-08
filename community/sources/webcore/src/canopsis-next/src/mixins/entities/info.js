@@ -9,7 +9,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('info');
 /**
  * @mixin
  */
-export default {
+export const entitiesInfoMixin = {
   computed: {
     ...mapGetters({
       version: 'version',
@@ -30,6 +30,7 @@ export default {
       casConfig: 'casConfig',
       samlConfig: 'samlConfig',
       timezone: 'timezone',
+      fileUploadMaxSize: 'fileUploadMaxSize',
       remediationJobConfigTypes: 'remediationJobConfigTypes',
       remediationPauseManualInstructionIntervalSeconds: 'remediationPauseManualInstructionIntervalSeconds',
     }),

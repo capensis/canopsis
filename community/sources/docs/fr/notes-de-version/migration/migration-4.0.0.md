@@ -91,7 +91,7 @@ Choisissez un onglet ci-dessous, en fonction de votre environnement (paquets Cen
 
     À la date de publication de ce Guide de migration, les URL et accès aux images Docker restent inchangés pour le moment.
 
-    Ce document sera mis à jour, et une communication sera effectuée auprès des utilisateurs connus de nos images DockerHub, lorsque ce nouveau registre sera disponible.
+    Ce document sera mis à jour, et une communication sera faite auprès des utilisateurs connus de nos images DockerHub, lorsque ce nouveau registre sera disponible.
 
 === "Debian 9"
 
@@ -203,7 +203,7 @@ Les changements architecturaux étant nombreux, une **coupure du service** doit 
     
     Si vous bénéficiez d'une souscription Canopsis Pro, rapprochez-vous de votre contact habituel pour obtenir plus d'information sur la mise à jour de ces fichiers.
     
-    Dans le fichier `.env`, assurez-vous de bien avoir `CANOPSIS_IMAGE_TAG=4.0.0`, ainsi que les nouvelles variables `CPS_API_URL` et `CPS_OLD_API_URL`. La variable `CPS_WEBSERVER=1` doit aussi être renommée en `CPS_OLD_API=1` là où elle était déjà utilisée.
+    Dans le fichier `.env`, assurez-vous de bien avoir `CANOPSIS_IMAGE_TAG=4.0.0`. Ainsi que dans `compose.env`, les nouvelles variables `CPS_API_URL` et `CPS_OLD_API_URL`. La variable `CPS_WEBSERVER=1` doit aussi être renommée en `CPS_OLD_API=1` là où elle était déjà utilisée.
 
     **Note :** si vous utilisiez le conteneur `canopsis/uiv3`, celui-ci n'est plus disponible et doit être remplacé par l'image `canopsis/nginx`. Notez aussi que le conteneur `init` a été renommé en `reconfigure`, et faites aussi attention à la chaîne `provisionning` (deux *n*) qui a été corrigée en `provisioning` (un seul *n*) dans ce fichier.
 
@@ -225,7 +225,7 @@ Vous devez, ici aussi, vous baser sur le nouveau fichier `canopsis.toml` install
 
 Les fichiers de référence (pour Community et Pro) sont aussi disponibles à cette adresse : <https://git.canopsis.net/canopsis/go-engines/-/tree/develop/cmd/canopsis-reconfigure>.
 
-Notez par ailleurs qu'après toute modification du fichier `canopsis.toml` vous devrez [relancer l'outil `canopsis-reconfigure`](../../guide-administration/mise-a-jour/index.md#mise-a-jour-en-installation-par-paquets) (qui remplace l'ancien programme `init`), afin que ces changements soient pris en compte.
+Notez par ailleurs que toute modification du fichier `canopsis.toml` nécessite de suivre la procédure décrite dans le [Guide de modification de `canopsis.toml`](../../guide-administration/administration-avancee/modification-canopsis-toml.md).
 
 ### Options obsolètes des moteurs
 
@@ -326,10 +326,10 @@ Il est aussi recommandé, en parallèle, de [vous rendre sur l'interface web Rab
 
 ## Migration des pbehaviors existants
 
-Le script suivant permet de transformer vos pbehaviors existants, au format attendu par les pbehaviors v4. Il doit être exécuté là où un client `mongo` est disponible et capable d'accéder à la base de données.
+Le script suivant permet de transformer vos pbehaviors existants, au format attendu par les pbehaviors v4. Il doit être exécuté là où un client `mongo` est disponible et capable d'accéder au service MongoDB, qui doit être lancée.
 
 ```sh
-curl -O -L https://git.canopsis.net/canopsis/go-engines/-/raw/4.0.0/database/migrations/planning/003_migrate_pbehaviors.js
+curl -O -L https://git.canopsis.net/canopsis/canopsis-community/-/raw/release-4.3/community/go-engines-community/database/migrations/release4.0/003_migrate_pbehaviors.js
 mongo -u cpsmongo -p canopsis canopsis < 003_migrate_pbehaviors.js
 ```
 
@@ -351,7 +351,7 @@ Veuillez noter également que le filtre d'alarmes `has_active_pb` a été suppri
 Le script suivant permet de transformer vos webhooks existants, afin de les rendre compatibles avec le nouveau format des comportements périodiques. Il doit être exécuté là où un client `mongo` est disponible et capable d'accéder à la base de données.
 
 ```sh
-curl -O -L https://git.canopsis.net/canopsis/go-engines/-/raw/4.0.0/database/migrations/planning/001_add_disable_during_periods_to_webhooks.js 
+curl -O -L https://git.canopsis.net/canopsis/canopsis-community/-/raw/release-4.3/community/go-engines-community/database/migrations/release4.0/001_add_disable_during_periods_to_webhooks.js
 mongo -u cpsmongo -p canopsis canopsis < 001_add_disable_during_periods_to_webhooks.js 
 ```
 
@@ -376,8 +376,8 @@ Si votre installation utilise une connexion de type CAS, LDAP ou SAML2, vous dev
 Le script suivant permet de transformer vos utilisateurs externes existants, afin de les rendre compatibles avec le nouveau système d'authentification LDAP. Il doit être exécuté là où un client `mongo` est disponible et capable d'accéder à la base de données.
 
 ```sh
-curl -O -L https://git.canopsis.net/canopsis/go-engines/-/raw/feat/4.0.2-hotfix/database/migrations/user/001_migrate_user_external_id.js
-mongo -u cpsmongo -p canopsis canopsis < 001_migrate_user_external_id.js
+curl -O -L https://git.canopsis.net/canopsis/canopsis-community/-/raw/release-4.3/community/go-engines-community/database/migrations/release4.0/004_migrate_user_external_id.js 
+mongo -u cpsmongo -p canopsis canopsis < 004_migrate_user_external_id.js
 ```
 
 Une fois cette migration terminée, vous devriez obtenir un résultat de ce type :
@@ -391,5 +391,3 @@ WriteResult({ "nMatched" : 0, "nUpserted" : 0, "nModified" : 0 })
 WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
 bye
 ```
-
-
