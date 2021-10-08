@@ -18,18 +18,16 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES, SOCKET_ROOMS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
+import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediation/job-execution';
+import { entitiesRemediationInstructionExecutionMixin } from '@/mixins/entities/remediation/instruction-execution';
 
-import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
+import RemediationInstructionExecute
+  from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
-
-const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
-const { mapActions: jobExecutionMapActions } = createNamespacedHelpers('remediationJobExecution');
 
 export default {
   name: MODALS.executeRemediationInstruction,
@@ -37,7 +35,11 @@ export default {
     ModalWrapper,
     RemediationInstructionExecute,
   },
-  mixins: [modalInnerMixin],
+  mixins: [
+    modalInnerMixin,
+    entitiesRemediationJobExecutionMixin,
+    entitiesRemediationInstructionExecutionMixin,
+  ],
   data() {
     return {
       pending: true,
@@ -105,21 +107,6 @@ export default {
       .removeListener(this.setOperation);
   },
   methods: {
-    ...mapActions({
-      fetchRemediationInstructionExecutionWithoutStore: 'fetchItemWithoutStore',
-      createRemediationInstructionExecution: 'create',
-      cancelRemediationInstructionExecution: 'cancel',
-      pauseRemediationInstructionExecution: 'pause',
-      nextStepRemediationInstructionExecution: 'nextStep',
-      nextOperationRemediationInstructionExecution: 'nextOperation',
-      previousOperationRemediationInstructionExecution: 'previousOperation',
-      resumeRemediationInstructionExecution: 'resume',
-    }),
-
-    ...jobExecutionMapActions({
-      createRemediationJobExecution: 'create',
-    }),
-
     /**
      * Goto next step
      *

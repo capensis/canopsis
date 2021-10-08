@@ -33,9 +33,9 @@ import RemediationInstructions from '@/components/other/remediation/instructions
 import RemediationJobs from '@/components/other/remediation/jobs/remediation-jobs.vue';
 import RemediationConfigurations from '@/components/other/remediation/configurations/remediation-configurations.vue';
 
-import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
-import entitiesRemediationConfigurationsMixin from '@/mixins/entities/remediation/configurations';
-import { entitiesRemediationJobsMixin } from '@/mixins/entities/remediation/jobs';
+import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
+import { entitiesRemediationConfigurationMixin } from '@/mixins/entities/remediation/configuration';
+import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
 import {
   permissionsTechnicalRemediationInstructionMixin,
 } from '@/mixins/permissions/technical/remediation-instruction';
@@ -51,9 +51,9 @@ export default {
     RemediationJobs,
   },
   mixins: [
-    entitiesRemediationInstructionsMixin,
-    entitiesRemediationConfigurationsMixin,
-    entitiesRemediationJobsMixin,
+    entitiesRemediationInstructionMixin,
+    entitiesRemediationConfigurationMixin,
+    entitiesRemediationJobMixin,
     permissionsTechnicalRemediationInstructionMixin,
     permissionsTechnicalRemediationConfigurationMixin,
     permissionsTechnicalRemediationJobMixin,
