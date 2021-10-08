@@ -15,7 +15,7 @@ ReconnectRetries = 3
 - `ReconnectRetries` représente le nombre de tentatives de reconnexion en cas d'erreur, 3 par défaut.
 - `ReconnectTimeoutMilliseconds` est le délai **minimum** entre chaque tentative. Par défaut, il est de 8 millisecondes et on parle de délai minimum, car celui-ci double à chaque tentative de reconnexion. Soit, avec la configuration par défaut, 8 ms avant le premier essai de reconnexion, 16 ms avant le second, 32 ms avant le troisième.
 
-Ce mécanisme de reconnexion automatique est utilisé par MongoDB, Redis, RabbitMQ, les moteurs Canopsis ainsi que les services `canopsis-api` et [`external-job-executor`](../remediation/index.md#architecture).
+Ce mécanisme de reconnexion automatique est utilisé par MongoDB, Redis, RabbitMQ, les moteurs Canopsis ainsi que `canopsis-api`.
 
 !!! note
     Toute modification d'une de ces valeurs implique de suivre de le [Guide de modification du fichier `canopsis.toml`](modification-canopsis-toml.md).
@@ -46,6 +46,6 @@ En cas d'erreur de connexion, le processus tente de nouveau d'exécuter la comma
 
 S'il s'agit d'une erreur d'un autre type, le processus envoie un message de type `ack` à RabbitMQ, inscrit l'erreur dans les logs et passe à la tâche suivante.
 
-## Services `canopsis-api` et `external-job-executor`
+## Service `canopsis-api`
 
-Ces services ne s'arrêtent jamais de fonctionner, quel que soit le type d'erreur rencontré. S'il s'agit d'une erreur de connexion, ils essaient de se reconnecter indéfiniment.
+Ce service ne s'arrête jamais de fonctionner, quel que soit le type d'erreur rencontré. S'il s'agit d'une erreur de connexion, il essaie de se reconnecter indéfiniment.

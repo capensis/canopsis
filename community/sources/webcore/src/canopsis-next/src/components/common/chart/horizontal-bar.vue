@@ -1,8 +1,10 @@
 <script>
-import { HorizontalBar } from 'vue-chartjs';
+import { merge } from 'lodash';
+
+import { Bar } from '@/externals/vue-chart/components';
 
 export default {
-  extends: HorizontalBar,
+  extends: Bar,
   props: {
     labels: {
       type: Array,
@@ -24,22 +26,26 @@ export default {
         datasets: this.datasets,
       };
     },
+
+    mergedOptions() {
+      return merge({ indexAxis: 'y' }, this.options);
+    },
   },
   watch: {
-    options(options, oldOptions) {
+    mergedOptions(options, oldOptions) {
       if (options !== oldOptions) {
-        this.renderChart(this.chartData, this.options);
+        this.updateChart(this.chartData, this.mergedOptions);
       }
     },
 
     chartData(data, oldData) {
       if (data !== oldData) {
-        this.renderChart(data, this.options);
+        this.updateChart(data, this.mergedOptions);
       }
     },
   },
   mounted() {
-    this.renderChart(this.chartData, this.options);
+    this.renderChart(this.chartData, this.mergedOptions);
   },
 };
 </script>

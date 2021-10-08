@@ -149,8 +149,8 @@ Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un clien
 ```sh
 git clone --depth 1 --single-branch -b release-4.3 https://git.canopsis.net/canopsis/canopsis-community.git
 cd canopsis-community/community/go-engines-community/database/migrations
-for file in ./*/*.js ; do
-    mongo -u cpsmongo -p canopsis canopsis < "$file"
+for file in $(find release4.3 -type f \( -name "*.js" \) | sort); do     
+   mongo -u cpsmongo -p canopsis canopsis < "$file"
 done
 ```
 

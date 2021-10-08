@@ -3,6 +3,7 @@ package pbehavior
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -11,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -26,6 +26,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, filter bson.M) (*Response, error)
 	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
 	Update(ctx context.Context, model *Response) (bool, error)
+	UpdateByFilter(ctx context.Context, model *Response, filters bson.M) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	Count(context.Context, Filter, int) (*CountFilterResult, error)
 }
@@ -36,8 +37,7 @@ type store struct {
 	dbCollection, entitiesCollection mongo.DbCollection
 
 	entityMatcher          pbehavior.EntityMatcher
-	redisStore             redis.Store
-	service                pbehavior.Service
+	entityTypeResolver     pbehavior.EntityTypeResolver
 	timezoneConfigProvider config.TimezoneConfigProvider
 	defaultSortBy          string
 
@@ -48,8 +48,7 @@ type store struct {
 func NewStore(
 	dbClient mongo.DbClient,
 	entityMatcher pbehavior.EntityMatcher,
-	redisStore redis.Store,
-	service pbehavior.Service,
+	entityTypeResolver pbehavior.EntityTypeResolver,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 ) Store {
 	return &store{
@@ -57,8 +56,7 @@ func NewStore(
 		dbCollection:                  dbClient.Collection(mongo.PbehaviorMongoCollection),
 		entitiesCollection:            dbClient.Collection(mongo.EntityMongoCollection),
 		entityMatcher:                 entityMatcher,
-		redisStore:                    redisStore,
-		service:                       service,
+		entityTypeResolver:            entityTypeResolver,
 		timezoneConfigProvider:        timezoneConfigProvider,
 		defaultSortBy:                 "created",
 		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
@@ -80,9 +78,31 @@ func (s *store) Insert(ctx context.Context, model *Response) error {
 	doc.ID = model.ID
 	doc.Created = now
 	doc.Updated = now
-	_, err = s.dbCollection.InsertOne(ctx, doc)
-	if err != nil {
-		return err
+
+	// If model.Stop is nill, insert to mongo using map so that
+	// tstop field can be cleared
+	if model.Stop == nil {
+		m := make(map[string]interface{})
+		p, err := bson.Marshal(doc)
+		if err != nil {
+			return err
+		}
+
+		err = bson.Unmarshal(p, &m)
+		if err != nil {
+			return err
+		}
+
+		delete(m, "tstop")
+		_, err = s.dbCollection.InsertOne(ctx, m)
+		if err != nil {
+			return err
+		}
+	} else {
+		_, err = s.dbCollection.InsertOne(ctx, doc)
+		if err != nil {
+			return err
+		}
 	}
 
 	model.Created = &now
@@ -340,6 +360,55 @@ func (s *store) Update(ctx context.Context, model *Response) (bool, error) {
 	return result.MatchedCount > 0, nil
 }
 
+func (s *store) UpdateByFilter(ctx context.Context, model *Response, filters bson.M) (bool, error) {
+	doc, err := s.transformModelToDocument(model)
+	if err != nil {
+		return false, err
+	}
+
+	doc.Updated = libtypes.NewCpsTime(time.Now().Unix())
+
+	var update bson.M
+	if model.Stop == nil {
+		m := make(map[string]interface{})
+		p, err := bson.Marshal(doc)
+		if err != nil {
+			return false, err
+		}
+
+		err = bson.Unmarshal(p, &m)
+		if err != nil {
+			return false, err
+		}
+
+		delete(m, "tstop")
+		update = bson.M{
+			"$set":   m,
+			"$unset": bson.M{"tstop": 1},
+		}
+	} else {
+		update = bson.M{"$set": doc}
+	}
+
+	result, err := s.dbCollection.UpdateOne(
+		ctx,
+		filters,
+		update,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	updatedModel, err := s.GetOneBy(ctx, bson.M{"_id": model.ID})
+	if err != nil {
+		return false, err
+	}
+
+	*model = *updatedModel
+
+	return result.MatchedCount > 0, nil
+}
+
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
@@ -383,15 +452,6 @@ func (s *store) transformModelToDocument(model *Response) (*pbehavior.PBehavior,
 }
 
 func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error {
-	ok, err := s.redisStore.Restore(ctx, s.service)
-	if err != nil {
-		return err
-	}
-
-	if !ok {
-		return nil
-	}
-
 	location := s.timezoneConfigProvider.Get().Location
 	now := time.Now().In(location)
 	ids := make([]string, len(result))
@@ -399,14 +459,18 @@ func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error
 		ids[i] = pbh.ID
 	}
 
-	statusesByID, err := s.service.GetPbehaviorStatus(ctx, ids, now)
+	typesByID, err := s.entityTypeResolver.GetPbehaviors(ctx, ids, now)
 	if err != nil {
+		if errors.Is(err, pbehavior.ErrNoComputed) || errors.Is(err, pbehavior.ErrRecomputeNeed) {
+			return nil
+		}
+
 		return err
 	}
 
 	for i := range result {
-		v := statusesByID[result[i].ID]
-		result[i].IsActiveStatus = &v
+		_, ok := typesByID[result[i].ID]
+		result[i].IsActiveStatus = &ok
 	}
 
 	return nil

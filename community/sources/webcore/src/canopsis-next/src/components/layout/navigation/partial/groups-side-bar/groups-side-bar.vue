@@ -10,7 +10,7 @@
     )
       div.brand.ma-0.secondary.lighten-1
         app-logo.logo
-        active-sessions-count
+        logged-users-count
         app-version.version
       draggable.groups-panel(
         v-if="hasReadAnyViewAccess",
@@ -58,7 +58,7 @@ import registrableMixin from '@/mixins/registrable';
 import GroupsSettingsButton from '../groups-settings-button.vue';
 import AppLogo from '../app-logo.vue';
 import AppVersion from '../app-version.vue';
-import ActiveSessionsCount from '../active-sessions-count.vue';
+import LoggedUsersCount from '../logged-users-count.vue';
 
 import GroupsSideBarGroup from './groups-side-bar-group.vue';
 import GroupsSideBarPlaylists from './groups-side-bar-playlists.vue';
@@ -78,7 +78,7 @@ export default {
     GroupsSettingsButton,
     AppLogo,
     AppVersion,
-    ActiveSessionsCount,
+    LoggedUsersCount,
     GroupsSideBarGroup,
     GroupsSideBarPlaylists,
   },
@@ -216,7 +216,7 @@ export default {
     justify-content: center;
     padding: 0.5em 0;
 
-    & /deep/ .active-sessions-count {
+    & /deep/ .logged-users-count {
       position: absolute;
       top: 0;
       right: 0;

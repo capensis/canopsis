@@ -23,9 +23,7 @@
 </template>
 
 <script>
-import tinycolor from 'tinycolor2';
-
-import { getMostReadableTextColor } from '@/helpers/color';
+import { getMostReadableTextColor, getRandomHexColor } from '@/helpers/color';
 
 export default {
   props: {
@@ -42,7 +40,7 @@ export default {
     getStyleForType(type = {}) {
       const backgroundColor = type.color
         || this.colorsToTypes[type._id]
-        || tinycolor.random().toHexString();
+        || getRandomHexColor();
 
       return {
         backgroundColor,

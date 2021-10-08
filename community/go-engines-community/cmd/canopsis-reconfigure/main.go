@@ -32,6 +32,7 @@ type Conf struct {
 	RabbitMQ    config.RabbitMQConf    `toml:"RabbitMQ"`
 	Canopsis    config.CanopsisConf    `toml:"Canopsis"`
 	Remediation config.RemediationConf `toml:"Remediation"`
+	HealthCheck config.HealthCheckConf `toml:"HealthCheck"`
 }
 
 func main() {
@@ -171,7 +172,10 @@ func main() {
 	}()
 
 	err = config.NewAdapter(client).UpsertConfig(ctx, conf.Canopsis)
+	utils.FailOnError(err, "Failed to save config into mongo")
 	err = config.NewRemediationAdapter(client).UpsertConfig(ctx, conf.Remediation)
+	utils.FailOnError(err, "Failed to save config into mongo")
+	err = config.NewHealthCheckAdapter(client).UpsertConfig(ctx, conf.HealthCheck)
 	utils.FailOnError(err, "Failed to save config into mongo")
 
 	logger.Info().Msg("Initialising Mongo indexes")

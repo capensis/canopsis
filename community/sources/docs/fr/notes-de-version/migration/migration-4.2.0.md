@@ -88,7 +88,7 @@ Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un clien
 
 ```sh
 for file in 000_migrate_actions.js 001_migrate_webhook.js 002_migrate_idlerules.js ; do
-    curl -O -L "https://git.canopsis.net/canopsis/go-engines/-/raw/release-4.2/database/migrations/engineactionv2/$file"
+    curl -O -L "https://git.canopsis.net/canopsis/canopsis-community/-/raw/release-4.3/community/go-engines-community/database/migrations/release4.2/$file"
     mongo -u cpsmongo -p canopsis canopsis < "$file"
 done
 ```

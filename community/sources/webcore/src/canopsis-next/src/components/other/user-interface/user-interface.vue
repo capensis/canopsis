@@ -60,14 +60,16 @@
         text-editor-field(
           v-model="form.footer",
           :label="$t('parameters.userInterfaceForm.fields.footer')",
-          :config="textEditorConfig"
+          :config="textEditorConfig",
+          public
         )
     v-layout.mt-3(row)
       v-flex
         text-editor-field(
           v-model="form.login_page_description",
           :label="$t('parameters.userInterfaceForm.fields.description')",
-          :config="textEditorConfig"
+          :config="textEditorConfig",
+          public
         )
     v-layout.mt-3(row)
       v-flex
@@ -101,7 +103,7 @@
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
 import { formToUserInterface, userInterfaceToForm } from '@/helpers/forms/user-interface';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import PopupTimeoutField from '@/components/forms/fields/popup-timeout.vue';
