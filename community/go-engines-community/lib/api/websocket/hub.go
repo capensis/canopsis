@@ -24,6 +24,7 @@ const (
 const (
 	WMessageSuccess = iota
 	WMessageFail
+	WMessageCloseRoom
 )
 
 const (
@@ -50,6 +51,8 @@ type Hub interface {
 	RegisterRoom(room string, perms ...string) error
 	// CloseRoom removes room.
 	CloseRoom(room string) error
+	// RoomHasConnection returns true if room listens at least one connection.
+	RoomHasConnection(room string) bool
 }
 
 func NewHub(
@@ -192,15 +195,46 @@ func (h *hub) RegisterRoom(room string, perms ...string) error {
 }
 
 func (h *hub) CloseRoom(room string) error {
+	h.connsMx.RLock()
+	h.roomsMx.Lock(room)
+
+	msg := WMessage{
+		Type: WMessageCloseRoom,
+		Room: room,
+	}
+
+	closedConns := make([]string, 0)
+	for _, connId := range h.rooms[room] {
+		conn := h.conns[connId].conn
+		err := conn.WriteJSON(msg)
+		if err != nil {
+			closedConns = append(closedConns, connId)
+			h.logger.Err(err).
+				Str("room", room).
+				Str("addr", conn.RemoteAddr().String()).
+				Msg("cannot write message to connection, connection will be closed")
+		}
+	}
+
 	err := h.authorizer.RemoveRoom(room)
 	if err != nil {
 		return err
 	}
+	delete(h.rooms, room)
 
+	h.roomsMx.Unlock(room)
+	h.connsMx.RUnlock()
+
+	h.closeConnections(closedConns...)
+
+	return nil
+}
+
+func (h *hub) RoomHasConnection(room string) bool {
 	h.roomsMx.Lock(room)
 	defer h.roomsMx.Unlock(room)
-	delete(h.rooms, room)
-	return nil
+
+	return len(h.rooms[room]) > 0
 }
 
 func (h *hub) join(connId, room string) (closed bool) {
