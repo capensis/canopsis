@@ -96,13 +96,13 @@ export default {
     await this.fetchInstructionExecution();
 
     this.$socket
-      .on('error', this.socketErrorHandler)
+      .on('close', this.socketCloseHandler)
       .join(this.socketRoomName)
       .addListener(this.setOperation);
   },
   beforeDestroy() {
     this.$socket
-      .off('error', this.socketErrorHandler)
+      .off('close', this.socketCloseHandler)
       .leave(this.socketRoomName)
       .removeListener(this.setOperation);
   },
@@ -178,7 +178,7 @@ export default {
     /**
      * Socket error handler (we need to use for connection checking)
      */
-    socketErrorHandler() {
+    socketCloseHandler() {
       if (!this.$socket.isConnectionOpen) {
         this.$modals.hide();
         this.$popups.error({

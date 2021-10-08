@@ -1,16 +1,20 @@
 export const REQUEST_MESSAGES_TYPES = {
-  join: 0,
-  leave: 1,
-  authenticate: 2,
-  heartbeat: 3,
+  ping: 0,
+  join: 1,
+  leave: 2,
+  authenticate: 3,
+  heartbeat: 4,
 };
 
 export const RESPONSE_MESSAGES_TYPES = {
-  ok: 0,
-  error: 1,
-  close: 2,
+  pong: 0,
+  ok: 1,
+  error: 2,
+  close: 3,
 };
 
 export const MAX_RECONNECTS_COUNT = 10;
 
-export const HEARTBEAT_TIMEOUT = 5000;
+export const PING_INTERVAL = 10000;
+
+export const RECONNECT_INTERVAL = 5000;

@@ -4,6 +4,8 @@ import {
   REQUEST_MESSAGES_TYPES,
   RESPONSE_MESSAGES_TYPES,
   MAX_RECONNECTS_COUNT,
+  PING_INTERVAL,
+  RECONNECT_INTERVAL,
 } from '../constants';
 
 import SocketRoom from './socket-room';
@@ -11,11 +13,16 @@ import SocketRoom from './socket-room';
 class Socket {
   constructor() {
     this.rooms = {};
+    this.token = '';
     this.url = '';
     this.protocols = '';
     this.sendQueue = [];
     this.reconnectsCount = 0;
+    this.lastPingedAt = 0;
+    this.lastPongedAt = 0;
+    this.isReconnecting = true;
     this.baseOpenHandler = this.baseOpenHandler.bind(this);
+    this.baseCloseHandler = this.baseCloseHandler.bind(this);
     this.baseErrorHandler = this.baseErrorHandler.bind(this);
     this.baseMessageHandler = this.baseMessageHandler.bind(this);
   }
@@ -42,6 +49,7 @@ class Socket {
     this.connection = new WebSocket(url, protocols);
 
     this.on('open', this.baseOpenHandler);
+    this.on('close', this.baseCloseHandler);
     this.on('error', this.baseErrorHandler);
     this.on('message', this.baseMessageHandler);
 
@@ -55,8 +63,14 @@ class Socket {
    */
   reconnect() {
     this.reconnectsCount += 1;
+    this.lastPingedAt = 0;
+    this.lastPongedAt = 0;
     this.disconnect();
     this.connect(this.url, this.protocols);
+
+    if (this.token) {
+      this.authenticate();
+    }
 
     Object.keys(this.rooms).forEach(name => this.join(name));
 
@@ -178,16 +192,55 @@ class Socket {
   /**
    * Authenticate by token
    *
-   * @param {string} token
+   * @param {string} [token = this.token]
    * @return {Socket}
    */
-  authenticate(token) {
+  authenticate(token = this.token) {
+    this.token = token;
+
     this.send({
       token,
       type: REQUEST_MESSAGES_TYPES.authenticate,
     });
 
     return this;
+  }
+
+  ping() {
+    this.send({
+      type: REQUEST_MESSAGES_TYPES.ping,
+    });
+
+    this.lastPingedAt = Date.now();
+  }
+
+  startPinging() {
+    if (!this.isConnectionOpen) {
+      return;
+    }
+
+    if (this.lastPingedAt > this.lastPongedAt) {
+      this.connection.close();
+      return;
+    }
+
+    this.ping();
+
+    setTimeout(() => this.startPinging(), PING_INTERVAL);
+  }
+
+  startReconnecting() {
+    if (this.isConnectionOpen) {
+      return;
+    }
+
+    if (this.reconnectsCount >= MAX_RECONNECTS_COUNT) {
+      throw new Error('Network problem');
+    }
+
+    this.reconnect();
+
+    setTimeout(() => this.startReconnecting(), RECONNECT_INTERVAL);
   }
 
   /**
@@ -201,6 +254,18 @@ class Socket {
     }
 
     this.sendQueue = [];
+    this.startPinging();
+  }
+
+  /**
+   * Base handler for 'close' event
+   */
+  baseCloseHandler() {
+    if (this.reconnectsCount) {
+      return;
+    }
+
+    this.startReconnecting();
   }
 
   /**
@@ -215,11 +280,11 @@ class Socket {
       return;
     }
 
-    if (this.reconnectsCount >= MAX_RECONNECTS_COUNT) {
-      throw new Error(err);
+    if (this.reconnectsCount) {
+      return;
     }
 
-    this.reconnect();
+    this.startReconnecting();
   }
 
   /**
@@ -233,6 +298,11 @@ class Socket {
 
       if (error) {
         throw error;
+      }
+
+      if (type === RESPONSE_MESSAGES_TYPES.pong) {
+        this.lastPongedAt = Date.now();
+        return;
       }
 
       const socketRoom = this.rooms[room];
