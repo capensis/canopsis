@@ -2,7 +2,7 @@
 
 Réceptionne les traps SNMP, les traduit grâce à un jeu de règles et les convertit en évènements.
 
-!!! attention
+!!! info
     Ce connecteur n'est disponible que dans l'édition Pro de Canopsis.
 
 ## Introduction

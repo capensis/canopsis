@@ -27,7 +27,7 @@ Si la version affichée est inférieure à 4.4, vous devez soit utiliser une di
 
 ## Installation de Docker et Docker Compose
 
-Vous devez tout d'abord [installer Docker](https://docs.docker.com/get-docker/), version 19.03.5 minimum. Veuillez utiliser les dépôts officiels de Docker, et non pas ceux proposés par votre distribution.
+Vous devez tout d'abord [installer Docker](https://docs.docker.com/get-docker/), version 19.03.5 minimum (versions 20.10 et supérieures recommandées). Veuillez utiliser les dépôts officiels de Docker, et non pas ceux proposés par votre distribution.
 
 Une fois Docker installé, vous devez ensuite [installer Docker Compose](https://docs.docker.com/compose/install/#install-compose).
 
@@ -81,6 +81,7 @@ docker-compose_rabbitmq_1        docker-entrypoint.sh rabbi ...   Up       15671
                                                                            5671/tcp,
                                                                            0.0.0.0:5672->5672/tcp
 docker-compose_redis_1           docker-entrypoint.sh redis ...   Up       0.0.0.0:6379->6379/tcp
+docker-compose_service_1         /bin/sh -c /${_BINARY_NAME}      Up
 docker-compose_watcher_1         /bin/sh -c /${_BINARY_NAME}      Up
 docker-compose_webserver_1       /bin/sh -c /entrypoint.sh        Up       0.0.0.0:8082->8082/tcp
 ```
@@ -106,7 +107,7 @@ Stopping docker-compose_che_1            ... done
 Stopping docker-compose_influxdb_1       ... done
 Stopping docker-compose_heartbeat_1      ... done
 Stopping docker-compose_rabbitmq_1       ... done
-Stopping docker-compose_watcher_1        ... done
+Stopping docker-compose_service_1        ... done
 Removing docker-compose_nginx_1          ... done
 Removing docker-compose_webserver_1      ... done
 Removing docker-compose_provisioning_1   ... done
@@ -121,7 +122,7 @@ Removing docker-compose_che_1            ... done
 Removing docker-compose_influxdb_1       ... done
 Removing docker-compose_heartbeat_1      ... done
 Removing docker-compose_rabbitmq_1       ... done
-Removing docker-compose_watcher_1        ... done
+Removing docker-compose_service_1        ... done
 Removing network docker-compose_default
 ```
 
