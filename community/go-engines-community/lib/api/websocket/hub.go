@@ -16,13 +16,15 @@ import (
 )
 
 const (
-	RMessageJoin = iota
+	RMessageClientPing = iota
+	RMessageJoin
 	RMessageLeave
 	RMessageAuth
 )
 
 const (
-	WMessageSuccess = iota
+	WMessageClientPong = iota
+	WMessageSuccess
 	WMessageFail
 	WMessageCloseRoom
 )
@@ -604,6 +606,8 @@ func (h *hub) listen(connId string, conn Connection) {
 		}
 
 		switch msg.Type {
+		case RMessageClientPing:
+			closed = h.sendToConn(connId, WMessage{Type: WMessageClientPong})
 		case RMessageAuth:
 			if msg.Token == "" {
 				closed = h.sendToConn(connId, WMessage{Type: WMessageFail, Error: "token is missing"})

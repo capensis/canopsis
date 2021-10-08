@@ -539,9 +539,6 @@ definitions:
         items:
           $ref: '#/definitions/appinfo.JobConfigType'
         type: array
-      pause_manual_instruction_interval:
-        $ref: '#/definitions/types.DurationWithUnit'
-        type: object
     type: object
   appinfo.UserInterfaceConf:
     properties:

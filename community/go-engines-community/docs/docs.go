@@ -8324,10 +8324,6 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/appinfo.JobConfigType"
                     }
-                },
-                "pause_manual_instruction_interval": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.DurationWithUnit"
                 }
             }
         },
