@@ -113,14 +113,14 @@ Utilisez pour cela le bouton d'action situé à droite de votre consigne.
 
 ![Assignation_consigne1](./img/remediation_instruction_assignation1.png)
 
-Puis associez vos alarmes en saisissant les patterns souhaités. Dans notre
+Puis, associez vos alarmes en saisissant les patterns souhaités. Dans notre
 exemple, il s'agit d'assigner la consigne aux alarmes dont la ressource contient
 `ping`.
 
 [![Assignation_consigne2](./img/remediation_instruction_assignation2.png)](./img/remediation_instruction_assignation2.png){target=_blank}
 
-À ce stade vous pouvez vérifier, dans un bac à alarmes, que les alarmes
-sélectionnées par les patterns sont bien éligibles à votre consigne.
+À ce stade, vous pouvez vérifier, dans un bac à alarmes que les alarmes
+sélectionnées par les patterns remplissent bien les conditions de votre consigne.
 
 [![Assignation_consigne3](./img/remediation_instruction_assignation3.png)](./img/remediation_instruction_assignation3.png){target=_blank}
 
