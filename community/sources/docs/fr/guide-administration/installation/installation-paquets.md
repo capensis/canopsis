@@ -11,7 +11,7 @@ Assurez-vous d'avoir suivi les [prérequis réseau et de sécurité](pre-requis-
 L'installation nécessite l'ajout de dépôts RPM tiers, ainsi qu'un accès HTTP et HTTPS pour le téléchargement de diverses dépendances.
 
 !!! information
-    Notez que Canopsis installe ses propres versions d'InfluxDB, MongoDB, Nginx, Redis et RabbitMQ, et que seules ces versions sont validées pour fonctionner avec Canopsis. Veillez à ne pas remplacer ces versions par vos propres versions, que ce soit de façon intentionnelle, ou par l'ajout de dépôt tiers qui pourraient écraser celles fournies par Canopsis.
+    Notez que Canopsis installe ses propres versions de MongoDB, Nginx, Redis et RabbitMQ, et que seules ces versions sont validées pour fonctionner avec Canopsis. Veillez à ne pas remplacer ces versions par vos propres versions, que ce soit de façon intentionnelle, ou par l'ajout de dépôt tiers qui pourraient écraser celles fournies par Canopsis.
 
 ## Ajout de dépôts tiers et de dépendances
 

@@ -14,12 +14,6 @@ systemctl status mongod.service
 systemctl status rabbitmq-server.service
 ```
 
-## InfluxDB
-
-```sh
-systemctl status influxdb.service
-```
-
 ## Redis
 
 ```sh

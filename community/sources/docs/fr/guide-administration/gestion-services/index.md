@@ -13,5 +13,4 @@ Cette section présente le fonctionnement des services liés à Canopsis.
 |Redis         |
 |MongoDB       |
 |RabbitMQ      |
-|InfluxDB      |
 |Canopsis      |
