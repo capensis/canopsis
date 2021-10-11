@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-enabled Renders \`c-enabled\` correctly. 1`] = `
+<span>
+  <v-icon-stub
+    color="error"
+  >
+    cancel
+  </v-icon-stub>
+</span>
+`;
+
+exports[`c-enabled Renders \`c-enabled\` with enabled prop correctly. 1`] = `
+<span>
+  <v-icon-stub
+    color="primary"
+  >
+    check_circle
+  </v-icon-stub>
+</span>
+`;
