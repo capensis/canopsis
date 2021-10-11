@@ -186,4 +186,13 @@ export const subtractUnitFromDate = (date, value = 0, unit = TIME_UNITS.second) 
   .subtract(value, unit)
   .unix();
 
+/**
+ * Format date/timestamp/unix/moment to string format
+ *
+ * @param {Date|number|moment.Moment} date
+ * @param {string} format
+ * @return {string}
+ */
+export const formatDate = (date, format) => convertTimestampToMoment(date).format(format);
+
 export default convertTimestampToMoment;

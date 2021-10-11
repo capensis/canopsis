@@ -65,6 +65,10 @@ func NewLdapProvider(
 	}
 }
 
+func (p *ldapProvider) GetName() string {
+	return security.AuthMethodLdap
+}
+
 func (p *ldapProvider) Auth(ctx context.Context, username, password string) (*security.User, error) {
 	config, err := p.configProvider.LoadLdapConfig(ctx)
 	if err != nil {

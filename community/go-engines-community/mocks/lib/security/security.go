@@ -176,6 +176,20 @@ func (mr *MockProviderMockRecorder) Auth(arg0, arg1, arg2 interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Auth", reflect.TypeOf((*MockProvider)(nil).Auth), arg0, arg1, arg2)
 }
 
+// GetName mocks base method
+func (m *MockProvider) GetName() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetName")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// GetName indicates an expected call of GetName
+func (mr *MockProviderMockRecorder) GetName() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetName", reflect.TypeOf((*MockProvider)(nil).GetName))
+}
+
 // MockHttpProvider is a mock of HttpProvider interface
 type MockHttpProvider struct {
 	ctrl     *gomock.Controller
