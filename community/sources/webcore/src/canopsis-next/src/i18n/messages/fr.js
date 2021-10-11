@@ -189,6 +189,7 @@ export default {
     dismiss: 'Rejeter',
     approve: 'Approuver',
     summary: 'Résumé',
+    recurrence: 'Récurrence',
     statistics: 'Statistiques',
     action: 'Action',
     minimal: 'Minimal',
@@ -1579,8 +1580,6 @@ export default {
   },
   recurrenceRule: {
     advancedHint: 'Séparer les nombres par une virgule',
-    textLabel: 'Récurrence',
-    stringLabel: 'Résumé',
     freq: 'Fréquence',
     until: 'Jusqu\'à',
     byweekday: 'Par jour de la semaine',
