@@ -2,12 +2,14 @@
   v-flex
     v-btn.ml-0(
       color="primary",
-      @click="showCreateRRuleModal"
-    )  {{ hasRRule ? $t('pbehavior.buttons.editRrule') : $t('pbehavior.buttons.addRRule') }}
-    v-tooltip(v-show="hasRRule", fixed, top)
-      v-btn(slot="activator", icon)
-        v-icon(color="grey darken-1") info
-      span {{ form.rrule }}
+      @click="showCreateRecurrenceRuleModal"
+    )  {{ hasRecurrenceRule ? $t('pbehavior.buttons.editRrule') : $t('pbehavior.buttons.addRRule') }}
+    template(v-if="hasRecurrenceRule")
+      v-tooltip(fixed, top)
+        v-btn(slot="activator", icon)
+          v-icon(color="grey darken-1") info
+        span {{ form.rrule }}
+      c-action-btn(type="delete", @click="showConfirmRemoveRecurrenceRuleModal")
 </template>
 
 <script>
@@ -30,14 +32,23 @@ export default {
     },
   },
   computed: {
-    hasRRule() {
+    hasRecurrenceRule() {
       return !isEmpty(this.form.rrule);
     },
   },
   methods: {
-    showCreateRRuleModal() {
+    showConfirmRemoveRecurrenceRuleModal() {
       this.$modals.show({
-        name: MODALS.createRRule,
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.updateField('rrule', ''),
+        },
+      });
+    },
+
+    showCreateRecurrenceRuleModal() {
+      this.$modals.show({
+        name: MODALS.createRecurrenceRule,
         config: {
           rrule: this.form.rrule,
           exdates: this.form.exdates,
