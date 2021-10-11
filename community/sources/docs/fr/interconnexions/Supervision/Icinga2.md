@@ -1,5 +1,7 @@
 # Connector Livestatus2Canopsis
 
+<!-- XXX: documentation de très faible qualité -->
+
 ## Description
 
 Convertit des évènements de supervision Icinga 2 en évènements Canopsis.

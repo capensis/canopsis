@@ -609,7 +609,7 @@ Feature: Get alarms
     """
     {
       "errors": {
-        "multi_sort": "Invalid multi_sort value."
+        "multi_sort[]": "Invalid multi_sort value."
       }
     }
     """
@@ -619,7 +619,7 @@ Feature: Get alarms
     """
     {
       "errors": {
-        "multi_sort": "Invalid multi_sort value."
+        "multi_sort[]": "Invalid multi_sort value."
       }
     }
     """
@@ -629,7 +629,7 @@ Feature: Get alarms
     """
     {
       "errors": {
-        "multi_sort": "Invalid multi_sort value."
+        "multi_sort[]": "Invalid multi_sort value."
       }
     }
     """

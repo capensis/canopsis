@@ -1,7 +1,7 @@
 import { sortBy } from 'lodash';
 
 import { authMixin } from '@/mixins/auth';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export const layoutNavigationTopBarMenuMixin = {
   mixins: [authMixin, entitiesInfoMixin],

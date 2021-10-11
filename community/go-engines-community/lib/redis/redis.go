@@ -37,8 +37,6 @@ const (
 	EngineLockStorage
 )
 
-const PbehaviorKey = "pbehaviors"
-
 // Env vars for redis session
 const (
 	EnvURL = "CPS_REDIS_URL"
@@ -92,9 +90,9 @@ func NewOptions(surl string, db int, logger zerolog.Logger,
 		},
 	}
 
-	if reconnectCount > 0 && minReconnectTimeout > 0 {
-		redisOptions.MaxRetries = reconnectCount
-		redisOptions.MinRetryBackoff = minReconnectTimeout
+	redisOptions.MaxRetries = reconnectCount
+	redisOptions.MinRetryBackoff = minReconnectTimeout
+	if redisOptions.MaxRetries > 0 && redisOptions.MinRetryBackoff > 0 {
 		redisOptions.MaxRetryBackoff = redisOptions.MinRetryBackoff << redisOptions.MaxRetries
 	}
 
@@ -160,9 +158,9 @@ func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 		return nil
 	}
 
-	if reconnectCount > 0 && minReconnectTimeout > 0 {
-		failoverOptions.MaxRetries = reconnectCount
-		failoverOptions.MinRetryBackoff = minReconnectTimeout
+	failoverOptions.MaxRetries = reconnectCount
+	failoverOptions.MinRetryBackoff = minReconnectTimeout
+	if failoverOptions.MaxRetries > 0 && failoverOptions.MinRetryBackoff > 0 {
 		failoverOptions.MaxRetryBackoff = failoverOptions.MinRetryBackoff << failoverOptions.MaxRetries
 	}
 

@@ -2,6 +2,7 @@ package contextgraph
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -28,7 +29,7 @@ func (r *mongoReporter) ReportOngoing(ctx context.Context, job ImportJob) error 
 	return r.update(ctx, job)
 }
 
-func (r *mongoReporter) ReportDone(ctx context.Context, job ImportJob, stats JobStats) error {
+func (r *mongoReporter) ReportDone(ctx context.Context, job ImportJob, stats importcontextgraph.Stats) error {
 	job.Status = statusDone
 	t := time.Time{}
 	job.ExecTime = t.Add(stats.ExecTime).Format("15:04:05")
@@ -48,7 +49,6 @@ func (r *mongoReporter) ReportError(ctx context.Context, job ImportJob, execDura
 
 func (r *mongoReporter) GetStatus(ctx context.Context, id string) (ImportJob, error) {
 	var status ImportJob
-
 	res := r.collection.FindOne(ctx, bson.M{"_id": id})
 	err := res.Err()
 
