@@ -9,7 +9,7 @@
 1. [Entités](#entites)
 2. [Recherche](#recherche)
 3. [Filtres](#filtres)
-4. [Création d'entités et d'observateurs](#creation-dentites-et-dobservateurs)
+4. [Création d'entités et de services](#creation-dentites-et-de-services)
 5. [Actions](#actions)
 6. [Comportements périodiques](#comportements-periodiques)
 
@@ -31,12 +31,11 @@ Au clic sur une entité (en dehors du texte des colonnes), des détails supplém
 
 ### Recherche
 
-
-Le champ de recherche permet d'effectuer une recherche parmi les entités.
+Le champ de recherche permet de réaliser une recherche parmi les entités.
 
 ![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
 
-Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche")
+Pour faire une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche")
 
 Dans l'explorateur de contexte, il est possible d'effectuer des recherches plus avancées. Une aide concernant la syntaxe à utiliser est disponible en survolant avec la souris l'icone d'aide ![Icone aide recherche avancée](./img/advanced-search-icon.png "Icone aide recherche avancée"). Une documentation est également disponible pour cet aspect [ici](../../recherche/index.md) !
 
@@ -64,16 +63,18 @@ Une fois l'options activée, un sélecteur apparaît à droite du bouton d'activ
 
 Une fois l'opérateur sélectionné, il ne vous reste plus qu'à sélectionner les filtres à appliquer dans le menu déroulant de sélection de filtres.
 
-### Création d'entités et d'observateurs
+### Création d'entités et de services
 
-Depuis l'explorateur de contexte, il vous est possible de créer des entités et des observateurs.
+<!-- XXX: probablement à refaire après Canopsis 4.3.0 -->
 
-Pour accéder aux fenêtres de création, survoler le bouton ![Icône Création Entité / Observateur](./img/add-entity-button.png "Icône Création Entité / Observateur").
+Depuis l'Explorateur de contexte, il vous est possible de créer des entités et des services.
+
+Pour accéder aux fenêtres de création, survoler le bouton ![Icône Création Entité](./img/add-entity-button.png "Icône Création Entité").
 Au survol de ce bouton, un menu s'ouvre avec deux boutons disponibles.
 
-![Icônes Création Entité / Observateur](./img/add-entity-button-hover.png "Icônes Création Entité / Observateur").
+![Icônes Création Entité](./img/add-entity-button-hover.png "Icônes Création Entité").
 
-La première icône à gauche permet de créer une entité, la deuxième permet de créer un observateur.
+La première icône à gauche permet de créer une entité, la deuxième permet de créer un service.
 
 #### Création d'entité
 
@@ -87,7 +88,7 @@ Le 1er onglet, 'Formulaire', vous demande de renseigner les informations princip
 - Description
 - Activé(e) : Définit si l'entité est activée, ou non.
 - Type (*requis*) : Définit le type d'entité (connecteur, composant ou ressource)
-- Impacts et Dépendances : Permet de définir les entités que l'entité que vous êtes en train de créer impacte, et celles dont elle dépend. Pour ajouter des entités dans une de ces listes, effectuez une recherche grâce au champ de recherche, puis cliquez sur l'icône ![Icône Ajout impact/dépendance](./img/add-impact-depends.png "Icône Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisés pour ajouter des entités.
+- Impacts et Dépendances : Permet de définir les entités que l'entité que vous êtes en train de créer impacte, et celles dont elle dépend. Pour ajouter des entités dans une de ces listes, réalisez une recherche grâce au champ de recherche, puis cliquez sur l'icône ![Icône Ajout impact/dépendance](./img/add-impact-depends.png "Icône Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisés pour ajouter des entités.
 
 Le 2ème onglet permet de gérer les infos contenues dans le champ 'infos' de l'entité. Les infos se composent d'un nom, d'une description et d'une valeur.
 Pour ajouter une information, remplissez les champs demandés, puis cliquez sur le bouton 'Ajouter'. L'information apparaît dans la liste située au dessus du formulaire.
@@ -102,27 +103,29 @@ Deux actions sont disponibles pour chaque information.
 
 Cliquez ensuite sur le bouton 'Envoyer' pour sauvegarder votre entité !
 
-#### Création d'observateur
+<!-- XXX: toute cette partie est obsolète avec la 4.3.0 -->
 
-Au clic sur l'icône de création d'observateurs, une fenêtre s'ouvre.
+#### Création de service
 
-![Formulaire création Observateurs](./img/watcher-creation-form.png "Formulaire création Observateurs")
+Au clic sur l'icône de création de services, une fenêtre s'ouvre.
 
-Pour créer un observateur, il vous suffit d'entrer deux informations :
+![Formulaire création Services](./img/watcher-creation-form.png "Formulaire création Services")
+
+Pour créer un service, il vous suffit d'entrer deux informations :
 
 *  Nom (*requis*)
 *  Filtre : Pour plus de détails sur les filtres et leur création, voir : [Les filtres](../../filtres/index.md)
 
-Cliquez ensuite sur le bouton 'Envoyer'. Votre observateur est créé !
+Cliquez ensuite sur le bouton 'Envoyer'. Votre service est créé !
 
 ### Actions
 
 Pour chaque entité de l'explorateur de contexte, trois actions sont disponibles :
 
-- **Editer** : Au clic sur l'icône d'édition ![Icône Editer entité](./img/edit-entity-icon.png "Icône Editer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de l'observateur (*Cf: [Création d'entités de d'observateur](#creation-dentites-et-dobservateurs)*). Après avoir modifié les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe que l'édition a été effectuée avec succès.
-- **Dupliquer**: Au clic sur l'icône ![Icône Dupliquer entité](./img/duplicate-entity-icon.png "Icône Dupliquer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de l'observateur que vous souhaitez dupliquer (*Cf: [Création d'entités de d'observateur](#creation-dentites-et-dobservateurs)*). Après avoir entré les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe qu'une nouvelle entité a été créée avec succès !
-- **Supprimer** : Permet de supprimer une entité/un observateur. Au clic sur l'icône de suppression ![icône Supprimer entité](./img/delete-entity-icon.png "icône Supprimer entité"), une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité/de l'observateur.
-- **Ajouter un comportement périodique** : Permet d'ajouter un comportement périodique à l'entité/à l'observateur. Au clic sur l'icône ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
+- **Éditer** : Au clic sur l'icône d'édition ![Icône Editer entité](./img/edit-entity-icon.png "Icône Editer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de le service (*Cf: [Création d'entités et de services](#creation-dentites-et-de-services)*). Après avoir modifié les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe que l'édition a été effectuée avec succès.
+- **Dupliquer**: Au clic sur l'icône ![Icône Dupliquer entité](./img/duplicate-entity-icon.png "Icône Dupliquer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de le service que vous souhaitez dupliquer. Après avoir entré les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe qu'une nouvelle entité a été créée avec succès !
+- **Supprimer** : Permet de supprimer une entité/un service. Au clic sur l'icône de suppression ![icône Supprimer entité](./img/delete-entity-icon.png "icône Supprimer entité"), une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité/de le service.
+- **Ajouter un comportement périodique** : Permet d'ajouter un comportement périodique à l'entité/à le service. Au clic sur l'icône ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
 
 ### Comportements périodiques
 
@@ -136,7 +139,7 @@ Pour ajouter un comportement périodique sur une sélection d'entités, sélecti
 
 ## Guide exploitant
 
-Vous pouvez configurer la taille, l'emplacement, le nom, ... des widgets directement dans une vue via le mode édition (*Cf: [Vues - Documentation de la grille d'edition](../../vues/edition-grille.md)*).
+Vous pouvez configurer les widgets (taille, remplacement, nom, etc.) directement dans une vue via le mode édition (*Cf: [Vues - Documentation de la grille d'edition](../../vues/edition-grille.md)*).
 
 ### Aide - Variables
 
@@ -190,7 +193,7 @@ Afin d'**ajouter une colonne**, cliquez sur le bouton 'Ajouter'.
 Une colonne vide est alors ajoutée. Afin de finaliser l'ajout, il est nécessaire de remplir les champs demandés.
 Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tous les champs de l'entité sont directement disponibles.
 
-Exemple: "name", qui contient le nom de l'entité, ou encore "type", qui contient le type  de l'entité.
+Exemple : "name", qui contient le nom de l'entité, ou encore "type", qui contient le type de l'entité.
 
 Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix rouge présente en haut à droite de la case de la colonne que vous souhaitez effacer.
 
@@ -213,6 +216,6 @@ Ce paramètre permet de sélectionner les différents types d'entités que vous 
 
 ![Paramètre Types d'entités](../img/settings/entities-types.png "Paramètre Types d'entités")
 
-Les types d'entités sont : Composant, Connecteur, Ressource et Observateurs.
+Les types d'entités sont : Composant, Connecteur, Ressource et Service.
 
 Il vous suffit de cocher les cases correspondantes aux types d'entités que vous souhaitez voir apparaître.
