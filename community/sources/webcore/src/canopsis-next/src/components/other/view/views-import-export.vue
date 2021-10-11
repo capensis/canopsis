@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { EXPORT_VIEWS_AND_GROUPS_PREFIX } from '@/config';
+import { EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX } from '@/config';
 import { MODALS } from '@/constants';
 
 import { saveJsonFile } from '@/helpers/file/files';
@@ -138,7 +138,7 @@ export default {
         views: this.selectedViewIds.map(this.getViewById),
       });
 
-      saveJsonFile(exportData, `${EXPORT_VIEWS_AND_GROUPS_PREFIX}${new Date().toLocaleString()}`);
+      saveJsonFile(exportData, `${EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX}${new Date().toLocaleString()}`);
 
       this.resetSelected();
     },

@@ -183,6 +183,13 @@ PrefetchSize = 0
 ReconnectTimeoutMilliseconds = 8
 ReconnectRetries = 3
 
+# It's required to restart api and engines after canopsis-reconfigure updates mongodb
+# to catch up following parameters.
+[Canopsis.file]
+# Local storage for Upload artifacts. Upload artifacts are used in Administration -> Parameters.
+Upload = "/opt/canopsis/var/lib/upload-files"
+UploadMaxSize = 314572800 # 300Mb
+
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.alarm]
 FlappingFreqLimit = 0
@@ -213,3 +220,9 @@ TimeToExecute = "Sunday,23"
 ThdWarnMinPerImport = "30m"
 ThdCritMinPerImport = "60m"
 FilePattern = "/tmp/import_%s.json"
+
+# Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
+[Canopsis.api]
+# Auth token expiration ttl. It's used also used for session ttl (deprected).
+TokenExpiration = "24h"
+TokenSigningMethod = "HS256"

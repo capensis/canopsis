@@ -45,7 +45,7 @@
             v-list-tile
               v-list-tile-title {{ $t('common.trend') }}: {{ stat.trend }}
             v-list-tile
-              v-list-tile-title {{ $t('common.parameters') }}: {{ stat.parameters }}
+              v-list-tile-title {{ $tc('common.parameter', 2) }}: {{ stat.parameters }}
 </template>
 
 <script>

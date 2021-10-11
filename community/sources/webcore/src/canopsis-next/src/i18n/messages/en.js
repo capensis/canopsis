@@ -9,7 +9,6 @@ import {
   BROADCAST_MESSAGES_STATUSES,
   USER_PERMISSIONS_PREFIXES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
-  ENGINES_NAMES,
   WIDGET_TYPES,
   ACTION_TYPES,
   ENTITY_TYPES,
@@ -22,6 +21,8 @@ import {
   IDLE_RULE_ALARM_CONDITIONS,
   USERS_PERMISSIONS,
   ALARMS_OPENED_VALUES,
+  HEALTHCHECK_SERVICES_NAMES,
+  HEALTHCHECK_ENGINES_NAMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -56,7 +57,7 @@ export default {
     no: 'No',
     default: 'Default',
     confirmation: 'Are you sure?',
-    parameters: 'Parameters',
+    parameter: 'Parameter | Parameters',
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
@@ -171,7 +172,7 @@ export default {
     percent: 'Percent | Percents',
     tests: 'Tests',
     total: 'Total',
-    errors: 'Errors',
+    error: 'Error | Errors',
     failures: 'Failures',
     skipped: 'Skipped',
     current: 'Current',
@@ -190,6 +191,11 @@ export default {
     summary: 'Summary',
     statistics: 'Statistics',
     action: 'Action',
+    minimal: 'Minimal',
+    optimal: 'Optimal',
+    graph: 'Graph | Graphs',
+    systemStatus: 'System status',
+    downloadAsPng: 'Download as PNG',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1727,7 +1733,7 @@ export default {
         create: 'Create view',
         settings: 'Settings',
       },
-      activeSessions: 'Active sessions',
+      loggedUsersCount: 'Active sessions',
       ordering: {
         popups: {
           success: 'The groups was reordered',
@@ -1934,47 +1940,104 @@ export default {
     },
   },
 
-  engines: {
-    [ENGINES_NAMES.event]: {
-      title: 'Event',
-      description: 'Comes from resource',
-    },
+  healthcheck: {
+    notRunning: '{name} is unavailable',
+    queueOverflow: 'Queue overflow',
+    lackOfInstances: 'Lack of instances',
+    diffInstancesConfig: 'Invalid instances configuration',
+    queueLength: 'Queue length {queueLength}/{maxQueueLength}',
+    instancesCount: 'Instances {instances}/{minInstances}',
+    activeInstances: 'Only {instances} is active out of {minInstances}. The optimal number of instances is {optimalInstances}.',
+    queueOverflowed: 'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
+    engineDown: '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
+    engineDownOrSlow: '{name} is down or responds too slow, the system is not operational.\nPlease check the log or restart the instance.',
+    invalidEnginesOrder: 'Invalid engines configuration',
+    invalidInstancesConfiguration: 'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
+    chainConfigurationInvalid: 'Engines chain configuration is invalid.\nRefer below for the correct sequence of engines:',
+    queueLimit: 'Queue length limit',
+    defineQueueLimit: 'Define the engines queue length limit',
+    notifyUsersQueueLimit: 'Users can be notified when the queue length limit is exceeded',
+    numberOfInstances: 'Number of instances',
+    notifyUsersNumberOfInstances: 'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
+    messagesHistory: 'FIFO messages processing history',
+    messagesLastHour: 'FIFO messages processing for the last hour',
+    messagesPerHour: 'messages/hour',
+    unknown: 'This system state is unavailable',
+    systemStatusChipError: 'The system is not operational',
+    systemStatusServerError: 'System configuration is invalid, please contact the administrator',
+    systemsOperational: 'All systems are operational',
+    nodes: {
+      [HEALTHCHECK_SERVICES_NAMES.mongo]: {
+        name: 'MongoDB',
+        edgeLabel: 'Status check',
+      },
 
-    [ENGINES_NAMES.webhook]: {
-      title: 'Webhook',
-      description: 'Triggers the webhooks launch',
-    },
-    [ENGINES_NAMES.fifo]: {
-      title: 'FIFO',
-      description: 'Manages the queue of events and alarms',
-    },
-    [ENGINES_NAMES.axe]: {
-      title: 'AXE',
-      description: 'Creates alarms and performs actions with them',
-    },
-    [ENGINES_NAMES.che]: {
-      title: 'CHE',
-      description: 'Applies eventfilters and created entities',
-    },
-    [ENGINES_NAMES.pbehavior]: {
-      title: 'Pbehavior',
-      description: 'Checks if the alarm is under PBehvaior',
-    },
-    [ENGINES_NAMES.action]: {
-      title: 'Action',
-      description: 'Triggers the actions launch',
-    },
-    [ENGINES_NAMES.service]: {
-      title: 'Service',
-      description: 'Updates counters and generates service-events',
-    },
-    [ENGINES_NAMES.dynamicInfo]: {
-      title: 'Dynamic infos',
-      description: 'Adds dynamic infos to alarm',
-    },
-    [ENGINES_NAMES.correlation]: {
-      title: 'Correlation',
-      description: 'Adds dynamic infos to alarm',
+      [HEALTHCHECK_SERVICES_NAMES.rabbit]: {
+        name: 'RabbitMQ',
+        edgeLabel: 'Status check',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.redis]: {
+        name: 'Redis',
+        edgeLabel: 'FIFO data\nRedis check',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.events]: {
+        name: 'Events',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.api]: {
+        name: 'Canopsis API',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.enginesChain]: {
+        name: 'Engines chain',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.healthcheck]: {
+        name: 'Healthcheck',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.webhook]: {
+        name: 'Webhook',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.fifo]: {
+        name: 'FIFO',
+        edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.axe]: {
+        name: 'AXE',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.che]: {
+        name: 'CHE',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
+        name: 'Pbehavior',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.action]: {
+        name: 'Action',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.service]: {
+        name: 'Service',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
+        name: 'Dynamic infos',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.correlation]: {
+        name: 'Correlation',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.remediation]: {
+        name: 'Remediation',
+      },
     },
   },
 
@@ -2319,6 +2382,10 @@ export default {
       deleteAfter: 'Delete PBehavior data after',
       deleteAfterHelpText: 'When switched on, inactive PBehaviors will be deleted after the defined time period from the last event.',
     },
+    healthCheck: {
+      title: 'Healthcheck data storage',
+      deleteAfter: 'Delete FIFO incoming flow data after',
+    },
     history: {
       scriptLaunched: 'Script launched at {launchedAt}.',
       alarm: {
@@ -2449,14 +2516,14 @@ export default {
       title: 'Playlists',
       message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
     },
+    [USERS_PERMISSIONS.technical.healthcheck]: {
+      title: 'Healthcheck',
+      message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
+    },
 
     /**
      * Admin general
      */
-    [USERS_PERMISSIONS.technical.engine]: {
-      title: 'Engines',
-      message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
-    },
     [USERS_PERMISSIONS.technical.parameters]: {
       title: 'Parameters',
     },

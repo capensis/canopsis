@@ -61,7 +61,7 @@ Il vous suffit de cliquer sur "Put a rrule on this PBehavior ?"
 
 Nous allons tout d'abord nous concentrer sur la configuration basique. Plusieurs options sont disponibles :
 
-*  La fréquence : les choix possibles sont variés : toutes les X Secondes, minutes, heures, jours, semaines, mois ou années.
+*  La fréquence : toutes les X secondes, minutes, heures, jours, semaines, mois ou années.
 *  Jusqu'à : date et heure de fin de l'activation de ce comportement périodique.
 *  Un jour en particulier : choisir un jour où le comportement périodique va s'activer.
 *  Répétition : combien de fois le comportement périodique va s'activer.
