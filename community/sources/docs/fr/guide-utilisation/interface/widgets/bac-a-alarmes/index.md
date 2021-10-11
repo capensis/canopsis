@@ -37,11 +37,11 @@ Cette chronologie reprend certains éléments du cycle de vie de l'alarme (notam
 
 ### Recherche
 
-Le champ de recherche permet d'effectuer une recherche parmi les alarmes.
+Le champ de recherche permet de réaliser une recherche parmi les alarmes.
 
 ![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
 
-Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche")
+Pour faire une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche")
 
 Dans le bac à alarmes, il est possible d'effectuer des recherches plus avancées. Une aide concernant la syntaxe à utiliser est disponible en survolant avec la souris l'icone d'aide ![Icone aide recherche avancée](./img/advanced-search-icon.png "Icone aide recherche avancée"). Une documentation est également disponible pour cette aspect [ici](../../recherche/index.md) !
 
@@ -97,16 +97,16 @@ Afin de supprimer ce filtre, cliquez sur le bouton de fermeture présent sur le 
 Vous pouvez accéder à une alarme en particulier grâce à une URL directe.  
 Cette URL est de la forme : `http(s)://URL_CANOPSIS/alarms/<alarmID>[?widgetId=<widgetID>]`.  
 
-* `<alarmID>` **(requis)** : correspond à l'attribut `_id` de l'alarme.  
-* `<widgetID>` **(optionnel)** : correspond à l'identifiant d'un widget. Lorsque cet identifiant est précisé, la configuration du widget s'applique (colonnes, plus d'infos, etc.)  
+* `<alarmID>` **(requis)** : correspond à l'attribut `_id` de l'alarme.
+* `<widgetID>` **(optionnel)** : correspond à l'identifiant d'un widget. Lorsque cet identifiant est précisé, la configuration du widget s'applique (colonnes, plus d'infos, etc.)
 
-L'identifiant d'un widget est disponible pour copie dans le mode **édition** d'une vue en bas d'un widget.  
+L'identifiant d'un widget est disponible pour copie dans le mode **édition** d'une vue en bas d'un widget.
 
 ### Actions
 
 Pour chaque alarme, des actions sont disponibles.
 
-Pour le détail de chacune des actions, voir la [liste des actions du Bac à alarmes](./actions.md).
+Pour le détail de chacune des actions, voir la [liste des actions](actions.md) du Bac à alarmes.
 
 ### Éléments par page
 
@@ -122,7 +122,7 @@ Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: 
 
 ## Guide exploitant
 
-Vous pouvez configurer la taille, l'emplacement, le nom, ... des widgets directement dans une vue via le mode édition (*Cf: [Vues - Documentation de la grille d'edition](../../vues/edition-grille.md)*).
+Vous pouvez configurer les widgets (taille, remplacement, nom, etc.) directement dans une vue via le mode édition (*Cf: [Vues - Documentation de la grille d'edition](../../vues/edition-grille.md)*).
 
 ### Aide - Variables
 
@@ -188,7 +188,7 @@ Voici quelques exemples pratiques de colonnes :
 
 ###### Champs basiques
 
-Label  | Valeur  
+Label  | Valeur
 --|--
 Type de connecteur | `alarm.v.connector `
 Nom du connecteur | `alarm.v.connector_name`
@@ -200,7 +200,7 @@ Statut | `alarm.v.status.val`
 
 ###### Champs enrichis
 
-Label  | Valeur  
+Label  | Valeur
 --|--
 Nom du champ enrichi	| `infos.NOM_DU_CHAMP_ENRICHI`
 
@@ -292,7 +292,7 @@ Voici quelques exemples pratiques de filtres :
 
 ###### Champs basiques
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Composant  | `component`  | `equal`  | *VALEUR_DU_COMPOSANT*
 Ressource  | `resource`  | `equal`  | *VALEUR_DE_LA_RESSOURCE*
@@ -302,7 +302,7 @@ Message	| `v.output` | `equal` | *VALEUR_DU_MESSAGE*
 
 ###### Selon la criticité
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Uniquement les alarmes Mineures  | `v.state.val`  | `equal`  | `1` (valeur de type number)
 Uniquement les alarmes Majeures  | `v.state.val`  | `equal`  | `2` (valeur de type number)
@@ -310,19 +310,19 @@ Uniquement les alarmes Critiques  | `v.state.val`  | `equal`  | `3` (valeur de t
 
 ###### Champs enrichis
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Champ enrichi	| `entity.infos.NOM_DU_CHAMP_ENRICHI.value` | equal | *VALEUR_DU_CHAMP_ENRICHI*
 
 ###### En fonction des informations dynamiques
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Les alarmes qui contiennent une information dynamique de type `consignes`	| `v.infos.*.type` | equal | *consigne*
 
 ###### Acquittement
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Exclure les alarmes avec acquittement  | `v.ack._t`  | `not equal` | `ack` (valeur string)
 Uniquement les alarmes avec acquittement  | `v.ack._t`  | `equal` | `ack` (valeur string)
@@ -333,7 +333,7 @@ Message de l'acquittement | `v.ack.m`  |  `equal`  | *CONTENU_DU_MESSAGE_DE_L_AC
 
 ###### Ticket
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Exlure les alarmes avec Ticket (quel que soit le type)  | `v.ticket._t`  | `is null` | *PAS_DE_VALEUR*
 Exclure les alarmes avec Ticket de type `assocticket`  | `v.ticket._t`  | `not equal` | `assocticket` (valeur string)
@@ -343,7 +343,7 @@ Auteur du Ticket  | `v.ticket.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DU_TICKET*
 
 ###### Mise en veille
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Exclure les alarmes mises en veille | `v.snooze._t`  | `not equal` | `snooze` (valeur string)
 Uniquement les alarmes mises en veille | `v.snooze._t`  | `equal` | `snooze` (valeur string)
@@ -351,7 +351,7 @@ Auteur de la mise en veille | `v.snooze.a`  |  `equal`  | *NOM_DE_L_AUTEUR_MISE_
 
 ###### Comportements périodiques
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Uniquement les alarmes qui possèdent un comportement périodique actif (anciennement `has_active_pb`) | `pbehavior` | `exists` | `true` (valeur booléenne)
 Uniquement les alarmes qui ne possèdent pas de comportement périodique actif  (anciennement `has_active_pb`) | `pbehavior` | `exists` | `false` (valeur booléenne)
@@ -361,17 +361,17 @@ Tous les attributs des comportements périodiques peuvent être utilisés à des
 
 ###### Changement de criticité
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
 Exclure les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `not equal` | `changestate` (valeur string)
 Uniquement les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `equal` | `changestate` (valeur string)
 
-###### Observateurs
+###### Services
 
-Description  | 1° colonne  | 2° colonne | 3° colonne
+Description  | 1<sup>re</sup> colonne  | 2<sup>e</sup> colonne | 3<sup>e</sup> colonne
 --|---|--|--
-Exclure les alarmes liées à des observateurs | `entity.type`  | `not equal` | `watcher` (valeur string)
-Uniquement les alarmes des observateurs | `entity.type`  | `equal` | `watcher` (valeur string)
+Exclure les alarmes liées à des services | `entity.type`  | `not equal` | `service` (valeur string)
+Uniquement les alarmes des services | `entity.type`  | `equal` | `service` (valeur string)
 
 ##### Info popup
 

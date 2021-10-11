@@ -4,29 +4,31 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"runtime/debug"
 	"sync"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
+	"golang.org/x/sync/errgroup"
 )
 
 const shutdownTimout = 5 * time.Second
 
-//  Router is used to implement adding new routes to API.
+// Router is used to implement adding new routes to API.
 type Router func(gin.IRouter)
 
-//  Worker is used to implement adding new worker to API.
+// Worker is used to implement adding new worker to API.
 type Worker func(context.Context)
 
-type DeferFunc func(ctx context.Context) error
+type DeferFunc func(ctx context.Context)
 
 // API is used to implement API http server.
 type API interface {
 	// Run starts http server.
 	Run(context.Context) error
-	// AddRouter adds new router.
+	// AddRouter adds new routes.
 	AddRouter(Router)
 	// AddWorker adds new worker.
 	AddWorker(string, Worker)
@@ -73,7 +75,7 @@ func (a *api) AddNoRoute(handlers []gin.HandlerFunc) {
 
 func (a *api) Run(ctx context.Context) (resErr error) {
 	handler := a.registerRoutes()
-	a.runWorkers(ctx)
+	workersGroup := a.runWorkers(ctx)
 
 	// Start server.
 	server := &http.Server{
@@ -95,10 +97,7 @@ func (a *api) Run(ctx context.Context) (resErr error) {
 		if a.deferFunc != nil {
 			deferCtx, deferCancel := context.WithTimeout(context.Background(), shutdownTimout)
 			defer deferCancel()
-			err := a.deferFunc(deferCtx)
-			if err != nil && resErr == nil {
-				resErr = err
-			}
+			a.deferFunc(deferCtx)
 		}
 	}()
 
@@ -108,9 +107,7 @@ func (a *api) Run(ctx context.Context) (resErr error) {
 		return err
 	}
 
-	a.waitGroup.Wait()
-
-	return nil
+	return workersGroup.Wait()
 }
 
 func (a *api) registerRoutes() http.Handler {
@@ -129,40 +126,45 @@ func (a *api) registerRoutes() http.Handler {
 	return ginRouter
 }
 
-func (a *api) runWorkers(ctx context.Context) {
+func (a *api) runWorkers(ctx context.Context) *errgroup.Group {
+	g, ctx := errgroup.WithContext(ctx)
+
 	for key := range a.workers {
-		a.waitGroup.Add(1)
 		f := a.workers[key]
 
-		go RestartGoroutine(fmt.Sprintf("worker %s", key), func() {
+		restartGoroutine(g, fmt.Sprintf("worker %s", key), func() error {
 			f(ctx)
-		}, &a.waitGroup, a.logger)
+
+			return nil
+		}, a.logger)
 	}
+
+	return g
 }
 
-// RestartGoroutine starts goroutine with panic recovery. RestartGoroutine logs
+// restartGoroutine starts goroutine with panic recovery. RestartGoroutine logs
 // recovery and restarts goroutine on panic.
-func RestartGoroutine(
+func restartGoroutine(
+	g *errgroup.Group,
 	key string,
-	f func(),
-	wg *sync.WaitGroup,
+	f func() error,
 	logger zerolog.Logger,
 ) {
-	defer func() {
-		if r := recover(); r != nil {
-			msg := fmt.Sprintf("%s have been recovered from panic and restarted", key)
+	g.Go(func() error {
+		defer func() {
+			if r := recover(); r != nil {
+				var err error
+				var ok bool
+				if err, ok = r.(error); !ok {
+					err = fmt.Errorf("%v", r)
+				}
 
-			if err, ok := r.(error); ok {
-				logger.Err(err).Msg(msg)
-			} else {
-				logger.Error().Interface("recover", r).Msg(msg)
+				logger.Err(err).Str("worker", key).Msgf("panic recovered\n%s\n", debug.Stack())
+
+				restartGoroutine(g, key, f, logger)
 			}
+		}()
 
-			go RestartGoroutine(key, f, wg, logger)
-		} else {
-			wg.Done()
-		}
-	}()
-
-	f()
+		return f()
+	})
 }

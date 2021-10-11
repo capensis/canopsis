@@ -3,10 +3,11 @@ package engine
 import (
 	"context"
 	"fmt"
-	"github.com/rs/zerolog"
 	"runtime/debug"
-	"sync"
 	"time"
+
+	"github.com/rs/zerolog"
+	"golang.org/x/sync/errgroup"
 )
 
 const shutdownTimout = 5 * time.Second
@@ -39,7 +40,7 @@ func (e *engine) AddPeriodicalWorker(worker PeriodicalWorker) {
 	e.periodicalWorkers = append(e.periodicalWorkers, worker)
 }
 
-func (e *engine) Run(parentCtx context.Context) error {
+func (e *engine) Run(ctx context.Context) error {
 	e.logger.Info().
 		Int("consumers", len(e.consumers)).
 		Int("periodical workers", len(e.periodicalWorkers)).
@@ -53,9 +54,6 @@ func (e *engine) Run(parentCtx context.Context) error {
 		}
 	}()
 
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
 	if e.init != nil {
 		err := e.init(ctx)
 		if err != nil {
@@ -63,13 +61,12 @@ func (e *engine) Run(parentCtx context.Context) error {
 		}
 	}
 
-	wg := &sync.WaitGroup{}
-	exitCh := make(chan error, len(e.consumers)+len(e.periodicalWorkers))
-	defer close(exitCh)
+	g, ctx := errgroup.WithContext(ctx)
 
 	for _, c := range e.consumers {
-		wg.Add(1)
-		go func(consumer Consumer) {
+		consumer := c
+
+		g.Go(func() (resErr error) {
 			defer func() {
 				if r := recover(); r != nil {
 					var err error
@@ -79,45 +76,33 @@ func (e *engine) Run(parentCtx context.Context) error {
 					}
 
 					e.logger.Err(err).Msgf("consumer recovered from panic\n%s\n", debug.Stack())
-					exitCh <- fmt.Errorf("consumer recovered from panic: %w", err)
+					resErr = fmt.Errorf("consumer recovered from panic: %w", err)
 				}
-
-				wg.Done()
 			}()
 
 			err := consumer.Consume(ctx)
 			if err != nil {
-				exitCh <- fmt.Errorf("consumer failed: %w", err)
+				return fmt.Errorf("consumer failed: %w", err)
 			}
-		}(c)
+
+			return nil
+		})
 	}
 
 	for _, w := range e.periodicalWorkers {
-		wg.Add(1)
-		go e.runPeriodicalWorker(ctx, wg, w, exitCh)
+		worker := w
+		g.Go(func() error {
+			return e.runPeriodicalWorker(ctx, worker)
+		})
 	}
 
-	// Wait context done or error from goroutines
-	var exitErr error
-	select {
-	case <-ctx.Done():
-	case exitErr = <-exitCh:
-		cancel()
-	}
-
-	// Wait goroutines finish
-	wg.Wait()
-
-	return exitErr
+	return g.Wait()
 }
 
 func (e *engine) runPeriodicalWorker(
 	ctx context.Context,
-	wg *sync.WaitGroup,
 	worker PeriodicalWorker,
-	exitCh chan<- error,
-) {
-	defer wg.Done()
+) (resErr error) {
 	defer func() {
 		if r := recover(); r != nil {
 			var err error
@@ -127,7 +112,7 @@ func (e *engine) runPeriodicalWorker(
 			}
 
 			e.logger.Err(err).Msgf("periodical worker recovered from panic\n%s\n", debug.Stack())
-			exitCh <- fmt.Errorf("periodical worker recovered from panic: %w", err)
+			resErr = fmt.Errorf("periodical worker recovered from panic: %w", err)
 		}
 	}()
 
@@ -140,8 +125,7 @@ func (e *engine) runPeriodicalWorker(
 		case <-ticker.C:
 			err := worker.Work(ctx)
 			if err != nil {
-				exitCh <- fmt.Errorf("periodical worker failed: %w", err)
-				return
+				return fmt.Errorf("periodical worker failed: %w", err)
 			}
 
 			newInterval := worker.GetInterval()
@@ -151,7 +135,7 @@ func (e *engine) runPeriodicalWorker(
 				ticker = time.NewTicker(interval)
 			}
 		case <-ctx.Done():
-			return
+			return nil
 		}
 	}
 }
