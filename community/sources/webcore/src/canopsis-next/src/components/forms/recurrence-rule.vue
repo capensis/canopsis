@@ -149,12 +149,12 @@
               span {{ $t('recurrenceRule.tooltips.bysecond') }}
     v-layout(row)
       v-flex(xs2)
-        strong {{ $t('recurrenceRule.stringLabel') }}
+        strong {{ $t('common.recurrence') }}
       v-flex(xs10)
         p {{ recurrenceRuleString }}
     v-layout(row)
       v-flex(xs2)
-        strong {{ $t('recurrenceRule.textLabel') }}
+        strong {{ $t('common.summary') }}
       v-flex(xs10)
         p {{ recurrenceRuleText }}
     v-layout(row)

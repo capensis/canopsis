@@ -189,6 +189,7 @@ export default {
     dismiss: 'Dismiss',
     approve: 'Approve',
     summary: 'Summary',
+    recurrence: 'Recurrence',
     statistics: 'Statistics',
     action: 'Action',
     minimal: 'Minimal',
@@ -1579,8 +1580,6 @@ export default {
   },
   recurrenceRule: {
     advancedHint: 'Separate numbers with a comma',
-    textLabel: 'Summary',
-    stringLabel: 'Recurrence',
     freq: 'Frequency',
     until: 'Until',
     byweekday: 'By week day',
