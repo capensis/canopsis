@@ -8752,7 +8752,8 @@ var doc = `{
                 "enabled",
                 "impact_level",
                 "name",
-                "output_template"
+                "output_template",
+                "sli_avail_state"
             ],
             "properties": {
                 "category": {
@@ -8779,6 +8780,9 @@ var doc = `{
                 },
                 "output_template": {
                     "type": "string"
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 }
             }
         },
@@ -8845,6 +8849,9 @@ var doc = `{
                 },
                 "output_template": {
                     "type": "string"
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"

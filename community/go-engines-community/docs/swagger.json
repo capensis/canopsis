@@ -8736,7 +8736,8 @@
                 "enabled",
                 "impact_level",
                 "name",
-                "output_template"
+                "output_template",
+                "sli_avail_state"
             ],
             "properties": {
                 "category": {
@@ -8763,6 +8764,9 @@
                 },
                 "output_template": {
                     "type": "string"
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 }
             }
         },
@@ -8829,6 +8833,9 @@
                 },
                 "output_template": {
                     "type": "string"
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"
