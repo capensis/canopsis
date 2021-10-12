@@ -10,7 +10,7 @@ module.exports = {
     '^.+\\.jsx?$': '<rootDir>/tests/unit/jest.transform',
   },
   moduleNameMapper: {
-    '^@/unit/(.*)$': '<rootDir>/tests/unit/$1',
+    '^@unit/(.*)$': '<rootDir>/tests/unit/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   snapshotSerializers: [

@@ -2,12 +2,11 @@ import Vuex from 'vuex';
 import { cloneDeep } from 'lodash';
 import { normalize } from 'normalizr';
 
+import { createVueInstance } from '@unit/utils/vue';
+import { fakeAlarms } from '@unit/data/alarm';
 import entitiesPlugin, { types } from '@/store/plugins/entities';
 import { alarmSchema } from '@/store/schemas';
 import { ENTITIES_TYPES } from '@/constants';
-
-import { createVueInstance } from '@/unit/utils/vue';
-import { fakeAlarms } from '@/unit/data/alarm';
 
 const mockData = {
   alarms: fakeAlarms({ count: 1 }),

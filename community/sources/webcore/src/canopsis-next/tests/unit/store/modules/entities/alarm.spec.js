@@ -3,6 +3,8 @@ import Vue from 'vue';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
 
+import { fakeAlarm, fakeAlarms, fakeAlarmsResponse } from '@unit/data/alarm';
+import { fakeMeta, fakeParams } from '@unit/data/request-data';
 import { API_ROUTES } from '@/config';
 
 import SetSeveralPlugin from '@/plugins/set-several';
@@ -11,8 +13,6 @@ import request from '@/services/request';
 
 import alarmModule, { types } from '@/store/modules/entities/alarm';
 
-import { fakeAlarm, fakeAlarms, fakeAlarmsResponse } from '@/unit/data/alarm';
-import { fakeMeta, fakeParams } from '@/unit/data/request-data';
 import { ENTITIES_TYPES } from '@/constants';
 
 const { actions, state: initialState, mutations, getters } = alarmModule;
