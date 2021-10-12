@@ -181,7 +181,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			MetricsSender: metrics.NewSender(
 				canopsis.MetricsExchangeName,
 				canopsis.MetricsQueueName,
-				channelPub,
+				amqpChannel,
 				json.NewEncoder(),
 				logger,
 			),
@@ -206,7 +206,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			MetricSender: metrics.NewSender(
 				canopsis.MetricsExchangeName,
 				canopsis.MetricsQueueName,
-				channelPub,
+				amqpChannel,
 				json.NewEncoder(),
 				logger,
 			),
