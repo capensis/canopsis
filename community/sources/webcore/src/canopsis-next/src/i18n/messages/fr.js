@@ -189,6 +189,7 @@ export default {
     dismiss: 'Rejeter',
     approve: 'Approuver',
     summary: 'Résumé',
+    recurrence: 'Récurrence',
     statistics: 'Statistiques',
     action: 'Action',
     minimal: 'Minimal',
@@ -220,6 +221,38 @@ export default {
       week: 'semaine | semaines',
       month: 'mois | mois',
       year: 'année | années',
+    },
+    timeFrequencies: {
+      secondly: 'Par seconde',
+      minutely: 'Par minute',
+      hourly: 'Par heure',
+      daily: 'Quotidien',
+      weekly: 'Hebdomadiare',
+      monthly: 'Mensuel',
+      yearly: 'Annuel',
+    },
+    weekDays: {
+      monday: 'Lundi',
+      tuesday: 'Mardi',
+      wednesday: 'Mercredi',
+      thursday: 'Jeudi',
+      friday: 'Vendredi',
+      saturday: 'Samedi',
+      sunday: 'Dimanche',
+    },
+    months: {
+      january: 'Janvier',
+      february: 'Février',
+      march: 'Mars',
+      april: 'Avril',
+      may: 'Mai',
+      june: 'Juin',
+      july: 'Juillet',
+      august: 'Août',
+      september: 'Septembre',
+      october: 'Octobre',
+      november: 'Novembre',
+      december: 'Décembre',
     },
   },
   variableTypes: {
@@ -277,7 +310,7 @@ export default {
     '<p>Le "-" avant la recherche est obligatoire</p>\n' +
     '<p>Opérateurs:\n' +
     '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
-    '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Vigule flottante, "NULL"</p>\n' +
+    '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n' +
     '<dl><dt>Exemples :</dt><dt>- Connector = "connector_1"</dt>\n' +
     '    <dd>Alarmes dont le connecteur est "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
     '    <dd>Alarmes dont le connecteur est "connector_1" et la ressource est "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
@@ -835,9 +868,6 @@ export default {
           exdate: 'Dates d\'exclusion',
           buttons: {
             addExdate: 'Ajouter une date d\'exclusion',
-          },
-          fields: {
-            rRuleQuestion: 'Ajouter une règle de récurrence au comportement périodique ?',
           },
         },
         comments: {
@@ -1548,10 +1578,22 @@ export default {
       },
     },
   },
-  rRule: {
+  recurrenceRule: {
     advancedHint: 'Séparer les nombres par une virgule',
-    textLabel: 'Récurrence',
-    stringLabel: 'Résumé',
+    freq: 'Fréquence',
+    until: 'Jusqu\'à',
+    byweekday: 'Par jour de la semaine',
+    count: 'Répéter',
+    interval: 'Intervalle',
+    wkst: 'Semaine de début',
+    bymonth: 'Par mois',
+    bysetpos: 'Par position',
+    bymonthday: 'Par jour du mois',
+    byyearday: 'Par jour de l\'année',
+    byweekno: 'Par semaine n°',
+    byhour: 'Par heure',
+    byminute: 'Par minute',
+    bysecond: 'Par seconde',
     tabs: {
       simple: 'Simple',
       advanced: 'Avancé',
@@ -1566,42 +1608,14 @@ export default {
       [PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth]: 'Ce mois',
       [PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth]: 'Le mois prochain',
     },
-    fields: {
-      freq: 'Fréquence',
-      until: 'Jusqu\'à',
-      byweekday: 'Par jour de la semaine',
-      count: 'Répéter',
-      interval: 'Intervalle',
-      wkst: 'Semaine de début',
-      bymonth: 'Par mois',
-      bysetpos: {
-        label: 'Par position',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la ènième occurence de la règle dans l\'intervalle de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (lundi, mardi, mercredi, jeudi, vendredi), va nous donner le dernier jour travaillé de chaque mois',
-      },
-      bymonthday: {
-        label: 'Par jour du mois',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours du mois auxquels s\'appliquera la récurrence.',
-      },
-      byyearday: {
-        label: 'Par jour de l\'année',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours de l\'année auxquels  s\'appliquera la récurrence.',
-      },
-      byweekno: {
-        label: 'Par numéro de semaine',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux numéros de semaine auxquelles s\'appliquera la récurrence. Les numéros de semaines sont ceux de la norme ISO8601. La première semaine de l\'année étant celle contenant au moins 4 jours de cette année.',
-      },
-      byhour: {
-        label: 'Par heure',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux heures auxquelles s\'appliquera la récurrence.',
-      },
-      byminute: {
-        label: 'Par minute',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux minutes auxquelles s\'appliquera la récurrence.',
-      },
-      bysecond: {
-        label: 'Par seconde',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux secondes auxquelles s\'appliquera la récurrence.',
-      },
+    tooltips: {
+      bysetpos: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la ènième occurence de la règle dans l\'intervalle de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (lundi, mardi, mercredi, jeudi, vendredi), va nous donner le dernier jour travaillé de chaque mois',
+      bymonthday: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours du mois auxquels s\'appliquera la récurrence.',
+      byyearday: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours de l\'année auxquels  s\'appliquera la récurrence.',
+      byweekno: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux numéros de semaine auxquelles s\'appliquera la récurrence. Les numéros de semaines sont ceux de ISO8601, la première semaine de l\'année étant celle contenant au moins 4 jours de cette année.',
+      byhour: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux heures auxquelles s\'appliquera la récurrence.',
+      byminute: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux minutes auxquelles s\'appliquera la récurrence.',
+      bysecond: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux secondes auxquelles s\'appliquera la récurrence.',
     },
   },
   errors: {
@@ -2234,7 +2248,7 @@ export default {
     },
   },
 
-  mixedField: { //TODO
+  mixedField: {
     types: {
       string: '@:variableTypes.string',
       number: '@:variableTypes.number',
@@ -2524,10 +2538,6 @@ export default {
     /**
      * Admin general
      */
-    [USERS_PERMISSIONS.technical.engine]: {
-      title: 'Moteurs',
-      message: 'Cette page contient les informations sur la séquence et la configuration des moteurs. Pour fonctionner correctement, la chaîne des moteurs doit être continue.',
-    },
     [USERS_PERMISSIONS.technical.parameters]: {
       title: 'Paramètres',
     },

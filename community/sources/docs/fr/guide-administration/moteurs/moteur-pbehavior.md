@@ -5,13 +5,9 @@ Les comportements périodiques (*pbehaviors*, pour *periodical behaviors*) sont 
 Ils permettent notamment de :
 
 - Déclarer des périodes de maintenance sur des applications.
-- Conditionner l'exécution de règles (ex : cette remédiation doit s'appliquer uniquement la nuit).
-- Conditionner l'affichage d'alarmes (ex: ne pas montrer les alarmes dont l'entité est en maintenance).
+- Conditionner l'exécution de règles (ex : cette remédiation doit s'appliquer uniquement la nuit).
+- Conditionner l'affichage d'alarmes (ex : ne pas montrer les alarmes dont l'entité est en maintenance).
 - Déclarer des périodes de service sur des applications.
-
-!!! Note
-    Avec la v4 de Canopsis le fonctionnement des comportements périodiques à été complètement revu.
-    Les informations qui figurent sur cette page ne sont donc valables que pour cette version.
 
 ## Définitions
 
@@ -81,6 +77,9 @@ Le fichier de configuration `/opt/canopsis/etc/canopsis.toml` vous permet de mod
 [Canopsis.timezone]
 Timezone = "Europe/Paris"
 ```
+
+!!! note
+    Toute modification d'une de ces valeurs implique de suivre de le [Guide de modification du fichier `canopsis.toml`](../administration-avancee/modification-canopsis-toml.md).
 
 ## Administration de la planification
 
