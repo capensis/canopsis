@@ -28,13 +28,14 @@ const (
 )
 
 type Type struct {
-	ID          string `bson:"_id,omitempty" json:"_id,omitempty"`
-	Name        string `bson:"name" json:"name"`
-	Description string `bson:"description" json:"description"`
-	Type        string `bson:"type" json:"type"`
-	Priority    int    `bson:"priority" json:"priority"`
-	IconName    string `bson:"icon_name" json:"icon_name"`
-	Color       string `bson:"color,omitempty" json:"color,omitempty"`
+	ID             string `bson:"_id,omitempty" json:"_id,omitempty"`
+	Name           string `bson:"name" json:"name"`
+	Description    string `bson:"description" json:"description"`
+	Type           string `bson:"type" json:"type"`
+	Priority       int    `bson:"priority" json:"priority"`
+	IconName       string `bson:"icon_name" json:"icon_name"`
+	Color          string `bson:"color,omitempty" json:"color,omitempty"`
+	SLIMaintenance bool   `bson:"sli_maintenance" json:"sli_maintenance"`
 }
 
 type Comments []*Comment

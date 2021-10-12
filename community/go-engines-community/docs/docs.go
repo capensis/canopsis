@@ -8100,9 +8100,6 @@ var doc = `{
                 }
             }
         },
-        "bson.M": {
-            "$ref": "#/definitions/primitive.M"
-        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -10249,6 +10246,9 @@ var doc = `{
                 "priority": {
                     "type": "integer"
                 },
+                "sli_maintenance": {
+                    "type": "boolean"
+                },
                 "type": {
                     "type": "string"
                 }
@@ -10463,6 +10463,7 @@ var doc = `{
                 "icon_name",
                 "name",
                 "priority",
+                "sli_maintenance",
                 "type"
             ],
             "properties": {
@@ -10480,6 +10481,9 @@ var doc = `{
                 },
                 "priority": {
                     "type": "integer"
+                },
+                "sli_maintenance": {
+                    "type": "boolean"
                 },
                 "type": {
                     "type": "string"
@@ -10512,6 +10516,9 @@ var doc = `{
                 },
                 "priority": {
                     "type": "integer"
+                },
+                "sli_maintenance": {
+                    "type": "boolean"
                 },
                 "type": {
                     "type": "string"
@@ -10601,10 +10608,6 @@ var doc = `{
                     "type": "integer"
                 }
             }
-        },
-        "primitive.M": {
-            "type": "object",
-            "additionalProperties": true
         },
         "role.CreateRequest": {
             "type": "object",

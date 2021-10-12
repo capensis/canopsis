@@ -1,101 +1,107 @@
-Feature: PBehavior Type create
-  Create PBehavior Type item
+Feature: Create a pbehavior type
+  I need to be able to create a pbehavior type
+  Only admin should be able to create a pbehavior type
 
-  Scenario: POST as unautohorized
-    When I do POST /api/v4/pbehavior-types:
-    """
-    {
-      "name": "Active State",
-      "description": "Active state type",
-      "type": "active",
-      "priority": 12,
-      "icon_name": "exclamation-mark.png"
-    }
-    """
+  Scenario: given create request and no auth user should not allow access
+    When I do POST /api/v4/pbehavior-types
     Then the response code should be 401
 
-  Scenario: POST without permissions
+  Scenario: given create request and auth user without permissions should not allow access
     When I am noperms
-    When I do POST /api/v4/pbehavior-types:
-    """
-    {
-      "name": "Active State",
-      "description": "some_description"
-    }
-    """
+    When I do POST /api/v4/pbehavior-types
     Then the response code should be 403
 
-  Scenario: POST a valid PBehavior Type with invalid payload
+  Scenario: given invalid create request should return errors
     When I am admin
     When I do POST /api/v4/pbehavior-types:
+    """json
+    {}
     """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
     {
-      "name": "Active State",
-      "description": "Active state type",
-      "type": "active",
-      "priority": 15,
-      "icon_name": "exclamation-mark.png"
+      "errors": {
+        "description": "Description is missing.",
+        "icon_name": "IconName is missing.",
+        "name": "Name is missing.",
+        "priority": "Priority is missing.",
+        "sli_maintenance": "SLIMaintenance is missing.",
+        "type": "Type is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/pbehavior-types:
+    """json
+    {
+      "type": "notexist"
     }
     """
     Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "type": "type must be one of [active inactive maintenance pause]."
+      }
+    }
+    """
 
-  Scenario: POST a valid PBehavior Type instance
+  Scenario: given create request should return ok
     When I am admin
     When I do POST /api/v4/pbehavior-types:
-    """
+    """json
     {
       "name": "Active State",
       "description": "Active state type",
       "type": "active",
       "priority": 177,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "sli_maintenance": false
     }
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "name": "Active State",
       "description": "Active state type",
       "type": "active",
       "priority": 177,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "sli_maintenance": false
     }
     """
 
-  Scenario: POST a valid PBehavior Type with custom id
+  Scenario: given create request with custom id should return ok
     When I am admin
     When I do POST /api/v4/pbehavior-types:
-    """
+    """json
     {
       "_id": "custom-id",
       "name": "Active State custom-id",
       "description": "Active state type",
       "type": "active",
       "priority": 277,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "sli_maintenance": false
     }
     """
     Then the response code should be 201
     When I do GET /api/v4/pbehavior-types/custom-id
     Then the response code should be 200
 
-  Scenario: POST a valid PBehavior Type with custom id that already exist should cause dup error
+  Scenario: given create request with already exists custom id should return error
     When I am admin
     When I do POST /api/v4/pbehavior-types:
-    """
+    """json
     {
-      "_id": "test-type-to-update",
-      "name": "Active State custom-id 2",
-      "description": "Active state type",
-      "type": "active",
-      "priority": 278,
-      "icon_name": "exclamation-mark.png"
+      "_id": "test-type-to-update"
     }
     """
     Then the response code should be 400
-    Then the response body should be:
-    """
+    Then the response body should contain:
+    """json
     {
       "errors": {
         "_id": "ID already exists."
@@ -103,21 +109,17 @@ Feature: PBehavior Type create
     }
     """
 
-  Scenario: POST a duplicate PBehavior Type priority
+  Scenario: given create request with already exists priority should return error
     When I am admin
     When I do POST /api/v4/pbehavior-types:
-    """
+    """json
     {
-      "name": "Duplicate 10-Active State",
-      "description": "Active state type",
-      "type": "active",
-      "priority": 10,
-      "icon_name": "exclamation-mark.png"
+      "priority": 10
     }
     """
     Then the response code should be 400
-    Then the response body should be:
-    """
+    Then the response body should contain:
+    """json
     {
       "errors": {
         "priority": "Priority already exists."
@@ -125,47 +127,31 @@ Feature: PBehavior Type create
     }
     """
 
-  Scenario: POST a valid PBehavior Type instance
+  Scenario: given create request should return ok to get request
     When I am admin
     When I do POST /api/v4/pbehavior-types:
-    """
+    """json
     {
       "name": "Active State 2",
       "description": "Active state type",
       "type": "active",
       "priority": 188,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "color": "green",
+      "sli_maintenance": true
     }
     """
     When I do GET /api/v4/pbehavior-types/{{ .lastResponse._id}}
     Then the response code should be 200
-
-  Scenario: POST a valid PBehavior Type with color
-    When I am admin
-    When I do POST /api/v4/pbehavior-types:
-    """
+    Then the response body should contain:
+    """json
     {
-      "_id": "test-type-active-green",
-      "name": "Active State 2 Green",
+      "name": "Active State 2",
       "description": "Active state type",
       "type": "active",
-      "priority": 191,
+      "priority": 188,
       "icon_name": "exclamation-mark.png",
-      "color": "green"
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/pbehavior-types/test-type-active-green
-    Then the response code should be 200
-    Then the response body should be:
-    """
-    {
-      "_id": "test-type-active-green",
-      "name": "Active State 2 Green",
-      "description": "Active state type",
-      "type": "active",
-      "priority": 191,
-      "icon_name": "exclamation-mark.png",
-      "color": "green"
+      "color": "green",
+      "sli_maintenance": true
     }
     """

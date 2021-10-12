@@ -642,8 +642,6 @@ definitions:
     - message
     - start
     type: object
-  bson.M:
-    $ref: '#/definitions/primitive.M'
   common.ErrorResponse:
     properties:
       error:
@@ -2288,6 +2286,8 @@ definitions:
         type: string
       priority:
         type: integer
+      sli_maintenance:
+        type: boolean
       type:
         type: string
     type: object
@@ -2438,6 +2438,8 @@ definitions:
         type: string
       priority:
         type: integer
+      sli_maintenance:
+        type: boolean
       type:
         type: string
     required:
@@ -2445,6 +2447,7 @@ definitions:
     - icon_name
     - name
     - priority
+    - sli_maintenance
     - type
     type: object
   pbehaviortype.Type:
@@ -2465,6 +2468,8 @@ definitions:
         type: string
       priority:
         type: integer
+      sli_maintenance:
+        type: boolean
       type:
         type: string
     type: object
@@ -2524,9 +2529,6 @@ definitions:
         type: array
       updated:
         type: integer
-    type: object
-  primitive.M:
-    additionalProperties: true
     type: object
   role.CreateRequest:
     properties:
