@@ -18,7 +18,10 @@
 </template>
 
 <script>
-import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES, SOCKET_ROOMS } from '@/constants';
+import { SOCKET_ROOMS } from '@/config';
+import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
+
+import Socket from '@/plugins/socket/services/socket';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediation/job-execution';
@@ -96,13 +99,13 @@ export default {
     await this.fetchInstructionExecution();
 
     this.$socket
-      .on('custom-close', this.socketCloseHandler)
+      .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
       .join(this.socketRoomName)
       .addListener(this.setOperation);
   },
   beforeDestroy() {
     this.$socket
-      .off('custom-close', this.socketCloseHandler)
+      .off(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
       .leave(this.socketRoomName)
       .removeListener(this.setOperation);
   },

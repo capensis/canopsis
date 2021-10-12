@@ -11,7 +11,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { SOCKET_ROOMS } from '@/constants';
+import { SOCKET_ROOMS } from '@/config';
 
 import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
 

@@ -5,7 +5,7 @@ import {
   RESPONSE_MESSAGES_TYPES,
   MAX_RECONNECTS_COUNT,
   PING_INTERVAL,
-  RECONNECT_INTERVAL,
+  RECONNECT_INTERVAL, EVENTS_TYPES,
 } from '../constants';
 
 import SocketRoom from './socket-room';
@@ -154,10 +154,12 @@ class Socket {
       this.rooms[room].increment();
     }
 
-    this.send({
-      room,
-      type: REQUEST_MESSAGES_TYPES.join,
-    });
+    if (!this.rooms[room].joined) {
+      this.send({
+        room,
+        type: REQUEST_MESSAGES_TYPES.join,
+      });
+    }
 
     return this.rooms[room];
   }
@@ -179,7 +181,7 @@ class Socket {
       }
     }
 
-    if (socketRoom.joined) {
+    if (socketRoom?.joined) {
       this.send({
         room,
         type: REQUEST_MESSAGES_TYPES.leave,
@@ -236,7 +238,7 @@ class Socket {
        * We need to use this code block to avoid problem with a long waiting for connection closing
        * without internet on Google Chrome on Linux
        */
-      const closeEvent = new CloseEvent('custom-close', { code: 1006, reason: '', wasClean: false });
+      const closeEvent = new CloseEvent(EVENTS_TYPES.customClose, { code: 1006, reason: '', wasClean: false });
 
       this.connection.dispatchEvent(closeEvent);
 
@@ -363,5 +365,7 @@ class Socket {
     return room;
   }
 }
+
+Socket.EVENTS_TYPES = EVENTS_TYPES;
 
 export default Socket;

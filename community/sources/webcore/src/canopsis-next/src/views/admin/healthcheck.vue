@@ -31,7 +31,7 @@
 import { isEqual } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { SOCKET_ROOMS } from '@/constants';
+import { SOCKET_ROOMS } from '@/config';
 
 import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation/healthcheck-network-graph.vue';
 import HealthcheckGraphs from '@/components/other/healthcheck/exploitation/healthcheck-graphs.vue';

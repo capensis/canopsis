@@ -13,8 +13,8 @@
 import { isEqual, sortBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { COLORS } from '@/config';
-import { HEALTHCHECK_SERVICES_NAMES, SOCKET_ROOMS } from '@/constants';
+import { COLORS, SOCKET_ROOMS } from '@/config';
+import { HEALTHCHECK_SERVICES_NAMES } from '@/constants';
 
 import { getHealthcheckNodeColor } from '@/helpers/color';
 

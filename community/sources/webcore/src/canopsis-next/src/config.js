@@ -68,6 +68,15 @@ export const DEFAULT_APP_TITLE = 'Canopsis';
 
 export const EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX = 'canopsis_groups_views-';
 
+export const SOCKET_ROOMS = {
+  healthcheck: 'healthcheck',
+  healthcheckStatus: 'healthcheck-status',
+  messageRates: 'message-rates',
+  loggedUserCount: 'logged-user-count',
+  broadcastMessages: 'broadcast-messages',
+  execution: 'execution',
+};
+
 export const API_ROUTES = {
   login: '/api/v4/login',
   logout: '/api/v4/logout',

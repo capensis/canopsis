@@ -10,7 +10,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { SOCKET_ROOMS } from '@/constants';
+import { SOCKET_ROOMS } from '@/config';
 
 const { mapActions } = createNamespacedHelpers('auth');
 

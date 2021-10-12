@@ -18,3 +18,7 @@ export const MAX_RECONNECTS_COUNT = 10;
 export const PING_INTERVAL = 5000;
 
 export const RECONNECT_INTERVAL = 5000;
+
+export const EVENTS_TYPES = {
+  customClose: 'custom-close',
+};
