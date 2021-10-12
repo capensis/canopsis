@@ -1,19 +1,18 @@
 <template lang="pug">
   v-layout.pa-3(column)
-    test-suite-summary-row(:label="$t('testSuite.xmlFeed')", :value="testSuite.xml_feed")
-    test-suite-summary-row(:label="$t('common.name')", :value="testSuite.name")
-    test-suite-summary-row(:label="$t('testSuite.hostname')", :value="testSuite.hostname")
-    test-suite-summary-row(
+    c-information-block-row(:label="$t('testSuite.xmlFeed')", :value="testSuite.xml_feed")
+    c-information-block-row(:label="$t('common.name')", :value="testSuite.name")
+    c-information-block-row(:label="$t('testSuite.hostname')", :value="testSuite.hostname")
+    c-information-block-row(
       :label="$t('testSuite.lastUpdate')"
     ) {{ testSuite.last_update | date('testSuiteFormat') }}
-    test-suite-summary-row(
+    c-information-block-row(
       :label="$t('testSuite.timeTaken')"
     )
       span(v-if="testSuite.time") {{ testSuite.time | fixed }}{{ $constants.TIME_UNITS.second }}
-
     v-layout.mt-4(row)
       v-layout(column)
-        test-suite-summary-row(:label="$t('testSuite.totalTests')", :value="testSuite.total")
+        c-information-block-row(:label="$t('testSuite.totalTests')", :value="testSuite.total")
         test-suite-summary-status-row(
           :label="$t('testSuite.disabledTests')",
           :total="testSuite.total",
@@ -39,7 +38,6 @@
 </template>
 
 <script>
-import TestSuiteSummaryRow from './test-suite-summary-row.vue';
 import TestSuiteSummaryStatusRow from './test-suite-summary-status-row.vue';
 
 const TestSuiteStatusPieChart = () => import(/* webpackChunkName: "Charts" */ './test-suite-status-pie-chart.vue');
@@ -48,7 +46,6 @@ export default {
   components: {
     TestSuiteStatusPieChart,
     TestSuiteSummaryStatusRow,
-    TestSuiteSummaryRow,
   },
   props: {
     testSuite: {

@@ -11,6 +11,7 @@ import (
 	bson "go.mongodb.org/mongo-driver/bson"
 	mongo0 "go.mongodb.org/mongo-driver/mongo"
 	options "go.mongodb.org/mongo-driver/mongo/options"
+	readpref "go.mongodb.org/mongo-driver/mongo/readpref"
 	reflect "reflect"
 	time "time"
 )
@@ -431,6 +432,20 @@ func (m *MockDbClient) Disconnect(arg0 context.Context) error {
 func (mr *MockDbClientMockRecorder) Disconnect(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Disconnect", reflect.TypeOf((*MockDbClient)(nil).Disconnect), arg0)
+}
+
+// Ping mocks base method
+func (m *MockDbClient) Ping(arg0 context.Context, arg1 *readpref.ReadPref) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Ping", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Ping indicates an expected call of Ping
+func (mr *MockDbClientMockRecorder) Ping(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ping", reflect.TypeOf((*MockDbClient)(nil).Ping), arg0, arg1)
 }
 
 // SetRetry mocks base method

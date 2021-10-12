@@ -1,10 +1,10 @@
 <template lang="pug">
   c-responsive-list.ml-4(:items="preparedEngines", item-key="name", item-value="label")
     v-tooltip(:disabled="!item.tooltip", slot-scope="{ item }", bottom)
-      c-engine-chip.ma-1.cursor-pointer(
+      c-engine-chip.ma-1(
         slot="activator",
         :color="item.color",
-        @click="redirectToHealthcheck"
+        v-on="chipListeners"
       ) {{ item.label }}
       span {{ item.tooltip }}
 </template>
@@ -14,16 +14,17 @@ import { isEqual, sortBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { COLORS, SOCKET_ROOMS } from '@/config';
-import { HEALTHCHECK_SERVICES_NAMES } from '@/constants';
+import { HEALTHCHECK_SERVICES_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
 
 import { getHealthcheckNodeColor } from '@/helpers/color';
 
+import { authMixin } from '@/mixins/auth';
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
 
 const { mapActions } = createNamespacedHelpers('healthcheck');
 
 export default {
-  mixins: [healthcheckNodesMixin],
+  mixins: [authMixin, healthcheckNodesMixin],
   data() {
     return {
       hasServerError: false,
@@ -34,6 +35,16 @@ export default {
     };
   },
   computed: {
+    chipListeners() {
+      if (this.checkAccess(USERS_PERMISSIONS.technical.healthcheck)) {
+        return {
+          click: this.redirectToHealthcheck,
+        };
+      }
+
+      return {};
+    },
+
     preparedEngines() {
       const wrongNodes = [...this.data.services, ...this.data.engines];
 
@@ -58,6 +69,7 @@ export default {
 
       return sortBy(wrongNodes, ['name']).map(engine => ({
         ...engine,
+
         color: getHealthcheckNodeColor(engine),
         tooltip: this.getTooltipText(engine),
         label: this.getNodeName(engine.name),
@@ -83,7 +95,7 @@ export default {
 
     redirectToHealthcheck() {
       this.$router.push({
-        name: 'admin-healthcheck',
+        name: ROUTES.adminHealthcheck,
       });
     },
 

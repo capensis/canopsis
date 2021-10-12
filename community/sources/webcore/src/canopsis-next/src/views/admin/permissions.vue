@@ -32,7 +32,7 @@ import { roleToForm, formToRole } from '@/helpers/forms/role';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesPermissionsMixin } from '@/mixins/entities/permission';
-import entitiesRoleMixin from '@/mixins/entities/role';
+import { entitiesRoleMixin } from '@/mixins/entities/role';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { entitiesPlaylistMixin } from '@/mixins/entities/playlist';
 import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';

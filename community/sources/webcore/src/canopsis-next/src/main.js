@@ -45,6 +45,7 @@ import CEllipsis from '@/components/common/table/c-ellipsis.vue';
 import CPagination from '@/components/common/pagination/c-pagination.vue';
 import CDraggableStepNumber from '@/components/common/drag-drop/c-draggable-step-number.vue';
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
+import CInformationBlockRow from '@/components/common/block/c-information-block-row.vue';
 import CResponsiveList from '@/components/common/responsive-list/c-responsive-list.vue';
 
 /**
@@ -307,6 +308,7 @@ Vue.component('c-timezone-field', CTimezoneField);
 Vue.component('c-language-field', CLanguageField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
+Vue.component('c-information-block-row', CInformationBlockRow);
 Vue.component('c-responsive-list', CResponsiveList);
 
 Vue.use(VueMq, {

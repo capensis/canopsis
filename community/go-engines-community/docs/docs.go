@@ -656,7 +656,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -916,7 +918,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1067,7 +1071,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1218,7 +1224,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1252,12 +1260,19 @@ var doc = `{
                 "operationId": "contextgraph-import-create-import",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "source",
+                        "name": "source",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "description": "body",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/contextgraph.Request"
+                            "$ref": "#/definitions/contextgraph.ImportRequest"
                         }
                     }
                 ],
@@ -1538,7 +1553,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "202": {},
+                    "202": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -1860,7 +1877,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2144,7 +2163,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -2483,7 +2504,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2792,7 +2815,243 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/file": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get list of file objects by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "List files by ID",
+                "operationId": "files-list",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/file.File"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Upload files",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Upload files",
+                "operationId": "file-upload",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "request",
+                        "name": "files",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "file visibility",
+                        "name": "public",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/file.File"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-access": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Get file access",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get file access",
+                "operationId": "auth-get-file-access",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/file/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get file content by ID or download with file name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Get file by ID",
+                "operationId": "files-get",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "file id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete file by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Delete file",
+                "operationId": "files-delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "file id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3119,7 +3378,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3243,7 +3504,99 @@ var doc = `{
                 "summary": "delete user interface",
                 "operationId": "internal-delete-user-interface",
                 "responses": {
-                    "204": {}
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/logged-user-count": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get logged user count",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get logged user count",
+                "operationId": "auth-logged-user-count",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Log in",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Log in",
+                "operationId": "auth-login",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.loginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.loginResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Log out",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Log out",
+                "operationId": "auth-logout",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
                 }
             }
         },
@@ -3284,31 +3637,6 @@ var doc = `{
                     },
                     {
                         "type": "integer",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "paginate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort_by",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "to",
                         "in": "query",
                         "required": true
@@ -3318,22 +3646,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/common.PaginatedListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/messageratestats.StatsResponse"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/messageratestats.StatsListResponse"
                         }
                     },
                     "400": {
@@ -3543,7 +3856,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3821,7 +4136,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -3866,7 +4183,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {},
+                    "200": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4144,7 +4463,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4472,7 +4793,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4805,7 +5128,69 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Patch partial set of behavior attributes by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Patch partial set of behavior attributes by id",
+                "operationId": "pbehaviors-patch-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pbehavior id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.PatchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5261,7 +5646,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5533,7 +5920,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5805,7 +6194,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5841,7 +6232,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.sessionsCountResponse"
+                            "$ref": "#/definitions/sessionauth.sessionsCountResponse"
                         }
                     },
                     "400": {
@@ -6246,7 +6637,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6518,7 +6911,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -6571,7 +6966,155 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/view-stats": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get list of view stats",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "view-stats"
+                ],
+                "summary": "Find view stats",
+                "operationId": "view-stats-find-all",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "name": "isActive",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "usernames",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/viewstats.listResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create view stats",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "view-stats"
+                ],
+                "summary": "Create view stats",
+                "operationId": "view-stats-create",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/viewstats.pingResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/view-stats/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update view stats by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "view-stats"
+                ],
+                "summary": "Update view stats by id",
+                "operationId": "view-stats-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "view stats id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/viewstats.pingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/viewstats.pingResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6843,7 +7386,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7737,6 +8282,9 @@ var doc = `{
                 "edition": {
                     "type": "string"
                 },
+                "file_upload_max_size": {
+                    "type": "integer"
+                },
                 "footer": {
                     "type": "string"
                 },
@@ -7923,11 +8471,26 @@ var doc = `{
         "associativetable.Content": {
             "type": "object"
         },
-        "auth.sessionsCountResponse": {
+        "auth.loginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.loginResponse": {
             "type": "object",
             "properties": {
-                "count": {
-                    "type": "integer"
+                "access_token": {
+                    "type": "string"
                 }
             }
         },
@@ -8040,123 +8603,34 @@ var doc = `{
                 }
             }
         },
-        "contextgraph.ConfigurationItem": {
+        "contextgraph.ImportJob": {
             "type": "object",
             "properties": {
                 "_id": {
                     "type": "string"
                 },
-                "action": {
-                    "type": "string"
-                },
-                "action_properties": {
-                    "type": "object"
-                },
-                "category": {
-                    "type": "string"
-                },
-                "enabled": {
-                    "type": "boolean"
-                },
-                "entity_patterns": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.EntityPatternList"
-                },
-                "impact_level": {
-                    "type": "integer"
-                },
-                "infos": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "measurements": {
-                    "type": "array",
-                    "items": {
-                        "type": "object"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output_template": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "contextgraph.ImportJob": {
-            "type": "object",
-            "properties": {
                 "creation": {
                     "type": "string"
                 },
-                "execTime": {
-                    "type": "string"
-                },
-                "id": {
+                "exec_time": {
                     "type": "string"
                 },
                 "info": {
                     "type": "string"
                 },
+                "source": {
+                    "type": "string"
+                },
                 "stats": {
                     "type": "object",
-                    "$ref": "#/definitions/contextgraph.JobStats"
+                    "$ref": "#/definitions/importcontextgraph.Stats"
                 },
                 "status": {
                     "type": "string"
                 }
             }
         },
-        "contextgraph.ImportResponse": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "contextgraph.JobStats": {
-            "type": "object",
-            "properties": {
-                "deleted": {
-                    "type": "integer"
-                },
-                "updated": {
-                    "type": "integer"
-                }
-            }
-        },
-        "contextgraph.Link": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "action": {
-                    "type": "string"
-                },
-                "action_properties": {
-                    "type": "object"
-                },
-                "from": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "infos": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "to": {
-                    "type": "string"
-                }
-            }
-        },
-        "contextgraph.Request": {
+        "contextgraph.ImportRequest": {
             "type": "object",
             "properties": {
                 "json": {
@@ -8165,16 +8639,24 @@ var doc = `{
                         "cis": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/contextgraph.ConfigurationItem"
+                                "$ref": "#/definitions/importcontextgraph.ConfigurationItem"
                             }
                         },
                         "links": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/contextgraph.Link"
+                                "$ref": "#/definitions/importcontextgraph.Link"
                             }
                         }
                     }
+                }
+            }
+        },
+        "contextgraph.ImportResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
                 }
             }
         },
@@ -8188,6 +8670,15 @@ var doc = `{
                             "type": "object",
                             "$ref": "#/definitions/types.DurationWithEnabled"
                         },
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
+                "health_check": {
+                    "type": "object",
+                    "properties": {
                         "delete_after": {
                             "type": "object",
                             "$ref": "#/definitions/types.DurationWithEnabled"
@@ -8250,6 +8741,9 @@ var doc = `{
                 "entity": {
                     "type": "object",
                     "$ref": "#/definitions/datastorage.HistoryWithCount"
+                },
+                "health_check": {
+                    "type": "integer"
                 },
                 "junit": {
                     "type": "integer"
@@ -8870,6 +9364,23 @@ var doc = `{
                 "$ref": "#/definitions/export.Field"
             }
         },
+        "file.File": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "filename": {
+                    "type": "string"
+                },
+                "mediatype": {
+                    "type": "string"
+                }
+            }
+        },
         "http.Response": {
             "type": "object",
             "properties": {
@@ -9085,6 +9596,90 @@ var doc = `{
                 }
             }
         },
+        "importcontextgraph.ConfigurationItem": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "action": {
+                    "type": "string"
+                },
+                "action_properties": {
+                    "type": "object"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "impact_level": {
+                    "type": "integer"
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "measurements": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "output_template": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "importcontextgraph.Link": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "action": {
+                    "type": "string"
+                },
+                "action_properties": {
+                    "type": "object"
+                },
+                "from": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "importcontextgraph.Stats": {
+            "type": "object",
+            "properties": {
+                "deleted": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
         "messageratestats.ListRequest": {
             "type": "object",
             "required": [
@@ -9099,33 +9694,37 @@ var doc = `{
                 "interval": {
                     "type": "string"
                 },
-                "limit": {
-                    "type": "integer"
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "paginate": {
-                    "type": "boolean"
-                },
-                "sort": {
-                    "type": "string"
-                },
-                "sort_by": {
-                    "type": "string"
-                },
                 "to": {
                     "type": "integer"
+                }
+            }
+        },
+        "messageratestats.StatsListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/messageratestats.StatsResponse"
+                    }
+                },
+                "meta": {
+                    "type": "object",
+                    "properties": {
+                        "deleted_before": {
+                            "type": "integer"
+                        }
+                    }
                 }
             }
         },
         "messageratestats.StatsResponse": {
             "type": "object",
             "properties": {
-                "_id": {
+                "rate": {
                     "type": "integer"
                 },
-                "received": {
+                "time": {
                     "type": "integer"
                 }
             }
@@ -10006,6 +10605,47 @@ var doc = `{
             "properties": {
                 "filter": {
                     "type": "object"
+                }
+            }
+        },
+        "pbehavior.PatchRequest": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.ExdateRequest"
+                    }
+                },
+                "filter": {
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
                 }
             }
         },
@@ -10950,6 +11590,14 @@ var doc = `{
                 }
             }
         },
+        "sessionauth.sessionsCountResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                }
+            }
+        },
         "statesettings.JUnitThresholds": {
             "type": "object",
             "required": [
@@ -11028,6 +11676,50 @@ var doc = `{
                     "type": "number"
                 },
                 "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "stats.Stats": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "id_beaker_session": {
+                    "description": "Deprecated",
+                    "type": "string"
+                },
+                "last_ping": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "last_visible_path": {
+                    "type": "object"
+                },
+                "last_visible_ping": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "session_id": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "tab_duration": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "username": {
+                    "description": "Deprecated",
+                    "type": "string"
+                },
+                "visible_duration": {
                     "type": "integer"
                 }
             }
@@ -11492,6 +12184,10 @@ var doc = `{
                 "_id": {
                     "type": "string"
                 },
+                "defaultview": {
+                    "type": "object",
+                    "$ref": "#/definitions/user.View"
+                },
                 "name": {
                     "type": "string"
                 }
@@ -11874,6 +12570,65 @@ var doc = `{
                     }
                 }
             }
+        },
+        "viewstats.listRequest": {
+            "type": "object",
+            "properties": {
+                "isActive": {
+                    "type": "boolean"
+                },
+                "startedAfter": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "stoppedBefore": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "usernames": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "viewstats.listResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/stats.Stats"
+                    }
+                }
+            }
+        },
+        "viewstats.pingRequest": {
+            "type": "object",
+            "required": [
+                "path",
+                "visible"
+            ],
+            "properties": {
+                "path": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "visible": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "viewstats.pingResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                }
+            }
         }
     },
     "securityDefinitions": {
@@ -11884,6 +12639,11 @@ var doc = `{
         },
         "BasicAuth": {
             "type": "basic"
+        },
+        "JWTAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

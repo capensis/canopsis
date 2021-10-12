@@ -121,12 +121,11 @@ Au clic sur ce bouton, une fenêtre de confirmation s'ouvre. Cliquez sur "Oui" p
 
 **Attention: Tous les widgets à l'intérieur de l'onglet seront également supprimés**
 
-
-## La suite...
+## La suite
 
 Une fois votre vue créée, il vous est possible d'y ajouter des widgets afin de commencer à utiliser l'application.  
 
-!!! Note
+!!! note
     Le rafraîchissement périodique des données de la vue est indépendant du rafraîchissement des widgets eux-mêmes.
 
 Voir : [Widgets](../index.md)

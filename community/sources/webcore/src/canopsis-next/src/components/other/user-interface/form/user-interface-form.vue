@@ -68,14 +68,16 @@
         text-editor-field(
           v-field="form.footer",
           :label="$t('userInterface.footer')",
-          :config="textEditorConfig"
+          :config="textEditorConfig",
+          public
         )
     v-layout.mt-3(row)
       v-flex
         text-editor-field(
           v-field="form.login_page_description",
           :label="$t('userInterface.description')",
-          :config="textEditorConfig"
+          :config="textEditorConfig",
+          public
         )
     v-layout.mt-3(row)
       v-flex

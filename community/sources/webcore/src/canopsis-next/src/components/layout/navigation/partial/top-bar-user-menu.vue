@@ -16,7 +16,7 @@
 import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
-import entitiesUserMixin from '@/mixins/entities/user';
+import { entitiesUserMixin } from '@/mixins/entities/user';
 
 export default {
   mixins: [authMixin, entitiesUserMixin],
