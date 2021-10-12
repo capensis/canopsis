@@ -1,4 +1,4 @@
-import { mount, createVueInstance } from '@/unit/utils/vue';
+import { mount, createVueInstance } from '@unit/utils/vue';
 
 import CEmptyDataTableColumns from '@/components/common/table/c-empty-data-table-columns.vue';
 
