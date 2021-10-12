@@ -8,14 +8,16 @@
         :title="$t('settings.screenshotMask.title')",
         :help-text="$t('settings.screenshotMask.helpText')",
         :placeholder="$constants.TEST_CASE_FILE_MASK",
-        name="screenshot_filemask"
+        name="screenshot_filemask",
+        required
       )
       c-file-name-mask-field(
         v-field="value.video_filemask",
         :title="$t('settings.videoMask.title')",
         :help-text="$t('settings.videoMask.helpText')",
         :placeholder="$constants.TEST_CASE_FILE_MASK",
-        name="video_filemask"
+        name="video_filemask",
+        required
       )
       c-file-name-mask-field(
         v-field="value.report_fileregexp",
