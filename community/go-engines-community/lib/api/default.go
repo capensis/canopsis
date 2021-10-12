@@ -43,6 +43,8 @@ func Default(
 	test bool,
 	enforcer libsecurity.Enforcer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
+	apiConfigProvider *config.BaseApiConfigProvider,
+	userInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider,
 	logger zerolog.Logger,
 	deferFunc DeferFunc,
 ) (API, error) {
@@ -101,7 +103,9 @@ func Default(
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = cookieOptions.Secure
-	apiConfigProvider := config.NewApiConfigProvider(cfg, logger)
+	if apiConfigProvider == nil {
+		apiConfigProvider = config.NewApiConfigProvider(cfg, logger)
+	}
 	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
 
 	proxyAccessConfig, err := proxy.LoadAccessConfig(configDir)
@@ -145,7 +149,9 @@ func Default(
 	if err != nil && err != mongodriver.ErrNoDocuments {
 		return nil, err
 	}
-	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
+	if userInterfaceConfigProvider == nil {
+		userInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
+	}
 
 	// Create csv exporter.
 	exportExecutor := export.NewTaskExecutor(dbClient, logger)
@@ -268,7 +274,6 @@ func updateConfig(
 		if test {
 			timeout = time.Second
 		}
-
 		ticker := time.NewTicker(timeout)
 		defer ticker.Stop()
 
