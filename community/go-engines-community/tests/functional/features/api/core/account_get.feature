@@ -2,18 +2,19 @@ Feature: Account auth user
   I need to be able to get auth user account.
 
   Scenario: given user username and password should get account
-    When I do POST /auth:
-    """
+    When I do POST /api/v4/login:
+    """json
     {
       "username": "test-user-to-get-1",
       "password": "test"
     }
     """
     Then the response code should be 200
+    When I set header Authorization=Bearer {{ .lastResponse.access_token }}
     When I do GET /api/v4/account/me
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-user-to-get-1",
       "authkey": "3ct2e1ff-5e9e-4b1f-9d80-d968d61g5202",
@@ -61,7 +62,11 @@ Feature: Account auth user
       ],
       "role": {
         "_id": "test-role-to-edit-user",
-        "name": "test-role-to-edit-user"
+        "name": "test-role-to-edit-user",
+        "defaultview": {
+          "_id": "test-view-to-edit-user",
+          "title": "test-view-to-edit-user-title"
+        }
       },
       "source": "",
       "ui_groups_navigation_type": "side-bar",

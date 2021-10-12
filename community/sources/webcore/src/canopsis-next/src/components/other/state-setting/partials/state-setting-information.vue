@@ -13,7 +13,7 @@
         )
       v-flex(xs4)
         state-setting-threshold(
-          :label="$t('common.errors')",
+          :label="$tc('common.error', 2)",
           :threshold="stateSetting.junit_thresholds.errors"
         )
       v-flex(xs4)

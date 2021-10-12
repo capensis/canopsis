@@ -39,6 +39,10 @@
       "remediation": "/tmp/canopsis/remediation",
       "junit": "/tmp/canopsis/junit",
       "junitapi": "/tmp/canopsis/junitapi"
+    },
+    "api": {
+      "tokenexpiration": "24h",
+      "tokensigningmethod": "HS256"
     }
   },
   {
@@ -170,5 +174,46 @@
     "wait_job_complete_retries_amount": 1,
     "wait_job_complete_retries_interval": "1s",
     "pause_manual_instruction_interval": "4s"
+  },
+  {
+    "_id": "health_check",
+    "engine_order": [
+      {
+        "from": "engine-fifo",
+        "to": "engine-che"
+      },
+      {
+        "from": "engine-che",
+        "to": "engine-pbehavior"
+      },
+      {
+        "from": "engine-pbehavior",
+        "to": "engine-axe"
+      },
+      {
+        "from": "engine-axe",
+        "to": "engine-correlation"
+      },
+      {
+        "from": "engine-axe",
+        "to": "engine-remediation"
+      },
+      {
+        "from": "engine-correlation",
+        "to": "engine-service"
+      },
+      {
+        "from": "engine-service",
+        "to": "engine-dynamic-infos"
+      },
+      {
+        "from": "engine-dynamic-infos",
+        "to": "engine-action"
+      },
+      {
+        "from": "engine-action",
+        "to": "engine-webhook"
+      }
+    ]
   }
 ]

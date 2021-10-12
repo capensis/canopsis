@@ -1,7 +1,11 @@
 <template lang="pug">
   v-flex.white
     v-flex.px-3(v-show="selectedIds.length", xs12)
-      mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
+      mass-actions-panel(
+        :itemsIds="selectedIds",
+        :widget="widget",
+        @clear:items="clearSelected"
+      )
     c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
@@ -241,6 +245,10 @@ export default {
 
     updatePaginationHandler(data) {
       this.$emit('update:pagination', data);
+    },
+
+    clearSelected() {
+      this.selected = [];
     },
   },
 };

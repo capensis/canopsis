@@ -12,7 +12,8 @@ Feature: add infos to alarm
       "entity_patterns":[{"name":"test-resource-dynamicinfos-1"}],
       "infos": [
         {"name":"test-info-dynamicinfos-1-name", "value":"test-info-dynamicinfos-1-value"}
-      ]
+      ],
+      "enabled": true
     }
     """
     Then the response code should be 201
@@ -77,7 +78,8 @@ Feature: add infos to alarm
       "entity_patterns":[{"name":"test-resource-dynamicinfos-2"}],
       "infos": [
         {"name":"test-info-dynamicinfos-2-name", "value":"test-info-dynamicinfos-2-value"}
-      ]
+      ],
+      "enabled": true
     }
     """
     Then the response code should be 201
@@ -106,7 +108,8 @@ Feature: add infos to alarm
       "entity_patterns":[{"name":"test-resource-dynamicinfos-2"}],
       "infos": [
         {"name":"test-info-dynamicinfos-2-name", "value":"test-info-dynamicinfos-2-value-updated"}
-      ]
+      ],
+      "enabled": true
     }
     """
     Then the response code should be 200
@@ -156,7 +159,8 @@ Feature: add infos to alarm
       "entity_patterns":[{"name":"test-resource-dynamicinfos-3"}],
       "infos": [
         {"name":"test-info-dynamicinfos-3-name", "value":"test-info-dynamicinfos-3-value"}
-      ]
+      ],
+      "enabled": true
     }
     """
     Then the response code should be 201
