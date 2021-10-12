@@ -97,7 +97,7 @@ export default {
           try {
             this.$socket.connect(`${SOCKET_URL}?token=${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
           } catch (err) {
-            this.$popups.error({ text: err.message || this.$t('errors.socketConnectionProblem'), autoClose: false });
+            this.$popups.error({ text: this.$t('errors.socketConnectionProblem'), autoClose: false });
 
             console.error(err);
           }
