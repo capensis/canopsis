@@ -20,14 +20,58 @@ const (
 	DurationMonth = 30 * DurationDay
 )
 
+type MetricPoint struct {
+	Timestamp int64 `json:"timestamp"`
+	Value     int64 `json:"value"`
+}
+
 type prometheusAPIClient struct {
 	prometheusApi v1.API
 	logger        zerolog.Logger
 }
 
 type PrometheusAPIClient interface {
+	/**
+	For example: to get ack alarms number with sampling by hours
+
+	res, err := a.prometheusClient.GetCountersVector(
+		c.Request.Context(),
+		"metrics_ack_alarm_number_slice",
+		"slice=\"default_slice\"",
+		time.Now().Add(-time.Hour * 4),
+		time.Now().Add(time.Hour * 2),
+		metrics.DurationHour,
+	)
+	*/
 	GetCountersVector(ctx context.Context, metric, labels string, start, end time.Time, stepDuration time.Duration) ([]MetricPoint, error)
+	/**
+	For example: to get average resolve time with sampling by hours
+
+	res, err := a.prometheusClient.GetAverageDurationVector(
+		c.Request.Context(),
+		"metrics_resolve_duration_slice_sum",
+		"metrics_resolve_duration_slice_count",
+		"slice=\"default_slice\"",
+		time.Now().Add(-time.Hour * 4),
+		time.Now().Add(time.Hour * 2),
+		metrics.DurationHour,
+	)
+	*/
 	GetAverageDurationVector(ctx context.Context, metricSum, metricCount, labels string, start, end time.Time, stepDuration time.Duration) ([]MetricPoint, error) // only for histograms or summary
+	/**
+
+	For example: to get percentage of ack alarms in comparison to the total number with sampling by hours
+
+	res, err := a.prometheusClient.GetRatiosVector(
+		c.Request.Context(),
+		"metrics_ack_alarm_number_slice",
+		"metrics_total_alarm_number_slice",
+		"slice=\"default_slice\"",
+		time.Now().Add(-time.Hour * 4),
+		time.Now().Add(time.Hour * 2),
+		metrics.DurationHour,
+	)
+	*/
 	GetRatiosVector(ctx context.Context, metricMain, metricTotal, labels string, start, end time.Time, stepDuration time.Duration) ([]MetricPoint, error)
 }
 
@@ -46,11 +90,6 @@ func NewPrometheusAPIClient(
 		prometheusApi: v1.NewAPI(client),
 		logger:        logger,
 	}, nil
-}
-
-type MetricPoint struct {
-	Timestamp int64 `json:"timestamp"`
-	Value     int64 `json:"value"`
 }
 
 func (p *prometheusAPIClient) GetAverageDurationVector(ctx context.Context, metricSum, metricCount, labels string, start, end time.Time, stepDuration time.Duration) ([]MetricPoint, error) {
