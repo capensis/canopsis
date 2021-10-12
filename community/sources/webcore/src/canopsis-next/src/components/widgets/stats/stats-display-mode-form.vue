@@ -3,7 +3,7 @@
     v-container(data-test="statsDisplayModeParameters")
       v-select(v-field="form.mode", :items="displayModes")
       v-card(dark, color="secondary")
-        v-card-title {{ $t('common.parameters') }}
+        v-card-title {{ $tc('common.parameter', 2) }}
         v-card-text
           v-card.my-1(
             v-for="criticity in $constants.STATS_CRITICITY",

@@ -96,7 +96,7 @@ Des options de configuration « Canopsis AMQP bus » apparaissent alors en bas
 ## Application des modifications
 
 !!! attention
-    Les manipulations suivantes occasionnent une **interruption de service**. Cette étape est **obligatoire** : le connecteur Centreon ne fonctionnera pas tant que vous n'aurez pas effectué les manipulations suivantes, exactement comme elles sont décrites.
+    Les manipulations suivantes occasionnent une **interruption de service**. Cette étape est **obligatoire** : le connecteur Centreon ne fonctionnera pas tant que vous n'aurez pas fait les manipulations suivantes, exactement comme elles sont décrites.
 
 Deux redémarrages doivent obligatoirement être réalisés pour que les modifications soient effectives :
 

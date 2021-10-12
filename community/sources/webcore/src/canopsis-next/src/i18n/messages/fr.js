@@ -9,7 +9,6 @@ import {
   BROADCAST_MESSAGES_STATUSES,
   USER_PERMISSIONS_PREFIXES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
-  ENGINES_NAMES,
   WIDGET_TYPES,
   ACTION_TYPES,
   ENTITY_TYPES,
@@ -22,6 +21,8 @@ import {
   IDLE_RULE_ALARM_CONDITIONS,
   USERS_PERMISSIONS,
   ALARMS_OPENED_VALUES,
+  HEALTHCHECK_SERVICES_NAMES,
+  HEALTHCHECK_ENGINES_NAMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -56,7 +57,7 @@ export default {
     no: 'Non',
     default: 'Défaut',
     confirmation: 'Êtes-vous sûr(e) ?',
-    parameters: 'Paramètres',
+    parameter: 'Paramètre | Paramètres',
     by: 'Par',
     date: 'Date',
     comment: 'Commentaire | Commentaires',
@@ -171,7 +172,7 @@ export default {
     percent: 'Pourcent | Pourcentages',
     tests: 'Tests',
     total: 'Total',
-    errors: 'Erreurs',
+    error: 'Erreur | Erreurs',
     failures: 'Failures',
     skipped: 'Ignoré',
     current: 'Actuel',
@@ -188,8 +189,14 @@ export default {
     dismiss: 'Rejeter',
     approve: 'Approuver',
     summary: 'Résumé',
+    recurrence: 'Récurrence',
     statistics: 'Statistiques',
     action: 'Action',
+    minimal: 'Minimal',
+    optimal: 'Optimal',
+    graph: 'Graphique | Graphiques',
+    systemStatus: 'État du système',
+    downloadAsPng: 'Télécharger en PNG',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1573,8 +1580,6 @@ export default {
   },
   recurrenceRule: {
     advancedHint: 'Séparer les nombres par une virgule',
-    textLabel: 'Récurrence',
-    stringLabel: 'Résumé',
     freq: 'Fréquence',
     until: 'Jusqu\'à',
     byweekday: 'Par jour de la semaine',
@@ -1742,7 +1747,7 @@ export default {
         create: 'Créer une vue',
         settings: 'Paramètres',
       },
-      activeSessions: 'Sessions actives',
+      loggedUsersCount: 'Sessions actives',
       ordering: {
         popups: {
           success: 'Les groupes ont été réorganisés',
@@ -1950,47 +1955,104 @@ export default {
     },
   },
 
-  engines: {
-    [ENGINES_NAMES.event]: {
-      title: 'Event',
-      description: 'Provient de la ressource',
-    },
+  healthcheck: {
+    notRunning: '{name} n\'est pas disponible',
+    queueOverflow: 'Débordement de file d\'attente',
+    lackOfInstances: 'Manque d\'instances',
+    diffInstancesConfig: 'Configuration des instances non valide',
+    queueLength: 'Longueur de la file d\'attente {queueLength}/{maxQueueLength}',
+    instancesCount: 'Instances {instances}/{minInstances}',
+    activeInstances: 'Seules {instances} sont actives sur {minInstances}. Le nombre optimal d\'instances est de {optimalInstances}.',
+    queueOverflowed: 'La file d\'attente est débordée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
+    engineDown: '{name} est en panne, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer le service.',
+    engineDownOrSlow: '{name} est en panne ou répond trop lentement, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
+    invalidEnginesOrder: 'Configuration des moteurs non valide',
+    invalidInstancesConfiguration: 'Configuration des instances non valide : les instances du moteur lisent ou écrivent dans différentes files d\'attente.\nVeuillez vérifier les instances.',
+    chainConfigurationInvalid: 'La configuration de la chaîne des moteurs n\'est pas valide.\nReportez-vous ci-dessous pour la séquence correcte des moteurs :',
+    queueLimit: 'Limite de longueur de file d\'attente',
+    defineQueueLimit: 'Définir la limite de longueur de file d\'attente des moteurs',
+    notifyUsersQueueLimit: 'Les utilisateurs peuvent être avertis lorsque la limite de longueur de file d\'attente est dépassée',
+    numberOfInstances: 'Nombre d\'instances',
+    notifyUsersNumberOfInstances: 'Les utilisateurs peuvent être avertis lorsque le nombre d\'instances actives est inférieur à la valeur minimale. Le nombre optimal d\'instances est affiché lorsque l\'état du moteur n\'est pas disponible.',
+    messagesHistory: 'Historique de traitement des messages FIFO',
+    messagesLastHour: 'Traitement des messages FIFO pour la dernière heure',
+    messagesPerHour: 'messages/heure',
+    unknown: 'Cet état du système n\'est pas disponible',
+    systemStatusChipError: 'Le système n\'est pas opérationnel',
+    systemStatusServerError: 'La configuration du système n\'est pas valide, veuillez contacter l\'administrateur',
+    systemsOperational: 'Tous les systèmes sont opérationnels',
+    nodes: {
+      [HEALTHCHECK_SERVICES_NAMES.mongo]: {
+        name: 'MongoDB',
+        edgeLabel: 'Vérification de l\'état',
+      },
 
-    [ENGINES_NAMES.webhook]: {
-      title: 'Webhook',
-      description: 'Gère les webhooks',
-    },
-    [ENGINES_NAMES.fifo]: {
-      title: 'FIFO',
-      description: 'Gère la file d\'attente des événements et des alarmes',
-    },
-    [ENGINES_NAMES.axe]: {
-      title: 'AXE',
-      description: 'Crée des alarmes et effectue des actions avec elles',
-    },
-    [ENGINES_NAMES.che]: {
-      title: 'CHE',
-      description: 'Applique les filtres d\'événements et les entités créées',
-    },
-    [ENGINES_NAMES.pbehavior]: {
-      title: 'Pbehavior',
-      description: 'Vérifie si l\'alarme est sous PBehavior',
-    },
-    [ENGINES_NAMES.action]: {
-      title: 'Action',
-      description: 'Déclenche le lancement des actions',
-    },
-    [ENGINES_NAMES.service]: {
-      title: 'Service',
-      description: 'Met à jour les compteurs et génère service-events',
-    },
-    [ENGINES_NAMES.dynamicInfo]: {
-      title: 'Dynamic infos',
-      description: 'Ajoute des informations dynamiques à l\'alarme',
-    },
-    [ENGINES_NAMES.correlation]: {
-      title: 'Correlation',
-      description: 'Gère la corrélation',
+      [HEALTHCHECK_SERVICES_NAMES.rabbit]: {
+        name: 'RabbitMQ',
+        edgeLabel: 'Vérification de l\'état',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.redis]: {
+        name: 'Redis',
+        edgeLabel: 'Données FIFO\nRedis vérifier',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.events]: {
+        name: 'Events',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.api]: {
+        name: 'Canopsis API',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.enginesChain]: {
+        name: 'Engines chain',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.healthcheck]: {
+        name: 'Healthcheck',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.webhook]: {
+        name: 'Webhook',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.fifo]: {
+        name: 'FIFO',
+        edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.axe]: {
+        name: 'AXE',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.che]: {
+        name: 'CHE',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
+        name: 'Pbehavior',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.action]: {
+        name: 'Action',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.service]: {
+        name: 'Service',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
+        name: 'Dynamic infos',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.correlation]: {
+        name: 'Correlation',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.remediation]: {
+        name: 'Remediation',
+      },
     },
   },
 
@@ -2335,6 +2397,10 @@ export default {
       deleteAfter: 'Supprimer les données PBehavior après',
       deleteAfterHelpText: 'Lorsqu\'il est activé, les PBehaviors inactifs seront supprimés après la période de temps définie à partir du dernier événement.',
     },
+    healthCheck: {
+      title: 'Stockage des données du bilan de santé',
+      deleteAfter: 'Supprimer les données de flux entrant FIFO après',
+    },
     history: {
       scriptLaunched: 'Script lancé à {launchedAt}.',
       alarm: {
@@ -2465,14 +2531,14 @@ export default {
       title: 'Playlists',
       message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
     },
+    [USERS_PERMISSIONS.technical.healthcheck]: {
+      title: 'Bilan de santé',
+      message: 'La fonction Healthcheck est le tableau de bord avec des indications d\'états et d\'erreurs de tous les systèmes inclus dans Canopsis.',
+    },
 
     /**
      * Admin general
      */
-    [USERS_PERMISSIONS.technical.engine]: {
-      title: 'Engines',
-      message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
-    },
     [USERS_PERMISSIONS.technical.parameters]: {
       title: 'Paramètres',
     },

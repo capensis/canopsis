@@ -3,7 +3,7 @@
 Réceptionne des traps SNMP, les traduit grâce à des traitements spécifiques
 souhaités et les convertit en évènements.
 
-!!! attention
+!!! info
     Ce connecteur n'est disponible que dans l'édition Pro de Canopsis.
 
 ## Fonctionnement
@@ -181,7 +181,6 @@ le conteneur du moteur `snmp`.
 ```console
 custom-trap-tester.py -t trap.json -c canopsis_cat.snmp.custom_handler.mycustomtrap [--publish]
 ```
-
 
 ## Test complet de mise en œuvre
 
