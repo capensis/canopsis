@@ -15,6 +15,6 @@ export const RESPONSE_MESSAGES_TYPES = {
 
 export const MAX_RECONNECTS_COUNT = 10;
 
-export const PING_INTERVAL = 10000;
+export const PING_INTERVAL = 5000;
 
 export const RECONNECT_INTERVAL = 5000;

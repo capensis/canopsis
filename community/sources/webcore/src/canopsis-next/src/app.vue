@@ -74,10 +74,12 @@ export default {
       this.$socket.connect(SOCKET_URL);
 
       await this.fetchCurrentUser();
-    } catch ({ status }) {
-      if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(status)) {
+    } catch (err) {
+      if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
         this.$router.push({ name: ROUTES_NAMES.error });
       }
+
+      console.error(err);
     } finally {
       this.pending = false;
     }

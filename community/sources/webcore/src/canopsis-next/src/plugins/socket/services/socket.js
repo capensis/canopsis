@@ -206,14 +206,24 @@ class Socket {
     return this;
   }
 
+  /**
+   * Send ping message
+   *
+   * @return {Socket}
+   */
   ping() {
     this.send({
       type: REQUEST_MESSAGES_TYPES.ping,
     });
 
     this.lastPingedAt = Date.now();
+
+    return this;
   }
 
+  /**
+   * Start custom ping mechanism
+   */
   startPinging() {
     if (!this.isConnectionOpen) {
       return;
@@ -221,6 +231,15 @@ class Socket {
 
     if (this.lastPingedAt > this.lastPongedAt) {
       this.connection.close();
+
+      /**
+       * We need to use this code block to avoid problem with a long waiting for connection closing
+       * without internet on Google Chrome on Linux
+       */
+      const closeEvent = new CloseEvent('custom-close', { code: 1006, reason: '', wasClean: false });
+
+      this.connection.dispatchEvent(closeEvent);
+
       return;
     }
 
@@ -229,6 +248,9 @@ class Socket {
     setTimeout(() => this.startPinging(), PING_INTERVAL);
   }
 
+  /**
+   * Start reconnecting mechanism
+   */
   startReconnecting() {
     if (this.isConnectionOpen) {
       return;

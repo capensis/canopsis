@@ -96,13 +96,13 @@ export default {
     await this.fetchInstructionExecution();
 
     this.$socket
-      .on('close', this.socketCloseHandler)
+      .on('custom-close', this.socketCloseHandler)
       .join(this.socketRoomName)
       .addListener(this.setOperation);
   },
   beforeDestroy() {
     this.$socket
-      .off('close', this.socketCloseHandler)
+      .off('custom-close', this.socketCloseHandler)
       .leave(this.socketRoomName)
       .removeListener(this.setOperation);
   },
