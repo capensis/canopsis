@@ -73,20 +73,9 @@ export default {
   created() {
     this.registerCurrentUserOnceWatcher();
   },
-  async mounted() {
-    try {
-      this.$socket.connect(SOCKET_URL);
-
-      await this.fetchCurrentUser();
-    } catch (err) {
-      if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
-        this.$router.push({ name: ROUTES_NAMES.error });
-      }
-
-      console.error(err);
-    } finally {
-      this.pending = false;
-    }
+  mounted() {
+    this.socketConnectWithErrorHandling();
+    this.fetchCurrentUserWithErrorHandling();
   },
   beforeDestroy() {
     this.stopViewStats();
@@ -135,6 +124,35 @@ export default {
           date: convertDateToString(execution.paused),
         }),
       }));
+    },
+
+    socketConnectWithErrorHandling() {
+      try {
+        this.$socket.connect(SOCKET_URL);
+      } catch (err) {
+        this.$popups.error({
+          text: this.$t('errors.socketConnectionProblem'),
+          autoClose: false,
+        });
+
+        console.error(err);
+      }
+    },
+
+    async fetchCurrentUserWithErrorHandling() {
+      try {
+        this.pending = true;
+
+        await this.fetchCurrentUser();
+      } catch (err) {
+        if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
+          this.$router.push({ name: ROUTES_NAMES.error });
+        }
+
+        console.error(err);
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };

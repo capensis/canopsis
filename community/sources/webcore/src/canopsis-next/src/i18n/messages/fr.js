@@ -1620,6 +1620,7 @@ export default {
     versionNotFound: 'Erreur dans la récupération du numéro de version...',
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
     statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
+    socketConnectionProblem: 'Problème de connexion au serveur socket',
   },
   calendar: {
     today: 'Aujourd\'hui',
