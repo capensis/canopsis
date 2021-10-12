@@ -274,13 +274,13 @@ export default {
           ...mapValues(this.form.advancedRecurrenceRuleOptions, o => o.split(',').filter(v => v)),
         });
 
-        if (!this.errors.has('rRule') && !this.recurrenceRuleObject.isFullyConvertibleToText()) {
+        if (!this.errors.has('recurrenceRule') && !this.recurrenceRuleObject.isFullyConvertibleToText()) {
           this.errors.add({
             field: 'recurrenceRule',
             msg: this.$t('recurrenceRule.errors.main'),
           });
         } else {
-          this.errors.remove('rRule');
+          this.errors.remove('recurrenceRule');
 
           this.$emit('input', this.recurrenceRuleString.replace(/.*RRULE:/, ''));
         }
