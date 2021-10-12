@@ -94,7 +94,13 @@ export default {
     registerCurrentUserOnceWatcher() {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
-          this.$socket.connect(`${SOCKET_URL}?token=${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
+          try {
+            this.$socket.connect(`${SOCKET_URL}?token=${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
+          } catch (err) {
+            this.$popups.error({ text: err.message || this.$t('errors.socketConnectionProblem'), autoClose: false });
+
+            console.error(err);
+          }
 
           await Promise.all([
             this.fetchAppInfos(),
