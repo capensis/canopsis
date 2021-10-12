@@ -2,21 +2,20 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation/executor"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -51,16 +50,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
-	amqpChannel, err := amqpConnection.Channel()
-	if err != nil {
-		panic(err)
-	}
-
-	channelPub, err := amqpConnection.Channel()
-	if err != nil {
-		panic(fmt.Errorf("dependency error: amqp publish channel: %v", err))
-	}
-
+	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	corrRedisClient := m.DepRedisSession(ctx, redis.CorrelationLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
@@ -96,7 +86,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		cfg.Global.PrefetchSize,
 		&rpcPBehaviorClientMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			PublishCh:                channelPub,
+			PublishCh:                amqpChannel,
 			ServiceRpc:               serviceRpcClient,
 			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, statsService),
 			Decoder:                  json.NewDecoder(),
@@ -107,6 +97,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		logger,
 	)
 
+	rpcPublishQueues := make([]string, 0)
 	var remediationRpcClient engine.RPCClient
 	if options.WithRemediation {
 		remediationRpcClient = engine.NewRPCClient(
@@ -119,6 +110,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			amqpChannel,
 			logger,
 		)
+		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
 	}
 
 	engineAxe := engine.New(
@@ -226,11 +218,8 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 	engineAxe.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisClient),
-		engine.RunInfo{
-			Name:         canopsis.AxeExchangeName,
-			ConsumeQueue: canopsis.AxeQueueName,
-			PublishQueue: options.PublishToQueue,
-		},
+		engine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
+		amqpChannel,
 		logger,
 	))
 	engineAxe.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
@@ -238,7 +227,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		redis.AxePeriodicalLockKey,
 		&periodicalWorker{
 			PeriodicalInterval: options.PeriodicalWaitTime,
-			ChannelPub:         channelPub,
+			ChannelPub:         amqpChannel,
 			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), logger),
 			AlarmAdapter:       alarm.NewAdapter(dbClient),
 			Encoder:            json.NewEncoder(),
@@ -246,8 +235,10 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 				idlerule.NewRuleAdapter(dbClient),
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
-				redis.NewStore(pbhRedisClient, "pbehaviors", 0),
-				pbehavior.NewService(pbehavior.NewModelProvider(dbClient), pbehavior.NewEntityMatcher(dbClient), logger),
+				pbehavior.NewEntityTypeResolver(
+					pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()),
+					pbehavior.NewComputedEntityMatcher(dbClient, pbhRedisClient, json.NewEncoder(), json.NewDecoder()),
+				),
 				json.NewEncoder(),
 				logger,
 			),

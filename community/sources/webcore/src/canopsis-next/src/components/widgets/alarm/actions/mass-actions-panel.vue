@@ -8,8 +8,6 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
-import { prepareEventsByAlarms } from '@/helpers/forms/event';
-
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
@@ -125,7 +123,6 @@ export default {
       return {
         itemsType: ENTITIES_TYPES.alarm,
         itemsIds: this.itemsIds,
-        afterSubmit: this.afterSubmit,
       };
     },
   },
@@ -136,8 +133,9 @@ export default {
     },
 
     afterSubmit() {
-      this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
       this.clearItems();
+
+      return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
     },
 
     showAddPbehaviorModal() {
@@ -147,7 +145,7 @@ export default {
           filter: {
             _id: { $in: this.items.map(item => item.entity._id) },
           },
-          afterSubmit: () => this.clearItems(),
+          afterSubmit: this.clearItems,
         },
       });
     },
@@ -193,13 +191,9 @@ export default {
         eventData = { output: this.widget.parameters.fastAckOutput.value };
       }
 
-      const ackEventData = prepareEventsByAlarms(EVENT_ENTITY_TYPES.ack, this.items, eventData);
+      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.items, eventData);
 
-      await this.createEventAction({
-        data: ackEventData,
-      });
-
-      this.afterSubmit();
+      return this.clearItems();
     },
   },
 };

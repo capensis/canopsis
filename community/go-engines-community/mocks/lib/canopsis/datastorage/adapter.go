@@ -78,6 +78,20 @@ func (mr *MockAdapterMockRecorder) UpdateHistoryEntity(arg0, arg1 interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryEntity", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryEntity), arg0, arg1)
 }
 
+// UpdateHistoryHealthCheck mocks base method
+func (m *MockAdapter) UpdateHistoryHealthCheck(arg0 context.Context, arg1 types.CpsTime) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHistoryHealthCheck", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateHistoryHealthCheck indicates an expected call of UpdateHistoryHealthCheck
+func (mr *MockAdapterMockRecorder) UpdateHistoryHealthCheck(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryHealthCheck", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryHealthCheck), arg0, arg1)
+}
+
 // UpdateHistoryJunit mocks base method
 func (m *MockAdapter) UpdateHistoryJunit(arg0 context.Context, arg1 types.CpsTime) error {
 	m.ctrl.T.Helper()

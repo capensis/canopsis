@@ -14,6 +14,7 @@ import (
 
 const waitTimeout = time.Second
 const interval = time.Millisecond * 100
+const inaccuracy = interval / 100
 
 func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 	const timesToRun = 2
@@ -62,7 +63,7 @@ func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 
 	for _, date := range workTimes {
 		sub := date.Sub(start)
-		if sub < interval || sub >= 2*interval {
+		if sub < interval-inaccuracy || sub >= 2*(interval-inaccuracy) {
 			t.Errorf("expected %v between periodical executions but got %v", interval, sub)
 			return
 		}

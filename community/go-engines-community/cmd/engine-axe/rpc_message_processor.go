@@ -39,6 +39,13 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 
 	alarm := event.Alarm
+
+	if alarm.IsResolved() {
+		p.logError(err, "RPC Message Processor: cannot update resolved alarm", msg)
+
+		return p.getErrRpcEvent(errors.New("cannot update resolved alarm"), alarm), nil
+	}
+
 	operationType := event.EventType
 	op := types.Operation{
 		Type:       operationType,

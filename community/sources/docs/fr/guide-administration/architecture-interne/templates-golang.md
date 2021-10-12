@@ -4,7 +4,7 @@ Dans les [Webhooks](../moteurs/moteur-webhook.md), les champs `payload` et `url`
 
 Les templates des champs `payload` et `url` peuvent se décomposer en deux parties : la déclaration de variables et le corps du texte lui-même.
 
-La déclaration de variables doit être positionnée avant le corps du message. Les variables se distinguent du corps du message par le fait qu'elles sont entourées de doubles accolades.
+La déclaration de variables doit être placée avant le corps du message. Les variables se distinguent du corps du message par le fait qu'elles sont entourées de doubles accolades.
 
 Pour plus d'informations, vous pouvez consulter la [documentation officielle de Go sur les templates](https://golang.org/pkg/text/template).
 
@@ -51,7 +51,7 @@ Vous avez également la possibilité de récupérer des informations propres à 
 
 | Champ                                   | Résultat                                                                                                  |
 |:--------------------------------------- |:--------------------------------------------------------------------------------------------------------- |
-| `{{ .AdditionalData.AlarmChangeType }}` | Nom du trigger (sous forme de chaîne: ack, stateinc, ...)                                                                               |
+| `{{ .AdditionalData.AlarmChangeType }}` | Nom du trigger (sous forme de chaîne : ack, stateinc, etc.) |                                                                               |
 | `{{ .AdditionalData.Author }}`          | Auteur de l'action                                                                                                                      |
 | `{{ .AdditionalData.Initiator }}`       | Initiateur de l'action (**user** pour une action exécutée depuis l'interface graphique, **system** pour une action exécutée par un moteur)  |
 
@@ -97,7 +97,7 @@ On peut aussi enchaîner différentes fonctions à la suite si on veut transform
 
 #### Fonctionnalités spécifiques à Canopsis
 
-Certaines fonctionnalités ne sont pas présentes de base dans les templates Go. Elles ont été implémentées par l'équipe de Canopsis.
+Certaines fonctionnalités ne sont pas présentes de base dans les templates Go. Elles ont été spécifiquement ajoutées pour Canopsis.
 
 !!! note
     Les fonctions suivantes sont disponibles dans les templates des [webhooks](../moteurs/moteur-webhook.md), pas ceux de l'event-filter.
@@ -147,8 +147,8 @@ Cette fonction prend en paramètre une chaîne qui est le format attendu de la d
 | `02`                         | `%m`                                                                                      | Mois                              | 01..12              |
 | `04`                         | `%M`                                                                                      | Minute                            | 01..59              |
 | `05`                         | `%S`                                                                                      | Seconde                           | 01..61              |
-| `2006`                       | `%Y`                                                                                      | Année                             | 1970, 1984, 2019... |
-| `MST`                        | `%Z`                                                                                      | Fuseau horaire                    | CEST, EDT, JST...   |
+| `2006`                       | `%Y`                                                                                      | Année                             | 1970, 1984, 2019… |
+| `MST`                        | `%Z`                                                                                      | Fuseau horaire                    | CEST, EDT, JST…   |
 
 Ainsi, pour afficher transformer un champ en une date au format `heure:minute:seconde`, il faudra utiliser `formattedDate \"15:04:05\"` (même si le champ dans l'alarme ou l'événement ne correspondent pas à cette heure).
 
