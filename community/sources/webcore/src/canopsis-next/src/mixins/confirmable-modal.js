@@ -1,4 +1,4 @@
-import { get, cloneDeep, isEqual } from 'lodash';
+import { get, cloneDeep, isEqual, isFunction } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -9,6 +9,7 @@ import uid from '@/helpers/uid';
  *
  * @param {string} [field = 'form']
  * @param {string} [method = 'submit']
+ * @param {string} [closeMethod = '$modals.hide']
  * @param {string} [modalName = MODALS.clickOutsideConfirmation]
  * @param {Function} [comparator = isEqual]
  * @returns {{created(): void, methods: {}, beforeDestroy(): void, inject: [string]}|*}
@@ -16,17 +17,23 @@ import uid from '@/helpers/uid';
 export const confirmableModalMixinCreator = ({
   field = 'form',
   method = 'submit',
+  closeMethod = '$modals.hide',
   modalName = MODALS.clickOutsideConfirmation,
   comparator = isEqual,
 } = {}) => {
   const originalField = Symbol('originalField');
   const confirmationModalIdField = Symbol('confirmationModalIdField');
   const clickOutsideHandlerMethodKey = uid('click-outside');
+  const clickOutsideCloseMethodKey = uid('close-method');
 
   return {
     provide() {
       return {
-        $closeModal: () => this[clickOutsideHandlerMethodKey]() && this.$modals.hide(),
+        $closeModal: () => {
+          if (this[clickOutsideHandlerMethodKey]()) {
+            this[clickOutsideCloseMethodKey]();
+          }
+        },
       };
     },
     inject: ['$clickOutside'],
@@ -40,6 +47,14 @@ export const confirmableModalMixinCreator = ({
       this.$clickOutside.unregister(this[clickOutsideHandlerMethodKey]);
     },
     methods: {
+      [clickOutsideCloseMethodKey]() {
+        const close = get(this, closeMethod);
+
+        if (isFunction(close)) {
+          close();
+        }
+      },
+
       [clickOutsideHandlerMethodKey]() {
         const equal = comparator.call(this, this[field], this[originalField]);
         const statePath = [this.$modals.moduleName, 'byId', this[confirmationModalIdField]];
@@ -57,7 +72,7 @@ export const confirmableModalMixinCreator = ({
                   return this[method]();
                 }
 
-                return this.$modals.hide();
+                return this[clickOutsideCloseMethodKey]();
               },
             },
           });

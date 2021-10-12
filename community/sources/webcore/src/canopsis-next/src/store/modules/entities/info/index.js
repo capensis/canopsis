@@ -27,6 +27,7 @@ export default {
     description: state => state.appInfo.login_page_description,
     language: state => state.appInfo.language,
     timezone: state => state.appInfo.timezone,
+    fileUploadMaxSize: state => state.appInfo.file_upload_max_size ?? 0,
     remediationJobConfigTypes: state => state.appInfo.remediation?.job_config_types ?? [],
     remediationPauseManualInstructionIntervalSeconds:
         state => state.appInfo.remediation?.pause_manual_instruction_interval.seconds
