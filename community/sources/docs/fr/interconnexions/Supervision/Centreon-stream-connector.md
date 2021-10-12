@@ -36,7 +36,7 @@ Deux sortes d'actions sont envoyées à Canopsis :
 1. Création d'un ack
 2. Suppression d'un ack
 
-L'acquittement est positionné sur le couple `resource/component` concerné.
+L'acquittement est appliqué au couple `resource/component` concerné.
 
 ### Plages de maintenance (downtimes)
 
