@@ -1,8 +1,5 @@
 # Sessions
 
-!!! info 
-        Le fonctionnement des routes de l'API est décrit dans le Guide de développement, section [API sessions](../../../guide-developpement/api/api-v2-session/).
-
 ## Information
 
 Le service web de Canopsis récolte des informations sur les sessions utilisateurs dans l'objectif de permettre la réalisation de statistiques.
@@ -41,6 +38,6 @@ Les données renvoyées par l'API sont stockées dans la collection `default_ses
     }
 }
 ```
+
 Cette collection stocke l'historique des sessions utilisateurs ainsi que le temps passé sur les différentes pages. 
 Elle peut servir de base pour l'élaboration de statistiques utilisateurs.
-

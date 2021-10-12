@@ -194,9 +194,10 @@ func getNestedObjectsPipeline() []bson.M {
 		{"$unwind": bson.M{"path": "$role", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
 			"role": bson.M{
-				"_id":    "$role._id",
-				"name":   "$role.crecord_name",
-				"rights": "$role.rights",
+				"_id":         "$role._id",
+				"name":        "$role.crecord_name",
+				"rights":      "$role.rights",
+				"defaultview": "$role.defaultview",
 			},
 		}},
 		{"$lookup": bson.M{
@@ -206,6 +207,13 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$defaultview", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.ViewMongoCollection,
+			"localField":   "role.defaultview",
+			"foreignField": "_id",
+			"as":           "role.defaultview",
+		}},
+		{"$unwind": bson.M{"path": "$role.defaultview", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
 			"name":                      "$crecord_name",
 			"email":                     "$mail",

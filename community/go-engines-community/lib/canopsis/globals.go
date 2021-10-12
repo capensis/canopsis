@@ -6,13 +6,14 @@ import (
 
 // Globals
 const (
+	AppName                         = "canopsis"
 	ActionEngineName                = "engine-action"
 	ActionQueueName                 = "Engine_action"
 	ActionAxeRPCClientQueueName     = "Engine_action_axe_rpc_client"
 	ActionWebhookRPCClientQueueName = "Engine_action_webhook_rpc_client"
 	ActionConsumerName              = "action"
 	ActionRPCConsumerName           = "action_rpc"
-	AxeExchangeName                 = "engine-axe"
+	AxeEngineName                   = "engine-axe"
 	AxeQueueName                    = "Engine_axe"
 	AxeServiceRPCClientQueueName    = "Engine_axe_service_rpc_client"
 	AxePbehaviorRPCClientQueueName  = "Engine_axe_pbehavior_rpc_client"
@@ -42,6 +43,7 @@ const (
 	ServiceRPCQueueServerName       = "Engine_service_rpc_server"
 	ServiceConsumerName             = "service"
 	ServiceRPCConsumerName          = "service_rpc"
+	WebhookEngineName               = "engine-webhook"
 	WebhookRPCQueueServerName       = "Engine_webhook_rpc_server"
 	WebhookRPCConsumerName          = "webhook_rpc"
 	FIFOEngineName                  = "engine-fifo"

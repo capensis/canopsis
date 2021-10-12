@@ -50,12 +50,12 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS, SIDE_BARS } from '@/constants';
 
+import uid from '@/helpers/uid';
+import { formToTestingWeatherWidget, testingWeatherWidgetToForm } from '@/helpers/forms/widgets/testing-weather';
+
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { sideBarSettingsWidgetAlarmMixin } from '@/mixins/side-bar/settings/widgets/alarm';
 import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';
-
-import uid from '@/helpers/uid';
-import { formToTestingWeatherWidget, testingWeatherWidgetToForm } from '@/helpers/forms/widgets/testing-weather';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldDuration from './fields/common/duration.vue';

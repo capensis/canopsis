@@ -103,7 +103,7 @@ export const MODALS = {
   createPlaylist: 'create-playlist',
   managePlaylistTabs: 'manage-playlist-tabs',
   pbehaviorPlanning: 'pbehavior-planning',
-  createRRule: 'create-r-rule',
+  createRecurrenceRule: 'create-recurrence-rule',
   selectExceptionsLists: 'select-exceptions-lists',
   pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
   createPbehavior: 'create-pbehavior',
@@ -126,6 +126,8 @@ export const MODALS = {
   stateSetting: 'state-setting',
   testSuite: 'test-suite',
   createIdleRule: 'create-idle-rule',
+  healthcheckEngine: 'healthcheck-engine',
+  healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -562,8 +564,10 @@ export const FILTER_DEFAULT_VALUES = {
 
 export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
+  longWithDayOfWeek: 'ddd DD/MM/YYYY H:mm:ss',
   medium: 'DD/MM H:mm',
   short: 'DD/MM/YYYY',
+  shortWithDayOfWeek: 'ddd DD/MM/YYYY',
   time: 'H:mm:ss',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
   dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
@@ -853,7 +857,7 @@ export const USERS_PERMISSIONS = {
     remediationInstruction: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstruction`,
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
-    engine: `${USER_PERMISSIONS_PREFIXES.technical.admin}_engine`,
+    healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -997,7 +1001,7 @@ export const USERS_PERMISSIONS = {
     pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
     pbehaviorException: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorexception`,
     event: `${USER_PERMISSIONS_PREFIXES.api}_event`,
-    engine: `${USER_PERMISSIONS_PREFIXES.api}_engine`,
+    healthcheck: `${USER_PERMISSIONS_PREFIXES.api}_healthcheck`,
     entity: `${USER_PERMISSIONS_PREFIXES.api}_entity`,
     acl: `${USER_PERMISSIONS_PREFIXES.api}_acl`,
     remediationExecution: `${USER_PERMISSIONS_PREFIXES.api}_execution`,
@@ -1667,49 +1671,6 @@ export const REMEDIATION_JOB_EXECUTION_STATUSES = {
  */
 export const MAX_PBEHAVIOR_DEFAULT_TSTOP = 2147483647;
 
-export const ENGINES_NAMES = {
-  event: 'event',
-  webhook: 'engine-webhook',
-  fifo: 'engine-fifo',
-  axe: 'engine-axe',
-  che: 'engine-che',
-  pbehavior: 'engine-pbehavior',
-  action: 'engine-action',
-  service: 'engine-service',
-  dynamicInfo: 'engine-dynamic-info',
-  correlation: 'engine-correlation',
-};
-
-export const ENGINES_QUEUE_NAMES = {
-  webhook: 'Engine_webhook',
-  fifo: 'Engine_fifo',
-  axe: 'Engine_axe',
-  che: 'Engine_che',
-  pbehavior: 'Engine_pbehavior',
-  action: 'Engine_action',
-  service: 'Engine_service',
-  dynamicInfo: 'Engine_dynamic_infos',
-  correlation: 'Engine_correlation',
-};
-
-export const ENGINES_NAMES_TO_QUEUE_NAMES = {
-  [ENGINES_QUEUE_NAMES.webhook]: ENGINES_NAMES.webhook,
-  [ENGINES_QUEUE_NAMES.fifo]: ENGINES_NAMES.fifo,
-  [ENGINES_QUEUE_NAMES.axe]: ENGINES_NAMES.axe,
-  [ENGINES_QUEUE_NAMES.che]: ENGINES_NAMES.che,
-  [ENGINES_QUEUE_NAMES.pbehavior]: ENGINES_NAMES.pbehavior,
-  [ENGINES_QUEUE_NAMES.action]: ENGINES_NAMES.action,
-  [ENGINES_QUEUE_NAMES.service]: ENGINES_NAMES.service,
-  [ENGINES_QUEUE_NAMES.dynamicInfo]: ENGINES_NAMES.dynamicInfo,
-  [ENGINES_QUEUE_NAMES.correlation]: ENGINES_NAMES.correlation,
-};
-
-export const CAT_ENGINES = [
-  ENGINES_NAMES.correlation,
-  ENGINES_NAMES.dynamicInfo,
-  ENGINES_NAMES.webhook,
-];
-
 export const REQUEST_METHODS = {
   post: 'POST',
   get: 'GET',
@@ -1930,3 +1891,185 @@ export const ALARMS_OPENED_VALUES = {
   all: null,
   resolved: false,
 };
+
+export const ROUTES_NAMES = {
+  home: 'home',
+  error: 'error',
+  login: 'login',
+  view: 'view',
+  alarms: 'alarms',
+  adminRights: 'admin-rights',
+  adminUsers: 'admin-users',
+  adminRoles: 'admin-roles',
+  adminParameters: 'admin-parameters',
+  adminBroadcastMessages: 'admin-broadcast-messages',
+  adminPlaylists: 'admin-playlists',
+  adminPlanning: 'admin-planning-administration',
+  adminRemediation: 'admin-remediation-administration',
+  adminHealthcheck: 'admin-healthcheck',
+  exploitationPbehaviors: 'exploitation-pbehaviors',
+  exploitationEventFilter: 'exploitation-event-filter',
+  exploitationSnmpRules: 'exploitation-snmp-rules',
+  exploitationDynamicInfos: 'exploitation-dynamic-infos',
+  playlist: 'playlist',
+  exploitationMetaAlarmRules: 'exploitation-meta-alarm-rules',
+  exploitationScenarios: 'exploitation-scenarios',
+  exploitationIdleRules: 'exploitation-idle-rules',
+  notificationInstructionStats: 'notification-instruction-stats',
+};
+
+export const ROUTES = {
+  home: '/',
+  login: '/login',
+  error: '/error',
+  view: '/view/:id',
+  alarms: '/alarms/:id',
+  adminRights: '/admin/rights',
+  adminUsers: '/admin/users',
+  adminRoles: '/admin/roles',
+  adminParameters: '/admin/parameters',
+  adminBroadcastMessages: '/admin/broadcast-messages',
+  adminPlaylists: '/admin/playlists',
+  adminPlanning: '/admin/planning',
+  adminRemediation: '/admin/remediation',
+  adminHealthcheck: '/admin/healthcheck',
+  exploitationPbehaviors: '/exploitation/pbehaviors',
+  exploitationEventFilter: '/exploitation/event-filter',
+  exploitationSnmpRules: '/exploitation/snmp-rules',
+  exploitationDynamicInfos: '/exploitation/dynamic-infos',
+  playlist: '/playlist/:id',
+  exploitationMetaAlarmRules: '/exploitation/meta-alarm-rule',
+  exploitationScenarios: '/exploitation/scenarios',
+  exploitationIdleRules: '/exploitation/idle-rules',
+  notificationInstructionStats: '/notification/instruction-stats',
+};
+
+export const HEALTHCHECK_SERVICES_NAMES = {
+  mongo: 'MongoDB',
+  redis: 'Redis',
+  rabbit: 'RabbitMQ',
+  events: 'Events',
+  api: 'API',
+  healthcheck: 'healthcheck',
+  enginesChain: 'engines-chain',
+};
+
+export const HEALTHCHECK_ENGINES_NAMES = {
+  webhook: 'engine-webhook',
+  fifo: 'engine-fifo',
+  axe: 'engine-axe',
+  che: 'engine-che',
+  pbehavior: 'engine-pbehavior',
+  action: 'engine-action',
+  service: 'engine-service',
+  dynamicInfos: 'engine-dynamic-infos',
+  correlation: 'engine-correlation',
+  remediation: 'engine-remediation',
+};
+
+export const HEALTHCHECK_ENGINES_REFERENCE_EDGES = [
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.fifo,
+    to: HEALTHCHECK_ENGINES_NAMES.che,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.che,
+    to: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+    to: HEALTHCHECK_ENGINES_NAMES.axe,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.axe,
+    to: HEALTHCHECK_ENGINES_NAMES.remediation,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.axe,
+    to: HEALTHCHECK_ENGINES_NAMES.service,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.service,
+    to: HEALTHCHECK_ENGINES_NAMES.action,
+  },
+];
+
+export const HEALTHCHECK_ENGINES_CAT_REFERENCE_EDGES = [
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.fifo,
+    to: HEALTHCHECK_ENGINES_NAMES.che,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.che,
+    to: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+    to: HEALTHCHECK_ENGINES_NAMES.axe,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.axe,
+    to: HEALTHCHECK_ENGINES_NAMES.remediation,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.axe,
+    to: HEALTHCHECK_ENGINES_NAMES.correlation,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.correlation,
+    to: HEALTHCHECK_ENGINES_NAMES.service,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.service,
+    to: HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
+    to: HEALTHCHECK_ENGINES_NAMES.action,
+  },
+  {
+    from: HEALTHCHECK_ENGINES_NAMES.action,
+    to: HEALTHCHECK_ENGINES_NAMES.webhook,
+  },
+];
+
+export const CAT_ENGINES = [
+  HEALTHCHECK_ENGINES_NAMES.correlation,
+  HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
+  HEALTHCHECK_ENGINES_NAMES.webhook,
+];
+
+export const HEALTHCHECK_NETWORK_GRAPH_OPTIONS = {
+  nodeSpace: 110, // Magic variable. Was calculated by imperative method
+  spacingFactor: 2,
+  fitPadding: 15,
+  wheelSensitivity: 0.5,
+  minZoom: 0.05,
+  maxZoom: 1.5,
+  nodeSize: 60,
+};
+
+export const HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS = {
+  [HEALTHCHECK_SERVICES_NAMES.events]: { x: -3, y: 1 },
+  [HEALTHCHECK_SERVICES_NAMES.mongo]: { x: -3, y: 0 },
+  [HEALTHCHECK_SERVICES_NAMES.api]: { x: -2, y: 0 },
+  [HEALTHCHECK_SERVICES_NAMES.rabbit]: { x: -2, y: 1 },
+  [HEALTHCHECK_SERVICES_NAMES.healthcheck]: { x: -2, y: -0.5 },
+  [HEALTHCHECK_SERVICES_NAMES.redis]: { x: -1, y: 0 },
+  [HEALTHCHECK_SERVICES_NAMES.enginesChain]: { x: 0, y: -0.5 },
+};
+
+export const MESSAGE_STATS_INTERVALS = {
+  hour: 'hour',
+  minute: 'minute',
+};
+
+export const HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR = 1.2;
+
+export const SOCKET_ROOMS = {
+  healthcheck: 'healthcheck',
+  healthcheckStatus: 'healthcheck-status',
+  messageRates: 'message-rates',
+};
+
+export const EXCLUDED_SERVER_ERROR_STATUSES = [401, 403];

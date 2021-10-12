@@ -6,12 +6,14 @@ L'ensemble des commandes suivantes doivent être réalisées avec l'utilisateur 
 
 ## Prérequis
 
-Assurez-vous d'avoir suivi les [prérequis réseau et de sécurité](pre-requis-parefeu-et-selinux.md), notamment concernant la désactivation de SELinux.
+Assurez-vous d'avoir suivi les [prérequis réseau et de sécurité](../administration-avancee/configuration-parefeu-et-selinux.md), notamment concernant la désactivation de SELinux.
 
-L'installation nécessite l'ajout de dépôts RPM tiers, ainsi qu'un accès HTTP et HTTPS pour le téléchargement de diverses dépendances.
+L'installation nécessite l'ajout de dépôts RPM tiers, ainsi qu'un accès HTTP et HTTPS pour le téléchargement de diverses dépendances. Plus de détails dans la [matrice des flux réseau](../matrice-des-flux-reseau/index.md).
 
 !!! information
     Notez que Canopsis installe ses propres versions d'InfluxDB, MongoDB, Nginx, Redis et RabbitMQ, et que seules ces versions sont validées pour fonctionner avec Canopsis. Veillez à ne pas remplacer ces versions par vos propres versions, que ce soit de façon intentionnelle, ou par l'ajout de dépôt tiers qui pourraient écraser celles fournies par Canopsis.
+
+    Plus de détails sur les [prérequis des versions](prerequis-des-versions.md).
 
 ## Ajout de dépôts tiers et de dépendances
 
