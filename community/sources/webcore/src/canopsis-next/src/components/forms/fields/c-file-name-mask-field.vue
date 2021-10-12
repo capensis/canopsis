@@ -8,7 +8,7 @@
       v-layout(column)
         v-text-field(
           v-field="value",
-          v-validate="'required'",
+          v-validate="rules",
           :value="value",
           :label="label",
           :placeholder="placeholder",
@@ -50,9 +50,20 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
     helpText: {
       type: String,
       required: false,
+    },
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
     },
   },
 };
