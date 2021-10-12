@@ -22,8 +22,6 @@ exports[`c-ellipsis Renders \`c-ellipsis\` correctly 1`] = `
   >
     <span
       class="ml-1"
-      depressed="depressed"
-      small="small"
     >
       ...
     </span>

@@ -2,47 +2,53 @@ import Faker from 'faker';
 
 import { mount, createVueInstance } from '@unit/utils/vue';
 
-import { EXPAND_DEFAULT_MAX_LETTERS } from '@/config';
-
 import CEllipsis from '@/components/common/table/c-ellipsis.vue';
 
 const localVue = createVueInstance();
 
+const defaultMaxLetters = CEllipsis.props.maxLetters.default;
+
+const mockData = {
+  shortText: Faker.datatype.string(defaultMaxLetters - 1),
+  longText: Faker.datatype.string(defaultMaxLetters + 1),
+  maxLetters: Faker.datatype.number(),
+};
+
 const factory = (options = {}) => mount(CEllipsis, { localVue, ...options });
 
 describe('c-ellipsis', () => {
-  it('Text letters count less then EXPAND_DEFAULT_MAX_LETTERS', () => {
-    const text = Faker.datatype.string(EXPAND_DEFAULT_MAX_LETTERS - 1);
+  it('Text letters count less then default max letters', () => {
+    const { shortText } = mockData;
 
-    const wrapper = factory({ propsData: { text } });
+    const wrapper = factory({ propsData: { text: shortText } });
 
-    expect(wrapper.text()).toBe(text);
+    expect(wrapper.text()).toBe(shortText);
     expect(wrapper.find('v-menu-stub').exists()).toBeFalsy();
   });
 
-  it('Text letters count more then EXPAND_DEFAULT_MAX_LETTERS', () => {
-    const text = Faker.datatype.string(EXPAND_DEFAULT_MAX_LETTERS + 1);
-    const shortenText = text.substr(0, EXPAND_DEFAULT_MAX_LETTERS);
+  it('Text letters count more then default max letters', () => {
+    const { longText } = mockData;
+    const shortenText = longText.substr(0, defaultMaxLetters);
 
-    const wrapper = factory({ propsData: { text } });
+    const wrapper = factory({ propsData: { text: longText } });
 
     expect(wrapper.find('div > span').text()).toBe(shortenText);
     expect(wrapper.find('v-menu-stub > span').text()).toBe('...');
-    expect(wrapper.find('v-menu-stub > v-card-stub > v-card-title-stub').text()).toBe(text);
+    expect(wrapper.find('v-menu-stub > v-card-stub > v-card-title-stub').text()).toBe(longText);
   });
 
   it('Text letters count less then custom maxLetters', () => {
-    const maxLetters = 5;
-    const text = Faker.datatype.string(maxLetters - 1);
+    const { maxLetters, shortText } = mockData;
 
-    const wrapper = factory({ propsData: { text, maxLetters } });
+    const wrapper = factory({ propsData: { text: shortText, maxLetters } });
 
-    expect(wrapper.text()).toBe(text);
+    expect(wrapper.text()).toBe(shortText);
+    expect(wrapper.find('v-menu-stub').exists()).toBeFalsy();
   });
 
   it('Text letters count more then custom maxLetters', () => {
-    const maxLetters = 5;
-    const text = Faker.datatype.string(maxLetters + 1);
+    const { maxLetters } = mockData;
+    const text = Faker.lorem.words(maxLetters + 1);
     const shortenText = text.substr(0, maxLetters);
 
     const wrapper = factory({ propsData: { text, maxLetters } });
@@ -52,20 +58,22 @@ describe('c-ellipsis', () => {
     expect(wrapper.find('v-menu-stub > v-card-stub > v-card-title-stub').text()).toBe(text);
   });
 
-  it('Click on dots with text letters count more then EXPAND_DEFAULT_MAX_LETTERS', () => {
-    const text = Faker.datatype.string(EXPAND_DEFAULT_MAX_LETTERS + 1);
+  it('Click on dots with text letters count more then default max letters', async () => {
+    const { longText } = mockData;
 
-    const wrapper = factory({ propsData: { text } });
+    const wrapper = factory({ propsData: { text: longText } });
 
     wrapper.find('v-menu-stub > span').trigger('click');
+
+    await localVue.nextTick();
 
     expect(wrapper.vm.isFullTextMenuOpen).toBeTruthy();
   });
 
-  it('Click on text with text letters count less then EXPAND_DEFAULT_MAX_LETTERS', () => {
-    const text = Faker.datatype.string(EXPAND_DEFAULT_MAX_LETTERS - 1);
+  it('Click on text with text letters count less then default max letters', () => {
+    const { longText } = mockData;
 
-    const wrapper = factory({ propsData: { text } });
+    const wrapper = factory({ propsData: { text: longText } });
 
     wrapper.find('div > span').trigger('click');
 
@@ -74,10 +82,10 @@ describe('c-ellipsis', () => {
     expect(textClickedEvents).toHaveLength(1);
   });
 
-  it('Click on text with text letters count more then EXPAND_DEFAULT_MAX_LETTERS', () => {
-    const text = Faker.datatype.string(EXPAND_DEFAULT_MAX_LETTERS + 1);
+  it('Click on text with text letters count more then default max letters', () => {
+    const { longText } = mockData;
 
-    const wrapper = factory({ propsData: { text } });
+    const wrapper = factory({ propsData: { text: longText } });
 
     wrapper.find('div > span').trigger('click');
 
