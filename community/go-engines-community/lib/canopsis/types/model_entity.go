@@ -35,10 +35,10 @@ type Info struct {
 
 // Entity ...
 type Entity struct {
-	ID                   string          `bson:"_id" json:"_id"`
-	Name                 string          `bson:"name" json:"name"`
-	Description          string          `bson:"description" json:"description"`
-	Impacts              []string        `bson:"impact" json:"impact"`
+	ID          string   `bson:"_id" json:"_id"`
+	Name        string   `bson:"name" json:"name"`
+	Description string   `bson:"description" json:"description"`
+	Impacts     []string `bson:"impact" json:"impact"`
 	// impacted_services field is only for connectors, see entity service RecomputeIdleSince method
 	ImpactedServices     []string        `bson:"impacted_services" json:"-"`
 	Depends              []string        `bson:"depends" json:"depends"`
@@ -68,6 +68,8 @@ type Entity struct {
 	LastIdleRuleApply string `bson:"last_idle_rule_apply,omitempty" json:"last_idle_rule_apply,omitempty"`
 	// IdleSince represents since when entity didn't receive any events.
 	IdleSince *CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty"`
+
+	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
 }
 
 func (e *Entity) GetUpsertMongoBson(newImpacts []string, newDepends []string) bson.M {

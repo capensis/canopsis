@@ -8557,7 +8557,8 @@ var doc = `{
             "type": "object",
             "required": [
                 "enabled",
-                "impact_level"
+                "impact_level",
+                "sli_avail_state"
             ],
             "properties": {
                 "category": {
@@ -8589,6 +8590,9 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/entitybasic.InfoRequest"
                     }
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 }
             }
         },
@@ -8663,6 +8667,9 @@ var doc = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"
