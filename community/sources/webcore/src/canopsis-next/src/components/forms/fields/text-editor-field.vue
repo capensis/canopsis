@@ -2,14 +2,18 @@
   text-editor(
     v-field="value",
     :label="label",
+    :public="public",
     :buttons="buttons",
-    :extraButtons="extraButtons",
     :config="config",
-    :errorMessages="errorMessages"
+    :extra-buttons="extraButtons",
+    :error-messages="errorMessages",
+    :max-file-size="maxFileSize"
   )
 </template>
 
 <script>
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+
 import TextEditor from '@/components/common/text-editor/text-editor.vue';
 
 export default {
@@ -26,6 +30,7 @@ export default {
   components: {
     TextEditor,
   },
+  mixins: [entitiesInfoMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -43,6 +48,10 @@ export default {
       type: String,
       default: '',
     },
+    public: {
+      type: Boolean,
+      default: false,
+    },
     buttons: {
       type: Array,
       default: () => [],
@@ -58,6 +67,12 @@ export default {
     errorMessages: {
       type: Array,
       default: () => [],
+    },
+    maxFileSize: {
+      type: Number,
+      default() {
+        return this.fileUploadMaxSize;
+      },
     },
   },
 };

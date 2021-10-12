@@ -1,4 +1,5 @@
 import moment from 'moment-timezone';
+
 import 'moment/locale/fr';
 
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
@@ -231,7 +232,7 @@ export const convertDateToString = (date, format = DATETIME_FORMATS.long, defaul
   if (!dateObject?.isValid()) {
     console.warn('Could not build a valid `moment` object from input.');
 
-    return date;
+    return defaultValue ?? date;
   }
 
   return dateObject.format(DATETIME_FORMATS[format] ?? format);

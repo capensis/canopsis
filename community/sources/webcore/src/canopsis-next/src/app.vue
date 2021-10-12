@@ -17,6 +17,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
 
+import { reloadPageWithTrailingSlashes } from '@/helpers/url';
 import { convertDateToString } from '@/helpers/date/date';
 
 import localStorageService from '@/services/local-storage';
@@ -66,6 +67,9 @@ export default {
       return ![ROUTES_NAMES.login, ROUTES_NAMES.error].includes(this.$route.name);
     },
   },
+  beforeCreate() {
+    reloadPageWithTrailingSlashes();
+  },
   created() {
     this.registerCurrentUserOnceWatcher();
   },
@@ -92,7 +96,11 @@ export default {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
           this.$socket.connect(`${SOCKET_URL}?token=${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
-          await this.fetchAppInfo();
+
+          await Promise.all([
+            this.fetchAppInfo(),
+            this.filesAccess(),
+          ]);
 
           this.setSystemData({
             timezone: this.timezone,

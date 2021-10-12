@@ -40,10 +40,12 @@
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+
+import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
@@ -93,10 +95,12 @@ export default {
         if (this.itemsWithoutAck.length) {
           const { fastAckOutput } = this.config;
 
-          await this.createEvent(EVENT_ENTITY_TYPES.ack, this.itemsWithoutAck, {
+          const eventData = prepareEventsByAlarms(EVENT_ENTITY_TYPES.ack, this.itemsWithoutAck, {
             output: fastAckOutput && fastAckOutput.enabled ? fastAckOutput.value : '',
             ticket: this.form.ticket,
           });
+
+          await this.createEventAction({ data: eventData });
         }
 
         await this.createEvent(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);

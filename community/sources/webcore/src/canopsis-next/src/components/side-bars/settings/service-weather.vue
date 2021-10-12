@@ -37,7 +37,7 @@
           field-sort-column(
             v-model="settings.widget.parameters.sort",
             :columns="sortColumns",
-            :columnsLabel="$t('settings.orderBy')"
+            :columns-label="$t('settings.orderBy')"
           )
           v-divider
           field-default-elements-per-page(v-model="settings.widget.parameters.modalItemsPerPage")

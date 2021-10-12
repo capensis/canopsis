@@ -40,7 +40,7 @@ export const authMixin = {
     },
   },
   methods: {
-    ...mapActions(['login', 'logout', 'fetchCurrentUser']),
+    ...mapActions(['login', 'logout', 'fetchCurrentUser', 'filesAccess']),
 
     checkIsTourEnabled(tour) {
       return !get(this.currentUser, ['ui_tours', tour]);
