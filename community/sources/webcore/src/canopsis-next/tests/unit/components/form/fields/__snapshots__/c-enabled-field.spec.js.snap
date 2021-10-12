@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-enabled-field Renders \`c-enabled-field\` with custom props correctly 1`] = `
+<v-switch-stub
+  backgroundcolor=""
+  color="customcolor"
+  disabled="true"
+  errorcount="1"
+  errormessages=""
+  hidedetails="true"
+  label="Custom label"
+  messages=""
+  ripple="true"
+  rules=""
+  successmessages=""
+  valuecomparator="[Function]"
+/>
+`;
+
+exports[`c-enabled-field Renders \`c-enabled-field\` with default props correctly 1`] = `
+<v-switch-stub
+  backgroundcolor=""
+  color="primary"
+  errorcount="1"
+  errormessages=""
+  inputvalue="true"
+  label="common.enabled"
+  messages=""
+  ripple="true"
+  rules=""
+  successmessages=""
+  valuecomparator="[Function]"
+/>
+`;

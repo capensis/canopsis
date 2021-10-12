@@ -1,3 +1,5 @@
+const updateFieldDirective = require('./tools/update-field-directive');
+
 module.exports = {
   moduleFileExtensions: [
     'js',
@@ -18,4 +20,15 @@ module.exports = {
   ],
   setupFiles: ['jest-localstorage-mock'],
   setupFilesAfterEnv: ['<rootDir>/tests/unit/jest.setup-test-framework'],
+  globals: {
+    'vue-jest': {
+      templateCompiler: {
+        compilerOptions: {
+          directives: {
+            field: updateFieldDirective,
+          },
+        },
+      },
+    },
+  },
 };

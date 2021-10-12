@@ -4,24 +4,11 @@ import CEnabledField from '@/components/forms/fields/c-enabled-field.vue';
 
 const localVue = createVueInstance();
 
-const directives = {
-  field: {
-    bind: (el, directive, vnode) => {
-      const { event } = vnode.context.$options.model;
-      el.setAttribute('value', `${JSON.stringify(directive.value)}`);
-
-      const updateField = $event => vnode.context.$emit(event || 'input', $event.target.value);
-
-      el.addEventListener('change', updateField);
-    },
-  },
-};
-
 const stubs = {
   'v-switch': {
     props: ['value'],
     template: `
-      <input :checked="value" type="checkbox" class="v-switch" @input="$emit('input')" />
+      <input :checked="value" type="checkbox" class="v-switch" @change="$listeners.input($event.target.checked)" />
     `,
   },
 };
@@ -29,7 +16,6 @@ const stubs = {
 const factory = (options = {}) => mount(CEnabledField, {
   localVue,
   stubs,
-  directives,
   ...options,
 });
 
@@ -56,7 +42,21 @@ describe('c-enabled-field', () => {
   it('Renders `c-enabled-field` with default props correctly', () => {
     const wrapper = mount(CEnabledField, {
       localVue,
-      directives,
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `c-enabled-field` with custom props correctly', () => {
+    const wrapper = mount(CEnabledField, {
+      localVue,
+      propsData: {
+        value: false,
+        label: 'Custom label',
+        color: 'customcolor',
+        disabled: true,
+        hideDetails: true,
+      },
     });
 
     expect(wrapper.element).toMatchSnapshot();
