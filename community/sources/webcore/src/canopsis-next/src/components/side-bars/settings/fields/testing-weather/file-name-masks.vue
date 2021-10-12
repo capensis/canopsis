@@ -17,6 +17,13 @@
         :placeholder="$constants.TEST_CASE_FILE_MASK",
         name="video_filemask"
       )
+      c-file-name-mask-field(
+        v-field="value.report_fileregexp",
+        :title="$t('settings.reportFileRegexp.title')",
+        :help-text="$t('settings.reportFileRegexp.helpText')",
+        :placeholder="$constants.TEST_CASE_FILE_NAME",
+        name="report_fileregexp"
+      )
 </template>
 
 <script>

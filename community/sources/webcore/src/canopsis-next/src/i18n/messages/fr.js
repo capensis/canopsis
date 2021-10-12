@@ -702,6 +702,14 @@ export default {
         '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
         '</dl>',
     },
+    reportFileRegexp: {
+      title: 'Masque de fichier de rapport',
+      helpText: '<dl>' +
+        '<dt>Définir le nom de fichier regexp de quel rapport:<dt>\n' +
+        '<dd>Par exemple:</dd>\n' +
+        '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n' +
+        '</dl>',
+    },
   },
   modals: {
     common: {
