@@ -71,7 +71,7 @@ func main() {
 		flags.SecureSession,
 		flags.Test,
 		enforcer,
-		nil,
+		nil, nil, nil,
 		logger,
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
