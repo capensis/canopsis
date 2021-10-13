@@ -4,8 +4,8 @@
       template(slot="title")
         span {{ $t('modals.createRrule.title') }}
       template(slot="text")
-        r-rule-form(v-model="form.rrule")
-        pbehavior-exception-form(v-if="form.rrule", v-model="form.exdates", :exceptions.sync="form.exceptions")
+        recurrence-rule-form(v-model="form.rrule")
+        pbehavior-exception-form(v-model="form.exdates", :exceptions.sync="form.exceptions")
       template(slot="actions")
         v-btn(
           depressed,
@@ -22,7 +22,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import RRuleForm from '@/components/forms/rrule.vue';
+import RecurrenceRuleForm from '@/components/forms/recurrence-rule.vue';
 import PbehaviorExceptionForm from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-form.vue';
 
 import { submittableMixin } from '@/mixins/submittable';
@@ -31,14 +31,14 @@ import { confirmableModalMixin } from '@/mixins/confirmable-modal';
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createRRule,
+  name: MODALS.createRecurrenceRule,
   $_veeValidate: {
     validator: 'new',
   },
   inject: ['$system'],
   components: {
     PbehaviorExceptionForm,
-    RRuleForm,
+    RecurrenceRuleForm,
     ModalWrapper,
   },
   mixins: [
