@@ -26,14 +26,11 @@ const (
 	WMessageClientPong = iota
 	WMessageSuccess
 	WMessageFail
-	WMessageCloseRoom
 )
 
 const (
-	errAuthFailed              = "cannot authorize user"
-	errUnknownRMessageType     = "unknown message type"
-	errConnAlreadyJoinedToRoom = "connection has already joined to room"
-	errConnNotJoinedToRoom     = "connection hasn't joined to room"
+	errAuthFailed          = "cannot authorize user"
+	errUnknownRMessageType = "unknown message type"
 )
 
 const (
@@ -207,17 +204,6 @@ func (h *hub) RegisterRoom(room string, perms ...string) error {
 }
 
 func (h *hub) CloseRoom(room string) error {
-	closedConns, err := h.closeRoomAndCheckConn(room)
-	if err != nil {
-		return err
-	}
-
-	h.closeConnections(closedConns...)
-
-	return nil
-}
-
-func (h *hub) closeRoomAndCheckConn(room string) ([]string, error) {
 	h.connsMx.RLock()
 	h.roomsMx.Lock(room)
 	defer func() {
@@ -225,31 +211,13 @@ func (h *hub) closeRoomAndCheckConn(room string) ([]string, error) {
 		h.connsMx.RUnlock()
 	}()
 
-	msg := WMessage{
-		Type: WMessageCloseRoom,
-		Room: room,
-	}
-
-	closedConns := make([]string, 0)
-	for _, connId := range h.rooms[room] {
-		conn := h.conns[connId].conn
-		err := conn.WriteJSON(msg)
-		if err != nil {
-			closedConns = append(closedConns, connId)
-			h.logger.Err(err).
-				Str("room", room).
-				Str("addr", conn.RemoteAddr().String()).
-				Msg("cannot write message to connection, connection will be closed")
-		}
-	}
-
 	err := h.authorizer.RemoveRoom(room)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	delete(h.rooms, room)
 
-	return closedConns, nil
+	return nil
 }
 
 func (h *hub) RoomHasConnection(room string) bool {
@@ -273,17 +241,6 @@ func (h *hub) join(connId, room string) (closed bool) {
 
 	for _, v := range h.rooms[room] {
 		if v == connId {
-			err := conn.WriteJSON(WMessage{
-				Type:  WMessageFail,
-				Room:  room,
-				Error: errConnAlreadyJoinedToRoom,
-			})
-			if err != nil {
-				closed = true
-				h.logger.Err(err).
-					Str("addr", conn.RemoteAddr().String()).
-					Msg("cannot write message to connection, connection will be closed")
-			}
 			return
 		}
 	}
@@ -325,7 +282,6 @@ func (h *hub) leave(connId, room string) (closed bool) {
 		h.connsMx.RUnlock()
 	}()
 
-	conn := h.conns[connId].conn
 	index := -1
 	for i, v := range h.rooms[room] {
 		if v == connId {
@@ -335,17 +291,6 @@ func (h *hub) leave(connId, room string) (closed bool) {
 	}
 
 	if index < 0 {
-		err := conn.WriteJSON(WMessage{
-			Type:  WMessageFail,
-			Room:  room,
-			Error: errConnNotJoinedToRoom,
-		})
-		if err != nil {
-			closed = true
-			h.logger.Err(err).
-				Str("addr", conn.RemoteAddr().String()).
-				Msg("cannot write message to connection, connection will be closed")
-		}
 		return
 	}
 
