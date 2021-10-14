@@ -21,14 +21,12 @@
 
 import unittest
 
-import canopsis.auth.cas as cas
-import canopsis.auth.mock as mock
 from canopsis.common import root_path
 
 import xmlrunner
 
 
-#TODO 21-09-2017
+# TODO 21-09-2017
 # class TestCASBackend(TestCase):
 #     def mock_canopsis(self):
 #         cas.get_account = mock.auth.mock_get_account
