@@ -4,11 +4,13 @@ import { merge } from 'lodash';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 
 import UpdateFieldPlugin from '@/plugins/update-field';
+import ValidatorPlugin from '@/plugins/validator';
 import * as constants from '@/constants';
 import * as config from '@/config';
 
 Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
+Vue.use(ValidatorPlugin);
 
 const prepareTranslateValues = values => (values ? `:${JSON.stringify(values)}` : '');
 
