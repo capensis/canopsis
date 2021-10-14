@@ -69,11 +69,11 @@ import { MAX_LIMIT } from '@/constants';
 import { isRemediationInstructionIntersectsWithFilterByType } from '@/helpers/forms/remediation-instruction-filter';
 
 import { formMixin } from '@/mixins/form';
-import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
+import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
 
 export default {
   inject: ['$validator'],
-  mixins: [formMixin, entitiesRemediationInstructionsMixin],
+  mixins: [formMixin, entitiesRemediationInstructionMixin],
   model: {
     prop: 'form',
     event: 'input',

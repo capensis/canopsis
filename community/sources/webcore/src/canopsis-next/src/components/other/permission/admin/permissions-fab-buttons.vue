@@ -16,8 +16,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import entitiesRoleMixin from '@/mixins/entities/role';
-import entitiesUserMixin from '@/mixins/entities/user';
+import { entitiesRoleMixin } from '@/mixins/entities/role';
+import { entitiesUserMixin } from '@/mixins/entities/user';
 import { permissionsTechnicalUserMixin } from '@/mixins/permissions/technical/user';
 import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';
 import { permissionsTechnicalActionMixin } from '@/mixins/permissions/technical/action';

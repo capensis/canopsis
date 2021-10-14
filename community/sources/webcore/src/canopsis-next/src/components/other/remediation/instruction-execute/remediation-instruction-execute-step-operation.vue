@@ -28,8 +28,7 @@
           remediation-instruction-execute-assigned-jobs.mt-4(
             v-if="operation.jobs.length",
             :jobs="operation.jobs",
-            :operation-id="operation.operation_id",
-            :execution-id="executionId"
+            @execute-job="executeJob"
           )
           v-layout.mb-2(row, justify-end)
             v-btn.accent(
@@ -52,10 +51,6 @@ export default {
     RemediationInstructionExecuteAssignedJobs,
   },
   props: {
-    executionId: {
-      type: String,
-      required: true,
-    },
     isFirstStep: {
       type: Boolean,
       default: false,
@@ -88,6 +83,11 @@ export default {
 
     isFailedOperation() {
       return !!this.operation.failed_at;
+    },
+  },
+  methods: {
+    executeJob(job) {
+      this.$emit('execute-job', { job, operation: this.operation });
     },
   },
 };

@@ -5,7 +5,7 @@ const { mapActions, mapGetters } = createNamespacedHelpers('remediationConfigura
 /**
  * @mixin
  */
-export default {
+export const entitiesRemediationConfigurationMixin = {
   computed: {
     ...mapGetters({
       remediationConfigurations: 'items',

@@ -1,22 +1,15 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('remediationInstructionExecution');
+const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
 /**
  * @mixin
  */
-export default {
-  computed: {
-    ...mapGetters({
-      remediationInstructionExecutions: 'items',
-      getRemediationInstructionExecution: 'getItemById',
-      remediationInstructionExecutionsPending: 'pending',
-    }),
-  },
+export const entitiesRemediationInstructionExecutionMixin = {
   methods: {
     ...mapActions({
-      fetchPausedExecutionsWithoutStore: 'fetchPausedExecutionsWithoutStore',
-      fetchRemediationInstructionExecution: 'fetchItem',
+      fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
+      fetchRemediationInstructionExecutionWithoutStore: 'fetchItemWithoutStore',
       createRemediationInstructionExecution: 'create',
       cancelRemediationInstructionExecution: 'cancel',
       nextOperationRemediationInstructionExecution: 'nextOperation',
@@ -25,7 +18,6 @@ export default {
       previousOperationRemediationInstructionExecution: 'previousOperation',
       resumeRemediationInstructionExecution: 'resume',
       rateRemediationInstructionExecution: 'rate',
-      pingRemediationInstructionExecution: 'ping',
     }),
   },
 };

@@ -1,4 +1,4 @@
-import { API_ROUTES, INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS } from '@/config';
+import { API_ROUTES } from '@/config';
 import { POPUP_TYPES } from '@/constants';
 
 import request from '@/services/request';
@@ -29,10 +29,6 @@ export default {
     timezone: state => state.appInfo.timezone,
     fileUploadMaxSize: state => state.appInfo.file_upload_max_size ?? 0,
     remediationJobConfigTypes: state => state.appInfo.remediation?.job_config_types ?? [],
-    remediationPauseManualInstructionIntervalSeconds:
-        state => state.appInfo.remediation?.pause_manual_instruction_interval.seconds
-          ?? INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS,
-
     casConfig: state => state.appInfo?.login?.casconfig,
     samlConfig: state => state.appInfo?.login?.saml2config,
     isLDAPAuthEnabled: state => !!state.appInfo?.login?.ldapconfig?.enable,

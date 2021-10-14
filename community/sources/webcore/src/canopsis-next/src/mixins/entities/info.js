@@ -30,7 +30,6 @@ export const entitiesInfoMixin = {
       timezone: 'timezone',
       fileUploadMaxSize: 'fileUploadMaxSize',
       remediationJobConfigTypes: 'remediationJobConfigTypes',
-      remediationPauseManualInstructionIntervalSeconds: 'remediationPauseManualInstructionIntervalSeconds',
     }),
 
     isCatVersion() {

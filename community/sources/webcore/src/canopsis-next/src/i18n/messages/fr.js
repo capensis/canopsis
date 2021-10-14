@@ -1620,6 +1620,7 @@ export default {
     versionNotFound: 'Erreur dans la récupération du numéro de version...',
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
     statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
+    socketConnectionProblem: 'Problème de connexion au serveur socket',
   },
   calendar: {
     today: 'Aujourd\'hui',
@@ -2099,6 +2100,7 @@ export default {
       success: '{instructionName} a été exécutée avec succès',
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème',
       connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
+      wasAborted: '{instructionName} a été abandonné',
       wasPaused: 'La consigne {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez la reprendre manuellement.',
     },
     jobs: {

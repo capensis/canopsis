@@ -43,10 +43,6 @@ export const LOCALE_PRIORITIES = {
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
 
-export const ACTIVE_LOGGED_USERS_COUNT_FETCHING_INTERVAL = 60000;
-
-export const ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL = 60000;
-
 export const VUETIFY_ANIMATION_DELAY = 300;
 
 export const POPUP_TICK_DELAY = 100;
@@ -71,6 +67,15 @@ export const MAX_LOGO_SIZE_IN_KB = 16384;
 export const DEFAULT_APP_TITLE = 'Canopsis';
 
 export const EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX = 'canopsis_groups_views-';
+
+export const SOCKET_ROOMS = {
+  healthcheck: 'healthcheck',
+  healthcheckStatus: 'healthcheck-status',
+  messageRates: 'message-rates',
+  loggedUserCount: 'logged-user-count',
+  broadcastMessages: 'broadcast-messages',
+  execution: 'execution',
+};
 
 export const API_ROUTES = {
   login: '/api/v4/login',
@@ -263,10 +268,6 @@ export const COLORS = {
 export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
-
-export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
-
-export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS = 10;
 
 export const EXPORT_FETCHING_INTERVAL = 2000;
 

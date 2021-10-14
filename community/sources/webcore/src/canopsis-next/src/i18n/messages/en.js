@@ -1620,6 +1620,7 @@ export default {
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
+    socketConnectionProblem: 'Problem with connection to socket server',
   },
   calendar: {
     today: 'Today',
@@ -2099,6 +2100,7 @@ export default {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
       connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
+      wasAborted: '{instructionName} has been aborted',
       wasPaused: 'The {instructionName} instruction on {alarmName} alarm was paused at {date}. You can resume it manually.',
     },
     jobs: {
