@@ -98,18 +98,36 @@ export default {
   async mounted() {
     await this.fetchInstructionExecution();
 
-    this.$socket
-      .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
-      .join(this.socketRoomName)
-      .addListener(this.setOperation);
+    this.joinToSocketRoom();
   },
   beforeDestroy() {
-    this.$socket
-      .off(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
-      .leave(this.socketRoomName)
-      .removeListener(this.setOperation);
+    this.leaveFromSocketRoom();
   },
   methods: {
+    /**
+     * Join from execution room
+     */
+    joinToSocketRoom() {
+      if (this.instructionExecutionId) {
+        this.$socket
+          .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
+          .join(this.socketRoomName)
+          .addListener(this.setOperation);
+      }
+    },
+
+    /**
+     * Leave from execution room
+     */
+    leaveFromSocketRoom() {
+      if (this.instructionExecutionId) {
+        this.$socket
+          .off(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
+          .leave(this.socketRoomName)
+          .removeListener(this.setOperation);
+      }
+    },
+
     /**
      * Goto next step
      *
