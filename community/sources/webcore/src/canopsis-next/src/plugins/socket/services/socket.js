@@ -341,6 +341,11 @@ class Socket {
           new ErrorEvent('error', { message: error }),
         );
         break;
+      case RESPONSE_MESSAGES_TYPES.close:
+        this.connection.dispatchEvent(
+          new Event(EVENTS_TYPES.closeRoom),
+        );
+        break;
       default:
         this.connection.dispatchEvent(
           new ErrorEvent('error', { message: 'Unknown message type' }),

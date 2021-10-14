@@ -111,6 +111,7 @@ export default {
       if (this.instructionExecutionId) {
         this.$socket
           .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
+          .on(Socket.EVENTS_TYPES.closeRoom, this.socketRoomCloseHandler)
           .join(this.socketRoomName)
           .addListener(this.setOperation);
       }
@@ -123,6 +124,7 @@ export default {
       if (this.instructionExecutionId) {
         this.$socket
           .off(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
+          .off(Socket.EVENTS_TYPES.closeRoom, this.socketRoomCloseHandler)
           .leave(this.socketRoomName)
           .removeListener(this.setOperation);
       }
@@ -197,7 +199,7 @@ export default {
     },
 
     /**
-     * Socket error handler (we need to use for connection checking)
+     * Socket customClose event handler (we need to use for connection checking)
      */
     socketCloseHandler() {
       if (!this.$socket.isConnectionOpen) {
@@ -207,6 +209,19 @@ export default {
           autoClose: false,
         });
       }
+    },
+
+    /**
+     * Socket closeRoom event handler
+     */
+    socketRoomCloseHandler() {
+      this.$modals.hide();
+      this.$popups.error({
+        text: this.$t('remediationInstructionExecute.popups.wasAborted', {
+          instructionName: this.instructionExecution?.name,
+        }),
+        autoClose: false,
+      });
     },
 
     /**
