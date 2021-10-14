@@ -14,7 +14,7 @@ import { isEqual, sortBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { COLORS, SOCKET_ROOMS } from '@/config';
-import { HEALTHCHECK_SERVICES_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
+import { HEALTHCHECK_SERVICES_NAMES, ROUTES_NAMES, USERS_PERMISSIONS } from '@/constants';
 
 import { getHealthcheckNodeColor } from '@/helpers/color';
 
@@ -95,7 +95,7 @@ export default {
 
     redirectToHealthcheck() {
       this.$router.push({
-        name: ROUTES.adminHealthcheck,
+        name: ROUTES_NAMES.adminHealthcheck,
       });
     },
 
