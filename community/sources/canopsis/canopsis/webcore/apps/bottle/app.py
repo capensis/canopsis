@@ -23,7 +23,6 @@ from canopsis.common import root_path
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.logger import Logger
-from canopsis.confng.helpers import cfg_to_array
 from canopsis.confng import Configuration, Ini
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
@@ -87,11 +86,6 @@ class OldApi():
             'enable_crossdomain_send_events', DEFAULT_ECSE)
         self.root_directory = os.path.expanduser(
             server.get('root_directory', DEFAULT_ROOT_DIR))
-
-        session = self.config.get('session', {})
-        self.secure_cookie = session.get('secure_cookie', 'false') == 'true'
-        self.data_dir = os.path.expanduser(
-            session.get('data_dir', DEFAULT_DATA_DIR))
 
         self.webservices = self.config.get('webservices', {})
 
