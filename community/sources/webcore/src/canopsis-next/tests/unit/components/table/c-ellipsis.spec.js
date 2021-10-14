@@ -48,7 +48,7 @@ describe('c-ellipsis', () => {
 
   it('Text letters count more then custom maxLetters', () => {
     const { maxLetters } = mockData;
-    const text = Faker.lorem.words(maxLetters + 1);
+    const text = Faker.datatype.string(maxLetters + 1);
     const shortenText = text.substr(0, maxLetters);
 
     const wrapper = factory({ propsData: { text, maxLetters } });

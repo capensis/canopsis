@@ -6,7 +6,7 @@ module.exports = {
     'vue',
   ],
   transform: {
-    '^.+\\.vue$': 'vue-jest',
+    '^.+\\.vue$': '<rootDir>/tests/unit/jest.vue',
     '^.+\\.jsx?$': '<rootDir>/tests/unit/jest.transform',
   },
   moduleNameMapper: {

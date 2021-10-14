@@ -3,7 +3,10 @@ import Vuetify from 'vuetify';
 import { merge } from 'lodash';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 
+import UpdateFieldPlugin from '@/plugins/update-field';
+
 Vue.use(Vuetify);
+Vue.use(UpdateFieldPlugin);
 
 const prepareTranslateValues = values => (values ? `:${JSON.stringify(values)}` : '');
 

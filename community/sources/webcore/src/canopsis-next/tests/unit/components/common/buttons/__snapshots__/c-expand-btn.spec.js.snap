@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-expand-btn Renders \`c-expand-btn\` correctly. 1`] = `
+<v-btn-stub
+  activeclass="v-btn--active"
+  class="ma-0"
+  icon="true"
+  small="true"
+  tag="button"
+  type="button"
+>
+  <v-icon-stub>
+    keyboard_arrow_down
+  </v-icon-stub>
+</v-btn-stub>
+`;
+
+exports[`c-expand-btn Renders \`c-expand-btn\` expanded correctly. 1`] = `
+<v-btn-stub
+  activeclass="v-btn--active"
+  class="ma-0"
+  icon="true"
+  small="true"
+  tag="button"
+  type="button"
+>
+  <v-icon-stub>
+    keyboard_arrow_up
+  </v-icon-stub>
+</v-btn-stub>
+`;
+
+exports[`c-expand-btn Renders \`c-expand-btn\` with custom color correctly. 1`] = `
+<v-btn-stub
+  activeclass="v-btn--active"
+  class="ma-0"
+  icon="true"
+  small="true"
+  tag="button"
+  type="button"
+>
+  <v-icon-stub
+    color="custom-color"
+  >
+    keyboard_arrow_down
+  </v-icon-stub>
+</v-btn-stub>
+`;
