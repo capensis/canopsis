@@ -4,6 +4,8 @@ import { merge } from 'lodash';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 
 import UpdateFieldPlugin from '@/plugins/update-field';
+import * as constants from '@/constants';
+import * as config from '@/config';
 
 Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
@@ -13,6 +15,9 @@ const prepareTranslateValues = values => (values ? `:${JSON.stringify(values)}` 
 const mocks = {
   $t: (path, values) => `${path}${prepareTranslateValues(values)}`,
   $tc: (path, count, values) => `${path}:${count}${prepareTranslateValues(values)}`,
+
+  $constants: Object.freeze(constants),
+  $config: Object.freeze(config),
 };
 
 /**
@@ -29,7 +34,13 @@ export const createVueInstance = () => createLocalVue();
  * @param {Object} options
  * @return {Wrapper<Vue>}
  */
-export const mount = (component, options = {}) => shallowMount(
-  component,
-  merge(options, { mocks }),
-);
+export const mount = (component, options = {}) => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  return shallowMount(
+    component,
+    merge(options, { mocks }),
+  );
+};

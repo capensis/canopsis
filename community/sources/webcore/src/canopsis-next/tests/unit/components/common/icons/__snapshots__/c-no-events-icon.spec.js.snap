@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-no-events-icon Renders \`c-no-events-icon\` with custom props correctly 1`] = `
+<v-tooltip-stub
+  closedelay="200"
+  contentclass=""
+  debounce="0"
+  fixed="true"
+  maxwidth="1120"
+  nudgebottom="0"
+  nudgeleft="0"
+  nudgeright="0"
+  nudgetop="0"
+  nudgewidth="0"
+  opendelay="200"
+  tag="span"
+  top="true"
+>
+  <v-icon-stub
+    color="secondary"
+  >
+    sync_problem
+  </v-icon-stub>
+  <span>
+    icons.noEvents:{"duration":"2,476 days 0 hrs 2 mins 3 secs"}
+  </span>
+</v-tooltip-stub>
+`;
+
+exports[`c-no-events-icon Renders \`c-no-events-icon\` with default props correctly 1`] = `<!---->`;
+
+exports[`c-no-events-icon Renders \`c-no-events-icon\` with value correctly 1`] = `
+<v-tooltip-stub
+  closedelay="200"
+  contentclass=""
+  debounce="0"
+  fixed="true"
+  maxwidth="auto"
+  nudgebottom="0"
+  nudgeleft="0"
+  nudgeright="0"
+  nudgetop="0"
+  nudgewidth="0"
+  opendelay="200"
+  tag="span"
+>
+  <v-icon-stub
+    color="error"
+  >
+    sync_problem
+  </v-icon-stub>
+  <span>
+    icons.noEvents:{"duration":"2,476 days 0 hrs 2 mins 3 secs"}
+  </span>
+</v-tooltip-stub>
+`;

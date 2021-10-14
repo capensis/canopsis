@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-progress-overlay Renders \`c-progress-overlay\` with custom props correctly 1`] = `
+<v-fade-transition-stub
+  origin="top center 0"
+>
+  <v-layout-stub
+    class="progress black"
+    style="opacity: 0.3;"
+    tag="div"
+  >
+    <v-progress-circular-stub
+      color="secondary"
+      indeterminate="true"
+      rotate="0"
+      size="32"
+      value="0"
+      width="4"
+    />
+  </v-layout-stub>
+</v-fade-transition-stub>
+`;
+
+exports[`c-progress-overlay Renders \`c-progress-overlay\` with default props correctly 1`] = `
+<v-fade-transition-stub
+  origin="top center 0"
+>
+  <!---->
+</v-fade-transition-stub>
+`;
+
+exports[`c-progress-overlay Renders \`c-progress-overlay\` with pending true correctly 1`] = `
+<v-fade-transition-stub
+  origin="top center 0"
+>
+  <v-layout-stub
+    class="progress white"
+    style="opacity: 0.5;"
+    tag="div"
+  >
+    <v-progress-circular-stub
+      color="primary"
+      indeterminate="true"
+      rotate="0"
+      size="32"
+      value="0"
+      width="4"
+    />
+  </v-layout-stub>
+</v-fade-transition-stub>
+`;
