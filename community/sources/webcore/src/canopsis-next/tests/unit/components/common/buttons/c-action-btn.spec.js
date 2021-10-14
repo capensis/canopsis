@@ -1,8 +1,7 @@
 import Faker from 'faker';
 
+import { mount, createVueInstance } from '@unit/utils/vue';
 import { PAGINATION_TOTAL_VISIBLE } from '@/config';
-
-import { mount, createVueInstance } from '@/unit/utils/vue';
 
 import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
 

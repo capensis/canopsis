@@ -1,4 +1,4 @@
-import { mount, createVueInstance } from '@/unit/utils/vue';
+import { mount, createVueInstance } from '@unit/utils/vue';
 
 import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
 

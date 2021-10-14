@@ -1,7 +1,7 @@
 import Faker from 'faker';
 
+import { fakeMeta } from '@unit/data/request-data';
 import { fakeTimestamp } from './date';
-import { fakeMeta } from '@/unit/data/request-data';
 
 export const fakeAlarm = () => ({
   _id: Faker.datatype.string(),

@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { mount, createVueInstance } from '@/unit/utils/vue';
+import { mount, createVueInstance } from '@unit/utils/vue';
 
 import CEllipsis from '@/components/common/table/c-ellipsis.vue';
 
