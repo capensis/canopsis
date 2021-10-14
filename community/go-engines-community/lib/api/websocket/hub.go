@@ -26,6 +26,7 @@ const (
 	WMessageClientPong = iota
 	WMessageSuccess
 	WMessageFail
+	WMessageCloseRoom
 )
 
 const (
@@ -50,6 +51,7 @@ type Hub interface {
 	RegisterRoom(room string, perms ...string) error
 	// CloseRoom removes room.
 	CloseRoom(room string) error
+	CloseRoomAndNotify(room string) error
 	// RoomHasConnection returns true if room listens at least one connection.
 	RoomHasConnection(room string) bool
 }
@@ -218,6 +220,52 @@ func (h *hub) CloseRoom(room string) error {
 	delete(h.rooms, room)
 
 	return nil
+}
+
+func (h *hub) CloseRoomAndNotify(room string) error {
+	closedConns, err := h.closeRoomAndCheckConn(room)
+	if err != nil {
+		return err
+	}
+
+	h.closeConnections(closedConns...)
+
+	return nil
+}
+
+func (h *hub) closeRoomAndCheckConn(room string) ([]string, error) {
+	h.connsMx.RLock()
+	h.roomsMx.Lock(room)
+	defer func() {
+		h.roomsMx.Unlock(room)
+		h.connsMx.RUnlock()
+	}()
+
+	msg := WMessage{
+		Type: WMessageCloseRoom,
+		Room: room,
+	}
+
+	closedConns := make([]string, 0)
+	for _, connId := range h.rooms[room] {
+		conn := h.conns[connId].conn
+		err := conn.WriteJSON(msg)
+		if err != nil {
+			closedConns = append(closedConns, connId)
+			h.logger.Err(err).
+				Str("room", room).
+				Str("addr", conn.RemoteAddr().String()).
+				Msg("cannot write message to connection, connection will be closed")
+		}
+	}
+
+	err := h.authorizer.RemoveRoom(room)
+	if err != nil {
+		return nil, err
+	}
+	delete(h.rooms, room)
+
+	return closedConns, nil
 }
 
 func (h *hub) RoomHasConnection(room string) bool {
