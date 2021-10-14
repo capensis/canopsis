@@ -23,11 +23,9 @@ import unittest
 
 from canopsis.old.account import Account
 from canopsis.common import root_path
-import canopsis.auth.base as base
-import canopsis.auth.mock as mock
 import xmlrunner
 
-#TODO 21-09-2017
+# TODO 21-09-2017
 # class TestBaseBackend(TestCase):
 #     def mock_canopsis(self):
 #         base.check_root = mock.auth.mock_check_root

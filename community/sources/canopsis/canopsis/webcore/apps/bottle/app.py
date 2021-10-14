@@ -88,13 +88,6 @@ class OldApi():
         self.root_directory = os.path.expanduser(
             server.get('root_directory', DEFAULT_ROOT_DIR))
 
-        auth = self.config.get('auth', {})
-        self.providers = cfg_to_array(auth.get('providers', ''))
-        if len(self.providers) == 0:
-            self.logger.critical(
-                'Missing providers. Cannot launch webcore module.')
-            raise RuntimeError('Missing providers')
-
         session = self.config.get('session', {})
         self.secure_cookie = session.get('secure_cookie', 'false') == 'true'
         self.data_dir = os.path.expanduser(
