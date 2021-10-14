@@ -143,10 +143,7 @@ export default {
 
     socketErrorHandler({ message } = {}) {
       if (message) {
-        this.$popups.error({
-          text: message,
-          autoClose: false,
-        });
+        this.$popups.error({ text: message });
       }
     },
 
