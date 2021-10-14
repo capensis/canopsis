@@ -1,4 +1,4 @@
-import { mount, createVueInstance } from '@/unit/utils/vue';
+import { mount, createVueInstance } from '@unit/utils/vue';
 
 import CEnabledField from '@/components/forms/fields/c-enabled-field.vue';
 

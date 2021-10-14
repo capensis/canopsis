@@ -1,4 +1,4 @@
-import { mount, createVueInstance } from '@/unit/utils/vue';
+import { mount, createVueInstance } from '@unit/utils/vue';
 
 import CEnabled from '@/components/icons/c-enabled.vue';
 

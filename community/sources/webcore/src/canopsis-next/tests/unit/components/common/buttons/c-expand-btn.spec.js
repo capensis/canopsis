@@ -1,4 +1,4 @@
-import { mount, createVueInstance } from '@/unit/utils/vue';
+import { mount, createVueInstance } from '@unit/utils/vue';
 
 import CExpandBtn from '@/components/common/buttons/c-expand-btn.vue';
 
