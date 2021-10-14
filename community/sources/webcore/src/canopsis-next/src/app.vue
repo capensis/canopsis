@@ -128,7 +128,9 @@ export default {
 
     socketConnectWithErrorHandling() {
       try {
-        this.$socket.connect(SOCKET_URL);
+        this.$socket
+          .connect(SOCKET_URL)
+          .on('error', this.socketErrorHandler);
       } catch (err) {
         this.$popups.error({
           text: this.$t('errors.socketConnectionProblem'),
@@ -136,6 +138,15 @@ export default {
         });
 
         console.error(err);
+      }
+    },
+
+    socketErrorHandler({ message } = {}) {
+      if (message) {
+        this.$popups.error({
+          text: message,
+          autoClose: false,
+        });
       }
     },
 

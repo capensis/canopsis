@@ -2,7 +2,6 @@ class SocketRoom {
   constructor(name) {
     this.name = name;
     this.count = 1;
-    this.joined = false;
     this.listeners = [];
   }
 
@@ -59,14 +58,6 @@ class SocketRoom {
    */
   isEmpty() {
     return this.count <= 0;
-  }
-
-  markJoin() {
-    this.joined = true;
-  }
-
-  markLeave() {
-    this.joined = false;
   }
 
   /**

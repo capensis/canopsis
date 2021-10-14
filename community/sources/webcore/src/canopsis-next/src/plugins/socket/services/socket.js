@@ -5,7 +5,8 @@ import {
   RESPONSE_MESSAGES_TYPES,
   MAX_RECONNECTS_COUNT,
   PING_INTERVAL,
-  RECONNECT_INTERVAL, EVENTS_TYPES,
+  RECONNECT_INTERVAL,
+  EVENTS_TYPES,
 } from '../constants';
 
 import SocketRoom from './socket-room';
@@ -154,12 +155,10 @@ class Socket {
       this.rooms[room].increment();
     }
 
-    if (!this.rooms[room].joined) {
-      this.send({
-        room,
-        type: REQUEST_MESSAGES_TYPES.join,
-      });
-    }
+    this.send({
+      room,
+      type: REQUEST_MESSAGES_TYPES.join,
+    });
 
     return this.rooms[room];
   }
@@ -181,12 +180,10 @@ class Socket {
       }
     }
 
-    if (socketRoom?.joined) {
-      this.send({
-        room,
-        type: REQUEST_MESSAGES_TYPES.leave,
-      });
-    }
+    this.send({
+      room,
+      type: REQUEST_MESSAGES_TYPES.leave,
+    });
 
     return socketRoom ?? new SocketRoom(room);
   }
@@ -317,35 +314,37 @@ class Socket {
    * @param {string} data
    */
   baseMessageHandler({ data }) {
-    try {
-      const { type, room, msg, error } = JSON.parse(data);
+    const { type, room, msg, error } = JSON.parse(data);
 
-      if (error) {
-        throw error;
-      }
+    if (type === RESPONSE_MESSAGES_TYPES.error) {
+      const event = new ErrorEvent('error', { message: error });
 
-      if (type === RESPONSE_MESSAGES_TYPES.pong) {
+      this.connection.dispatchEvent(event);
+      return;
+    }
+
+    if (type === RESPONSE_MESSAGES_TYPES.pong) {
+      this.lastPongedAt = Date.now();
+      return;
+    }
+
+    switch (type) {
+      case RESPONSE_MESSAGES_TYPES.pong:
         this.lastPongedAt = Date.now();
-        return;
-      }
-
-      const socketRoom = this.rooms[room];
-
-      if (!socketRoom) {
-        return;
-      }
-
-      if (type === RESPONSE_MESSAGES_TYPES.ok) {
-        if (msg) {
-          socketRoom.call(null, msg);
-        } else {
-          socketRoom.markJoin();
-        }
-      } else if (type === RESPONSE_MESSAGES_TYPES.close) {
-        socketRoom.markLeave();
-      }
-    } catch (err) {
-      console.error(err);
+        break;
+      case RESPONSE_MESSAGES_TYPES.ok:
+        // eslint-disable-next-line no-unused-expressions
+        this.rooms[room]?.call(null, msg);
+        break;
+      case RESPONSE_MESSAGES_TYPES.error:
+        this.connection.dispatchEvent(
+          new ErrorEvent('error', { message: error }),
+        );
+        break;
+      default:
+        this.connection.dispatchEvent(
+          new ErrorEvent('error', { message: 'Unknown message type' }),
+        );
     }
   }
 
