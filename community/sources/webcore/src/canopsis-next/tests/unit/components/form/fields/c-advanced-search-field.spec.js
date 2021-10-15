@@ -6,14 +6,12 @@ import CAdvancedSearchField from '@/components/forms/fields/c-advanced-search-fi
 
 const localVue = createVueInstance();
 
-const fakeTooltipText = Faker.lorem.words();
-
 const mockData = {
   search: Faker.lorem.words(),
-  tooltipText: fakeTooltipText,
+  tooltipText: Faker.lorem.words(),
   column: {
-    text: Faker.lorem.word(),
-    value: Faker.lorem.word(),
+    text: 'Column label',
+    value: 'column.value',
   },
   field: Faker.lorem.word(),
 };
