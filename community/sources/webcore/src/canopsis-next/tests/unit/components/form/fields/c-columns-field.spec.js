@@ -80,6 +80,13 @@ const stubs = {
   },
 };
 
+const snapshotStubs = {
+  'c-color-indicator-field': true,
+  'v-text-field': {
+    template: '<input class="v-text-field" />',
+  },
+};
+
 const factory = (options = {}) => mount(CColumnsField, {
   localVue,
   stubs,
@@ -436,7 +443,7 @@ describe('c-columns-field', () => {
   it('Renders `c-columns-field` with default props correctly', () => {
     const wrapper = mount(CColumnsField, {
       localVue,
-      stubs: ['c-color-indicator-field'],
+      stubs: snapshotStubs,
     });
 
     expect(wrapper.element).toMatchSnapshot();
@@ -445,7 +452,7 @@ describe('c-columns-field', () => {
   it('Renders `c-columns-field` with default props correctly', () => {
     const wrapper = mount(CColumnsField, {
       localVue,
-      stubs: ['c-color-indicator-field'],
+      stubs: snapshotStubs,
     });
 
     expect(wrapper.element).toMatchSnapshot();
@@ -457,7 +464,7 @@ describe('c-columns-field', () => {
       provide: {
         $validator: new Validator(),
       },
-      stubs: ['c-color-indicator-field'],
+      stubs: snapshotStubs,
       propsData: {
         columns: [
           mockData.defaultColumn,
@@ -478,7 +485,7 @@ describe('c-columns-field', () => {
       provide: {
         $validator: new Validator(),
       },
-      stubs: ['c-color-indicator-field'],
+      stubs: snapshotStubs,
       propsData: {
         columns: [
           mockData.defaultColumn,
@@ -528,7 +535,7 @@ describe('c-columns-field', () => {
       provide: {
         $validator: validator,
       },
-      stubs: ['c-color-indicator-field'],
+      stubs: snapshotStubs,
       propsData: {
         columns,
         withColorIndicator: true,
