@@ -293,6 +293,11 @@ export default {
       }
     },
 
+    /**
+     * File size validator
+     *
+     * @param {File} file
+     */
     uploaderFileValidator(file) {
       if (!this.maxFileSize) {
         return;
