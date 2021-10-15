@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state value correctly 1`] = `
+<v-radio-group-stub
+  backgroundcolor=""
+  column="true"
+  errorcount="1"
+  errormessages=""
+  height="auto"
+  mandatory="true"
+  messages=""
+  rules=""
+  successmessages=""
+  value="state"
+  valuecomparator="[Function]"
+>
+  <v-radio-stub
+    color="primary"
+    label="settings.colorIndicator.fields.displayAsSeverity"
+    officon="$vuetify.icons.radioOff"
+    onicon="$vuetify.icons.radioOn"
+    ripple="true"
+    value="state"
+  />
+  <v-radio-stub
+    color="primary"
+    label="settings.colorIndicator.fields.displayAsPriority"
+    officon="$vuetify.icons.radioOff"
+    onicon="$vuetify.icons.radioOn"
+    ripple="true"
+    value="impact_state"
+  />
+</v-radio-group-stub>
+`;
+
+exports[`c-color-indicator-field Renders \`c-enabled-field\` with impact state value correctly 1`] = `
+<v-radio-group-stub
+  backgroundcolor=""
+  column="true"
+  errorcount="1"
+  errormessages=""
+  height="auto"
+  mandatory="true"
+  messages=""
+  rules=""
+  successmessages=""
+  value="impact_state"
+  valuecomparator="[Function]"
+>
+  <v-radio-stub
+    color="primary"
+    label="settings.colorIndicator.fields.displayAsSeverity"
+    officon="$vuetify.icons.radioOff"
+    onicon="$vuetify.icons.radioOn"
+    ripple="true"
+    value="state"
+  />
+  <v-radio-stub
+    color="primary"
+    label="settings.colorIndicator.fields.displayAsPriority"
+    officon="$vuetify.icons.radioOff"
+    onicon="$vuetify.icons.radioOn"
+    ripple="true"
+    value="impact_state"
+  />
+</v-radio-group-stub>
+`;

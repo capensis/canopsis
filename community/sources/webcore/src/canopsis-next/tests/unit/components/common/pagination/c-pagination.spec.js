@@ -1,17 +1,10 @@
 import Faker from 'faker';
 
 import { mount, createVueInstance } from '@unit/utils/vue';
-import { PAGINATION_TOTAL_VISIBLE } from '@/config';
 
 import CPagination from '@/components/common/pagination/c-pagination.vue';
 
 const localVue = createVueInstance();
-
-const mocks = {
-  $config: {
-    PAGINATION_TOTAL_VISIBLE,
-  },
-};
 
 const stubs = {
   'v-pagination': {
@@ -24,7 +17,6 @@ const stubs = {
 const factory = (options = {}) => mount(CPagination, {
   localVue,
   stubs,
-  mocks,
   ...options,
 });
 
@@ -97,7 +89,6 @@ describe('c-pagination', () => {
   it('Renders `c-pagination` with default props correctly', () => {
     const wrapper = mount(CPagination, {
       localVue,
-      mocks,
       propsData: { total: 1 },
     });
 
@@ -107,7 +98,6 @@ describe('c-pagination', () => {
   it('Renders `c-pagination` with default props correctly', () => {
     const wrapper = mount(CPagination, {
       localVue,
-      mocks,
       propsData: { total: 1 },
     });
 
@@ -117,7 +107,6 @@ describe('c-pagination', () => {
   it('Renders `c-pagination` on the top with disabled prev button correctly', () => {
     const wrapper = mount(CPagination, {
       localVue,
-      mocks,
       propsData: { page: 1, total: 2, limit: 1, type: 'top' },
     });
 
@@ -127,7 +116,6 @@ describe('c-pagination', () => {
   it('Renders `c-pagination` on the top with disabled next button correctly', () => {
     const wrapper = mount(CPagination, {
       localVue,
-      mocks,
       propsData: { page: 2, total: 2, limit: 1, type: 'top' },
     });
 
@@ -137,7 +125,6 @@ describe('c-pagination', () => {
   it('Renders `c-pagination` on the top with disabled buttons correctly', () => {
     const wrapper = mount(CPagination, {
       localVue,
-      mocks,
       propsData: { page: 1, total: 1, limit: 1, type: 'top' },
     });
 
@@ -147,7 +134,6 @@ describe('c-pagination', () => {
   it('Renders `c-pagination` with default props on the top correctly', () => {
     const wrapper = mount(CPagination, {
       localVue,
-      mocks,
       propsData: { total: 1, type: 'top' },
     });
 
@@ -157,7 +143,6 @@ describe('c-pagination', () => {
   it('Renders `c-pagination` on the bottom correctly', () => {
     const wrapper = mount(CPagination, {
       localVue,
-      mocks,
       propsData: { page: 3, total: 100 },
     });
 
@@ -167,7 +152,6 @@ describe('c-pagination', () => {
   it('Renders `c-pagination` on the top correctly', () => {
     const wrapper = mount(CPagination, {
       localVue,
-      mocks,
       propsData: { page: 3, total: 100, type: 'top' },
     });
 

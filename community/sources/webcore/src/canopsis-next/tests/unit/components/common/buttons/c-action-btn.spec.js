@@ -1,17 +1,10 @@
 import Faker from 'faker';
 
 import { mount, createVueInstance } from '@unit/utils/vue';
-import { PAGINATION_TOTAL_VISIBLE } from '@/config';
 
 import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
 
 const localVue = createVueInstance();
-
-const mocks = {
-  $config: {
-    PAGINATION_TOTAL_VISIBLE,
-  },
-};
 
 const stubs = {
   'v-btn': {
@@ -29,7 +22,6 @@ const stubs = {
 const factory = (options = {}) => mount(CActionBtn, {
   localVue,
   stubs,
-  mocks,
   ...options,
 });
 
@@ -121,7 +113,6 @@ describe('c-action-btn', () => {
   it('Renders `c-action-btn` with default edit type correctly.', () => {
     const wrapper = mount(CActionBtn, {
       localVue,
-      mocks,
       propsData: { type: 'edit' },
     });
 
@@ -131,7 +122,6 @@ describe('c-action-btn', () => {
   it('Renders `c-action-btn` with default edit type correctly.', () => {
     const wrapper = mount(CActionBtn, {
       localVue,
-      mocks,
       propsData: { type: 'duplicate' },
     });
 
@@ -141,7 +131,6 @@ describe('c-action-btn', () => {
   it('Renders `c-action-btn` with default edit type correctly.', () => {
     const wrapper = mount(CActionBtn, {
       localVue,
-      mocks,
       propsData: { type: 'delete' },
     });
 
@@ -151,7 +140,6 @@ describe('c-action-btn', () => {
   it('Renders `c-action-btn` with custom type correctly.', () => {
     const wrapper = mount(CActionBtn, {
       localVue,
-      mocks,
       propsData: { icon: 'test_icon', color: 'color', tooltip: 'tooltip' },
     });
 
