@@ -31,8 +31,7 @@ type GlobalConf struct {
 }
 
 type RemediationConf struct {
-	PauseManualInstructionInterval types.DurationWithUnit `json:"pause_manual_instruction_interval"`
-	JobConfigTypes                 []JobConfigType        `json:"job_config_types"`
+	JobConfigTypes []JobConfigType `json:"job_config_types"`
 }
 
 type JobConfigType struct {

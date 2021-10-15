@@ -6185,44 +6185,6 @@ var doc = `{
                 }
             }
         },
-        "/sessions-count": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Get counts of active sessions",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Get counts of active sessions",
-                "operationId": "auth-get-session-counts",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/sessionauth.sessionsCountResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/state-settings": {
             "get": {
                 "security": [
@@ -8362,10 +8324,6 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/appinfo.JobConfigType"
                     }
-                },
-                "pause_manual_instruction_interval": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.DurationWithUnit"
                 }
             }
         },
@@ -11537,14 +11495,6 @@ var doc = `{
                 },
                 "links": {
                     "type": "object"
-                }
-            }
-        },
-        "sessionauth.sessionsCountResponse": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
                 }
             }
         },
