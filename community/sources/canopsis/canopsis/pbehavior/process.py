@@ -33,7 +33,6 @@ from canopsis.task.core import register_task
 from canopsis.models.pbehavior import PBehavior as PBehaviorModel
 from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
 from canopsis.watcher.manager import Watcher
-from canopsis.engines.core import DROP
 import timeit
 
 
@@ -72,6 +71,7 @@ def init_managers():
     pb_manager = singleton_per_scope(PBehaviorManager, kwargs=pb_kwargs)
 
     return pb_manager
+
 
 _pb_manager = init_managers()
 
@@ -186,7 +186,8 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
                     watcher_manager.compute_watchers()
 
             else:
-                logger.error(ERROR_MSG.format(event.get('action', 'no_action'), event))
+                logger.error(ERROR_MSG.format(
+                    event.get('action', 'no_action'), event))
 
         except ValueError as err:
 
@@ -207,9 +208,11 @@ def beat_processing(engine, pbm=_pb_manager, **kwargs):
         start = timeit.default_timer()
         pbm.compute_pbehaviors_filters()
         end_compute = timeit.default_timer()
-        engine.logger.info("compute_pbehaviors_filters took %.2f seconds" % (end_compute - start))
+        engine.logger.info(
+            "compute_pbehaviors_filters took %.2f seconds" % (end_compute - start))
         pbm.send_pbehavior_event()
-        engine.logger.info("send_pbehavior_event took %.2f seconds" % (timeit.default_timer() - end_compute))
+        engine.logger.info("send_pbehavior_event took %.2f seconds" %
+                           (timeit.default_timer() - end_compute))
         pbm.launch_update_watcher(watcher_manager)
     except Exception as ex:
         engine.logger.exception('Processing error {}'.format(str(ex)))
