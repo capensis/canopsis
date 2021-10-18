@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import CAdvancedSearchField from '@/components/forms/fields/c-advanced-search-field.vue';
 
@@ -43,7 +43,7 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => mount(CAdvancedSearchField, {
+const factory = (options = {}) => shallowMount(CAdvancedSearchField, {
   localVue,
   stubs,
   ...options,
@@ -209,7 +209,7 @@ describe('c-advanced-search-field', () => {
     const tooltip = `
       <span>Tooltip content</span>
     `;
-    const wrapper = mount(CAdvancedSearchField, {
+    const wrapper = shallowMount(CAdvancedSearchField, {
       localVue,
       stubs: ['c-search-field'],
       propsData: {

@@ -1299,22 +1299,6 @@ exports[`c-columns-field Renders \`c-columns-field\` with default props correctl
 </v-container-stub>
 `;
 
-exports[`c-columns-field Renders \`c-columns-field\` with default props correctly 2`] = `
-<v-container-stub
-  tag="div"
->
-  <v-btn-stub
-    activeclass="v-btn--active"
-    class="ml-0"
-    color="primary"
-    tag="button"
-    type="button"
-  >
-    common.add
-  </v-btn-stub>
-</v-container-stub>
-`;
-
 exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] = `
 <v-container-stub
   tag="div"

@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import CTablePagination from '@/components/common/pagination/c-table-pagination.vue';
 
@@ -26,7 +26,7 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => mount(CTablePagination, {
+const factory = (options = {}) => shallowMount(CTablePagination, {
   localVue,
   stubs,
   ...options,
@@ -69,7 +69,7 @@ describe('c-table-pagination', () => {
   });
 
   it('Renders `c-table-pagination` correctly', () => {
-    const wrapper = mount(CTablePagination, {
+    const wrapper = shallowMount(CTablePagination, {
       localVue,
       propsData: { page: 3, rowsPerPage: 10, totalItems: 100 },
     });

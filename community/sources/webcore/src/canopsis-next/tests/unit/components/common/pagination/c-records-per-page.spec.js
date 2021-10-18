@@ -1,4 +1,4 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
 
@@ -17,7 +17,7 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => mount(CRecordsPerPage, {
+const factory = (options = {}) => shallowMount(CRecordsPerPage, {
   localVue,
   stubs,
   ...options,
@@ -91,7 +91,7 @@ describe('c-records-per-page', () => {
   });
 
   it('Renders `c-records-per-page` correctly', () => {
-    const wrapper = mount(CRecordsPerPage, {
+    const wrapper = shallowMount(CRecordsPerPage, {
       localVue,
     });
 

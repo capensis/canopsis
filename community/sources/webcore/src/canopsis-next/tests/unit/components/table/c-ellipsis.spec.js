@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import CEllipsis from '@/components/common/table/c-ellipsis.vue';
 
@@ -14,7 +14,7 @@ const mockData = {
   maxLetters: Faker.datatype.number(),
 };
 
-const factory = (options = {}) => mount(CEllipsis, { localVue, ...options });
+const factory = (options = {}) => shallowMount(CEllipsis, { localVue, ...options });
 
 describe('c-ellipsis', () => {
   it('Text letters count less then default max letters', () => {
@@ -103,7 +103,7 @@ describe('c-ellipsis', () => {
       magnam nulla et consequatur facere sint nam facere sunt aut alias qui omnis rerum corporis totam quibusdam
       nostrum mollitia quia vel amet pariatur eveniet explicabo quia ullam`;
 
-    const wrapper = mount(CEllipsis, {
+    const wrapper = shallowMount(CEllipsis, {
       localVue,
       propsData: { text },
     });

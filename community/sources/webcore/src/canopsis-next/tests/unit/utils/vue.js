@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import { merge } from 'lodash';
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
 
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ValidatorPlugin from '@/plugins/validator';
@@ -30,7 +30,7 @@ const mocks = {
 export const createVueInstance = () => createLocalVue();
 
 /**
- * Function for mount vue component with mocked i18n
+ * Function for mount vue component with mocked i18n, constants and config.
  *
  * @param {Object} component
  * @param {Object} options
@@ -41,7 +41,25 @@ export const mount = (component, options = {}) => {
     jest.clearAllMocks();
   });
 
-  return shallowMount(
+  return testUtilsMount(
+    component,
+    merge(options, { mocks }),
+  );
+};
+
+/**
+ * Function for shallow mount vue component with mocked i18n, constants and config.
+ *
+ * @param {Object} component
+ * @param {Object} options
+ * @return {Wrapper<Vue>}
+ */
+export const shallowMount = (component, options = {}) => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  return testUtilsShallowMount(
     component,
     merge(options, { mocks }),
   );
