@@ -39,6 +39,7 @@ const stubs = {
       />
     `,
   },
+  'c-array-mixed-field': true,
 };
 
 const snapshotStubs = {
@@ -61,6 +62,9 @@ const snapshotStubs = {
 const factory = (options = {}) => shallowMount(CMixedField, {
   localVue,
   stubs,
+  provide: {
+    $validator: new Validator(),
+  },
   ...options,
 });
 
@@ -68,9 +72,6 @@ describe('c-mixed-field', () => {
   it('Value set into select', () => {
     const value = Faker.datatype.number();
     const wrapper = factory({
-      provide: {
-        $validator: new Validator(),
-      },
       propsData: {
         value,
       },
@@ -84,9 +85,6 @@ describe('c-mixed-field', () => {
   it('Value changed after change the type select to string', () => {
     const value = Faker.datatype.number();
     const wrapper = factory({
-      provide: {
-        $validator: new Validator(),
-      },
       propsData: {
         value,
       },
@@ -105,9 +103,6 @@ describe('c-mixed-field', () => {
   it('Value changed after change the type select to number', () => {
     const number = Faker.datatype.number();
     const wrapper = factory({
-      provide: {
-        $validator: new Validator(),
-      },
       propsData: {
         value: `${number}`,
       },
@@ -125,9 +120,6 @@ describe('c-mixed-field', () => {
 
   it('Value changed after change the type select to boolean', () => {
     const wrapper = factory({
-      provide: {
-        $validator: new Validator(),
-      },
       propsData: {
         value: Faker.datatype.string(),
       },
@@ -145,9 +137,6 @@ describe('c-mixed-field', () => {
 
   it('Value changed after change the type select to null', () => {
     const wrapper = factory({
-      provide: {
-        $validator: new Validator(),
-      },
       propsData: {
         value: Faker.datatype.string(),
       },
@@ -166,9 +155,6 @@ describe('c-mixed-field', () => {
   it('Value changed after change the type select to array', () => {
     const value = Faker.datatype.string();
     const wrapper = factory({
-      provide: {
-        $validator: new Validator(),
-      },
       propsData: {
         value,
       },
@@ -184,12 +170,9 @@ describe('c-mixed-field', () => {
     expect(inputEventData).toEqual([value]);
   });
 
-  it('Value changed on the first type after remove selected type', async () => {
+  it('Value changed on the first field after remove selected type', async () => {
     const value = Faker.datatype.number();
     const wrapper = factory({
-      provide: {
-        $validator: new Validator(),
-      },
       propsData: {
         value,
         types: [
@@ -217,9 +200,6 @@ describe('c-mixed-field', () => {
   it('Value change on undefined after remove all types', async () => {
     const value = Faker.datatype.number();
     const wrapper = factory({
-      provide: {
-        $validator: new Validator(),
-      },
       propsData: {
         value,
         types: [
@@ -243,9 +223,6 @@ describe('c-mixed-field', () => {
 
   it('Value changed to empty string after trigger the input with null value', () => {
     const wrapper = factory({
-      provide: {
-        $validator: new Validator(),
-      },
       propsData: {
         value: 'Value',
       },
@@ -264,9 +241,6 @@ describe('c-mixed-field', () => {
   it('Value changed after trigger the input with number value', () => {
     const newNumber = Faker.datatype.number();
     const wrapper = factory({
-      provide: {
-        $validator: new Validator(),
-      },
       propsData: {
         value: 12,
       },
@@ -282,15 +256,30 @@ describe('c-mixed-field', () => {
     expect(inputEventData).toEqual(newNumber);
   });
 
+  it('Value changed after trigger the mixed field with array value', () => {
+    const newValue = Faker.datatype.array();
+    const wrapper = factory({
+      propsData: {
+        value: [],
+      },
+    });
+    const arrayMixedFieldElement = wrapper.find('c-array-mixed-field-stub');
+
+    arrayMixedFieldElement.vm.$emit('change', newValue);
+
+    const inputEvents = wrapper.emitted('input');
+    expect(inputEvents).toHaveLength(1);
+
+    const [inputEventData] = inputEvents[0];
+    expect(inputEventData).toEqual(newValue);
+  });
+
   it('Value changed after trigger the select with items', () => {
     const item = {
       text: Faker.datatype.string(),
       value: Faker.datatype.string(),
     };
     const wrapper = factory({
-      provide: {
-        $validator: new Validator(),
-      },
       propsData: {
         value: '',
         items: [item],
@@ -311,6 +300,7 @@ describe('c-mixed-field', () => {
     const name = Faker.datatype.string();
     const value = Faker.datatype.string();
     const validator = new Validator();
+
     mount({
       inject: ['$validator'],
       components: {

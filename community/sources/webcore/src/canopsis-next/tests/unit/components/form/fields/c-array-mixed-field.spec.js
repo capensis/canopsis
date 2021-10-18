@@ -13,7 +13,6 @@ const mockData = {
 };
 
 const stubs = {
-  'c-mixed-field': true,
   'c-action-btn': {
     template: `
       <button class="c-action-btn" @click="$listeners.click" />
@@ -24,6 +23,16 @@ const stubs = {
       <button class="v-btn" @click="$listeners.click" >
         <slot></slot>
       </button>
+    `,
+  },
+  'c-mixed-field': {
+    props: ['value'],
+    template: `
+      <input
+        :value="value"
+        class="c-mixed-field"
+        @input="$listeners.input($event.target.value)"
+      />
     `,
   },
 };
@@ -51,7 +60,6 @@ describe('c-array-mixed-field', () => {
     addButtonElement.trigger('click');
 
     const changeEvents = wrapper.emitted('change');
-
     expect(changeEvents).toHaveLength(1);
 
     const [newFieldsData] = changeEvents[0];
@@ -59,6 +67,26 @@ describe('c-array-mixed-field', () => {
 
     expect(oldValue).toEqual(mockData.string);
     expect(newValue).toEqual('');
+  });
+
+  it('Value changed after trigger mixed field', () => {
+    const newFieldValue = Faker.datatype.string();
+    const wrapper = factory({
+      propsData: {
+        values: [mockData.string, mockData.number],
+      },
+    });
+    const secondFieldElement = wrapper.findAll('v-layout-stub').at(0);
+    const mixedFieldElement = secondFieldElement.find('input.c-mixed-field');
+
+    mixedFieldElement.setValue(newFieldValue);
+
+    const changeEvents = wrapper.emitted('change');
+    expect(changeEvents).toHaveLength(1);
+
+    const [newFieldsData] = changeEvents[0];
+
+    expect(newFieldsData).toEqual([newFieldValue, mockData.number]);
   });
 
   it('Field removed after click on remove button', () => {
@@ -73,7 +101,6 @@ describe('c-array-mixed-field', () => {
     removeButtonElement.trigger('click');
 
     const changeEvents = wrapper.emitted('change');
-
     expect(changeEvents).toHaveLength(1);
 
     const [newFieldsData] = changeEvents[0];
