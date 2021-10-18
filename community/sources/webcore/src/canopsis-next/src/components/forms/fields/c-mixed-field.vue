@@ -123,7 +123,9 @@ export default {
 
       if (isNull(this.value)) {
         return FILTER_INPUT_TYPES.null;
-      } if (isArray(this.value)) {
+      }
+
+      if (isArray(this.value)) {
         return FILTER_INPUT_TYPES.array;
       }
 
@@ -182,7 +184,9 @@ export default {
             change: this.updateModel,
           },
         };
-      } if (this.inputType === FILTER_INPUT_TYPES.array) {
+      }
+
+      if (this.inputType === FILTER_INPUT_TYPES.array) {
         return {
           is: 'c-array-mixed-field',
 
@@ -213,7 +217,7 @@ export default {
   watch: {
     types: {
       immediate: true,
-      handler(types = []) {
+      handler(types) {
         if (!types.some(({ value }) => value === this.inputType)) {
           const [type = {}] = types;
 
@@ -254,6 +258,8 @@ export default {
         case FILTER_INPUT_TYPES.array:
           this.updateModel([preparedValue]);
           break;
+        default:
+          this.updateModel(undefined);
       }
     },
 

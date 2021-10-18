@@ -1,4 +1,4 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { shallowMount, createVueInstance } from '@unit/utils/vue';
 import { stubDateNow } from '@unit/utils/stub-hooks';
 
 import CNoEventsIcon from '@/components/common/icons/c-no-events-icon.vue';
@@ -14,13 +14,13 @@ describe('c-no-events-icon', () => {
   stubDateNow(mockData.secondTimestamp);
 
   it('Renders `c-no-events-icon` with default props correctly', () => {
-    const wrapper = mount(CNoEventsIcon, { localVue });
+    const wrapper = shallowMount(CNoEventsIcon, { localVue });
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `c-no-events-icon` with value correctly', () => {
-    const wrapper = mount(CNoEventsIcon, {
+    const wrapper = shallowMount(CNoEventsIcon, {
       localVue,
       propsData: {
         value: mockData.firstTimestamp,
@@ -31,7 +31,7 @@ describe('c-no-events-icon', () => {
   });
 
   it('Renders `c-no-events-icon` with custom props correctly', () => {
-    const wrapper = mount(CNoEventsIcon, {
+    const wrapper = shallowMount(CNoEventsIcon, {
       localVue,
       propsData: {
         value: mockData.firstTimestamp,

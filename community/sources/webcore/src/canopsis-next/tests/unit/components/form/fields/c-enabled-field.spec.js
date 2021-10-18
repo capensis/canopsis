@@ -1,4 +1,4 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import CEnabledField from '@/components/forms/fields/c-enabled-field.vue';
 
@@ -13,7 +13,7 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => mount(CEnabledField, {
+const factory = (options = {}) => shallowMount(CEnabledField, {
   localVue,
   stubs,
   ...options,
@@ -40,7 +40,7 @@ describe('c-enabled-field', () => {
   });
 
   it('Renders `c-enabled-field` with default props correctly', () => {
-    const wrapper = mount(CEnabledField, {
+    const wrapper = shallowMount(CEnabledField, {
       localVue,
     });
 
@@ -48,7 +48,7 @@ describe('c-enabled-field', () => {
   });
 
   it('Renders `c-enabled-field` with custom props correctly', () => {
-    const wrapper = mount(CEnabledField, {
+    const wrapper = shallowMount(CEnabledField, {
       localVue,
       propsData: {
         value: false,

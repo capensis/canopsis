@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
 
@@ -19,7 +19,7 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => mount(CActionBtn, {
+const factory = (options = {}) => shallowMount(CActionBtn, {
   localVue,
   stubs,
   ...options,
@@ -111,7 +111,7 @@ describe('c-action-btn', () => {
   });
 
   it('Renders `c-action-btn` with default edit type correctly.', () => {
-    const wrapper = mount(CActionBtn, {
+    const wrapper = shallowMount(CActionBtn, {
       localVue,
       propsData: { type: 'edit' },
     });
@@ -120,7 +120,7 @@ describe('c-action-btn', () => {
   });
 
   it('Renders `c-action-btn` with default edit type correctly.', () => {
-    const wrapper = mount(CActionBtn, {
+    const wrapper = shallowMount(CActionBtn, {
       localVue,
       propsData: { type: 'duplicate' },
     });
@@ -129,7 +129,7 @@ describe('c-action-btn', () => {
   });
 
   it('Renders `c-action-btn` with default edit type correctly.', () => {
-    const wrapper = mount(CActionBtn, {
+    const wrapper = shallowMount(CActionBtn, {
       localVue,
       propsData: { type: 'delete' },
     });
@@ -138,7 +138,7 @@ describe('c-action-btn', () => {
   });
 
   it('Renders `c-action-btn` with custom type correctly.', () => {
-    const wrapper = mount(CActionBtn, {
+    const wrapper = shallowMount(CActionBtn, {
       localVue,
       propsData: { icon: 'test_icon', color: 'color', tooltip: 'tooltip' },
     });

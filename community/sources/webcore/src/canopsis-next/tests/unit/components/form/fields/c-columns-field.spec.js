@@ -1,7 +1,7 @@
 import Faker from 'faker';
 import { Validator } from 'vee-validate';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
@@ -87,7 +87,7 @@ const snapshotStubs = {
   },
 };
 
-const factory = (options = {}) => mount(CColumnsField, {
+const factory = (options = {}) => shallowMount(CColumnsField, {
   localVue,
   stubs,
   ...options,
@@ -441,16 +441,7 @@ describe('c-columns-field', () => {
   });
 
   it('Renders `c-columns-field` with default props correctly', () => {
-    const wrapper = mount(CColumnsField, {
-      localVue,
-      stubs: snapshotStubs,
-    });
-
-    expect(wrapper.element).toMatchSnapshot();
-  });
-
-  it('Renders `c-columns-field` with default props correctly', () => {
-    const wrapper = mount(CColumnsField, {
+    const wrapper = shallowMount(CColumnsField, {
       localVue,
       stubs: snapshotStubs,
     });
@@ -459,7 +450,7 @@ describe('c-columns-field', () => {
   });
 
   it('Renders `c-columns-field` with all columns type correctly', () => {
-    const wrapper = mount(CColumnsField, {
+    const wrapper = shallowMount(CColumnsField, {
       localVue,
       provide: {
         $validator: new Validator(),
@@ -480,7 +471,7 @@ describe('c-columns-field', () => {
   });
 
   it('Renders `c-columns-field` with custom props correctly', () => {
-    const wrapper = mount(CColumnsField, {
+    const wrapper = shallowMount(CColumnsField, {
       localVue,
       provide: {
         $validator: new Validator(),
@@ -530,7 +521,7 @@ describe('c-columns-field', () => {
       },
     ]);
 
-    const wrapper = mount(CColumnsField, {
+    const wrapper = shallowMount(CColumnsField, {
       localVue,
       provide: {
         $validator: validator,

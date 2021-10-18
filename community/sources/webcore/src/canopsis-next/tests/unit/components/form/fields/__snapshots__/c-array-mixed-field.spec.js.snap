@@ -1,0 +1,139 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field types correctly 1`] = `
+<div>
+  <v-layout-stub
+    tag="div"
+  >
+    <v-flex-stub
+      tag="div"
+    >
+      <c-mixed-field-stub
+        value="string"
+      />
+    </v-flex-stub>
+    <c-action-btn-stub
+      type="delete"
+    />
+  </v-layout-stub>
+  <v-layout-stub
+    tag="div"
+  >
+    <v-flex-stub
+      tag="div"
+    >
+      <c-mixed-field-stub
+        value="123"
+      />
+    </v-flex-stub>
+    <c-action-btn-stub
+      type="delete"
+    />
+  </v-layout-stub>
+  <v-layout-stub
+    tag="div"
+  >
+    <v-flex-stub
+      tag="div"
+    >
+      <c-mixed-field-stub />
+    </v-flex-stub>
+    <c-action-btn-stub
+      type="delete"
+    />
+  </v-layout-stub>
+  <v-layout-stub
+    tag="div"
+  >
+    <v-flex-stub
+      tag="div"
+    >
+      <c-mixed-field-stub />
+    </v-flex-stub>
+    <c-action-btn-stub
+      type="delete"
+    />
+  </v-layout-stub>
+  <v-layout-stub
+    tag="div"
+  >
+    <v-flex-stub
+      tag="div"
+    >
+      <c-mixed-field-stub
+        value=",string,123"
+      />
+    </v-flex-stub>
+    <c-action-btn-stub
+      type="delete"
+    />
+  </v-layout-stub>
+  <v-btn-stub
+    activeclass="v-btn--active"
+    class="mx-0"
+    color="primary"
+    outline="true"
+    tag="button"
+    type="button"
+  >
+    common.add
+  </v-btn-stub>
+</div>
+`;
+
+exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with default props correctly 1`] = `
+<div>
+  <v-btn-stub
+    activeclass="v-btn--active"
+    class="mx-0"
+    color="primary"
+    outline="true"
+    tag="button"
+    type="button"
+  >
+    common.add
+  </v-btn-stub>
+</div>
+`;
+
+exports[`c-array-mixed-field Renders disabled \`c-array-mixed-field\` correctly 1`] = `
+<div>
+  <v-layout-stub
+    tag="div"
+  >
+    <v-flex-stub
+      tag="div"
+    >
+      <c-mixed-field-stub
+        disabled="true"
+        value="string"
+      />
+    </v-flex-stub>
+    <!---->
+  </v-layout-stub>
+  <v-layout-stub
+    tag="div"
+  >
+    <v-flex-stub
+      tag="div"
+    >
+      <c-mixed-field-stub
+        disabled="true"
+        value="123"
+      />
+    </v-flex-stub>
+    <!---->
+  </v-layout-stub>
+  <v-btn-stub
+    activeclass="v-btn--active"
+    class="mx-0"
+    color="primary"
+    disabled="true"
+    outline="true"
+    tag="button"
+    type="button"
+  >
+    common.add
+  </v-btn-stub>
+</div>
+`;
