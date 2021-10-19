@@ -1,14 +1,11 @@
 # Args defined here are only available to from commands
 # See https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG ALPINE_VERSION
+ARG ALPINE_BUILD_VERSION
 ARG GOLANG_VERSION
 
-# Upgrade alpine
-FROM alpine:${ALPINE_VERSION} AS alpine_updated
-RUN apk upgrade --no-cache
-
 # Build the engines
-FROM golang:${GOLANG_VERSION}-alpine${ALPINE_VERSION} AS builder
+FROM golang:${GOLANG_VERSION}-alpine${ALPINE_BUILD_VERSION} AS builder
 RUN apk add --no-cache make git gcc build-base g++ coreutils php
 
 ARG CANOPSIS_EDITION
@@ -25,7 +22,7 @@ RUN make canopsis.toml
 RUN make build
 
 # Create the final container
-FROM alpine_updated AS final_container
+FROM alpine:${ALPINE_VERSION} AS final_container
 ARG CANOPSIS_EDITION
 
 RUN adduser -D canopsis
