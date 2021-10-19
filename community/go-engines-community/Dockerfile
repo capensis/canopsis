@@ -15,7 +15,9 @@ COPY community/go-engines-community/go.mod /monorepo/community/go-engines-commun
 COPY community/go-engines-community/go.sum /monorepo/community/go-engines-community/go.sum
 COPY ${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.mod /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.mod
 COPY ${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.sum /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.sum
-RUN go mod download
+COPY community/go-engines-community/Makefile /monorepo/community/go-engines-community/Makefile
+COPY ${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/Makefile /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/Makefile
+RUN make deps
 
 COPY . /monorepo
 RUN make canopsis.toml

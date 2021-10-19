@@ -62,7 +62,7 @@ DOCKER_GOLANG_VERSION = 1.17.1
 DOCKERFILE_PATH = $(dir $(CURRENT_MAKEFILE))Dockerfile
 DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
-.PHONY: build docker_images
+.PHONY: deps build docker_images
 build: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
 docker_images: $(DOCKER_TARGETS)
 
@@ -70,11 +70,13 @@ docker_images: $(DOCKER_TARGETS)
 # BINARY TARGETS
 #
 
+deps:
+	go mod download
+
 # Make make treat cmds as viable build targets (for single-engine build)
 $(CMDS_BINARY_TARGETS):
 $(PLUGINS_BINARY_TARGETS):
 # Tell make where to find the binaries
-
 
 # Plugin build job template
 $(OUTPUT_DIR)/plugins/%.so: $(ROOT_DIR)/plugins/% $(ROOT_DIR)/plugins/%/*
@@ -136,7 +138,6 @@ $(DOCKER_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker_builder
 	docker build -t "$(DOCKER_IMAGE_BASE_PATH)/$(subst docker_,,$@):$(DOCKER_TAG)" \
 		--build-arg CMD="$(subst docker_,,$@)" \
 		--target $(TARGET) \
-		--cache-from $(DOCKER_IMAGE_BASE_PATH)/alpine_updated:latest \
 		--cache-from $(DOCKER_IMAGE_BASE_PATH)/canopsis_go_bin:latest \
 		$(if $(DOCKER_NO_CACHE),,--cache-from "$(subst docker_,,$@):$(DOCKER_TAG)") \
 		$(DOCKER_BUILD_ARGS) \
