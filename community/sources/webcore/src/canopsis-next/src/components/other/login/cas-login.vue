@@ -13,7 +13,7 @@ import { APP_HOST, API_HOST, API_ROUTES } from '@/config';
 
 import { removeTrailingSlashes } from '@/helpers/url';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
   mixins: [entitiesInfoMixin],

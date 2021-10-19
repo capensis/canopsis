@@ -493,7 +493,8 @@ Feature: update connector alarm
       ],
       "infos": [
         {"name":"test-info-axe-idlerule-connector-5-name", "value":"test-info-axe-idlerule-connector-5-value"}
-      ]
+      ],
+      "enabled": true
     }
     """
     Then the response code should be 201

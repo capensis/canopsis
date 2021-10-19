@@ -4,6 +4,7 @@ package config
 
 import (
 	"fmt"
+	"github.com/golang-jwt/jwt"
 	"html/template"
 	"reflect"
 	"strconv"
@@ -34,6 +35,10 @@ type TimezoneConfigProvider interface {
 	Get() TimezoneConfig
 }
 
+type ApiConfigProvider interface {
+	Get() ApiConfig
+}
+
 type RemediationConfigProvider interface {
 	Get() RemediationConfig
 }
@@ -56,6 +61,7 @@ type AlarmConfig struct {
 	DisplayNameScheme     *template.Template
 	displayNameSchemeText string
 	OutputLength          int
+	LongOutputLength      int
 	// DisableActionSnoozeDelayOnPbh ignores Pbh state to resolve snoozed with Action alarm while is True
 	DisableActionSnoozeDelayOnPbh bool
 	TimeToKeepResolvedAlarms      time.Duration
@@ -63,6 +69,11 @@ type AlarmConfig struct {
 
 type TimezoneConfig struct {
 	Location *time.Location
+}
+
+type ApiConfig struct {
+	TokenExpiration    time.Duration
+	TokenSigningMethod jwt.SigningMethod
 }
 
 type RemediationConfig struct {
@@ -103,12 +114,21 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDefaultNameScheme, "DisplayNameScheme", sectionName, logger)
 
 	if cfg.Alarm.OutputLength <= 0 {
-		logger.Warn().Msgf("OutputLength of %s config section is not set or less than 1: the event's output and long_output won't be truncated", sectionName)
+		logger.Warn().Msg("OutputLength of alarm config section is not set or less than 1: the event's output won't be truncated")
 	} else {
 		conf.OutputLength = cfg.Alarm.OutputLength
 		logger.Info().
 			Int("value", conf.OutputLength).
 			Msgf("OutputLength of %s config section is used", sectionName)
+	}
+
+	if cfg.Alarm.LongOutputLength <= 0 {
+		logger.Warn().Msg("LongOutputLength of alarm config section is not set or less than 1: the event's long_output won't be truncated")
+	} else {
+		conf.LongOutputLength = cfg.Alarm.LongOutputLength
+		logger.Info().
+			Int("value", conf.LongOutputLength).
+			Msg("LongOutputLength of alarm config section is used")
 	}
 
 	return &BaseAlarmConfigProvider{
@@ -230,6 +250,50 @@ func (p *BaseTimezoneConfigProvider) Update(cfg CanopsisConf) error {
 }
 
 func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+
+	return p.conf
+}
+
+func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfigProvider {
+	sectionName := "api"
+	conf := ApiConfig{
+		TokenExpiration:    parseTimeDurationByStr(cfg.API.TokenExpiration, ApiTokenExpiration, "TokenExpiration", sectionName, logger),
+		TokenSigningMethod: parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
+	}
+
+	return &BaseApiConfigProvider{
+		conf:   conf,
+		logger: logger,
+	}
+}
+
+type BaseApiConfigProvider struct {
+	conf   ApiConfig
+	mx     sync.RWMutex
+	logger zerolog.Logger
+}
+
+func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) error {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	sectionName := "api"
+	d, ok := parseUpdatedTimeDurationByStr(cfg.API.TokenExpiration, p.conf.TokenExpiration, "TokenExpiration", sectionName, p.logger)
+	if ok {
+		p.conf.TokenExpiration = d
+	}
+
+	m, ok := parseUpdatedJwtSigningMethod(cfg.API.TokenSigningMethod, p.conf.TokenSigningMethod, "TokenSigningMethod", sectionName, p.logger)
+	if ok {
+		p.conf.TokenSigningMethod = m
+	}
+
+	return nil
+}
+
+func (p *BaseApiConfigProvider) Get() ApiConfig {
 	p.mx.RLock()
 	defer p.mx.RUnlock()
 
@@ -573,7 +637,7 @@ func parseTimeDurationByStr(
 }
 
 func parseUpdatedTimeDurationByStr(
-	v string, oldValal time.Duration,
+	v string, oldVal time.Duration,
 	name, sectionName string,
 	logger zerolog.Logger,
 ) (time.Duration, bool) {
@@ -592,12 +656,12 @@ func parseUpdatedTimeDurationByStr(
 		return 0, false
 	}
 
-	if d == oldValal {
+	if d == oldVal {
 		return 0, false
 	}
 
 	logger.Info().
-		Str("previous", oldValal.String()).
+		Str("previous", oldVal.String()).
 		Str("new", d.String()).
 		Msgf("%s of %s config section is loaded", name, sectionName)
 
@@ -629,7 +693,7 @@ func parseTimeDurationBySeconds(
 
 func parseUpdatedTimeDurationBySeconds(
 	v int,
-	oldValal time.Duration,
+	oldVal time.Duration,
 	name, sectionName string,
 	logger zerolog.Logger,
 ) (time.Duration, bool) {
@@ -641,12 +705,12 @@ func parseUpdatedTimeDurationBySeconds(
 	}
 
 	d := time.Duration(v) * time.Second
-	if d == oldValal {
+	if d == oldVal {
 		return 0, false
 	}
 
 	logger.Info().
-		Str("previous", oldValal.String()).
+		Str("previous", oldVal.String()).
 		Str("new", d.String()).
 		Msgf("%s of %s config section is loaded", name, sectionName)
 
@@ -674,7 +738,7 @@ func parseInt(
 }
 
 func parseUpdatedInt(
-	v, oldValal int,
+	v, oldVal int,
 	name, sectionName string,
 	logger zerolog.Logger,
 	invalidMsg ...string,
@@ -691,12 +755,12 @@ func parseUpdatedInt(
 		return 0, false
 	}
 
-	if v == oldValal {
+	if v == oldVal {
 		return 0, false
 	}
 
 	logger.Info().
-		Int("previous", oldValal).
+		Int("previous", oldVal).
 		Int("new", v).
 		Msgf("%s of %s config section is loaded", name, sectionName)
 
@@ -863,4 +927,62 @@ func parseUpdatedLocation(
 		Msgf("%s of %s config section is loaded", name, sectionName)
 
 	return location, true
+}
+
+func parseJwtSigningMethod(
+	v string,
+	defaultVal jwt.SigningMethod,
+	name, sectionName string,
+	logger zerolog.Logger,
+) jwt.SigningMethod {
+	if v == "" {
+		logger.Error().
+			Str("default", defaultVal.Alg()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	m := jwt.GetSigningMethod(v)
+	if m == nil {
+		logger.Error().
+			Str("default", defaultVal.Alg()).
+			Str("invalid", v).
+			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	logger.Info().
+		Str("value", v).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return m
+}
+
+func parseUpdatedJwtSigningMethod(
+	v string,
+	oldVal jwt.SigningMethod,
+	name, sectionName string,
+	logger zerolog.Logger,
+) (jwt.SigningMethod, bool) {
+	if v == "" {
+		logger.Error().
+			Str("invalid", v).
+			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		return nil, false
+	}
+
+	m := jwt.GetSigningMethod(v)
+	if m.Alg() == oldVal.Alg() {
+		return nil, false
+	}
+
+	logger.Info().
+		Str("previous", oldVal.Alg()).
+		Str("new", v).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	return m, true
 }

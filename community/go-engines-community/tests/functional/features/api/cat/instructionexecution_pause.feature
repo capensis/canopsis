@@ -202,7 +202,7 @@ Feature: pause a instruction execution
     Then the response code should be 200
 
   Scenario: given running instruction should add pause execution to user
-    When I do POST /auth:
+    When I do POST /api/v4/login:
     """
     {
       "username": "test-user-to-test-paused-executions",
@@ -210,6 +210,7 @@ Feature: pause a instruction execution
     }
     """
     Then the response code should be 200
+    When I set header Authorization=Bearer {{ .lastResponse.access_token }}
     When I do POST /api/v4/cat/instructions:
     """
     {

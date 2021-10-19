@@ -53,8 +53,8 @@ export DOCKER_BUILDKIT = 1
 #Docker variables
 DOCKER_NO_CACHE = # If set to 1 previous build caches will be ignored
 DOCKER_TAG = $(VERSION)
-DOCKER_ALPINE_VERSION = 3.13
-DOCKER_GOLANG_VERSION = 1.16.4
+DOCKER_ALPINE_VERSION = 3.12.8
+DOCKER_GOLANG_VERSION = 1.17.1
 DOCKERFILE_PATH = $(dir $(CURRENT_MAKEFILE))Dockerfile
 DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
