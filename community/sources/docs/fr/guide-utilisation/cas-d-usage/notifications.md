@@ -3,8 +3,8 @@
 Canopsis est capable de *réagir* en fonction de critères objectifs afin de notifier un outil tiers en appelant une API HTTP.  
 Ce guide vous propose d'interagir avec Mattermost et avec Logstash.  
 
-!!! attention
-    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go dans l'édition Pro de Canopsis.
+!!! info
+    Ces possibilités ne sont offertes que par l'utilisation de l'édition Pro de Canopsis.
 
 Le moteur [`engine-webhook`](../../guide-administration/moteurs/moteur-webhook.md) vous permet de prendre en charge cette fonctionnalité.
 
@@ -18,10 +18,11 @@ Prenons le cas d'usage suivant :
     Je souhaite notifier Mattermost depuis Canopsis dans les cas suivants :
     Création d'alarme, Mise à jour de de criticité, acquittement d'un utilisateur
 
-Pour cela, RDV sur le menu des **webhooks**
+<!-- XXX: scénarios à partir de Canopsis 4.2.0 -->
+
+Pour cela, rendez-vous dans le menu des **webhooks**
 
 ![Menu Webhooks](./img/notification_mattermost_menu.png "Menu Webhooks")  
-
 
 Vous devez créer un règle comme suit :
 
@@ -39,7 +40,7 @@ Vous devez créer un règle comme suit :
 
 Pour vérifier le résultat, nous considérons l'événement suivant :  
 
-````json
+```json
 {
   "resource": "ressource-doc3",
   "event_type": "check",
@@ -50,8 +51,7 @@ Pour vérifier le résultat, nous considérons l'événement suivant :
   "connector_name": "cas-usage-notification-mattermost",
   "output": "doc cas d'usage"
 }
-
-````
+```
 
 Une fois publié, vous pourrez consulter votre canal Mattermost
 
@@ -62,7 +62,7 @@ Une fois publié, vous pourrez consulter votre canal Mattermost
 Nous partons du principe que vous possédez un logstash à l'écoute.  
 Pour information, voici la configuration minimaliste utilisée pour l'exemple :
 
-````
+```
 input {
   http {
     host => "0.0.0.0"
@@ -75,7 +75,7 @@ output {
     codec => rubydebug
   }
 }
-````
+```
 
 Prenons le cas d'usage suivant :
 
@@ -83,10 +83,11 @@ Prenons le cas d'usage suivant :
     Je souhaite envoyer un message HTTP à Logstash depuis Canopsis dans les cas suivants :
     Création d'alarme, Mise à jour de criticité, acquittement d'un utilisateur
 
-Pour cela, RDV sur le menu des **webhooks**
+<!-- XXX: scénarios à partir de Canopsis 4.2.0 -->
+
+Pour cela, rendez-vous dans le menu des **webhooks**
 
 ![Menu Webhooks](./img/notification_mattermost_menu.png "Menu Webhooks")  
-
 
 Vous devez créer un règle comme suit :
 
@@ -100,7 +101,7 @@ Vous devez créer un règle comme suit :
 
 Pour vérifier le résultat, nous considérons l'événement suivant :  
 
-````json
+```json
 {
   "resource": "ressource-doc4",
   "event_type": "check",
@@ -111,12 +112,11 @@ Pour vérifier le résultat, nous considérons l'événement suivant :
   "connector_name": "cas-usage-notification-logstash",
   "output": "doc cas d'usage"
 }
-
-````
+```
 
 Une fois publié, vous pourrez consulter le résultat sur la console de debug de Logstash
 
-````
+```
 {
   "host" => "172.21.0.1",
   "Message_Logstash" => "Création, modification, ou acquittement d'une alarme sur composant-doc4 concernant ressource-doc4",
@@ -134,12 +134,11 @@ Une fois publié, vous pourrez consulter le résultat sur la console de debug de
     "request_path" => "/"
   }
 }
-````
+```
 
 ## Notification Mail
 
 Pour la notification par mail, nous nous appuyons sur une instance de Logstash à l'écoute.
-
 
 ### Configuration de logstash pour l'envoi de mail
 
@@ -180,7 +179,7 @@ vous pouvez utiliser les clefs de configuration :
 
 Ajoutez enfin le fichier `/etc/logstash/conf.d/email.tpl` qui servira de modèle pour l'envoi d'email :
 
-```bash
+```html
 <pre>
 Bonjour,
 

@@ -64,6 +64,7 @@ Les ordonnanceurs de tâches compatibles avec les jobs de remédiation sont :
 
 1. [Rundeck](https://www.rundeck.com/)
 2. [AWX](https://www.ansible.com/products/awx-project)
+2. [Jenkins](https://www.jenkins.io/)
 
 ## Exécution d'une remédiation
 

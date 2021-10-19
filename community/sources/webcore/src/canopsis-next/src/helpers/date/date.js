@@ -1,4 +1,5 @@
 import moment from 'moment-timezone';
+import { isUndefined } from 'lodash';
 
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
@@ -123,7 +124,11 @@ export const convertDateToString = (date, format, ignoreTodayChecker, defaultVal
 
   if (!dateObject || !dateObject.isValid()) {
     console.warn('Could not build a valid `moment` object from input.');
-    return date;
+
+    /**
+     * TODO: Should be used nullish operator
+     */
+    return isUndefined(defaultValue) ? date : defaultValue;
   }
 
   if (!ignoreTodayChecker && dateObject.isSame(new Date(), 'day')) {
@@ -180,5 +185,14 @@ export const subtractUnitFromDate = (date, value = 0, unit = TIME_UNITS.second) 
   .clone()
   .subtract(value, unit)
   .unix();
+
+/**
+ * Format date/timestamp/unix/moment to string format
+ *
+ * @param {Date|number|moment.Moment} date
+ * @param {string} format
+ * @return {string}
+ */
+export const formatDate = (date, format) => convertTimestampToMoment(date).format(format);
 
 export default convertTimestampToMoment;

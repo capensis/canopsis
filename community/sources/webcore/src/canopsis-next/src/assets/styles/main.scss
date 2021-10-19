@@ -69,7 +69,7 @@ $mobileBreakpoint: 450px;
 }
 
 .cursor-pointer {
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
 .weather-item {
@@ -216,6 +216,20 @@ $mobileBreakpoint: 450px;
       white-space: pre-line !important;
       display: inline-block;
       vertical-align: middle;
+    }
+  }
+}
+
+.c-word {
+  &-break {
+    &-all {
+      word-break: break-all;
+    }
+  }
+
+  &-wrap {
+    &-break {
+      word-wrap: break-word;
     }
   }
 }

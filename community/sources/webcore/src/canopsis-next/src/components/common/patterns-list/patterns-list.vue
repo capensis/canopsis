@@ -49,6 +49,8 @@
 </template>
 
 <script>
+import { Validator } from 'vee-validate';
+
 import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
 import { formArrayMixin } from '@/mixins/form';
@@ -65,7 +67,18 @@ export default {
       return this.name;
     },
   },
-  inject: ['$validator', '$checkEntitiesCountForPatternsByType'],
+  inject: {
+    $validator: {
+      default() {
+        return new Validator();
+      },
+    },
+    $checkEntitiesCountForPatternsByType: {
+      default() {
+        return null;
+      },
+    },
+  },
   components: {
     PatternInformation,
   },

@@ -29,25 +29,6 @@ stage_test:
     paths:
       #- tests_report
 
-build_next:
-   stage: test
-   tags: ["canopsis"]
-   script:
-     - docker build -t canopsis/uiv3:develop -f docker/Dockerfile.canopsis-next-develop .
-     - docker-compose --project-directory CI/ -f CI/docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next up -d
-     - docker push canopsis/uiv3:develop
-   only:
-    changes:
-      - sources/webcore/src/canopsis-next/**/*
-    refs:
-      - develop
-   after_script:
-     - cd community/
-     - docker-compose --project-directory CI/ -f CI/docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next kill
-     - sleep 10
-     - docker-compose --project-directory CI/ -f CI/docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next rm -sf
-     - docker-compose --project-directory CI/ -f CI/docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next down
-
 after_script:
   - cd community/
   - docker-compose --project-directory CI/ -f CI/docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} kill

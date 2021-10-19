@@ -1,3 +1,5 @@
+import { enabledToForm } from '@/helpers/forms/shared/common';
+
 /**
  * @typedef { 'maintenance' | 'pause' } DisableDuringPeriods
  */
@@ -5,6 +7,7 @@
 /**
  * @typedef {Object} DynamicInfo
  * @property {string} _id
+ * @property {boolean} enabled
  * @property {string} name
  * @property {string} description
  * @property {DisableDuringPeriods[]} disable_during_periods
@@ -33,6 +36,7 @@
 export const dynamicInfoToForm = (dynamicInfo = {}) => ({
   _id: dynamicInfo._id || '',
   name: dynamicInfo.name || '',
+  enabled: enabledToForm(dynamicInfo.enabled),
   description: dynamicInfo.description || '',
   disable_during_periods: dynamicInfo.disable_during_periods || [],
   infos: dynamicInfo.infos ? [...dynamicInfo.infos] : [],

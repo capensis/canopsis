@@ -106,13 +106,13 @@ export async function checkUserAccessForRoute(to = {}) {
 }
 
 /**
- * Get path array for keep alive requests by route
+ * Get path array for view stats requests by route
  *
  * @param {string} path
  * @param {Object} query
  * @returns {Array}
  */
-export function getKeepalivePathByRoute({ path, query } = {}) {
+export function getViewStatsPathByRoute({ path, query } = {}) {
   const { tabId } = query;
 
   if (tabId) {
