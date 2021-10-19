@@ -3,6 +3,7 @@ import Vuetify from 'vuetify';
 import { merge } from 'lodash';
 import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
 
+import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ValidatorPlugin from '@/plugins/validator';
 import * as constants from '@/constants';
@@ -25,19 +26,7 @@ const mocks = {
 };
 
 const stubs = {
-  'mq-layout': {
-    props: ['mq'],
-    computed: {
-      shouldBeRendered() {
-        return this.mq === this.$windowSize;
-      },
-    },
-    template: `
-      <div v-if="shouldBeRendered">
-        <slot />
-      </div>
-    `,
-  },
+  'mq-layout': MqLayout,
 };
 
 /**
