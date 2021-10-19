@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -16,7 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type Options struct {
@@ -73,7 +74,17 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 
 	engine := libengine.New(
 		func(ctx context.Context) error {
-			_, err := periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
+			logger.Debug().Msg("Loading event filter data sources")
+			err := eventFilterService.LoadDataSourceFactories(
+				enrichmentCenter,
+				enrichFields,
+				options.DataSourceDirectory,
+			)
+			if err != nil {
+				return fmt.Errorf("unable to load data sources: %v", err)
+			}
+
+			_, err = periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
@@ -92,16 +103,6 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 				logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
 			}
 			logger.Debug().Msg("Recompute impacted services for connectors finished")
-
-			logger.Debug().Msg("Loading event filter data sources")
-			err = eventFilterService.LoadDataSourceFactories(
-				enrichmentCenter,
-				enrichFields,
-				options.DataSourceDirectory,
-			)
-			if err != nil {
-				return fmt.Errorf("unable to load data sources: %v", err)
-			}
 
 			logger.Debug().Msg("Loading event filter rules")
 			err = eventFilterService.LoadRules(ctx)
