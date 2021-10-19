@@ -12,6 +12,8 @@ Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin);
 
+document.body.setAttribute('data-app', true);
+
 const prepareTranslateValues = values => (values ? `:${JSON.stringify(values)}` : '');
 
 const mocks = {
@@ -20,6 +22,22 @@ const mocks = {
 
   $constants: Object.freeze(constants),
   $config: Object.freeze(config),
+};
+
+const stubs = {
+  'mq-layout': {
+    props: ['mq'],
+    computed: {
+      shouldBeRendered() {
+        return this.mq === this.$windowSize;
+      },
+    },
+    template: `
+      <div v-if="shouldBeRendered">
+        <slot />
+      </div>
+    `,
+  },
 };
 
 /**
@@ -43,7 +61,7 @@ export const mount = (component, options = {}) => {
 
   return testUtilsMount(
     component,
-    merge(options, { mocks }),
+    merge(options, { mocks, stubs }),
   );
 };
 
@@ -61,6 +79,6 @@ export const shallowMount = (component, options = {}) => {
 
   return testUtilsShallowMount(
     component,
-    merge(options, { mocks }),
+    merge(options, { mocks, stubs }),
   );
 };

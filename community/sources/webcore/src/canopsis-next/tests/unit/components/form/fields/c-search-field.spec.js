@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { shallowMount, createVueInstance } from '@unit/utils/vue';
+import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import CSearchField from '@/components/forms/fields/c-search-field.vue';
 
@@ -157,7 +157,7 @@ describe('c-search-field', () => {
   });
 
   it('Renders `c-search-field` correctly', () => {
-    const wrapper = shallowMount(CSearchField, {
+    const wrapper = mount(CSearchField, {
       localVue,
       propsData: { value: 'c-search-field' },
     });

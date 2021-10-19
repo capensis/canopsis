@@ -4,25 +4,101 @@ exports[`c-pagination Renders \`c-pagination\` on the bottom correctly 1`] = `
 <div
   class="container text-xs-center"
 >
-  <v-layout-stub
-    align-center="align-center"
-    justify-center="justify-center"
-    tag="div"
+  <div
+    class="layout align-center justify-center"
   >
     <span
       class="grey--text text--darken-1"
     >
       common.paginationItems:{"first":21,"last":30,"total":100}
     </span>
-    <v-pagination-stub
+    <ul
+      class="v-pagination theme--light"
       data-test="vPagination"
-      length="10"
-      nexticon="$vuetify.icons.next"
-      previcon="$vuetify.icons.prev"
-      totalvisible="7"
-      value="3"
-    />
-  </v-layout-stub>
+    >
+      <li>
+        <button
+          class="v-pagination__navigation"
+          type="button"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            chevron_left
+          </i>
+        </button>
+      </li>
+      <li>
+        <button
+          class="v-pagination__item"
+          type="button"
+        >
+          1
+        </button>
+      </li>
+      <li>
+        <button
+          class="v-pagination__item"
+          type="button"
+        >
+          2
+        </button>
+      </li>
+      <li>
+        <button
+          class="v-pagination__item v-pagination__item--active primary"
+          type="button"
+        >
+          3
+        </button>
+      </li>
+      <li>
+        <button
+          class="v-pagination__item"
+          type="button"
+        >
+          4
+        </button>
+      </li>
+      <li>
+        <button
+          class="v-pagination__item"
+          type="button"
+        >
+          5
+        </button>
+      </li>
+      <li>
+        <span
+          class="v-pagination__more"
+        >
+          ...
+        </span>
+      </li>
+      <li>
+        <button
+          class="v-pagination__item"
+          type="button"
+        >
+          10
+        </button>
+      </li>
+      <li>
+        <button
+          class="v-pagination__navigation"
+          type="button"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            chevron_right
+          </i>
+        </button>
+      </li>
+    </ul>
+  </div>
 </div>
 `;
 
@@ -38,9 +114,12 @@ exports[`c-pagination Renders \`c-pagination\` on the top correctly 1`] = `
         class="v-pagination__navigation"
         data-test="paginationPreviewButton"
       >
-        <v-icon-stub>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
           chevron_left
-        </v-icon-stub>
+        </i>
       </button>
     </li>
     <div
@@ -53,9 +132,12 @@ exports[`c-pagination Renders \`c-pagination\` on the top correctly 1`] = `
         class="v-pagination__navigation"
         data-test="paginationNextButton"
       >
-        <v-icon-stub>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
           chevron_right
-        </v-icon-stub>
+        </i>
       </button>
     </li>
   </ul>
@@ -75,9 +157,12 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled buttons 
         data-test="paginationPreviewButton"
         disabled="disabled"
       >
-        <v-icon-stub>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
           chevron_left
-        </v-icon-stub>
+        </i>
       </button>
     </li>
     <div
@@ -91,9 +176,12 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled buttons 
         data-test="paginationNextButton"
         disabled="disabled"
       >
-        <v-icon-stub>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
           chevron_right
-        </v-icon-stub>
+        </i>
       </button>
     </li>
   </ul>
@@ -112,9 +200,12 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled next but
         class="v-pagination__navigation"
         data-test="paginationPreviewButton"
       >
-        <v-icon-stub>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
           chevron_left
-        </v-icon-stub>
+        </i>
       </button>
     </li>
     <div
@@ -128,9 +219,12 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled next but
         data-test="paginationNextButton"
         disabled="disabled"
       >
-        <v-icon-stub>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
           chevron_right
-        </v-icon-stub>
+        </i>
       </button>
     </li>
   </ul>
@@ -150,9 +244,12 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled prev but
         data-test="paginationPreviewButton"
         disabled="disabled"
       >
-        <v-icon-stub>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
           chevron_left
-        </v-icon-stub>
+        </i>
       </button>
     </li>
     <div
@@ -165,9 +262,12 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled prev but
         class="v-pagination__navigation"
         data-test="paginationNextButton"
       >
-        <v-icon-stub>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
           chevron_right
-        </v-icon-stub>
+        </i>
       </button>
     </li>
   </ul>
@@ -178,25 +278,54 @@ exports[`c-pagination Renders \`c-pagination\` with default props correctly 1`] 
 <div
   class="container text-xs-center"
 >
-  <v-layout-stub
-    align-center="align-center"
-    justify-center="justify-center"
-    tag="div"
+  <div
+    class="layout align-center justify-center"
   >
     <span
       class="grey--text text--darken-1"
     >
       common.paginationItems:{"first":1,"last":1,"total":1}
     </span>
-    <v-pagination-stub
+    <ul
+      class="v-pagination theme--light"
       data-test="vPagination"
-      length="1"
-      nexticon="$vuetify.icons.next"
-      previcon="$vuetify.icons.prev"
-      totalvisible="7"
-      value="1"
-    />
-  </v-layout-stub>
+    >
+      <li>
+        <button
+          class="v-pagination__navigation v-pagination__navigation--disabled"
+          type="button"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            chevron_left
+          </i>
+        </button>
+      </li>
+      <li>
+        <button
+          class="v-pagination__item v-pagination__item--active primary"
+          type="button"
+        >
+          1
+        </button>
+      </li>
+      <li>
+        <button
+          class="v-pagination__navigation v-pagination__navigation--disabled"
+          type="button"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            chevron_right
+          </i>
+        </button>
+      </li>
+    </ul>
+  </div>
 </div>
 `;
 
@@ -204,25 +333,54 @@ exports[`c-pagination Renders \`c-pagination\` with default props correctly 2`] 
 <div
   class="container text-xs-center"
 >
-  <v-layout-stub
-    align-center="align-center"
-    justify-center="justify-center"
-    tag="div"
+  <div
+    class="layout align-center justify-center"
   >
     <span
       class="grey--text text--darken-1"
     >
       common.paginationItems:{"first":1,"last":1,"total":1}
     </span>
-    <v-pagination-stub
+    <ul
+      class="v-pagination theme--light"
       data-test="vPagination"
-      length="1"
-      nexticon="$vuetify.icons.next"
-      previcon="$vuetify.icons.prev"
-      totalvisible="7"
-      value="1"
-    />
-  </v-layout-stub>
+    >
+      <li>
+        <button
+          class="v-pagination__navigation v-pagination__navigation--disabled"
+          type="button"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            chevron_left
+          </i>
+        </button>
+      </li>
+      <li>
+        <button
+          class="v-pagination__item v-pagination__item--active primary"
+          type="button"
+        >
+          1
+        </button>
+      </li>
+      <li>
+        <button
+          class="v-pagination__navigation v-pagination__navigation--disabled"
+          type="button"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            chevron_right
+          </i>
+        </button>
+      </li>
+    </ul>
+  </div>
 </div>
 `;
 
@@ -239,9 +397,12 @@ exports[`c-pagination Renders \`c-pagination\` with default props on the top cor
         data-test="paginationPreviewButton"
         disabled="disabled"
       >
-        <v-icon-stub>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
           chevron_left
-        </v-icon-stub>
+        </i>
       </button>
     </li>
     <div
@@ -255,9 +416,12 @@ exports[`c-pagination Renders \`c-pagination\` with default props on the top cor
         data-test="paginationNextButton"
         disabled="disabled"
       >
-        <v-icon-stub>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
           chevron_right
-        </v-icon-stub>
+        </i>
       </button>
     </li>
   </ul>

@@ -1,4 +1,4 @@
-import { shallowMount, createVueInstance } from '@unit/utils/vue';
+import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
 
@@ -91,10 +91,13 @@ describe('c-records-per-page', () => {
   });
 
   it('Renders `c-records-per-page` correctly', () => {
-    const wrapper = shallowMount(CRecordsPerPage, {
+    const wrapper = mount(CRecordsPerPage, {
       localVue,
     });
 
+    const menuContent = wrapper.find('.v-menu__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
   });
 });

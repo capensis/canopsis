@@ -1,90 +1,90 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`c-columns-field Renders \`c-columns-field\` with all columns type correctly 1`] = `
-<v-container-stub
-  tag="div"
+<div
+  class="container"
 >
-  <v-card-stub
-    class="my-2"
-    tag="div"
+  <div
+    class="my-2 v-card v-sheet theme--light"
   >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
+    <div
+      class="layout pt-2 justify-space-between"
     >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
+      <div
+        class="flex xs3"
       >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="flex xs1"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -93,10 +93,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           placeholder="common.label"
           value="Default column label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -105,92 +104,92 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           placeholder="common.value"
           value="column.defaultColumn"
         />
-      </v-flex-stub>
+      </div>
       <!---->
       <!---->
-    </v-layout-stub>
-  </v-card-stub>
-  <v-card-stub
-    class="my-2"
-    tag="div"
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
   >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
+    <div
+      class="layout pt-2 justify-space-between"
     >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
+      <div
+        class="flex xs3"
       >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="flex xs1"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -199,10 +198,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           placeholder="common.label"
           value="Column with html label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -211,92 +209,92 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           placeholder="common.value"
           value="column.columnWithHtml"
         />
-      </v-flex-stub>
+      </div>
       <!---->
       <!---->
-    </v-layout-stub>
-  </v-card-stub>
-  <v-card-stub
-    class="my-2"
-    tag="div"
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
   >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
+    <div
+      class="layout pt-2 justify-space-between"
     >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
+      <div
+        class="flex xs3"
       >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="flex xs1"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -305,10 +303,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           placeholder="common.label"
           value="Column with color indicator state label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -317,92 +314,92 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           placeholder="common.value"
           value="column.columnWithColorIndicatorState"
         />
-      </v-flex-stub>
+      </div>
       <!---->
       <!---->
-    </v-layout-stub>
-  </v-card-stub>
-  <v-card-stub
-    class="my-2"
-    tag="div"
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
   >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
+    <div
+      class="layout pt-2 justify-space-between"
     >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
+      <div
+        class="flex xs3"
       >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="flex xs1"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -411,10 +408,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           placeholder="common.label"
           value="Column with color indicator impact state label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -423,92 +419,92 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           placeholder="common.value"
           value="column.columnWithColorIndicatorImpactState"
         />
-      </v-flex-stub>
+      </div>
       <!---->
       <!---->
-    </v-layout-stub>
-  </v-card-stub>
-  <v-card-stub
-    class="my-2"
-    tag="div"
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
   >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
+    <div
+      class="layout pt-2 justify-space-between"
     >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
+      <div
+        class="flex xs3"
       >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="flex xs1"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -517,10 +513,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           placeholder="common.label"
           value="Column with color indicator and html label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -529,108 +524,109 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           placeholder="common.value"
           value="column.columnWithColorIndicatorAndHtml"
         />
-      </v-flex-stub>
+      </div>
       <!---->
       <!---->
-    </v-layout-stub>
-  </v-card-stub>
-  <v-btn-stub
-    activeclass="v-btn--active"
-    class="ml-0"
-    color="primary"
-    tag="button"
+    </div>
+  </div>
+  <button
+    class="ml-0 v-btn theme--light primary"
     type="button"
   >
-    common.add
-  </v-btn-stub>
-</v-container-stub>
+    <div
+      class="v-btn__content"
+    >
+      common.add
+    </div>
+  </button>
+</div>
 `;
 
 exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly 1`] = `
-<v-container-stub
-  tag="div"
+<div
+  class="container"
 >
-  <v-card-stub
-    class="my-2"
-    tag="div"
+  <div
+    class="my-2 v-card v-sheet theme--light"
   >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
+    <div
+      class="layout pt-2 justify-space-between"
     >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
+      <div
+        class="flex xs3"
       >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="flex xs1"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -639,10 +635,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.label"
           value="Default column label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -651,125 +646,205 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.value"
           value="column.defaultColumn"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          label="settings.columns.isHtml"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
-      >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          label="settings.colorIndicator.title"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-        <!---->
-      </v-flex-stub>
-    </v-layout-stub>
-  </v-card-stub>
-  <v-card-stub
-    class="my-2"
-    tag="div"
-  >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
-    >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
-      >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="v-input v-input--selection-controls v-input--switch theme--light"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="v-input__control"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="settings.columns.isHtml"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <div
+                  class="v-input--switch__track theme--light"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.columns.isHtml
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <div
+          class="v-input v-input--selection-controls v-input--switch theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="settings.colorIndicator.title"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <div
+                  class="v-input--switch__track theme--light"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.colorIndicator.title
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+        <!---->
+      </div>
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
+  >
+    <div
+      class="layout pt-2 justify-space-between"
+    >
+      <div
+        class="flex xs3"
+      >
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
+        >
+          <div
+            class="flex xs1"
+          >
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -778,10 +853,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.label"
           value="Column with html label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -790,126 +864,205 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.value"
           value="column.columnWithHtml"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          inputvalue="true"
-          label="settings.columns.isHtml"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
-      >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          label="settings.colorIndicator.title"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-        <!---->
-      </v-flex-stub>
-    </v-layout-stub>
-  </v-card-stub>
-  <v-card-stub
-    class="my-2"
-    tag="div"
-  >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
-    >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
-      >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="v-input__control"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="true"
+                  aria-label="settings.columns.isHtml"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple primary--text"
+                />
+                <div
+                  class="v-input--switch__track theme--light primary--text"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light primary--text"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.columns.isHtml
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <div
+          class="v-input v-input--selection-controls v-input--switch theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="settings.colorIndicator.title"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <div
+                  class="v-input--switch__track theme--light"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.colorIndicator.title
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+        <!---->
+      </div>
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
+  >
+    <div
+      class="layout pt-2 justify-space-between"
+    >
+      <div
+        class="flex xs3"
+      >
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
+        >
+          <div
+            class="flex xs1"
+          >
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -918,10 +1071,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.label"
           value="Column with color indicator state label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -930,133 +1082,211 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.value"
           value="column.columnWithColorIndicatorState"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          label="settings.columns.isHtml"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+        <div
+          class="v-input v-input--selection-controls v-input--switch theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="settings.columns.isHtml"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <div
+                  class="v-input--switch__track theme--light"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.columns.isHtml
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          inputvalue="true"
-          label="settings.colorIndicator.title"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-        <v-layout-stub
-          row="row"
-          tag="div"
+        <div
+          class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="true"
+                  aria-label="settings.colorIndicator.title"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple primary--text"
+                />
+                <div
+                  class="v-input--switch__track theme--light primary--text"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light primary--text"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.colorIndicator.title
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="layout row"
         >
           <c-color-indicator-field-stub
             value="state"
           />
-        </v-layout-stub>
-      </v-flex-stub>
-    </v-layout-stub>
-  </v-card-stub>
-  <v-card-stub
-    class="my-2"
-    tag="div"
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
   >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
+    <div
+      class="layout pt-2 justify-space-between"
     >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
+      <div
+        class="flex xs3"
       >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="flex xs1"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1065,10 +1295,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.label"
           value="Column with color indicator impact state label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1077,133 +1306,211 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.value"
           value="column.columnWithColorIndicatorImpactState"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          label="settings.columns.isHtml"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+        <div
+          class="v-input v-input--selection-controls v-input--switch theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="settings.columns.isHtml"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <div
+                  class="v-input--switch__track theme--light"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.columns.isHtml
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          inputvalue="true"
-          label="settings.colorIndicator.title"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-        <v-layout-stub
-          row="row"
-          tag="div"
+        <div
+          class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="true"
+                  aria-label="settings.colorIndicator.title"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple primary--text"
+                />
+                <div
+                  class="v-input--switch__track theme--light primary--text"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light primary--text"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.colorIndicator.title
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="layout row"
         >
           <c-color-indicator-field-stub
             value="impact_state"
           />
-        </v-layout-stub>
-      </v-flex-stub>
-    </v-layout-stub>
-  </v-card-stub>
-  <v-card-stub
-    class="my-2"
-    tag="div"
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
   >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
+    <div
+      class="layout pt-2 justify-space-between"
     >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
+      <div
+        class="flex xs3"
       >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="flex xs1"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1212,10 +1519,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.label"
           value="Column with color indicator and html label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1224,166 +1530,245 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.value"
           value="column.columnWithColorIndicatorAndHtml"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          inputvalue="true"
-          label="settings.columns.isHtml"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+        <div
+          class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="true"
+                  aria-label="settings.columns.isHtml"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple primary--text"
+                />
+                <div
+                  class="v-input--switch__track theme--light primary--text"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light primary--text"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.columns.isHtml
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          inputvalue="true"
-          label="settings.colorIndicator.title"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-        <v-layout-stub
-          row="row"
-          tag="div"
+        <div
+          class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="true"
+                  aria-label="settings.colorIndicator.title"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple primary--text"
+                />
+                <div
+                  class="v-input--switch__track theme--light primary--text"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light primary--text"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.colorIndicator.title
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="layout row"
         >
           <c-color-indicator-field-stub
             value="impact_state"
           />
-        </v-layout-stub>
-      </v-flex-stub>
-    </v-layout-stub>
-  </v-card-stub>
-  <v-btn-stub
-    activeclass="v-btn--active"
-    class="ml-0"
-    color="primary"
-    tag="button"
+        </div>
+      </div>
+    </div>
+  </div>
+  <button
+    class="ml-0 v-btn theme--light primary"
     type="button"
   >
-    common.add
-  </v-btn-stub>
-</v-container-stub>
+    <div
+      class="v-btn__content"
+    >
+      common.add
+    </div>
+  </button>
+</div>
 `;
 
 exports[`c-columns-field Renders \`c-columns-field\` with default props correctly 1`] = `
-<v-container-stub
-  tag="div"
+<div
+  class="container"
 >
-  <v-btn-stub
-    activeclass="v-btn--active"
-    class="ml-0"
-    color="primary"
-    tag="button"
+  <button
+    class="ml-0 v-btn theme--light primary"
     type="button"
   >
-    common.add
-  </v-btn-stub>
-</v-container-stub>
+    <div
+      class="v-btn__content"
+    >
+      common.add
+    </div>
+  </button>
+</div>
 `;
 
 exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] = `
-<v-container-stub
-  tag="div"
+<div
+  class="container"
 >
-  <v-card-stub
-    class="my-2"
-    tag="div"
+  <div
+    class="my-2 v-card v-sheet theme--light"
   >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
+    <div
+      class="layout pt-2 justify-space-between"
     >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
+      <div
+        class="flex xs3"
       >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="flex xs1"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1392,10 +1777,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           placeholder="common.label"
           value="Default column label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1404,125 +1788,205 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           placeholder="common.value"
           value="column.defaultColumn"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          label="settings.columns.isHtml"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
-      >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          label="settings.colorIndicator.title"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-        <!---->
-      </v-flex-stub>
-    </v-layout-stub>
-  </v-card-stub>
-  <v-card-stub
-    class="my-2"
-    tag="div"
-  >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
-    >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
-      >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="v-input v-input--selection-controls v-input--switch theme--light"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="v-input__control"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="settings.columns.isHtml"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <div
+                  class="v-input--switch__track theme--light"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.columns.isHtml
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <div
+          class="v-input v-input--selection-controls v-input--switch theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="settings.colorIndicator.title"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <div
+                  class="v-input--switch__track theme--light"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.colorIndicator.title
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+        <!---->
+      </div>
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
+  >
+    <div
+      class="layout pt-2 justify-space-between"
+    >
+      <div
+        class="flex xs3"
+      >
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
+        >
+          <div
+            class="flex xs1"
+          >
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1531,10 +1995,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           placeholder="common.label"
           value="Column with html label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1543,126 +2006,205 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           placeholder="common.value"
           value="column.columnWithHtml"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          inputvalue="true"
-          label="settings.columns.isHtml"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
-      >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          label="settings.colorIndicator.title"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-        <!---->
-      </v-flex-stub>
-    </v-layout-stub>
-  </v-card-stub>
-  <v-card-stub
-    class="my-2"
-    tag="div"
-  >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
-    >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
-      >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="v-input__control"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="true"
+                  aria-label="settings.columns.isHtml"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple primary--text"
+                />
+                <div
+                  class="v-input--switch__track theme--light primary--text"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light primary--text"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.columns.isHtml
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <div
+          class="v-input v-input--selection-controls v-input--switch theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="settings.colorIndicator.title"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <div
+                  class="v-input--switch__track theme--light"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.colorIndicator.title
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+        <!---->
+      </div>
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
+  >
+    <div
+      class="layout pt-2 justify-space-between"
+    >
+      <div
+        class="flex xs3"
+      >
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
+        >
+          <div
+            class="flex xs1"
+          >
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1671,10 +2213,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           placeholder="common.label"
           value="Column with color indicator state label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1683,133 +2224,211 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           placeholder="common.value"
           value="column.columnWithColorIndicatorState"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          label="settings.columns.isHtml"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+        <div
+          class="v-input v-input--selection-controls v-input--switch theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="settings.columns.isHtml"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <div
+                  class="v-input--switch__track theme--light"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.columns.isHtml
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          inputvalue="true"
-          label="settings.colorIndicator.title"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-        <v-layout-stub
-          row="row"
-          tag="div"
+        <div
+          class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="true"
+                  aria-label="settings.colorIndicator.title"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple primary--text"
+                />
+                <div
+                  class="v-input--switch__track theme--light primary--text"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light primary--text"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.colorIndicator.title
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="layout row"
         >
           <c-color-indicator-field-stub
             value="state"
           />
-        </v-layout-stub>
-      </v-flex-stub>
-    </v-layout-stub>
-  </v-card-stub>
-  <v-card-stub
-    class="my-2"
-    tag="div"
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
   >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
+    <div
+      class="layout pt-2 justify-space-between"
     >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
+      <div
+        class="flex xs3"
       >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="flex xs1"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1818,10 +2437,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           placeholder="common.label"
           value="Column with color indicator impact state label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1830,133 +2448,211 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           placeholder="common.value"
           value="column.columnWithColorIndicatorImpactState"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          label="settings.columns.isHtml"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+        <div
+          class="v-input v-input--selection-controls v-input--switch theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="settings.columns.isHtml"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <div
+                  class="v-input--switch__track theme--light"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.columns.isHtml
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          inputvalue="true"
-          label="settings.colorIndicator.title"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-        <v-layout-stub
-          row="row"
-          tag="div"
+        <div
+          class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="true"
+                  aria-label="settings.colorIndicator.title"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple primary--text"
+                />
+                <div
+                  class="v-input--switch__track theme--light primary--text"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light primary--text"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.colorIndicator.title
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="layout row"
         >
           <c-color-indicator-field-stub
             value="impact_state"
           />
-        </v-layout-stub>
-      </v-flex-stub>
-    </v-layout-stub>
-  </v-card-stub>
-  <v-card-stub
-    class="my-2"
-    tag="div"
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
   >
-    <v-layout-stub
-      class="pt-2"
-      justify-space-between="justify-space-between"
-      tag="div"
+    <div
+      class="layout pt-2 justify-space-between"
     >
-      <v-flex-stub
-        tag="div"
-        xs3="xs3"
+      <div
+        class="flex xs3"
       >
-        <v-layout-stub
-          class="text-xs-center pl-2"
-          justify-space-between="justify-space-between"
-          tag="div"
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
         >
-          <v-flex-stub
-            tag="div"
-            xs1="xs1"
+          <div
+            class="flex xs1"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_upward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-          <v-flex-stub
-            tag="div"
-            xs5="xs5"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
           >
-            <v-btn-stub
-              activeclass="v-btn--active"
-              icon="true"
-              tag="button"
+            <button
+              class="v-btn v-btn--icon theme--light"
               type="button"
             >
-              <v-icon-stub>
-                arrow_downward
-              </v-icon-stub>
-            </v-btn-stub>
-          </v-flex-stub>
-        </v-layout-stub>
-      </v-flex-stub>
-      <v-flex-stub
-        class="d-flex"
-        tag="div"
-        xs3="xs3"
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
       >
         <div
           class="text-xs-right pr-2"
         >
-          <v-btn-stub
-            activeclass="v-btn--active"
-            icon="true"
-            tag="button"
+          <button
+            class="v-btn v-btn--icon theme--light"
             type="button"
           >
-            <v-icon-stub
-              color="red"
+            <div
+              class="v-btn__content"
             >
-              close
-            </v-icon-stub>
-          </v-btn-stub>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
         </div>
-      </v-flex-stub>
-    </v-layout-stub>
-    <v-layout-stub
-      justify-center="justify-center"
-      tag="div"
-      wrap="wrap"
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
     >
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1965,10 +2661,9 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           placeholder="common.label"
           value="Column with color indicator and html label"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
         <input
           class="v-text-field"
@@ -1977,61 +2672,139 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           placeholder="common.value"
           value="column.columnWithColorIndicatorAndHtml"
         />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          inputvalue="true"
-          label="settings.columns.isHtml"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-      </v-flex-stub>
-      <v-flex-stub
-        tag="div"
-        xs11="xs11"
+        <div
+          class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="true"
+                  aria-label="settings.columns.isHtml"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple primary--text"
+                />
+                <div
+                  class="v-input--switch__track theme--light primary--text"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light primary--text"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.columns.isHtml
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex xs11"
       >
-        <v-switch-stub
-          backgroundcolor=""
-          color="primary"
-          errorcount="1"
-          errormessages=""
-          inputvalue="true"
-          label="settings.colorIndicator.title"
-          messages=""
-          ripple="true"
-          rules=""
-          successmessages=""
-          valuecomparator="[Function]"
-        />
-        <v-layout-stub
-          row="row"
-          tag="div"
+        <div
+          class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="true"
+                  aria-label="settings.colorIndicator.title"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple primary--text"
+                />
+                <div
+                  class="v-input--switch__track theme--light primary--text"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light primary--text"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.colorIndicator.title
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="layout row"
         >
           <c-color-indicator-field-stub
             value="impact_state"
           />
-        </v-layout-stub>
-      </v-flex-stub>
-    </v-layout-stub>
-  </v-card-stub>
-  <v-btn-stub
-    activeclass="v-btn--active"
-    class="ml-0"
-    color="primary"
-    tag="button"
+        </div>
+      </div>
+    </div>
+  </div>
+  <button
+    class="ml-0 v-btn theme--light primary"
     type="button"
   >
-    common.add
-  </v-btn-stub>
-</v-container-stub>
+    <div
+      class="v-btn__content"
+    >
+      common.add
+    </div>
+  </button>
+</div>
 `;

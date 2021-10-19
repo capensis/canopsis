@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { shallowMount, createVueInstance } from '@unit/utils/vue';
+import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
 
@@ -111,38 +111,50 @@ describe('c-action-btn', () => {
   });
 
   it('Renders `c-action-btn` with default edit type correctly.', () => {
-    const wrapper = shallowMount(CActionBtn, {
+    const wrapper = mount(CActionBtn, {
       localVue,
       propsData: { type: 'edit' },
     });
 
+    const tooltipContent = wrapper.find('.v-tooltip__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(tooltipContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-action-btn` with default edit type correctly.', () => {
-    const wrapper = shallowMount(CActionBtn, {
+  it('Renders `c-action-btn` with default duplicate type correctly.', () => {
+    const wrapper = mount(CActionBtn, {
       localVue,
       propsData: { type: 'duplicate' },
     });
 
+    const tooltipContent = wrapper.find('.v-tooltip__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(tooltipContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-action-btn` with default edit type correctly.', () => {
-    const wrapper = shallowMount(CActionBtn, {
+  it('Renders `c-action-btn` with default delete type correctly.', () => {
+    const wrapper = mount(CActionBtn, {
       localVue,
       propsData: { type: 'delete' },
     });
 
+    const tooltipContent = wrapper.find('.v-tooltip__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(tooltipContent.element).toMatchSnapshot();
   });
 
   it('Renders `c-action-btn` with custom type correctly.', () => {
-    const wrapper = shallowMount(CActionBtn, {
+    const wrapper = mount(CActionBtn, {
       localVue,
       propsData: { icon: 'test_icon', color: 'color', tooltip: 'tooltip' },
     });
 
+    const tooltipContent = wrapper.find('.v-tooltip__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(tooltipContent.element).toMatchSnapshot();
   });
 });
