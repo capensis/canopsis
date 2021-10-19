@@ -43,7 +43,7 @@ describe('state-criticity-field', () => {
     expect(inputEvents).toHaveLength(1);
 
     const [eventData] = inputEvents[0];
-    expect(+eventData).toEqual(ENTITIES_STATES.ok);
+    expect(eventData).toEqual(ENTITIES_STATES.ok);
   });
 
   it('Renders `state-criticity-field` with default props correctly', () => {
