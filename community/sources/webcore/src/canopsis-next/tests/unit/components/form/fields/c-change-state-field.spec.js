@@ -14,9 +14,6 @@ const stubs = {
   'v-textarea': createInputStub('v-textarea'),
 };
 
-const snapshotStubs = {
-};
-
 const factory = (options = {}) => shallowMount(CChangeStateField, {
   localVue,
   stubs,
@@ -113,7 +110,6 @@ describe('c-change-state-field', () => {
   it('Renders `c-change-state-field` with custom label correctly', () => {
     const wrapper = mount(CChangeStateField, {
       localVue,
-      stubs: snapshotStubs,
       store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: false }),
       propsData: {
         value: {
@@ -130,7 +126,6 @@ describe('c-change-state-field', () => {
   it('Renders `c-change-state-field` without allowed change severity to info correctly', () => {
     const wrapper = mount(CChangeStateField, {
       localVue,
-      stubs: snapshotStubs,
       store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: false }),
       propsData: {
         value: {
@@ -147,7 +142,6 @@ describe('c-change-state-field', () => {
   it('Renders `c-change-state-field` with allowed change severity to info correctly', () => {
     const wrapper = mount(CChangeStateField, {
       localVue,
-      stubs: snapshotStubs,
       store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: true }),
       propsData: {
         value: {
@@ -174,7 +168,6 @@ describe('c-change-state-field', () => {
 
     const wrapper = mount(CChangeStateField, {
       localVue,
-      stubs: snapshotStubs,
       provide: {
         $validator: validator,
       },

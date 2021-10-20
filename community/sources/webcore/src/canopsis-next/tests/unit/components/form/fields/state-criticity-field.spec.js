@@ -18,9 +18,6 @@ const stubs = {
   },
 };
 
-const snapshotStubs = {
-};
-
 const factory = (options = {}) => shallowMount(StateCriticityField, {
   localVue,
   stubs,
@@ -49,7 +46,6 @@ describe('state-criticity-field', () => {
   it('Renders `state-criticity-field` with default props correctly', () => {
     const wrapper = mount(StateCriticityField, {
       localVue,
-      stubs: snapshotStubs,
     });
 
     expect(wrapper.element).toMatchSnapshot();
@@ -58,7 +54,6 @@ describe('state-criticity-field', () => {
   it('Renders `state-criticity-field` with custom props correctly', () => {
     const wrapper = mount(StateCriticityField, {
       localVue,
-      stubs: snapshotStubs,
       propsData: {
         value: ENTITIES_STATES.major,
         mandatory: true,
