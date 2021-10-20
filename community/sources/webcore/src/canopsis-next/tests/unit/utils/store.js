@@ -4,7 +4,7 @@ import Vuex from 'vuex';
 /**
  * Create mocked store module.
  *
- * Example:
+ * @example
  *  createMockedStoreModule('info', {
  *    getters: {
  *      allowChangeSeverityToInfo: true,
