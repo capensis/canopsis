@@ -1,5 +1,4 @@
 import Faker from 'faker';
-import { Validator } from 'vee-validate';
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createMockedStoreGetters } from '@unit/utils/store';
@@ -17,6 +16,16 @@ const stubs = {
 const factory = (options = {}) => shallowMount(CChangeStateField, {
   localVue,
   stubs,
+  ...options,
+});
+
+const snapshotFactory = (options = {}) => mount(CChangeStateField, {
+  localVue,
+  parentComponent: {
+    $_veeValidate: {
+      validator: 'new',
+    },
+  },
   ...options,
 });
 
@@ -78,38 +87,28 @@ describe('c-change-state-field', () => {
     });
   });
 
-  it('Error created for output field, after validate', async () => {
-    const validator = new Validator();
-    const name = Faker.datatype.string();
+  it('Renders `c-change-state-field` after validate correctly', async () => {
     const value = {
       state: ENTITIES_STATES.major,
       output: '',
     };
 
-    factory({
-      provide: {
-        $validator: validator,
-      },
+    const wrapper = snapshotFactory({
       store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: false }),
       propsData: {
         value,
-        name,
       },
     });
 
-    const isValid = await validator.validateAll();
+    const { $validator: validator } = wrapper.vm;
 
-    expect(isValid).toBe(false);
-    expect(validator.errors.count()).toBe(1);
+    await validator.validateAll();
 
-    const [error] = validator.errors;
-    expect(error.field).toBe(`${name}.output`);
-    expect(error.rule).toBe('required');
+    expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `c-change-state-field` with custom label correctly', () => {
-    const wrapper = mount(CChangeStateField, {
-      localVue,
+    const wrapper = snapshotFactory({
       store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: false }),
       propsData: {
         value: {
@@ -124,8 +123,7 @@ describe('c-change-state-field', () => {
   });
 
   it('Renders `c-change-state-field` without allowed change severity to info correctly', () => {
-    const wrapper = mount(CChangeStateField, {
-      localVue,
+    const wrapper = snapshotFactory({
       store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: false }),
       propsData: {
         value: {
@@ -140,8 +138,7 @@ describe('c-change-state-field', () => {
   });
 
   it('Renders `c-change-state-field` with allowed change severity to info correctly', () => {
-    const wrapper = mount(CChangeStateField, {
-      localVue,
+    const wrapper = snapshotFactory({
       store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: true }),
       propsData: {
         value: {
@@ -156,21 +153,10 @@ describe('c-change-state-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `c-change-state-field` with errors correctly', () => {
+  it('Renders `c-change-state-field` with errors correctly', async () => {
     const name = 'customName';
-    const validator = new Validator();
-    validator.errors.add([
-      {
-        field: `${name}.output`,
-        msg: 'Output error',
-      },
-    ]);
 
-    const wrapper = mount(CChangeStateField, {
-      localVue,
-      provide: {
-        $validator: validator,
-      },
+    const wrapper = snapshotFactory({
       store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: true }),
       propsData: {
         value: {
@@ -180,6 +166,16 @@ describe('c-change-state-field', () => {
         name,
       },
     });
+
+    const { $validator: validator } = wrapper.vm;
+    validator.errors.add([
+      {
+        field: `${name}.output`,
+        msg: 'Output error',
+      },
+    ]);
+
+    await localVue.nextTick();
 
     expect(wrapper.element).toMatchSnapshot();
   });

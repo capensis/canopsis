@@ -12,7 +12,7 @@ const stubs = {
      <input
        :value="value"
        class="v-btn-toggle"
-       @input="$listeners.change($event.target.value)"
+       @input="$listeners.change(+$event.target.value)"
      />
    `,
   },
@@ -21,6 +21,11 @@ const stubs = {
 const factory = (options = {}) => shallowMount(StateCriticityField, {
   localVue,
   stubs,
+  ...options,
+});
+
+const snapshotFactory = (options = {}) => mount(StateCriticityField, {
+  localVue,
   ...options,
 });
 
@@ -44,16 +49,13 @@ describe('state-criticity-field', () => {
   });
 
   it('Renders `state-criticity-field` with default props correctly', () => {
-    const wrapper = mount(StateCriticityField, {
-      localVue,
-    });
+    const wrapper = snapshotFactory();
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `state-criticity-field` with custom props correctly', () => {
-    const wrapper = mount(StateCriticityField, {
-      localVue,
+    const wrapper = snapshotFactory({
       propsData: {
         value: ENTITIES_STATES.major,
         mandatory: true,
