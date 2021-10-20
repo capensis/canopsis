@@ -38,12 +38,8 @@
 import { get, isString } from 'lodash';
 import { Validator } from 'vee-validate';
 
-import { PAYLOAD_VARIABLE_REGEXP } from '@/constants';
-
 import { convertPayloadToJson } from '@/helpers/payload-json';
 import { stringifyJson } from '@/helpers/json';
-
-import { isValidJson } from '@/plugins/validator/helpers/is-valid-json';
 
 export default {
   inject: {
@@ -137,7 +133,9 @@ export default {
     },
 
     rule() {
-      return this.variables ? 'payload' : 'json';
+      return {
+        json: this.variables,
+      };
     },
   },
   watch: {
@@ -151,26 +149,6 @@ export default {
       }
     },
   },
-  created() {
-    this.$validator.extend('payload', {
-      getMessage: () => this.$t('errors.JSONNotValid'),
-      /**
-       * Function for check json payload with variables is valid
-       *
-       * @param {string} json
-       * @return {boolean}
-       */
-      validate: (json) => {
-        try {
-          const string = json.replace(new RegExp(PAYLOAD_VARIABLE_REGEXP), '""');
-
-          return isValidJson(string);
-        } catch (e) {
-          return false;
-        }
-      },
-    });
-  },
   methods: {
     valueToLocalValue(value) {
       try {
@@ -178,7 +156,6 @@ export default {
           ? convertPayloadToJson(value)
           : stringifyJson(value);
       } catch (err) {
-        // this.$popups.error({ text: this.$t('errors.default') });
         console.error(err);
 
         return '{}';
