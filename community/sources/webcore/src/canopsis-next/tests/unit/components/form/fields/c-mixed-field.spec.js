@@ -2,6 +2,7 @@ import Faker from 'faker';
 import { Validator } from 'vee-validate';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createInputStub, createSelectInputStub } from '@unit/stubs/input';
 import { FILTER_INPUT_TYPES } from '@/constants';
 
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
@@ -9,54 +10,14 @@ import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
 const localVue = createVueInstance();
 
 const stubs = {
-  'v-select': {
-    props: ['value', 'items'],
-    template: `
-      <select class="v-select" :value="value" @change="$listeners.input($event.target.value)">
-        <option v-for="item in items" :value="item.value" :key="item.value">
-          {{ item.value }}
-        </option>
-      </select>
-    `,
-  },
-  'v-text-field': {
-    props: ['value'],
-    template: `
-      <input
-        :value="value"
-        class="v-text-field"
-        @input="$listeners.input($event.target.value)"
-      />
-    `,
-  },
-  'v-combobox': {
-    props: ['value'],
-    template: `
-      <input
-        :value="value"
-        class="v-combobox"
-        @input="$listeners.input($event.target.value)"
-      />
-    `,
-  },
+  'v-select': createSelectInputStub('v-select'),
+  'v-text-field': createInputStub('v-text-field'),
+  'v-combobox': createInputStub('v-combobox'),
   'c-array-mixed-field': true,
 };
 
 const snapshotStubs = {
   'c-array-mixed-field': true,
-  'v-select': {
-    props: ['items'],
-    template: `
-      <div class="v-select">
-        <select>
-          <option v-for="(item, index) in items" :value="item.value" :key="item.value">
-            <slot name="selection" :item="item" :index="index" />
-            <slot name="item" :item="item" />
-          </option>
-        </select>
-      </div>
-    `,
-  },
 };
 
 const factory = (options = {}) => shallowMount(CMixedField, {
@@ -337,7 +298,10 @@ describe('c-mixed-field', () => {
       },
     });
 
+    const menuContent = wrapper.find('.v-menu__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
   });
 
   it('Renders `c-mixed-field` with errors correctly', () => {
@@ -354,7 +318,10 @@ describe('c-mixed-field', () => {
       },
     });
 
+    const menuContent = wrapper.find('.v-menu__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
   });
 
   it('Renders `c-mixed-field` with custom props correctly', () => {
@@ -383,7 +350,10 @@ describe('c-mixed-field', () => {
       },
     });
 
+    const menuContent = wrapper.find('.v-menu__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
   });
 
   it('Renders `c-mixed-field` with string type and items correctly', () => {
@@ -408,7 +378,12 @@ describe('c-mixed-field', () => {
       },
     });
 
+    const menuContents = wrapper.findAll('.v-menu__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    menuContents.wrappers.forEach((menuContent) => {
+      expect(menuContent.element).toMatchSnapshot();
+    });
   });
 
   it('Renders `c-mixed-field` with boolean type correctly', () => {
@@ -427,7 +402,10 @@ describe('c-mixed-field', () => {
       },
     });
 
+    const menuContent = wrapper.find('.v-menu__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
   });
 
   it('Renders `c-mixed-field` with number type correctly', () => {
@@ -446,7 +424,10 @@ describe('c-mixed-field', () => {
       },
     });
 
+    const menuContent = wrapper.find('.v-menu__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
   });
 
   it('Renders `c-mixed-field` with null type correctly', () => {
@@ -465,7 +446,10 @@ describe('c-mixed-field', () => {
       },
     });
 
+    const menuContent = wrapper.find('.v-menu__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
   });
 
   it('Renders `c-mixed-field` with null type correctly', () => {
@@ -484,6 +468,9 @@ describe('c-mixed-field', () => {
       },
     });
 
+    const menuContent = wrapper.find('.v-menu__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
   });
 });

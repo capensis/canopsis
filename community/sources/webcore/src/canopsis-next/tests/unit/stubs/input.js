@@ -19,3 +19,14 @@ export const createNumberInputStub = className => ({
     />
   `,
 });
+
+export const createSelectInputStub = className => ({
+  props: ['value', 'items'],
+  template: `
+    <select class="${className}" :value="value" @change="$listeners.input($event.target.value)">
+    <option v-for="item in items" :value="item.value" :key="item.value">
+      {{ item.value }}
+    </option>
+    </select>
+  `,
+});
