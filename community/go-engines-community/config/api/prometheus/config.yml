@@ -1,0 +1,3 @@
+prometheus:
+  host: 10.0.4.131
+  port: 9091
