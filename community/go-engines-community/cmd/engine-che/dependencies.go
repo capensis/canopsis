@@ -84,26 +84,6 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 				return fmt.Errorf("unable to load data sources: %v", err)
 			}
 
-			_, err = periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
-				options.PeriodicalWaitTime, &redislock.Options{
-					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
-				})
-			if err != nil {
-				if err == redislock.ErrNotObtained {
-					return nil
-				}
-
-				logger.Error().Err(err).Msg("cannot obtain lock")
-				return err
-			}
-
-			logger.Debug().Msg("Recompute impacted services for connectors")
-			err = enrichmentCenter.UpdateImpactedServices(ctx)
-			if err != nil {
-				logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
-			}
-			logger.Debug().Msg("Recompute impacted services for connectors finished")
-
 			logger.Debug().Msg("Loading event filter rules")
 			err = eventFilterService.LoadRules(ctx)
 			if err != nil {
@@ -115,6 +95,28 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 			if err != nil {
 				logger.Error().Err(err).Msg("unable to load services")
 			}
+
+			_, err = periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
+				options.PeriodicalWaitTime, &redislock.Options{
+					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
+				})
+			if err != nil {
+				// Lock is set for options.PeriodicalWaitTime TTL, other instances should skip actions below
+				if err == redislock.ErrNotObtained {
+					return nil
+				}
+
+				logger.Error().Err(err).Msg("cannot obtain lock")
+				return err
+			}
+			// Below are actions locked with ChePeriodicalLockKey for multi-instance configuration
+
+			logger.Debug().Msg("Recompute impacted services for connectors")
+			err = enrichmentCenter.UpdateImpactedServices(ctx)
+			if err != nil {
+				logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
+			}
+			logger.Debug().Msg("Recompute impacted services for connectors finished")
 			return nil
 		},
 		func(ctx context.Context) {
