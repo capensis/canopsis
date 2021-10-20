@@ -1,4 +1,7 @@
-import { shallowMount, createVueInstance } from '@unit/utils/vue';
+import Faker from 'faker';
+import { Validator } from 'vee-validate';
+
+import { shallowMount, createVueInstance, mount } from '@unit/utils/vue';
 
 import CJsonField from '@/components/forms/fields/c-json-field.vue';
 
@@ -41,9 +44,23 @@ describe('c-json-field', () => {
   it('Object value set to the input', () => {
     const value = { key: 'value' };
     const wrapper = factory({ propsData: { value } });
-    const input = wrapper.find('.v-textarea textarea');
 
-    expect(input.element.value).toBe(JSON.stringify(value, undefined, 4));
+    const textarea = wrapper.find('.v-textarea textarea');
+
+    expect(textarea.element.value).toBe(JSON.stringify(value, undefined, 4));
+  });
+
+  it('Input event after set value', () => {
+    const value = { key: 'value' };
+    const wrapper = factory({ propsData: { value } });
+
+    const textarea = wrapper.find('.v-textarea textarea');
+
+    textarea.setValue('{ "newKey": "newValue" }');
+
+    const inputEvents = wrapper.emitted('input');
+
+    expect(inputEvents).toHaveLength(1);
   });
 
   it('String value set to the input with variables', () => {
@@ -62,18 +79,78 @@ describe('c-json-field', () => {
       },
     });
 
-    const input = wrapper.find('.v-textarea textarea');
+    const textarea = wrapper.find('.v-textarea textarea');
 
-    expect(input.element.value).toBe(value);
+    expect(textarea.element.value).toBe(value);
   });
 
-  /*  it('Object value set to the input', () => {
+  it('v-validate works correctly on valid json', async () => {
+    const name = Faker.datatype.string();
     const value = { key: 'value' };
-    const wrapper = factory({ propsData: { value } });
-    const input = wrapper.find('.v-textarea textarea');
+    const validator = new Validator();
 
-    expect(input.element.value).toBe(value);
-  }); */
+    mount({
+      inject: ['$validator'],
+      components: {
+        CJsonField,
+      },
+      props: ['name', 'value'],
+      template: `
+        <c-json-field :name="name" :value="value" />
+      `,
+    }, {
+      localVue,
+      stubs,
+      provide: {
+        $validator: validator,
+      },
+      propsData: {
+        value,
+        name,
+      },
+    });
+
+    const isValid = await validator.validateAll();
+
+    expect(isValid).toBeTruthy();
+    expect(validator.fields.find({ name })).toBeTruthy();
+  });
+
+  it('v-validate works correctly on invalid json', async () => {
+    const name = Faker.datatype.string();
+    const value = { key: 'value' };
+    const validator = new Validator();
+
+    const wrapper = mount({
+      inject: ['$validator'],
+      components: {
+        CJsonField,
+      },
+      props: ['name', 'value'],
+      template: `
+        <c-json-field :name="name" :value="value" />
+      `,
+    }, {
+      localVue,
+      stubs,
+      provide: {
+        $validator: validator,
+      },
+      propsData: {
+        value,
+        name,
+      },
+    });
+
+    const textarea = wrapper.find('.v-textarea textarea');
+
+    textarea.setValue('asd');
+
+    const isValid = await validator.validateAll();
+
+    expect(isValid).toBeTruthy();
+    expect(validator.fields.find({ name })).toBeTruthy();
+  });
 
   it('Renders `c-json-field` with default props correctly', () => {
     const wrapper = shallowMount(CJsonField, {
@@ -90,6 +167,32 @@ describe('c-json-field', () => {
         validateOn: 'button',
       },
     });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `c-json-field` with custom props correctly and touched value', async () => {
+    const wrapper = mount({
+      components: {
+        CJsonField,
+      },
+      props: ['name', 'value'],
+      template: `
+        <c-json-field ref="jsonField" :name="name" :value="value" validate-on="button" />
+      `,
+    }, {
+      localVue,
+      $_veeValidate: {
+        validator: 'new',
+      },
+      propsData: {
+        value: '{}',
+      },
+    });
+
+    const textarea = wrapper.find('.v-textarea textarea');
+
+    await textarea.setValue('asd');
 
     expect(wrapper.element).toMatchSnapshot();
   });
