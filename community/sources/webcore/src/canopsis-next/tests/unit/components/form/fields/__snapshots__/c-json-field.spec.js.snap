@@ -1,0 +1,215 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] = `
+<v-layout-stub
+  row="row"
+  tag="div"
+  wrap="wrap"
+>
+  <v-flex-stub
+    tag="div"
+    xs12="xs12"
+  >
+    <v-textarea-stub
+      backgroundcolor=""
+      clearicon="$vuetify.icons.clear"
+      color="primary"
+      data-vv-validate-on="none"
+      errorcount="1"
+      errormessages=""
+      label=""
+      messages=""
+      name="json"
+      rowheight="24"
+      rows="5"
+      rules=""
+      successmessages=""
+      type="text"
+      value="{}"
+    >
+      <!---->
+    </v-textarea-stub>
+  </v-flex-stub>
+  <v-flex-stub
+    tag="div"
+    xs12="xs12"
+  >
+    <v-btn-stub
+      activeclass="v-btn--active"
+      class="ml-0"
+      color="primary"
+      disabled="true"
+      outline="true"
+      tag="button"
+      type="button"
+    >
+      common.parse
+    </v-btn-stub>
+    <v-btn-stub
+      activeclass="v-btn--active"
+      color="grey darken-1"
+      disabled="true"
+      outline="true"
+      tag="button"
+      type="button"
+    >
+      common.reset
+    </v-btn-stub>
+  </v-flex-stub>
+</v-layout-stub>
+`;
+
+exports[`c-json-field Renders \`c-json-field\` with custom props correctly 2`] = `
+<v-layout-stub
+  row="row"
+  tag="div"
+  wrap="wrap"
+>
+  <v-flex-stub
+    tag="div"
+    xs12="xs12"
+  >
+    <v-textarea-stub
+      backgroundcolor=""
+      clearicon="$vuetify.icons.clear"
+      color="primary"
+      data-vv-validate-on="none"
+      errorcount="1"
+      errormessages=""
+      label=""
+      messages=""
+      name="json"
+      readonly="true"
+      rowheight="24"
+      rows="5"
+      rules=""
+      successmessages=""
+      type="text"
+      value="{}"
+    >
+      <!---->
+    </v-textarea-stub>
+  </v-flex-stub>
+  <!---->
+</v-layout-stub>
+`;
+
+exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] = `
+<v-layout-stub
+  row="row"
+  tag="div"
+  wrap="wrap"
+>
+  <v-flex-stub
+    tag="div"
+    xs12="xs12"
+  >
+    <v-textarea-stub
+      autogrow="true"
+      backgroundcolor=""
+      box="true"
+      clearicon="$vuetify.icons.clear"
+      color="primary"
+      data-vv-validate-on="none"
+      disabled="true"
+      errorcount="1"
+      errormessages=""
+      label="JSON field"
+      messages=""
+      name="jsonField"
+      outline="true"
+      rowheight="24"
+      rows="4"
+      rules=""
+      successmessages=""
+      type="text"
+      value="{
+    \\"key\\": \\"value\\"
+}"
+    >
+      <v-tooltip-stub
+        closedelay="200"
+        contentclass=""
+        debounce="0"
+        fixed="true"
+        left="true"
+        maxwidth="auto"
+        nudgebottom="0"
+        nudgeleft="0"
+        nudgeright="0"
+        nudgetop="0"
+        nudgewidth="0"
+        opendelay="200"
+        tag="span"
+      >
+        <v-icon-stub>
+          help
+        </v-icon-stub>
+        <div>
+          Test text
+        </div>
+      </v-tooltip-stub>
+    </v-textarea-stub>
+  </v-flex-stub>
+  <v-flex-stub
+    tag="div"
+    xs12="xs12"
+  >
+    <v-btn-stub
+      activeclass="v-btn--active"
+      class="ml-0"
+      color="primary"
+      disabled="true"
+      outline="true"
+      tag="button"
+      type="button"
+    >
+      common.parse
+    </v-btn-stub>
+    <v-btn-stub
+      activeclass="v-btn--active"
+      color="grey darken-1"
+      disabled="true"
+      outline="true"
+      tag="button"
+      type="button"
+    >
+      common.reset
+    </v-btn-stub>
+  </v-flex-stub>
+</v-layout-stub>
+`;
+
+exports[`c-json-field Renders \`c-json-field\` with default props correctly 1`] = `
+<v-layout-stub
+  row="row"
+  tag="div"
+  wrap="wrap"
+>
+  <v-flex-stub
+    tag="div"
+    xs12="xs12"
+  >
+    <v-textarea-stub
+      backgroundcolor=""
+      clearicon="$vuetify.icons.clear"
+      color="primary"
+      data-vv-validate-on="none"
+      errorcount="1"
+      errormessages=""
+      label=""
+      messages=""
+      name="json"
+      rowheight="24"
+      rows="5"
+      rules=""
+      successmessages=""
+      type="text"
+      value="{}"
+    >
+      <!---->
+    </v-textarea-stub>
+  </v-flex-stub>
+  <!---->
+</v-layout-stub>
+`;

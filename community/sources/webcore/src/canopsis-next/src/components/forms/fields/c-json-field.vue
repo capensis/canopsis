@@ -175,10 +175,11 @@ export default {
     valueToLocalValue(value) {
       try {
         return this.variables
-          ? convertPayloadToJson(value, 4)
+          ? convertPayloadToJson(value)
           : stringifyJson(value);
       } catch (err) {
-        this.$popups.error({ text: this.$t('errors.default') });
+        // this.$popups.error({ text: this.$t('errors.default') });
+        console.error(err);
 
         return '{}';
       }

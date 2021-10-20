@@ -6,10 +6,10 @@ import { PAYLOAD_VARIABLE_REGEXP } from '@/constants';
  * Convert payload string to JSON with indents
  *
  * @param {string} payload
- * @param {number} [indents]
+ * @param {number} [indents = 4]
  * @returns {string}
  */
-export const convertPayloadToJson = (payload, indents) => {
+export const convertPayloadToJson = (payload, indents = 4) => {
   // Searching for all variables without quot in a string
   const match = payload.matchAll(new RegExp(PAYLOAD_VARIABLE_REGEXP));
 
