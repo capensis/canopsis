@@ -161,7 +161,9 @@ describe('c-duration-field', () => {
       },
     });
 
-    await wrapper.vm.$validator.validateAll();
+    const { $validator: validator } = wrapper.vm;
+
+    await validator.validateAll();
 
     expect(wrapper.element).toMatchSnapshot();
   });
@@ -190,7 +192,9 @@ describe('c-duration-field', () => {
       },
     });
 
-    await wrapper.vm.$validator.validateAll();
+    const { $validator: validator } = wrapper.vm;
+
+    await validator.validateAll();
 
     expect(wrapper.element).toMatchSnapshot();
   });
