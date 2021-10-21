@@ -36,7 +36,7 @@ Feature: send activation event on pbhleave
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the end of event processing
     When I send an event:
     """json
     {
@@ -115,7 +115,7 @@ Feature: send activation event on pbhleave
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the end of event processing
     When I send an event:
     """json
     {
@@ -194,7 +194,7 @@ Feature: send activation event on pbhleave
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the end of event processing
     When I send an event:
     """json
     {

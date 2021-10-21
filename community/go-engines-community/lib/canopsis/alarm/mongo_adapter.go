@@ -426,6 +426,27 @@ func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 	})
 }
 
+func (a mongoAdapter) GetOpenedAlarmsWithEntity(ctx context.Context, createdAfter types.CpsTime) (libmongo.Cursor, error) {
+	return a.mainDbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"v.resolved": nil,
+			"t":          bson.M{"$lt": createdAfter},
+		}},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         libmongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+		{"$match": bson.M{"entity.enabled": true}},
+	})
+}
+
 func (a mongoAdapter) GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) ([]types.Alarm, error) {
 	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{

@@ -468,3 +468,65 @@ Feature: no execute action when entity is inactive
       }
     }
     """
+
+  Scenario: given pbehavior action should create pbehavior and update last alarm date of pbehavior
+    Given I am admin
+    When I do POST /api/v4/scenarios:
+    """
+    {
+      "name": "test-scenario-pbehavior-action-6-name",
+      "enabled": true,
+      "priority": 76,
+      "triggers": ["stateinc"],
+      "actions": [
+        {
+          "_id": "test-action-pbehavior-action-6",
+          "enabled": true,
+          "entity_patterns": [{"name": "test-resource-pbehavior-action-6"}],
+          "parameters": {
+            "name": "pbehavior-action-6",
+            "tstart": {{ now.Unix }},
+            "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+            "type": "test-maintenance-type-to-engine",
+            "reason": "test-reason-to-engine"
+          },
+          "type": "pbehavior",
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """
+    {
+      "connector" : "test-connector-pbehavior-action-6",
+      "connector_name" : "test-connector-name-pbehavior-action-6",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-pbehavior-action-6",
+      "resource" : "test-resource-pbehavior-action-6",
+      "state" : 1,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """
+    {
+      "connector" : "test-connector-pbehavior-action-6",
+      "connector_name" : "test-connector-name-pbehavior-action-6",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-pbehavior-action-6",
+      "resource" : "test-resource-pbehavior-action-6",
+      "state" : 2,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/pbehaviors?search=pbehavior-action-6
+    Then the response code should be 200
+    Then the response key "data.0.last_alarm_date" should not be "null"
