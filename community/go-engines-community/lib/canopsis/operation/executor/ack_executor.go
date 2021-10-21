@@ -7,23 +7,28 @@ import (
 	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 // NewAckExecutor creates new executor.
-func NewAckExecutor(configProvider config.AlarmConfigProvider) operationlib.Executor {
-	return &ackExecutor{configProvider: configProvider}
+func NewAckExecutor(metricsSender metrics.Sender, configProvider config.AlarmConfigProvider) operationlib.Executor {
+	return &ackExecutor{
+		metricsSender:  metricsSender,
+		configProvider: configProvider,
+	}
 }
 
 type ackExecutor struct {
+	metricsSender  metrics.Sender
 	configProvider config.AlarmConfigProvider
 }
 
 // Exec creates new ack step for alarm.
 func (e *ackExecutor) Exec(
-	_ context.Context,
+	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
@@ -50,6 +55,8 @@ func (e *ackExecutor) Exec(
 	if err != nil {
 		return "", err
 	}
+
+	go e.metricsSender.SendAck(ctx, *alarm, params.Author, time.Time)
 
 	return types.AlarmChangeTypeAck, nil
 }

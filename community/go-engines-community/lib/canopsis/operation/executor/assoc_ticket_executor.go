@@ -3,21 +3,23 @@ package executor
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 // NewAssocTicketExecutor creates new executor.
-func NewAssocTicketExecutor() operationlib.Executor {
-	return &assocTicketExecutor{}
+func NewAssocTicketExecutor(metricsSender metrics.Sender) operationlib.Executor {
+	return &assocTicketExecutor{metricsSender: metricsSender}
 }
 
 type assocTicketExecutor struct {
+	metricsSender metrics.Sender
 }
 
 // Exec creates new assoc ticket step for alarm.
 func (e *assocTicketExecutor) Exec(
-	_ context.Context,
+	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
@@ -40,6 +42,8 @@ func (e *assocTicketExecutor) Exec(
 	if err != nil {
 		return "", err
 	}
+
+	go e.metricsSender.SendAssocTicket(ctx, *alarm, params.Author, time.Time)
 
 	return types.AlarmChangeTypeAssocTicket, nil
 }

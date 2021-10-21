@@ -3,6 +3,7 @@ package executor
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -10,9 +11,10 @@ import (
 type instructionExecutor struct {
 	alarmStepTypeMap   map[string]string
 	alarmChangeTypeMap map[string]types.AlarmChangeType
+	metricsSender      metrics.Sender
 }
 
-func NewInstructionExecutor() operation.Executor {
+func NewInstructionExecutor(metricsSender metrics.Sender) operation.Executor {
 	return &instructionExecutor{
 		alarmStepTypeMap: map[string]string{
 			// Manual instruction
@@ -54,11 +56,12 @@ func NewInstructionExecutor() operation.Executor {
 			types.EventTypeInstructionJobAborted:   types.AlarmChangeTypeInstructionJobAbort,
 			types.EventTypeInstructionJobFailed:    types.AlarmChangeTypeInstructionJobFail,
 		},
+		metricsSender: metricsSender,
 	}
 }
 
 func (e *instructionExecutor) Exec(
-	_ context.Context,
+	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
@@ -91,6 +94,10 @@ func (e *instructionExecutor) Exec(
 	)
 	if err != nil {
 		return "", err
+	}
+
+	if alarmChangeType == types.AlarmStepAutoInstructionStart {
+		go e.metricsSender.SendAutoInstructionStart(ctx, *alarm, time.Time)
 	}
 
 	return alarmChangeType, nil
