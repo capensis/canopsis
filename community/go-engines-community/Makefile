@@ -33,10 +33,8 @@ LDFLAGS:=-ldflags "\
 	-X ${LINKPKG}.BuildGitCommit=${GITCOMMIT} \
 	-X ${LINKPKG}.BuildDate=${BUILDDATE} ${CUSTOM_LDFLAGS}"
 
-# Use the trimpath option so that the logs do not contain the absolute paths to
-# the source files.
-# This makes the log lines shorter, and independent from the build machine.
-GO_BUILD_FLAGS:= -mod=mod #-gcflags="all=-trimpath \"${GOPATH}/src\""
+# -trimpath makes the log lines shorter and independent from the current machine.
+GO_BUILD_FLAGS:= -trimpath
 GO_BUILD_CUSTOM_FLAGS=
 
 # Export configuration env variables to the Go compiler
