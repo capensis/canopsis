@@ -21,11 +21,11 @@ RUN make deps
 
 COPY . /monorepo
 RUN make canopsis.toml
-RUN make build
+RUN make
 
-# Create the final container
-FROM alpine:${ALPINE_VERSION} AS final_container
 ARG CANOPSIS_EDITION
+# Prepare the final container
+FROM alpine:${ALPINE_VERSION} AS final-container
 
 RUN adduser -D canopsis
 RUN mkdir -p /opt/canopsis/share && chown canopsis:canopsis /opt/canopsis/share
@@ -39,5 +39,5 @@ COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}
 ARG CMD
 COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /engine
 
-FROM final_container AS canopsis-api
+FROM final-container AS canopsis-api
 EXPOSE 8082
