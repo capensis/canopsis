@@ -20,6 +20,12 @@ const factory = (options = {}) => shallowMount(ActionsPanel, {
   ...options,
 });
 
+const snapshotFactory = (options = {}) => mount(ActionsPanel, {
+  localVue,
+  stubs: snapshotStubs,
+  ...options,
+});
+
 describe('actions-panel', () => {
   it('Method into list called after trigger click on action item button. On the extra large size.', () => {
     const actions = [
@@ -98,9 +104,7 @@ describe('actions-panel', () => {
   });
 
   it('Renders `actions-panel` with default props correctly on the extra large size', () => {
-    const wrapper = mount(ActionsPanel, {
-      localVue,
-      stubs: snapshotStubs,
+    const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'xl',
       },
@@ -113,9 +117,7 @@ describe('actions-panel', () => {
   });
 
   it('Renders `actions-panel` with default props correctly on the large size', () => {
-    const wrapper = mount(ActionsPanel, {
-      localVue,
-      stubs: snapshotStubs,
+    const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'l',
       },
@@ -128,9 +130,7 @@ describe('actions-panel', () => {
   });
 
   it('Renders `actions-panel` with actions correctly on the extra large size', () => {
-    const wrapper = mount(ActionsPanel, {
-      localVue,
-      stubs: snapshotStubs,
+    const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'xl',
       },
@@ -146,9 +146,7 @@ describe('actions-panel', () => {
   });
 
   it('Renders `actions-panel` with actions correctly on the large size', () => {
-    const wrapper = mount(ActionsPanel, {
-      localVue,
-      stubs: snapshotStubs,
+    const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'l',
       },
@@ -164,9 +162,7 @@ describe('actions-panel', () => {
   });
 
   it('Renders `actions-panel` with dropdown actions correctly on the extra large size', () => {
-    const wrapper = mount(ActionsPanel, {
-      localVue,
-      stubs: snapshotStubs,
+    const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'xl',
       },
@@ -182,11 +178,41 @@ describe('actions-panel', () => {
   });
 
   it('Renders `actions-panel` with dropdown actions correctly on the large size', () => {
-    const wrapper = mount(ActionsPanel, {
-      localVue,
-      stubs: snapshotStubs,
+    const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'l',
+      },
+      propsData: {
+        dropDownActions: [editAction, deleteAction],
+      },
+    });
+
+    const dropdownContent = wrapper.find('.v-menu__content');
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(dropdownContent.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with dropdown actions correctly on the tablet size', () => {
+    const wrapper = snapshotFactory({
+      mocks: {
+        $windowSize: 't',
+      },
+      propsData: {
+        dropDownActions: [editAction, deleteAction],
+      },
+    });
+
+    const dropdownContent = wrapper.find('.v-menu__content');
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(dropdownContent.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with dropdown actions correctly on the mobile size', () => {
+    const wrapper = snapshotFactory({
+      mocks: {
+        $windowSize: 'm',
       },
       propsData: {
         dropDownActions: [editAction, deleteAction],

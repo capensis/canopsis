@@ -20,6 +20,12 @@ const factory = (options = {}) => shallowMount(MassActionsPanel, {
   ...options,
 });
 
+const snapshotFactory = (options = {}) => mount(MassActionsPanel, {
+  localVue,
+  stubs: snapshotStubs,
+  ...options,
+});
+
 describe('mass-actions-panel', () => {
   it('Method into list called after trigger click on action item button. On the large size.', () => {
     const actions = [
@@ -73,9 +79,7 @@ describe('mass-actions-panel', () => {
   });
 
   it('Renders `mass-actions-panel` with actions on the large size', () => {
-    const wrapper = mount(MassActionsPanel, {
-      localVue,
-      stubs: snapshotStubs,
+    const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'l+',
       },
@@ -88,11 +92,25 @@ describe('mass-actions-panel', () => {
   });
 
   it('Renders `mass-actions-panel` with actions correctly on the tablet size', () => {
-    const wrapper = mount(MassActionsPanel, {
-      localVue,
-      stubs: snapshotStubs,
+    const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 't',
+      },
+      propsData: {
+        actions: [editAction, deleteAction],
+      },
+    });
+
+    const dropdownContent = wrapper.find('.v-menu__content');
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(dropdownContent.element).toMatchSnapshot();
+  });
+
+  it('Renders `mass-actions-panel` with actions correctly on the mobile size', () => {
+    const wrapper = snapshotFactory({
+      mocks: {
+        $windowSize: 'm',
       },
       propsData: {
         actions: [editAction, deleteAction],
