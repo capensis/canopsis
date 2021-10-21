@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuetify from 'vuetify';
 import { merge } from 'lodash';
 import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
+import Vuex from 'vuex';
 
 import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
@@ -9,6 +10,7 @@ import ValidatorPlugin from '@/plugins/validator';
 import * as constants from '@/constants';
 import * as config from '@/config';
 
+Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin);
