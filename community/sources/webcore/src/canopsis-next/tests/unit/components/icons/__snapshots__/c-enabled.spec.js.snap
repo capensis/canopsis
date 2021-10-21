@@ -2,20 +2,22 @@
 
 exports[`c-enabled Renders \`c-enabled\` correctly. 1`] = `
 <span>
-  <v-icon-stub
-    color="error"
+  <i
+    aria-hidden="true"
+    class="v-icon material-icons theme--light error--text"
   >
     cancel
-  </v-icon-stub>
+  </i>
 </span>
 `;
 
 exports[`c-enabled Renders \`c-enabled\` with enabled prop correctly. 1`] = `
 <span>
-  <v-icon-stub
-    color="primary"
+  <i
+    aria-hidden="true"
+    class="v-icon material-icons theme--light primary--text"
   >
     check_circle
-  </v-icon-stub>
+  </i>
 </span>
 `;

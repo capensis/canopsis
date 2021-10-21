@@ -16,154 +16,234 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with boolean type correctly 1`]
       <option
         value="string"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           title
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            title
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              title
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.string
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="number"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           exposure_plus_1
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            exposure_plus_1
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              exposure_plus_1
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.number
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="boolean"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           toggle_on
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            toggle_on
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              toggle_on
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.boolean
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="null"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           space_bar
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            space_bar
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              space_bar
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.null
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="array"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           view_array
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            view_array
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              view_array
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.array
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
     </select>
   </div>
-  <v-switch-stub
-    backgroundcolor=""
-    class="ma-0 ml-3 mixed-field__switch"
-    color="primary"
-    errorcount="1"
-    errormessages=""
-    hidedetails="true"
-    label="false"
-    messages=""
-    ripple="true"
-    rules=""
-    successmessages=""
-    valuecomparator="[Function]"
-  />
+  <div
+    class="v-input v-input--selection-controls v-input--switch v-input--hide-details theme--light ma-0 ml-3 mixed-field__switch"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-input--selection-controls__input"
+        >
+          <input
+            aria-checked="false"
+            aria-label="false"
+            role="checkbox"
+            type="checkbox"
+            value=""
+          />
+          <div
+            class="v-input--selection-controls__ripple"
+          />
+          <div
+            class="v-input--switch__track theme--light"
+          />
+          <div
+            class="v-input--switch__thumb theme--light"
+          >
+            <transition-stub
+              mode="out-in"
+              name="fab-transition"
+            />
+          </div>
+        </div>
+        <label
+          aria-hidden="true"
+          class="v-label theme--light"
+          style="left: 0px; position: relative;"
+        >
+          false
+        </label>
+      </div>
+    </div>
+  </div>
 </div>
 `;
 
@@ -186,99 +266,138 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with custom props correctly 1`]
       <option
         value="string"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           title
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            title
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              title
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             Custom string
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="number"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           exposure_plus_1
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            exposure_plus_1
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              exposure_plus_1
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.number
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="boolean"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           toggle_on
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            toggle_on
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              toggle_on
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.boolean
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
     </select>
   </div>
-  <v-text-field-stub
-    class="mixed-field__text"
-    dense="true"
-    disabled="true"
-    errormessages="First error message,Second error message"
-    flat="true"
-    hidedetails="true"
-    name="mixedFieldName"
-    singleline="true"
-    soloinverted="true"
-    type="text"
-    value="Value"
-  />
+  <div
+    class="v-input v-text-field v-text-field--single-line v-text-field--solo v-text-field--solo-inverted v-text-field--solo-flat v-text-field--enclosed v-input--has-state v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light error--text mixed-field__text"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <input
+            dense="true"
+            disabled="disabled"
+            name="mixedFieldName"
+            type="text"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 `;
 
@@ -297,148 +416,221 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with default props correctly 1`
       <option
         value="string"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           title
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            title
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              title
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.string
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="number"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           exposure_plus_1
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            exposure_plus_1
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              exposure_plus_1
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.number
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="boolean"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           toggle_on
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            toggle_on
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              toggle_on
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.boolean
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="null"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           space_bar
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            space_bar
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              space_bar
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.null
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="array"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           view_array
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            view_array
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              view_array
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.array
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
     </select>
   </div>
-  <v-text-field-stub
-    class="mixed-field__text"
-    dense="true"
-    errormessages=""
-    singleline="true"
-    type="text"
-    value=""
-  />
+  <div
+    class="v-input v-text-field v-text-field--single-line theme--light mixed-field__text"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <input
+            dense="true"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 `;
 
@@ -457,148 +649,227 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with errors correctly 1`] = `
       <option
         value="string"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           title
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            title
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              title
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.string
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="number"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           exposure_plus_1
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            exposure_plus_1
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              exposure_plus_1
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.number
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="boolean"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           toggle_on
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            toggle_on
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              toggle_on
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.boolean
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="null"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           space_bar
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            space_bar
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              space_bar
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.null
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="array"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           view_array
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            view_array
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              view_array
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.array
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
     </select>
   </div>
-  <v-text-field-stub
-    class="mixed-field__text"
-    dense="true"
-    errormessages="First error message,Second error message"
-    singleline="true"
-    type="text"
-    value=""
-  />
+  <div
+    class="v-input v-text-field v-text-field--single-line v-input--has-state theme--light error--text mixed-field__text"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <input
+            dense="true"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light error--text"
+        >
+          <div
+            class="v-messages__wrapper"
+          >
+            <div
+              class="v-messages__message"
+            >
+              First error message
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 `;
 
@@ -618,146 +889,221 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with null type correctly 1`] = 
       <option
         value="string"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           title
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            title
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              title
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.string
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="number"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           exposure_plus_1
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            exposure_plus_1
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              exposure_plus_1
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.number
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="boolean"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           toggle_on
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            toggle_on
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              toggle_on
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.boolean
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="null"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           space_bar
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            space_bar
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              space_bar
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.null
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="array"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           view_array
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            view_array
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              view_array
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.array
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
     </select>
   </div>
-  <v-text-field-stub
-    class="mixed-field__text"
-    disabled="true"
-    errormessages=""
-    value="null"
-  />
+  <div
+    class="v-input v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light mixed-field__text"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <input
+            disabled="disabled"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 `;
 
@@ -777,137 +1123,187 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with null type correctly 2`] = 
       <option
         value="string"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           title
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            title
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              title
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.string
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="number"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           exposure_plus_1
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            exposure_plus_1
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              exposure_plus_1
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.number
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="boolean"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           toggle_on
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            toggle_on
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              toggle_on
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.boolean
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="null"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           space_bar
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            space_bar
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              space_bar
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.null
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="array"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           view_array
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            view_array
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              view_array
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.array
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
     </select>
   </div>
@@ -935,149 +1331,222 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with number type correctly 1`] 
       <option
         value="string"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           title
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            title
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              title
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.string
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="number"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           exposure_plus_1
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            exposure_plus_1
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              exposure_plus_1
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.number
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="boolean"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           toggle_on
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            toggle_on
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              toggle_on
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.boolean
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="null"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           space_bar
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            space_bar
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              space_bar
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.null
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="array"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           view_array
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            view_array
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              view_array
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.array
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
     </select>
   </div>
-  <v-text-field-stub
-    class="mixed-field__text"
-    dense="true"
-    errormessages=""
-    name="mixedFieldName"
-    singleline="true"
-    type="number"
-    value="222"
-  />
+  <div
+    class="v-input v-text-field v-text-field--single-line v-input--is-label-active v-input--is-dirty theme--light mixed-field__text"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <input
+            dense="true"
+            name="mixedFieldName"
+            type="number"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 `;
 
@@ -1097,153 +1566,233 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with string type and items corr
       <option
         value="string"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           title
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            title
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              title
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.string
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="number"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           exposure_plus_1
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            exposure_plus_1
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              exposure_plus_1
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.number
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="boolean"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           toggle_on
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            toggle_on
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              toggle_on
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.boolean
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="null"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           space_bar
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            space_bar
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              space_bar
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.null
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
       <option
         value="array"
       >
-        <v-icon-stub
-          class="mixed-field__type-selector-icon"
-          small="small"
+        <i
+          aria-hidden="true"
+          class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+          style="font-size: 16px;"
         >
           view_array
-        </v-icon-stub>
+        </i>
          
-        <v-list-tile-avatar-stub
-          class="mixed-field__type-selector-avatar"
-          size="40"
+        <div
+          class="v-list__tile__avatar mixed-field__type-selector-avatar"
         >
-          <v-icon-stub
-            class="mixed-field__type-selector-icon"
-            small="small"
+          <div
+            class="v-avatar"
+            style="height: 40px; width: 40px;"
           >
-            view_array
-          </v-icon-stub>
-        </v-list-tile-avatar-stub>
-        <v-list-tile-content-stub>
-          <v-list-tile-title-stub>
+            <i
+              aria-hidden="true"
+              class="v-icon mixed-field__type-selector-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              view_array
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-list__tile__content"
+        >
+          <div
+            class="v-list__tile__title"
+          >
             mixedField.types.array
-          </v-list-tile-title-stub>
-        </v-list-tile-content-stub>
+          </div>
+        </div>
       </option>
     </select>
   </div>
-  <v-switch-stub
-    backgroundcolor=""
-    class="ma-0 ml-3 mixed-field__switch"
-    color="primary"
-    errorcount="1"
-    errormessages=""
-    hidedetails="true"
-    label="false"
-    messages=""
-    ripple="true"
-    rules=""
-    successmessages=""
-    valuecomparator="[Function]"
-  />
+  <div
+    class="v-input v-input--selection-controls v-input--switch v-input--hide-details theme--light ma-0 ml-3 mixed-field__switch"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-input--selection-controls__input"
+        >
+          <input
+            aria-checked="false"
+            aria-label="false"
+            role="checkbox"
+            type="checkbox"
+            value=""
+          />
+          <div
+            class="v-input--selection-controls__ripple"
+          />
+          <div
+            class="v-input--switch__track theme--light"
+          />
+          <div
+            class="v-input--switch__thumb theme--light"
+          >
+            <transition-stub
+              mode="out-in"
+              name="fab-transition"
+            />
+          </div>
+        </div>
+        <label
+          aria-hidden="true"
+          class="v-label theme--light"
+          style="left: 0px; position: relative;"
+        >
+          false
+        </label>
+      </div>
+    </div>
+  </div>
 </div>
 `;

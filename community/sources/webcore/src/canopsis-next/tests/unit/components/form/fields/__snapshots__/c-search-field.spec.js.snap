@@ -1,78 +1,85 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
-<v-toolbar-stub
-  class="white"
-  dense="true"
-  flat="true"
-  scrollthreshold="300"
+<nav
+  class="white v-toolbar elevation-0 v-toolbar--dense theme--light"
+  style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
 >
-  <v-text-field-stub
-    data-test="searchingTextField"
-    hide-details="hide-details"
-    label="common.search"
-    single-line="single-line"
-    value="c-search-field"
-  />
-  <v-tooltip-stub
-    bottom="true"
-    closedelay="200"
-    contentclass=""
-    debounce="0"
-    fixed="true"
-    maxwidth="auto"
-    nudgebottom="0"
-    nudgeleft="0"
-    nudgeright="0"
-    nudgetop="0"
-    nudgewidth="0"
-    opendelay="200"
-    tag="span"
+  <div
+    class="v-toolbar__content"
+    style="height: 48px;"
   >
-    <v-btn-stub
-      activeclass="v-btn--active"
-      data-test="submitSearchButton"
-      icon="true"
-      tag="button"
-      type="button"
+    <div
+      class="v-input v-text-field v-text-field--single-line v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
     >
-      <v-icon-stub>
-        search
-      </v-icon-stub>
-    </v-btn-stub>
-    <span>
-      search.submit
-    </span>
-  </v-tooltip-stub>
-  <v-tooltip-stub
-    bottom="true"
-    closedelay="200"
-    contentclass=""
-    debounce="0"
-    fixed="true"
-    maxwidth="auto"
-    nudgebottom="0"
-    nudgeleft="0"
-    nudgeright="0"
-    nudgetop="0"
-    nudgewidth="0"
-    opendelay="200"
-    tag="span"
-  >
-    <v-btn-stub
-      activeclass="v-btn--active"
-      data-test="clearSearchButton"
-      icon="true"
-      tag="button"
-      type="button"
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <input
+              aria-label="common.search"
+              data-test="searchingTextField"
+              type="text"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <span
+      class="v-tooltip v-tooltip--bottom"
     >
-      <v-icon-stub>
-        clear
-      </v-icon-stub>
-    </v-btn-stub>
-    <span>
-      search.clear
+      <transition-stub
+        name="slide-y-transition"
+      />
+      <span>
+        <button
+          class="v-btn v-btn--icon theme--light"
+          data-test="submitSearchButton"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              search
+            </i>
+          </div>
+        </button>
+      </span>
     </span>
-  </v-tooltip-stub>
-</v-toolbar-stub>
+    <span
+      class="v-tooltip v-tooltip--bottom"
+    >
+      <transition-stub
+        name="slide-y-transition"
+      />
+      <span>
+        <button
+          class="v-btn v-btn--icon theme--light"
+          data-test="clearSearchButton"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              clear
+            </i>
+          </div>
+        </button>
+      </span>
+    </span>
+  </div>
+</nav>
 `;

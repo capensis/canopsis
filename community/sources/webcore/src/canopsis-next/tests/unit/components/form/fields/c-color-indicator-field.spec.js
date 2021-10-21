@@ -1,4 +1,4 @@
-import { shallowMount, createVueInstance } from '@unit/utils/vue';
+import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import CColorIndicatorField from '@/components/forms/fields/c-color-indicator-field.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
@@ -41,13 +41,13 @@ describe('c-color-indicator-field', () => {
   });
 
   it('Renders `c-color-indicator-field` with state value correctly', () => {
-    const wrapper = shallowMount(CColorIndicatorField, { localVue });
+    const wrapper = mount(CColorIndicatorField, { localVue });
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `c-enabled-field` with impact state value correctly', () => {
-    const wrapper = shallowMount(CColorIndicatorField, {
+    const wrapper = mount(CColorIndicatorField, {
       localVue,
       propsData: {
         value: COLOR_INDICATOR_TYPES.impactState,

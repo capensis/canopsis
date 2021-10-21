@@ -3,6 +3,7 @@ import Vuetify from 'vuetify';
 import { merge } from 'lodash';
 import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
 
+import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ValidatorPlugin from '@/plugins/validator';
 import * as constants from '@/constants';
@@ -12,6 +13,8 @@ Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin);
 
+document.body.setAttribute('data-app', true);
+
 const prepareTranslateValues = values => (values ? `:${JSON.stringify(values)}` : '');
 
 const mocks = {
@@ -20,6 +23,10 @@ const mocks = {
 
   $constants: Object.freeze(constants),
   $config: Object.freeze(config),
+};
+
+const stubs = {
+  'mq-layout': MqLayout,
 };
 
 /**
@@ -43,7 +50,7 @@ export const mount = (component, options = {}) => {
 
   return testUtilsMount(
     component,
-    merge(options, { mocks }),
+    merge(options, { mocks, stubs }),
   );
 };
 
@@ -61,6 +68,6 @@ export const shallowMount = (component, options = {}) => {
 
   return testUtilsShallowMount(
     component,
-    merge(options, { mocks }),
+    merge(options, { mocks, stubs }),
   );
 };

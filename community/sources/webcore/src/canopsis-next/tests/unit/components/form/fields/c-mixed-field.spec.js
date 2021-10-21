@@ -329,7 +329,7 @@ describe('c-mixed-field', () => {
   });
 
   it('Renders `c-mixed-field` with default props correctly', () => {
-    const wrapper = shallowMount(CMixedField, {
+    const wrapper = mount(CMixedField, {
       localVue,
       stubs: snapshotStubs,
       provide: {
@@ -343,7 +343,7 @@ describe('c-mixed-field', () => {
   it('Renders `c-mixed-field` with errors correctly', () => {
     const validator = new Validator();
 
-    const wrapper = shallowMount(CMixedField, {
+    const wrapper = mount(CMixedField, {
       localVue,
       provide: {
         $validator: validator,
@@ -360,7 +360,7 @@ describe('c-mixed-field', () => {
   it('Renders `c-mixed-field` with custom props correctly', () => {
     const validator = new Validator();
 
-    const wrapper = shallowMount(CMixedField, {
+    const wrapper = mount(CMixedField, {
       localVue,
       provide: {
         $validator: validator,
@@ -389,7 +389,7 @@ describe('c-mixed-field', () => {
   it('Renders `c-mixed-field` with string type and items correctly', () => {
     const validator = new Validator();
 
-    const wrapper = shallowMount(CMixedField, {
+    const wrapper = mount(CMixedField, {
       localVue,
       provide: {
         $validator: validator,
@@ -414,7 +414,7 @@ describe('c-mixed-field', () => {
   it('Renders `c-mixed-field` with boolean type correctly', () => {
     const validator = new Validator();
 
-    const wrapper = shallowMount(CMixedField, {
+    const wrapper = mount(CMixedField, {
       localVue,
       provide: {
         $validator: validator,
@@ -433,7 +433,7 @@ describe('c-mixed-field', () => {
   it('Renders `c-mixed-field` with number type correctly', () => {
     const validator = new Validator();
 
-    const wrapper = shallowMount(CMixedField, {
+    const wrapper = mount(CMixedField, {
       localVue,
       provide: {
         $validator: validator,
@@ -452,7 +452,7 @@ describe('c-mixed-field', () => {
   it('Renders `c-mixed-field` with null type correctly', () => {
     const validator = new Validator();
 
-    const wrapper = shallowMount(CMixedField, {
+    const wrapper = mount(CMixedField, {
       localVue,
       provide: {
         $validator: validator,
@@ -471,7 +471,7 @@ describe('c-mixed-field', () => {
   it('Renders `c-mixed-field` with null type correctly', () => {
     const validator = new Validator();
 
-    const wrapper = shallowMount(CMixedField, {
+    const wrapper = mount(CMixedField, {
       localVue,
       provide: {
         $validator: validator,

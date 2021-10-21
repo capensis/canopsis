@@ -1,7 +1,7 @@
 import Faker from 'faker';
 import { Validator } from 'vee-validate';
 
-import { shallowMount, createVueInstance } from '@unit/utils/vue';
+import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import CArrayMixedField from '@/components/forms/fields/c-array-mixed-field.vue';
 
@@ -109,7 +109,7 @@ describe('c-array-mixed-field', () => {
   });
 
   it('Renders `c-array-mixed-field` with default props correctly', () => {
-    const wrapper = shallowMount(CArrayMixedField, {
+    const wrapper = mount(CArrayMixedField, {
       localVue,
       stubs: snapshotStubs,
     });
@@ -118,7 +118,7 @@ describe('c-array-mixed-field', () => {
   });
 
   it('Renders `c-array-mixed-field` with all field types correctly', () => {
-    const wrapper = shallowMount(CArrayMixedField, {
+    const wrapper = mount(CArrayMixedField, {
       localVue,
       provide: {
         $validator: new Validator(),
@@ -139,7 +139,7 @@ describe('c-array-mixed-field', () => {
   });
 
   it('Renders disabled `c-array-mixed-field` correctly', () => {
-    const wrapper = shallowMount(CArrayMixedField, {
+    const wrapper = mount(CArrayMixedField, {
       localVue,
       provide: {
         $validator: new Validator(),
