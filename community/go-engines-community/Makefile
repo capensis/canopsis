@@ -71,6 +71,8 @@ docker-images: $(DOCKER_TARGETS)
 #
 
 deps:
+	@echo "==> Downloading go.mod dependencies"
+	cd -- "$(ROOT_DIR)" && \
 	go mod download
 
 # Make make treat cmds as viable build targets (for single-engine build)
