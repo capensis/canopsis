@@ -1,8 +1,12 @@
+import { isArray } from 'lodash';
+
 export const MqLayout = {
   props: ['mq'],
   computed: {
     shouldBeRendered() {
-      return this.mq === this.$windowSize;
+      return isArray(this.mq)
+        ? this.mq.includes(this.$windowSize)
+        : this.mq === this.$windowSize;
     },
   },
   template: `

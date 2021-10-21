@@ -17,7 +17,7 @@
               is-drop-down,
               :key="`drop-down-${index}`"
             )
-    mq-layout(mq="l")
+    mq-layout(:mq="['m', 't', 'l']")
       v-layout
         v-menu(
           v-show="actions.length",

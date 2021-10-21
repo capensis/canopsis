@@ -6,7 +6,7 @@
         v-bind="action",
         :key="`multiple-${index}`"
       )
-    mq-layout(mq="t")
+    mq-layout(:mq="['m', 't']")
       v-menu(bottom, left, @click.native.stop="")
         v-btn(icon, slot="activator")
           v-icon more_vert
