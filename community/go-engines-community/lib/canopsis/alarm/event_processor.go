@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"runtime/trace"
 	"sync"
 	"time"
@@ -30,6 +31,7 @@ type eventProcessor struct {
 	alarmConfigProvider config.AlarmConfigProvider
 	executor            liboperation.Executor
 	logger              zerolog.Logger
+	metricsSender       metrics.Sender
 }
 
 func NewEventProcessor(
@@ -39,6 +41,7 @@ func NewEventProcessor(
 	alarmConfigProvider config.AlarmConfigProvider,
 	executor liboperation.Executor,
 	redisLockClient redis.LockClient,
+	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) EventProcessor {
 	return &eventProcessor{
@@ -48,6 +51,7 @@ func NewEventProcessor(
 		alarmConfigProvider: alarmConfigProvider,
 		executor:            executor,
 		redisLockClient:     redisLockClient,
+		metricsSender:       metricsSender,
 		logger:              logger,
 	}
 }
@@ -233,6 +237,14 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 	err = s.adapter.Insert(ctx, alarm)
 	if err != nil {
 		return changeType, err
+	}
+
+	if changeType == types.AlarmChangeTypeCreate {
+		s.metricsSender.SendCreate(ctx, alarm, alarm.Value.CreationDate.Time)
+	}
+
+	if changeType == types.AlarmChangeTypeCreateAndPbhEnter {
+		s.metricsSender.SendCreateAndPbhEnter(ctx, alarm, alarm.Value.CreationDate.Time)
 	}
 
 	event.Alarm = &alarm

@@ -1,8 +1,7 @@
-package main
+package axe
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"runtime/trace"
 	"time"
 
@@ -28,7 +27,6 @@ type messageProcessor struct {
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
 	PbehaviorAdapter         pbehavior.Adapter
-	MetricsSender            metrics.Sender
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -74,7 +72,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	p.updatePbhLastAlarmDate(ctx, event)
 	p.handleStats(ctx, event, msg)
-	go p.MetricsSender.HandleMetricsByEvent(event)
 
 	// Encode and publish the event to the next engine
 	var bevent []byte

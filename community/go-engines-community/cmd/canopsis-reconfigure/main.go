@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -178,9 +179,166 @@ func main() {
 	err = config.NewHealthCheckAdapter(client).UpsertConfig(ctx, conf.HealthCheck)
 	utils.FailOnError(err, "Failed to save config into mongo")
 
+	logger.Info().Msg("Initialise TimescaleDB")
+	err = createTimescaleDBTables(ctx)
+	utils.FailOnError(err, "Failed to create timescaleDB tables")
+
 	logger.Info().Msg("Initialising Mongo indexes")
 	err = createMongoIndexes(ctx, client, mongoConfPath, logger)
 	utils.FailOnError(err, "Failed to create Mongo indexes")
+}
+
+func createTimescaleDBTables(ctx context.Context) error {
+	dbPool, err := postgres.NewPool(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = dbPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS total_alarm_number (
+		   	time TIMESTAMPTZ NOT NULL,
+		   	entity_id VARCHAR(255),
+		   	value INT);
+		   	SELECT create_hypertable('total_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = dbPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS non_displayed_alarm_number (
+		   	time TIMESTAMPTZ NOT NULL,
+		   	entity_id VARCHAR(255),
+		   	value INT);
+		   	SELECT create_hypertable('non_displayed_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = dbPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS pbh_alarm_number (
+		   	time TIMESTAMPTZ NOT NULL,
+		   	entity_id VARCHAR(255),
+		   	value INT);
+		   	SELECT create_hypertable('pbh_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = dbPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS instruction_alarm_number (
+		   	time TIMESTAMPTZ NOT NULL,
+		   	entity_id VARCHAR(255),
+		   	value INT);
+		   	SELECT create_hypertable('instruction_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = dbPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS correlation_alarm_number (
+		   	time TIMESTAMPTZ NOT NULL,
+		   	entity_id VARCHAR(255),
+		   	value INT);
+		   	SELECT create_hypertable('correlation_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = dbPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS ticket_alarm_number (
+		   	time TIMESTAMPTZ NOT NULL,
+		   	entity_id VARCHAR(255),
+			username VARCHAR(255),
+		   	value INT);
+		   	SELECT create_hypertable('ticket_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = dbPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS ack_alarm_number (
+		   	time TIMESTAMPTZ NOT NULL,
+		   	entity_id VARCHAR(255),
+			username VARCHAR(255),
+		   	value INT);
+		   	SELECT create_hypertable('ack_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = dbPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS cancel_ack_alarm_number (
+		   	time TIMESTAMPTZ NOT NULL,
+		   	entity_id VARCHAR(255),
+			username VARCHAR(255),
+		   	value INT);
+		   	SELECT create_hypertable('cancel_ack_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = dbPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS ack_duration (
+			time TIMESTAMPTZ NOT NULL,
+			entity_id VARCHAR(255),
+			username VARCHAR(255),
+			value INT);
+			SELECT create_hypertable('ack_duration', 'time', if_not_exists => TRUE);
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = dbPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS resolve_duration (
+			time TIMESTAMPTZ NOT NULL,
+			entity_id VARCHAR(255),
+			value INT);
+			SELECT create_hypertable('resolve_duration', 'time', if_not_exists => TRUE);
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func createMongoIndexes(ctx context.Context, client mongo.DbClient, mongoConfPath string, logger zerolog.Logger) error {
