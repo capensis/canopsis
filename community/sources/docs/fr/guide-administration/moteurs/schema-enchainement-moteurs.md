@@ -36,8 +36,8 @@ fifo --> che["engine-che (multi-instanciable)"]
 che --> pbh["engine-pbehavior (multi-instanciable)"]
 pbh --> axe["engine-axe (multi-instanciable)"]
 axe --> correl["engine-correlation (multi-instanciable)"]
-correl --> watcher["engine-watcher"]
-watcher --> info["engine-dynamic-infos"]
+correl --> service["engine-service (multi-instanciable)"]
+service --> info["engine-dynamic-infos"]
 info --> action["engine-action"]
 
 click snmp "https://doc.canopsis.net/guide-administration/moteurs/moteur-snmp/"
@@ -47,7 +47,7 @@ click che "https://doc.canopsis.net/guide-administration/moteurs/moteur-che/"
 click pbh "https://doc.canopsis.net/guide-administration/moteurs/moteur-pbehavior/"
 click axe "https://doc.canopsis.net/guide-administration/moteurs/moteur-axe/"
 click correl "https://doc.canopsis.net/guide-administration/moteurs/moteur-correlation/"
-click watcher "https://doc.canopsis.net/guide-administration/moteurs/moteur-watcher/"
+click service "https://doc.canopsis.net/guide-administration/moteurs/moteur-service/"
 click info "https://doc.canopsis.net/guide-administration/moteurs/moteur-dynamic-infos/"
 click action "https://doc.canopsis.net/guide-administration/moteurs/moteur-action/"
 
@@ -56,7 +56,7 @@ classDef community-green font-weight:normal,font-size:12pt,color:#fff,fill:#2fab
 classDef pro-blue font-weight:normal,font-size:12pt,color:#fff,fill:#2b3e4f,color:#fff,stroke:#222,stroke-width:3px;
 classDef rabbit-orange font-weight:normal,font-size:12pt,color:#fff,fill:#ff6600,color:#fff,stroke:#222,stroke-width:3px;
 class sup grey
-class heart,fifo,che,filter,pbh,axe,watcher,action community-green
+class heart,fifo,che,filter,pbh,axe,service,action community-green
 class snmp,kpi,correl,info pro-blue
 class exch.snmp,exch.events rabbit-orange
 ```
