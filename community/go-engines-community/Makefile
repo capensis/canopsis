@@ -42,8 +42,6 @@ GO_BUILD_FLAGS:= -mod=mod #-gcflags="all=-trimpath \"${GOPATH}/src\""
 GO_BUILD_CUSTOM_FLAGS=
 
 # Export configuration env variables to the go compiler
-export GOOS:=linux
-export GOARCH:=amd64
 export CGO_ENABLED:=1
 
 #Docker configuration
