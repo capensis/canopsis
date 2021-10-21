@@ -30,20 +30,6 @@ describe('stringifyJson', () => {
   });
 
   it('Invalid json with default arguments', () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-    expect(stringifyJson(invalidJsonString)).toBe(defaultValue);
-    expect(consoleErrorSpy).toBeCalledTimes(1);
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it('Invalid json with special default value', () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-    expect(stringifyJson(invalidJsonString, defaultIndents, validJsonString)).toBe(validJsonString);
-    expect(consoleErrorSpy).toBeCalledTimes(1);
-
-    consoleErrorSpy.mockRestore();
+    expect(() => stringifyJson(invalidJsonString)).toThrowError();
   });
 });

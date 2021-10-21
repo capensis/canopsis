@@ -153,7 +153,6 @@ describe('c-json-field', () => {
     await textarea.setValue(validJsonStringValue);
     await textarea.trigger('blur');
 
-    expect(validator.fields.find({ name })).toBeTruthy();
     expect(validator.errors.has(name)).toBeFalsy();
   });
 
@@ -303,6 +302,22 @@ describe('c-json-field', () => {
     await wrapper.setProps({ value: validJsonStringValue });
 
     expect(textarea.element.value).toBe(validJsonStringValue);
+  });
+
+  it('Set new value by prop (same value)', async () => {
+    const wrapper = factory({
+      propsData: {
+        name,
+        variables: true,
+        value: validJsonValue,
+      },
+    });
+
+    const textarea = wrapper.find('.v-textarea textarea');
+
+    await wrapper.setProps({ value: { ...validJsonValue } });
+
+    expect(textarea.element.value).toBe(stringifyJson(validJsonValue));
   });
 
   it('Set the same values', async () => {

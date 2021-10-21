@@ -12,8 +12,11 @@ import { PAYLOAD_VARIABLE_REGEXP } from '@/constants';
  * @returns {string}
  */
 export const convertPayloadToJson = (payload, indents = 4) => {
-  // Searching for all variables without quot in a string
   const preparedPayload = !isString(payload) ? JSON.stringify(payload) : payload;
+
+  /**
+   * Searching for all variables without quot in a string
+   */
   const match = preparedPayload.matchAll(new RegExp(PAYLOAD_VARIABLE_REGEXP));
 
   if (match) {
