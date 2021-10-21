@@ -6,7 +6,7 @@ ARG GOLANG_VERSION
 
 # Build the engines
 FROM golang:${GOLANG_VERSION}-alpine${ALPINE_BUILD_VERSION} AS builder
-RUN apk add --no-cache make git gcc build-base g++ coreutils php
+RUN apk add --no-cache make git gcc binutils binutils-gold libc-dev
 
 ARG CANOPSIS_EDITION
 WORKDIR /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/
