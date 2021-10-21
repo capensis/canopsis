@@ -19,8 +19,8 @@ CMDS_BINARY_TARGETS = $(addprefix $(OUTPUT_DIR)/cmd/,$(CMDS))
 PLUGINS = $(addsuffix .so,$(patsubst $(ROOT_DIR)/plugins/%,%,$(wildcard $(ROOT_DIR)/plugins/*/*)))
 PLUGINS_BINARY_TARGETS = $(addprefix $(OUTPUT_DIR)/plugins/,$(PLUGINS))
 
-# List of docker containers targets
-DOCKER_TARGETS = $(addprefix docker_,$(CMDS))
+# List of Docker containers targets
+DOCKER_TARGETS = $(addprefix docker-,$(CMDS))
 
 # BUILD FLAGS
 BUILDDATE:=$(shell date "+%Y-%m-%dT%H:%M:%S%z")
@@ -63,9 +63,9 @@ DOCKER_GOLANG_VERSION = 1.17.1
 DOCKERFILE_PATH = $(dir $(CURRENT_MAKEFILE))Dockerfile
 DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
-.PHONY: deps build docker_images
-build: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
-docker_images: $(DOCKER_TARGETS)
+.PHONY: all docker-images deps
+all: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
+docker-images: $(DOCKER_TARGETS)
 
 #
 # BINARY TARGETS
@@ -124,9 +124,9 @@ canopsis.toml:
 	mkdir -p $(OUTPUT_DIR)
 	cp $(dir $(CURRENT_MAKEFILE))/config/canopsis.${CANOPSIS_EDITION}.toml $(OUTPUT_DIR)/canopsis.toml
 
-.PHONY: docker_builder $(DOCKER_TARGETS)
+.PHONY: docker-builder $(DOCKER_TARGETS)
 
-docker_builder: $(MONOREPO_ROOT)/.dockerignore
+docker-builder: $(MONOREPO_ROOT)/.dockerignore
 	docker build \
 		-t $(DOCKER_IMAGE_BASE_PATH)/canopsis_go_bin:latest \
 		--target builder \
@@ -135,18 +135,18 @@ docker_builder: $(MONOREPO_ROOT)/.dockerignore
 		--file "$(DOCKERFILE_PATH)" \
 		"$(MONOREPO_ROOT)"
 
-$(DOCKER_TARGETS): TARGET=final_container
-$(DOCKER_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker_builder
-	docker build -t "$(DOCKER_IMAGE_BASE_PATH)/$(subst docker_,,$@):$(DOCKER_TAG)" \
-		--build-arg CMD="$(subst docker_,,$@)" \
-		--target $(TARGET) \
-		--cache-from $(DOCKER_IMAGE_BASE_PATH)/canopsis_go_bin:latest \
-		$(if $(DOCKER_NO_CACHE),,--cache-from "$(subst docker_,,$@):$(DOCKER_TAG)") \
+$(DOCKER_TARGETS): TARGET=final-container
+$(DOCKER_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker-builder
+	docker build -t "$(DOCKER_IMAGE_BASE_PATH)/$(subst docker-,,$@):$(DOCKER_TAG)" \
+		--build-arg CMD="$(subst docker-,,$@)" \
+		--target "$(TARGET)" \
+		--cache-from "$(DOCKER_IMAGE_BASE_PATH)/canopsis_go_bin:latest" \
+		$(if $(DOCKER_NO_CACHE),,--cache-from "$(subst docker-,,$@):$(DOCKER_TAG)") \
 		$(DOCKER_BUILD_ARGS) \
 		--file "$(DOCKERFILE_PATH)" \
 		"$(MONOREPO_ROOT)"
 
-docker_canopsis-api: TARGET=canopsis-api
+docker-canopsis-api: TARGET=canopsis-api
 
 #
 # Install targets
