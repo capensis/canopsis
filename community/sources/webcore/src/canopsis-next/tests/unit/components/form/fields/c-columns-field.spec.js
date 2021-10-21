@@ -1,7 +1,7 @@
 import Faker from 'faker';
 import { Validator } from 'vee-validate';
 
-import { shallowMount, createVueInstance } from '@unit/utils/vue';
+import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
@@ -441,7 +441,7 @@ describe('c-columns-field', () => {
   });
 
   it('Renders `c-columns-field` with default props correctly', () => {
-    const wrapper = shallowMount(CColumnsField, {
+    const wrapper = mount(CColumnsField, {
       localVue,
       stubs: snapshotStubs,
     });
@@ -450,7 +450,7 @@ describe('c-columns-field', () => {
   });
 
   it('Renders `c-columns-field` with all columns type correctly', () => {
-    const wrapper = shallowMount(CColumnsField, {
+    const wrapper = mount(CColumnsField, {
       localVue,
       provide: {
         $validator: new Validator(),
@@ -471,7 +471,7 @@ describe('c-columns-field', () => {
   });
 
   it('Renders `c-columns-field` with custom props correctly', () => {
-    const wrapper = shallowMount(CColumnsField, {
+    const wrapper = mount(CColumnsField, {
       localVue,
       provide: {
         $validator: new Validator(),
@@ -521,7 +521,7 @@ describe('c-columns-field', () => {
       },
     ]);
 
-    const wrapper = shallowMount(CColumnsField, {
+    const wrapper = mount(CColumnsField, {
       localVue,
       provide: {
         $validator: validator,

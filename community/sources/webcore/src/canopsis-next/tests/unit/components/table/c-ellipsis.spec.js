@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { shallowMount, createVueInstance } from '@unit/utils/vue';
+import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import CEllipsis from '@/components/common/table/c-ellipsis.vue';
 
@@ -103,11 +103,14 @@ describe('c-ellipsis', () => {
       magnam nulla et consequatur facere sint nam facere sunt aut alias qui omnis rerum corporis totam quibusdam
       nostrum mollitia quia vel amet pariatur eveniet explicabo quia ullam`;
 
-    const wrapper = shallowMount(CEllipsis, {
+    const wrapper = mount(CEllipsis, {
       localVue,
       propsData: { text },
     });
 
+    const menuContent = wrapper.find('.v-menu__content');
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
   });
 });

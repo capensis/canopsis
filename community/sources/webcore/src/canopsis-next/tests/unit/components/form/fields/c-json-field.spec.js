@@ -22,13 +22,6 @@ const stubs = {
       },
     },
   },
-  'v-tooltip': {
-    template: `
-      <div class='v-tooltip'>
-        <slot />
-      </div>
-    `,
-  },
   'v-btn': {
     template: `
       <button class="v-btn" @click="$listeners.click">
@@ -205,7 +198,7 @@ describe('c-json-field', () => {
 
     const validator = wrapper.getValidator();
     const textarea = wrapper.find('.v-textarea textarea');
-    const button = wrapper.find('.v-btn:nth-of-type(1)');
+    const button = wrapper.find('.v-btn');
 
     await textarea.setValue(invalidJsonStringValue);
     await button.trigger('click');
@@ -351,7 +344,7 @@ describe('c-json-field', () => {
 
     const validator = wrapper.getValidator();
     const textarea = wrapper.find('.v-textarea textarea');
-    const button = wrapper.find('.v-btn:nth-of-type(2)');
+    const button = wrapper.findAll('.v-btn').at(1);
 
     await textarea.setValue(validJsonStringValue);
     await button.trigger('click');

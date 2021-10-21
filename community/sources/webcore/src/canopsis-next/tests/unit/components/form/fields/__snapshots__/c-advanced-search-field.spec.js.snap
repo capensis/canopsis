@@ -4,40 +4,46 @@ exports[`c-advanced-search-field Renders \`c-advanced-search-field\` correctly 1
 <c-search-field-stub
   value="c-advanced-search-field"
 >
-  <v-tooltip-stub
-    bottom="true"
-    closedelay="200"
-    contentclass=""
-    debounce="0"
-    fixed="true"
-    maxwidth="auto"
-    nudgebottom="0"
-    nudgeleft="0"
-    nudgeright="0"
-    nudgetop="0"
-    nudgewidth="0"
-    opendelay="200"
-    tag="span"
+  <span
+    class="v-tooltip v-tooltip--bottom"
   >
-    <v-btn-stub
-      activeclass="v-btn--active"
-      icon="true"
-      tag="button"
-      type="button"
-    >
-      <v-icon-stub>
-        help_outline
-      </v-icon-stub>
-    </v-btn-stub>
-    <div>
-      
-      
-      <span>
-        Tooltip content
-      </span>
-      
-    
-    </div>
-  </v-tooltip-stub>
+    <transition-stub
+      name="slide-y-transition"
+    />
+    <span>
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            help_outline
+          </i>
+        </div>
+      </button>
+    </span>
+  </span>
 </c-search-field-stub>
+`;
+
+exports[`c-advanced-search-field Renders \`c-advanced-search-field\` correctly 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div>
+    
+      
+    <span>
+      Tooltip content
+    </span>
+    
+    
+  </div>
+</div>
 `;

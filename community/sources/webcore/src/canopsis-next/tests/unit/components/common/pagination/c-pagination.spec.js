@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { shallowMount, createVueInstance } from '@unit/utils/vue';
+import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import CPagination from '@/components/common/pagination/c-pagination.vue';
 
@@ -87,7 +87,7 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` with default props correctly', () => {
-    const wrapper = shallowMount(CPagination, {
+    const wrapper = mount(CPagination, {
       localVue,
       propsData: { total: 1 },
     });
@@ -96,7 +96,7 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` with default props correctly', () => {
-    const wrapper = shallowMount(CPagination, {
+    const wrapper = mount(CPagination, {
       localVue,
       propsData: { total: 1 },
     });
@@ -105,7 +105,7 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` on the top with disabled prev button correctly', () => {
-    const wrapper = shallowMount(CPagination, {
+    const wrapper = mount(CPagination, {
       localVue,
       propsData: { page: 1, total: 2, limit: 1, type: 'top' },
     });
@@ -114,7 +114,7 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` on the top with disabled next button correctly', () => {
-    const wrapper = shallowMount(CPagination, {
+    const wrapper = mount(CPagination, {
       localVue,
       propsData: { page: 2, total: 2, limit: 1, type: 'top' },
     });
@@ -123,7 +123,7 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` on the top with disabled buttons correctly', () => {
-    const wrapper = shallowMount(CPagination, {
+    const wrapper = mount(CPagination, {
       localVue,
       propsData: { page: 1, total: 1, limit: 1, type: 'top' },
     });
@@ -132,7 +132,7 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` with default props on the top correctly', () => {
-    const wrapper = shallowMount(CPagination, {
+    const wrapper = mount(CPagination, {
       localVue,
       propsData: { total: 1, type: 'top' },
     });
@@ -141,7 +141,7 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` on the bottom correctly', () => {
-    const wrapper = shallowMount(CPagination, {
+    const wrapper = mount(CPagination, {
       localVue,
       propsData: { page: 3, total: 100 },
     });
@@ -150,7 +150,7 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` on the top correctly', () => {
-    const wrapper = shallowMount(CPagination, {
+    const wrapper = mount(CPagination, {
       localVue,
       propsData: { page: 3, total: 100, type: 'top' },
     });

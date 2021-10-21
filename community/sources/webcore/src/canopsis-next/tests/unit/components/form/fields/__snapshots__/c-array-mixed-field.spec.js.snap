@@ -2,138 +2,138 @@
 
 exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field types correctly 1`] = `
 <div>
-  <v-layout-stub
-    tag="div"
+  <div
+    class="layout"
   >
-    <v-flex-stub
-      tag="div"
+    <div
+      class="flex"
     >
       <c-mixed-field-stub
         value="string"
       />
-    </v-flex-stub>
+    </div>
     <c-action-btn-stub
       type="delete"
     />
-  </v-layout-stub>
-  <v-layout-stub
-    tag="div"
+  </div>
+  <div
+    class="layout"
   >
-    <v-flex-stub
-      tag="div"
+    <div
+      class="flex"
     >
       <c-mixed-field-stub
         value="123"
       />
-    </v-flex-stub>
+    </div>
     <c-action-btn-stub
       type="delete"
     />
-  </v-layout-stub>
-  <v-layout-stub
-    tag="div"
+  </div>
+  <div
+    class="layout"
   >
-    <v-flex-stub
-      tag="div"
+    <div
+      class="flex"
     >
       <c-mixed-field-stub />
-    </v-flex-stub>
+    </div>
     <c-action-btn-stub
       type="delete"
     />
-  </v-layout-stub>
-  <v-layout-stub
-    tag="div"
+  </div>
+  <div
+    class="layout"
   >
-    <v-flex-stub
-      tag="div"
+    <div
+      class="flex"
     >
       <c-mixed-field-stub />
-    </v-flex-stub>
+    </div>
     <c-action-btn-stub
       type="delete"
     />
-  </v-layout-stub>
-  <v-layout-stub
-    tag="div"
+  </div>
+  <div
+    class="layout"
   >
-    <v-flex-stub
-      tag="div"
+    <div
+      class="flex"
     >
       <c-mixed-field-stub
         value=",string,123"
       />
-    </v-flex-stub>
+    </div>
     <c-action-btn-stub
       type="delete"
     />
-  </v-layout-stub>
-  <v-btn-stub
-    activeclass="v-btn--active"
-    class="mx-0"
-    color="primary"
-    outline="true"
-    tag="button"
+  </div>
+  <button
+    class="mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
     type="button"
   >
-    common.add
-  </v-btn-stub>
+    <div
+      class="v-btn__content"
+    >
+      common.add
+    </div>
+  </button>
 </div>
 `;
 
 exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with default props correctly 1`] = `
 <div>
-  <v-btn-stub
-    activeclass="v-btn--active"
-    class="mx-0"
-    color="primary"
-    outline="true"
-    tag="button"
+  <button
+    class="mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
     type="button"
   >
-    common.add
-  </v-btn-stub>
+    <div
+      class="v-btn__content"
+    >
+      common.add
+    </div>
+  </button>
 </div>
 `;
 
 exports[`c-array-mixed-field Renders disabled \`c-array-mixed-field\` correctly 1`] = `
 <div>
-  <v-layout-stub
-    tag="div"
+  <div
+    class="layout"
   >
-    <v-flex-stub
-      tag="div"
+    <div
+      class="flex"
     >
       <c-mixed-field-stub
         disabled="true"
         value="string"
       />
-    </v-flex-stub>
+    </div>
     <!---->
-  </v-layout-stub>
-  <v-layout-stub
-    tag="div"
+  </div>
+  <div
+    class="layout"
   >
-    <v-flex-stub
-      tag="div"
+    <div
+      class="flex"
     >
       <c-mixed-field-stub
         disabled="true"
         value="123"
       />
-    </v-flex-stub>
+    </div>
     <!---->
-  </v-layout-stub>
-  <v-btn-stub
-    activeclass="v-btn--active"
-    class="mx-0"
-    color="primary"
-    disabled="true"
-    outline="true"
-    tag="button"
+  </div>
+  <button
+    class="mx-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"
+    disabled="disabled"
     type="button"
   >
-    common.add
-  </v-btn-stub>
+    <div
+      class="v-btn__content"
+    >
+      common.add
+    </div>
+  </button>
 </div>
 `;

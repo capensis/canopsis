@@ -5,42 +5,44 @@ exports[`c-ellipsis Renders \`c-ellipsis\` correctly 1`] = `
   <span>
     omnis esse recusandae magni similique porro quaera
   </span>
-  <v-menu-stub
-    closedelay="0"
-    closeonclick="true"
-    contentclass=""
-    maxheight="auto"
-    maxwidth="auto"
-    nudgebottom="0"
-    nudgeleft="0"
-    nudgeright="0"
-    nudgetop="0"
-    nudgewidth="0"
-    opendelay="0"
-    origin="top left"
-    transition="v-menu-transition"
+  <div
+    class="v-menu v-menu--inline"
   >
-    <span
-      class="ml-1"
+    <div
+      class="v-menu__activator"
     >
-      ...
-    </span>
-    <v-card-stub
-      dark="true"
-      tag="div"
-    >
-      <v-card-title-stub
-        class="pre-wrap"
+      <span
+        class="ml-1"
       >
-        omnis esse recusandae magni similique porro quaerat alias vel deserunt porro voluptate
+        ...
+      </span>
+    </div>
+    <transition-stub
+      name="v-menu-transition"
+    />
+  </div>
+</div>
+`;
+
+exports[`c-ellipsis Renders \`c-ellipsis\` correctly 2`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; z-index: 0; display: none;"
+>
+  <div
+    class="v-card v-sheet theme--dark"
+  >
+    <div
+      class="v-card__title pre-wrap"
+    >
+      omnis esse recusandae magni similique porro quaerat alias vel deserunt porro voluptate
       voluptatibus commodi sequi et qui fugiat exercitationem et et eligendi ad officia quis suscipit earum soluta
       minima architecto numquam et voluptatibus quia officiis nulla veritatis soluta optio assumenda est fugiat est
       suscipit inventore temporibus dolores quos dolorem doloremque autem qui sit ipsam praesentium esse sunt ut
       molestiae nulla itaque voluptatem pariatur vel dolorum impedit asperiores numquam animi esse laborum in et
       magnam nulla et consequatur facere sint nam facere sunt aut alias qui omnis rerum corporis totam quibusdam
       nostrum mollitia quia vel amet pariatur eveniet explicabo quia ullam
-      </v-card-title-stub>
-    </v-card-stub>
-  </v-menu-stub>
+    </div>
+  </div>
 </div>
 `;

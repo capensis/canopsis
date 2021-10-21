@@ -2,7 +2,9 @@ import Vue from 'vue';
 import Vuetify from 'vuetify';
 import { merge } from 'lodash';
 import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
+import Vuex from 'vuex';
 
+import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ValidatorPlugin from '@/plugins/validator';
 import * as constants from '@/constants';
@@ -12,6 +14,8 @@ import * as config from '@/config';
  * @typedef {Wrapper<Vue>} CustomWrapper
  * @property {Function} getValidator
  */
+
+document.body.setAttribute('data-app', true);
 
 const prepareTranslateValues = values => (values ? `:${JSON.stringify(values)}` : '');
 
@@ -32,9 +36,14 @@ const i18n = {
   mergeLocaleMessage: jest.fn(),
 };
 
+Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin, { i18n });
+
+const stubs = {
+  'mq-layout': MqLayout,
+};
 
 /**
  * Create local vue instance for component tests
@@ -57,7 +66,7 @@ export const mount = (component, options = {}) => {
 
   const wrapper = testUtilsMount(
     component,
-    merge(options, { mocks }),
+    merge(options, { mocks, stubs }),
   );
 
   wrapper.getValidator = () => wrapper.vm.$validator;
@@ -79,7 +88,7 @@ export const shallowMount = (component, options = {}) => {
 
   const wrapper = testUtilsShallowMount(
     component,
-    merge(options, { mocks }),
+    merge(options, { mocks, stubs }),
   );
 
   wrapper.getValidator = () => wrapper.vm.$validator;

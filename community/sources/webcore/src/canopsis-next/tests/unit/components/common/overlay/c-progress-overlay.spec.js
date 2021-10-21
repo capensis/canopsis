@@ -1,4 +1,4 @@
-import { shallowMount, createVueInstance } from '@unit/utils/vue';
+import { mount, createVueInstance } from '@unit/utils/vue';
 
 import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
 
@@ -6,13 +6,13 @@ const localVue = createVueInstance();
 
 describe('c-progress-overlay', () => {
   it('Renders `c-progress-overlay` with default props correctly', () => {
-    const wrapper = shallowMount(CProgressOverlay, { localVue });
+    const wrapper = mount(CProgressOverlay, { localVue });
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `c-progress-overlay` with pending true correctly', () => {
-    const wrapper = shallowMount(CProgressOverlay, {
+    const wrapper = mount(CProgressOverlay, {
       localVue,
       propsData: {
         pending: true,
@@ -23,7 +23,7 @@ describe('c-progress-overlay', () => {
   });
 
   it('Renders `c-progress-overlay` with custom props correctly', () => {
-    const wrapper = shallowMount(CProgressOverlay, {
+    const wrapper = mount(CProgressOverlay, {
       localVue,
       propsData: {
         pending: true,

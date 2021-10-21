@@ -1,4 +1,4 @@
-import { isString } from 'lodash';
+import { isObject } from 'lodash';
 
 import uid from '@/helpers/uid';
 
@@ -7,12 +7,12 @@ import { PAYLOAD_VARIABLE_REGEXP } from '@/constants';
 /**
  * Convert payload string to JSON with indents
  *
- * @param {string} payload
+ * @param {string | Object} payload
  * @param {number} [indents = 4]
  * @returns {string}
  */
 export const convertPayloadToJson = (payload, indents = 4) => {
-  const preparedPayload = !isString(payload) ? JSON.stringify(payload) : payload;
+  const preparedPayload = isObject(payload) ? JSON.stringify(payload) : payload;
 
   /**
    * Searching for all variables without quot in a string
