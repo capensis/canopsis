@@ -101,6 +101,7 @@ $(OUTPUT_DIR)/cmd/%: $(ROOT_DIR)/cmd/% $(ROOT_DIR)/cmd/%/*
 #
 
 define DOCKER_BUILD_ARGS
+--platform linux/amd64 \
 --build-arg "ALPINE_VERSION=${DOCKER_ALPINE_VERSION}" \
 --build-arg "ALPINE_BUILD_VERSION=${DOCKER_ALPINE_BUILD_VERSION}" \
 --build-arg "CANOPSIS_EDITION=${CANOPSIS_EDITION}" \
