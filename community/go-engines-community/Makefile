@@ -23,7 +23,7 @@ PLUGINS_BINARY_TARGETS = $(addprefix $(OUTPUT_DIR)/plugins/,$(PLUGINS))
 DOCKER_TARGETS = $(addprefix docker-,$(CMDS))
 
 # BUILD FLAGS
-BUILDDATE:=$(shell date "+%Y-%m-%dT%H:%M:%S%z")
+BUILDDATE:=$(shell date -u "+%Y-%m-%dT%H:%M:%S%z")
 LINKPKG="git.canopsis.net/canopsis/canopsis-$(CANOPSIS_EDITION)/$(CANOPSIS_EDITION)/go-engines-$(CANOPSIS_EDITION)"
 VERSION:=$(shell git -C $(MONOREPO_ROOT) for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1)
 GITCOMMIT:=$(shell git -C $(MONOREPO_ROOT) rev-parse HEAD)
