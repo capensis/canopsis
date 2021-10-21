@@ -89,18 +89,22 @@ describe('c-json-field', () => {
   });
 
   it('Input event after set value', async () => {
+    const newValue = '"asd"';
     const wrapper = factory({
-      propsData: { value: validJsonValue },
+      propsData: { value: validJsonStringValue },
     });
 
     const textarea = wrapper.find('.v-textarea textarea');
 
-    await textarea.setValue('"asd"');
+    await textarea.setValue(newValue);
     await textarea.trigger('blur');
 
     const inputEvents = wrapper.emitted('input');
 
+    const [eventData] = inputEvents[0];
+
     expect(inputEvents).toHaveLength(1);
+    expect(eventData).toBe(newValue);
   });
 
   it('Payload json value as prop with variables', () => {
