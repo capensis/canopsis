@@ -1,6 +1,5 @@
 **
 !build_all.sh
-!default_configuration.toml
 !go.mod
 !go.sum
 !cmd/
