@@ -368,7 +368,7 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 	}
 
 	leaveOutput := fmt.Sprintf(
-		"Pbehavior %s. Type: %s. Reason: %s",
+		"Pbehavior %s. Type: %s. Reason: %s.",
 		a.Value.PbehaviorInfo.Name,
 		a.Value.PbehaviorInfo.TypeName,
 		a.Value.PbehaviorInfo.Reason,

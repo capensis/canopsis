@@ -1586,7 +1586,7 @@ Feature: update service on event
       "state": 2
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I send an event:
     """
     {

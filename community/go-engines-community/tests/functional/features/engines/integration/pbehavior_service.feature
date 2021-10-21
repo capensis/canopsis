@@ -1,7 +1,7 @@
 Feature: no update service when entity is inactive
   I need to be able to not update service when pause or maintenance pbehavior is in action.
 
-  Scenario: given entity service and maintenance pbehavior should not update service alarm on create and pbhenter event
+  Scenario: given entity service and maintenance pbehavior should not update service alarm on create with pbhenter event
     Given I am admin
     When I send an event:
     """json
@@ -49,7 +49,7 @@ Feature: no update service when entity is inactive
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the end of 2 events processing
     When I send an event:
     """json
     {
@@ -373,7 +373,6 @@ Feature: no update service when entity is inactive
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I wait 2s
-    When I wait the next periodical process
     When I wait the end of 2 events processing
     When I send an event:
     """json
