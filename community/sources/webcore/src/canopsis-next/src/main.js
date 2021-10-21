@@ -280,7 +280,6 @@ Vue.component('c-retry-field', CRetryField);
 Vue.component('c-mixed-field', CMixedField);
 Vue.component('c-array-mixed-field', CArrayMixedField);
 Vue.component('c-color-picker-field', CColorPickerField);
-Vue.component('c-json-field', CJsonField);
 Vue.component('c-entity-type-field', CEntityTypeField);
 Vue.component('c-impact-level-field', CImpactLevelField);
 Vue.component('c-search-field', CSearchField);
