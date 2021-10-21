@@ -41,11 +41,15 @@ LDFLAGS:=-ldflags "\
 GO_BUILD_FLAGS:= -mod=mod #-gcflags="all=-trimpath \"${GOPATH}/src\""
 GO_BUILD_CUSTOM_FLAGS=
 
-# Export configuration env variables to the go compiler
+# Export configuration env variables to the Go compiler
 export CGO_ENABLED:=1
 
-#Docker configuration
-export DOCKER_BUILDKIT = 1
+#
+# DOCKER FLAGS
+#
+
+export DOCKER_BUILDKIT:=1
+export BUILDKIT_PROGRESS:=plain
 
 #Docker variables
 # If set to 1 previous build caches will be ignored
