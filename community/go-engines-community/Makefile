@@ -8,14 +8,15 @@ VPATH = $(dir $(MAIN_MAKEFILE))
 # Where to put the built binaries
 BUILD_DIR = $(ROOT_DIR)/build
 
+# Either community or pro
 CANOPSIS_EDITION = community
 
-# List of cmds/engines to build and install (eg : canopsis-api connector-junit ...)
+# List of cmds/engines to build and install (eg: canopsis-api connector-junit...)
 CMDS = $(notdir $(wildcard $(ROOT_DIR)/cmd/*))
 # List of cmd binary paths (eg: build/cmd/canopsis-api build/cmd/connector-junit...)
 CMDS_BINARY_TARGETS = $(addprefix $(BUILD_DIR)/cmd/,$(CMDS))
 
-# List of plugins to build and install (eg : datasource/mongo.so)
+# List of plugins to build and install (eg: datasource/mongo.so)
 PLUGINS = $(addsuffix .so,$(patsubst $(ROOT_DIR)/plugins/%,%,$(wildcard $(ROOT_DIR)/plugins/*/*)))
 PLUGINS_BINARY_TARGETS = $(addprefix $(BUILD_DIR)/plugins/,$(PLUGINS))
 
@@ -70,6 +71,8 @@ docker-images: $(DOCKER_TARGETS)
 # BINARY TARGETS
 #
 
+# "go build" does this implicitly, but doing it explicitly beforehand can
+# be useful in some cases (e.g. Docker cache layer)
 deps:
 	@echo "==> Downloading go.mod dependencies"
 	cd -- "$(ROOT_DIR)" && \
@@ -110,8 +113,8 @@ define DOCKER_BUILD_ARGS
 --build-arg "GOLANG_VERSION=${DOCKER_GOLANG_VERSION}"
 endef
 
+# Build a recursive .dockerignore from the monorepo (https://github.com/moby/moby/issues/20944)
 $(MONOREPO_ROOT)/.dockerignore:
-	# I love Docker https://github.com/moby/moby/issues/20944
 	cd -- "$(MONOREPO_ROOT)";\
 	:> "$(MONOREPO_ROOT)/.dockerignore";\
 	for file in $$(find . -name .dockerignore -type f);\
@@ -148,7 +151,7 @@ $(DOCKER_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker-builder
 docker-canopsis-api: TARGET=canopsis-api
 
 #
-# Install targets
+# INSTALLATION
 #
 
 .PHONY: install
@@ -165,6 +168,18 @@ install: canopsis.toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
 	# Install configuration file
 	install -d $(DESTDIR)$(PREFIX)/opt/canopsis/etc
 	install -m 644 $(OUTPUT_DIR)/canopsis.toml $(DESTDIR)$(PREFIX)/opt/canopsis/etc/
+
+#
+# HELP
+#
+
+.PHONY: help
+help:
+	@echo "Please read: $(ROOT_DIR)/README.md"
+
+#
+# CLEANUP
+#
 
 .PHONY: clean
 clean:
