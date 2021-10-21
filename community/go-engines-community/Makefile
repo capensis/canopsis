@@ -47,15 +47,15 @@ export CGO_ENABLED:=1
 export DOCKER_BUILDKIT:=1
 export BUILDKIT_PROGRESS:=plain
 
-#Docker variables
-# If set to 1 previous build caches will be ignored
+# If set to 1, previous build caches will be ignored
 DOCKER_NO_CACHE = 
 DOCKER_TAG = $(VERSION)
-# Alpine version used in final containers
+# Alpine version used in final containers (https://hub.docker.com/_/alpine?tab=tags)
 DOCKER_ALPINE_VERSION = 3.12.8
-# Alpine version used in the build container
-DOCKER_ALPINE_BUILD_VERSION = 3.13
+# Version of the Go compiler (https://hub.docker.com/_/golang?tab=tags)
 DOCKER_GOLANG_VERSION = 1.17.1
+# Alpine version used in the Golang build container (https://hub.docker.com/_/golang?tab=tags&page=1&name=alpine)
+DOCKER_ALPINE_BUILD_VERSION = 3.13
 DOCKERFILE_PATH = $(dir $(CURRENT_MAKEFILE))Dockerfile
 DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
