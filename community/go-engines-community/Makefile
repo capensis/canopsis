@@ -1,9 +1,9 @@
 MAIN_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
 CURRENT_MAKEFILE := $(abspath $(lastword $(MAKEFILE_LIST)))
 # Path of the monorepo
-MONOREPO_ROOT := $(shell realpath --relative-to=. $(dir $(CURRENT_MAKEFILE))/../..)
+MONOREPO_ROOT := $(realpath $(dir $(CURRENT_MAKEFILE))/../..)
 # Directory containing the main Makefile (the Makefile that was executed)
-ROOT_DIR = $(shell realpath --relative-to=. $(dir $(MAIN_MAKEFILE)))
+ROOT_DIR = $(realpath $(dir $(MAIN_MAKEFILE)))
 VPATH = $(dir $(MAIN_MAKEFILE))
 # Where to put the built binaries
 OUTPUT_DIR = $(ROOT_DIR)/build
