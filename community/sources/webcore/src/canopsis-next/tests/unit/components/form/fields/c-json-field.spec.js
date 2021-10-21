@@ -124,19 +124,22 @@ describe('c-json-field', () => {
   });
 
   it('Payload json value as prop without variables', () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const popupErrorFn = jest.fn();
     const wrapper = factory({
       propsData: {
         value: validPayloadJsonValue,
+      },
+      mocks: {
+        $popups: {
+          error: popupErrorFn,
+        },
       },
     });
 
     const textarea = wrapper.find('.v-textarea textarea');
 
     expect(textarea.element.value).toBe(defaultValue);
-    expect(consoleErrorSpy).toBeCalledTimes(1);
-
-    consoleErrorSpy.mockRestore();
+    expect(popupErrorFn).toBeCalledWith({ text: 'errors.default' });
   });
 
   it('v-validate works correctly on valid json', async () => {
