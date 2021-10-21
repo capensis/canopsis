@@ -122,10 +122,6 @@ $(MONOREPO_ROOT)/.dockerignore:
 		sed -E 's;^(!?)(.*)$$;\1'$$(dirname "$$file")'/\2;' "$$file" >> .dockerignore;\
 	done
 
-canopsis.toml:
-	mkdir -p $(OUTPUT_DIR)
-	cp $(dir $(CURRENT_MAKEFILE))/config/canopsis.${CANOPSIS_EDITION}.toml $(OUTPUT_DIR)/canopsis.toml
-
 .PHONY: docker-builder $(DOCKER_TARGETS)
 
 docker-builder: $(MONOREPO_ROOT)/.dockerignore
@@ -159,15 +155,15 @@ docker-canopsis-api: TARGET=canopsis-api
 # You can modify the content of the CMDS and PLUGINS variables to change what will be built/installed
 # Example : make install DESTDIR=/tmp/installroot PLUGINS=datasource/mongo.so CMDS="canopsis-api connector-junit"
 # will only install the mongo datasource plugin, canopsis-api and connector-junit
-install: canopsis.toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
+install: $(dir $(CURRENT_MAKEFILE))/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
 	# Install cmds
 	install -d -- "$(DESTDIR)$(PREFIX)/opt/canopsis/bin"
 	$(foreach cmd,$(CMDS),install -m 755 -- "$(BUILD_DIR)/cmd/$(cmd)" "$(DESTDIR)$(PREFIX)/opt/canopsis/bin/";)
 	# Install plugins
 	$(foreach plugin,$(PLUGINS),install -D -m 755 -- "$(BUILD_DIR)/plugins/$(plugin)" "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(plugin)";)
 	# Install configuration file
-	install -d $(DESTDIR)$(PREFIX)/opt/canopsis/etc
-	install -m 644 $(OUTPUT_DIR)/canopsis.toml $(DESTDIR)$(PREFIX)/opt/canopsis/etc/
+	install -d -- "$(DESTDIR)$(PREFIX)/opt/canopsis/etc"
+	install -m 644 -- "$(dir $(CURRENT_MAKEFILE))/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml" "$(DESTDIR)$(PREFIX)/opt/canopsis/etc/canopsis.toml"
 
 #
 # HELP

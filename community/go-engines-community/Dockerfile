@@ -20,7 +20,6 @@ COPY ${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/Makefile /monorepo/${CAN
 RUN make deps
 
 COPY . /monorepo
-RUN make canopsis.toml
 RUN make
 
 ARG CANOPSIS_EDITION
@@ -35,9 +34,9 @@ USER canopsis:canopsis
 
 ENTRYPOINT /engine
 
-COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/canopsis.toml /
 ARG CMD
 COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /engine
+COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml /canopsis.toml
 
 FROM final-container AS canopsis-api
 EXPOSE 8082
