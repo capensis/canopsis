@@ -27,12 +27,10 @@ BUILDDATE:=$(shell date "+%Y-%m-%dT%H:%M:%S%z")
 LINKPKG="git.canopsis.net/canopsis/canopsis-$(CANOPSIS_EDITION)/$(CANOPSIS_EDITION)/go-engines-$(CANOPSIS_EDITION)"
 VERSION:=$(shell git -C $(MONOREPO_ROOT) for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1)
 GITCOMMIT:=$(shell git -C $(MONOREPO_ROOT) rev-parse HEAD)
-GITBRANCH:=$(shell git -C $(MONOREPO_ROOT) rev-parse --abbrev-ref HEAD)
 #Metadata for the binaries
 CUSTOM_LDFLAGS=
 LDFLAGS:=-ldflags "\
 	-X ${LINKPKG}.BuildGitCommit=${GITCOMMIT} \
-	-X ${LINKPKG}.BuildGitBranch=${GITBRANCH} \
 	-X ${LINKPKG}.BuildDate=${BUILDDATE} ${CUSTOM_LDFLAGS}"
 
 # Use the trimpath option so that the logs do not contain the absolute paths to
