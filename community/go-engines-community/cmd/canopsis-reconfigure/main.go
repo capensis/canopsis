@@ -181,7 +181,9 @@ func main() {
 
 	logger.Info().Msg("Initialise TimescaleDB")
 	err = createTimescaleDBTables(ctx)
-	utils.FailOnError(err, "Failed to create timescaleDB tables")
+	if os.Getenv(postgres.EnvURL) != "" && err != nil {
+		utils.FailOnError(err, "Failed to create timescaleDB tables")
+	}
 
 	logger.Info().Msg("Initialising Mongo indexes")
 	err = createMongoIndexes(ctx, client, mongoConfPath, logger)
