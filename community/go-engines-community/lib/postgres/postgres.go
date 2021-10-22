@@ -7,12 +7,12 @@ import (
 	"os"
 )
 
-const envURL = "CPS_POSTGRES_URL"
+const EnvURL = "CPS_POSTGRES_URL"
 
 func NewPool(ctx context.Context) (*pgxpool.Pool, error) {
-	connStr := os.Getenv(envURL)
+	connStr := os.Getenv(EnvURL)
 	if connStr == "" {
-		return nil, fmt.Errorf("environment variable %s empty", envURL)
+		return nil, fmt.Errorf("environment variable %s empty", EnvURL)
 	}
 
 	return pgxpool.Connect(ctx, connStr)
