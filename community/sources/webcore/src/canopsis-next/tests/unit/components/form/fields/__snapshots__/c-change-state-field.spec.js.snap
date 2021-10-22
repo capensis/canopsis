@@ -98,7 +98,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
               <div
                 class="v-messages__message"
               >
-                The changeState.output field is required.
+                validation.custom.changeState.output.required:["validation.attributes.changeState.output",[],{}]
               </div>
             </transition-group-stub>
           </div>

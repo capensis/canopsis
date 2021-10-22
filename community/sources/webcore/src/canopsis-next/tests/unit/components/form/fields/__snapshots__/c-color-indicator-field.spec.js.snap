@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state value correctly 1`] = `
+exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact state value correctly 1`] = `
 <div
   class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--is-label-active v-input--is-dirty theme--light"
 >
@@ -24,7 +24,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state 
             <input
               aria-checked="false"
               aria-label="settings.colorIndicator.fields.displayAsSeverity"
-              name="v-radio-10"
+              name="colorIndicator"
               role="radio"
               type="radio"
               value="state"
@@ -56,7 +56,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state 
             <input
               aria-checked="false"
               aria-label="settings.colorIndicator.fields.displayAsPriority"
-              name="v-radio-10"
+              name="colorIndicator"
               role="radio"
               type="radio"
               value="impact_state"
@@ -94,7 +94,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state 
 </div>
 `;
 
-exports[`c-color-indicator-field Renders \`c-enabled-field\` with impact state value correctly 1`] = `
+exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state value correctly 1`] = `
 <div
   class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--is-label-active v-input--is-dirty theme--light"
 >
@@ -118,7 +118,7 @@ exports[`c-color-indicator-field Renders \`c-enabled-field\` with impact state v
             <input
               aria-checked="false"
               aria-label="settings.colorIndicator.fields.displayAsSeverity"
-              name="v-radio-19"
+              name="colorIndicator"
               role="radio"
               type="radio"
               value="state"
@@ -150,7 +150,7 @@ exports[`c-color-indicator-field Renders \`c-enabled-field\` with impact state v
             <input
               aria-checked="false"
               aria-label="settings.colorIndicator.fields.displayAsPriority"
-              name="v-radio-19"
+              name="colorIndicator"
               role="radio"
               type="radio"
               value="impact_state"
