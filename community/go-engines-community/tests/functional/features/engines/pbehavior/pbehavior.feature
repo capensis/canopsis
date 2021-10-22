@@ -437,3 +437,80 @@ Feature: update alarm on pbehavior
       }
     }
     """
+
+  Scenario: given pbehavior and alarm should update alarm pbehavior info on periodical
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-7",
+      "connector_name" : "test-connector-name-pbehavior-7",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-pbehavior-7",
+      "resource" : "test-resource-pbehavior-7",
+      "state" : 1,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-7",
+      "tstart": {{ (now.Add (parseDuration "2s")).Unix }},
+      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "filter":{
+        "$and":[
+          {
+            "name": "test-resource-pbehavior-7"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-7"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "pbehavior_info": {
+              "name": "test-pbehavior-7"
+            },
+            "connector" : "test-connector-pbehavior-7",
+            "connector_name" : "test-connector-name-pbehavior-7",
+            "component" : "test-component-pbehavior-7",
+            "resource" : "test-resource-pbehavior-7",
+            "steps": [
+              {
+                "_t": "stateinc",
+                "val": 1
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "pbhenter",
+                "m": "Pbehavior test-pbehavior-7. Type: Engine maintenance. Reason: Test Engine."
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """

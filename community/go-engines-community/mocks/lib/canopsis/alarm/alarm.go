@@ -110,6 +110,21 @@ func (mr *MockAdapterMockRecorder) DeleteResolvedAlarms(arg0, arg1 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteResolvedAlarms", reflect.TypeOf((*MockAdapter)(nil).DeleteResolvedAlarms), arg0, arg1)
 }
 
+// FindToCheckPbehaviorInfo mocks base method
+func (m *MockAdapter) FindToCheckPbehaviorInfo(arg0 context.Context, arg1 types.CpsTime, arg2 []string) (mongo.Cursor, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindToCheckPbehaviorInfo", arg0, arg1, arg2)
+	ret0, _ := ret[0].(mongo.Cursor)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindToCheckPbehaviorInfo indicates an expected call of FindToCheckPbehaviorInfo
+func (mr *MockAdapterMockRecorder) FindToCheckPbehaviorInfo(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindToCheckPbehaviorInfo", reflect.TypeOf((*MockAdapter)(nil).FindToCheckPbehaviorInfo), arg0, arg1, arg2)
+}
+
 // GetAlarmByAlarmId mocks base method
 func (m *MockAdapter) GetAlarmByAlarmId(arg0 context.Context, arg1 string) (types.Alarm, error) {
 	m.ctrl.T.Helper()

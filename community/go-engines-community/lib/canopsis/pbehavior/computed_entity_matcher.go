@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -188,7 +189,7 @@ func (m *computedEntityMatcher) MatchAll(ctx context.Context, entityIDs []string
 
 func (m *computedEntityMatcher) GetComputedEntityIDs(ctx context.Context) ([]string, error) {
 	var cursor uint64
-	keys := make([]string, 0)
+	entityIDs := make([]string, 0)
 	processedKeys := make(map[string]bool)
 
 	for {
@@ -201,7 +202,8 @@ func (m *computedEntityMatcher) GetComputedEntityIDs(ctx context.Context) ([]str
 		keys, cursor = res.Val()
 		for _, key := range keys {
 			if !processedKeys[key] {
-				keys = append(keys, key)
+				processedKeys[key] = true
+				entityIDs = append(entityIDs, strings.ReplaceAll(key, m.key, ""))
 			}
 		}
 
@@ -210,7 +212,7 @@ func (m *computedEntityMatcher) GetComputedEntityIDs(ctx context.Context) ([]str
 		}
 	}
 
-	return keys, nil
+	return entityIDs, nil
 }
 
 func (m *computedEntityMatcher) findEntityIDs(ctx context.Context, filter string) ([]string, error) {

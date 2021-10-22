@@ -204,7 +204,6 @@ Feature: update connector alarm
               },
               {
                 "_t": "pbhenter",
-                "a": "system",
                 "m": "Pbehavior test-pbehavior-axe-idlerule-connector-2. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
