@@ -84,7 +84,7 @@ func (mr *MockSenderMockRecorder) SendCancelAck(arg0, arg1, arg2 interface{}) *g
 }
 
 // SendCorrelation mocks base method
-func (m *MockSender) SendCorrelation(arg0 context.Context, arg1 time.Time, arg2 types.AlarmWithEntity) {
+func (m *MockSender) SendCorrelation(arg0 context.Context, arg1 time.Time, arg2 types.Alarm) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SendCorrelation", arg0, arg1, arg2)
 }
