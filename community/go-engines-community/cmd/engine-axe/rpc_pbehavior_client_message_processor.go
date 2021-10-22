@@ -83,7 +83,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 		}
 
 		p.updateEntity(ctx, event.PbhEvent.Entity, *event.Alarm, alarmChangeType)
-		p.updatePbhLastAlarmDate(ctx, alarmChangeType, event.Alarm.Value.PbehaviorInfo)
+		go p.updatePbhLastAlarmDate(ctx, alarmChangeType, event.Alarm.Value.PbehaviorInfo)
 
 		alarmChange.Type = alarmChangeType
 		body, err := p.Encoder.Encode(types.RPCServiceEvent{
@@ -186,10 +186,8 @@ func (p *rpcPBehaviorClientMessageProcessor) updatePbhLastAlarmDate(ctx context.
 		return
 	}
 
-	go func() {
-		err := p.PbehaviorAdapter.UpdateLastAlarmDate(ctx, pbehaviorInfo.ID, types.CpsTime{Time: time.Now()})
-		if err != nil {
-			p.Logger.Err(err).Msg("")
-		}
-	}()
+	err := p.PbehaviorAdapter.UpdateLastAlarmDate(ctx, pbehaviorInfo.ID, types.CpsTime{Time: time.Now()})
+	if err != nil {
+		p.Logger.Err(err).Msg("cannot update pbehavior")
+	}
 }
