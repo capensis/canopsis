@@ -542,6 +542,17 @@ func (s *eventProcessor) processMetaAlarmCreateEvent(ctx context.Context, event 
 		return types.AlarmChangeTypeNone, err
 	}
 
+	go func() {
+		timestamp := time.Now()
+		if !event.Timestamp.IsZero() {
+			timestamp = event.Timestamp.Time
+		}
+
+		for _, child := range childAlarms {
+			s.metricsSender.SendCorrelation(ctx, timestamp, child)
+		}
+	}()
+
 	event.Alarm = &metaAlarm
 	return types.AlarmChangeTypeCreate, nil
 }

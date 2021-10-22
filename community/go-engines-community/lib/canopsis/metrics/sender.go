@@ -16,7 +16,7 @@ type Sender interface {
 	SendAutoInstructionStart(ctx context.Context, alarm types.Alarm, timestamp time.Time)
 	SendCreate(ctx context.Context, alarm types.Alarm, timestamp time.Time)
 	SendCreateAndPbhEnter(ctx context.Context, alarm types.Alarm, timestamp time.Time)
-	SendCorrelation(ctx context.Context, timestamp time.Time, child types.AlarmWithEntity)
+	SendCorrelation(ctx context.Context, timestamp time.Time, child types.Alarm)
 }
 
 type nullSender struct{}
@@ -46,5 +46,5 @@ func (s *nullSender) SendCreate(_ context.Context, _ types.Alarm, _ time.Time) {
 func (s *nullSender) SendCreateAndPbhEnter(_ context.Context, _ types.Alarm, _ time.Time) {
 }
 
-func (s *nullSender) SendCorrelation(_ context.Context, _ time.Time, child types.AlarmWithEntity) {
+func (s *nullSender) SendCorrelation(_ context.Context, _ time.Time, _ types.Alarm) {
 }
