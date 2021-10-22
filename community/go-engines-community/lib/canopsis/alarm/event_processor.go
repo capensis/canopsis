@@ -347,13 +347,31 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 			return changeType, err
 		}
 
+		changeType = types.AlarmChangeTypeCreate
+
+		if !event.PbehaviorInfo.IsDefaultActive() {
+			output := fmt.Sprintf(
+				"Pbehavior %s. Type: %s. Reason: %s.",
+				event.PbehaviorInfo.Name,
+				event.PbehaviorInfo.TypeName,
+				event.PbehaviorInfo.Reason,
+			)
+
+			err := alarm.PartialUpdatePbhEnter(event.Timestamp, event.PbehaviorInfo,
+				event.Author, output, event.Role, event.Initiator)
+			if err != nil {
+				return changeType, err
+			}
+
+			changeType = types.AlarmChangeTypeCreateAndPbhEnter
+		}
+
 		err = s.adapter.Insert(ctx, alarm)
 		if err != nil {
 			return changeType, err
 		}
 
 		event.Alarm = &alarm
-		changeType = types.AlarmChangeTypeCreate
 	} else {
 		alarm := event.Alarm
 		previousState := alarm.CurrentState()

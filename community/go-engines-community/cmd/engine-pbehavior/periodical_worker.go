@@ -41,8 +41,15 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 func (w *periodicalWorker) Work(ctx context.Context) error {
 	now := time.Now().In(w.TimezoneConfigProvider.Get().Location)
 	w.compute(ctx, now)
-	processedEntityIds := w.processAlarms(ctx, now)
-	w.processEntities(ctx, now, processedEntityIds)
+
+	computedEntityIDs, err := w.PbhEntityMatcher.GetComputedEntityIDs(ctx)
+	if err != nil {
+		w.Logger.Err(err).Msg("cannot get entities which have pbehavior")
+		return nil
+	}
+
+	processedEntityIds := w.processAlarms(ctx, now, computedEntityIDs)
+	w.processEntities(ctx, now, computedEntityIDs, processedEntityIds)
 
 	return nil
 }
@@ -64,8 +71,8 @@ func (w *periodicalWorker) compute(ctx context.Context, now time.Time) {
 	}
 }
 
-func (w *periodicalWorker) processAlarms(ctx context.Context, now time.Time) []string {
-	cursor, err := w.AlarmAdapter.GetOpenedAlarmsWithEntity(ctx, types.CpsTime{Time: now})
+func (w *periodicalWorker) processAlarms(ctx context.Context, now time.Time, computedEntityIDs []string) []string {
+	cursor, err := w.AlarmAdapter.FindToCheckPbehaviorInfo(ctx, types.CpsTime{Time: now}, computedEntityIDs)
 	if err != nil {
 		w.Logger.Err(err).Msg("get alarms from mongo failed")
 		return nil
@@ -111,13 +118,7 @@ func (w *periodicalWorker) processAlarms(ctx context.Context, now time.Time) []s
 	return processedEntityIds
 }
 
-func (w *periodicalWorker) processEntities(ctx context.Context, now time.Time, processedEntityIds []string) {
-	computedEntityIDs, err := w.PbhEntityMatcher.GetComputedEntityIDs(ctx)
-	if err != nil {
-
-		return
-	}
-
+func (w *periodicalWorker) processEntities(ctx context.Context, now time.Time, computedEntityIDs, processedEntityIds []string) {
 	cursor, err := w.EntityAdapter.FindToCheckPbehaviorInfo(ctx, computedEntityIDs, processedEntityIds)
 	if err != nil {
 		w.Logger.Err(err).Msg("get alarms from mongo failed")

@@ -97,6 +97,8 @@ type Adapter interface {
 
 	// ArchiveResolvedAlarms archives alarm to archived alarm collection
 	ArchiveResolvedAlarms(ctx context.Context, duration time.Duration) (int64, error)
+
+	FindToCheckPbehaviorInfo(ctx context.Context, createdAfter types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
 }
 
 type EventProcessor interface {
