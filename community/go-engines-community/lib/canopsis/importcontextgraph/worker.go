@@ -425,7 +425,7 @@ func (w *worker) deleteLink(link Link) []mongo.WriteModel {
 func (w *worker) createEntity(ci ConfigurationItem) mongo.WriteModel {
 	ci.Depends = []string{}
 	ci.Impact = []string{}
-	ci.EnableHistory = make([]string, 0)
+	ci.EnableHistory = make([]int64, 0)
 
 	if ci.Infos == nil {
 		ci.Infos = make(map[string]interface{})
