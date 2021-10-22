@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(data-test="createAssociateTicketModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.createAssociateTicket.title') }}
@@ -16,14 +16,12 @@
               v-validate="'required'",
               :label="$t('modals.createAssociateTicket.fields.ticket')",
               :error-messages="errors.collect('ticket')",
-              name="ticket",
-              data-test="createAssociateTicketNumberOfTicket"
+              name="ticket"
             )
           v-alert(:value="itemsWithoutAck.length", type="info")
             span {{ alertMessage }}
       template(slot="actions")
         v-btn(
-          data-test="createAssociateTicketCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -31,7 +29,6 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          data-test="createAssociateTicketSubmitButton",
           type="submit"
         ) {{ $t('common.actions.saveChanges') }}
 </template>
@@ -39,11 +36,14 @@
 <script>
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
+import { prepareEventsByAlarms } from '@/helpers/forms/event';
+
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
@@ -93,10 +93,12 @@ export default {
         if (this.itemsWithoutAck.length) {
           const { fastAckOutput } = this.config;
 
-          await this.createEvent(EVENT_ENTITY_TYPES.ack, this.itemsWithoutAck, {
+          const eventData = prepareEventsByAlarms(EVENT_ENTITY_TYPES.ack, this.itemsWithoutAck, {
             output: fastAckOutput && fastAckOutput.enabled ? fastAckOutput.value : '',
             ticket: this.form.ticket,
           });
+
+          await this.createEventAction({ data: eventData });
         }
 
         await this.createEvent(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);

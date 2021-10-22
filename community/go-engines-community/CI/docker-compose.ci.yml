@@ -6,8 +6,6 @@ volumes:
       driver: local
   rabbitmqdata:
     driver: local
-  importctxdata:
-    driver: local
   dumpdata:
     driver: local
   exchangedata:
@@ -64,7 +62,6 @@ services:
     depends_on:
       - "mongodb"
     volumes:
-      - importctxdata:/opt/canopsis/tmp
       - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
     links:
       - mongodb

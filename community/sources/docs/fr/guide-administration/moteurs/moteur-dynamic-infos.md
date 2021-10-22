@@ -15,7 +15,7 @@ La commande `engine-dynamic-infos -help` liste toutes les options acceptées par
 
 ### Règles
 
-Les règles sont définies dans la collection MongoDB `dynamic-infos`, et peuvent être ajoutées et modifiées avec l'[API Informations Dynamiques](../../guide-developpement/api/api-v2-dynamic-infos.md).
+Les règles sont définies dans la collection MongoDB `dynamic-infos`.
 
 Une règle est représentée par un document JSON de la forme suivante :
 
@@ -77,7 +77,7 @@ Un exemple concret d'utilisation du moteur `engine-dynamic-infos` pour l'afficha
 
 ### Pré remplissage des attributs
 
-Lorsque vous devez saisir des règles d'informations dynamiques similaires, vous avez la possibilité de pré remplir les attributs de celles-ci pour n'avoir plus que la saisie des valeurs à effectuer.  
+Lorsque vous devez saisir des règles d'informations dynamiques similaires, vous avez la possibilité de pré remplir les attributs de celles-ci pour ne plus avoir que la saisie des valeurs à réaliser.  
 
 Pour cela, vous devez
 

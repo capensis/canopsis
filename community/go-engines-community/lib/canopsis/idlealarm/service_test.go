@@ -11,7 +11,6 @@ import (
 	mock_idlerule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/idlerule"
 	mock_pbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/pbehavior"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/redis"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 	"reflect"
@@ -27,8 +26,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 	mockRuleAdapter := mock_idlerule.NewMockRuleAdapter(ctrl)
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
-	mockRedisStore := mock_redis.NewMockStore(ctrl)
-	mockPbhService := mock_pbehavior.NewMockService(ctrl)
+	mockPbhService := mock_pbehavior.NewMockEntityTypeResolver(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	entity := types.Entity{}
@@ -79,7 +77,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
 	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter,
-		mockRedisStore, mockPbhService, mockEncoder, logger)
+		mockPbhService, mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {
@@ -120,8 +118,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 	mockRuleAdapter := mock_idlerule.NewMockRuleAdapter(ctrl)
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
-	mockRedisStore := mock_redis.NewMockStore(ctrl)
-	mockPbhService := mock_pbehavior.NewMockService(ctrl)
+	mockPbhService := mock_pbehavior.NewMockEntityTypeResolver(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	entity := types.Entity{}
@@ -171,7 +168,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
 	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter,
-		mockRedisStore, mockPbhService, mockEncoder, logger)
+		mockPbhService, mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {
@@ -212,8 +209,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 	mockRuleAdapter := mock_idlerule.NewMockRuleAdapter(ctrl)
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
-	mockRedisStore := mock_redis.NewMockStore(ctrl)
-	mockPbhService := mock_pbehavior.NewMockService(ctrl)
+	mockPbhService := mock_pbehavior.NewMockEntityTypeResolver(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	resource := "test-resource"
@@ -275,7 +271,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
 	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter,
-		mockRedisStore, mockPbhService, mockEncoder, logger)
+		mockPbhService, mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {
@@ -317,8 +313,7 @@ func TestService_Process_GivenAlarmForConnectorEntity_ShouldReturnEvent(t *testi
 	mockRuleAdapter := mock_idlerule.NewMockRuleAdapter(ctrl)
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
-	mockRedisStore := mock_redis.NewMockStore(ctrl)
-	mockPbhService := mock_pbehavior.NewMockService(ctrl)
+	mockPbhService := mock_pbehavior.NewMockEntityTypeResolver(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	alarm := types.Alarm{
@@ -340,7 +335,7 @@ func TestService_Process_GivenAlarmForConnectorEntity_ShouldReturnEvent(t *testi
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return([]types.Alarm{alarm}, nil)
 
 	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter,
-		mockRedisStore, mockPbhService, mockEncoder, logger)
+		mockPbhService, mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {
@@ -379,8 +374,7 @@ func TestService_Process_GivenEntityRuleAndTwoAffectedComponents_ShouldFindConne
 	mockRuleAdapter := mock_idlerule.NewMockRuleAdapter(ctrl)
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
-	mockRedisStore := mock_redis.NewMockStore(ctrl)
-	mockPbhService := mock_pbehavior.NewMockService(ctrl)
+	mockPbhService := mock_pbehavior.NewMockEntityTypeResolver(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	component1 := "test-component-1"
@@ -460,7 +454,7 @@ func TestService_Process_GivenEntityRuleAndTwoAffectedComponents_ShouldFindConne
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
 	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter,
-		mockRedisStore, mockPbhService, mockEncoder, logger)
+		mockPbhService, mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {

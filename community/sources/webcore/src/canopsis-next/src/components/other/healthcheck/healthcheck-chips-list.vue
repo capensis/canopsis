@@ -1,10 +1,10 @@
 <template lang="pug">
   c-responsive-list.ml-4(:items="preparedEngines", item-key="name", item-value="label")
     v-tooltip(:disabled="!item.tooltip", slot-scope="{ item }", bottom)
-      c-engine-chip.ma-1.cursor-pointer(
+      c-engine-chip.ma-1(
         slot="activator",
         :color="item.color",
-        @click="redirectToHealthcheck"
+        v-on="chipListeners"
       ) {{ item.label }}
       span {{ item.tooltip }}
 </template>
@@ -13,17 +13,18 @@
 import { isEqual, sortBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { COLORS } from '@/config';
-import { HEALTHCHECK_SERVICES_NAMES, SOCKET_ROOMS } from '@/constants';
+import { COLORS, SOCKET_ROOMS } from '@/config';
+import { HEALTHCHECK_SERVICES_NAMES, ROUTES_NAMES, USERS_PERMISSIONS } from '@/constants';
 
 import { getHealthcheckNodeColor } from '@/helpers/color';
 
+import { authMixin } from '@/mixins/auth';
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
 
 const { mapActions } = createNamespacedHelpers('healthcheck');
 
 export default {
-  mixins: [healthcheckNodesMixin],
+  mixins: [authMixin, healthcheckNodesMixin],
   data() {
     return {
       hasServerError: false,
@@ -34,6 +35,16 @@ export default {
     };
   },
   computed: {
+    chipListeners() {
+      if (this.checkAccess(USERS_PERMISSIONS.technical.healthcheck)) {
+        return {
+          click: this.redirectToHealthcheck,
+        };
+      }
+
+      return {};
+    },
+
     preparedEngines() {
       const wrongNodes = [...this.data.services, ...this.data.engines];
 
@@ -58,6 +69,7 @@ export default {
 
       return sortBy(wrongNodes, ['name']).map(engine => ({
         ...engine,
+
         color: getHealthcheckNodeColor(engine),
         tooltip: this.getTooltipText(engine),
         label: this.getNodeName(engine.name),
@@ -67,16 +79,14 @@ export default {
   mounted() {
     this.fetchList();
 
-    this.$socket.join(SOCKET_ROOMS.healthcheckStatus);
     this.$socket
-      .getRoom(SOCKET_ROOMS.healthcheckStatus)
+      .join(SOCKET_ROOMS.healthcheckStatus)
       .addListener(this.setHealthcheckStatus);
   },
   beforeDestroy() {
     this.$socket
-      .getRoom(SOCKET_ROOMS.healthcheckStatus)
+      .leave(SOCKET_ROOMS.healthcheckStatus)
       .removeListener(this.setHealthcheckStatus);
-    this.$socket.leave(SOCKET_ROOMS.healthcheckStatus);
   },
   methods: {
     ...mapActions({
@@ -85,7 +95,7 @@ export default {
 
     redirectToHealthcheck() {
       this.$router.push({
-        name: 'admin-healthcheck',
+        name: ROUTES_NAMES.adminHealthcheck,
       });
     },
 

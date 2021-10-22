@@ -95,12 +95,6 @@ export const DAYS_IN_WEEK = 7;
 
 export const EXCLUDED_SERVER_ERROR_STATUSES = [401, 403];
 
-export const SOCKET_ROOMS = {
-  healthcheck: 'healthcheck',
-  healthcheckStatus: 'healthcheck-status',
-  messageRates: 'message-rates',
-};
-
 export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 
 export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';

@@ -20,18 +20,18 @@ import { MODALS } from '@/constants';
 
 import { remediationInstructionToForm, formToRemediationInstruction } from '@/helpers/forms/remediation-instruction';
 
-import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
-import { localQueryMixin } from '@/mixins/query-local/query';
 import { authMixin } from '@/mixins/auth';
+import { localQueryMixin } from '@/mixins/query-local/query';
+import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
 
 import RemediationInstructionsList from './remediation-instructions-list.vue';
 
 export default {
   components: { RemediationInstructionsList },
   mixins: [
-    entitiesRemediationInstructionsMixin,
-    localQueryMixin,
     authMixin,
+    localQueryMixin,
+    entitiesRemediationInstructionMixin,
   ],
   mounted() {
     this.fetchList();
