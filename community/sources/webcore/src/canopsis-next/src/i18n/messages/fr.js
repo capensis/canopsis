@@ -190,6 +190,7 @@ export default {
     dismiss: 'Rejeter',
     approve: 'Approuver',
     summary: 'Résumé',
+    recurrence: 'Récurrence',
     statistics: 'Statistiques',
     action: 'Action',
     minimal: 'Minimal',
@@ -862,9 +863,6 @@ export default {
           exdate: 'Dates d\'exclusion',
           buttons: {
             addExdate: 'Ajouter une date d\'exclusion',
-          },
-          fields: {
-            rRuleQuestion: 'Ajouter une règle de récurrence au comportement périodique ?',
           },
         },
         comments: {
@@ -1575,10 +1573,22 @@ export default {
       },
     },
   },
-  rRule: {
+  recurrenceRule: {
     advancedHint: 'Séparer les nombres par une virgule',
-    textLabel: 'Récurrence',
-    stringLabel: 'Résumé',
+    freq: 'Fréquence',
+    until: 'Jusqu\'à',
+    byweekday: 'Par jour de la semaine',
+    count: 'Répéter',
+    interval: 'Intervalle',
+    wkst: 'Semaine de début',
+    bymonth: 'Par mois',
+    bysetpos: 'Par position',
+    bymonthday: 'Par jour du mois',
+    byyearday: 'Par jour de l\'année',
+    byweekno: 'Par semaine n°',
+    byhour: 'Par heure',
+    byminute: 'Par minute',
+    bysecond: 'Par seconde',
     tabs: {
       simple: 'Simple',
       advanced: 'Avancé',
@@ -1593,42 +1603,14 @@ export default {
       [PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth]: 'Ce mois',
       [PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth]: 'Le mois prochain',
     },
-    fields: {
-      freq: 'Fréquence',
-      until: 'Jusqu\'à',
-      byweekday: 'Par jour de la semaine',
-      count: 'Répéter',
-      interval: 'Intervalle',
-      wkst: 'Semaine de début',
-      bymonth: 'Par mois',
-      bysetpos: {
-        label: 'Par position',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la ènième occurence de la règle dans l\'intervalle de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (lundi, mardi, mercredi, jeudi, vendredi), va nous donner le dernier jour travaillé de chaque mois',
-      },
-      bymonthday: {
-        label: 'Par jour du mois',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours du mois auxquels s\'appliquera la récurrence.',
-      },
-      byyearday: {
-        label: 'Par jour de l\'année',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours de l\'année auxquels  s\'appliquera la récurrence.',
-      },
-      byweekno: {
-        label: 'Par semaine n°',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux numéros de semaine auxquelles s\'appliquera la récurrence. Les numéros de semaines sont ceux de ISO8601, la première semaine de l\'année étant celle contenant au moins 4 jours de cette année.',
-      },
-      byhour: {
-        label: 'Par heure',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux heures auxquelles s\'appliquera la récurrence.',
-      },
-      byminute: {
-        label: 'Par minute',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux minutes auxquelles s\'appliquera la récurrence.',
-      },
-      bysecond: {
-        label: 'Par seconde',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux secondes auxquelles s\'appliquera la récurrence.',
-      },
+    tooltips: {
+      bysetpos: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la ènième occurence de la règle dans l\'intervalle de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (lundi, mardi, mercredi, jeudi, vendredi), va nous donner le dernier jour travaillé de chaque mois',
+      bymonthday: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours du mois auxquels s\'appliquera la récurrence.',
+      byyearday: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours de l\'année auxquels  s\'appliquera la récurrence.',
+      byweekno: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux numéros de semaine auxquelles s\'appliquera la récurrence. Les numéros de semaines sont ceux de ISO8601, la première semaine de l\'année étant celle contenant au moins 4 jours de cette année.',
+      byhour: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux heures auxquelles s\'appliquera la récurrence.',
+      byminute: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux minutes auxquelles s\'appliquera la récurrence.',
+      bysecond: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux secondes auxquelles s\'appliquera la récurrence.',
     },
   },
   errors: {
@@ -1638,6 +1620,7 @@ export default {
     versionNotFound: 'Erreur dans la récupération du numéro de version...',
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
     statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
+    socketConnectionProblem: 'Problème de connexion au serveur socket',
   },
   calendar: {
     today: 'Aujourd\'hui',
@@ -2117,6 +2100,7 @@ export default {
       success: '{instructionName} a été exécutée avec succès',
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème',
       connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
+      wasAborted: '{instructionName} a été abandonné',
       wasPaused: 'La consigne {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez la reprendre manuellement.',
     },
     jobs: {

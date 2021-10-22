@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('role');
 
-export default {
+export const entitiesRoleMixin = {
   computed: {
     ...mapGetters({
       roles: 'items',
@@ -13,7 +13,6 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchRoleWithoutStore: 'fetchItemWithoutStore',
       fetchRolesListWithoutStore: 'fetchListWithoutStore',
       fetchRolesList: 'fetchList',
       removeRole: 'remove',

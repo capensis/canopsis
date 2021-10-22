@@ -17,15 +17,16 @@ import { createNamespacedHelpers } from 'vuex';
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
 
+import { reloadPageWithTrailingSlashes } from '@/helpers/url';
 import { convertDateToString } from '@/helpers/date/date';
 
 import localStorageService from '@/services/local-storage';
 
 import { authMixin } from '@/mixins/auth';
-import systemMixin from '@/mixins/system';
+import { systemMixin } from '@/mixins/system';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesViewStatsMixin } from '@/mixins/entities/view-stats';
-import entitiesUserMixin from '@/mixins/entities/user';
+import { entitiesUserMixin } from '@/mixins/entities/user';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import TheSideBars from '@/components/side-bars/the-sidebars.vue';
@@ -66,33 +67,33 @@ export default {
       return ![ROUTES_NAMES.login, ROUTES_NAMES.error].includes(this.$route.name);
     },
   },
+  beforeCreate() {
+    reloadPageWithTrailingSlashes();
+  },
   created() {
     this.registerCurrentUserOnceWatcher();
   },
-  async mounted() {
-    try {
-      await this.fetchCurrentUser();
-    } catch ({ status }) {
-      if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(status)) {
-        this.$router.push({ name: ROUTES_NAMES.error });
-      }
-    } finally {
-      this.pending = false;
-    }
+  mounted() {
+    this.socketConnectWithErrorHandling();
+    this.fetchCurrentUserWithErrorHandling();
   },
   beforeDestroy() {
     this.stopViewStats();
   },
   methods: {
     ...mapActions({
-      fetchPausedExecutionsWithoutStore: 'fetchPausedExecutionsWithoutStore',
+      fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
     }),
 
     registerCurrentUserOnceWatcher() {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
-          this.$socket.connect(`${SOCKET_URL}?token=${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
-          await this.fetchAppInfo();
+          this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
+
+          await Promise.all([
+            this.fetchAppInfo(),
+            this.filesAccess(),
+          ]);
 
           this.setSystemData({
             timezone: this.timezone,
@@ -123,6 +124,43 @@ export default {
           date: convertDateToString(execution.paused),
         }),
       }));
+    },
+
+    socketConnectWithErrorHandling() {
+      try {
+        this.$socket
+          .connect(SOCKET_URL)
+          .on('error', this.socketErrorHandler);
+      } catch (err) {
+        this.$popups.error({
+          text: this.$t('errors.socketConnectionProblem'),
+          autoClose: false,
+        });
+
+        console.error(err);
+      }
+    },
+
+    socketErrorHandler({ message } = {}) {
+      if (message) {
+        this.$popups.error({ text: message });
+      }
+    },
+
+    async fetchCurrentUserWithErrorHandling() {
+      try {
+        this.pending = true;
+
+        await this.fetchCurrentUser();
+      } catch (err) {
+        if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
+          this.$router.push({ name: ROUTES_NAMES.error });
+        }
+
+        console.error(err);
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };

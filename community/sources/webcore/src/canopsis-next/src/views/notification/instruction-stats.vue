@@ -27,7 +27,7 @@ import {
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
-import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
+import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
 
 import RemediationInstructionStatsList from '@/components/other/remediation/instruction-stats/remediation-instruction-stats-list.vue';
 
@@ -39,7 +39,7 @@ export default {
     authMixin,
     localQueryMixin,
     entitiesRemediationInstructionStatsMixin,
-    entitiesRemediationInstructionsMixin,
+    entitiesRemediationInstructionMixin,
   ],
   data() {
     return {

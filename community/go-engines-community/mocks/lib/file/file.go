@@ -6,6 +6,7 @@ package mock_file
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	io "io"
 	reflect "reflect"
 )
 
@@ -45,6 +46,21 @@ func (m *MockStorage) Copy(arg0, arg1 string) (string, error) {
 func (mr *MockStorageMockRecorder) Copy(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Copy", reflect.TypeOf((*MockStorage)(nil).Copy), arg0, arg1)
+}
+
+// CopyReader mocks base method
+func (m *MockStorage) CopyReader(arg0 string, arg1 io.Reader) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CopyReader", arg0, arg1)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CopyReader indicates an expected call of CopyReader
+func (mr *MockStorageMockRecorder) CopyReader(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CopyReader", reflect.TypeOf((*MockStorage)(nil).CopyReader), arg0, arg1)
 }
 
 // Delete mocks base method

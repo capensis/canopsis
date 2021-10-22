@@ -45,6 +45,7 @@ import CEllipsis from '@/components/common/table/c-ellipsis.vue';
 import CPagination from '@/components/common/pagination/c-pagination.vue';
 import CDraggableStepNumber from '@/components/common/drag-drop/c-draggable-step-number.vue';
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
+import CInformationBlockRow from '@/components/common/block/c-information-block-row.vue';
 import CResponsiveList from '@/components/common/responsive-list/c-responsive-list.vue';
 
 /**
@@ -279,7 +280,6 @@ Vue.component('c-retry-field', CRetryField);
 Vue.component('c-mixed-field', CMixedField);
 Vue.component('c-array-mixed-field', CArrayMixedField);
 Vue.component('c-color-picker-field', CColorPickerField);
-Vue.component('c-json-field', CJsonField);
 Vue.component('c-entity-type-field', CEntityTypeField);
 Vue.component('c-impact-level-field', CImpactLevelField);
 Vue.component('c-search-field', CSearchField);
@@ -307,6 +307,7 @@ Vue.component('c-timezone-field', CTimezoneField);
 Vue.component('c-language-field', CLanguageField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
+Vue.component('c-information-block-row', CInformationBlockRow);
 Vue.component('c-responsive-list', CResponsiveList);
 
 Vue.use(VueMq, {

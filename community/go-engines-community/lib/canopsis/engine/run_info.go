@@ -5,15 +5,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/go-redis/redis/v8"
+	"strings"
 	"time"
-)
 
-const defaultKey = "engine-run-info"
+	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"github.com/go-redis/redis/v8"
+)
 
 // NewRunInfoManager creates new run info manager.
 func NewRunInfoManager(client redis.Cmdable, key ...string) RunInfoManager {
-	k := defaultKey
+	k := libredis.RunInfoKey
 	if len(key) == 1 {
 		k = key[0]
 	} else if len(key) > 1 {
@@ -32,55 +33,36 @@ type runInfoManager struct {
 	key    string
 }
 
-func (m *runInfoManager) Save(ctx context.Context, info RunInfo, expiration time.Duration) error {
+func (m *runInfoManager) SaveInstance(ctx context.Context, info InstanceRunInfo, expiration time.Duration) error {
+	if info.ID == "" {
+		return errors.New("id is required")
+	}
 	if info.Name == "" {
 		return errors.New("name is required")
 	}
 
 	b, err := json.Marshal(info)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot marshal info: %w", err)
 	}
 
-	res := m.client.Set(ctx, m.getKey(info.Name), b, expiration)
+	res := m.client.Set(ctx, m.GetCacheKey(info), b, expiration)
 	if err := res.Err(); err != nil {
-		return err
+		return fmt.Errorf("cannot save info to cache: %w", err)
 	}
 
 	return nil
 }
 
-func (m *runInfoManager) Get(ctx context.Context, engineName string) (*RunInfo, error) {
-	if engineName == "" {
-		return nil, errors.New("name is required")
-	}
-
-	res := m.client.Get(ctx, m.getKey(engineName))
-	if err := res.Err(); err != nil {
-		if err == redis.Nil {
-			return nil, nil
-		}
-		return nil, err
-	}
-
-	var info RunInfo
-	err := json.Unmarshal([]byte(res.Val()), &info)
-	if err != nil {
-		return nil, err
-	}
-
-	return &info, nil
-}
-
-func (m *runInfoManager) GetAll(ctx context.Context) ([]RunInfo, error) {
-	infos := make([]RunInfo, 0)
+func (m *runInfoManager) GetEngineQueues(ctx context.Context) ([]RunInfo, error) {
+	recentInfos := make(map[string]InstanceRunInfo)
 	var cursor uint64
 	processedKeys := make(map[string]bool)
 
 	for {
 		res := m.client.Scan(ctx, cursor, fmt.Sprintf("%s*", m.key), 50)
 		if err := res.Err(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("cannot scan cache keys: %w", err)
 		}
 
 		var keys []string
@@ -96,20 +78,22 @@ func (m *runInfoManager) GetAll(ctx context.Context) ([]RunInfo, error) {
 		if len(unprocessedKeys) > 0 {
 			resGet := m.client.MGet(ctx, unprocessedKeys...)
 			if err := resGet.Err(); err != nil {
-				return nil, err
+				return nil, fmt.Errorf("cannot fetch infos from cache: %w", err)
 			}
 
-			for _, v := range resGet.Val() {
+			for i, v := range resGet.Val() {
 				if s, ok := v.(string); ok {
-					var info RunInfo
+					var info InstanceRunInfo
 					err := json.Unmarshal([]byte(s), &info)
 					if err != nil {
-						return nil, err
+						return nil, fmt.Errorf("cannot unmarshal info key=%q: %w", unprocessedKeys[i], err)
 					}
 
-					infos = append(infos, info)
+					if recentInfo, ok := recentInfos[info.Name]; !ok || recentInfo.Time.Before(info.Time.Time) {
+						recentInfos[info.Name] = info
+					}
 				} else {
-					return nil, fmt.Errorf("unknown value type")
+					return nil, fmt.Errorf("expect string for key=%q but got type=%T", unprocessedKeys[i], v)
 				}
 			}
 		}
@@ -119,57 +103,20 @@ func (m *runInfoManager) GetAll(ctx context.Context) ([]RunInfo, error) {
 		}
 	}
 
+	infos := make([]RunInfo, len(recentInfos))
+	i := 0
+	for _, info := range recentInfos {
+		infos[i] = RunInfo{
+			Name:         info.Name,
+			ConsumeQueue: info.ConsumeQueue,
+			PublishQueue: info.PublishQueue,
+		}
+		i++
+	}
+
 	return infos, nil
 }
 
-func (m *runInfoManager) GetGraph(ctx context.Context) (*RunInfoGraph, error) {
-	infos, err := m.GetAll(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	graph := RunInfoGraph{
-		Nodes: infos,
-	}
-	for i := range infos {
-		for j := range infos {
-			if infos[i].PublishQueue == infos[j].ConsumeQueue {
-				graph.Edges = append(graph.Edges, Edge{
-					From: infos[i].Name,
-					To:   infos[j].Name,
-				})
-			}
-		}
-	}
-
-	return &graph, nil
-}
-
-func (m *runInfoManager) ClearAll(ctx context.Context) error {
-	var cursor uint64
-	for {
-		res := m.client.Scan(ctx, cursor, fmt.Sprintf("%s*", m.key), 50)
-		if err := res.Err(); err != nil {
-			return err
-		}
-
-		var keys []string
-		keys, cursor = res.Val()
-		if len(keys) > 0 {
-			resDel := m.client.Del(ctx, keys...)
-			if err := resDel.Err(); err != nil {
-				return err
-			}
-		}
-
-		if cursor == 0 {
-			break
-		}
-	}
-
-	return nil
-}
-
-func (m *runInfoManager) getKey(name string) string {
-	return fmt.Sprintf("%s[%s]", m.key, name)
+func (m *runInfoManager) GetCacheKey(info InstanceRunInfo) string {
+	return strings.Join([]string{m.key, info.Name, info.ID}, libredis.KeyDelimiter)
 }
