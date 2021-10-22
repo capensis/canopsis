@@ -46,7 +46,7 @@ describe('c-color-indicator-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `c-enabled-field` with impact state value correctly', () => {
+  it('Renders `c-color-indicator-field` with impact state value correctly', () => {
     const wrapper = mount(CColorIndicatorField, {
       localVue,
       propsData: {

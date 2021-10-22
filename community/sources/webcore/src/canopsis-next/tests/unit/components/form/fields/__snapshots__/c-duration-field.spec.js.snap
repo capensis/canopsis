@@ -491,7 +491,7 @@ exports[`c-duration-field Renders \`c-duration-field\` with duration value as st
               <div
                 class="v-messages__message message-transition-enter message-transition-enter-active"
               >
-                The duration.value field may only contain numeric characters.
+                validation.custom.duration.value.numeric:["validation.attributes.duration.value",[],{}]
               </div>
             </div>
           </div>
