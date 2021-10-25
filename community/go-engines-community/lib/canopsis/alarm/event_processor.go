@@ -240,11 +240,11 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 	}
 
 	if changeType == types.AlarmChangeTypeCreate {
-		s.metricsSender.SendCreate(ctx, alarm, alarm.Value.CreationDate.Time)
+		go s.metricsSender.SendCreate(ctx, alarm, alarm.Value.CreationDate.Time)
 	}
 
 	if changeType == types.AlarmChangeTypeCreateAndPbhEnter {
-		s.metricsSender.SendCreateAndPbhEnter(ctx, alarm, alarm.Value.CreationDate.Time)
+		go s.metricsSender.SendCreateAndPbhEnter(ctx, alarm, alarm.Value.CreationDate.Time)
 	}
 
 	event.Alarm = &alarm
@@ -341,7 +341,7 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 
 		event.Alarm = &alarm
 		changeType = types.AlarmChangeTypeCreate
-		s.metricsSender.SendCreate(ctx, alarm, alarm.Value.CreationDate.Time)
+		go s.metricsSender.SendCreate(ctx, alarm, alarm.Value.CreationDate.Time)
 	} else {
 		alarm := event.Alarm
 		previousState := alarm.CurrentState()
