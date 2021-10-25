@@ -10,5 +10,5 @@ import (
 
 // NewEngineAXE returns the default AXE engine with default connections.
 func NewEngineAXE(ctx context.Context, options axe.Options, logger zerolog.Logger) engine.Engine {
-	return axe.Default(ctx, options, metrics.NewNullSender(), logger)
+	return axe.Default(ctx, options, metrics.NewNullSender(), nil, logger)
 }

@@ -341,6 +341,7 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 
 		event.Alarm = &alarm
 		changeType = types.AlarmChangeTypeCreate
+		s.metricsSender.SendCreate(ctx, alarm, alarm.Value.CreationDate.Time)
 	} else {
 		alarm := event.Alarm
 		previousState := alarm.CurrentState()
