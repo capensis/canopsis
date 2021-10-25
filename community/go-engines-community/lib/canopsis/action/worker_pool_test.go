@@ -97,9 +97,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Action: action.Action{
 					EntityPatterns: p,
 					Type:           "action_1",
-					Parameters: &types.OperationParameters{
-						Output: "output 1",
-						Author: "author 1",
+					Parameters: map[string]interface{}{
+						"output": "output 1",
+						"author": "author 1",
 					},
 				},
 				Alarm: types.Alarm{
@@ -125,9 +125,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Action: action.Action{
 					EntityPatterns: p,
 					Type:           "action_2",
-					Parameters: &types.OperationParameters{
-						Output: "output 2",
-						Author: "author 2",
+					Parameters: map[string]interface{}{
+						"output": "output 2",
+						"author": "author 2",
 					},
 				},
 				Alarm: types.Alarm{
@@ -143,9 +143,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Action: action.Action{
 					EntityPatterns: p,
 					Type:           "action_3",
-					Parameters: &types.OperationParameters{
-						Output: "output 3",
-						Author: "author 3",
+					Parameters: map[string]interface{}{
+						"output": "output 3",
+						"author": "author 3",
 					},
 				},
 				Alarm: types.Alarm{
@@ -172,9 +172,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Action: action.Action{
 					EntityPatterns: p,
 					Type:           "action_1",
-					Parameters: &types.OperationParameters{
-						Output: "rendered output: {{.Entity.ID}}",
-						Author: "rendered author: {{.Alarm.ID}}",
+					Parameters: map[string]interface{}{
+						"output": "rendered output: {{.Entity.ID}}",
+						"author": "rendered author: {{.Alarm.ID}}",
 					},
 				},
 				Alarm: types.Alarm{
