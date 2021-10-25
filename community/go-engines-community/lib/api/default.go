@@ -2,16 +2,19 @@ package api
 
 import (
 	"context"
+	"net/http"
 	"os"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	devmiddleware "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware/dev"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -27,6 +30,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
 	"github.com/gin-gonic/gin"
+	gorillawebsocket "github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
@@ -150,6 +154,10 @@ func Default(
 	// Create csv exporter.
 	exportExecutor := export.NewTaskExecutor(dbClient, logger)
 
+	websocketHub := newWebsocketHub(enforcer, security.GetTokenProvider(), logger)
+
+	broadcastMessageChan := make(chan bool)
+
 	// Create api.
 	api := New(
 		addr,
@@ -157,6 +165,7 @@ func Default(
 			close(pbhComputeChan)
 			close(entityPublChan)
 			close(entityCleanerTaskChan)
+			close(broadcastMessageChan)
 
 			err := dbClient.Disconnect(ctx)
 			if err != nil {
@@ -210,10 +219,13 @@ func Default(
 			jobQueue,
 			userInterfaceConfigProvider,
 			cfg.File.Upload,
+			websocketHub,
+			broadcastMessageChan,
 			logger,
 		)
 	})
 	api.AddNoRoute(GetProxy(security, enforcer, proxyAccessConfig))
+	api.SetWebsocketHub(websocketHub)
 
 	api.AddWorker("session clean", func(ctx context.Context) {
 		security.GetSessionStore().StartAutoClean(ctx, sessionStoreAutoCleanInterval)
@@ -250,8 +262,31 @@ func Default(
 	api.AddWorker("auth token", func(ctx context.Context) {
 		security.GetTokenStore().DeleteExpired(ctx, canopsis.PeriodicalWaitTime)
 	})
+	api.AddWorker("websocket", func(ctx context.Context) {
+		websocketHub.Start(ctx)
+	})
+	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient), websocketHub, canopsis.PeriodicalWaitTime, logger)
+	api.AddWorker("broadcast message", func(ctx context.Context) {
+		broadcastMessageService.Start(ctx, broadcastMessageChan)
+	})
 
 	return api, nil
+}
+
+func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.TokenProvider, logger zerolog.Logger, roomPerms ...map[string][]string) websocket.Hub {
+	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 2048,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	})
+	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProvider)
+	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer,
+		canopsis.PeriodicalWaitTime, logger)
+	websocketHub.RegisterRoom(websocket.RoomBroadcastMessages)
+	websocketHub.RegisterRoom(websocket.RoomLoggedUserCount)
+	return websocketHub
 }
 
 func updateConfig(
