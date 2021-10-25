@@ -23,6 +23,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/rs/zerolog"
 	"time"
 )
@@ -61,7 +62,7 @@ func ParseOptions() Options {
 	return opts
 }
 
-func Default(ctx context.Context, options Options, metricsSender metrics.Sender, logger zerolog.Logger) libengine.Engine {
+func Default(ctx context.Context, options Options, metricsSender metrics.Sender, postgresPool *pgxpool.Pool, logger zerolog.Logger) libengine.Engine {
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
@@ -165,6 +166,10 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			err = runInfoRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			if postgresPool != nil {
+				postgresPool.Close()
 			}
 		},
 		logger,

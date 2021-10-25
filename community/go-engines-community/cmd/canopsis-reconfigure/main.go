@@ -191,12 +191,14 @@ func main() {
 }
 
 func createTimescaleDBTables(ctx context.Context) error {
-	dbPool, err := postgres.NewPool(ctx)
+	postgresPool, err := postgres.NewPool(ctx)
 	if err != nil {
 		return err
 	}
 
-	_, err = dbPool.Exec(
+	defer postgresPool.Close()
+
+	_, err = postgresPool.Exec(
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS total_alarm_number (
@@ -210,7 +212,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		return err
 	}
 
-	_, err = dbPool.Exec(
+	_, err = postgresPool.Exec(
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS non_displayed_alarm_number (
@@ -224,7 +226,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		return err
 	}
 
-	_, err = dbPool.Exec(
+	_, err = postgresPool.Exec(
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS pbh_alarm_number (
@@ -238,7 +240,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		return err
 	}
 
-	_, err = dbPool.Exec(
+	_, err = postgresPool.Exec(
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS instruction_alarm_number (
@@ -252,7 +254,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		return err
 	}
 
-	_, err = dbPool.Exec(
+	_, err = postgresPool.Exec(
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS correlation_alarm_number (
@@ -266,7 +268,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		return err
 	}
 
-	_, err = dbPool.Exec(
+	_, err = postgresPool.Exec(
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS ticket_alarm_number (
@@ -281,7 +283,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		return err
 	}
 
-	_, err = dbPool.Exec(
+	_, err = postgresPool.Exec(
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS ack_alarm_number (
@@ -296,7 +298,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		return err
 	}
 
-	_, err = dbPool.Exec(
+	_, err = postgresPool.Exec(
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS cancel_ack_alarm_number (
@@ -311,7 +313,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		return err
 	}
 
-	_, err = dbPool.Exec(
+	_, err = postgresPool.Exec(
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS ack_duration (
@@ -326,7 +328,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		return err
 	}
 
-	_, err = dbPool.Exec(
+	_, err = postgresPool.Exec(
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS resolve_duration (
