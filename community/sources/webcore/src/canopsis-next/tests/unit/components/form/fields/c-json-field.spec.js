@@ -1,4 +1,6 @@
 import { createVueInstance, mount, shallowMount } from '@unit/utils/vue';
+import { createTextareaInputStub } from '@unit/stubs/input';
+import { createButtonStub } from '@unit/stubs/button';
 
 import CJsonField from '@/components/forms/fields/c-json-field.vue';
 import { stringifyJson } from '@/helpers/json';
@@ -6,29 +8,8 @@ import { stringifyJson } from '@/helpers/json';
 const localVue = createVueInstance();
 
 const stubs = {
-  'v-textarea': {
-    props: ['value'],
-    template: `
-      <div class='v-textarea'>
-        <textarea :value="value" @input="$listeners.input($event.target.value)" @blur="blurHandler" />
-        <slot name="append" />
-      </div>
-    `,
-    methods: {
-      blurHandler(event) {
-        if (this.$listeners.blur) {
-          this.$listeners.blur(event);
-        }
-      },
-    },
-  },
-  'v-btn': {
-    template: `
-      <button class="v-btn" @click="$listeners.click">
-        <slot />
-      </button>
-    `,
-  },
+  'v-textarea': createTextareaInputStub('v-textarea'),
+  'v-btn': createButtonStub('v-btn'),
 };
 
 const factory = (options = {}) => shallowMount(CJsonField, {
