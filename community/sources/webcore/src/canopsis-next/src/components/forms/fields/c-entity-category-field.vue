@@ -86,7 +86,7 @@ export default {
   created() {
     this.$validator.extend('unique-name', {
       getMessage: () => this.$t('validator.unique'),
-      validate: () => (this.newCategory && !this.categoriesNames.includes(this.newCategory.toLowerCase())),
+      validate: () => this.newCategory && !this.categoriesNames.includes(this.newCategory.toLowerCase()),
     });
   },
   mounted() {
