@@ -30,3 +30,20 @@ export const createSelectInputStub = className => ({
     </select>
   `,
 });
+
+export const createTextareaInputStub = className => ({
+  props: ['value'],
+  template: `
+      <div class='${className}'>
+        <textarea :value="value" @input="$listeners.input($event.target.value)" @blur="blurHandler" />
+        <slot name="append" />
+      </div>
+    `,
+  methods: {
+    blurHandler(event) {
+      if (this.$listeners.blur) {
+        this.$listeners.blur(event);
+      }
+    },
+  },
+});

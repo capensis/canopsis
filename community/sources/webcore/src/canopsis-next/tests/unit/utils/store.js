@@ -16,11 +16,11 @@ import Vuex from 'vuex';
  *  })
  *
  * @param {string} name
- * @param {Object.<string, Function>} [actions]
+ * @param {Object.<string, Function | Mock>} [actions]
  * @param {Object.<string, any>} [getters]
  * @returns {Store}
  */
-export const createMockedStoreModule = (name, { actions, getters }) => new Vuex.Store({
+export const createMockedStoreModule = (name, { actions = {}, getters = {} } = {}) => new Vuex.Store({
   modules: {
     [name]: {
       namespaced: true,
