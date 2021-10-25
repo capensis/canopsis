@@ -152,32 +152,6 @@ Feature: run a job
       ]
     }
     """
-    When I do PUT /api/v4/cat/executions/{{ .executionID }}/ping
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "jobs": [
-        {
-          "_id": "",
-          "name": "test-job-to-job-execution-start-1-1-name",
-          "status": null,
-          "fail_reason": "",
-          "payload": "",
-          "started_at": 0,
-          "launched_at": 0,
-          "completed_at": 0
-        },
-        {
-          "name": "test-job-to-job-execution-start-1-2-name",
-          "status": 1,
-          "fail_reason": "",
-          "output": "test-job-execution-succeeded-output",
-          "payload": "{\"resource2\": \"test-resource-to-job-execution-start-1\",\"entity2\": \"test-resource-to-job-execution-start-1/test-component-to-job-execution-start-1\"}"
-        }
-      ]
-    }
-    """
     When I do POST /api/v4/cat/job-executions:
     """json
     {
@@ -234,29 +208,6 @@ Feature: run a job
               ]
             }
           ]
-        }
-      ]
-    }
-    """
-    When I do PUT /api/v4/cat/executions/{{ .executionID }}/ping
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "jobs": [
-        {
-          "name": "test-job-to-job-execution-start-1-1-name",
-          "status": 1,
-          "fail_reason": "",
-          "output": "test-job-execution-succeeded-output",
-          "payload": "{\"resource1\": \"test-resource-to-job-execution-start-1\",\"entity1\": \"test-resource-to-job-execution-start-1/test-component-to-job-execution-start-1\"}"
-        },
-        {
-          "name": "test-job-to-job-execution-start-1-2-name",
-          "status": 1,
-          "fail_reason": "",
-          "output": "test-job-execution-succeeded-output",
-          "payload": "{\"resource2\": \"test-resource-to-job-execution-start-1\",\"entity2\": \"test-resource-to-job-execution-start-1/test-component-to-job-execution-start-1\"}"
         }
       ]
     }
@@ -1080,19 +1031,27 @@ Feature: run a job
     """
     Then the response key "started_at" should not be "0"
     When I wait 2s
-    When I do PUT /api/v4/cat/executions/{{ .executionID }}/ping
+    When I do GET /api/v4/cat/executions/{{ .executionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "jobs": [
+      "steps": [
         {
-          "name": "test-job-to-job-execution-start-8-name",
-          "status": 1,
-          "fail_reason": "",
-          "output": "test-job-execution-succeeded-output",
-          "payload": "",
-          "query": null
+          "operations": [
+            {
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-8-name",
+                  "status": 1,
+                  "fail_reason": "",
+                  "output": "test-job-execution-succeeded-output",
+                  "payload": "",
+                  "query": null
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -1206,22 +1165,30 @@ Feature: run a job
     """
     Then the response key "started_at" should not be "0"
     When I wait 2s
-    When I do PUT /api/v4/cat/executions/{{ .executionID }}/ping
+    When I do GET /api/v4/cat/executions/{{ .executionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "jobs": [
+      "steps": [
         {
-          "name": "test-job-to-job-execution-start-9-name",
-          "status": 1,
-          "fail_reason": "",
-          "output": "test-job-execution-params-succeeded-output",
-          "payload": "",
-          "query": {
-            "resource1": "test-resource-to-job-execution-start-9",
-            "entity1": "test-resource-to-job-execution-start-9/test-component-to-job-execution-start-9"
-          }
+          "operations": [
+            {
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-9-name",
+                  "status": 1,
+                  "fail_reason": "",
+                  "output": "test-job-execution-params-succeeded-output",
+                  "payload": "",
+                  "query": {
+                    "resource1": "test-resource-to-job-execution-start-9",
+                    "entity1": "test-resource-to-job-execution-start-9/test-component-to-job-execution-start-9"
+                  }
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -1329,19 +1296,27 @@ Feature: run a job
     """
     Then the response key "started_at" should not be "0"
     When I wait 2s
-    When I do PUT /api/v4/cat/executions/{{ .executionID }}/ping
+    When I do GET /api/v4/cat/executions/{{ .executionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "jobs": [
+      "steps": [
         {
-          "name": "test-job-to-job-execution-start-10-name",
-          "status": 1,
-          "fail_reason": "",
-          "output": "test-job-execution-succeeded-output",
-          "payload": "{\"resource1\": \"test-resource-to-job-execution-start-10\", \"entity1\": \"test-resource-to-job-execution-start-10/test-component-to-job-execution-start-10\"}",
-          "query": null
+          "operations": [
+            {
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-10-name",
+                  "status": 1,
+                  "fail_reason": "",
+                  "output": "test-job-execution-succeeded-output",
+                  "payload": "{\"resource1\": \"test-resource-to-job-execution-start-10\", \"entity1\": \"test-resource-to-job-execution-start-10/test-component-to-job-execution-start-10\"}",
+                  "query": null
+                }
+              ]
+            }
+          ]
         }
       ]
     }
