@@ -290,6 +290,7 @@ describe('c-entity-category-field', () => {
   });
 
   it('Check clearing by blur', async () => {
+    const categoryName = 'test';
     const fetchListMock = jest.fn();
     const createMock = jest.fn();
     const wrapper = shallowMount(CEntityCategoryFieldCopy, {
@@ -323,7 +324,7 @@ describe('c-entity-category-field', () => {
 
     const textField = wrapper.find('.v-text-field');
 
-    textField.setValue('test');
+    textField.setValue(categoryName);
     textField.trigger('blur');
 
     await flushPromises();
