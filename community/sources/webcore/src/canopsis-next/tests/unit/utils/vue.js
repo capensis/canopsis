@@ -82,16 +82,17 @@ export const mount = (component, options = {}) => {
  * @return {CustomWrapper}
  */
 export const shallowMount = (component, options = {}) => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   const wrapper = testUtilsShallowMount(
     component,
     merge(options, { mocks, stubs }),
   );
 
   wrapper.getValidator = () => wrapper.vm.$validator;
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    wrapper.destroy();
+  });
 
   return wrapper;
 };

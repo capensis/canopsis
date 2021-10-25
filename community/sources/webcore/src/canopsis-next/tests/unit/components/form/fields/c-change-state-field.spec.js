@@ -2,7 +2,7 @@ import Faker from 'faker';
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createMockedStoreGetters } from '@unit/utils/store';
-import { createInputStub, createNumberInputStub } from '@unit/stubs/input';
+import { createTextareaInputStub, createNumberInputStub } from '@unit/stubs/input';
 import { ENTITIES_STATES } from '@/constants';
 import CChangeStateField from '@/components/forms/fields/c-change-state-field.vue';
 
@@ -10,7 +10,7 @@ const localVue = createVueInstance();
 
 const stubs = {
   'state-criticity-field': createNumberInputStub('state-criticity-field'),
-  'v-textarea': createInputStub('v-textarea'),
+  'v-textarea': createTextareaInputStub('v-textarea'),
 };
 
 const factory = (options = {}) => shallowMount(CChangeStateField, {
@@ -70,8 +70,7 @@ describe('c-change-state-field', () => {
       },
     });
 
-    const outputElement = wrapper.find('input.v-textarea');
-
+    const outputElement = wrapper.find('.v-textarea textarea');
     const newOutput = Faker.datatype.string();
     outputElement.setValue(newOutput);
 
