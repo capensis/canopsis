@@ -19,6 +19,7 @@ type rpcMessageProcessor struct {
 	FeaturePrintEventOnError bool
 	PbhRpc                   engine.RPCClient
 	ServiceRpc               engine.RPCClient
+	RemediationRpc           engine.RPCClient
 	Executor                 operation.Executor
 	AlarmAdapter             libalarm.Adapter
 	Decoder                  encoding.Decoder
@@ -138,6 +139,25 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 			})
 			if err != nil {
 				p.logError(err, "RPC Message Processor: failed to send rpc call to engine-service", msg)
+			}
+		}
+	}
+
+	if p.RemediationRpc != nil && alarmChangeType == types.AlarmChangeTypeChangeState {
+		body, err := p.Encoder.Encode(types.RPCRemediationEvent{
+			Alarm:       alarm,
+			Entity:      event.Entity,
+			AlarmChange: alarmChange,
+		})
+		if err != nil {
+			p.logError(err, "RPC Message Processor: failed to encode rpc call to engine-remediation", msg)
+		} else {
+			err = p.RemediationRpc.Call(engine.RPCMessage{
+				CorrelationID: event.Alarm.ID,
+				Body:          body,
+			})
+			if err != nil {
+				p.logError(err, "RPC Message Processor: failed to send rpc call to engine-remediation", msg)
 			}
 		}
 	}

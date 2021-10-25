@@ -541,6 +541,35 @@ var doc = `{
                 }
             }
         },
+        "/app-info": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get application information",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "internal"
+                ],
+                "summary": "Get application information",
+                "operationId": "internal-get-app-info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/appinfo.AppInfoResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/associativetable": {
             "get": {
                 "security": [
@@ -3390,56 +3419,6 @@ var doc = `{
                 }
             }
         },
-        "/internal/app_info": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Get application information",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "internal"
-                ],
-                "summary": "Get application information",
-                "operationId": "internal-get-app-info",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/appinfo.AppInfoResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/internal/login_info": {
-            "get": {
-                "description": "Get login information",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "internal"
-                ],
-                "summary": "Get login information",
-                "operationId": "internal-get-login-info",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/appinfo.LoginConfigResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/internal/user_interface": {
             "put": {
                 "security": [
@@ -6206,44 +6185,6 @@ var doc = `{
                 }
             }
         },
-        "/sessions-count": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Get counts of active sessions",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Get counts of active sessions",
-                "operationId": "auth-get-session-counts",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/sessionauth.sessionsCountResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/state-settings": {
             "get": {
                 "security": [
@@ -8291,6 +8232,10 @@ var doc = `{
                 "language": {
                     "type": "string"
                 },
+                "login": {
+                    "type": "object",
+                    "$ref": "#/definitions/appinfo.LoginConf"
+                },
                 "login_page_description": {
                     "type": "string"
                 },
@@ -8319,17 +8264,6 @@ var doc = `{
                 }
             }
         },
-        "appinfo.IntervalUnit": {
-            "type": "object",
-            "properties": {
-                "interval": {
-                    "type": "integer"
-                },
-                "unit": {
-                    "type": "string"
-                }
-            }
-        },
         "appinfo.JobConfigType": {
             "type": "object",
             "properties": {
@@ -8341,7 +8275,7 @@ var doc = `{
                 }
             }
         },
-        "appinfo.LoginConfig": {
+        "appinfo.LoginConf": {
             "type": "object",
             "properties": {
                 "casconfig": {
@@ -8369,38 +8303,16 @@ var doc = `{
                 }
             }
         },
-        "appinfo.LoginConfigResponse": {
-            "type": "object",
-            "properties": {
-                "edition": {
-                    "type": "string"
-                },
-                "login_config": {
-                    "type": "object",
-                    "$ref": "#/definitions/appinfo.LoginConfig"
-                },
-                "stack": {
-                    "type": "string"
-                },
-                "user_interface": {
-                    "type": "object",
-                    "$ref": "#/definitions/appinfo.UserInterfaceConf"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
         "appinfo.PopupTimeout": {
             "type": "object",
             "properties": {
                 "error": {
                     "type": "object",
-                    "$ref": "#/definitions/appinfo.IntervalUnit"
+                    "$ref": "#/definitions/types.DurationWithUnit"
                 },
                 "info": {
                     "type": "object",
-                    "$ref": "#/definitions/appinfo.IntervalUnit"
+                    "$ref": "#/definitions/types.DurationWithUnit"
                 }
             }
         },
@@ -8412,10 +8324,6 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/appinfo.JobConfigType"
                     }
-                },
-                "pause_manual_instruction_interval": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.DurationWithUnit"
                 }
             }
         },
@@ -11587,14 +11495,6 @@ var doc = `{
                 },
                 "links": {
                     "type": "object"
-                }
-            }
-        },
-        "sessionauth.sessionsCountResponse": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
                 }
             }
         },
