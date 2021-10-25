@@ -39,7 +39,7 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 2`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; z-index: 0; display: none;"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-list theme--light"
@@ -140,7 +140,7 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 2`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; z-index: 0; display: none;"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-list theme--light"

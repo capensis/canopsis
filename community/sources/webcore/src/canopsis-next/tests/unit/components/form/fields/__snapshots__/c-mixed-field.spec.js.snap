@@ -113,7 +113,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with boolean type correctly 1`]
 exports[`c-mixed-field Renders \`c-mixed-field\` with boolean type correctly 2`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; z-index: 0; display: none;"
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-select-list v-card theme--light"
@@ -378,7 +378,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with custom props correctly 1`]
 exports[`c-mixed-field Renders \`c-mixed-field\` with custom props correctly 2`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; z-index: 0; display: none;"
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-select-list v-card theme--light"
@@ -584,7 +584,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with default props correctly 1`
 exports[`c-mixed-field Renders \`c-mixed-field\` with default props correctly 2`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; z-index: 0; display: none;"
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-select-list v-card theme--light"
@@ -862,7 +862,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with errors correctly 1`] = `
 exports[`c-mixed-field Renders \`c-mixed-field\` with errors correctly 2`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; z-index: 0; display: none;"
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-select-list v-card theme--light"
@@ -1142,7 +1142,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with null type correctly 1`] = 
 exports[`c-mixed-field Renders \`c-mixed-field\` with null type correctly 2`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; z-index: 0; display: none;"
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-select-list v-card theme--light"
@@ -1396,7 +1396,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with null type correctly 3`] = 
 exports[`c-mixed-field Renders \`c-mixed-field\` with null type correctly 4`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; z-index: 0; display: none;"
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-select-list v-card theme--light"
@@ -1677,7 +1677,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with number type correctly 1`] 
 exports[`c-mixed-field Renders \`c-mixed-field\` with number type correctly 2`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; z-index: 0; display: none;"
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-select-list v-card theme--light"
@@ -1970,7 +1970,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with string type and items corr
 exports[`c-mixed-field Renders \`c-mixed-field\` with string type and items correctly 2`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; z-index: 0; display: none;"
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-select-list v-card theme--light"
