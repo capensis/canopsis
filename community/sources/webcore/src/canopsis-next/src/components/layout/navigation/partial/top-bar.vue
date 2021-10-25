@@ -7,7 +7,6 @@
   )
     v-toolbar-side-icon.ml-2.white--text(
       v-if="isShownGroupsSideBar",
-      data-test="groupsSideBarButton",
       @click="$emit('toggleSideBar')"
     )
     v-layout(v-else, fill-height, align-center)
@@ -16,7 +15,8 @@
         logged-users-count(badgeColor="secondary")
         app-version
     v-toolbar-title.white--text.font-weight-regular(v-if="appTitle") {{ appTitle }}
-    healthcheck-chips-list
+    healthcheck-chips-list(v-if="hasAccessToHealthcheckStatus")
+    v-spacer(v-else)
     portal-target(:name="$constants.PORTALS_NAMES.additionalTopBarItems")
     v-toolbar-items
       top-bar-exploitation-menu
@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { USERS_PERMISSIONS } from '@/constants';
+
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -62,6 +64,11 @@ export default {
     authMixin,
     entitiesInfoMixin,
   ],
+  computed: {
+    hasAccessToHealthcheckStatus() {
+      return this.checkAccess(USERS_PERMISSIONS.technical.healthcheckStatus);
+    },
+  },
 };
 </script>
 

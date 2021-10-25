@@ -1,41 +1,67 @@
 package websocket
 
 import (
-	"errors"
+	"context"
+	"fmt"
+	"sync"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 )
 
-var ErrUserNotFound = errors.New("user not found")
-
+// Authorizer is used to implement websocket room authentication and authorization.
 type Authorizer interface {
-	Exists(userId string) (bool, error)
-	Auth(userId, room string) (bool, error)
+	// Authenticate authenticates user by token.
+	Authenticate(ctx context.Context, token string) (string, error)
+	// Authorize checks if user has access to room.
+	Authorize(userId, room string) (bool, error)
+	// AddRoom adds room with permissions.
+	AddRoom(room string, perms []string) error
+	// RemoveRoom removes room.
+	RemoveRoom(room string) error
 }
 
-func NewAuthorizer(enforcer security.Enforcer, roomPerms map[string][]string) Authorizer {
+func NewAuthorizer(
+	enforcer security.Enforcer,
+	tokenProvider security.TokenProvider,
+) Authorizer {
 	return &authorizer{
-		enforcer:  enforcer,
-		roomPerms: roomPerms,
+		enforcer:      enforcer,
+		tokenProvider: tokenProvider,
+		roomPerms:     make(map[string][]string),
 	}
 }
 
 type authorizer struct {
-	enforcer  security.Enforcer
-	roomPerms map[string][]string
+	enforcer      security.Enforcer
+	tokenProvider security.TokenProvider
+	roomPermsMx   sync.RWMutex
+	roomPerms     map[string][]string
 }
 
-func (a *authorizer) Exists(userId string) (bool, error) {
-	roles, err := a.enforcer.GetRolesForUser(userId)
-	if err != nil {
-		return false, err
+func (a *authorizer) Authenticate(ctx context.Context, token string) (string, error) {
+	user, err := a.tokenProvider.Auth(ctx, token)
+	if err != nil || user == nil {
+		return "", err
 	}
 
-	return len(roles) > 0, nil
+	return user.ID, nil
 }
 
-func (a *authorizer) Auth(userId, room string) (bool, error) {
-	perms := a.roomPerms[room]
+func (a *authorizer) Authorize(userId, room string) (bool, error) {
+	a.roomPermsMx.RLock()
+	defer a.roomPermsMx.RUnlock()
+	perms, ok := a.roomPerms[room]
+	// Return unauthorized if room is missing.
+	if !ok {
+		return false, nil
+	}
+
+	// Return authorized if room doesn't have permissions.
 	if len(perms) == 0 {
+		return true, nil
+	}
+
+	if userId == "" {
 		return false, nil
 	}
 
@@ -44,14 +70,29 @@ func (a *authorizer) Auth(userId, room string) (bool, error) {
 		vals = append(vals, v)
 	}
 
-	roles, err := a.enforcer.GetRolesForUser(userId)
-	if err != nil {
-		return false, err
-	}
-
-	if len(roles) == 0 {
-		return false, ErrUserNotFound
-	}
-
 	return a.enforcer.Enforce(vals...)
+}
+
+func (a *authorizer) AddRoom(room string, perms []string) error {
+	a.roomPermsMx.Lock()
+	defer a.roomPermsMx.Unlock()
+
+	if _, ok := a.roomPerms[room]; ok {
+		return fmt.Errorf("%q room already exists", room)
+	}
+
+	a.roomPerms[room] = perms
+	return nil
+}
+
+func (a *authorizer) RemoveRoom(room string) error {
+	a.roomPermsMx.Lock()
+	defer a.roomPermsMx.Unlock()
+
+	if _, ok := a.roomPerms[room]; !ok {
+		return fmt.Errorf("%q room doesn't exists", room)
+	}
+
+	delete(a.roomPerms, room)
+	return nil
 }

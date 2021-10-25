@@ -476,6 +476,9 @@ definitions:
         type: string
       language:
         type: string
+      login:
+        $ref: '#/definitions/appinfo.LoginConf'
+        type: object
       login_page_description:
         type: string
       logo:
@@ -495,13 +498,6 @@ definitions:
       version:
         type: string
     type: object
-  appinfo.IntervalUnit:
-    properties:
-      interval:
-        type: integer
-      unit:
-        type: string
-    type: object
   appinfo.JobConfigType:
     properties:
       auth_type:
@@ -509,7 +505,7 @@ definitions:
       name:
         type: string
     type: object
-  appinfo.LoginConfig:
+  appinfo.LoginConf:
     properties:
       casconfig:
         $ref: '#/definitions/appinfo.LoginConfigMethod'
@@ -528,28 +524,13 @@ definitions:
       title:
         type: string
     type: object
-  appinfo.LoginConfigResponse:
-    properties:
-      edition:
-        type: string
-      login_config:
-        $ref: '#/definitions/appinfo.LoginConfig'
-        type: object
-      stack:
-        type: string
-      user_interface:
-        $ref: '#/definitions/appinfo.UserInterfaceConf'
-        type: object
-      version:
-        type: string
-    type: object
   appinfo.PopupTimeout:
     properties:
       error:
-        $ref: '#/definitions/appinfo.IntervalUnit'
+        $ref: '#/definitions/types.DurationWithUnit'
         type: object
       info:
-        $ref: '#/definitions/appinfo.IntervalUnit'
+        $ref: '#/definitions/types.DurationWithUnit'
         type: object
     type: object
   appinfo.RemediationConf:
@@ -558,9 +539,6 @@ definitions:
         items:
           $ref: '#/definitions/appinfo.JobConfigType'
         type: array
-      pause_manual_instruction_interval:
-        $ref: '#/definitions/types.DurationWithUnit'
-        type: object
     type: object
   appinfo.UserInterfaceConf:
     properties:
@@ -2895,11 +2873,6 @@ definitions:
       links:
         type: object
     type: object
-  sessionauth.sessionsCountResponse:
-    properties:
-      count:
-        type: integer
-    type: object
   statesettings.JUnitThresholds:
     properties:
       errors:
@@ -3939,6 +3912,23 @@ paths:
       summary: Find all alarms
       tags:
       - alarms
+  /app-info:
+    get:
+      description: Get application information
+      operationId: internal-get-app-info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/appinfo.AppInfoResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get application information
+      tags:
+      - internal
   /associativetable:
     delete:
       description: Delete associativetable by name
@@ -5689,37 +5679,6 @@ paths:
       summary: Count entities and alarm matching patterns
       tags:
       - idlerules
-  /internal/app_info:
-    get:
-      description: Get application information
-      operationId: internal-get-app-info
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/appinfo.AppInfoResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Get application information
-      tags:
-      - internal
-  /internal/login_info:
-    get:
-      description: Get login information
-      operationId: internal-get-login-info
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/appinfo.LoginConfigResponse'
-      summary: Get login information
-      tags:
-      - internal
   /internal/user_interface:
     delete:
       description: delete user interface
@@ -7430,29 +7389,6 @@ paths:
       summary: Update scenario by id
       tags:
       - scenarios
-  /sessions-count:
-    get:
-      consumes:
-      - application/json
-      description: Get counts of active sessions
-      operationId: auth-get-session-counts
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/sessionauth.sessionsCountResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Get counts of active sessions
-      tags:
-      - auth
   /state-settings:
     get:
       consumes:
