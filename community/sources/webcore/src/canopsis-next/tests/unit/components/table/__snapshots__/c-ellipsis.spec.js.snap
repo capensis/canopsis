@@ -27,7 +27,7 @@ exports[`c-ellipsis Renders \`c-ellipsis\` correctly 1`] = `
 exports[`c-ellipsis Renders \`c-ellipsis\` correctly 2`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; z-index: 0; display: none;"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-card v-sheet theme--dark"
