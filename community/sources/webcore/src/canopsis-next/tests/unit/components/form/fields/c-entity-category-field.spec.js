@@ -168,6 +168,17 @@ const snapshotFactory = (options = {}) => mount(CEntityCategoryField, {
 
 describe('c-entity-category-field', () => {
   const name = 'category';
+  const CEntityCategoryFieldCopy = {
+    ...CEntityCategoryField,
+
+    methods: {
+      ...CEntityCategoryField.methods,
+
+      clearCategory() {
+        this.newCategory = '';
+      },
+    },
+  };
 
   it('Check fetch list call', () => {
     const fetchListMock = jest.fn();
@@ -232,18 +243,6 @@ describe('c-entity-category-field', () => {
     const [category] = entityCategories;
     const fetchListMock = jest.fn();
     const createMock = jest.fn(() => category);
-    const CEntityCategoryFieldCopy = {
-      ...CEntityCategoryField,
-
-      methods: {
-        ...CEntityCategoryField.methods,
-
-        clearCategory() {
-          this.newCategory = '';
-        },
-      },
-    };
-
     const wrapper = shallowMount(CEntityCategoryFieldCopy, {
       localVue,
       stubs,
@@ -287,6 +286,52 @@ describe('c-entity-category-field', () => {
     expect(fetchListMock).toBeCalledTimes(2);
     expect(inputEvents).toHaveLength(1);
     expect(eventData).toBe(category);
+    expect(textField.element.value).toBe('');
+  });
+
+  it('Check clearing by blur', async () => {
+    const fetchListMock = jest.fn();
+    const createMock = jest.fn();
+    const wrapper = shallowMount(CEntityCategoryFieldCopy, {
+      localVue,
+      stubs,
+
+      parentComponent: {
+        $_veeValidate: {
+          validator: 'new',
+        },
+      },
+      propsData: {
+        addable: true,
+      },
+
+      store: createMockedStoreModule('entityCategory', {
+        getters: {
+          items: [],
+          pending: false,
+        },
+        actions: {
+          fetchList: fetchListMock,
+          create: createMock,
+        },
+      }),
+    });
+
+    const select = wrapper.find('.v-select');
+
+    await select.trigger('click');
+
+    const textField = wrapper.find('.v-text-field');
+
+    textField.setValue('test');
+    textField.trigger('blur');
+
+    await flushPromises();
+
+    const inputEvents = wrapper.emitted('input');
+
+    expect(fetchListMock).toBeCalledTimes(1);
+    expect(inputEvents).toBe(undefined);
     expect(textField.element.value).toBe('');
   });
 
