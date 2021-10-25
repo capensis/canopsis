@@ -2,10 +2,8 @@ package action
 
 import (
 	"encoding/json"
-	"fmt"
 	"git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
-	"github.com/mitchellh/mapstructure"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
@@ -44,7 +42,7 @@ func (s Scenario) IsTriggered(triggers []string) bool {
 // Action represents a canopsis Action on alarms.
 type Action struct {
 	Type                     string                    `bson:"type" json:"type"`
-	Parameters               interface{}               `bson:"parameters,omitempty" json:"parameters,omitempty"` // parameters for the action
+	Parameters               map[string]interface{}    `bson:"parameters,omitempty" json:"parameters,omitempty"` // parameters for the action
 	AlarmPatterns            pattern.AlarmPatternList  `bson:"alarm_patterns" json:"alarm_patterns"`
 	EntityPatterns           pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
 	DropScenarioIfNotMatched bool                      `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
@@ -61,12 +59,7 @@ func (a *Action) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
 	}
 
 	*a = Action(tmp)
-	a.Parameters = bsonDtoMap(a.Parameters)
-
-	err = a.convertParamsMapToStruct()
-	if err != nil {
-		return err
-	}
+	a.Parameters = bsonDtoMap(a.Parameters).(map[string]interface{})
 
 	return nil
 }
@@ -81,60 +74,6 @@ func (a *Action) UnmarshalJSON(b []byte) error {
 	}
 
 	*a = Action(tmp)
-
-	err = a.convertParamsMapToStruct()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (a *Action) convertParamsMapToStruct() error {
-	switch a.Type {
-	case types.ActionTypeAssocTicket:
-		params := &types.OperationAssocTicketParameters{}
-		err := mapstructure.Decode(a.Parameters, params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		a.Parameters = params
-	case types.ActionTypeChangeState:
-		params := &types.OperationChangeStateParameters{}
-		err := mapstructure.Decode(a.Parameters, params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		a.Parameters = params
-	case types.ActionTypeSnooze:
-		params := &types.OperationSnoozeParameters{}
-		err := mapstructure.Decode(a.Parameters, params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		a.Parameters = params
-	case types.ActionTypePbehavior:
-		params := &types.ActionPBehaviorParameters{}
-		err := mapstructure.Decode(a.Parameters, params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		a.Parameters = params
-	case types.ActionTypeWebhook:
-		params := &types.WebhookParameters{}
-		err := mapstructure.Decode(a.Parameters, params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		a.Parameters = params
-	default:
-		params := &types.OperationParameters{}
-		err := mapstructure.Decode(a.Parameters, params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		a.Parameters = params
-	}
 
 	return nil
 }

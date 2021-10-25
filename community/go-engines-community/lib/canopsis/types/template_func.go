@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-func getTemplateFunc() template.FuncMap {
+func GetTemplateFunc() template.FuncMap {
 	return template.FuncMap{
 		// json will convert an item to an JSON-compatible element,
 		// ie ints will be returned as integers and strings returned as strings with quotes
