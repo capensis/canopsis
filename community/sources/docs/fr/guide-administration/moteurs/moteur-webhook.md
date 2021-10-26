@@ -59,10 +59,10 @@ Lors du lancement du moteur `engine-webhook`, plusieurs [variables d'environneme
 * [`NO_PROXY`, `HTTPS_PROXY` et `HTTP_PROXY`](../administration-avancee/variables-environnement.md#utilisation-dun-proxy-http-ou-https) seront utilisés si la connexion au service externe nécessite un proxy.
 
 !!! attention
-    Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
+    Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des évènements, ils ne sont pas utilisables avec les `event_patterns`.
 
 !!! attention
-    L'`event_pattern` sait uniquement parser les champs customs (autres que ceux définis dans les [`structures d'événements`](../../guide-developpement/struct-event.md#structure-basique-dun-evenement)) qui sont de type `string`. Il ne sait pas parser les champs customs de type `number` ou `boolean`.
+    L'`event_pattern` n'interprète que les champs personnalisés (autres que ceux définis dans les structures d'événements) qui sont de type `string`. Les champs de type `number` ou `boolean` ne sont pas interprétés.
 
 ### Activation d'un webhook
 
@@ -112,20 +112,23 @@ Pour plus d'informations, vous pouvez consulter la [documentation sur les templa
 ### Tentatives en cas d'échec
 
 Lorsque le service appelé par le webhook répond une erreur (Code erreur HTTP != 200 ou timeout du service), plusieurs nouvelles tentatives sont effectuées avec un délai.  
-`count` représente le nombre de nouvelles tentatives.  
-`delay` et `unit` représentent le délai avant une nouvelle tentative.   
 
-`unit` est exprimé en "s" pour seconde, "m" pour minute, et "h" pour heure.
+  * `count` représente le nombre de nouvelles tentatives.  
+  * `delay` représente le délai avant une nouvelle tentative.   
+  * `http_timeout` représente le délai d'attente d'une réponse.
 
-Ces paramètres sont positionnés dans la configuration de chaque webhook.  
-Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).
+Les valeurs de ces paramètres sont exprimées en secondes.
 
-Exemple de fichier `webhook.conf` :
+Ces paramètres sont présents dans la configuration de chaque webhook. 
+
+Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath /opt/canopsis/etc/webhook.conf.toml` de la ligne de commande).
+
+Exemple de fichier `webhook.conf.toml`:
 
 ```ini
-count=5
-delay=1
-unit="m"
+count = 5
+delay = 60
+http_timeout = 10
 ```
 
 ### Données externes
@@ -140,7 +143,7 @@ Si l'API renvoie une réponse sous forme de JSON imbriqué, il faut prendre en c
 
 Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Data` de telle sorte que la clé dans `Data` corresponde à la valeur dans les données du service. Par exemple avec `"ticket_creation_date" : "timestamp"`, la valeur de `ticket["timestamp"]` sera mise dans `Alarm.Value.Ticket.Data["ticket_creation_date"]`.
 
-Les valeurs des champs `ticket_id` et autres champs de `declare_ticket` peuvent être définies sous forme d'expressions régulières. Pour cela, il est nécessaire de positionner l'option `regexp` à `true` comme dans l'exemple suivant :
+Les valeurs des champs `ticket_id` et autres champs de `declare_ticket` peuvent être définies sous forme d'expressions régulières. Pour cela, il est nécessaire de passer l'option `regexp` à `true` comme dans l'exemple suivant :
 
 ```json
 "declare_ticket": {

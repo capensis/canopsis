@@ -513,6 +513,13 @@
         "desc": "Healthcheck"
     },
     {
+        "_id": "models_healthcheckStatus",
+        "loader_id": "models_healthcheckStatus",
+        "crecord_name": "models_healthcheckStatus",
+        "crecord_type": "action",
+        "desc": "Healthcheck status"
+    },
+    {
         "_id": "models_notification_instructionStats",
         "loader_id": "models_notification_instructionStats",
         "crecord_name": "models_notification_instructionStats",

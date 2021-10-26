@@ -28,8 +28,8 @@ Il se peut que votre JSON ne soit pas bien formaté. Pensez à vérifier celui-c
 
 ### Contenu de l'évènement
 
-> Un évènement est un message arrivant dans Canopsis. Il est formatté en JSON et provient généralement d'une source externe ou d'un connecteur (email, SNMP, etc.). Lorsqu'un évènement arrive, il est envoyé vers le bac à évènement puis traité, il devient donc un alarme (cf. [Vocabulaire](../guide-utilisation/vocabulaire/index.md)).
+Un évènement est un message arrivant dans Canopsis. Il est formatté en JSON et provient généralement d'une source externe ou d'un connecteur (email, SNMP, etc.).
 
 Ces évènements, formatés en JSON, doivent être composés de plusieurs champs, certains étant obligatoires, d'autres étant optionnels.
 
-Une liste détaillée de ces champs est [disponible ici](../guide-developpement/struct-event.md).
+Voir aussi la page de [Vocabulaire](../guide-utilisation/vocabulaire/index.md).

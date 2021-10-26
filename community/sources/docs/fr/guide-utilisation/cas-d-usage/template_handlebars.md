@@ -3,7 +3,7 @@
 Dans l'interface graphique de Canopsis, il est possible en de multiples endroits de personnaliser les affichages en utilisant un éditeur HTML couplé à des variables.  
 Pour faciliter les tâches de l'administrateur, Canopsis met à disposition :
 
-* les helpers *built in* [handlebars](https://handlebarsjs.com/)
+* les helpers officiels [Handlebars](https://handlebarsjs.com/)
 * des helpers handlebars spécifiques à Canopsis
 
 Voici un tour d'horizon des espaces dans lesquels vous pouvez personnaliser les rendus.
@@ -21,7 +21,7 @@ Pour pallier cette limite, 2 mécanismes sont mis à disposition :
 ### Info popup
 
 Les infos popup permettent d'afficher un popup contenant des données lors du clic sur un élément de colonne.  
-Toutes les colonnes affichées sont éligibles au système.  
+Toutes les colonnes affichées peuvent bénéficier de ce système.  
 
 Dans les paramètres du widget bac à alarmes :
 
@@ -34,7 +34,6 @@ Puis dans info popup :
 Le rendu s'effectue au clic sur la colonne *Nom du connecteur* comme précisé dans la configuration
 
 ![Info popup visualisation](./img/templates_infopopup_visualisation.png "Info popup visualisation")  
-
 
 ### Plus d'infos
 
@@ -49,7 +48,7 @@ Couplé avec des exemples fournis sur le site [vuetify](https://vuetifyjs.com/en
 
 Le template associé est dans ce cas le suivant :
 
-````
+```html
 <div class="v-card__text">
  <div class="v-tabs" data-booted="true">
   <div class="v-tabs__bar theme--dark cyan">
@@ -83,7 +82,7 @@ Le template associé est dans ce cas le suivant :
   </div>
  </div>
 </div>
-````
+```
 
 ### Variables
 
@@ -110,7 +109,7 @@ Voici un descriptif des zones correspondantes :
 
 Le templating *handlebars* embarque un langage complet qui vous permet d'aller beaucoup plus loin que le simple affichage de variables.  
 Pour afficher des structures de données complexes, Canopsis met généralement à disposition des helpers.  
-Par exemple, pour afficher l'ensemble des entités d'un observateur de météo, il existe le helper *{{ entities }}*.  
+Par exemple, pour afficher l'ensemble des entités d'un service de météo, il existe le helper *{{ entities }}*.  
 
 Dans d'autres cas, soit le helper n'est pas encore développé, soit il ne le sera pas.  
 Vous avez donc la possibilité d'utiliser *handlebars* pour personnaliser vos affichages.  
@@ -125,7 +124,7 @@ Voici un exemple concret de représentation.
 
 La structure dont on veut afficher les données est la suivante  :
 
-````
+```json
 "watcher_pbehavior": [
   {
     "connector": "canopsis",
@@ -155,12 +154,12 @@ La structure dont on veut afficher les données est la suivante  :
     "rrule": null
    }
 ]
-````
+```
 
 Nous souhaitons donc itérer sur le tableau `watcher_pbehavior` puis sur le tableau `comments`.  
 Voici le template de la modale : 
 
-````
+```handlebars
 {{#each entity.watcher_pbehavior}}
   {{#with . as |pbh|}}
     <strong>{{pbh.name}} ({{pbh.type_}} / {{pbh.reason}})</strong> <br>
@@ -173,12 +172,11 @@ Voici le template de la modale :
     </ul>
   {{/with}}
 {{/each}}
-````
+```
 
 L'affichage associé sera au final : 
 
 ![Affichage pbh](./img/templates_affichage_pbh.png "Affichage pbh")  
-
 
 ### Afficher des images dans une tuile de météo
 
@@ -188,14 +186,14 @@ Si vous souhaitez afficher des pictos applicatifs sur une tuile de météo, vous
 
 Le template handlebars associé est le suivant : 
 
-````
+```handlebars
 {{#if entity.infos.picto.value}}
 <img src="{{entity.infos.picto.value}}" width="200px">
 {{/if}}
-````
+```
 
 Cela suppose que l'attribut `picto` de votre entité porte un png encodé en base64.  
 
-````
+```
 data:image/png;base64,iVBORw0KGgoA ... ==
-````
+```
