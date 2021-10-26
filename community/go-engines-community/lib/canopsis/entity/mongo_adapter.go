@@ -627,6 +627,25 @@ func (a *mongoAdapter) GetWithIdleSince(ctx context.Context) (mongo.Cursor, erro
 	)
 }
 
+func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbehaviors []string, exceptIds []string) (mongo.Cursor, error) {
+	filter := bson.M{
+		"enabled": true,
+	}
+	if len(exceptIds) > 0 {
+		filter["_id"] = bson.M{"$nin": exceptIds}
+	}
+	if len(idsWithPbehaviors) > 0 {
+		filter["$or"] = []bson.M{
+			{"_id": bson.M{"$in": idsWithPbehaviors}},
+			{"pbehavior_info": bson.M{"$ne": nil}},
+		}
+	} else {
+		filter["pbehavior_info"] = bson.M{"$ne": nil}
+	}
+
+	return a.dbCollection.Find(ctx, filter)
+}
+
 func (a *mongoAdapter) GetImpactedServicesInfo(ctx context.Context) (mongo.Cursor, error) {
 	return a.dbCollection.Aggregate(ctx, []bson.M{
 		{
@@ -676,4 +695,14 @@ func (a *mongoAdapter) GetImpactedServicesInfo(ctx context.Context) (mongo.Curso
 			},
 		},
 	})
+}
+
+func (a *mongoAdapter) UpdatePbehaviorInfo(ctx context.Context, id string, info types.PbehaviorInfo) error {
+	if info.IsZero() {
+		_, err := a.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$unset": bson.M{"pbehavior_info": ""}})
+		return err
+	}
+
+	_, err := a.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"pbehavior_info": info}})
+	return err
 }

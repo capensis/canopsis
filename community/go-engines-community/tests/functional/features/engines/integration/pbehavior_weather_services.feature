@@ -1,8 +1,7 @@
 Feature: get service weather
   I need to be able to get service weather
 
-  Scenario: given service for one entity with maintenance pbehavior
-    should not get secondary icon
+  Scenario: given one dependency with maintenance pbehavior should get maintenance icon and grey flag
     Given I am admin
     When I send an event:
     """json
@@ -13,7 +12,7 @@ Feature: get service weather
       "event_type": "check",
       "component" :  "test-component-pbehavior-weather-service-1",
       "resource" : "test-resource-pbehavior-weather-service-1",
-      "state" : 0,
+      "state" : 2,
       "output" : "noveo alarm"
     }
     """
@@ -50,20 +49,6 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
-    When I wait 1s
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-1",
-      "connector_name": "test-connector-name-pbehavior-weather-service-1",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-1",
-      "resource" : "test-resource-pbehavior-weather-service-1",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
     When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-1"}
     Then the response code should be 200
@@ -77,6 +62,7 @@ Feature: get service weather
           "status": {"val": 0},
           "icon": "maintenance",
           "secondary_icon": "",
+          "is_grey": true,
           "alarm_counters": [
             {
               "count": 1,
@@ -101,9 +87,22 @@ Feature: get service weather
     }
     """
 
-  Scenario: given service for one entity with active pbehavior
-    should not get secondary icon
+  Scenario: given one dependency with active pbehavior should get state icon
     Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-2",
+      "connector_name": "test-connector-name-pbehavior-weather-service-2",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-2",
+      "resource" : "test-resource-pbehavior-weather-service-2",
+      "state" : 2,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -136,21 +135,7 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
-    When I wait 1s
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-2",
-      "connector_name": "test-connector-name-pbehavior-weather-service-2",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-2",
-      "resource" : "test-resource-pbehavior-weather-service-2",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-2"}
     Then the response code should be 200
     Then the response body should contain:
@@ -163,6 +148,7 @@ Feature: get service weather
           "status": {"val": 1},
           "icon": "major",
           "secondary_icon": "",
+          "is_grey": false,
           "alarm_counters": []
         }
       ],
@@ -175,8 +161,8 @@ Feature: get service weather
     }
     """
 
-  Scenario: given service for one entity with maintenance pbehavior
-    and another entity without pbehavior should get secondary icon
+  Scenario: given dependency with maintenance pbehavior
+    and dependency without pbehavior should get secondary maintenance icon
     Given I am admin
     When I send an event:
     """json
@@ -187,7 +173,7 @@ Feature: get service weather
       "event_type": "check",
       "component" :  "test-component-pbehavior-weather-service-3",
       "resource" : "test-resource-pbehavior-weather-service-3-1",
-      "state" : 0,
+      "state" : 3,
       "output" : "noveo alarm"
     }
     """
@@ -200,7 +186,7 @@ Feature: get service weather
       "event_type": "check",
       "component" :  "test-component-pbehavior-weather-service-3",
       "resource" : "test-resource-pbehavior-weather-service-3-2",
-      "state" : 0,
+      "state" : 2,
       "output" : "noveo alarm"
     }
     """
@@ -240,34 +226,6 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
-    When I wait 1s
-    When I send an event:
-    """json
-    {
-      "connector" :  "test-connector-pbehavior-weather-service-3",
-      "connector_name": "test-connector-name-pbehavior-weather-service-3",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-3",
-      "resource" : "test-resource-pbehavior-weather-service-3-1",
-      "state" : 3,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of 2 events processing
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-3",
-      "connector_name": "test-connector-name-pbehavior-weather-service-3",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-3",
-      "resource" : "test-resource-pbehavior-weather-service-3-2",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
     When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-3"}
     Then the response code should be 200
@@ -281,6 +239,7 @@ Feature: get service weather
           "status": {"val": 1},
           "icon": "major",
           "secondary_icon": "maintenance",
+          "is_grey": false,
           "alarm_counters": [
             {
               "count": 1,
@@ -305,8 +264,7 @@ Feature: get service weather
     }
     """
 
-  Scenario: given service with maintenance pbehavior for one entity
-    should get maintenance icon and pause color
+  Scenario: given service with maintenance pbehavior should get maintenance icon and grey flag
     Given I am admin
     When I do POST /api/v4/entityservices:
     """json
@@ -340,7 +298,7 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the end of event processing
     When I send an event:
     """json
     {
@@ -367,6 +325,7 @@ Feature: get service weather
           "status": {"val": 1},
           "icon": "maintenance",
           "secondary_icon": "",
+          "is_grey": true,
           "alarm_counters": [],
           "pbehaviors": [
             {
@@ -384,8 +343,7 @@ Feature: get service weather
     }
     """
 
-  Scenario: given service with active pbehavior for one entity
-    should get state icon
+  Scenario: given service with active pbehavior should get state icon
     Given I am admin
     When I do POST /api/v4/entityservices:
     """json
@@ -419,7 +377,7 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the end of event processing
     When I send an event:
     """json
     {
@@ -446,6 +404,7 @@ Feature: get service weather
           "status": {"val": 1},
           "icon": "critical",
           "secondary_icon": "",
+          "is_grey": false,
           "alarm_counters": [],
           "pbehaviors": [
             {
@@ -463,7 +422,7 @@ Feature: get service weather
     }
     """
 
-  Scenario: given service with maintenance pbehavior for one entity with maintenance pbehavior
+  Scenario: given service with maintenance pbehavior and one dependency with maintenance pbehavior
     should get maintenance icon and not get secondary icon
     Given I am admin
     When I send an event:
@@ -475,7 +434,7 @@ Feature: get service weather
       "event_type": "check",
       "component" :  "test-component-pbehavior-weather-service-6",
       "resource" : "test-resource-pbehavior-weather-service-6",
-      "state" : 0,
+      "state" : 3,
       "output" : "noveo alarm"
     }
     """
@@ -512,6 +471,7 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
+    When I wait the end of event processing
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -531,20 +491,6 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
-    When I wait 1s
-    When I send an event:
-    """json
-    {
-      "connector" :  "test-connector-pbehavior-weather-service-6",
-      "connector_name": "test-connector-name-pbehavior-weather-service-6",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-6",
-      "resource" : "test-resource-pbehavior-weather-service-6",
-      "state" : 3,
-      "output" : "noveo alarm"
-    }
-    """
     When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-6"}
     Then the response code should be 200
@@ -558,6 +504,7 @@ Feature: get service weather
           "status": {"val": 0},
           "icon": "maintenance",
           "secondary_icon": "",
+          "is_grey": true,
           "alarm_counters": [
             {
               "count": 1,
@@ -571,7 +518,11 @@ Feature: get service weather
               }
             }
           ],
-          "pbehaviors": []
+          "pbehaviors": [
+            {
+              "name": "test-pbehavior-weather-service-6-1"
+            }
+          ]
         }
       ],
       "meta": {
@@ -583,8 +534,8 @@ Feature: get service weather
     }
     """
 
-  Scenario: given service with maintenance pbehavior for one entity with maintenance pbehavior
-    and another entity without pbehavior should get maintenance icon and maintenance secondary icon
+  Scenario: given service with maintenance pbehavior and dependency with maintenance pbehavior
+    and another dependency without pbehavior should get maintenance icon and maintenance secondary icon
     Given I am admin
     When I send an event:
     """json
@@ -595,7 +546,7 @@ Feature: get service weather
       "event_type": "check",
       "component" :  "test-component-pbehavior-weather-service-7",
       "resource" : "test-resource-pbehavior-weather-service-7-1",
-      "state" : 0,
+      "state" : 3,
       "output" : "noveo alarm"
     }
     """
@@ -608,7 +559,7 @@ Feature: get service weather
       "event_type": "check",
       "component" :  "test-component-pbehavior-weather-service-7",
       "resource" : "test-resource-pbehavior-weather-service-7-2",
-      "state" : 0,
+      "state" : 2,
       "output" : "noveo alarm"
     }
     """
@@ -648,6 +599,7 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
+    When I wait the end of event processing
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -667,34 +619,6 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
-    When I wait 1s
-    When I send an event:
-    """json
-    {
-      "connector" :  "test-connector-pbehavior-weather-service-7",
-      "connector_name": "test-connector-name-pbehavior-weather-service-7",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-7",
-      "resource" : "test-resource-pbehavior-weather-service-7-1",
-      "state" : 3,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of 2 events processing
-    When I send an event:
-    """json
-    {
-      "connector" :  "test-connector-pbehavior-weather-service-7",
-      "connector_name": "test-connector-name-pbehavior-weather-service-7",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-7",
-      "resource" : "test-resource-pbehavior-weather-service-7-2",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
     When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-7"}
     Then the response code should be 200
@@ -708,6 +632,7 @@ Feature: get service weather
           "status": {"val": 1},
           "icon": "maintenance",
           "secondary_icon": "maintenance",
+          "is_grey": true,
           "alarm_counters": [
             {
               "count": 1,
@@ -771,7 +696,7 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the end of event processing
     When I send an event:
     """json
     {
@@ -793,10 +718,7 @@ Feature: get service weather
     {
       "data": [
         {
-          "name": "test-pbehavior-weather-service-11",
-          "icon": "maintenance",
-          "secondary_icon": "",
-          "alarm_counters": []
+          "name": "test-pbehavior-weather-service-11"
         }
       ],
       "meta": {
@@ -808,8 +730,7 @@ Feature: get service weather
     }
     """
 
-  Scenario: given service for two entities with maintenance pbehavior
-  should get service by filter icon=maintenance
+  Scenario: given one dependency with maintenance pbehavior should get service by filter icon=maintenance
     Given I am admin
     When I send an event:
     """json
@@ -819,25 +740,12 @@ Feature: get service weather
       "source_type": "resource",
       "event_type": "check",
       "component" :  "test-component-pbehavior-weather-service-12",
-      "resource" : "test-resource-pbehavior-weather-service-12-1",
-      "state" : 0,
+      "resource" : "test-resource-pbehavior-weather-service-12",
+      "state" : 2,
       "output" : "noveo alarm"
     }
     """
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-12",
-      "connector_name": "test-connector-name-pbehavior-weather-service-12",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-12",
-      "resource" : "test-resource-pbehavior-weather-service-12-2",
-      "state" : 0,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -847,8 +755,7 @@ Feature: get service weather
       "impact_level": 1,
       "enabled": true,
       "entity_patterns": [
-        {"name": "test-resource-pbehavior-weather-service-12-1"},
-        {"name": "test-resource-pbehavior-weather-service-12-2"}
+        {"name": "test-resource-pbehavior-weather-service-12"}
       ]
     }
     """
@@ -866,61 +773,13 @@ Feature: get service weather
       "filter":{
         "$and":[
           {
-            "name": "test-resource-pbehavior-weather-service-12-1"
+            "name": "test-resource-pbehavior-weather-service-12"
           }
         ]
       }
     }
     """
     Then the response code should be 201
-    When I wait 1s
-    When I send an event:
-    """json
-    {
-      "connector" :  "test-connector-pbehavior-weather-service-12",
-      "connector_name": "test-connector-name-pbehavior-weather-service-12",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-12",
-      "resource" : "test-resource-pbehavior-weather-service-12-1",
-      "state" : 3,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of 2 events processing
-    When I do POST /api/v4/pbehaviors:
-    """json
-    {
-      "enabled": true,
-      "name": "test-pbehavior-weather-service-12-2",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
-      "type": "test-maintenance-type-to-engine",
-      "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
-          {
-            "name": "test-resource-pbehavior-weather-service-12-2"
-          }
-        ]
-      }
-    }
-    """
-    Then the response code should be 201
-    When I wait 1s
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-12",
-      "connector_name": "test-connector-name-pbehavior-weather-service-12",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-12",
-      "resource" : "test-resource-pbehavior-weather-service-12-2",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
     When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-12","icon":"maintenance"}
     Then the response code should be 200
@@ -929,22 +788,7 @@ Feature: get service weather
     {
       "data": [
         {
-          "name": "test-pbehavior-weather-service-12",
-          "icon": "maintenance",
-          "secondary_icon": "",
-          "alarm_counters": [
-            {
-              "count": 2,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
-                "name": "Engine maintenance",
-                "priority": 18,
-                "type": "maintenance"
-              }
-            }
-          ]
+          "name": "test-pbehavior-weather-service-12"
         }
       ],
       "meta": {
@@ -1000,8 +844,8 @@ Feature: get service weather
     }
     """
 
-  Scenario: given service for one entity with maintenance pbehavior
-    and another entity without pbehavior should get service by filter secondary_icon=maintenance
+  Scenario: given dependency with maintenance pbehavior
+    and another dependency without pbehavior should get service by filter secondary_icon=maintenance
     Given I am admin
     When I send an event:
     """json
@@ -1012,7 +856,7 @@ Feature: get service weather
       "event_type": "check",
       "component" :  "test-component-pbehavior-weather-service-14",
       "resource" : "test-resource-pbehavior-weather-service-14-1",
-      "state" : 0,
+      "state" : 2,
       "output" : "noveo alarm"
     }
     """
@@ -1025,7 +869,7 @@ Feature: get service weather
       "event_type": "check",
       "component" :  "test-component-pbehavior-weather-service-14",
       "resource" : "test-resource-pbehavior-weather-service-14-2",
-      "state" : 0,
+      "state" : 3,
       "output" : "noveo alarm"
     }
     """
@@ -1065,34 +909,6 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
-    When I wait 1s
-    When I send an event:
-    """json
-    {
-      "connector" :  "test-connector-pbehavior-weather-service-14",
-      "connector_name": "test-connector-name-pbehavior-weather-service-14",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-14",
-      "resource" : "test-resource-pbehavior-weather-service-14-1",
-      "state" : 3,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of 2 events processing
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-14",
-      "connector_name": "test-connector-name-pbehavior-weather-service-14",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-14",
-      "resource" : "test-resource-pbehavior-weather-service-14-2",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
     When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-14","secondary_icon":"maintenance"}
     Then the response code should be 200
@@ -1101,22 +917,7 @@ Feature: get service weather
     {
       "data": [
         {
-          "name": "test-pbehavior-weather-service-14",
-          "icon": "major",
-          "secondary_icon": "maintenance",
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
-                "name": "Engine maintenance",
-                "priority": 18,
-                "type": "maintenance"
-              }
-            }
-          ]
+          "name": "test-pbehavior-weather-service-14"
         }
       ],
       "meta": {
@@ -1128,7 +929,7 @@ Feature: get service weather
     }
     """
 
-  Scenario: given service for one entity without pbehavior should not get service by filter secondary_icon=maintenance
+  Scenario: given dependency without pbehavior should not get service by filter secondary_icon=maintenance
     Given I am admin
     When I do POST /api/v4/entityservices:
     """json
@@ -1172,20 +973,33 @@ Feature: get service weather
     }
     """
 
-  Scenario: given service should be marked grey if it is in pbehavior
+  Scenario: given service with maintenance pbehavior without alarm should get maintenance icon
     Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-16",
+      "connector_name": "test-connector-name-pbehavior-weather-service-16",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-16",
+      "resource" : "test-resource-pbehavior-weather-service-16",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
       "_id": "test-pbehavior-weather-service-16",
       "name": "test-pbehavior-weather-service-16",
       "output_template": "test-pbehavior-weather-service-16",
-      "category": "test-category-pbehavior-weather-service-is-grey",
+      "category": "test-category-pbehavior-weather-service",
       "impact_level": 1,
       "enabled": true,
       "entity_patterns": [
-         {"name": "test-resource-pbehavior-weather-service-16-1"},
-         {"name": "test-resource-pbehavior-weather-service-16-2"}
+         {"name": "test-resource-pbehavior-weather-service-16"}
       ]
     }
     """
@@ -1210,35 +1024,7 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
-    When I wait 1s
-    When I send an event:
-    """json
-    {
-      "connector" :  "test-connector-pbehavior-weather-service-16",
-      "connector_name": "test-connector-name-pbehavior-weather-service-16",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-16",
-      "resource" : "test-resource-pbehavior-weather-service-16-1",
-      "state" : 3,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of 2 events processing
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-16",
-      "connector_name": "test-connector-name-pbehavior-weather-service-16",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-16",
-      "resource" : "test-resource-pbehavior-weather-service-16-2",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-16"}
     Then the response code should be 200
     Then the response body should contain:
@@ -1246,8 +1032,18 @@ Feature: get service weather
     {
       "data": [
         {
-            "_id": "test-pbehavior-weather-service-16",
-            "is_grey": true
+          "name": "test-pbehavior-weather-service-16",
+          "state": {"val": 0},
+          "status": {"val": 0},
+          "icon": "maintenance",
+          "secondary_icon": "",
+          "is_grey": true,
+          "alarm_counters": [],
+          "pbehaviors": [
+            {
+              "name": "test-pbehavior-weather-service-16"
+            }
+          ]
         }
       ],
       "meta": {
@@ -1259,7 +1055,7 @@ Feature: get service weather
     }
     """
 
-  Scenario: given service should be marked grey if all its entities are in pbehavior
+  Scenario: given dependency with maintenance pbehavior without alarm should get maintenance icon
     Given I am admin
     When I send an event:
     """json
@@ -1269,37 +1065,23 @@ Feature: get service weather
       "source_type": "resource",
       "event_type": "check",
       "component" :  "test-component-pbehavior-weather-service-17",
-      "resource" : "test-resource-pbehavior-weather-service-17-1",
+      "resource" : "test-resource-pbehavior-weather-service-17",
       "state" : 0,
       "output" : "noveo alarm"
     }
     """
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-17",
-      "connector_name": "test-connector-name-pbehavior-weather-service-17",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-17",
-      "resource" : "test-resource-pbehavior-weather-service-17-2",
-      "state" : 0,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
       "_id": "test-pbehavior-weather-service-17",
       "name": "test-pbehavior-weather-service-17",
       "output_template": "test-pbehavior-weather-service-17",
-      "category": "test-category-pbehavior-weather-service-is-grey",
+      "category": "test-category-pbehavior-weather-service",
       "impact_level": 1,
       "enabled": true,
       "entity_patterns": [
-         {"name": "test-resource-pbehavior-weather-service-17-1"},
-         {"name": "test-resource-pbehavior-weather-service-17-2"}
+         {"name": "test-resource-pbehavior-weather-service-17"}
       ]
     }
     """
@@ -1317,41 +1099,13 @@ Feature: get service weather
       "filter":{
         "$and":[
           {
-            "component": "test-component-pbehavior-weather-service-17"
+            "name": "test-resource-pbehavior-weather-service-17"
           }
         ]
       }
     }
     """
     Then the response code should be 201
-    When I wait 1s
-    When I send an event:
-    """json
-    {
-      "connector" :  "test-connector-pbehavior-weather-service-17",
-      "connector_name": "test-connector-name-pbehavior-weather-service-17",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-17",
-      "resource" : "test-resource-pbehavior-weather-service-17-1",
-      "state" : 3,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of 2 events processing
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-17",
-      "connector_name": "test-connector-name-pbehavior-weather-service-17",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-17",
-      "resource" : "test-resource-pbehavior-weather-service-17-2",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
     When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-17"}
     Then the response code should be 200
@@ -1360,8 +1114,25 @@ Feature: get service weather
     {
       "data": [
         {
-            "_id": "test-pbehavior-weather-service-17",
-            "is_grey": true
+          "name": "test-pbehavior-weather-service-17",
+          "state": {"val": 0},
+          "status": {"val": 0},
+          "icon": "maintenance",
+          "secondary_icon": "",
+          "is_grey": true,
+          "alarm_counters": [
+            {
+              "count": 1,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "test-maintenance-to-engine-icon",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
         }
       ],
       "meta": {

@@ -61,7 +61,6 @@ Feature: update meta alarm on pbehavior
     }
     """
     Then the response code should be 201
-    When I wait 1s
     When I wait the end of event processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
     Then the response code should be 200
@@ -130,7 +129,7 @@ Feature: update meta alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
-                "m": "Pbehavior test-pbehavior-axe-correlation-1. Type: Engine maintenance. Reason: Test Engine",
+                "m": "Pbehavior test-pbehavior-axe-correlation-1. Type: Engine maintenance. Reason: Test Engine.",
                 "val": 0
               }
             ]

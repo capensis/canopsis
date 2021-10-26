@@ -599,7 +599,6 @@ func RegisterRoutes(
 				GetLegacyURL(),
 				statsStore,
 				timezoneConfigProvider,
-				pbhEntityTypeResolver,
 			))
 			weatherRouter.GET(
 				"",
