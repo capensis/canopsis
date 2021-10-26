@@ -122,9 +122,16 @@ $(MONOREPO_ROOT)/.dockerignore:
 		sed -E 's;^(!?)(.*)$$;\1'$$(dirname "$$file")'/\2;' "$$file" >> .dockerignore;\
 	done
 
-.PHONY: docker-builder $(DOCKER_TARGETS)
+.PHONY: check-docker-version docker-builder $(DOCKER_TARGETS)
 
-docker-builder: $(MONOREPO_ROOT)/.dockerignore
+# We require at least Docker 19.03 for the BuildKit features we use
+check-docker-version:
+	@if test "$$(docker version --format '{{.Server.Version}}' | awk -F'.' '{print $$1 $$2}')" -lt 1903 ; then\
+		echo "ERROR: Docker >= 19.03 is required";\
+		exit 1;\
+	fi
+
+docker-builder: $(MONOREPO_ROOT)/.dockerignore check-docker-version
 	docker build \
 		-t "$(DOCKER_IMAGE_BASE_PATH)/canopsis_go_bin:latest" \
 		--target builder \
