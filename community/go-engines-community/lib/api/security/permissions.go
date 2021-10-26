@@ -47,7 +47,5 @@ const (
 
 	PermHealthcheck = "api_healthcheck"
 
-	PermMetrics = "api_metrics"
-
 	ObjFile = "api_file"
 )
