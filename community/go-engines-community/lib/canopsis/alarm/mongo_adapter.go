@@ -449,7 +449,7 @@ func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 	})
 }
 
-func (a mongoAdapter) GetOpenedAlarmsWithEntity(ctx context.Context, createdAfter types.CpsTime) (libmongo.Cursor, error) {
+func (a mongoAdapter) GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter types.CpsTime) (libmongo.Cursor, error) {
 	return a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"v.resolved": nil,

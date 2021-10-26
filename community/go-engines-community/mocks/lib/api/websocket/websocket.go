@@ -289,6 +289,20 @@ func (mr *MockHubMockRecorder) CloseRoom(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseRoom", reflect.TypeOf((*MockHub)(nil).CloseRoom), arg0)
 }
 
+// CloseRoomAndNotify mocks base method
+func (m *MockHub) CloseRoomAndNotify(arg0 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CloseRoomAndNotify", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CloseRoomAndNotify indicates an expected call of CloseRoomAndNotify
+func (mr *MockHubMockRecorder) CloseRoomAndNotify(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseRoomAndNotify", reflect.TypeOf((*MockHub)(nil).CloseRoomAndNotify), arg0)
+}
+
 // Connect mocks base method
 func (m *MockHub) Connect(arg0 http.ResponseWriter, arg1 *http.Request) error {
 	m.ctrl.T.Helper()
