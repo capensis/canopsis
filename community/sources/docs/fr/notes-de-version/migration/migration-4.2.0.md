@@ -3,7 +3,7 @@
 Ce guide donne des instructions vous permettant de mettre à jour un Canopsis 4.1.0 ou 4.1.1 vers la version 4.2.0.
 
 !!! note
-    **18/05/2021 :** Mise à jour des [scripts de migrations](#migration-des-actions-webhooks-et-idlerules-existants).
+    **18/05/2021 :** Mise à jour des [scripts de migration](#migration-des-actions-webhooks-et-idlerules-existants).
 
 ## Prérequis
 
@@ -24,17 +24,33 @@ Les deux seules méthodes d'installation officiellement prises en charge (sauf d
 
 ### Note auprès des utilisateurs de Dockerhub
 
-Canopsis 4.3.0 migrera ses images Docker de Dockerhub vers le nouveau registre `registry.canopsis.net`.
+Canopsis 4.4.0 migrera ses images Docker de Dockerhub vers le nouveau registre `registry.canopsis.net`.
 
 Si vous bénéficiez de Canopsis Pro, et que vous utilisez Canopsis au travers des images Docker, vous avez dû recevoir une communication vous invitant à nous transmettre une adresse e-mail à utiliser afin de mettre en place ce nouvel accès. Si ce n'est pas le cas, veuillez vous rapprocher de votre contact habituel chez Capensis.
 
-Les détails de cette migration seront publiés lors de la sortie de Canopsis 4.3.0. Canopsis reste encore disponible sur Dockerhub sans changement particulier pour le moment.
+Les détails de cette migration seront publiés après la sortie de Canopsis 4.3.0. Canopsis reste encore disponible sur Dockerhub sans changement particulier pour le moment.
 
 ### Suppression du moteur `engine-stat`
 
 Le moteur `engine-stat`, désactivé et déprécié depuis [Canopsis 3.31.0](../3.31.0.md), a été complètement supprimé.
 
 ## Procédure de mise à jour
+
+### Arrêt de l'environnement en cours de lancement
+
+Vous devez prévoir une interruption du service afin de procéder à la mise à jour qui va suivre.
+
+=== "Paquets CentOS 7"
+
+    ```sh
+    canoctl stop
+    ```
+
+=== "Docker Compose"
+
+    ```sh
+    docker-compose down
+    ```
 
 ### Déclenchement des webhooks par le moteur `engine-action` (Pro)
 
@@ -68,11 +84,11 @@ Notez que le moteur `engine-webhook` est cependant toujours nécessaire et ne do
 
 Toutes vos configurations d'actions, webhooks ou *idle rules* doivent être migrées à l'aide de scripts, afin d'être fonctionnels avec les nouveaux scénarios de Canopsis 4.2.
 
-Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un client MongoDB, exécutez les scripts suivants, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
+Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un client MongoDB, assurez-vous que le service MongoDB soit bien lancé et exécutez les scripts suivants, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
 
 ```sh
 for file in 000_migrate_actions.js 001_migrate_webhook.js 002_migrate_idlerules.js ; do
-    curl -O -L "https://git.canopsis.net/canopsis/go-engines/-/raw/release-4.2/database/migrations/engineactionv2/$file"
+    curl -O -L "https://git.canopsis.net/canopsis/canopsis-community/-/raw/release-4.3/community/go-engines-community/database/migrations/release4.2/$file"
     mongo -u cpsmongo -p canopsis canopsis < "$file"
 done
 ```
@@ -99,4 +115,4 @@ Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fic
 
 ### Fin de la mise à jour
 
-Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md).
+Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md) et redémarrez l'environnement.

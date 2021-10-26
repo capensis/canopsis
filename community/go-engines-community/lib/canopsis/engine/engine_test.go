@@ -14,7 +14,7 @@ import (
 
 const waitTimeout = time.Second
 const interval = time.Millisecond * 100
-const inaccuracy = interval / 1000
+const inaccuracy = interval / 100
 
 func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 	const timesToRun = 2

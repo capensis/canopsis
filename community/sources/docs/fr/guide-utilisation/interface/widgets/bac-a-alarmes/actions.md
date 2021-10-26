@@ -1,6 +1,4 @@
-# Les actions du bac à alarmes
-
-Lorsqu'un évènement arrive, il est envoyé vers le bac à évènements, puis traité. Il devient alors une alarme (Une alarme est le résultat de l'analyse des évènements. cf [vocabulaire](../../../vocabulaire/index.md)).  
+# Les actions du Bac à alarmes
 
 Les différentes actions possibles sur cette alarme sont :
 
@@ -14,7 +12,7 @@ Les différentes actions possibles sur cette alarme sont :
     *  [Changer la criticité](#changer-la-criticite)
     *  [Comportement périodique](#comportement-periodique)
     *  [Lister les comportements périodiques](#lister-les-comportements-periodiques)
-    *  [Commenter l'alarme](#commenter-lalarme) 
+    *  [Commenter l'alarme](#commenter-lalarme)
     *  [Historique](#historique)
     *  [Liste des variables disponibles](#liste-des-variables-disponibles)
 
@@ -173,7 +171,7 @@ Pour fermer la fenêtre, cliquez en dehors de celle-ci, ou sur le bouton 'Annule
 
 ### Commenter l'alarme
 
-L'action 'Commenter l'alarme' permet de poser un commentaire sur une alarme. 
+L'action 'Commenter l'alarme' permet de poser un commentaire sur une alarme.
 
 ![Commenter l'alarme](./img/comment.png "Commenter l'alarme")
 
@@ -182,7 +180,7 @@ Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Ic
 
 ### Historique
 
-L'action 'Historique' permet de consulter l'historique de cette alarme durant les 30 derniers jours (valeur par défaut).  
+L'action 'Historique' permet de consulter l'historique de cette alarme durant les 30 derniers jours (valeur par défaut).
 
 ![Historique](./img/history.png  "Historique")
 
@@ -190,9 +188,9 @@ En utilisant le [suivi personnalisé](../../bac-a-alarmes/#suivi-personnalise), 
 
 ### Liste des variables disponibles
 
-Cette action permet de montrer à l'utilisateur l'ensemble des variables disponibles concernant l'alarme et son entité.  
+Cette action permet de montrer à l'utilisateur l'ensemble des variables disponibles concernant l'alarme et son entité.
 
 ![Liste des variables disponibles](./img/available_variables.png  "Liste des variables disponibles")
 
-!!! Info
+!!! info
     Cette action est autorisée grâce au droit `common_variablesHelp(Access to available variables list)`.

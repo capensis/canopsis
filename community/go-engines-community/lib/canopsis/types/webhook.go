@@ -13,30 +13,6 @@ type WebhookParameters struct {
 	RetryDelay    *DurationWithUnit     `bson:"retry_delay,omitempty" json:"retry_delay,omitempty" mapstructure:"retry_delay"`
 }
 
-func (p *WebhookParameters) Template(data interface{}) error {
-	url, err := renderTemplate(p.Request.URL, data, GetTemplateFunc())
-	if err != nil {
-		return err
-	}
-	p.Request.URL = url
-	payload, err := renderTemplate(p.Request.Payload, data, GetTemplateFunc())
-	if err != nil {
-		return err
-	}
-	p.Request.Payload = payload
-
-	for k, h := range p.Request.Headers {
-		renderedHeader, err := renderTemplate(h, data, GetTemplateFunc())
-		if err != nil {
-			return err
-		}
-
-		p.Request.Headers[k] = renderedHeader
-	}
-
-	return nil
-}
-
 type WebhookRequest struct {
 	URL        string            `bson:"url" json:"url"`
 	Method     string            `bson:"method" json:"method"`

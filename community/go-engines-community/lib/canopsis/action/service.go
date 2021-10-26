@@ -77,7 +77,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 				s.logger.Debug().Msgf("scenario for alarm_id = %s finished", result.Alarm.ID)
 				// Fetch updated alarm from storage since task manager returns
 				// updated alarm after one scenario and not after all scenarios.
-				alarm, err := s.alarmAdapter.GetOpenedAlarmByAlarmId(ctx, result.Alarm.ID)
+				alarm, err := s.alarmAdapter.GetAlarmByAlarmId(ctx, result.Alarm.ID)
 				if err != nil {
 					s.logger.Error().Err(err).Msg("failed to fetch alarm")
 					break
@@ -96,9 +96,9 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 				}
 
 				activationSent := false
-				if result.Err == nil ||
+				if !alarm.IsResolved() && (result.Err == nil ||
 					(result.Err != nil && len(result.ActionExecutions) > 0 &&
-						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook) {
+						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook)) {
 					// Send activation event
 					ok, err = s.activationService.Process(&alarm)
 					if err != nil {
@@ -120,7 +120,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 }
 
 func (s *service) Process(ctx context.Context, event *types.Event) error {
-	if event.Alarm == nil || event.Entity == nil || event.Alarm.IsResolved() {
+	if event.Alarm == nil || event.Entity == nil {
 		s.sendEventToFifoAck(event)
 
 		return nil
