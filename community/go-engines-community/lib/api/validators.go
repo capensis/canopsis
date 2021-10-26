@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -21,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortimespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/playlist"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
@@ -229,4 +231,12 @@ func RegisterValidators(client mongo.DbClient) {
 
 	v.RegisterStructValidation(alarm.ValidateListRequest, alarm.ListRequest{})
 	v.RegisterStructValidation(datastorage.ValidateConfig, libdatastorage.Config{})
+
+	resolveRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.ResolveRuleMongoCollection, "ID")
+	v.RegisterStructValidationCtx(resolveRuleIdUniqueValidator.Validate, resolverule.CreateRequest{})
+	v.RegisterStructValidation(resolverule.ValidateEditRequest, resolverule.EditRequest{})
+
+	flappingRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.FlappingRuleMongoCollection, "ID")
+	v.RegisterStructValidationCtx(flappingRuleIdUniqueValidator.Validate, flappingrule.CreateRequest{})
+	v.RegisterStructValidation(flappingrule.ValidateEditRequest, flappingrule.EditRequest{})
 }
