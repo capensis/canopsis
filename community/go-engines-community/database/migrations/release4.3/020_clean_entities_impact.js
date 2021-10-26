@@ -2,11 +2,18 @@
     var cursor = db.default_entities.aggregate([
         {$match: {type: "service"}},
         {$lookup: {
-                from: "default_entities",
-                localField: "_id",
-                foreignField: "impact",
-                as: "depends_by_impact"
-            }},
+            from: "default_entities",
+            let: {"id": "$_id"},
+            pipeline: [
+                {$match: 
+                    {$expr: 
+                        {$and: [{$in: ["$$id", "$impact"]}]}
+                    }
+                },
+                {$project: {_id: 1}}
+            ],
+            as: "depends_by_impact"
+        }},
         {$addFields: {
                 depends_by_impact: {$map: {
                         input: "$depends_by_impact",

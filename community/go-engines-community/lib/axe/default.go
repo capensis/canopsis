@@ -6,18 +6,21 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation/executor"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statsng"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
@@ -91,6 +94,8 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		logger,
 	)
 
+	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider)
+
 	statsService := statsng.NewService(
 		m.DepAMQPChannelPub(amqpConnection),
 		canopsis.StatsngExchangeName,
@@ -110,7 +115,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			PublishCh:                amqpChannel,
 			ServiceRpc:               serviceRpcClient,
-			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, statsService, metricsSender),
+			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, statsService, metricsSender),
 			EntityAdapter:            entity.NewAdapter(dbClient),
 			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
 			Decoder:                  json.NewDecoder(),
@@ -195,7 +200,8 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				entity.NewAdapter(dbClient),
 				correlation.NewRuleAdapter(dbClient),
 				alarmConfigProvider,
-				m.depOperationExecutor(dbClient, alarmConfigProvider, statsService, metricsSender),
+				m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, statsService, metricsSender),
+				alarmStatusService,
 				redis.NewLockClient(corrRedisClient),
 				metricsSender,
 				logger,
@@ -222,7 +228,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			PbhRpc:                   pbhRpcClient,
 			RemediationRpc:           remediationRpcClient,
 			AlarmAdapter:             alarm.NewAdapter(dbClient),
-			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, statsService, metricsSender),
+			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, statsService, metricsSender),
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Logger:                   logger,
@@ -244,8 +250,9 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		&periodicalWorker{
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			ChannelPub:         amqpChannel,
-			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), logger),
+			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, logger),
 			AlarmAdapter:       alarm.NewAdapter(dbClient),
+			AlarmStatusService: alarmStatusService,
 			Encoder:            json.NewEncoder(),
 			IdleAlarmService: idlealarm.NewService(
 				idlerule.NewRuleAdapter(dbClient),
@@ -295,6 +302,7 @@ type DependencyMaker struct {
 func (m DependencyMaker) depOperationExecutor(
 	dbClient mongo.DbClient,
 	configProvider config.AlarmConfigProvider,
+	alarmStatusService alarmstatus.Service,
 	statsService statsng.Service,
 	metricsSender metrics.Sender,
 ) operation.Executor {
@@ -304,13 +312,13 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeAckremove, executor.NewAckRemoveExecutor(metricsSender, configProvider))
 	container.Set(types.EventTypeActivate, executor.NewActivateExecutor())
 	container.Set(types.EventTypeAssocTicket, executor.NewAssocTicketExecutor(metricsSender))
-	container.Set(types.EventTypeCancel, executor.NewCancelExecutor(configProvider))
-	container.Set(types.EventTypeChangestate, executor.NewChangeStateExecutor(configProvider))
+	container.Set(types.EventTypeCancel, executor.NewCancelExecutor(configProvider, alarmStatusService))
+	container.Set(types.EventTypeChangestate, executor.NewChangeStateExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeComment, executor.NewCommentExecutor(configProvider))
 	container.Set(types.EventTypeDeclareTicket, executor.NewDeclareTicketExecutor())
 	container.Set(types.EventTypeDeclareTicketWebhook, executor.NewDeclareTicketWebhookExecutor(configProvider))
 	container.Set(types.EventTypeDone, executor.NewDoneExecutor(configProvider))
-	container.Set(types.EventTypeKeepstate, executor.NewChangeStateExecutor(configProvider))
+	container.Set(types.EventTypeKeepstate, executor.NewChangeStateExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypePbhEnter, executor.NewPbhEnterExecutor(configProvider))
 	container.Set(types.EventTypePbhLeave, executor.NewPbhLeaveExecutor(configProvider))
 	container.Set(types.EventTypePbhLeaveAndEnter, executor.NewPbhLeaveAndEnterExecutor(configProvider))
@@ -319,9 +327,9 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeResolveClose, executor.NewResolveStatExecutor(executor.NewResolveCloseExecutor(), entityAdapter, statsService, metricsSender))
 	container.Set(types.EventTypeEntityToggled, executor.NewResolveStatExecutor(executor.NewResolveDisabledExecutor(), entityAdapter, statsService, metricsSender))
 	container.Set(types.EventTypeSnooze, executor.NewSnoozeExecutor(configProvider))
-	container.Set(types.EventTypeUncancel, executor.NewUncancelExecutor(configProvider))
+	container.Set(types.EventTypeUncancel, executor.NewUncancelExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeUnsnooze, executor.NewUnsnoozeExecutor())
-	container.Set(types.EventTypeUpdateStatus, executor.NewUpdateStatusExecutor(configProvider))
+	container.Set(types.EventTypeUpdateStatus, executor.NewUpdateStatusExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeInstructionStarted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionPaused, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionResumed, executor.NewInstructionExecutor(metricsSender))
