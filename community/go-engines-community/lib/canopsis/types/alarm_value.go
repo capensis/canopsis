@@ -258,6 +258,9 @@ func (s ByTimestamp) Less(i, j int) bool {
 
 // PbehaviorInfo represents current state of entity.
 type PbehaviorInfo struct {
+	// Timestamp is time when entity enters pbehavior.
+	// Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+	Timestamp *CpsTime `bson:"timestamp" json:"timestamp"`
 	// ID is ID of pbehavior.PBehavior.
 	ID string `bson:"id" json:"id"`
 	// Name is Name of pbehavior.PBehavior.

@@ -426,6 +426,27 @@ func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 	})
 }
 
+func (a mongoAdapter) GetOpenedAlarmsWithEntity(ctx context.Context, createdAfter types.CpsTime) (libmongo.Cursor, error) {
+	return a.mainDbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"v.resolved": nil,
+			"t":          bson.M{"$lt": createdAfter},
+		}},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         libmongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+		{"$match": bson.M{"entity.enabled": true}},
+	})
+}
+
 func (a mongoAdapter) GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) ([]types.Alarm, error) {
 	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
@@ -670,4 +691,36 @@ func (a *mongoAdapter) ArchiveResolvedAlarms(ctx context.Context, duration time.
 	}
 
 	return archived, nil
+}
+
+func (a mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdAfter types.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
+	filter := bson.M{
+		"v.resolved": nil,
+		"t":          bson.M{"$lt": createdAfter},
+	}
+
+	if len(idsWithPbehaviors) > 0 {
+		filter["$or"] = []bson.M{
+			{"d": bson.M{"$in": idsWithPbehaviors}},
+			{"v.pbehavior_info": bson.M{"$ne": nil}},
+		}
+	} else {
+		filter["v.pbehavior_info"] = bson.M{"$ne": nil}
+	}
+
+	return a.mainDbCollection.Aggregate(ctx, []bson.M{
+		{"$match": filter},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         libmongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+		{"$match": bson.M{"entity.enabled": true}},
+	})
 }
