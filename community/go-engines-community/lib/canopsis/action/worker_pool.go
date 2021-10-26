@@ -4,12 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+	"sync"
+	"text/template"
+
 	"git.canopsis.net/canopsis/go-engines/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/go-engines/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/go-engines/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
+	"github.com/mitchellh/mapstructure"
 	"github.com/rs/zerolog"
-	"sync"
 )
 
 const (
@@ -195,31 +199,36 @@ func (s *pool) call(task Task, workerId int) error {
 }
 
 func (s *pool) getRPCAxeEvent(task Task) (*types.RPCAxeEvent, error) {
-	if t, ok := task.Action.Parameters.(types.Templater); ok {
-		err := t.Template(types.AlarmWithEntity{
-			Alarm:  task.Alarm,
-			Entity: task.Entity,
-		})
+	params := make(map[string]interface{}, len(task.Action.Parameters))
+	tplData := types.AlarmWithEntity{
+		Alarm:  task.Alarm,
+		Entity: task.Entity,
+	}
 
-		if err != nil {
-			return nil, err
+	for k, v := range task.Action.Parameters {
+		params[k] = v
+
+		switch k {
+		case "author", "output":
+			if str, ok := v.(string); ok {
+				var err error
+				params[k], err = renderTemplate(str, tplData, types.GetTemplateFunc())
+				if err != nil {
+					return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+				}
+			}
 		}
 	}
 
 	return &types.RPCAxeEvent{
 		EventType:  task.Action.Type,
-		Parameters: task.Action.Parameters,
+		Parameters: params,
 		Alarm:      &task.Alarm,
 		Entity:     &task.Entity,
 	}, nil
 }
 
 func (s *pool) getRPCWebhookEvent(task Task) (*types.RPCWebhookEvent, error) {
-	params, ok := task.Action.Parameters.(*types.WebhookParameters)
-	if !ok {
-		return nil, errors.New("invalid parameters")
-	}
-
 	children := make([]types.Alarm, 0)
 	if len(task.Alarm.Value.Children) > 0 {
 		err := s.alarmAdapter.GetOpenedAlarmsByAlarmIDs(task.Alarm.Value.Children, &children)
@@ -228,23 +237,85 @@ func (s *pool) getRPCWebhookEvent(task Task) (*types.RPCWebhookEvent, error) {
 		}
 	}
 
-	err := params.Template(map[string]interface{}{
+	tplData := map[string]interface{}{
 		"Alarm":    task.Alarm,
 		"Entity":   task.Entity,
 		"Children": children,
 		"Response": task.Response,
 		"Header":   task.Header,
-	})
+	}
+	params := make(map[string]interface{}, len(task.Action.Parameters))
+	for k, v := range task.Action.Parameters {
+		params[k] = v
+
+		switch k {
+		case "request":
+			if m, ok := v.(map[string]interface{}); ok {
+				newRequest := make(map[string]interface{}, len(m))
+
+				for requestKey, requestVal := range m {
+					newRequest[requestKey] = requestVal
+
+					switch requestKey {
+					case "url", "payload":
+						if str, ok := requestVal.(string); ok {
+							var err error
+							newRequest[requestKey], err = renderTemplate(str, tplData, types.GetTemplateFunc())
+							if err != nil {
+								return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+							}
+						}
+					case "headers":
+						if headers, ok := requestVal.(map[string]interface{}); ok {
+							newHeaders := make(map[string]interface{}, len(headers))
+
+							for headerKey, headerVal := range headers {
+								newHeaders[headerKey] = headerVal
+
+								if str, ok := headerVal.(string); ok {
+									var err error
+									newHeaders[headerKey], err = renderTemplate(str, tplData, types.GetTemplateFunc())
+									if err != nil {
+										return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+									}
+								}
+							}
+
+							newRequest[requestKey] = newHeaders
+						}
+					}
+				}
+
+				params[k] = newRequest
+			}
+		}
+	}
+
+	webhookParams := types.WebhookParameters{}
+	err := mapstructure.Decode(params, &webhookParams)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot decode map struct scenario=%s : %v", task.ScenarioID, err)
 	}
 
 	return &types.RPCWebhookEvent{
-		Parameters:   *params,
+		Parameters:   webhookParams,
 		Alarm:        &task.Alarm,
 		AckResources: task.AckResources,
 		Header:       task.Header,
 		Response:     task.Response,
 		Message:      fmt.Sprintf("step %d of scenario %s", task.Step, task.ScenarioID),
 	}, nil
+}
+
+func renderTemplate(templateStr string, data interface{}, f template.FuncMap) (string, error) {
+	t, err := template.New("template").Funcs(f).Parse(templateStr)
+	if err != nil {
+		return "", err
+	}
+	b := strings.Builder{}
+	err = t.Execute(&b, data)
+	if err != nil {
+		return "", err
+	}
+	return b.String(), nil
 }
