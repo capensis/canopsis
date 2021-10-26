@@ -388,9 +388,24 @@ func (m *MockAdapter) GetOpenedAlarmsWithEntity(arg0 context.Context) (mongo.Cur
 }
 
 // GetOpenedAlarmsWithEntity indicates an expected call of GetOpenedAlarmsWithEntity
-func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithEntity(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithEntity(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarmsWithEntity", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarmsWithEntity), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarmsWithEntity", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarmsWithEntity), arg0)
+}
+
+// GetOpenedAlarmsWithEntityAfter mocks base method
+func (m *MockAdapter) GetOpenedAlarmsWithEntityAfter(arg0 context.Context, arg1 types.CpsTime) (mongo.Cursor, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOpenedAlarmsWithEntityAfter", arg0, arg1)
+	ret0, _ := ret[0].(mongo.Cursor)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOpenedAlarmsWithEntityAfter indicates an expected call of GetOpenedAlarmsWithEntityAfter
+func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithEntityAfter(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarmsWithEntityAfter", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarmsWithEntityAfter), arg0, arg1)
 }
 
 // GetOpenedAlarmsWithEntityByAlarmIDs mocks base method
