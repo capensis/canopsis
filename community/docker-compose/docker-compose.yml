@@ -7,8 +7,6 @@ volumes:
     driver: local
   rabbitmqdata:
     driver: local
-  importctxdata:
-    driver: local
 
 services:
   rabbitmq:
@@ -94,12 +92,6 @@ services:
       - "oldapi"
     restart: unless-stopped
     command: /canopsis-api
-  heartbeat:
-    image: canopsis/engine-heartbeat:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    restart: unless-stopped
-    command: /engine-heartbeat
   axe:
     image: canopsis/engine-axe:${CANOPSIS_IMAGE_TAG}
     env_file:
@@ -129,32 +121,6 @@ services:
     env_file:
       - compose.env
     restart: unless-stopped
-  scheduler:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=scheduler
-      - ENGINE_MODULE=canopsis.engines.scheduler
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
-  task_importctx:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=task_importctx
-      - ENGINE_MODULE=canopsis.engines.task_importctx
-    volumes:
-      - importctxdata:/opt/canopsis/tmp
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
   oldapi:
     image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
@@ -165,8 +131,6 @@ services:
       - "mongodb"
     ports:
       - "8081:8081"
-    volumes:
-      - importctxdata:/opt/canopsis/tmp
     links:
       - mongodb
       - rabbitmq

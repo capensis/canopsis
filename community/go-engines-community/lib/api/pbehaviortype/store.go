@@ -15,7 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Store is an interface for pbhavior types storage
+// Store is an interface for pbehavior types storage
 type Store interface {
 	Insert(ctx context.Context, model *Type) error
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
@@ -55,7 +55,7 @@ func (s *store) getCollection() mongo.DbCollection {
 	return s.db.Collection(mongo.PbehaviorTypeMongoCollection)
 }
 
-// Find pbhavior types according to query.
+// Find pbehavior types according to query.
 func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *AggregationResult, err error) {
 	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes(ctx)
 	if err != nil {

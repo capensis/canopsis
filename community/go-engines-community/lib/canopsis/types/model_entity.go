@@ -56,8 +56,8 @@ type Entity struct {
 		// Only for Service.
 		// WatchedCount is count of unresolved alarms.
 		WatchedCount int64 `bson:"watched_count"`
-		// WatchedPbheaviorCount contains counters of unresolved and in pbehavior alarms.
-		WatchedPbheaviorCount map[string]int64 `bson:"watched_pbehavior_count"`
+		// WatchedPbehaviorCount contains counters of unresolved and in pbehavior alarms.
+		WatchedPbehaviorCount map[string]int64 `bson:"watched_pbehavior_count"`
 		// WatchedNotAckedCount is count of unresolved and not acked and active (by pbehavior) alarms.
 		WatchedNotAckedCount int64 `bson:"watched_not_acked_count"`
 	} `bson:"alarms_cumulative_data,omitempty" json:"-"`
@@ -68,6 +68,11 @@ type Entity struct {
 	LastIdleRuleApply string `bson:"last_idle_rule_apply,omitempty" json:"last_idle_rule_apply,omitempty"`
 	// IdleSince represents since when entity didn't receive any events.
 	IdleSince *CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty"`
+
+	ImportSource string   `bson:"import_source,omitempty" json:"import_source"`
+	Imported     *CpsTime `bson:"imported,omitempty" json:"imported"`
+
+	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 
 	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
 }

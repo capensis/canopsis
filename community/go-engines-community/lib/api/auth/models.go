@@ -6,16 +6,9 @@ type loginRequest struct {
 }
 
 type loginResponse struct {
-	Name       string `json:"crecord_name"`
-	AuthApiKey string `json:"authkey"`
-	Role       string `json:"role"`
-	Contact    struct {
-		Name    string `json:"name"`
-		Address string `json:"address"`
-	} `json:"contact"`
-	Email string `json:"mail"`
+	AccessToken string `json:"access_token"`
 }
 
-type sessionsCountResponse struct {
+type loggedUserCountResponse struct {
 	Count int64 `json:"count"`
 }

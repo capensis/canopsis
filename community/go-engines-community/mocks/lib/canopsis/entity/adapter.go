@@ -169,6 +169,21 @@ func (mr *MockAdapterMockRecorder) FindConnectorForResource(arg0, arg1 interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindConnectorForResource", reflect.TypeOf((*MockAdapter)(nil).FindConnectorForResource), arg0, arg1)
 }
 
+// FindToCheckPbehaviorInfo mocks base method
+func (m *MockAdapter) FindToCheckPbehaviorInfo(arg0 context.Context, arg1, arg2 []string) (mongo.Cursor, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindToCheckPbehaviorInfo", arg0, arg1, arg2)
+	ret0, _ := ret[0].(mongo.Cursor)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindToCheckPbehaviorInfo indicates an expected call of FindToCheckPbehaviorInfo
+func (mr *MockAdapterMockRecorder) FindToCheckPbehaviorInfo(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindToCheckPbehaviorInfo", reflect.TypeOf((*MockAdapter)(nil).FindToCheckPbehaviorInfo), arg0, arg1, arg2)
+}
+
 // Get mocks base method
 func (m *MockAdapter) Get(arg0 context.Context, arg1 string) (types.Entity, bool) {
 	m.ctrl.T.Helper()
@@ -371,6 +386,20 @@ func (m *MockAdapter) UpdateLastEventDate(arg0 context.Context, arg1 []string, a
 func (mr *MockAdapterMockRecorder) UpdateLastEventDate(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateLastEventDate", reflect.TypeOf((*MockAdapter)(nil).UpdateLastEventDate), arg0, arg1, arg2)
+}
+
+// UpdatePbehaviorInfo mocks base method
+func (m *MockAdapter) UpdatePbehaviorInfo(arg0 context.Context, arg1 string, arg2 types.PbehaviorInfo) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePbehaviorInfo", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdatePbehaviorInfo indicates an expected call of UpdatePbehaviorInfo
+func (mr *MockAdapterMockRecorder) UpdatePbehaviorInfo(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePbehaviorInfo", reflect.TypeOf((*MockAdapter)(nil).UpdatePbehaviorInfo), arg0, arg1, arg2)
 }
 
 // UpsertMany mocks base method
