@@ -48,6 +48,7 @@ type Adapter interface {
 	GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.Alarm, error)
 
 	GetOpenedAlarmByAlarmId(ctx context.Context, id string) (types.Alarm, error)
+	GetAlarmByAlarmId(ctx context.Context, id string) (types.Alarm, error)
 
 	// GetOpenedAlarm find one opened alarm with his entity id.
 	// Note : a control is added to prevent fetching future alarms.
@@ -79,6 +80,8 @@ type Adapter interface {
 
 	GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) ([]types.Alarm, error)
 
+	GetOpenedAlarmsWithEntity(ctx context.Context, createdAfter types.CpsTime) (mongo.Cursor, error)
+
 	CountResolvedAlarm(ctx context.Context, alarmList []string) (int, error)
 
 	GetLastAlarmByEntityID(ctx context.Context, entityID string) (*types.Alarm, error)
@@ -94,6 +97,8 @@ type Adapter interface {
 
 	// ArchiveResolvedAlarms archives alarm to archived alarm collection
 	ArchiveResolvedAlarms(ctx context.Context, duration time.Duration) (int64, error)
+
+	FindToCheckPbehaviorInfo(ctx context.Context, createdAfter types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
 }
 
 type EventProcessor interface {

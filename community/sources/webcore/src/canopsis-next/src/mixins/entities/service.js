@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('service');
 

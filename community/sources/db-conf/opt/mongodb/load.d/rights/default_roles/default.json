@@ -1,1076 +1,1085 @@
-[{
+[
+  {
     "_id": "admin",
     "rights": {
-        "models_userview" : {
-            "checksum" : 15
-        },
-        "models_action" : {
-            "checksum" : 15
-        },
-        "models_profile" : {
-            "checksum" : 15
-        },
-        "models_account" : {
-            "checksum" : 15
-        },
-        "models_role" : {
-            "checksum" : 15
-        },
-        "models_user" : {
-            "checksum" : 15
-        },
-        "models_parameters" : {
-            "checksum" : 7
-        },
-        "models_exploitation_eventFilter": {
-            "checksum": 15
-        },
-        "models_exploitation_pbehavior": {
-            "checksum": 15
-        },
-        "models_exploitation_snmpRule": {
-            "checksum": 15
-        },
-        "models_exploitation_dynamicInfo": {
-            "checksum": 15
-        },
-        "models_exploitation_metaAlarmRule": {
-          "checksum": 15
-        },
-        "models_exploitation_scenario": {
-          "checksum": 15
-        },
-        "models_exploitation_idleRules": {
-          "checksum": 15
-        },
-        "models_notification_instructionStats": {
-          "checksum": 15
-        },
-        "tabs_showeditionmenu" : {
-            "checksum": 1
-        },
-        "actionbutton_canuploadmibfile": {
-            "checksum": 15,
-            "desc": "Upload mib file to canopsis system"
-        },
-        "actionbutton_canediturlfield": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_connectoredit": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "view_event": {
-            "checksum": 7,
-            "desc": ""
-        },
-        "actionbutton_connectordisable": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_connectorenable": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_connectorgetconf": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_connectorgetstate": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_connectorsetconf": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "list_search": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "list_filters": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "menu_aclconfig": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "menu_authsystems": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "menu_enginesconfig": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "menu_pluginsconfig": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "menu_uisettings": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_ack": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_fastack": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_cancel": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_uncancel": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_changestate": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_eventnavigation": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_history": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_incident": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_info": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_ticketnumber": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "models_taskmail": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "models_taskdataclean": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_ack": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_fastAck": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_cancelAck": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_declareanIncident": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_assignTicketNumber": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_pbehavior": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_removeAlarm": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_changeState": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_changeCriticity": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_restoreAlarm": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_snoozeAlarm": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_history": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_groupRequest": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_manualMetaAlarmGroup": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_listPbehavior": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_listFilters": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_editFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_addFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_userFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_links": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_done": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_comment": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_executeInstruction": {
-          "checksum": 1,
-          "desc": ""
-        },
-        "listalarm_correlation": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_category": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_listRemediationInstructionsFilters": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_editRemediationInstructionsFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_addRemediationInstructionsFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_userRemediationInstructionsFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_exportAsCsv": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_entityComment": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_moreInfos": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_alarmsList": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_entityAck": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_entityAssocTicket": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_entityDeclareTicket": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_entityValidate": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_entityInvalidate": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_entityPlay": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_entityPause": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_entityCancel": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_entityManagePbehaviors": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_entityLinks": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_pbehaviorList": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_ack":{
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_confirm": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_invalidate": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_declareticket": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_pause": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_listFilters": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_addFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_editFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_userFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_createEntity": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_edit": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_duplicate": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_delete": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_pbehavior": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_listPbehavior": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_deletePbehavior": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_listFilters": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_editFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_addFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_userFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_category": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "crudcontext_exportAsCsv": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "view_current_alarms": {
-            "checksum": 7,
-            "desc": ""
-        },
-        "view_history_alarms": {
-            "checksum": 7,
-            "desc": ""
-        },
-        "models_broadcastMessage": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "models_playlist": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "models_planning": {
-          "checksum": 15,
-          "desc": ""
-        },
-        "models_planningType": {
-          "checksum": 15,
-          "desc": ""
-        },
-        "models_planningReason": {
-          "checksum": 15,
-          "desc": ""
-        },
-        "models_planningExceptions": {
-          "checksum": 15,
-          "desc": ""
-        },
-        "models_remediation": {
-          "checksum": 15,
-          "desc": ""
-        },
-        "models_remediationInstruction": {
-          "checksum": 15,
-          "desc": ""
-        },
-        "models_remediationJob": {
-          "checksum": 15,
-          "desc": ""
-        },
-        "models_remediationConfiguration": {
-          "checksum": 15,
-          "desc": ""
-        },
-        "models_engine": {
-          "checksum": 1,
-          "desc": ""
-        },
-        "common_variablesHelp": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "counter_alarmsList": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "da7ac9b9-db1c-4435-a1f2-edb4d6be4db8": {
-            "checksum": 15,
-            "crecord_type": "right"
-        },
-        "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
-            "checksum": 15,
-            "crecord_type": "right"
-        },
-        "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa": {
-            "checksum": 15,
-            "crecord_type": "right"
-        },
-        "testingweather_alarmsList": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "api_alarm_read": {
-          "checksum": 1,
-          "crecord_type": "right"
-        },
-        "api_alarm_update": {
-          "checksum": 1,
-          "crecord_type": "right"
-        },
-        "api_alarm_delete": {
-          "checksum": 1,
-          "crecord_type": "right"
-        },
-        "api_alarmfilter": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_idlerule": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_eventfilter": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_action": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_webhook": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_metaalarmrule": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_playlist": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_dynamicinfos": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_entityservice": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_entitycategory": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_viewgroup": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_view": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_pbehavior": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_pbehaviortype": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_pbehaviorreason": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_pbehaviorexception": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_event": {
-          "checksum": 1,
-          "crecord_type": "right"
-        },
-        "api_engine": {
-            "checksum": 1,
-            "crecord_type": "right"
-        },
-        "api_execution": {
-          "checksum": 1,
-          "crecord_type": "right"
-        },
-        "api_job_config": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_job": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_instruction": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_file": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_entity": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_contextgraph": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_acl": {
-          "checksum": 1,
-          "crecord_type": "right"
-        },
-        "api_state_settings": {
-          "checksum": 1,
-          "crecord_type": "right"
-        },
-        "api_broadcast_message": {
-            "checksum": 15,
-            "crecord_type": "right"
-        },
-        "api_associative_table": {
-            "checksum": 15,
-            "crecord_type": "right"
-        },
-        "api_app_info_read": {
-            "checksum": 1,
-            "crecord_type": "right"
-        },
-        "api_user_interface_update": {
-            "checksum": 1,
-            "crecord_type": "right"
-        },
-        "api_user_interface_delete": {
-            "checksum": 1,
-            "crecord_type": "right"
-        },
-        "api_junit": {
-          "checksum": 15,
-          "crecord_type": "right"
-        },
-        "api_datastorage_read": {
-          "checksum": 1,
-          "crecord_type": "right"
-        },
-        "api_datastorage_update": {
-          "checksum": 1,
-          "crecord_type": "right"
-        },
-        "api_notification": {
-          "checksum": 1,
-          "crecord_type": "right"
-        },
-        "api_instruction_approve": {
-          "checksum": 1,
-          "crecord_type": "right"
-        }
+      "models_userview": {
+        "checksum": 15
       },
+      "models_action": {
+        "checksum": 15
+      },
+      "models_profile": {
+        "checksum": 15
+      },
+      "models_account": {
+        "checksum": 15
+      },
+      "models_role": {
+        "checksum": 15
+      },
+      "models_user": {
+        "checksum": 15
+      },
+      "models_parameters": {
+        "checksum": 7
+      },
+      "models_exploitation_eventFilter": {
+        "checksum": 15
+      },
+      "models_exploitation_pbehavior": {
+        "checksum": 15
+      },
+      "models_exploitation_snmpRule": {
+        "checksum": 15
+      },
+      "models_exploitation_dynamicInfo": {
+        "checksum": 15
+      },
+      "models_exploitation_metaAlarmRule": {
+        "checksum": 15
+      },
+      "models_exploitation_scenario": {
+        "checksum": 15
+      },
+      "models_exploitation_idleRules": {
+        "checksum": 15
+      },
+      "models_healthcheck": {
+        "checksum": 1
+      },
+      "models_healthcheckStatus": {
+        "checksum": 1
+      },
+      "models_notification_instructionStats": {
+        "checksum": 15
+      },
+      "tabs_showeditionmenu": {
+        "checksum": 1
+      },
+      "actionbutton_canuploadmibfile": {
+        "checksum": 15,
+        "desc": "Upload mib file to canopsis system"
+      },
+      "actionbutton_canediturlfield": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_connectoredit": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "view_event": {
+        "checksum": 7,
+        "desc": ""
+      },
+      "actionbutton_connectordisable": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_connectorenable": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_connectorgetconf": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_connectorgetstate": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_connectorsetconf": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "list_search": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "list_filters": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "menu_aclconfig": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "menu_authsystems": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "menu_enginesconfig": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "menu_pluginsconfig": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "menu_uisettings": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_ack": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_fastack": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_cancel": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_uncancel": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_changestate": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_eventnavigation": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_history": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_incident": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_info": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_ticketnumber": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "models_taskmail": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "models_taskdataclean": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_ack": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_fastAck": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_cancelAck": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_declareanIncident": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_assignTicketNumber": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_pbehavior": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_removeAlarm": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_changeState": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_changeCriticity": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_restoreAlarm": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_snoozeAlarm": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_history": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_groupRequest": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_manualMetaAlarmGroup": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_listPbehavior": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_listFilters": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_editFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_addFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_userFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_links": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_done": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_comment": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_executeInstruction": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_correlation": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_category": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_listRemediationInstructionsFilters": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_editRemediationInstructionsFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_addRemediationInstructionsFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_userRemediationInstructionsFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_exportAsCsv": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_entityComment": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_moreInfos": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_alarmsList": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_entityAck": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_entityAssocTicket": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_entityDeclareTicket": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_entityValidate": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_entityInvalidate": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_entityPlay": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_entityPause": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_entityCancel": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_entityManagePbehaviors": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_entityLinks": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_pbehaviorList": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_ack": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_confirm": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_invalidate": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_declareticket": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_pause": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_listFilters": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_addFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_editFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_userFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_createEntity": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_edit": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_duplicate": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_delete": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_pbehavior": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_listPbehavior": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_deletePbehavior": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_listFilters": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_editFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_addFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_userFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_category": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_exportAsCsv": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "view_current_alarms": {
+        "checksum": 7,
+        "desc": ""
+      },
+      "view_history_alarms": {
+        "checksum": 7,
+        "desc": ""
+      },
+      "models_broadcastMessage": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "models_playlist": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "models_planning": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "models_planningType": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "models_planningReason": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "models_planningExceptions": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "models_remediation": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "models_remediationInstruction": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "models_remediationJob": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "models_remediationConfiguration": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "common_variablesHelp": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "counter_alarmsList": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "da7ac9b9-db1c-4435-a1f2-edb4d6be4db8": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "testingweather_alarmsList": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "api_alarm_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_alarm_update": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_alarm_delete": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_alarmfilter": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_idlerule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_eventfilter": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_action": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_webhook": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_metaalarmrule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_playlist": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_dynamicinfos": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_entityservice": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_entitycategory": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_viewgroup": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_view": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_pbehavior": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_pbehaviortype": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_pbehaviorreason": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_pbehaviorexception": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_event": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_healthcheck": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_message_rate_stats_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_execution": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_job_config": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_job": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_instruction": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_file": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_entity": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_contextgraph": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_acl": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_state_settings": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_broadcast_message": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_associative_table": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_app_info_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_user_interface_update": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_user_interface_delete": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_junit": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_datastorage_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_datastorage_update": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_notification": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_instruction_approve": {
+        "checksum": 1,
+        "crecord_type": "right"
+      }
+    },
     "defaultview": "875df4c2-027b-4549-8add-e20ed7ff7d4f"
-},{
+  },
+  {
     "_id": "Supervision",
     "rights": {
-        "tabs_showeditionmenu" : {
-            "checksum": 1
-        },
-        "actionbutton_ack": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_fastack": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "list_search": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "list_filters": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "listalarm_ack": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_fastAck": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_listPbehavior": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "view_current_alarms": {
-            "checksum": 7,
-            "desc": ""
-        },
-        "serviceweather_ack":{
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_confirm": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_userFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_category": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_invalidate": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_listFilters": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_editFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_addFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "api_viewgroup": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_playlist": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_acl": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "api_app_info_read": {
-            "checksum": 1,
-            "crecord_type": "right"
-        },
-        "api_associative_table": {
-            "checksum": 4,
-            "crecord_type": "right"
-        },
-        "models_userview": {
-            "checksum": 4
-        },
-        "api_alarm_read": {
-            "checksum": 1,
-            "crecord_type": "right"
-        },
-        "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
-            "checksum": 4,
-            "crecord_type": "right"
-        }
+      "tabs_showeditionmenu": {
+        "checksum": 1
+      },
+      "actionbutton_ack": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_fastack": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "list_search": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "list_filters": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "listalarm_ack": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_fastAck": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_listPbehavior": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "view_current_alarms": {
+        "checksum": 7,
+        "desc": ""
+      },
+      "serviceweather_ack": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_confirm": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_userFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_category": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_invalidate": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_listFilters": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_editFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_addFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "api_viewgroup": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_playlist": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_acl": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_app_info_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_associative_table": {
+        "checksum": 4,
+        "crecord_type": "right"
+      },
+      "models_userview": {
+        "checksum": 4
+      },
+      "api_alarm_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
+        "checksum": 4,
+        "crecord_type": "right"
+      }
     },
     "defaultview": "view.current_alarms"
-},{
+  },
+  {
     "_id": "Support",
     "rights": {
-        "tabs_showeditionmenu" : {
-            "checksum": 1
-        },
-        "actionbutton_changestate": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_cancel": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_info": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_ack": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_fastack": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "list_search": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "list_filters": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "view_current_alarms": {
-            "checksum": 5,
-            "desc": ""
-        },
-        "listalarm_listFilters": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "api_viewgroup": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_playlist": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_acl": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "api_app_info_read": {
-            "checksum": 1,
-            "crecord_type": "right"
-        },
-        "api_associative_table": {
-            "checksum": 4,
-            "crecord_type": "right"
-        },
-        "models_userview": {
-            "checksum": 4
-        },
-        "api_alarm_read": {
-            "checksum": 1,
-            "crecord_type": "right"
-        },
-        "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
-            "checksum": 4,
-            "crecord_type": "right"
-        }
+      "tabs_showeditionmenu": {
+        "checksum": 1
+      },
+      "actionbutton_changestate": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_cancel": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_info": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_ack": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_fastack": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "list_search": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "list_filters": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "view_current_alarms": {
+        "checksum": 5,
+        "desc": ""
+      },
+      "listalarm_listFilters": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "api_viewgroup": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_playlist": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_acl": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_app_info_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_associative_table": {
+        "checksum": 4,
+        "crecord_type": "right"
+      },
+      "models_userview": {
+        "checksum": 4
+      },
+      "api_alarm_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
+        "checksum": 4,
+        "crecord_type": "right"
+      }
     },
     "defaultview": "view.current_alarms"
-},{
+  },
+  {
     "_id": "Manager",
     "rights": {
-        "tabs_showeditionmenu" : {
-            "checksum": 1
-        },
-        "menu_aclconfig": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "menu_authsystems": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_uncancel": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "actionbutton_changestate": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "list_search": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "list_filters": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "listalarm_cancelAck": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_changeState": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_listPbehavior": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_done": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "view_current_alarms": {
-            "checksum": 7,
-            "desc": ""
-        },
-        "serviceweather_ack":{
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_confirm": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_invalidate": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_declareticket": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "serviceweather_pause" : {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_listFilters": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_editFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "listalarm_addFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "api_viewgroup": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_playlist": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_acl": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "api_app_info_read": {
-            "checksum": 1,
-            "crecord_type": "right"
-        },
-        "api_associative_table": {
-            "checksum": 4,
-            "crecord_type": "right"
-        },
-        "models_userview": {
-            "checksum": 4
-        },
-        "api_alarm_read": {
-            "checksum": 1,
-            "crecord_type": "right"
-        },
-        "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
-            "checksum": 4,
-            "crecord_type": "right"
-        }
+      "tabs_showeditionmenu": {
+        "checksum": 1
+      },
+      "menu_aclconfig": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "menu_authsystems": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_uncancel": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "actionbutton_changestate": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "list_search": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "list_filters": {
+        "checksum": 15,
+        "desc": ""
+      },
+      "listalarm_cancelAck": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_changeState": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_listPbehavior": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_done": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "view_current_alarms": {
+        "checksum": 7,
+        "desc": ""
+      },
+      "serviceweather_ack": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_confirm": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_invalidate": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_declareticket": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_pause": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_listFilters": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_editFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "listalarm_addFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "api_viewgroup": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_playlist": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_acl": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_app_info_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_associative_table": {
+        "checksum": 4,
+        "crecord_type": "right"
+      },
+      "models_userview": {
+        "checksum": 4
+      },
+      "api_alarm_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
+        "checksum": 4,
+        "crecord_type": "right"
+      }
     },
     "defaultview": "view.current_alarms"
-},{
+  },
+  {
     "_id": "Visualisation",
     "rights": {
-        "view_current_alarms": {
-            "checksum": 5,
-            "desc": ""
-        },
-        "listalarm_listFilters": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "api_alarmfilter": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_idlerule": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_eventfilter": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_action": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_webhook": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_metaalarmrule": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_dynamicinfos": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_heartbeat": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_view": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_pbehavior": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_pbehaviortype": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_pbehaviorreason": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_pbehaviorexception": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_viewgroup": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_playlist": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_acl": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "api_app_info_read": {
-            "checksum": 1,
-            "crecord_type": "right"
-        },
-        "api_associative_table": {
-            "checksum": 4,
-            "crecord_type": "right"
-        },
-        "models_userview": {
-            "checksum": 4
-        },
-        "api_alarm_read": {
-            "checksum": 1,
-            "crecord_type": "right"
-        },
-        "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
-            "checksum": 4,
-            "crecord_type": "right"
-        }
+      "view_current_alarms": {
+        "checksum": 5,
+        "desc": ""
+      },
+      "listalarm_listFilters": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "api_alarmfilter": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_idlerule": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_eventfilter": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_action": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_webhook": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_metaalarmrule": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_dynamicinfos": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_heartbeat": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_view": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_pbehavior": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_pbehaviortype": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_pbehaviorreason": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_pbehaviorexception": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_viewgroup": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_playlist": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_acl": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_app_info_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_associative_table": {
+        "checksum": 4,
+        "crecord_type": "right"
+      },
+      "models_userview": {
+        "checksum": 4
+      },
+      "api_alarm_read": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "875df4c2-027b-4549-8add-e20ed7ff7d4f": {
+        "checksum": 4,
+        "crecord_type": "right"
+      }
     },
     "defaultview": "view.current_alarms"
-},{
+  },
+  {
     "_id": "Norights",
     "rights": {
-        "view_norights": {
-            "checksum": 5,
-            "desc": ""
-        },
-        "api_viewgroup": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_playlist": {
-            "checksum": 4,
-            "desc": ""
-        },
-        "api_acl": {
-            "checksum": 1,
-            "desc": ""
-        }
+      "view_norights": {
+        "checksum": 5,
+        "desc": ""
+      },
+      "api_viewgroup": {
+        "checksum": 4,
+        "desc": ""
+      },
+      "api_playlist": {
+        "checksum": 4,
+        "desc": ""
+      }
     },
     "defaultview": "view.norights"
-}]
+  }
+]

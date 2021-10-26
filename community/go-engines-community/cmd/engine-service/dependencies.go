@@ -38,11 +38,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
-	amqpChannel, err := amqpConnection.Channel()
-	if err != nil {
-		panic(err)
-	}
-
+	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	redisSession := m.DepRedisSession(ctx, redis.CacheService, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
@@ -71,7 +67,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 			defer task.End()
 
 			// Lock periodical, do not release lock to not allow another instance start periodical.
-			_, err = periodicalLockClient.Obtain(ctx, redis.ServiceIdleSincePeriodicalLockKey,
+			_, err := periodicalLockClient.Obtain(ctx, redis.ServiceIdleSincePeriodicalLockKey,
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
@@ -98,7 +94,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 			}
 
 			// Lock periodical, do not release lock to not allow another instance start periodical.
-			_, err := periodicalLockClient.Obtain(ctx, redis.ServicePeriodicalLockKey,
+			_, err = periodicalLockClient.Obtain(ctx, redis.ServicePeriodicalLockKey,
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
@@ -189,11 +185,8 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 	engineService.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisSession),
-		engine.RunInfo{
-			Name:         canopsis.ServiceEngineName,
-			ConsumeQueue: canopsis.ServiceQueueName,
-			PublishQueue: options.PublishToQueue,
-		},
+		engine.NewInstanceRunInfo(canopsis.ServiceEngineName, canopsis.ServiceQueueName, options.PublishToQueue),
+		amqpChannel,
 		logger,
 	))
 	if options.AutoRecomputeAll {

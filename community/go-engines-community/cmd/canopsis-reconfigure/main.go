@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -32,6 +33,7 @@ type Conf struct {
 	RabbitMQ    config.RabbitMQConf    `toml:"RabbitMQ"`
 	Canopsis    config.CanopsisConf    `toml:"Canopsis"`
 	Remediation config.RemediationConf `toml:"Remediation"`
+	HealthCheck config.HealthCheckConf `toml:"HealthCheck"`
 }
 
 func main() {
@@ -171,12 +173,176 @@ func main() {
 	}()
 
 	err = config.NewAdapter(client).UpsertConfig(ctx, conf.Canopsis)
+	utils.FailOnError(err, "Failed to save config into mongo")
 	err = config.NewRemediationAdapter(client).UpsertConfig(ctx, conf.Remediation)
 	utils.FailOnError(err, "Failed to save config into mongo")
+	err = config.NewHealthCheckAdapter(client).UpsertConfig(ctx, conf.HealthCheck)
+	utils.FailOnError(err, "Failed to save config into mongo")
+
+	logger.Info().Msg("Initialise TimescaleDB")
+	err = createTimescaleDBTables(ctx)
+	if os.Getenv(postgres.EnvURL) != "" && err != nil {
+		utils.FailOnError(err, "Failed to create timescaleDB tables")
+	}
 
 	logger.Info().Msg("Initialising Mongo indexes")
 	err = createMongoIndexes(ctx, client, mongoConfPath, logger)
 	utils.FailOnError(err, "Failed to create Mongo indexes")
+}
+
+func createTimescaleDBTables(ctx context.Context) error {
+	postgresPool, err := postgres.NewPool(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer postgresPool.Close()
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS total_alarm_number (
+		   	time TIMESTAMP NOT NULL,
+		   	entity_id VARCHAR(500),
+		   	value INT);
+		   	SELECT create_hypertable('total_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS non_displayed_alarm_number (
+		   	time TIMESTAMP NOT NULL,
+		   	entity_id VARCHAR(500),
+		   	value INT);
+		   	SELECT create_hypertable('non_displayed_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS pbh_alarm_number (
+		   	time TIMESTAMP NOT NULL,
+		   	entity_id VARCHAR(500),
+		   	value INT);
+		   	SELECT create_hypertable('pbh_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS instruction_alarm_number (
+		   	time TIMESTAMP NOT NULL,
+		   	entity_id VARCHAR(500),
+		   	value INT);
+		   	SELECT create_hypertable('instruction_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS correlation_alarm_number (
+		   	time TIMESTAMP NOT NULL,
+		   	entity_id VARCHAR(500),
+		   	value INT);
+		   	SELECT create_hypertable('correlation_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS ticket_alarm_number (
+		   	time TIMESTAMP NOT NULL,
+		   	entity_id VARCHAR(500),
+			username VARCHAR(255),
+		   	value INT);
+		   	SELECT create_hypertable('ticket_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS ack_alarm_number (
+		   	time TIMESTAMP NOT NULL,
+		   	entity_id VARCHAR(500),
+			username VARCHAR(255),
+		   	value INT);
+		   	SELECT create_hypertable('ack_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS cancel_ack_alarm_number (
+		   	time TIMESTAMP NOT NULL,
+		   	entity_id VARCHAR(500),
+			username VARCHAR(255),
+		   	value INT);
+		   	SELECT create_hypertable('cancel_ack_alarm_number', 'time', if_not_exists => TRUE);   
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS ack_duration (
+			time TIMESTAMP NOT NULL,
+			entity_id VARCHAR(500),
+			username VARCHAR(255),
+			value INT);
+			SELECT create_hypertable('ack_duration', 'time', if_not_exists => TRUE);
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS resolve_duration (
+			time TIMESTAMP NOT NULL,
+			entity_id VARCHAR(500),
+			value INT);
+			SELECT create_hypertable('resolve_duration', 'time', if_not_exists => TRUE);
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func createMongoIndexes(ctx context.Context, client mongo.DbClient, mongoConfPath string, logger zerolog.Logger) error {

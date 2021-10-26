@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -16,7 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type Options struct {
@@ -48,6 +49,7 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 	config.SetDbClientRetry(mongoClient, cfg)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
+	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	entityAdapter := entity.NewAdapter(mongoClient)
 	eventFilterAdapter := eventfilter.NewAdapter(mongoClient)
 	entityServiceAdapter := entityservice.NewAdapter(mongoClient)
@@ -72,28 +74,8 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 
 	engine := libengine.New(
 		func(ctx context.Context) error {
-			_, err := periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
-				options.PeriodicalWaitTime, &redislock.Options{
-					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
-				})
-			if err != nil {
-				if err == redislock.ErrNotObtained {
-					return nil
-				}
-
-				logger.Error().Err(err).Msg("cannot obtain lock")
-				return err
-			}
-
-			logger.Debug().Msg("Recompute impacted services for connectors")
-			err = enrichmentCenter.UpdateImpactedServices(ctx)
-			if err != nil {
-				logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
-			}
-			logger.Debug().Msg("Recompute impacted services for connectors finished")
-
 			logger.Debug().Msg("Loading event filter data sources")
-			err = eventFilterService.LoadDataSourceFactories(
+			err := eventFilterService.LoadDataSourceFactories(
 				enrichmentCenter,
 				enrichFields,
 				options.DataSourceDirectory,
@@ -113,6 +95,28 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 			if err != nil {
 				logger.Error().Err(err).Msg("unable to load services")
 			}
+
+			_, err = periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
+				options.PeriodicalWaitTime, &redislock.Options{
+					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
+				})
+			if err != nil {
+				// Lock is set for options.PeriodicalWaitTime TTL, other instances should skip actions below
+				if err == redislock.ErrNotObtained {
+					return nil
+				}
+
+				logger.Error().Err(err).Msg("cannot obtain lock")
+				return err
+			}
+			// Below are actions locked with ChePeriodicalLockKey for multi-instance configuration
+
+			logger.Debug().Msg("Recompute impacted services for connectors")
+			err = enrichmentCenter.UpdateImpactedServices(ctx)
+			if err != nil {
+				logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
+			}
+			logger.Debug().Msg("Recompute impacted services for connectors finished")
 			return nil
 		},
 		func(ctx context.Context) {
@@ -179,11 +183,8 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 	engine.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisSession),
-		libengine.RunInfo{
-			Name:         canopsis.CheEngineName,
-			ConsumeQueue: options.ConsumeFromQueue,
-			PublishQueue: options.PublishToQueue,
-		},
+		libengine.NewInstanceRunInfo(canopsis.CheEngineName, options.ConsumeFromQueue, options.PublishToQueue),
+		amqpChannel,
 		logger,
 	))
 	engine.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(

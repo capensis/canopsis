@@ -10,6 +10,7 @@ const (
 	UserInterfaceKeyName = "user_interface"
 	VersionKeyName       = "canopsis_version"
 	RemediationKeyName   = "remediation"
+	HealthCheckName      = "health_check"
 )
 
 // SectionAlarm ...
@@ -52,13 +53,19 @@ type SectionImportCtx struct {
 }
 
 type SectionFile struct {
-	Remediation string `toml:"Remediation"`
-	Junit       string `toml:"Junit"`
-	JunitApi    string `toml:"JunitApi"`
+	Upload        string `toml:"Upload"`
+	UploadMaxSize int64  `toml:"UploadMaxSize"`
+	Junit         string `toml:"Junit"`
+	JunitApi      string `toml:"JunitApi"`
 }
 
 type SectionDataStorage struct {
 	TimeToExecute string `toml:"TimeToExecute"`
+}
+
+type SectionApi struct {
+	TokenExpiration    string `toml:"TokenExpiration"`
+	TokenSigningMethod string `toml:"TokenSigningMethod"`
 }
 
 // CanopsisConf represents a generic configuration object.
@@ -70,6 +77,7 @@ type CanopsisConf struct {
 	ImportCtx   SectionImportCtx   `bson:"import_ctx" toml:"import_ctx"`
 	File        SectionFile        `bson:"file" toml:"file"`
 	DataStorage SectionDataStorage `bson:"data_storage" toml:"data_storage"`
+	API         SectionApi         `bson:"api" tml:"api"`
 }
 
 // UserInterfaceConf represents a user interface configuration object.

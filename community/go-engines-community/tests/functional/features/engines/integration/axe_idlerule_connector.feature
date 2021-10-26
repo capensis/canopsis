@@ -162,7 +162,7 @@ Feature: update connector alarm
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the next periodical process
     When I send an event:
     """
     {
@@ -204,8 +204,7 @@ Feature: update connector alarm
               },
               {
                 "_t": "pbhenter",
-                "a": "system",
-                "m": "Pbehavior test-pbehavior-axe-idlerule-connector-2. Type: Engine maintenance. Reason: Test Engine"
+                "m": "Pbehavior test-pbehavior-axe-idlerule-connector-2. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
           }
@@ -493,7 +492,8 @@ Feature: update connector alarm
       ],
       "infos": [
         {"name":"test-info-axe-idlerule-connector-5-name", "value":"test-info-axe-idlerule-connector-5-value"}
-      ]
+      ],
+      "enabled": true
     }
     """
     Then the response code should be 201

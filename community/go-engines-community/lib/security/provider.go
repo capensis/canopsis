@@ -7,6 +7,7 @@ import (
 
 // Provider interface is used to implement user authentication by username and password.
 type Provider interface {
+	GetName() string
 	Auth(ctx context.Context, username, password string) (*User, error)
 }
 
@@ -14,6 +15,11 @@ type Provider interface {
 // by credentials which are retrieved from http request.
 type HttpProvider interface {
 	Auth(*http.Request) (*User, error, bool)
+}
+
+// TokenProvider interface is used to implement user authentication by token.
+type TokenProvider interface {
+	Auth(ctx context.Context, token string) (*User, error)
 }
 
 // UserProvider is decorator for requests to user storage.

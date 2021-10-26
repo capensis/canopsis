@@ -4,7 +4,7 @@ Feature: get pbehavior
   Scenario: given pbehavior should return true status
     Given I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "enabled": true,
       "name": "test-pbehavior-api-1",
@@ -26,7 +26,7 @@ Feature: get pbehavior
     When I do GET /api/v4/pbehaviors?search=test-pbehavior-api-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -45,7 +45,7 @@ Feature: get pbehavior
   Scenario: given pbehavior should return true status
     Given I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "enabled": true,
       "name": "test-pbehavior-api-2",
@@ -68,7 +68,7 @@ Feature: get pbehavior
     When I do GET /api/v4/pbehaviors?search=test-pbehavior-api-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -87,7 +87,7 @@ Feature: get pbehavior
   Scenario: given pbehavior should return false status
     Given I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "enabled": false,
       "name": "test-pbehavior-api-3",
@@ -109,7 +109,7 @@ Feature: get pbehavior
     When I do GET /api/v4/pbehaviors?search=test-pbehavior-api-3
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -127,8 +127,22 @@ Feature: get pbehavior
 
   Scenario: given pbehavior should return status
     Given I am admin
-    When I do POST /api/v4/pbehaviors:
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-api-4",
+      "connector_name" : "test-connector-name-pbehavior-api-4",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-pbehavior-api-4",
+      "resource" : "test-resource-pbehavior-api-4",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
     """
+    When I wait the end of event processing
+    When I do POST /api/v4/pbehaviors:
+    """json
     {
       "enabled": true,
       "name": "test-pbehavior-api-4-1",
@@ -146,9 +160,10 @@ Feature: get pbehavior
     }
     """
     Then the response code should be 201
+    When I wait the end of event processing
     When I wait 1s
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "enabled": true,
       "name": "test-pbehavior-api-4-2",
@@ -168,7 +183,7 @@ Feature: get pbehavior
     Then the response code should be 201
     When I wait 1s
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-pbehavior-api-4",
       "connector_name" : "test-connector-name-pbehavior-api-4",
