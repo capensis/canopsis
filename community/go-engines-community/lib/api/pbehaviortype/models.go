@@ -11,13 +11,12 @@ type ListRequest struct {
 }
 
 type EditRequest struct {
-	Name           string `json:"name" binding:"required,max=255"`
-	Description    string `json:"description" binding:"required,max=255"`
-	Type           string `json:"type" binding:"required"`
-	Priority       *int   `json:"priority" binding:"required"`
-	IconName       string `json:"icon_name" binding:"required,max=255"`
-	Color          string `json:"color"`
-	SLIMaintenance *bool  `json:"sli_maintenance" binding:"required"`
+	Name        string `json:"name" binding:"required,max=255"`
+	Description string `json:"description" binding:"required,max=255"`
+	Type        string `json:"type" binding:"required"`
+	Priority    *int   `json:"priority" binding:"required"`
+	IconName    string `json:"icon_name" binding:"required,max=255"`
+	Color       string `json:"color"`
 }
 
 type CreateRequest struct {
@@ -31,16 +30,15 @@ type UpdateRequest struct {
 }
 
 type Type struct {
-	ID             string `bson:"_id,omitempty" json:"_id"`
-	Name           string `bson:"name" json:"name"`
-	Description    string `bson:"description" json:"description"`
-	Type           string `bson:"type" json:"type"`
-	Priority       int    `bson:"priority" json:"priority"`
-	IconName       string `bson:"icon_name" json:"icon_name"`
-	Color          string `bson:"color,omitempty" json:"color,omitempty"`
-	SLIMaintenance bool   `bson:"sli_maintenance" json:"sli_maintenance"`
-	Editable       *bool  `bson:"editable,omitempty" json:"editable,omitempty"`
-	Deletable      *bool  `bson:"deletable,omitempty" json:"deletable,omitempty"`
+	ID          string `bson:"_id,omitempty" json:"_id"`
+	Name        string `bson:"name" json:"name"`
+	Description string `bson:"description" json:"description"`
+	Type        string `bson:"type" json:"type"`
+	Priority    int    `bson:"priority" json:"priority"`
+	IconName    string `bson:"icon_name" json:"icon_name"`
+	Color       string `bson:"color,omitempty" json:"color,omitempty"`
+	Editable    *bool  `bson:"editable,omitempty" json:"editable,omitempty"`
+	Deletable   *bool  `bson:"deletable,omitempty" json:"deletable,omitempty"`
 }
 
 type AggregationResult struct {

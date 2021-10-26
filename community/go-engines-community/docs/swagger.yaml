@@ -2391,8 +2391,6 @@ definitions:
         type: string
       priority:
         type: integer
-      sli_maintenance:
-        type: boolean
       type:
         type: string
     type: object
@@ -2543,8 +2541,6 @@ definitions:
         type: string
       priority:
         type: integer
-      sli_maintenance:
-        type: boolean
       type:
         type: string
     required:
@@ -2552,7 +2548,6 @@ definitions:
     - icon_name
     - name
     - priority
-    - sli_maintenance
     - type
     type: object
   pbehaviortype.Type:
@@ -2573,8 +2568,6 @@ definitions:
         type: string
       priority:
         type: integer
-      sli_maintenance:
-        type: boolean
       type:
         type: string
     type: object
@@ -3410,6 +3403,12 @@ definitions:
       reason:
         description: Reason is Name of pbehavior.Reason.
         type: string
+      timestamp:
+        $ref: '#/definitions/types.CpsTime'
+        description: |-
+          Timestamp is time when entity enters pbehavior.
+          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+        type: object
       type:
         description: TypeID is ID of pbehavior.Type.
         type: string

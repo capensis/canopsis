@@ -26,7 +26,6 @@ Feature: Create a pbehavior type
         "icon_name": "IconName is missing.",
         "name": "Name is missing.",
         "priority": "Priority is missing.",
-        "sli_maintenance": "SLIMaintenance is missing.",
         "type": "Type is missing."
       }
     }
@@ -56,8 +55,7 @@ Feature: Create a pbehavior type
       "description": "Active state type",
       "type": "active",
       "priority": 177,
-      "icon_name": "exclamation-mark.png",
-      "sli_maintenance": false
+      "icon_name": "exclamation-mark.png"
     }
     """
     Then the response code should be 201
@@ -68,8 +66,7 @@ Feature: Create a pbehavior type
       "description": "Active state type",
       "type": "active",
       "priority": 177,
-      "icon_name": "exclamation-mark.png",
-      "sli_maintenance": false
+      "icon_name": "exclamation-mark.png"
     }
     """
 
@@ -83,8 +80,7 @@ Feature: Create a pbehavior type
       "description": "Active state type",
       "type": "active",
       "priority": 277,
-      "icon_name": "exclamation-mark.png",
-      "sli_maintenance": false
+      "icon_name": "exclamation-mark.png"
     }
     """
     Then the response code should be 201
@@ -137,8 +133,7 @@ Feature: Create a pbehavior type
       "type": "active",
       "priority": 188,
       "icon_name": "exclamation-mark.png",
-      "color": "green",
-      "sli_maintenance": true
+      "color": "green"
     }
     """
     When I do GET /api/v4/pbehavior-types/{{ .lastResponse._id}}
@@ -151,7 +146,6 @@ Feature: Create a pbehavior type
       "type": "active",
       "priority": 188,
       "icon_name": "exclamation-mark.png",
-      "color": "green",
-      "sli_maintenance": true
+      "color": "green"
     }
     """
