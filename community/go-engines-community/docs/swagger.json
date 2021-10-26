@@ -11284,9 +11284,6 @@
                 "priority": {
                     "type": "integer"
                 },
-                "sli_maintenance": {
-                    "type": "boolean"
-                },
                 "type": {
                     "type": "string"
                 }
@@ -11501,7 +11498,6 @@
                 "icon_name",
                 "name",
                 "priority",
-                "sli_maintenance",
                 "type"
             ],
             "properties": {
@@ -11519,9 +11515,6 @@
                 },
                 "priority": {
                     "type": "integer"
-                },
-                "sli_maintenance": {
-                    "type": "boolean"
                 },
                 "type": {
                     "type": "string"
@@ -11554,9 +11547,6 @@
                 },
                 "priority": {
                     "type": "integer"
-                },
-                "sli_maintenance": {
-                    "type": "boolean"
                 },
                 "type": {
                     "type": "string"
@@ -12764,6 +12754,11 @@
                 "reason": {
                     "description": "Reason is Name of pbehavior.Reason.",
                     "type": "string"
+                },
+                "timestamp": {
+                    "description": "Timestamp is time when entity enters pbehavior.\nUse pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.",
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
                 },
                 "type": {
                     "description": "TypeID is ID of pbehavior.Type.",

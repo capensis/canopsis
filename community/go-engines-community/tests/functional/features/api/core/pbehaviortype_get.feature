@@ -23,8 +23,7 @@ Feature: Get a pbehavior type
       "icon_name": "test-to-get-icon",
       "name": "Some State",
       "priority": 8,
-      "type": "active",
-      "sli_maintenance": false
+      "type": "active"
     }
     """
 
@@ -68,8 +67,7 @@ Feature: Get a pbehavior type
           "icon_name": "test-to-find-icon",
           "name": "Find State",
           "priority": 9,
-          "type": "active",
-          "sli_maintenance": false
+          "type": "active"
         }
       ]
     }
@@ -96,7 +94,6 @@ Feature: Get a pbehavior type
           "name": "Default Type Active",
           "priority": 2,
           "type": "active",
-          "sli_maintenance": false,
           "editable": false,
           "deletable": false
         },
@@ -107,7 +104,6 @@ Feature: Get a pbehavior type
           "name": "Default Type Inactive",
           "priority": 1,
           "type": "inactive",
-          "sli_maintenance": false,
           "editable": false,
           "deletable": false
         },
@@ -118,7 +114,6 @@ Feature: Get a pbehavior type
           "name": "Default Type Maintenance",
           "priority": 4,
           "type": "maintenance",
-          "sli_maintenance": false,
           "editable": false,
           "deletable": false
         },
@@ -129,7 +124,6 @@ Feature: Get a pbehavior type
           "name": "Default Type Pause",
           "priority": 3,
           "type": "pause",
-          "sli_maintenance": false,
           "editable": false,
           "deletable": false
         }

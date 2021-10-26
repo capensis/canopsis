@@ -11300,9 +11300,6 @@ var doc = `{
                 "priority": {
                     "type": "integer"
                 },
-                "sli_maintenance": {
-                    "type": "boolean"
-                },
                 "type": {
                     "type": "string"
                 }
@@ -11517,7 +11514,6 @@ var doc = `{
                 "icon_name",
                 "name",
                 "priority",
-                "sli_maintenance",
                 "type"
             ],
             "properties": {
@@ -11535,9 +11531,6 @@ var doc = `{
                 },
                 "priority": {
                     "type": "integer"
-                },
-                "sli_maintenance": {
-                    "type": "boolean"
                 },
                 "type": {
                     "type": "string"
@@ -11570,9 +11563,6 @@ var doc = `{
                 },
                 "priority": {
                     "type": "integer"
-                },
-                "sli_maintenance": {
-                    "type": "boolean"
                 },
                 "type": {
                     "type": "string"
@@ -12780,6 +12770,11 @@ var doc = `{
                 "reason": {
                     "description": "Reason is Name of pbehavior.Reason.",
                     "type": "string"
+                },
+                "timestamp": {
+                    "description": "Timestamp is time when entity enters pbehavior.\nUse pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.",
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
                 },
                 "type": {
                     "description": "TypeID is ID of pbehavior.Type.",

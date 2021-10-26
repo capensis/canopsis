@@ -20,8 +20,7 @@ Feature: Update a pbehavior type
       "description": "Maintenance state type",
       "type": "maintenance",
       "priority": 399,
-      "icon_name": "exclamation-mark.png",
-      "sli_maintenance": false
+      "icon_name": "exclamation-mark.png"
     }
     """
     Then the response code should be 404
@@ -47,7 +46,6 @@ Feature: Update a pbehavior type
         "icon_name": "IconName is missing.",
         "name": "Name is missing.",
         "priority": "Priority is missing.",
-        "sli_maintenance": "SLIMaintenance is missing.",
         "type": "Type is missing."
       }
     }
@@ -77,8 +75,7 @@ Feature: Update a pbehavior type
       "description": "Maintenance state type",
       "type": "maintenance",
       "priority": 399,
-      "icon_name": "exclamation-mark.png",
-      "sli_maintenance": false
+      "icon_name": "exclamation-mark.png"
     }
     """
     Then the response code should be 200
@@ -90,8 +87,7 @@ Feature: Update a pbehavior type
       "description": "Maintenance state type",
       "type": "maintenance",
       "priority": 399,
-      "icon_name": "exclamation-mark.png",
-      "sli_maintenance": false
+      "icon_name": "exclamation-mark.png"
     }
     """
 
@@ -124,8 +120,7 @@ Feature: Update a pbehavior type
       "description": "Maintenance state type",
       "type": "maintenance",
       "priority": 3,
-      "icon_name": "exclamation-mark.png",
-      "sli_maintenance": false
+      "icon_name": "exclamation-mark.png"
     }
     """
     Then the response code should be 400
