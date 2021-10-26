@@ -53,6 +53,9 @@
       "models_healthcheck": {
         "checksum": 1
       },
+      "models_healthcheckStatus": {
+        "checksum": 1
+      },
       "models_notification_instructionStats": {
         "checksum": 15
       },

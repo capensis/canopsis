@@ -154,8 +154,9 @@ type RPCWebhookResultEvent struct {
 }
 
 type RPCRemediationEvent struct {
-	Alarm  *Alarm  `json:"alarm"`
-	Entity *Entity `json:"entity"`
+	Alarm       *Alarm      `json:"alarm"`
+	Entity      *Entity     `json:"entity"`
+	AlarmChange AlarmChange `json:"alarm_change"`
 }
 
 type RPCRemediationJobEvent struct {

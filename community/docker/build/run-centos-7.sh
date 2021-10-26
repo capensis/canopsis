@@ -15,10 +15,11 @@ rm -f /etc/localtime
 ln -s /usr/share/zoneinfo/UTC /etc/localtime
 
 yum --color=never makecache
+yum --color=never -y update ca-certificates || true
+yum --color=never update -y
+
 yum --color=never install -y epel-release
 yum --color=never makecache
-
-yum --color=never update -y
 
 yum --color=never install -y \
     bzip2 \

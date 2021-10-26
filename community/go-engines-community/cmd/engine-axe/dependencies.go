@@ -190,6 +190,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			ServiceRpc:               serviceRpcClient,
 			PbhRpc:                   pbhRpcClient,
+			RemediationRpc:           remediationRpcClient,
 			AlarmAdapter:             alarm.NewAdapter(dbClient),
 			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, statsService),
 			Encoder:                  json.NewEncoder(),
