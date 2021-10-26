@@ -9,6 +9,7 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
@@ -23,6 +24,7 @@ type periodicalWorker struct {
 	ChannelPub          libamqp.Channel
 	AlarmService        libalarm.Service
 	AlarmAdapter        libalarm.Adapter
+	AlarmStatusService  alarmstatus.Service
 	Encoder             encoding.Encoder
 	IdleAlarmService    idlealarm.Service
 	AlarmConfigProvider config.AlarmConfigProvider
@@ -40,19 +42,25 @@ func (w *periodicalWorker) Work(parentCtx context.Context) error {
 	idleCtx, cancel := context.WithTimeout(ctx, w.GetInterval())
 	defer cancel()
 
+	err := w.AlarmStatusService.Load(ctx)
+	if err != nil {
+		w.Logger.Error().Err(err).Msg("cannot load alarm status rules")
+	}
+
 	alarmConfig := w.AlarmConfigProvider.Get()
 	if alarmConfig.TimeToKeepResolvedAlarms > 0 {
 		w.Logger.Debug().Msg("Delete outdated resolved alarms")
 
 		err := w.AlarmAdapter.DeleteResolvedAlarms(ctx, alarmConfig.TimeToKeepResolvedAlarms)
 		if err != nil {
-			return err
+			w.Logger.Error().Err(err).Msg("cannot delete resolved alarms")
+			return nil
 		}
 	}
 
 	// Resolve the alarms whose state is info.
 	w.Logger.Debug().Msg("Closing alarms")
-	closed, err := w.AlarmService.ResolveAlarms(ctx, alarmConfig)
+	closed, err := w.AlarmService.ResolveClosed(ctx)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("cannot resolve ok alarms")
 		return nil
@@ -91,7 +99,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) error {
 	// This is the reason why the statusUpdated alarms are not added to the
 	// resolvedAlarms slice.
 	w.Logger.Debug().Msg("Update flapping alarms")
-	statusUpdated, err := w.AlarmService.UpdateFlappingAlarms(ctx, alarmConfig)
+	statusUpdated, err := w.AlarmService.UpdateFlappingAlarms(ctx)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("cannot update flapping alarms")
 		return nil
