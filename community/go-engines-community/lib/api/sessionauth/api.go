@@ -4,16 +4,18 @@ package sessionauth
 
 import (
 	"context"
-	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
+	"net/http"
+	"time"
 )
 
 type API interface {
@@ -26,23 +28,26 @@ func NewApi(
 	providers []security.Provider,
 	websocketHub websocket.Hub,
 	tokenStore token.Store,
+	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		sessionStore: sessionStore,
-		providers:    providers,
-		websocketHub: websocketHub,
-		tokenStore:   tokenStore,
-		logger:       logger,
+		sessionStore:  sessionStore,
+		providers:     providers,
+		websocketHub:  websocketHub,
+		tokenStore:    tokenStore,
+		metricsSender: metricsSender,
+		logger:        logger,
 	}
 }
 
 type api struct {
-	sessionStore libsession.Store
-	providers    []security.Provider
-	websocketHub websocket.Hub
-	tokenStore   token.Store
-	logger       zerolog.Logger
+	sessionStore  libsession.Store
+	providers     []security.Provider
+	metricsSender metrics.Sender
+	websocketHub  websocket.Hub
+	tokenStore    token.Store
+	logger        zerolog.Logger
 }
 
 // LoginHandler authenticates user and starts sessions.
@@ -90,6 +95,8 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 		}
 
 		a.sendWebsocketMessage(c)
+		a.metricsSender.SendUserLogin(c.Request.Context(), time.Now(), user.ID)
+
 		c.JSON(http.StatusOK, response)
 	}
 }

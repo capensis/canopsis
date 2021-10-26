@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -132,6 +133,7 @@ func RegisterRoutes(
 	filesRoot string,
 	websocketHub websocket.Hub,
 	broadcastMessageChan chan<- bool,
+	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -146,6 +148,7 @@ func RegisterRoutes(
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
 		security.GetCookieOptions().Secure,
+		metricsSender,
 		logger,
 	)
 	sessionauthApi := sessionauth.NewApi(
@@ -153,6 +156,7 @@ func RegisterRoutes(
 		security.GetAuthProviders(),
 		websocketHub,
 		security.GetTokenStore(),
+		metricsSender,
 		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())

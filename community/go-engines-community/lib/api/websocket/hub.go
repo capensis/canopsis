@@ -54,6 +54,8 @@ type Hub interface {
 	CloseRoomAndNotify(room string) error
 	// RoomHasConnection returns true if room listens at least one connection.
 	RoomHasConnection(room string) bool
+	// GetUniqueUsers returns slice of unique users from all connections.
+	GetUniqueUsers() []string
 }
 
 func NewHub(
@@ -695,4 +697,20 @@ func (h *hub) removeConnsFromRoom(room string, connIds []string) {
 	}
 
 	h.rooms[room] = filteredConns
+}
+
+func (h *hub) GetUniqueUsers() []string {
+	h.connsMx.Lock()
+	defer h.connsMx.Unlock()
+
+	users := make([]string, 0)
+	usersMap := make(map[string]bool)
+	for _, conn := range h.conns {
+		if conn.userId != "" && !usersMap[conn.userId] {
+			usersMap[conn.userId] = true
+			users = append(users, conn.userId)
+		}
+	}
+
+	return users
 }
