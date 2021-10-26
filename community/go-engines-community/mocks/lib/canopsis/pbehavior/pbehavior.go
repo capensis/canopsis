@@ -268,6 +268,21 @@ func (mr *MockEventManagerMockRecorder) GetEvent(arg0, arg1, arg2 interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEvent", reflect.TypeOf((*MockEventManager)(nil).GetEvent), arg0, arg1, arg2)
 }
 
+// GetEventType mocks base method
+func (m *MockEventManager) GetEventType(arg0 pbehavior.ResolveResult, arg1 types.PbehaviorInfo) (string, string) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetEventType", arg0, arg1)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(string)
+	return ret0, ret1
+}
+
+// GetEventType indicates an expected call of GetEventType
+func (mr *MockEventManagerMockRecorder) GetEventType(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEventType", reflect.TypeOf((*MockEventManager)(nil).GetEventType), arg0, arg1)
+}
+
 // MockComputedEntityMatcher is a mock of ComputedEntityMatcher interface
 type MockComputedEntityMatcher struct {
 	ctrl     *gomock.Controller
@@ -289,6 +304,21 @@ func NewMockComputedEntityMatcher(ctrl *gomock.Controller) *MockComputedEntityMa
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockComputedEntityMatcher) EXPECT() *MockComputedEntityMatcherMockRecorder {
 	return m.recorder
+}
+
+// GetComputedEntityIDs mocks base method
+func (m *MockComputedEntityMatcher) GetComputedEntityIDs(arg0 context.Context) ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetComputedEntityIDs", arg0)
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetComputedEntityIDs indicates an expected call of GetComputedEntityIDs
+func (mr *MockComputedEntityMatcherMockRecorder) GetComputedEntityIDs(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetComputedEntityIDs", reflect.TypeOf((*MockComputedEntityMatcher)(nil).GetComputedEntityIDs), arg0)
 }
 
 // LoadAll mocks base method

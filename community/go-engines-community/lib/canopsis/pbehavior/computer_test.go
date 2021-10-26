@@ -32,7 +32,19 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 
 	mockPbhDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEntityDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockDbClient.EXPECT().Collection(mongo.PbehaviorMongoCollection).Return(mockPbhDbCollection)
+	mockAlarmDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockDbClient.EXPECT().Collection(gomock.Any()).DoAndReturn(func(collection string) mongo.DbCollection {
+		switch collection {
+		case mongo.AlarmMongoCollection:
+			return mockAlarmDbCollection
+		case mongo.EntityMongoCollection:
+			return mockEntityDbCollection
+		case mongo.PbehaviorMongoCollection:
+			return mockPbhDbCollection
+		}
+		t.Errorf("uknown collection")
+		return nil
+	}).AnyTimes()
 	mockSingleResultHelper := mock_mongo.NewMockSingleResultHelper(ctrl)
 	mockCursor := mock_mongo.NewMockCursor(ctrl)
 	mockPbhDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).
@@ -40,8 +52,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 	mockSingleResultHelper.EXPECT().Decode(gomock.Any()).Do(func(pbh *pbehavior.PBehavior) {
 		pbh.Filter = "{\"name\":\"test-name\"}"
 	}).Return(nil)
-	mockDbClient.EXPECT().Collection(mongo.EntityMongoCollection).Return(mockEntityDbCollection)
-	mockEntityDbCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(mockCursor, nil)
+	mockEntityDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockCursor, nil)
 	mockCursor.EXPECT().Next(gomock.Any()).Return(false)
 
 	computer := pbehavior.NewCancelableComputer(mockService,
@@ -70,6 +81,21 @@ func TestCancelableComputer_Compute_GivenEmptyPbehaviorID_ShouldRecomputeAllPbeh
 	defer ctrl.Finish()
 	mockService := mock_pbehavior.NewMockService(ctrl)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
+	mockPbhDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockEntityDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockAlarmDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockDbClient.EXPECT().Collection(gomock.Any()).DoAndReturn(func(collection string) mongo.DbCollection {
+		switch collection {
+		case mongo.AlarmMongoCollection:
+			return mockAlarmDbCollection
+		case mongo.EntityMongoCollection:
+			return mockEntityDbCollection
+		case mongo.PbehaviorMongoCollection:
+			return mockPbhDbCollection
+		}
+		t.Errorf("uknown collection")
+		return nil
+	}).AnyTimes()
 	mockEventManager := mock_pbehavior.NewMockEventManager(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockPublisher := mock_amqp.NewMockPublisher(ctrl)
@@ -101,15 +127,19 @@ func TestCancelableComputer_Compute_GivenPbehaviorIDAndOperationType_ShouldSendP
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockPbhDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEntityDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockAlarmDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEventManager := mock_pbehavior.NewMockEventManager(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockPublisher := mock_amqp.NewMockPublisher(ctrl)
 	pbehaviorID := "test-pbehavior-id"
 	queue := "test-queue"
-	alarm := types.AlarmWithEntity{
-		Alarm:  types.Alarm{},
-		Entity: types.Entity{},
-	}
+	alarm := types.Alarm{Value: types.AlarmValue{
+		Connector:     "test-connector",
+		ConnectorName: "test-connector-name",
+		Component:     "test-component",
+		Resource:      "test-resource",
+	}}
+	entity := types.Entity{ID: "test-entity-id"}
 	resolveResult := pbehavior.ResolveResult{
 		ResolvedType: &pbehavior.Type{
 			ID:   "test-type-id",
@@ -127,6 +157,8 @@ func TestCancelableComputer_Compute_GivenPbehaviorIDAndOperationType_ShouldSendP
 		switch collectionName {
 		case mongo.PbehaviorMongoCollection:
 			return mockPbhDbCollection
+		case mongo.AlarmMongoCollection:
+			return mockAlarmDbCollection
 		case mongo.EntityMongoCollection:
 			return mockEntityDbCollection
 		}
@@ -140,18 +172,24 @@ func TestCancelableComputer_Compute_GivenPbehaviorIDAndOperationType_ShouldSendP
 		*pbh = pbehavior.PBehavior{Filter: "{\"name\":\"test-name\"}"}
 	}).Return(nil)
 	mockEntityCursor := mock_mongo.NewMockCursor(ctrl)
-	mockEntityDbCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(mockEntityCursor, nil)
-	firstCall := mockEntityCursor.EXPECT().Next(gomock.Any()).Return(true)
-	secondCall := mockEntityCursor.EXPECT().Next(gomock.Any()).Return(false)
-	gomock.InOrder(firstCall, secondCall)
-	mockEntityCursor.EXPECT().Decode(gomock.Any()).Do(func(a *types.AlarmWithEntity) {
+	mockEntityDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockEntityCursor, nil)
+	gomock.InOrder(
+		mockEntityCursor.EXPECT().Next(gomock.Any()).Return(true),
+		mockEntityCursor.EXPECT().Next(gomock.Any()).Return(false),
+	)
+	mockEntityCursor.EXPECT().Decode(gomock.Any()).Do(func(e *types.Entity) {
+		*e = entity
+	}).Return(nil)
+	mockAlarmSingleResult := mock_mongo.NewMockSingleResultHelper(ctrl)
+	mockAlarmDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockAlarmSingleResult)
+	mockAlarmSingleResult.EXPECT().Decode(gomock.Any()).Do(func(a *types.Alarm) {
 		*a = alarm
 	}).Return(nil)
 
-	mockEventManager.EXPECT().GetEvent(gomock.Eq(resolveResult), gomock.Any(), gomock.Any()).
-		Return(event)
+	mockEventManager.EXPECT().GetEventType(gomock.Eq(resolveResult), gomock.Any()).
+		Return(event.EventType, event.Output)
 
-	mockEncoder.EXPECT().Encode(gomock.Eq(event)).Return(body, nil)
+	mockEncoder.EXPECT().Encode(gomock.Any()).Return(body, nil)
 
 	mockPublisher.EXPECT().
 		Publish(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Eq(amqp.Publishing{

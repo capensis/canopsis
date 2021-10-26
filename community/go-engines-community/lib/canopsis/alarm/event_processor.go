@@ -97,6 +97,9 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		}
 
 		alarmChange.Type = changeType
+		if event.Alarm != nil {
+			s.updateEntity(ctx, event.Entity, *event.Alarm, changeType)
+		}
 		return alarmChange, err
 	case types.EventTypeNoEvents:
 		changeType, err := s.processNoEvents(ctx, event)
@@ -109,6 +112,26 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	if event.Alarm == nil {
+		switch event.EventType {
+		case types.EventTypePbhEnter, types.EventTypePbhLeave, types.EventTypePbhLeaveAndEnter:
+			if event.Entity.PbehaviorInfo != event.PbehaviorInfo {
+				alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
+				alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
+				if alarmChange.PreviousPbehaviorTypeID == "" {
+					alarmChange.Type = types.AlarmChangeTypePbhEnter
+				} else if event.PbehaviorInfo.TypeID == "" {
+					alarmChange.Type = types.AlarmChangeTypePbhLeave
+				} else {
+					alarmChange.Type = types.AlarmChangeTypePbhLeaveAndEnter
+				}
+				event.Entity.PbehaviorInfo = event.PbehaviorInfo
+				err := s.entityAdapter.UpdatePbehaviorInfo(ctx, event.Entity.ID, event.Entity.PbehaviorInfo)
+				if err != nil {
+					s.logger.Err(err).Msg("cannot update entity")
+				}
+			}
+		}
+
 		return alarmChange, nil
 	}
 
@@ -152,6 +175,8 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	alarmChange.Type = changeType
+
+	s.updateEntity(ctx, event.Entity, *event.Alarm, changeType)
 
 	return alarmChange, nil
 }
@@ -219,7 +244,7 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 		changeType = types.AlarmChangeTypeCreate
 	} else {
 		output := fmt.Sprintf(
-			"Pbehavior %s. Type: %s. Reason: %s",
+			"Pbehavior %s. Type: %s. Reason: %s.",
 			event.PbehaviorInfo.Name,
 			event.PbehaviorInfo.TypeName,
 			event.PbehaviorInfo.Reason,
@@ -334,13 +359,31 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 			return changeType, err
 		}
 
+		changeType = types.AlarmChangeTypeCreate
+
+		if !event.PbehaviorInfo.IsDefaultActive() {
+			output := fmt.Sprintf(
+				"Pbehavior %s. Type: %s. Reason: %s.",
+				event.PbehaviorInfo.Name,
+				event.PbehaviorInfo.TypeName,
+				event.PbehaviorInfo.Reason,
+			)
+
+			err := alarm.PartialUpdatePbhEnter(event.Timestamp, event.PbehaviorInfo,
+				event.Author, output, event.Role, event.Initiator)
+			if err != nil {
+				return changeType, err
+			}
+
+			changeType = types.AlarmChangeTypeCreateAndPbhEnter
+		}
+
 		err = s.adapter.Insert(ctx, alarm)
 		if err != nil {
 			return changeType, err
 		}
 
 		event.Alarm = &alarm
-		changeType = types.AlarmChangeTypeCreate
 		go s.metricsSender.SendCreate(ctx, alarm, alarm.Value.CreationDate.Time)
 	} else {
 		alarm := event.Alarm
@@ -761,6 +804,18 @@ func (s *eventProcessor) updateMetaLastEventDate(ctx context.Context, event *typ
 	}
 	if err != nil {
 		s.logger.Error().Err(err).Msgf("error changestate meta-alarm from children %+v", event.Alarm)
+	}
+}
+
+func (s *eventProcessor) updateEntity(ctx context.Context, entity *types.Entity, alarm types.Alarm, changeType types.AlarmChangeType) {
+	switch changeType {
+	case types.AlarmChangeTypeCreateAndPbhEnter, types.AlarmChangeTypePbhEnter,
+		types.AlarmChangeTypePbhLeave, types.AlarmChangeTypePbhLeaveAndEnter:
+		entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
+		err := s.entityAdapter.UpdatePbehaviorInfo(ctx, entity.ID, entity.PbehaviorInfo)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot update entity")
+		}
 	}
 }
 
