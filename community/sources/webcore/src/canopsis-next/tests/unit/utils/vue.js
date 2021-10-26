@@ -1,8 +1,8 @@
 import Vue from 'vue';
-import Vuetify from 'vuetify';
-import { merge } from 'lodash';
-import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
+import Vuetify from 'vuetify';
+import { get, merge } from 'lodash';
+import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
 
 import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
@@ -40,6 +40,8 @@ Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin, { i18n });
+
+Vue.filter('get', get);
 
 const stubs = {
   'mq-layout': MqLayout,
