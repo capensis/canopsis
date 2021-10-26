@@ -222,7 +222,7 @@ Feature: entity_service idle_rules integration
       ]
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/entities?search=test-idle-since-integration-resource-2
     Then the response code should be 200
     When I save response idleSince={{ (index .lastResponse.data 0).idle_since }}

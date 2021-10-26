@@ -117,12 +117,5 @@
     "author": "test-category-to-entitybasic-edit-author",
     "created": 1592215337,
     "updated": 1592215337
-  },
-  {
-    "_id": "test-category-pbehavior-weather-service-is-grey",
-    "name": "test-category-pbehavior-weather-service-is-grey-name",
-    "author": "test-category-pbehavior-weather-service-is-grey-author",
-    "created": 1592215337,
-    "updated": 1592215337
   }
 ]

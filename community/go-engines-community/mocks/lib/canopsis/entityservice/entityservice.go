@@ -81,21 +81,6 @@ func (mr *MockAdapterMockRecorder) GetByID(arg0, arg1 interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockAdapter)(nil).GetByID), arg0, arg1)
 }
 
-// GetCounters mocks base method
-func (m *MockAdapter) GetCounters(arg0 context.Context, arg1 string) (mongo.Cursor, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCounters", arg0, arg1)
-	ret0, _ := ret[0].(mongo.Cursor)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetCounters indicates an expected call of GetCounters
-func (mr *MockAdapterMockRecorder) GetCounters(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCounters", reflect.TypeOf((*MockAdapter)(nil).GetCounters), arg0, arg1)
-}
-
 // GetEnabled mocks base method
 func (m *MockAdapter) GetEnabled(arg0 context.Context) ([]entityservice.EntityService, error) {
 	m.ctrl.T.Helper()
@@ -109,6 +94,36 @@ func (m *MockAdapter) GetEnabled(arg0 context.Context) ([]entityservice.EntitySe
 func (mr *MockAdapterMockRecorder) GetEnabled(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabled", reflect.TypeOf((*MockAdapter)(nil).GetEnabled), arg0)
+}
+
+// GetOpenAlarmsOfServiceDependencies mocks base method
+func (m *MockAdapter) GetOpenAlarmsOfServiceDependencies(arg0 context.Context, arg1 string) (mongo.Cursor, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOpenAlarmsOfServiceDependencies", arg0, arg1)
+	ret0, _ := ret[0].(mongo.Cursor)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOpenAlarmsOfServiceDependencies indicates an expected call of GetOpenAlarmsOfServiceDependencies
+func (mr *MockAdapterMockRecorder) GetOpenAlarmsOfServiceDependencies(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenAlarmsOfServiceDependencies", reflect.TypeOf((*MockAdapter)(nil).GetOpenAlarmsOfServiceDependencies), arg0, arg1)
+}
+
+// GetServiceDependencies mocks base method
+func (m *MockAdapter) GetServiceDependencies(arg0 context.Context, arg1 string) (mongo.Cursor, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetServiceDependencies", arg0, arg1)
+	ret0, _ := ret[0].(mongo.Cursor)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetServiceDependencies indicates an expected call of GetServiceDependencies
+func (mr *MockAdapterMockRecorder) GetServiceDependencies(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetServiceDependencies", reflect.TypeOf((*MockAdapter)(nil).GetServiceDependencies), arg0, arg1)
 }
 
 // GetValid mocks base method

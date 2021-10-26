@@ -160,6 +160,7 @@ Feature: get pbehavior
     }
     """
     Then the response code should be 201
+    When I wait the end of event processing
     When I wait 1s
     When I do POST /api/v4/pbehaviors:
     """json
