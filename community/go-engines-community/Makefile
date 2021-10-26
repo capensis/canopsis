@@ -151,7 +151,10 @@ $(DOCKER_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker-builder
 		--file "$(DOCKERFILE_PATH)" \
 		"$(MONOREPO_ROOT)"
 
+# Targets having some extra content on top of the generic final-container
 docker-canopsis-api: TARGET=canopsis-api
+docker-connector-junit: TARGET=connector-junit
+docker-engine-webhook: TARGET=engine-webhook
 
 #
 # INSTALLATION
