@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"runtime/trace"
 	"sync"
 	"time"
@@ -30,6 +31,7 @@ type eventProcessor struct {
 	alarmConfigProvider config.AlarmConfigProvider
 	executor            liboperation.Executor
 	logger              zerolog.Logger
+	metricsSender       metrics.Sender
 }
 
 func NewEventProcessor(
@@ -39,6 +41,7 @@ func NewEventProcessor(
 	alarmConfigProvider config.AlarmConfigProvider,
 	executor liboperation.Executor,
 	redisLockClient redis.LockClient,
+	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) EventProcessor {
 	return &eventProcessor{
@@ -48,6 +51,7 @@ func NewEventProcessor(
 		alarmConfigProvider: alarmConfigProvider,
 		executor:            executor,
 		redisLockClient:     redisLockClient,
+		metricsSender:       metricsSender,
 		logger:              logger,
 	}
 }
@@ -260,6 +264,14 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 		return changeType, err
 	}
 
+	if changeType == types.AlarmChangeTypeCreate {
+		go s.metricsSender.SendCreate(ctx, alarm, alarm.Value.CreationDate.Time)
+	}
+
+	if changeType == types.AlarmChangeTypeCreateAndPbhEnter {
+		go s.metricsSender.SendCreateAndPbhEnter(ctx, alarm, alarm.Value.CreationDate.Time)
+	}
+
 	event.Alarm = &alarm
 
 	return changeType, nil
@@ -372,6 +384,7 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 		}
 
 		event.Alarm = &alarm
+		go s.metricsSender.SendCreate(ctx, alarm, alarm.Value.CreationDate.Time)
 	} else {
 		alarm := event.Alarm
 		previousState := alarm.CurrentState()
@@ -572,6 +585,17 @@ func (s *eventProcessor) processMetaAlarmCreateEvent(ctx context.Context, event 
 	if err != nil {
 		return types.AlarmChangeTypeNone, err
 	}
+
+	go func() {
+		timestamp := time.Now()
+		if !event.Timestamp.IsZero() {
+			timestamp = event.Timestamp.Time
+		}
+
+		for _, child := range childAlarms {
+			s.metricsSender.SendCorrelation(ctx, timestamp, child)
+		}
+	}()
 
 	event.Alarm = &metaAlarm
 	return types.AlarmChangeTypeCreate, nil
