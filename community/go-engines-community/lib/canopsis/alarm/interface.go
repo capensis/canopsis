@@ -49,6 +49,7 @@ type Adapter interface {
 	GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
 	GetOpenedAlarmByAlarmId(ctx context.Context, id string) (types.Alarm, error)
+	GetAlarmByAlarmId(ctx context.Context, id string) (types.Alarm, error)
 
 	// GetOpenedAlarm find one opened alarm with his entity id.
 	// Note : a control is added to prevent fetching future alarms.

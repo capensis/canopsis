@@ -110,6 +110,21 @@ func (mr *MockAdapterMockRecorder) DeleteResolvedAlarms(arg0, arg1 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteResolvedAlarms", reflect.TypeOf((*MockAdapter)(nil).DeleteResolvedAlarms), arg0, arg1)
 }
 
+// GetAlarmByAlarmId mocks base method
+func (m *MockAdapter) GetAlarmByAlarmId(arg0 context.Context, arg1 string) (types.Alarm, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAlarmByAlarmId", arg0, arg1)
+	ret0, _ := ret[0].(types.Alarm)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAlarmByAlarmId indicates an expected call of GetAlarmByAlarmId
+func (mr *MockAdapterMockRecorder) GetAlarmByAlarmId(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAlarmByAlarmId", reflect.TypeOf((*MockAdapter)(nil).GetAlarmByAlarmId), arg0, arg1)
+}
+
 // GetAlarmsByID mocks base method
 func (m *MockAdapter) GetAlarmsByID(arg0 context.Context, arg1 string) ([]types.Alarm, error) {
 	m.ctrl.T.Helper()

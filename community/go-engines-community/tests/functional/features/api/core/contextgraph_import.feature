@@ -74,9 +74,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
        "status": "done"
@@ -156,9 +154,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "done"
@@ -211,9 +207,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -244,9 +238,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "done"
@@ -304,9 +296,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "done"
@@ -369,9 +359,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "done"
@@ -418,9 +406,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "done"
@@ -467,9 +453,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "done"
@@ -517,9 +501,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -550,9 +532,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "done"
@@ -598,9 +578,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -631,9 +609,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "done"
@@ -679,9 +655,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -711,9 +685,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "done"
@@ -812,9 +784,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "done"
@@ -901,9 +871,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -928,9 +896,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -959,9 +925,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -990,9 +954,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -1022,9 +984,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -1054,9 +1014,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -1083,9 +1041,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -1112,9 +1068,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -1132,9 +1086,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -1152,9 +1104,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -1170,9 +1120,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "failed"
@@ -1197,9 +1145,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "done"
@@ -1283,14 +1229,13 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
-        "status": "done"
+      "status": "done"
     }
     """
+    When I wait 2s
     When I do GET /api/v4/entitybasics?_id=SC004C
     Then the response code should be 200
     Then the response body should contain:
@@ -1444,9 +1389,7 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
     """json
     {
         "status": "done"
@@ -1521,5 +1464,237 @@ Feature: Import entities
         },
         "type": "resource",
         "impact_level": 1
+    }
+    """
+
+  Scenario: given import with create component and resource should update resource component_infos
+    When I am admin
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "_id": "test-component-contextgraph-import-28",
+            "name": "test-component-contextgraph-import-28",
+            "type": "component",
+            "infos": {
+              "test_info": {
+                "description": "description 1",
+                "value": "value 1"
+              }
+            },
+            "action": "create",
+            "enabled": true
+          },
+          {
+            "_id": "test-resource-contextgraph-import-28/test-component-contextgraph-import-28",
+            "name": "test-resource-contextgraph-import-28",
+            "type": "resource",
+            "action": "create",
+            "enabled": true
+          }
+        ],
+        "links": [
+          {
+            "from": [
+              "test-resource-contextgraph-import-28/test-component-contextgraph-import-28"
+            ],
+            "to": "test-component-contextgraph-import-28",
+            "action": "create",
+            "infos": {},
+            "id": "id_0",
+            "properties": []
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+     "status": "done"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-import-28/test-component-contextgraph-import-28
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "component": "test-component-contextgraph-import-28",
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "value 1"
+        }
+      }
+    }
+    """
+
+  Scenario: given import with create resource should set resource component_infos
+    When I am admin
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "_id": "test-component-contextgraph-import-29",
+            "name": "test-component-contextgraph-import-29",
+            "type": "component",
+            "infos": {
+              "test_info": {
+                "description": "description 1",
+                "value": "value 1"
+              }
+            },
+            "action": "create",
+            "enabled": true
+          }
+        ],
+        "links": []
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+     "status": "done"
+    }
+    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "_id": "test-resource-contextgraph-import-29/test-component-contextgraph-import-29",
+            "name": "test-resource-contextgraph-import-29",
+            "type": "resource",
+            "action": "create",
+            "enabled": true
+          }
+        ],
+        "links": [
+          {
+            "from": [
+              "test-resource-contextgraph-import-29/test-component-contextgraph-import-29"
+            ],
+            "to": "test-component-contextgraph-import-29",
+            "action": "create",
+            "infos": {},
+            "id": "id_0",
+            "properties": []
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+     "status": "done"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-import-29/test-component-contextgraph-import-29
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "component": "test-component-contextgraph-import-29",
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "value 1"
+        }
+      }
+    }
+    """
+
+  Scenario: given import with create component should set resource component_infos
+    When I am admin
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "_id": "test-resource-contextgraph-import-30/test-component-contextgraph-import-30",
+            "name": "test-resource-contextgraph-import-30",
+            "type": "resource",
+            "action": "create",
+            "enabled": true
+          }
+        ],
+        "links": []
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+     "status": "done"
+    }
+    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "_id": "test-component-contextgraph-import-30",
+            "name": "test-component-contextgraph-import-30",
+            "type": "component",
+            "infos": {
+              "test_info": {
+                "description": "description 1",
+                "value": "value 1"
+              }
+            },
+            "action": "create",
+            "enabled": true
+          }
+        ],
+        "links": [
+          {
+            "from": [
+              "test-resource-contextgraph-import-30/test-component-contextgraph-import-30"
+            ],
+            "to": "test-component-contextgraph-import-30",
+            "action": "create",
+            "infos": {},
+            "id": "id_0",
+            "properties": []
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+     "status": "done"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-import-30/test-component-contextgraph-import-30
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "component": "test-component-contextgraph-import-30",
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "value 1"
+        }
+      }
     }
     """

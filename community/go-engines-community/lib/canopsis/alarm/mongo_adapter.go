@@ -214,6 +214,12 @@ func (a mongoAdapter) GetOpenedAlarmByAlarmId(ctx context.Context, id string) (t
 	})
 }
 
+func (a mongoAdapter) GetAlarmByAlarmId(ctx context.Context, id string) (types.Alarm, error) {
+	return a.getAlarmWithErr(ctx, bson.M{
+		"_id": id,
+	})
+}
+
 func (a mongoAdapter) GetOpenedAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error) {
 	return a.getAlarmWithErr(ctx, bson.M{
 		"d":                id,

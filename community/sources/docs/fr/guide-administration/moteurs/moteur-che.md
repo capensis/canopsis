@@ -1,6 +1,6 @@
 # Moteur `engine-che` (Community)
 
-Le moteur `engine-che` permet d'enrichir les [événements](../../guide-developpement/struct-event.md) (via son [`event-filter`](moteur-che-event_filter.md)), de créer et d'enrichir les entités et de créer le context-graph.
+Le moteur `engine-che` permet d'enrichir les événements (via son [`event-filter`](moteur-che-event_filter.md)), de créer et d'enrichir les entités et de créer le context-graph.
 
 ## Utilisation
 
@@ -20,7 +20,7 @@ Cette fonctionnalité sera aussi disponible en installation par paquets lors d'u
 
 À l'arrivée dans sa file, le moteur `engine-che` va leur appliquer les règles d'enrichissement de son [`event-filter`](moteur-che-event_filter.md).
 
-Si l'événement est de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) ou [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : au prochain battement (*beat*) du moteur, il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre à jour le context-graph qui gère les liens entre les entités.
+Si l'événement est de type `check` ou `declareticket` : au prochain battement (*beat*) du moteur, il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre à jour le context-graph qui gère les liens entre les entités.
 
 ## Activation des plugins d'enrichissement externe (`datasource`)
 
