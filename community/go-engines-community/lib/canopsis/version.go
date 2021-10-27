@@ -3,17 +3,24 @@ package canopsis
 import (
 	"fmt"
 	"os"
+	"strconv"
+	"time"
 )
 
-// BuildDate ...
+// BuildDate is a Unix timestamp (as a string)
 var BuildDate string
 
-// BuildGitCommit is the short version of git commit
+// BuildGitCommit is the short version of Git commit
 var BuildGitCommit string
 
-// PrintVersion outputs versions informations
+// PrintVersion outputs version information
 func PrintVersion() {
-	fmt.Printf("build date  : %s\n", BuildDate)
+	timestamp, err := strconv.ParseInt(BuildDate, 10, 64)
+	if err != nil {
+		timestamp = 0
+	}
+
+	fmt.Printf("build date  : %s\n", time.Unix(timestamp, 0).UTC().Format(time.RFC3339))
 	fmt.Printf("build commit: %s\n", BuildGitCommit)
 }
 
