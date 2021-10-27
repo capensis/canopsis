@@ -1,17 +1,31 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
-
 import flushPromises from 'flush-promises';
+
+import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+
 import JunitGanttChart from '@/components/common/chart/junit-gantt-chart.vue';
 
 const localVue = createVueInstance();
+const newRowsPerPage = 20;
+
+const snapshotStubs = {
+  'c-table-pagination': true,
+};
 
 const stubs = {
   'c-table-pagination': {
-    template: '<div class="c-table-pagination" />',
+    props: ['page'],
+    template: `
+      <div class="c-table-pagination">
+        <button class="next-page" @click="$listeners['update:page'](page + 1)"></button>
+        <button class="rows-per-page" @click="$listeners['update:rows-per-page'](${newRowsPerPage})"></button>
+      </div>
+    `,
   },
+
+  'horizontal-bar': true,
 };
 
-const snapshotFactory = (options = {}) => mount(JunitGanttChart, {
+const factory = (options = {}) => shallowMount(JunitGanttChart, {
   localVue,
   stubs,
   attachTo: document.body,
@@ -19,20 +33,16 @@ const snapshotFactory = (options = {}) => mount(JunitGanttChart, {
   ...options,
 });
 
-/**
- *
- *
- * junit-gantt-chart(
- :items="ganttIntervals",
- :historical="historical",
- :total-items="meta.total_count",
- :query.sync="query",
- :width="840"
- )
- *
- */
+const snapshotFactory = (options = {}) => mount(JunitGanttChart, {
+  localVue,
+  stubs: snapshotStubs,
+  attachTo: document.body,
+
+  ...options,
+});
 
 describe('junit-gantt-chart', () => {
+  const query = { page: 1, rowsPerPage: 10 };
   const historicalItems = [
     {
       _id: '5d72a420-ca3d-429f-a765-276af1d4cd55',
@@ -188,7 +198,45 @@ describe('junit-gantt-chart', () => {
     avg_status: 0,
   }];
 
-  it('Render `junit-gantt-chart` tooltip.', async () => {
+  it('Pagination next page event', async () => {
+    const wrapper = factory({
+      propsData: {
+        items,
+        query,
+      },
+    });
+
+    const nextPageButton = wrapper.find('.c-table-pagination .next-page');
+
+    await nextPageButton.trigger('click');
+
+    const updateQueryEvents = wrapper.emitted('update:query');
+    const [eventData] = updateQueryEvents[0];
+
+    expect(updateQueryEvents).toHaveLength(1);
+    expect(eventData).toEqual({ ...query, page: query.page + 1 });
+  });
+
+  it('Pagination rows per page event', async () => {
+    const wrapper = factory({
+      propsData: {
+        items,
+        query,
+      },
+    });
+
+    const rowsPerPageButton = wrapper.find('.c-table-pagination .rows-per-page');
+
+    await rowsPerPageButton.trigger('click');
+
+    const updateQueryEvents = wrapper.emitted('update:query');
+    const [eventData] = updateQueryEvents[0];
+
+    expect(updateQueryEvents).toHaveLength(1);
+    expect(eventData).toEqual({ ...query, rowsPerPage: newRowsPerPage, page: 1 });
+  });
+
+  it('Renders `junit-gantt-chart` tooltip.', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         items,
@@ -209,7 +257,7 @@ describe('junit-gantt-chart', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Render `junit-gantt-chart` tooltip with opacity 0.', async () => {
+  it('Renders `junit-gantt-chart` tooltip with opacity 0.', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         items,
@@ -230,7 +278,7 @@ describe('junit-gantt-chart', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Render `junit-gantt-chart` historical tooltip.', async () => {
+  it('Renders `junit-gantt-chart` historical tooltip.', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: historicalItems,
@@ -252,7 +300,17 @@ describe('junit-gantt-chart', () => {
     expect(wrapper.element).toMatchSnapshot(); // TODO: check icons
   });
 
-  it('Renders `junit-gantt-chart` with default and required props.', async () => {
+  it('Renders `junit-gantt-chart` with default props.', async () => {
+    const wrapper = snapshotFactory();
+
+    await flushPromises();
+
+    const canvas = wrapper.find('canvas');
+
+    expect(canvas.element).toMatchCanvasSnapshot();
+  });
+
+  it('Renders `junit-gantt-chart` with items prop.', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         items,
@@ -266,7 +324,7 @@ describe('junit-gantt-chart', () => {
     expect(canvas.element).toMatchCanvasSnapshot();
   });
 
-  it('Renders `junit-gantt-chart` with historical data and prop.', async () => {
+  it('Renders `junit-gantt-chart` with historical items and prop.', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: historicalItems,
