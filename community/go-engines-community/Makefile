@@ -168,10 +168,10 @@ docker-engine-webhook: TARGET=engine-webhook
 install: $(dir $(CURRENT_MAKEFILE))/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
 	# Install cmds
 	install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/bin"
-	$(foreach cmd,$(CMDS),install -c -m 755 -- "$(BUILD_OUTPUT_DIR)/cmd/$(cmd)" "$(DESTDIR)$(PREFIX)/opt/canopsis/bin/";)
+	install -c -m 755 -- $(foreach cmd,$(CMDS),"$(BUILD_OUTPUT_DIR)/cmd/$(cmd)") "$(DESTDIR)$(PREFIX)/opt/canopsis/bin/"
 	# Install plugins
 	$(foreach plugin,$(PLUGINS),install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(plugin)" && install -c -m 644 -- "$(BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(plugin)";)
-	# Install configuration file
+	# Install configuration files
 	install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/etc"
 	install -c -m 644 -- "$(dir $(CURRENT_MAKEFILE))/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml" "$(DESTDIR)$(PREFIX)/opt/canopsis/etc/canopsis.toml"
 
