@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`junit-gantt-chart Render \`junit-gantt-chart\` historical tooltip. 1`] = `
+<div>
+  <div
+    class="layout position-relative justify-center"
+  >
+    <div>
+      <div
+        class=""
+      >
+        <canvas
+          height="400"
+          id="bar-chart"
+          style="display: block; box-sizing: border-box; height: 400px; width: 400px;"
+          width="400"
+        />
+      </div>
+    </div>
+    <div
+      class="v-tooltip__content menuable__content__active"
+      style="opacity: 1; left: 90px; top: 95px; pointer-events: none;"
+    >
+      <div>
+        <div>
+          common.current: testSuite.statuses.0 0.970s 
+        </div>
+        <div>
+          common.average: testSuite.statuses.0 0.970s
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="c-table-pagination"
+    rows-per-page-items="5,10,20"
+    total-items="0"
+  />
+</div>
+`;
+
+exports[`junit-gantt-chart Render \`junit-gantt-chart\` tooltip with opacity 0. 1`] = `
+<div>
+  <div
+    class="layout position-relative justify-center"
+  >
+    <div>
+      <div
+        class=""
+      >
+        <canvas
+          height="400"
+          id="bar-chart"
+          style="display: block; box-sizing: border-box; height: 400px; width: 400px;"
+          width="400"
+        />
+      </div>
+    </div>
+    <div
+      class="v-tooltip__content menuable__content__active"
+      style="opacity: 0;"
+    />
+  </div>
+  <div
+    class="c-table-pagination"
+    rows-per-page-items="5,10,20"
+    total-items="0"
+  />
+</div>
+`;
+
+exports[`junit-gantt-chart Render \`junit-gantt-chart\` tooltip. 1`] = `
+<div>
+  <div
+    class="layout position-relative justify-center"
+  >
+    <div>
+      <div
+        class=""
+      >
+        <canvas
+          height="400"
+          id="bar-chart"
+          style="display: block; box-sizing: border-box; height: 400px; width: 400px;"
+          width="400"
+        />
+      </div>
+    </div>
+    <div
+      class="v-tooltip__content menuable__content__active"
+      style="opacity: 1; left: 90px; top: 95px; pointer-events: none;"
+    >
+      <div>
+        <div>
+          0.700s
+        </div>
+        <div>
+          testSuite.statuses.2: test_case_msg_9_6_0
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="c-table-pagination"
+    rows-per-page-items="5,10,20"
+    total-items="0"
+  />
+</div>
+`;
