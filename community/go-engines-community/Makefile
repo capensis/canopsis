@@ -181,7 +181,10 @@ install: $(dir $(CURRENT_MAKEFILE))/cmd/canopsis-reconfigure/canopsis-${CANOPSIS
 
 .PHONY: help
 help:
-	@echo "Please read: $(ROOT_DIR)/README.md"
+	@echo "Available targets are:"
+	@$(MAKE) -pRrq -f "$(CURRENT_MAKEFILE)" : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
+	@echo
+	@echo "See also: $(ROOT_DIR)/README.md"
 
 #
 # CLEANUP
