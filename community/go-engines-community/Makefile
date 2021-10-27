@@ -6,7 +6,7 @@ MONOREPO_ROOT := $(realpath $(dir $(CURRENT_MAKEFILE))/../..)
 ROOT_DIR = $(realpath $(dir $(MAIN_MAKEFILE)))
 VPATH = $(dir $(MAIN_MAKEFILE))
 # Where to put the built binaries
-BUILD_DIR = $(ROOT_DIR)/build
+BUILD_OUTPUT_DIR = $(ROOT_DIR)/build
 
 # Either community or pro
 CANOPSIS_EDITION = community
@@ -14,11 +14,11 @@ CANOPSIS_EDITION = community
 # List of cmds/engines to build and install (eg: canopsis-api connector-junit...)
 CMDS = $(notdir $(wildcard $(ROOT_DIR)/cmd/*))
 # List of cmd binary paths (eg: build/cmd/canopsis-api build/cmd/connector-junit...)
-CMDS_BINARY_TARGETS = $(addprefix $(BUILD_DIR)/cmd/,$(CMDS))
+CMDS_BINARY_TARGETS = $(addprefix $(BUILD_OUTPUT_DIR)/cmd/,$(CMDS))
 
 # List of plugins to build and install (eg: datasource/mongo.so)
 PLUGINS = $(addsuffix .so,$(patsubst $(ROOT_DIR)/plugins/%,%,$(wildcard $(ROOT_DIR)/plugins/*/*)))
-PLUGINS_BINARY_TARGETS = $(addprefix $(BUILD_DIR)/plugins/,$(PLUGINS))
+PLUGINS_BINARY_TARGETS = $(addprefix $(BUILD_OUTPUT_DIR)/plugins/,$(PLUGINS))
 
 # List of Docker containers targets
 DOCKER_TARGETS = $(addprefix docker-,$(CMDS))
@@ -84,7 +84,7 @@ $(PLUGINS_BINARY_TARGETS):
 # Tell make where to find the binaries
 
 # Plugin build job template
-$(BUILD_DIR)/plugins/%.so: $(ROOT_DIR)/plugins/% $(ROOT_DIR)/plugins/%/*
+$(BUILD_OUTPUT_DIR)/plugins/%.so: $(ROOT_DIR)/plugins/% $(ROOT_DIR)/plugins/%/*
 	@echo "==> Building $@"
 	cd -- "$(ROOT_DIR)" && \
 	go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
@@ -92,7 +92,7 @@ $(BUILD_DIR)/plugins/%.so: $(ROOT_DIR)/plugins/% $(ROOT_DIR)/plugins/%/*
 		-o "$(abspath $@)" "$(abspath $<)"
 
 # Build job template
-$(BUILD_DIR)/cmd/%: $(ROOT_DIR)/cmd/% $(ROOT_DIR)/cmd/%/*
+$(BUILD_OUTPUT_DIR)/cmd/%: $(ROOT_DIR)/cmd/% $(ROOT_DIR)/cmd/%/*
 	@echo "==> Building $@"
 	cd -- "$(ROOT_DIR)" && \
 	go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
@@ -168,9 +168,9 @@ docker-engine-webhook: TARGET=engine-webhook
 install: $(dir $(CURRENT_MAKEFILE))/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
 	# Install cmds
 	install -d -- "$(DESTDIR)$(PREFIX)/opt/canopsis/bin"
-	$(foreach cmd,$(CMDS),install -m 755 -- "$(BUILD_DIR)/cmd/$(cmd)" "$(DESTDIR)$(PREFIX)/opt/canopsis/bin/";)
+	$(foreach cmd,$(CMDS),install -m 755 -- "$(BUILD_OUTPUT_DIR)/cmd/$(cmd)" "$(DESTDIR)$(PREFIX)/opt/canopsis/bin/";)
 	# Install plugins
-	$(foreach plugin,$(PLUGINS),install -D -m 755 -- "$(BUILD_DIR)/plugins/$(plugin)" "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(plugin)";)
+	$(foreach plugin,$(PLUGINS),install -D -m 755 -- "$(BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(plugin)";)
 	# Install configuration file
 	install -d -- "$(DESTDIR)$(PREFIX)/opt/canopsis/etc"
 	install -m 644 -- "$(dir $(CURRENT_MAKEFILE))/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml" "$(DESTDIR)$(PREFIX)/opt/canopsis/etc/canopsis.toml"
@@ -192,5 +192,5 @@ help:
 
 .PHONY: clean
 clean:
-	rm -rf -- "$(BUILD_DIR)"
+	rm -rf -- "$(BUILD_OUTPUT_DIR)"
 	rm -f -- "$(MONOREPO_ROOT)/.dockerignore"
