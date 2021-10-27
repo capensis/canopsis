@@ -27,7 +27,7 @@ DOCKER_TARGETS = $(addprefix docker-,$(CMDS))
 # BUILD FLAGS
 #
 
-BUILDDATE:=$(shell date -u "+%Y-%m-%dT%H:%M:%S%z")
+SOURCE_DATE_EPOCH:=$(shell date -u +%s)
 LINKPKG=git.canopsis.net/canopsis/canopsis-$(CANOPSIS_EDITION)/$(CANOPSIS_EDITION)/go-engines-$(CANOPSIS_EDITION)/lib/canopsis
 VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1 2>/dev/null || echo "unknown Git version")
 GITCOMMIT:=$(shell git -C "$(MONOREPO_ROOT)" log -n 1 --format=oneline --abbrev-commit --pretty="%h" 2>/dev/null || echo "unknown Git commit")
@@ -35,7 +35,7 @@ GITCOMMIT:=$(shell git -C "$(MONOREPO_ROOT)" log -n 1 --format=oneline --abbrev-
 CUSTOM_LDFLAGS=
 LDFLAGS:=-ldflags "\
 	-X '${LINKPKG}.BuildGitCommit=${GITCOMMIT}' \
-	-X '${LINKPKG}.BuildDate=${BUILDDATE}' ${CUSTOM_LDFLAGS}"
+	-X '${LINKPKG}.BuildDate=${SOURCE_DATE_EPOCH}' ${CUSTOM_LDFLAGS}"
 
 # -trimpath makes the log lines shorter and independent from the current machine.
 GO_BUILD_FLAGS:= -trimpath
