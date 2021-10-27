@@ -48,7 +48,7 @@ describe('horizontal-bar', () => {
     },
   };
 
-  it('Renders `horizontal-bar` with default props.', () => {
+  it('Renders `horizontal-bar` with default props and options.', () => {
     const wrapper = snapshotFactory({
       propsData: {
         options,

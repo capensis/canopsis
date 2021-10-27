@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`junit-gantt-chart Render \`junit-gantt-chart\` historical tooltip. 1`] = `
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip. 1`] = `
 <div>
   <div
     class="layout position-relative justify-center"
@@ -31,15 +31,14 @@ exports[`junit-gantt-chart Render \`junit-gantt-chart\` historical tooltip. 1`] 
       </div>
     </div>
   </div>
-  <div
-    class="c-table-pagination"
+  <c-table-pagination-stub
     rows-per-page-items="5,10,20"
     total-items="0"
   />
 </div>
 `;
 
-exports[`junit-gantt-chart Render \`junit-gantt-chart\` tooltip with opacity 0. 1`] = `
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip with opacity 0. 1`] = `
 <div>
   <div
     class="layout position-relative justify-center"
@@ -61,15 +60,14 @@ exports[`junit-gantt-chart Render \`junit-gantt-chart\` tooltip with opacity 0. 
       style="opacity: 0;"
     />
   </div>
-  <div
-    class="c-table-pagination"
+  <c-table-pagination-stub
     rows-per-page-items="5,10,20"
     total-items="0"
   />
 </div>
 `;
 
-exports[`junit-gantt-chart Render \`junit-gantt-chart\` tooltip. 1`] = `
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip. 1`] = `
 <div>
   <div
     class="layout position-relative justify-center"
@@ -100,8 +98,7 @@ exports[`junit-gantt-chart Render \`junit-gantt-chart\` tooltip. 1`] = `
       </div>
     </div>
   </div>
-  <div
-    class="c-table-pagination"
+  <c-table-pagination-stub
     rows-per-page-items="5,10,20"
     total-items="0"
   />

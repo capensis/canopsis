@@ -1,3 +1,5 @@
+import flushPromises from 'flush-promises';
+
 import { mount, createVueInstance } from '@unit/utils/vue';
 import { fakeUsersForTreeview } from '@unit/data/treeview';
 
@@ -7,6 +9,9 @@ const localVue = createVueInstance();
 
 const snapshotFactory = (options = {}) => mount(CTreeviewDataTable, {
   localVue,
+  stubs: {
+    transition: true,
+  },
 
   ...options,
 });
@@ -136,10 +141,12 @@ describe('c-treeview-data-table', () => {
     const toggleIcon = wrapper.find('.v-treeview-node__toggle');
 
     await toggleIcon.trigger('click');
+    await flushPromises();
 
     const secondToggleIcon = wrapper.find('.v-treeview-node__children .v-treeview-node__toggle');
 
     await secondToggleIcon.trigger('click');
+    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
   });
