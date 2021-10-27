@@ -57,8 +57,9 @@ DOCKER_TAG = $(VERSION)
 # Alpine version used in final containers (https://hub.docker.com/_/alpine?tab=tags)
 DOCKER_ALPINE_VERSION = 3.12.8
 # Version of the Go compiler (https://hub.docker.com/_/golang?tab=tags)
-DOCKER_GOLANG_VERSION = 1.17.1
+DOCKER_GOLANG_VERSION = 1.17.2
 # Alpine version used in the Golang build container (https://hub.docker.com/_/golang?tab=tags&page=1&name=alpine)
+# (note: Alpine 3.14+ is currenly on hold; see issue canopsis/canopsis-pro#3871)
 DOCKER_ALPINE_BUILD_VERSION = 3.13
 DOCKERFILE_PATH = $(dir $(CURRENT_MAKEFILE))Dockerfile
 DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
