@@ -167,13 +167,13 @@ docker-engine-webhook: TARGET=engine-webhook
 # will only install the mongo datasource plugin, canopsis-api and connector-junit
 install: $(dir $(CURRENT_MAKEFILE))/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
 	# Install cmds
-	install -d -- "$(DESTDIR)$(PREFIX)/opt/canopsis/bin"
-	$(foreach cmd,$(CMDS),install -m 755 -- "$(BUILD_OUTPUT_DIR)/cmd/$(cmd)" "$(DESTDIR)$(PREFIX)/opt/canopsis/bin/";)
+	install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/bin"
+	$(foreach cmd,$(CMDS),install -c -m 755 -- "$(BUILD_OUTPUT_DIR)/cmd/$(cmd)" "$(DESTDIR)$(PREFIX)/opt/canopsis/bin/";)
 	# Install plugins
-	$(foreach plugin,$(PLUGINS),install -D -m 755 -- "$(BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(plugin)";)
+	$(foreach plugin,$(PLUGINS),install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(plugin)" && install -c -m 644 -- "$(BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(plugin)";)
 	# Install configuration file
-	install -d -- "$(DESTDIR)$(PREFIX)/opt/canopsis/etc"
-	install -m 644 -- "$(dir $(CURRENT_MAKEFILE))/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml" "$(DESTDIR)$(PREFIX)/opt/canopsis/etc/canopsis.toml"
+	install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/etc"
+	install -c -m 644 -- "$(dir $(CURRENT_MAKEFILE))/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml" "$(DESTDIR)$(PREFIX)/opt/canopsis/etc/canopsis.toml"
 
 #
 # HELP
