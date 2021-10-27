@@ -1,3 +1,7 @@
+ifneq (3.81,$(firstword $(sort $(MAKE_VERSION) 3.81)))
+$(error This makefile requires GNU Make >= 3.81)
+endif
+
 MAIN_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
 CURRENT_MAKEFILE := $(abspath $(lastword $(MAKEFILE_LIST)))
 # Path of the monorepo
