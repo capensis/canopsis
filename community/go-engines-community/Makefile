@@ -206,7 +206,7 @@ test: $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/ready $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/
 
 docker-test-image: $(MONOREPO_ROOT)/.dockerignore docker-check-version
 	docker build \
-		-t "$(DOCKER_IMAGE_BASE_PATH)/canopsis-go-test:latest" \
+		-t "canopsis-go-test:latest" \
 		$(DOCKER_BUILD_ARGS) \
 		--file "$(COMMUNITY_ROOT_DIR)/Dockerfile.test" \
 		"$(MONOREPO_ROOT)"
