@@ -1,15 +1,16 @@
-ARG GOLANG_IMAGE_TAG
+# Args defined here are only available to FROM commands
+# See https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG ALPINE_BUILD_VERSION
+ARG GOLANG_VERSION
 
-FROM golang:${GOLANG_IMAGE_TAG}
+FROM golang:${GOLANG_VERSION}-alpine${ALPINE_BUILD_VERSION}
 
-ENV GO111MODULE on
+RUN apk add --no-cache make git gcc binutils binutils-gold libc-dev
 
-RUN apk update && apk add make git curl gcc build-base g++
-
-WORKDIR /go/src/community/go-engines-community
+WORKDIR /go/src
 COPY . . 
-COPY docker/go-test.sh /go-test.sh
+COPY community/go-engines-community/go-test.sh /go-test.sh
 
-RUN go mod download
+RUN cd community/go-engines-community && go mod download
 
 # do not set entrypoint as this container will be run via docker-compose exec
