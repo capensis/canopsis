@@ -75,6 +75,7 @@ DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
 .PHONY: all docker-images deps
 all: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
+.DEFAULT_GOAL:=all
 docker-images: $(DOCKER_CMD_TARGETS)
 
 #
@@ -125,8 +126,8 @@ endef
 
 # Build a recursive .dockerignore from the monorepo (https://github.com/moby/moby/issues/20944)
 $(MONOREPO_ROOT)/.dockerignore:
-	cd -- "$(MONOREPO_ROOT)";\
-	:> "$(MONOREPO_ROOT)/.dockerignore";\
+	cd -- "$(MONOREPO_ROOT)" &&\
+	:> "$(MONOREPO_ROOT)/.dockerignore" &&\
 	for file in $$(find . -name .dockerignore -type f);\
 	do \
 		sed -E 's;^(!?)(.*)$$;\1'$$(dirname "$$file")'/\2;' "$$file" >> .dockerignore;\
