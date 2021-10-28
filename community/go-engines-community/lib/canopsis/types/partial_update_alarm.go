@@ -151,7 +151,7 @@ func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, role, i
 
 		d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
 		a.Value.PbehaviorInactiveDuration += d
-		a.addUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
 	}
 
 	return nil
@@ -204,7 +204,7 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 
 		d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
 		a.Value.PbehaviorInactiveDuration += d
-		a.addUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
 	}
 
 	return nil
