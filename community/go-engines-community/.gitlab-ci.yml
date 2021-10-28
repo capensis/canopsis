@@ -11,6 +11,7 @@ before_script:
   - cd community/go-engines-community/
   - uname -a
   - docker -v
+  - docker-compose version
   - grep '^DOCKER_GOLANG_VERSION' Makefile
   - make --version
   - git --no-pager show
