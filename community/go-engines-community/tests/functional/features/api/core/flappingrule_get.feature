@@ -24,6 +24,7 @@ Feature: Get a flapping rule
             "name": "root"
           },
           "created": 1619083733,
+          "name": "test-flapping-rule-to-get-1-name",
           "description": "test-flapping-rule-to-get-1-description",
           "duration": {
             "seconds": 0,
@@ -52,6 +53,7 @@ Feature: Get a flapping rule
             "name": "root"
           },
           "created": 1619083733,
+          "name": "test-flapping-rule-to-get-2-name",
           "description": "test-flapping-rule-to-get-2-description",
           "duration": {
             "seconds": 0,
@@ -96,6 +98,7 @@ Feature: Get a flapping rule
         "name": "root"
       },
       "created": 1619083733,
+      "name": "test-flapping-rule-to-get-1-name",
       "description": "test-flapping-rule-to-get-1-description",
       "duration": {
         "seconds": 0,

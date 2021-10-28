@@ -3,7 +3,7 @@
     "_id": "default_rule",
     "loader_id": "default_rule",
     "author": "root",
-    "description": "Default rule",
+    "name": "Default rule",
     "duration": {
       "seconds": 60,
       "unit": "m"
