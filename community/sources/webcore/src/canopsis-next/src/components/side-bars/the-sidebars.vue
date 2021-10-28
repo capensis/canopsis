@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import sideBarInnerMixin from '@/mixins/side-bar/side-bar-inner';
+import { sideBarInnerMixin } from '@/mixins/side-bar/side-bar-inner';
 
 import SideBarWrapper from './side-bar-wrapper.vue';
 import AlarmSettings from './settings/alarm.vue';

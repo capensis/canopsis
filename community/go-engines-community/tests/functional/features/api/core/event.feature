@@ -578,7 +578,7 @@ Feature: send an event
 
   Scenario: POST a valid event with urlencoded content-type
     When I am admin
-    When I set content-type=application/x-www-form-urlencoded
+    When I set header Content-Type=application/x-www-form-urlencoded
     When I do POST /api/v4/event:
     """
     event_type=check&connector=computer24&connector_name=computer24&component=phone&resource=ram&source_type=resource&author=superviseur1&state=2&output=canopsis
@@ -607,7 +607,7 @@ Feature: send an event
 
   Scenario: POST a valid event with extended urlencoded content-type
     When I am admin
-    When I set content-type=application/x-www-form-urlencoded; charset=utf-8
+    When I set header Content-Type=application/x-www-form-urlencoded; charset=utf-8
     When I do POST /api/v4/event:
     """
     event_type=check&connector=computer25&connector_name=computer25&component=phone2&resource=cpu&source_type=resource&author=superviseur2&state=2&output=canopsis
@@ -636,7 +636,7 @@ Feature: send an event
 
   Scenario: POST an invalid state event with extended urlencoded content-type
     When I am admin
-    When I set content-type=application/x-www-form-urlencoded; charset=utf-8
+    When I set header Content-Type=application/x-www-form-urlencoded; charset=utf-8
     When I do POST /api/v4/event:
     """
     event_type=check&connector=computer25&connector_name=computer25&component=phone2&resource=cpu&source_type=resource&author=superviseur2&state=abc&output=canopsis

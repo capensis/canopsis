@@ -3,6 +3,7 @@ package pbehavior
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -11,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -37,8 +37,7 @@ type store struct {
 	dbCollection, entitiesCollection mongo.DbCollection
 
 	entityMatcher          pbehavior.EntityMatcher
-	redisStore             redis.Store
-	service                pbehavior.Service
+	entityTypeResolver     pbehavior.EntityTypeResolver
 	timezoneConfigProvider config.TimezoneConfigProvider
 	defaultSortBy          string
 
@@ -49,8 +48,7 @@ type store struct {
 func NewStore(
 	dbClient mongo.DbClient,
 	entityMatcher pbehavior.EntityMatcher,
-	redisStore redis.Store,
-	service pbehavior.Service,
+	entityTypeResolver pbehavior.EntityTypeResolver,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 ) Store {
 	return &store{
@@ -58,8 +56,7 @@ func NewStore(
 		dbCollection:                  dbClient.Collection(mongo.PbehaviorMongoCollection),
 		entitiesCollection:            dbClient.Collection(mongo.EntityMongoCollection),
 		entityMatcher:                 entityMatcher,
-		redisStore:                    redisStore,
-		service:                       service,
+		entityTypeResolver:            entityTypeResolver,
 		timezoneConfigProvider:        timezoneConfigProvider,
 		defaultSortBy:                 "created",
 		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
@@ -82,10 +79,8 @@ func (s *store) Insert(ctx context.Context, model *Response) error {
 	doc.Created = now
 	doc.Updated = now
 
-	if model.Stop != nil {
-		doc.Stop = nil
-	}
-
+	// If model.Stop is nill, insert to mongo using map so that
+	// tstop field can be cleared
 	if model.Stop == nil {
 		m := make(map[string]interface{})
 		p, err := bson.Marshal(doc)
@@ -457,15 +452,6 @@ func (s *store) transformModelToDocument(model *Response) (*pbehavior.PBehavior,
 }
 
 func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error {
-	ok, err := s.redisStore.Restore(ctx, s.service)
-	if err != nil {
-		return err
-	}
-
-	if !ok {
-		return nil
-	}
-
 	location := s.timezoneConfigProvider.Get().Location
 	now := time.Now().In(location)
 	ids := make([]string, len(result))
@@ -473,14 +459,18 @@ func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error
 		ids[i] = pbh.ID
 	}
 
-	statusesByID, err := s.service.GetPbehaviorStatus(ctx, ids, now)
+	typesByID, err := s.entityTypeResolver.GetPbehaviors(ctx, ids, now)
 	if err != nil {
+		if errors.Is(err, pbehavior.ErrNoComputed) || errors.Is(err, pbehavior.ErrRecomputeNeed) {
+			return nil
+		}
+
 		return err
 	}
 
 	for i := range result {
-		v := statusesByID[result[i].ID]
-		result[i].IsActiveStatus = &v
+		_, ok := typesByID[result[i].ID]
+		result[i].IsActiveStatus = &ok
 	}
 
 	return nil

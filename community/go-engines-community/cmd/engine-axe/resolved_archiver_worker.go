@@ -71,9 +71,9 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) error {
 			deleted, err = w.AlarmAdapter.DeleteArchivedResolvedAlarms(ctx, d)
 			if err != nil {
 				w.Logger.Err(err).Msg("cannot delete resolved alarms")
+			} else if deleted > 0 {
+				w.Logger.Info().Int64("alarm number", deleted).Msg("resolved alarm removing")
 			}
-
-			w.Logger.Info().Int64("alarm number", deleted).Msg("resolved alarm removing")
 		}
 	}
 

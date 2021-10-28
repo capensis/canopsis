@@ -17,7 +17,7 @@
           data-test="statTitle"
         )
         v-card(v-if="form.stat.options.length || withTrend", color="secondary white--text", dark)
-          v-card-title(data-test="statParameters") {{ $t('common.parameters') }}
+          v-card-title(data-test="statParameters") {{ $tc('common.parameter', 2) }}
           v-card-text
             v-switch(
               v-if="withTrend",
