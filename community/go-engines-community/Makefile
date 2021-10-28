@@ -25,7 +25,7 @@ PLUGINS = $(addsuffix .so,$(patsubst $(ROOT_DIR)/plugins/%,%,$(wildcard $(ROOT_D
 PLUGINS_BINARY_TARGETS = $(addprefix $(BUILD_OUTPUT_DIR)/plugins/,$(PLUGINS))
 
 # List of Docker containers targets
-DOCKER_TARGETS = $(addprefix docker-,$(CMDS))
+DOCKER_CMD_TARGETS = $(addprefix docker-cmd-,$(CMDS))
 
 #
 # BUILD FLAGS
@@ -71,7 +71,7 @@ DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
 .PHONY: all docker-images deps
 all: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
-docker-images: $(DOCKER_TARGETS)
+docker-images: $(DOCKER_CMD_TARGETS)
 
 #
 # BINARY TARGETS
@@ -128,39 +128,40 @@ $(MONOREPO_ROOT)/.dockerignore:
 		sed -E 's;^(!?)(.*)$$;\1'$$(dirname "$$file")'/\2;' "$$file" >> .dockerignore;\
 	done
 
-.PHONY: check-docker-version docker-builder $(DOCKER_TARGETS)
+.PHONY: docker-check-version docker-go-builder $(DOCKER_CMD_TARGETS)
 
 # We require at least Docker 19.03 for the BuildKit features we use
-check-docker-version:
+docker-check-version:
 	@if test "$$(docker version --format '{{.Server.Version}}' | awk -F'.' '{print $$1 $$2}')" -lt 1903 ; then\
 		echo "ERROR: Docker >= 19.03 is required";\
 		exit 1;\
 	fi
 
-docker-builder: $(MONOREPO_ROOT)/.dockerignore check-docker-version
+docker-go-builder: $(MONOREPO_ROOT)/.dockerignore docker-check-version
 	docker build \
-		-t "$(DOCKER_IMAGE_BASE_PATH)/canopsis_go_bin:latest" \
+		-t "$(DOCKER_IMAGE_BASE_PATH)/canopsis-go-builder:latest" \
 		--target builder \
-		$(if $(DOCKER_NO_CACHE),,--cache-from "$(DOCKER_IMAGE_BASE_PATH)/canopsis_go_bin:latest") \
+		$(if $(DOCKER_NO_CACHE),,--cache-from "$(DOCKER_IMAGE_BASE_PATH)/canopsis-go-builder:latest") \
 		$(DOCKER_BUILD_ARGS) \
 		--file "$(DOCKERFILE_PATH)" \
 		"$(MONOREPO_ROOT)"
 
-$(DOCKER_TARGETS): TARGET=final-container
-$(DOCKER_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker-builder
-	docker build -t "$(DOCKER_IMAGE_BASE_PATH)/$(subst docker-,,$@):$(DOCKER_TAG)" \
-		--build-arg CMD="$(subst docker-,,$@)" \
+$(DOCKER_CMD_TARGETS): TARGET=final-container
+$(DOCKER_CMD_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker-go-builder
+	docker build \
+		-t "$(DOCKER_IMAGE_BASE_PATH)/$(subst docker-cmd-,,$@):$(DOCKER_TAG)" \
 		--target "$(TARGET)" \
-		--cache-from "$(DOCKER_IMAGE_BASE_PATH)/canopsis_go_bin:latest" \
-		$(if $(DOCKER_NO_CACHE),,--cache-from "$(subst docker-,,$@):$(DOCKER_TAG)") \
+		--build-arg CMD="$(subst docker-cmd-,,$@)" \
+		--cache-from "$(DOCKER_IMAGE_BASE_PATH)/canopsis-go-builder:latest" \
+		$(if $(DOCKER_NO_CACHE),,--cache-from "$(subst docker-cmd-,,$@):$(DOCKER_TAG)") \
 		$(DOCKER_BUILD_ARGS) \
 		--file "$(DOCKERFILE_PATH)" \
 		"$(MONOREPO_ROOT)"
 
 # Targets having some extra content on top of the generic final-container
-docker-canopsis-api: TARGET=canopsis-api
-docker-connector-junit: TARGET=connector-junit
-docker-engine-webhook: TARGET=engine-webhook
+docker-cmd-canopsis-api: TARGET=canopsis-api
+docker-cmd-connector-junit: TARGET=connector-junit
+docker-cmd-engine-webhook: TARGET=engine-webhook
 
 #
 # INSTALLATION
