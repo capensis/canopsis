@@ -49,7 +49,6 @@ def exports(ws):
                     entity_ids.append(en['entity'])
 
         if alarm_ids:
-            print(entity_ids)
             alarms = ar.alarm_collection.find({'_id': {'$in': alarm_ids}})
             entities = context_manager.get_entities_by_id(
                 entity_ids, with_links=False)
@@ -58,10 +57,6 @@ def exports(ws):
             for entity in entities:
                 entity_dict[entity.get('_id')] = entity
             for alarm in alarms:
-                return {
-                    'data': context_manager.enrich_links_to_entity_with_alarm(
-                        {}, alarm)
-                }
                 if alarm['d'] in entity_dict:
                     links.append({
                         'entity': alarm['d'],
