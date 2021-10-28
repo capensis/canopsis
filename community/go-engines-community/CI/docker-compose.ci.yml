@@ -1,4 +1,4 @@
-version: '2'
+version: '2.3'
 volumes:
   mongodbdata:
     driver: local
@@ -23,7 +23,7 @@ services:
     mem_reservation: 2g
     oom_score_adj: -1000
   mongodb:
-    image: mongo:${MONGODB_TAG}
+    image: mongo:${MONGO_TAG}
     env_file: compose.mongo.env
     volumes:
       - mongodbdata:/data/db
@@ -34,7 +34,8 @@ services:
     oom_score_adj: -1000
     command: '--wiredTigerCacheSizeGB 2560'
   influxdb:
-    image: influxdb:${INFLUX_TAG} 
+    image: influxdb:${INFLUX_TAG}
+    platform: linux/x86_64
     environment:
       - INFLUXDB_DB=canopsis
       - INFLUXDB_ADMIN_USER=admin
@@ -57,7 +58,7 @@ services:
     env_file:
       - compose.env
     environment:
-      - CPS_WEBSERVER=1
+      - CPS_OLD_API=1
       - CPS_MONGO_URL=mongodb://cpsmongo:canopsis@mongodb/canopsis
     depends_on:
       - "mongodb"
@@ -78,7 +79,7 @@ services:
 #    volumes:
 #      - "./docker/initialisation.toml:/initialisation.toml"
   testing:
-    image: canopsis/go-test:latest
+    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}canopsis/canopsis-go-test:latest
     env_file:
       - compose.env
     depends_on:
