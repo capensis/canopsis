@@ -1538,15 +1538,15 @@ export default {
       },
     },
     createAlarmStatusRule: {
-      flipping: {
+      flapping: {
         create: {
-          title: 'Create flipping rule',
+          title: 'Create flapping rule',
         },
         edit: {
-          title: 'Edit flipping rule',
+          title: 'Edit flapping rule',
         },
         duplicate: {
-          title: 'Duplicate flipping rule',
+          title: 'Duplicate flapping rule',
         },
       },
       resolve: {

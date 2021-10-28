@@ -1538,15 +1538,15 @@ export default {
       },
     },
     createAlarmStatusRule: {
-      flipping: {
+      flapping: {
         create: {
-          title: 'Créer une règle d\'inversion',
+          title: 'Créer une règle de battement',
         },
         edit: {
-          title: 'Modifier la règle d\'inversion',
+          title: 'Modifier la règle de battement',
         },
         duplicate: {
-          title: 'Règle de retournement en double',
+          title: 'Règle de battement en double',
         },
       },
       resolve: {

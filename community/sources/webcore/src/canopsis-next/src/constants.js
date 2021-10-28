@@ -1025,6 +1025,8 @@ export const USERS_PERMISSIONS = {
     datastorageRead: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_read`,
     datastorageUpdate: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_update`,
     instructionApprove: `${USER_PERMISSIONS_PREFIXES.api}_instruction_approve`,
+    flappingRule: `${USER_PERMISSIONS_PREFIXES.api}_flapping_rule`,
+    resolveRule: `${USER_PERMISSIONS_PREFIXES.api}_resolve_rule`,
   },
 };
 
