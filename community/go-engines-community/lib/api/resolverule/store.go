@@ -37,7 +37,7 @@ func NewStore(
 		dbClient:     dbClient,
 		dbCollection: dbClient.Collection(mongo.ResolveRuleMongoCollection),
 
-		defaultSearchByFields: []string{"_id", "author", "description"},
+		defaultSearchByFields: []string{"_id", "author", "name", "description"},
 	}
 }
 
