@@ -1773,6 +1773,8 @@ export const TEST_SUITE_COLORS = {
 
 export const TEST_CASE_FILE_MASK = '%test_case%-hh-mm-ss-YYYY-MM-DD';
 
+export const TEST_CASE_FILE_NAME = '%name%_*.xml';
+
 export const TEST_SUITE_HISTORICAL_DATA_MONTHS_DEFAULT_ITEMS = [1, 3, 6, 12];
 
 export const JUNIT_ALARM_CONNECTOR = 'junit';
