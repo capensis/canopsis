@@ -43,29 +43,31 @@ export default {
     annotationLine() {
       const { annotationLine } = this.widget.parameters;
 
-      if (annotationLine && annotationLine.enabled) {
-        return {
-          annotations: [{
+      return {
+        annotations: {
+          annotationLine: {
+            drawTime: 'afterDatasetsDraw',
+            display: annotationLine && annotationLine.enabled,
             type: 'line',
             mode: 'horizontal',
-            scaleID: 'y-axis-0',
+            scaleID: 'y',
             value: annotationLine.value,
             borderColor: annotationLine.lineColor,
             borderWidth: 2,
             label: {
               enabled: true,
               position: 'left',
-              fontSize: 10,
               xPadding: 5,
               yPadding: 5,
               content: annotationLine.label,
               backgroundColor: annotationLine.labelColor,
+              font: {
+                size: 10,
+              },
             },
-          }],
-        };
-      }
-
-      return {};
+          },
+        },
+      };
     },
 
     options() {

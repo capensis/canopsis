@@ -72,7 +72,6 @@ canoctl restart
 
 Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concerne.
 
-
 ### Mise à jour en environnement Docker Compose
 
 Après avoir suivi les notes de version, resynchronisez l'ensemble de vos fichiers Docker Compose avec les fichiers de référence correspondant à la version voulue : <https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop/community/docker-compose>.
@@ -82,6 +81,8 @@ Puis, exécutez la commande suivante :
 ```sh
 docker-compose up -d
 ```
+
+Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concerne, y commpris toute éventuelle remarque des notes de version au sujet du fichier `canopsis.toml`.
 
 ## Après la mise à jour
 

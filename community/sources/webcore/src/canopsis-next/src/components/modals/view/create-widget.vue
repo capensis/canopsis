@@ -25,7 +25,7 @@ import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES, WIDGET_TYPES_RULES, WI
 import { generateWidgetByType } from '@/helpers/entities';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

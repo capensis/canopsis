@@ -9,7 +9,7 @@
 <script>
 import { CANOPSIS_DOCUMENTATION } from '@/constants';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
   mixins: [entitiesInfoMixin],

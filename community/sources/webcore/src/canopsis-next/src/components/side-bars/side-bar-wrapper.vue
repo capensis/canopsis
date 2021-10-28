@@ -3,6 +3,7 @@
     data-test="sideBarWrapper",
     v-model="isOpen",
     :ignore-click-outside="hasMaximizedModal",
+    :custom-close-conditional="closeCondition",
     v-bind="navigationDrawerProps"
   )
     div(v-if="title")
@@ -10,7 +11,7 @@
         v-list
           v-list-tile
             v-list-tile-title.white--text {{ title }}
-        v-btn(data-test="closeWidget", @click.stop="hideSideBar", icon)
+        v-btn(data-test="closeWidget", @click.stop="closeHandler", icon)
           v-icon(color="white") close
       v-divider
       // @slot use this slot default
@@ -18,7 +19,9 @@
 </template>
 
 <script>
-import sideBarInnerMixin from '@/mixins/side-bar/side-bar-inner';
+import ClickOutside from '@/services/click-outside';
+
+import { sideBarInnerMixin } from '@/mixins/side-bar/side-bar-inner';
 
 /**
  * Wrapper for each modal window
@@ -26,6 +29,11 @@ import sideBarInnerMixin from '@/mixins/side-bar/side-bar-inner';
  * @prop {Object} [navigationDrawerProps={}] - Properties for vuetify v-navigation-drawer
  */
 export default {
+  provide() {
+    return {
+      $clickOutside: this.$clickOutside,
+    };
+  },
   mixins: [sideBarInnerMixin],
   props: {
     navigationDrawerProps: {
@@ -59,6 +67,20 @@ export default {
   },
   mounted() {
     this.ready = true;
+  },
+  beforeCreate() {
+    this.$clickOutside = new ClickOutside();
+  },
+  methods: {
+    closeHandler() {
+      if (this.closeCondition()) {
+        this.hideSideBar();
+      }
+    },
+
+    closeCondition(...args) {
+      return this.$clickOutside.call(...args);
+    },
   },
 };
 </script>

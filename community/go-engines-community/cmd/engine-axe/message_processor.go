@@ -139,14 +139,18 @@ func (p *messageProcessor) handleRemediation(event types.Event, msg []byte) erro
 		return nil
 	}
 
-	if event.AlarmChange.Type != types.AlarmChangeTypeCreate &&
-		event.AlarmChange.Type != types.AlarmChangeTypeCreateAndPbhEnter {
+	switch event.AlarmChange.Type {
+	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter,
+		types.AlarmChangeTypeResolve, types.AlarmChangeTypeStateDecrease,
+		types.AlarmChangeTypeChangeState:
+	default:
 		return nil
 	}
 
 	body, err := p.Encoder.Encode(types.RPCRemediationEvent{
-		Alarm:  event.Alarm,
-		Entity: event.Entity,
+		Alarm:       event.Alarm,
+		Entity:      event.Entity,
+		AlarmChange: *event.AlarmChange,
 	})
 	if err != nil {
 		p.logError(err, "failed to encode remediation event", msg)

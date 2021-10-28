@@ -2,138 +2,18 @@ Feature: Import entities
   I need to be able to import entities
 
   Scenario: import unauthorized
-    When I do PUT /api/v4/contextgraph/import:
-    """
-    {
-        "json": {
-            "cis": [
-                {
-                    "_id": "SC003C",
-                    "name": "SC003C",
-                    "type": "component",
-                    "infos": {
-                        "test_info": {
-                            "description": "description 1",
-                            "value": "value 1"
-                        }
-                    },
-                    "action": "create",
-                    "enabled": true
-                },
-                {
-                    "_id": "script_import/SC003C",
-                    "name": "script_import",
-                    "type": "resource",
-                    "infos": {
-                        "test_info": {
-                            "description": "description 2",
-                            "value": "value 2"
-                        }
-                    },
-                    "action": "create",
-                    "enabled": true
-                },
-                {
-                    "_id": "script_import_2/SC003C",
-                    "name": "script_import",
-                    "type": "resource",
-                    "infos": {
-                        "test_info": {
-                            "description": "description 3",
-                            "value": "value 3"
-                        }
-                    },
-                    "action": "create",
-                    "enabled": true
-                }
-            ],
-            "links": [
-                {
-                    "from": [
-                        "script_import/SC003C",
-                        "script_import_2/SC003C"
-                    ],
-                    "to": "SC003C",
-                    "action": "create",
-                    "infos": {},
-                    "id": "id_0",
-                    "properties": []
-                }
-            ]
-        }
-    }
-    """
+    When I do PUT /api/v4/contextgraph/import
     Then the response code should be 401
 
   Scenario: import without permissions
     When I am noperms
-    When I do PUT /api/v4/contextgraph/import:
-    """
-    {
-        "json": {
-            "cis": [
-                {
-                    "_id": "SC003C",
-                    "name": "SC003C",
-                    "type": "component",
-                    "infos": {
-                        "test_info": {
-                            "description": "description 1",
-                            "value": "value 1"
-                        }
-                    },
-                    "action": "create",
-                    "enabled": true
-                },
-                {
-                    "_id": "script_import/SC003C",
-                    "name": "script_import",
-                    "type": "resource",
-                    "infos": {
-                        "test_info": {
-                            "description": "description 2",
-                            "value": "value 2"
-                        }
-                    },
-                    "action": "create",
-                    "enabled": true
-                },
-                {
-                    "_id": "script_import_2/SC003C",
-                    "name": "script_import",
-                    "type": "resource",
-                    "infos": {
-                        "test_info": {
-                            "description": "description 3",
-                            "value": "value 3"
-                        }
-                    },
-                    "action": "create",
-                    "enabled": true
-                }
-            ],
-            "links": [
-                {
-                    "from": [
-                        "script_import/SC003C",
-                        "script_import_2/SC003C"
-                    ],
-                    "to": "SC003C",
-                    "action": "create",
-                    "infos": {},
-                    "id": "id_0",
-                    "properties": []
-                }
-            ]
-        }
-    }
-    """
+    When I do PUT /api/v4/contextgraph/import
     Then the response code should be 403
 
   Scenario: import with action create
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -194,18 +74,16 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+       "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=SC003C
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "SC003C",
         "name": "SC003C",
@@ -231,7 +109,7 @@ Feature: Import entities
     When I do GET /api/v4/entitybasics?_id=script_import/SC003C
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "script_import/SC003C",
         "name": "script_import",
@@ -254,8 +132,8 @@ Feature: Import entities
 
   Scenario: import with action update
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -276,18 +154,16 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+        "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-to-update
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-to-update",
         "name": "change name",
@@ -309,8 +185,8 @@ Feature: Import entities
 
   Scenario: import with action update, when id doesn't exist, status should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -331,19 +207,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with action set
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -364,18 +238,16 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+        "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-to-set
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-to-set",
         "name": "change name",
@@ -399,8 +271,8 @@ Feature: Import entities
         "impact_level": 1
     }
     """
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -424,18 +296,16 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+        "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-to-set
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-to-set",
         "name": "change name",
@@ -467,8 +337,8 @@ Feature: Import entities
 
   Scenario: import with action set, when id doesn't exist, new entity should be created
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -489,18 +359,16 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+        "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-to-set-not-exist
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-to-set-not-exist",
         "name": "test-entity-contextgraph-import-to-set-not-exist-name",
@@ -516,8 +384,8 @@ Feature: Import entities
 
   Scenario: import with action delete
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -538,19 +406,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+        "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-delete-1
     Then the response code should be 404
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-component-to-delete
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-component-to-delete",
         "name": "test-entity-contextgraph-import-component-to-delete-name",
@@ -565,8 +431,8 @@ Feature: Import entities
         "impact_level": 1
     }
     """
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -587,19 +453,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+        "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-component-to-delete
     Then the response code should be 404
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-delete-2
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-resource-to-delete-2",
         "name": "test-entity-contextgraph-import-resource-to-delete-2-name",
@@ -615,8 +479,8 @@ Feature: Import entities
 
   Scenario: import with action delete, when id doesn't exist, status should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -637,19 +501,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with action enable
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -670,17 +532,15 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+        "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-component-to-enable
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-component-to-enable",
         "name": "test-entity-contextgraph-import-component-to-enable-name",
@@ -696,8 +556,8 @@ Feature: Import entities
 
   Scenario: import with action enable, when id doesn't exist, status should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -718,19 +578,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with action disable
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -751,17 +609,15 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+        "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-component-to-disable
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-component-to-disable",
         "name": "test-entity-contextgraph-import-component-to-disable-name",
@@ -777,8 +633,8 @@ Feature: Import entities
 
   Scenario: import with action disable, when id doesn't exist, status should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -799,19 +655,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with create links action
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "links": [
@@ -831,18 +685,16 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+        "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-component-to-link
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-component-to-link",
         "depends": [
@@ -863,7 +715,7 @@ Feature: Import entities
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-link-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-resource-to-link-1",
         "depends": [],
@@ -887,7 +739,7 @@ Feature: Import entities
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-link-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-resource-to-link-2",
         "depends": [],
@@ -911,8 +763,8 @@ Feature: Import entities
 
   Scenario: import with delete links action
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "links": [
@@ -932,18 +784,16 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+        "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-component-to-unlink
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-component-to-unlink",
         "depends": [],
@@ -961,7 +811,7 @@ Feature: Import entities
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-unlink-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-resource-to-unlink-1",
         "depends": [],
@@ -983,7 +833,7 @@ Feature: Import entities
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-unlink-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "test-entity-contextgraph-import-resource-to-unlink-2",
         "depends": [],
@@ -1005,8 +855,8 @@ Feature: Import entities
 
   Scenario: import with action create, without type, should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -1021,19 +871,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with action create, without _id, should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -1048,19 +896,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with action create, patterns should be only in services
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -1079,19 +925,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with wrong cis action
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -1110,19 +954,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with wrong links action
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "links": [
@@ -1142,19 +984,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with not implemented links action
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "links": [
@@ -1174,16 +1014,14 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "links": [
@@ -1203,16 +1041,14 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "links": [
@@ -1232,19 +1068,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with bad cis
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": "test"
@@ -1252,19 +1086,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with bad links
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "links": "test"
@@ -1272,37 +1104,33 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with empty json
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {}
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "failed"
+        "status": "failed"
     }
     """
 
   Scenario: import with action create, without name, should have a name the same as _id
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -1317,18 +1145,16 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+        "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=some_id
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "some_id",
         "depends": [],
@@ -1344,8 +1170,8 @@ Feature: Import entities
 
   Scenario: import with action create, context graph should be valid for entity service
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -1403,18 +1229,17 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+      "status": "done"
     }
     """
+    When I wait 2s
     When I do GET /api/v4/entitybasics?_id=SC004C
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "SC004C",
         "depends": [
@@ -1433,7 +1258,7 @@ Feature: Import entities
     When I do GET /api/v4/entitybasics?_id=script_import_service/SC004C
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "script_import_service/SC004C",
         "depends": [],
@@ -1452,7 +1277,7 @@ Feature: Import entities
     When I do GET /api/v4/entitybasics?_id=script_import_service_2/SC004C
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "script_import_service_2/SC004C",
         "depends": [],
@@ -1471,7 +1296,7 @@ Feature: Import entities
     When I do GET /api/v4/entityservices/test-entityservice-service-import
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-entityservice-service-import",
       "depends": [
@@ -1492,8 +1317,8 @@ Feature: Import entities
 
   Scenario: import with action create, same links with different actions
     When I am admin
-    When I do PUT /api/v4/contextgraph/import:
-    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
     {
         "json": {
             "cis": [
@@ -1564,18 +1389,16 @@ Feature: Import entities
     }
     """
     Then the response code should be 200
-    When I wait 2s
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}}
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
     {
-        "Status": "done"
+        "status": "done"
     }
     """
     When I do GET /api/v4/entitybasics?_id=SC100C
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "SC100C",
         "name": "SC100C",
@@ -1600,7 +1423,7 @@ Feature: Import entities
     When I do GET /api/v4/entitybasics?_id=script_import/SC100C
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "script_import/SC100C",
         "name": "script_import",
@@ -1623,7 +1446,7 @@ Feature: Import entities
     When I do GET /api/v4/entitybasics?_id=script_import_2/SC100C
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
         "_id": "script_import_2/SC100C",
         "name": "script_import_2",
@@ -1641,5 +1464,237 @@ Feature: Import entities
         },
         "type": "resource",
         "impact_level": 1
+    }
+    """
+
+  Scenario: given import with create component and resource should update resource component_infos
+    When I am admin
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "_id": "test-component-contextgraph-import-28",
+            "name": "test-component-contextgraph-import-28",
+            "type": "component",
+            "infos": {
+              "test_info": {
+                "description": "description 1",
+                "value": "value 1"
+              }
+            },
+            "action": "create",
+            "enabled": true
+          },
+          {
+            "_id": "test-resource-contextgraph-import-28/test-component-contextgraph-import-28",
+            "name": "test-resource-contextgraph-import-28",
+            "type": "resource",
+            "action": "create",
+            "enabled": true
+          }
+        ],
+        "links": [
+          {
+            "from": [
+              "test-resource-contextgraph-import-28/test-component-contextgraph-import-28"
+            ],
+            "to": "test-component-contextgraph-import-28",
+            "action": "create",
+            "infos": {},
+            "id": "id_0",
+            "properties": []
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+     "status": "done"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-import-28/test-component-contextgraph-import-28
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "component": "test-component-contextgraph-import-28",
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "value 1"
+        }
+      }
+    }
+    """
+
+  Scenario: given import with create resource should set resource component_infos
+    When I am admin
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "_id": "test-component-contextgraph-import-29",
+            "name": "test-component-contextgraph-import-29",
+            "type": "component",
+            "infos": {
+              "test_info": {
+                "description": "description 1",
+                "value": "value 1"
+              }
+            },
+            "action": "create",
+            "enabled": true
+          }
+        ],
+        "links": []
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+     "status": "done"
+    }
+    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "_id": "test-resource-contextgraph-import-29/test-component-contextgraph-import-29",
+            "name": "test-resource-contextgraph-import-29",
+            "type": "resource",
+            "action": "create",
+            "enabled": true
+          }
+        ],
+        "links": [
+          {
+            "from": [
+              "test-resource-contextgraph-import-29/test-component-contextgraph-import-29"
+            ],
+            "to": "test-component-contextgraph-import-29",
+            "action": "create",
+            "infos": {},
+            "id": "id_0",
+            "properties": []
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+     "status": "done"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-import-29/test-component-contextgraph-import-29
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "component": "test-component-contextgraph-import-29",
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "value 1"
+        }
+      }
+    }
+    """
+
+  Scenario: given import with create component should set resource component_infos
+    When I am admin
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "_id": "test-resource-contextgraph-import-30/test-component-contextgraph-import-30",
+            "name": "test-resource-contextgraph-import-30",
+            "type": "resource",
+            "action": "create",
+            "enabled": true
+          }
+        ],
+        "links": []
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+     "status": "done"
+    }
+    """
+    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "_id": "test-component-contextgraph-import-30",
+            "name": "test-component-contextgraph-import-30",
+            "type": "component",
+            "infos": {
+              "test_info": {
+                "description": "description 1",
+                "value": "value 1"
+              }
+            },
+            "action": "create",
+            "enabled": true
+          }
+        ],
+        "links": [
+          {
+            "from": [
+              "test-resource-contextgraph-import-30/test-component-contextgraph-import-30"
+            ],
+            "to": "test-component-contextgraph-import-30",
+            "action": "create",
+            "infos": {},
+            "id": "id_0",
+            "properties": []
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+     "status": "done"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-import-30/test-component-contextgraph-import-30
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "component": "test-component-contextgraph-import-30",
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "value 1"
+        }
+      }
     }
     """

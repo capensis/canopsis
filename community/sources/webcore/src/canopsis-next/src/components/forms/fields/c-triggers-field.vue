@@ -15,7 +15,7 @@
 <script>
 import { SCENARIO_TRIGGERS, CAT_SCENARIO_TRIGGERS } from '@/constants';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
   inject: ['$validator'],
