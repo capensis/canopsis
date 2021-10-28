@@ -2,27 +2,31 @@ ifneq (3.81,$(firstword $(sort $(MAKE_VERSION) 3.81)))
 $(error This makefile requires GNU Make >= 3.81)
 endif
 
-MAIN_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
-CURRENT_MAKEFILE := $(abspath $(lastword $(MAKEFILE_LIST)))
-# Path of the monorepo
-MONOREPO_ROOT := $(realpath $(dir $(CURRENT_MAKEFILE))/../..)
-# Directory containing the main Makefile (the Makefile that was executed)
-ROOT_DIR = $(realpath $(dir $(MAIN_MAKEFILE)))
-VPATH = $(dir $(MAIN_MAKEFILE))
-# Where to put the built binaries
-BUILD_OUTPUT_DIR = $(ROOT_DIR)/build
-
 # Either community or pro
 CANOPSIS_EDITION = community
 
+COMMUNITY_MAKEFILE := $(abspath $(lastword $(MAKEFILE_LIST)))
+COMMUNITY_ROOT_DIR = $(realpath $(dir $(COMMUNITY_MAKEFILE)))
+COMMUNITY_BUILD_OUTPUT_DIR = $(COMMUNITY_ROOT_DIR)/build
+
+CURRENT_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
+# Directory containing the main Makefile (the Makefile that was executed)
+CURRENT_ROOT_DIR = $(realpath $(dir $(CURRENT_MAKEFILE)))
+# Where to put the built binaries
+CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
+
+# Path of the monorepo
+MONOREPO_ROOT := $(realpath $(dir $(COMMUNITY_MAKEFILE))/../..)
+VPATH = $(dir $(CURRENT_MAKEFILE))
+
 # List of cmds/engines to build and install (eg: canopsis-api connector-junit...)
-CMDS = $(notdir $(wildcard $(ROOT_DIR)/cmd/*))
+CMDS = $(notdir $(wildcard $(CURRENT_ROOT_DIR)/cmd/*))
 # List of cmd binary paths (eg: build/cmd/canopsis-api build/cmd/connector-junit...)
-CMDS_BINARY_TARGETS = $(addprefix $(BUILD_OUTPUT_DIR)/cmd/,$(CMDS))
+CMDS_BINARY_TARGETS = $(addprefix $(CURRENT_BUILD_OUTPUT_DIR)/cmd/,$(CMDS))
 
 # List of plugins to build and install (eg: datasource/mongo.so)
-PLUGINS = $(addsuffix .so,$(patsubst $(ROOT_DIR)/plugins/%,%,$(wildcard $(ROOT_DIR)/plugins/*/*)))
-PLUGINS_BINARY_TARGETS = $(addprefix $(BUILD_OUTPUT_DIR)/plugins/,$(PLUGINS))
+PLUGINS = $(addsuffix .so,$(patsubst $(CURRENT_ROOT_DIR)/plugins/%,%,$(wildcard $(CURRENT_ROOT_DIR)/plugins/*/*)))
+PLUGINS_BINARY_TARGETS = $(addprefix $(CURRENT_BUILD_OUTPUT_DIR)/plugins/,$(PLUGINS))
 
 # List of Docker containers targets
 DOCKER_CMD_TARGETS = $(addprefix docker-cmd-,$(CMDS))
@@ -66,7 +70,7 @@ DOCKER_GOLANG_VERSION = 1.17.2
 # Alpine version used in the Golang build container (https://hub.docker.com/_/golang?tab=tags&page=1&name=alpine)
 # (note: Alpine 3.14+ is currenly on hold; see issue canopsis/canopsis-pro#3871)
 DOCKER_ALPINE_BUILD_VERSION = 3.13
-DOCKERFILE_PATH = $(dir $(CURRENT_MAKEFILE))Dockerfile
+DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
 DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
 .PHONY: all docker-images deps
@@ -80,8 +84,8 @@ docker-images: $(DOCKER_CMD_TARGETS)
 # "go build" does this implicitly, but doing it explicitly beforehand can
 # be useful in some cases (e.g. Docker cache layer)
 deps:
-	@echo "==> Downloading go.mod dependencies"
-	cd -- "$(ROOT_DIR)" && \
+	@echo "==> Downloading go.mod dependencies for $(CANOPSIS_EDITION)"
+	cd -- "$(CURRENT_ROOT_DIR)" && \
 	go mod download
 
 # Make make treat cmds as viable build targets (for single-engine build)
@@ -90,17 +94,17 @@ $(PLUGINS_BINARY_TARGETS):
 # Tell make where to find the binaries
 
 # Plugin build job template
-$(BUILD_OUTPUT_DIR)/plugins/%.so: $(ROOT_DIR)/plugins/% $(ROOT_DIR)/plugins/%/*
-	@echo "==> Building $@"
-	cd -- "$(ROOT_DIR)" && \
+$(CURRENT_BUILD_OUTPUT_DIR)/plugins/%.so: $(CURRENT_ROOT_DIR)/plugins/% $(CURRENT_ROOT_DIR)/plugins/%/*
+	@echo "==> Building $@ for $(CANOPSIS_EDITION)"
+	cd -- "$(CURRENT_ROOT_DIR)" && \
 	go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
 		-buildmode=plugin \
 		-o "$(abspath $@)" "$(abspath $<)"
 
 # Build job template
-$(BUILD_OUTPUT_DIR)/cmd/%: $(ROOT_DIR)/cmd/% $(ROOT_DIR)/cmd/%/*
-	@echo "==> Building $@"
-	cd -- "$(ROOT_DIR)" && \
+$(CURRENT_BUILD_OUTPUT_DIR)/cmd/%: $(CURRENT_ROOT_DIR)/cmd/% $(CURRENT_ROOT_DIR)/cmd/%/*
+	@echo "==> Building $@ for $(CANOPSIS_EDITION)"
+	cd -- "$(CURRENT_ROOT_DIR)" && \
 	go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
 		-o "$(abspath $@)" "$(abspath $<)"
 
@@ -172,15 +176,17 @@ docker-cmd-engine-webhook: TARGET=engine-webhook
 # You can modify the content of the CMDS and PLUGINS variables to change what will be built/installed
 # Example : make install DESTDIR=/tmp/installroot PLUGINS=datasource/mongo.so CMDS="canopsis-api connector-junit"
 # will only install the mongo datasource plugin, canopsis-api and connector-junit
-install: $(dir $(CURRENT_MAKEFILE))/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
+install: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
+	@echo "==> Installing files for $(CANOPSIS_EDITION)"
 	# Install cmds
 	install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/bin"
-	install -c -m 755 -- $(foreach cmd,$(CMDS),"$(BUILD_OUTPUT_DIR)/cmd/$(cmd)") "$(DESTDIR)$(PREFIX)/opt/canopsis/bin/"
+	install -c -m 755 -- $(foreach cmd,$(CMDS),"$(CURRENT_BUILD_OUTPUT_DIR)/cmd/$(cmd)") "$(DESTDIR)$(PREFIX)/opt/canopsis/bin/"
 	# Install plugins
-	$(foreach plugin,$(PLUGINS),install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(plugin)" && install -c -m 644 -- "$(BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(plugin)";)
+	$(foreach plugin,$(PLUGINS),install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(dir $(plugin))" && install -c -m 644 -- "$(CURRENT_BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(dir $(plugin))")
 	# Install configuration files
 	install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/etc"
-	install -c -m 644 -- "$(dir $(CURRENT_MAKEFILE))/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml" "$(DESTDIR)$(PREFIX)/opt/canopsis/etc/canopsis.toml"
+	install -c -m 644 -- "$(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml" "$(DESTDIR)$(PREFIX)/opt/canopsis/etc/canopsis.toml"
+
 
 #
 # HELP
@@ -191,7 +197,7 @@ help:
 	@echo "Available targets are:"
 	@$(MAKE) -pRrq -f "$(CURRENT_MAKEFILE)" : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
 	@echo
-	@echo "See also: $(ROOT_DIR)/README.md"
+	@echo "See also: $(CURRENT_ROOT_DIR)/README.md"
 
 #
 # CLEANUP
@@ -199,5 +205,5 @@ help:
 
 .PHONY: clean
 clean:
-	rm -rf -- "$(BUILD_OUTPUT_DIR)"
+	rm -rf -- "$(CURRENT_BUILD_OUTPUT_DIR)"
 	rm -f -- "$(MONOREPO_ROOT)/.dockerignore"
