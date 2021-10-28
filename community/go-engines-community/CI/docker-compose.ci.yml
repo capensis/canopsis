@@ -79,7 +79,7 @@ services:
 #    volumes:
 #      - "./docker/initialisation.toml:/initialisation.toml"
   testing:
-    image: canopsis/canopsis-go-test:latest
+    image: canopsis-go-test:latest
     env_file:
       - compose.env
     depends_on:
