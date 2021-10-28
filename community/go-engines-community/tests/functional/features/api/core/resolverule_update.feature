@@ -110,8 +110,6 @@ Feature: Update an resolve rule
     """json
     {
       "errors": {
-        "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
-        "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
         "description": "Description is missing.",
         "duration.seconds": "Seconds is missing.",
         "duration.unit": "Unit is missing.",
