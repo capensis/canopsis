@@ -43,8 +43,8 @@ GITCOMMIT:=$(shell git -C "$(MONOREPO_ROOT)" log -n 1 --format=oneline --abbrev-
 CUSTOM_LDFLAGS=
 # TODO: simplify this after Go 1.18 with https://utcc.utoronto.ca/~cks/space/blog/programming/GoVersionOfYourSource
 LDFLAGS:=-ldflags "\
-	-X '${LINKPKG}.BuildGitCommit=${GITCOMMIT}' \
-	-X '${LINKPKG}.BuildDate=${SOURCE_DATE_EPOCH}' ${CUSTOM_LDFLAGS}"
+	-X '$(LINKPKG).BuildGitCommit=$(GITCOMMIT)' \
+	-X '$(LINKPKG).BuildDate=$(SOURCE_DATE_EPOCH)' $(CUSTOM_LDFLAGS)"
 
 # -trimpath makes the log lines shorter and independent from the current machine.
 GO_BUILD_FLAGS:= -trimpath
@@ -117,10 +117,10 @@ $(CURRENT_BUILD_OUTPUT_DIR)/cmd/%: $(CURRENT_ROOT_DIR)/cmd/% $(CURRENT_ROOT_DIR)
 
 define DOCKER_BUILD_ARGS
 --platform linux/amd64 \
---build-arg "ALPINE_VERSION=${DOCKER_ALPINE_VERSION}" \
---build-arg "ALPINE_BUILD_VERSION=${DOCKER_ALPINE_BUILD_VERSION}" \
---build-arg "CANOPSIS_EDITION=${CANOPSIS_EDITION}" \
---build-arg "GOLANG_VERSION=${DOCKER_GOLANG_VERSION}"
+--build-arg "ALPINE_VERSION=$(DOCKER_ALPINE_VERSION)" \
+--build-arg "ALPINE_BUILD_VERSION=$(DOCKER_ALPINE_BUILD_VERSION)" \
+--build-arg "GOLANG_VERSION=$(DOCKER_GOLANG_VERSION)" \
+--build-arg "CANOPSIS_EDITION=$(CANOPSIS_EDITION)"
 endef
 
 # Build a recursive .dockerignore from the monorepo (https://github.com/moby/moby/issues/20944)
