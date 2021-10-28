@@ -50,6 +50,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 
 	_, err := s.dbCollection.InsertOne(ctx, flappingrule.Rule{
 		ID:             id,
+		Name:           request.Name,
 		Description:    request.Description,
 		FreqLimit:      request.FreqLimit,
 		Duration:       request.Duration,
@@ -145,6 +146,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		bson.M{"_id": request.ID},
 		bson.M{"$set": flappingrule.Rule{
 			ID:             request.ID,
+			Name:           request.Name,
 			Description:    request.Description,
 			FreqLimit:      request.FreqLimit,
 			Duration:       request.Duration,

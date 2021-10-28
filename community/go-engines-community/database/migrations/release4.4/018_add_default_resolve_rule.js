@@ -3,7 +3,7 @@
     db.resolve_rule.insertOne({
         _id: UUID().toString().split('"')[1],
         "author": "root",
-        "description": "Default rule",
+        "name": "Default rule",
         "duration": {
             "seconds": 60,
             "unit": "m"

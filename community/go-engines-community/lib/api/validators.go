@@ -233,10 +233,20 @@ func RegisterValidators(client mongo.DbClient) {
 	v.RegisterStructValidation(datastorage.ValidateConfig, libdatastorage.Config{})
 
 	resolveRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.ResolveRuleMongoCollection, "ID")
-	v.RegisterStructValidationCtx(resolveRuleIdUniqueValidator.Validate, resolverule.CreateRequest{})
+	resolveRuleNameUniqueValidator := common.NewUniqueFieldValidator(client, mongo.ResolveRuleMongoCollection, "Name")
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		resolveRuleIdUniqueValidator.Validate(ctx, sl)
+		resolveRuleNameUniqueValidator.Validate(ctx, sl)
+	}, resolverule.CreateRequest{})
+	v.RegisterStructValidationCtx(resolveRuleNameUniqueValidator.Validate, resolverule.UpdateRequest{})
 	v.RegisterStructValidation(resolverule.ValidateEditRequest, resolverule.EditRequest{})
 
 	flappingRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.FlappingRuleMongoCollection, "ID")
-	v.RegisterStructValidationCtx(flappingRuleIdUniqueValidator.Validate, flappingrule.CreateRequest{})
+	flappingRuleNameUniqueValidator := common.NewUniqueFieldValidator(client, mongo.FlappingRuleMongoCollection, "Name")
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		flappingRuleIdUniqueValidator.Validate(ctx, sl)
+		flappingRuleNameUniqueValidator.Validate(ctx, sl)
+	}, flappingrule.CreateRequest{})
+	v.RegisterStructValidationCtx(flappingRuleNameUniqueValidator.Validate, flappingrule.UpdateRequest{})
 	v.RegisterStructValidation(flappingrule.ValidateEditRequest, flappingrule.EditRequest{})
 }

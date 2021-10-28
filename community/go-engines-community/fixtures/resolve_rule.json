@@ -2,6 +2,7 @@
   {
     "_id": "test-resolve-rule-to-get-1",
     "author": "root",
+    "name": "test-resolve-rule-to-get-1-name",
     "description": "test-resolve-rule-to-get-1-description",
     "duration": {
       "seconds": 10,
@@ -26,6 +27,7 @@
   {
     "_id": "test-resolve-rule-to-get-2",
     "author": "root",
+    "name": "test-resolve-rule-to-get-2-name",
     "description": "test-resolve-rule-to-get-2-description",
     "duration": {
       "seconds": 10,
@@ -50,6 +52,7 @@
   {
     "_id": "test-resolve-rule-to-delete",
     "author": "root",
+    "name": "test-resolve-rule-to-delete-name",
     "description": "test-resolve-rule-to-delete-description",
     "duration": {
       "seconds": 10,
@@ -74,6 +77,7 @@
   {
     "_id": "test-resolve-rule-to-update-1",
     "author": "root",
+    "name": "test-resolve-rule-to-update-1-name",
     "description": "test-resolve-rule-to-update-1-description",
     "duration": {
       "seconds": 10,
@@ -98,6 +102,7 @@
   {
     "_id": "test-resolve-rule-to-check-unique",
     "author": "root",
+    "name": "test-resolve-rule-to-check-unique-name",
     "description": "test-resolve-rule-to-check-unique-description",
     "duration": {
       "seconds": 10,
