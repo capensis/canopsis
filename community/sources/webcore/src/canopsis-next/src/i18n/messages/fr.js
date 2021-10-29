@@ -1545,6 +1545,30 @@ export default {
         title: 'Règle d\'entité en double',
       },
     },
+    createAlarmStatusRule: {
+      flapping: {
+        create: {
+          title: 'Créer une règle de bagot',
+        },
+        edit: {
+          title: 'Modifier la règle de bagot',
+        },
+        duplicate: {
+          title: 'Dupliquer la règle de bagot',
+        },
+      },
+      resolve: {
+        create: {
+          title: 'Créer une règle de résolution',
+        },
+        edit: {
+          title: 'Modifier la règle de résolution',
+        },
+        duplicate: {
+          title: 'Dupliquer la règle de résolution',
+        },
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -2469,6 +2493,10 @@ export default {
     },
   },
 
+  alarmStatusRules: {
+    frequencyLimit: 'Nombre d\'oscillations',
+  },
+
   icons: {
     noEvents: 'Aucun événement reçu pendant {duration} par certaines dépendances',
   },
@@ -2498,6 +2526,16 @@ export default {
     [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
       title: 'Règles d\'inactivité',
       message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
+      title: 'Règles de bagot',
+      // message: '', // TODO: need to put description
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
+      title: 'Règles de résolution',
+      // message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
