@@ -30,7 +30,7 @@
 
 <script>
 import { authMixin } from '@/mixins/auth';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
   inject: ['$validator'],

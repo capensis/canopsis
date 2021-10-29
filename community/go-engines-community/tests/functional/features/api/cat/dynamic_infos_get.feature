@@ -28,6 +28,7 @@ Feature: Get a dynamic-infos
               "author": "root",
               "alarm_patterns": null,
               "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
+              "enabled": true,
               "disable_during_periods": null,
               "infos": [
                   {
@@ -63,6 +64,7 @@ Feature: Get a dynamic-infos
               "author": "root",
               "alarm_patterns": null,
               "description": "le service d’import des postes dans l’annuaire ne fonctionne pas",
+              "enabled": true,
               "disable_during_periods": null,
               "infos": [
                   {
@@ -116,6 +118,7 @@ Feature: Get a dynamic-infos
               "author": "root",
               "alarm_patterns": null,
               "description": "le service d’import des postes dans l’annuaire ne fonctionne pas",
+              "enabled": true,
               "infos": [
                   {
                       "name": "type",
@@ -167,6 +170,7 @@ Feature: Get a dynamic-infos
       "author": "root",
       "alarm_patterns": null,
       "description": "le service d’import des postes dans l’annuaire ne fonctionne pas",
+      "enabled": true,
       "infos": [
         {
           "name": "type",

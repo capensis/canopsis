@@ -20,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -93,10 +94,16 @@ func Default(
 		return nil, err
 	}
 
+	cookieOptions := CookieOptions{
+		FileAccessName: "token",
+		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
+		Secure:         secureSession,
+	}
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
-	sessionStore.Options.MaxAge = int(sessionStoreSessionMaxAge.Seconds())
-	sessionStore.Options.Secure = secureSession
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, logger)
+	sessionStore.Options.MaxAge = cookieOptions.MaxAge
+	sessionStore.Options.Secure = cookieOptions.Secure
+	apiConfigProvider := config.NewApiConfigProvider(cfg, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
 
 	proxyAccessConfig, err := proxy.LoadAccessConfig(configDir)
 	if err != nil {
@@ -105,12 +112,10 @@ func Default(
 	}
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
-	pbhStore := libredis.NewStore(pbhRedisSession, libredis.PbehaviorKey, 0)
-	pbhService := libpbehavior.NewService(
-		libpbehavior.NewModelProvider(dbClient),
-		libpbehavior.NewEntityMatcher(dbClient),
-		logger,
-	)
+	pbhEntityMatcher := libpbehavior.NewComputedEntityMatcher(dbClient, pbhRedisSession, json.NewEncoder(), json.NewDecoder())
+	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
+	pbhService := libpbehavior.NewService(libpbehavior.NewModelProvider(dbClient), pbhEntityMatcher, pbhStore, libredis.NewLockClient(pbhRedisSession))
+	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, pbhEntityMatcher)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
 	entityServiceEventPublisher := entityservice.NewEventPublisher(
@@ -122,10 +127,10 @@ func Default(
 	jobQueue := contextgraph.NewJobQueue()
 	importWorker := contextgraph.NewImportWorker(
 		cfg,
-		dbClient,
-		contextgraph.NewRMQPublisher(json.NewEncoder(), amqpChannel),
+		contextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 		contextgraph.NewMongoStatusReporter(dbClient),
 		jobQueue,
+		importcontextgraph.NewWorker(dbClient, importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel)),
 		logger,
 	)
 
@@ -156,39 +161,33 @@ func Default(
 	// Create api.
 	api := New(
 		addr,
-		func(ctx context.Context) error {
+		func(ctx context.Context) {
 			close(pbhComputeChan)
 			close(entityPublChan)
 			close(entityCleanerTaskChan)
 
-			var resErr error
 			err := dbClient.Disconnect(ctx)
-			if err != nil && resErr == nil {
-				resErr = err
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
 			err = amqpConn.Close()
-			if err != nil && resErr == nil {
-				resErr = err
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
 
 			err = pbhRedisSession.Close()
-			if err != nil && resErr == nil {
-				resErr = err
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
 
 			err = engineRedisSession.Close()
-			if err != nil && resErr == nil {
-				resErr = err
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
 
 			if deferFunc != nil {
-				err := deferFunc(ctx)
-				if err != nil && resErr == nil {
-					resErr = err
-				}
+				deferFunc(ctx)
 			}
-
-			return resErr
 		},
 		logger,
 	)
@@ -208,8 +207,7 @@ func Default(
 			enforcer,
 			dbClient,
 			timezoneConfigProvider,
-			pbhStore,
-			pbhService,
+			pbhEntityTypeResolver,
 			pbhComputeChan,
 			entityPublChan,
 			entityCleanerTaskChan,
@@ -220,6 +218,7 @@ func Default(
 			jobQueue,
 			userInterfaceConfigProvider,
 			scenarioPriorityIntervals,
+			cfg.File.Upload,
 			logger,
 		)
 	})
@@ -233,8 +232,6 @@ func Default(
 	})
 	api.AddWorker("pbehavior compute", func(ctx context.Context) {
 		pbhComputer := libpbehavior.NewCancelableComputer(
-			libredis.NewLockClient(pbhRedisSession),
-			pbhStore,
 			pbhService,
 			dbClient,
 			amqpChannel,
@@ -254,7 +251,28 @@ func Default(
 	api.AddWorker("import job", func(ctx context.Context) {
 		importWorker.Run(ctx)
 	})
-	api.AddWorker("config reload", func(ctx context.Context) {
+	api.AddWorker("config reload", updateConfig(timezoneConfigProvider, apiConfigProvider,
+		configAdapter, userInterfaceConfigProvider, userInterfaceAdapter, test, logger))
+	api.AddWorker("data export", func(ctx context.Context) {
+		exportExecutor.Execute(ctx)
+	})
+	api.AddWorker("auth token", func(ctx context.Context) {
+		security.GetTokenStore().DeleteExpired(ctx, canopsis.PeriodicalWaitTime)
+	})
+
+	return api, nil
+}
+
+func updateConfig(
+	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
+	apiConfigProvider *config.BaseApiConfigProvider,
+	configAdapter config.Adapter,
+	userInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider,
+	userInterfaceAdapter config.UserInterfaceAdapter,
+	test bool,
+	logger zerolog.Logger,
+) func(ctx context.Context) {
+	return func(ctx context.Context) {
 		timeout := canopsis.PeriodicalWaitTime
 		if test {
 			timeout = time.Second
@@ -274,18 +292,24 @@ func Default(
 
 				err = timezoneConfigProvider.Update(cfg)
 				if err != nil {
-					logger.Err(err).Msg("fail to load config")
+					logger.Err(err).Msg("fail to update tz config")
 					continue
 				}
 
-				userInterfaceConfig, err = userInterfaceAdapter.GetConfig(ctx)
+				err = apiConfigProvider.Update(cfg)
+				if err != nil {
+					logger.Err(err).Msg("fail to update api config")
+					continue
+				}
+
+				userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {
 					logger.Err(err).Msg("fail to load user interface config")
 					continue
 				}
 				err = userInterfaceConfigProvider.Update(userInterfaceConfig)
 				if err != nil {
-					logger.Err(err).Msg("fail to load user interface config")
+					logger.Err(err).Msg("fail to update user interface config")
 					continue
 				}
 			case <-ctx.Done():

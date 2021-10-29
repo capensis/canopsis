@@ -9,14 +9,16 @@ import (
 	"encoding/xml"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"github.com/beevik/etree"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
 	saml2 "github.com/russellhaering/gosaml2"
-	"github.com/russellhaering/gosaml2/types"
+	samltypes "github.com/russellhaering/gosaml2/types"
 	dsig "github.com/russellhaering/goxmldsig"
 	"io"
 	"io/ioutil"
@@ -35,6 +37,7 @@ const (
 type ServiceProvider interface {
 	SamlMetadataHandler() gin.HandlerFunc
 	SamlAuthHandler() gin.HandlerFunc
+	SamlSessionAcsHandler() gin.HandlerFunc
 	SamlAcsHandler() gin.HandlerFunc
 	SamlSloHandler() gin.HandlerFunc
 }
@@ -45,10 +48,20 @@ type serviceProvider struct {
 	sessionStore libsession.Store
 	enforcer     security.Enforcer
 	config       *security.Config
+	tokenService token.Service
+	tokenStore   token.Store
 	logger       zerolog.Logger
 }
 
-func NewServiceProvider(userProvider security.UserProvider, sessionStore libsession.Store, enforcer security.Enforcer, config *security.Config, logger zerolog.Logger) (ServiceProvider, error) {
+func NewServiceProvider(
+	userProvider security.UserProvider,
+	sessionStore libsession.Store,
+	enforcer security.Enforcer,
+	config *security.Config,
+	tokenService token.Service,
+	tokenStore token.Store,
+	logger zerolog.Logger,
+) (ServiceProvider, error) {
 	if config.Security.Saml.IdpMetadataUrl != "" && config.Security.Saml.IdpMetadataXml != "" {
 		return nil, fmt.Errorf("should provide only idp metadata url or xml, not both")
 	}
@@ -66,7 +79,7 @@ func NewServiceProvider(userProvider security.UserProvider, sessionStore libsess
 		return nil, err
 	}
 
-	idpMetadata := &types.EntityDescriptor{}
+	idpMetadata := &samltypes.EntityDescriptor{}
 	if config.Security.Saml.IdpMetadataUrl != "" {
 		tr := http.DefaultTransport.(*http.Transport).Clone()
 		tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: config.Security.Saml.InsecureSkipVerify}
@@ -154,6 +167,8 @@ func NewServiceProvider(userProvider security.UserProvider, sessionStore libsess
 		sessionStore: sessionStore,
 		enforcer:     enforcer,
 		config:       config,
+		tokenService: tokenService,
+		tokenStore:   tokenStore,
 		logger:       logger,
 	}, nil
 }
@@ -244,7 +259,7 @@ func (sp *serviceProvider) SamlAuthHandler() gin.HandlerFunc {
 	}
 }
 
-func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
+func (sp *serviceProvider) SamlSessionAcsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		samlResponse, exists := c.GetPostForm("SAMLResponse")
 		if !exists {
@@ -320,7 +335,7 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 
 		session := sp.getSession(c)
 		session.Values["user"] = user.ID
-		session.Values["provider"] = "saml"
+		session.Values["provider"] = security.AuthMethodSaml
 
 		if assertionInfo.SessionNotOnOrAfter != nil {
 			session.Options.MaxAge = int(time.Until(*assertionInfo.SessionNotOnOrAfter).Seconds())
@@ -336,6 +351,116 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 		if err != nil {
 			panic(fmt.Errorf("reload enforcer error: %w", err))
 		}
+
+		c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
+	}
+}
+
+func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		samlResponse, exists := c.GetPostForm("SAMLResponse")
+		if !exists {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("SAMLResponse doesn't exist")))
+			return
+		}
+
+		relayState, exists := c.GetPostForm("RelayState")
+		if !exists {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("RelayState doesn't exist")))
+			return
+		}
+
+		relayUrl, err := url.Parse(relayState)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("RelayState is not a valid url")))
+			return
+		}
+
+		assertionInfo, err := sp.samlSP.RetrieveAssertionInfo(samlResponse)
+		if err != nil {
+			sp.logger.Err(err).Msg("Assertion is not valid")
+			c.AbortWithStatus(http.StatusForbidden)
+			return
+		}
+
+		if assertionInfo.WarningInfo.InvalidTime {
+			sp.logger.Err(fmt.Errorf("invalid time")).Msg("Assertion is not valid")
+			c.AbortWithStatus(http.StatusForbidden)
+			return
+		}
+
+		if assertionInfo.WarningInfo.NotInAudience {
+			sp.logger.Err(fmt.Errorf("not in audience")).Msg("Assertion is not valid")
+			c.AbortWithStatus(http.StatusForbidden)
+			return
+		}
+
+		user, err := sp.userProvider.FindByExternalSource(c.Request.Context(), assertionInfo.NameID, security.SourceSaml)
+		if err != nil {
+			sp.logger.Err(err).Msg("SamlAcsHandler: userProvider FindByExternalSource error")
+			panic(err)
+		}
+
+		if user == nil {
+			if !sp.config.Security.Saml.AutoUserRegistration {
+				sp.logger.Err(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)).Msg("AutoUserRegistration is disabled")
+
+				query := relayUrl.Query()
+				query.Set("errorMessage", "This user is not allowed to log into Canopsis")
+				relayUrl.RawQuery = query.Encode()
+
+				c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
+				return
+			}
+
+			user = &security.User{
+				Name:       sp.getAssocAttribute(assertionInfo.Values, "name", assertionInfo.NameID),
+				Role:       sp.config.Security.Saml.DefaultRole,
+				IsEnabled:  true,
+				ExternalID: assertionInfo.NameID,
+				Source:     security.SourceSaml,
+				Firstname:  sp.getAssocAttribute(assertionInfo.Values, "firstname", ""),
+				Lastname:   sp.getAssocAttribute(assertionInfo.Values, "lastname", ""),
+				Email:      sp.getAssocAttribute(assertionInfo.Values, "email", ""),
+			}
+			err = sp.userProvider.Save(c.Request.Context(), user)
+			if err != nil {
+				sp.logger.Err(err).Msg("SamlAcsHandler: userProvider Save error")
+				panic(fmt.Errorf("cannot save user: %v", err))
+			}
+		}
+
+		err = sp.enforcer.LoadPolicy()
+		if err != nil {
+			panic(fmt.Errorf("reload enforcer error: %w", err))
+		}
+
+		var accessToken string
+		var expiresAt time.Time
+		if assertionInfo.SessionNotOnOrAfter == nil {
+			accessToken, expiresAt, err = sp.tokenService.GenerateToken(user.ID)
+		} else {
+			expiresAt = *assertionInfo.SessionNotOnOrAfter
+			accessToken, err = sp.tokenService.GenerateTokenWithExpiration(user.ID, expiresAt)
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		err = sp.tokenStore.Save(c.Request.Context(), token.Token{
+			ID:       accessToken,
+			User:     user.ID,
+			Provider: security.AuthMethodSaml,
+			Created:  types.CpsTime{Time: time.Now()},
+			Expired:  types.CpsTime{Time: expiresAt},
+		})
+		if err != nil {
+			panic(err)
+		}
+
+		query := relayUrl.Query()
+		query.Set("access_token", accessToken)
+		relayUrl.RawQuery = query.Encode()
 
 		c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
 	}
@@ -394,7 +519,19 @@ func (sp *serviceProvider) SamlSloHandler() gin.HandlerFunc {
 			return
 		}
 
-		err = sp.sessionStore.ExpireSessions(c.Request.Context(), user.ID, "saml")
+		err = sp.sessionStore.ExpireSessions(c.Request.Context(), user.ID, security.AuthMethodSaml)
+		if err != nil {
+			responseUrl, err := sp.buildLogoutResponseUrl(saml2.StatusCodeUnknownPrincipal, request.ID, relayState)
+			if err != nil {
+				sp.logger.Err(err).Msg("SamlSloHandler: buildLogoutResponseUrl error")
+				panic(err)
+			}
+
+			c.Redirect(http.StatusPermanentRedirect, responseUrl.String())
+			return
+		}
+
+		err = sp.tokenStore.DeleteBy(c.Request.Context(), user.ID, security.AuthMethodSaml)
 		if err != nil {
 			responseUrl, err := sp.buildLogoutResponseUrl(saml2.StatusCodeUnknownPrincipal, request.ID, relayState)
 			if err != nil {

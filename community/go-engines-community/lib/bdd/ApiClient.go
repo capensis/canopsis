@@ -4,6 +4,7 @@ package bdd
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"go/types"
@@ -22,12 +23,24 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/cucumber/godog"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/sergi/go-diff/diffmatchpatch"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const authHeader = "x-canopsis-authkey"
-const ApiEnvURL = "API_URL"
-const requestTimeout = 10 * time.Second
+const (
+	ApiEnvURL           = "API_URL"
+	requestTimeout      = 10 * time.Second
+	userPass            = "test"
+	headerAuthorization = "Authorization"
+	headerContentType   = "Content-Type"
+	basicPrefix         = "Basic"
+	bearerPrefix        = "Bearer"
+
+	repeatRequestCount    = 20
+	repeatRequestInterval = time.Millisecond * 100
+
+	ansiReset = "\x1b[0m"
+)
 
 // ApiClient represents utility struct which implements API steps to feature context.
 type ApiClient struct {
@@ -37,25 +50,17 @@ type ApiClient struct {
 	client *http.Client
 	// db is db client.
 	db mongo.DbClient
-	// authApiKey is api key which can be set using corresponding step.
-	authApiKey string
-	// basicAuth is username and password which can be set using corresponding step.
-	basicAuth *basicAuth
 	// response is http response of made API request.
 	response           *http.Response
 	responseBody       interface{}
 	responseBodyOutput string
 	// cookies is http cookies which are retrieved from API response and used in following steps.
+	// todo remove after session remove
 	cookies []*http.Cookie
 	// vars is used to save data between steps.
 	vars map[string]string
 	// request header
-	contentType string
-}
-
-// basicAuth represents Basic Auth credentials.
-type basicAuth struct {
-	username, password string
+	headers map[string]string
 }
 
 // NewApiClient creates new API client.
@@ -71,7 +76,7 @@ func NewApiClient(db mongo.DbClient) (*ApiClient, error) {
 	}
 	apiClient.url = apiUrl
 	apiClient.db = db
-	apiClient.contentType = binding.MIMEJSON
+	apiClient.headers = make(map[string]string)
 
 	return &apiClient, nil
 }
@@ -85,7 +90,7 @@ func GetApiURL() (*url.URL, error) {
 
 	parsed, err := url.Parse(legacy)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot parse api url: %w", err)
 	}
 
 	return parsed, nil
@@ -96,11 +101,9 @@ func (a *ApiClient) ResetResponse(ctx context.Context, _ *godog.Scenario) (conte
 	a.response = nil
 	a.responseBody = nil
 	a.responseBodyOutput = ""
-	a.authApiKey = ""
-	a.basicAuth = nil
 	a.cookies = nil
 	a.vars = nil
-	a.contentType = binding.MIMEJSON
+	a.headers = make(map[string]string)
 
 	return ctx, nil
 }
@@ -141,7 +144,7 @@ func (a *ApiClient) TheResponseBodyShouldBe(doc string) error {
 		return fmt.Errorf("response is nil")
 	}
 
-	// Try execute template on expected body
+	// Try to execute template on expected body
 	b, err := a.executeTemplate(doc)
 	if err != nil {
 		return err
@@ -152,13 +155,12 @@ func (a *ApiClient) TheResponseBodyShouldBe(doc string) error {
 	var expectedBody interface{}
 	err = json.Unmarshal(content, &expectedBody)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot decode expected response body: %w", err)
 	}
 
 	if !reflect.DeepEqual(a.responseBody, expectedBody) {
 		expectedBodyOutput, _ := json.MarshalIndent(expectedBody, "", "  ")
-		return fmt.Errorf("expected response body to be:\n%v\n, but actual is:\n%v",
-			string(expectedBodyOutput), a.responseBodyOutput)
+		return createDiffResponseError(string(expectedBodyOutput), a.responseBodyOutput)
 	}
 
 	return nil
@@ -180,8 +182,7 @@ func (a *ApiClient) TheResponseRawBodyShouldBe(doc string) error {
 
 	expectedBody := b.String()
 	if a.responseBodyOutput != expectedBody {
-		return fmt.Errorf("expected response body to be:\n%v\n, but actual is:\n%v",
-			expectedBody, a.responseBodyOutput)
+		return createDiffResponseError(expectedBody, a.responseBodyOutput)
 	}
 
 	return nil
@@ -219,8 +220,7 @@ func (a *ApiClient) TheResponseBodyShouldContain(doc string) error {
 
 	if !partialEqual(expectedBody, a.responseBody) {
 		expectedBodyOutput, _ := json.MarshalIndent(expectedBody, "", "  ")
-		return fmt.Errorf("expected response body to be:\n%v\n, but actual is:\n%v",
-			string(expectedBodyOutput), a.responseBodyOutput)
+		return createDiffResponseError(string(expectedBodyOutput), a.responseBodyOutput)
 	}
 
 	return nil
@@ -328,12 +328,12 @@ func (a *ApiClient) IAm(ctx context.Context, role string) error {
 		"crecord_name": role,
 	})
 	if err := res.Err(); err != nil {
-		return err
+		return fmt.Errorf("cannot fetch role: %w", err)
 	}
 
 	err := res.Decode(&line)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot decode role: %w", err)
 	}
 
 	res = a.db.Collection(mongo.RightsMongoCollection).FindOne(ctx, bson.M{
@@ -341,16 +341,52 @@ func (a *ApiClient) IAm(ctx context.Context, role string) error {
 		"role":         line.ID,
 	})
 	if err := res.Err(); err != nil {
-		return err
+		return fmt.Errorf("cannot fetch user: %w", err)
 	}
 
 	err = res.Decode(&line)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot decode user: %w", err)
 	}
 
-	a.authApiKey = line.AuthApiKey
-	a.basicAuth = nil
+	uri := fmt.Sprintf("%s/api/v4/login", a.url)
+	body, err := json.Marshal(map[string]string{
+		"username": line.Name,
+		"password": userPass,
+	})
+	request, err := http.NewRequest(http.MethodPost, uri, bytes.NewReader(body))
+	if err != nil {
+		return fmt.Errorf("cannot create login request: %w", err)
+	}
+
+	request.Header.Set(headerContentType, binding.MIMEJSON)
+
+	response, err := a.client.Do(request)
+	if err != nil {
+		return fmt.Errorf("cannot do login request: %w", err)
+	}
+
+	buf, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return fmt.Errorf("cannot fetch login response: %w", err)
+	}
+
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected response status %v %s", response.StatusCode, buf)
+	}
+
+	responseBody := make(map[string]string)
+	err = json.Unmarshal(buf, &responseBody)
+	if err != nil {
+		return fmt.Errorf("cannot decode login response: %w", err)
+	}
+
+	token := responseBody["access_token"]
+	if token == "" {
+		return fmt.Errorf("unexpected login response %v", buf)
+	}
+
+	a.headers[headerAuthorization] = bearerPrefix + " " + token
 
 	return nil
 }
@@ -360,27 +396,7 @@ Step example:
 	When I am authenticated with username "user" password "pass"
 */
 func (a *ApiClient) IAmAuthenticatedByBasicAuth(username, password string) error {
-	a.basicAuth = &basicAuth{
-		username: username,
-		password: password,
-	}
-	a.authApiKey = ""
-
-	return nil
-}
-
-/**
-Step example:
-	When I am authenticated with api key "key"
-*/
-func (a *ApiClient) IAmAuthenticatedByApiKey(apiKey string) error {
-	b, err := a.executeTemplate(apiKey)
-	if err != nil {
-		return err
-	}
-
-	a.authApiKey = b.String()
-	a.basicAuth = nil
+	a.headers[headerAuthorization] = basicPrefix + " " + base64.StdEncoding.EncodeToString([]byte(username+":"+password))
 
 	return nil
 }
@@ -415,10 +431,10 @@ func (a *ApiClient) ISendAnEvent(doc string) (err error) {
 
 	req, err := http.NewRequest(http.MethodPost, uri, body)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot create event request: %w", err)
 	}
 
-	req.Header.Set("Content-Type", a.contentType)
+	req.Header.Set(headerContentType, binding.MIMEJSON)
 	err = a.doRequest(req)
 	if err != nil {
 		return err
@@ -445,7 +461,7 @@ func (a *ApiClient) IDoRequest(method, uri string) error {
 
 	req, err := http.NewRequest(method, uri, nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot create request: %w", err)
 	}
 
 	return a.doRequest(req)
@@ -490,18 +506,181 @@ func (a *ApiClient) IDoRequestWithBody(method, uri string, doc string) error {
 		body,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot create request: %w", err)
 	}
 
-	req.Header.Set("Content-Type", a.contentType)
+	if _, ok := a.headers[headerContentType]; !ok {
+		req.Header.Set(headerContentType, binding.MIMEJSON)
+	}
+
 	return a.doRequest(req)
 }
 
 /**
 Step example:
+	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}} until response code is 200
 */
-func (a *ApiClient) SetRequestContentType(contentType string) error {
-	a.contentType = contentType
+func (a *ApiClient) IDoRequestUntilResponseCode(method, uri string, code int) error {
+	uri, err := a.getRequestURL(uri)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return fmt.Errorf("cannot create request: %w", err)
+	}
+
+	for i := 0; i < repeatRequestCount; i++ {
+		if i != 0 {
+			time.Sleep(repeatRequestInterval)
+		}
+
+		err := a.doRequest(req)
+		if err != nil {
+			return err
+		}
+
+		if code == a.response.StatusCode {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("max retries exceeded, expected response code to be: %d, but actual is: %d\nresponse body: %v",
+		code,
+		a.response.StatusCode,
+		a.responseBodyOutput,
+	)
+}
+
+/**
+Step example:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body is:
+    """
+    {
+      "status": "done"
+    }
+    """
+*/
+func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc string) error {
+	uri, err := a.getRequestURL(uri)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return fmt.Errorf("cannot create request: %w", err)
+	}
+
+	b, err := a.executeTemplate(doc)
+	if err != nil {
+		return err
+	}
+	content := b.Bytes()
+	var expectedBody interface{}
+	err = json.Unmarshal(content, &expectedBody)
+	if err != nil {
+		return fmt.Errorf("cannot decode expected response body: %w", err)
+	}
+
+	for i := 0; i < repeatRequestCount; i++ {
+		if i != 0 {
+			time.Sleep(repeatRequestInterval)
+		}
+
+		err := a.doRequest(req)
+		if err != nil {
+			return err
+		}
+
+		if code == a.response.StatusCode && reflect.DeepEqual(a.responseBody, expectedBody) {
+			return nil
+		}
+	}
+
+	if code != a.response.StatusCode {
+		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+			code,
+			a.response.StatusCode,
+			a.responseBodyOutput,
+		)
+	}
+
+	expectedBodyOutput, _ := json.MarshalIndent(expectedBody, "", "  ")
+	return fmt.Errorf("max retries exceeded: %w", createDiffResponseError(string(expectedBodyOutput), a.responseBodyOutput))
+}
+
+/**
+Step example:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """
+    {
+      "status": "done"
+    }
+    """
+*/
+func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int, doc string) error {
+	uri, err := a.getRequestURL(uri)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return fmt.Errorf("cannot create request: %w", err)
+	}
+
+	b, err := a.executeTemplate(doc)
+	if err != nil {
+		return err
+	}
+	content := b.Bytes()
+	var expectedBody interface{}
+	err = json.Unmarshal(content, &expectedBody)
+	if err != nil {
+		return fmt.Errorf("cannot decode expected response body: %w", err)
+	}
+
+	for i := 0; i < repeatRequestCount; i++ {
+		if i != 0 {
+			time.Sleep(repeatRequestInterval)
+		}
+
+		err := a.doRequest(req)
+		if err != nil {
+			return err
+		}
+
+		if code == a.response.StatusCode && partialEqual(expectedBody, a.responseBody) {
+			return nil
+		}
+	}
+
+	if code != a.response.StatusCode {
+		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+			code,
+			a.response.StatusCode,
+			a.responseBodyOutput,
+		)
+	}
+
+	expectedBodyOutput, _ := json.MarshalIndent(expectedBody, "", "  ")
+	return fmt.Errorf("max retries exceeded: %w", createDiffResponseError(string(expectedBodyOutput), a.responseBodyOutput))
+}
+
+/**
+Step example:
+    When I set header Content-Type=application/json
+*/
+func (a *ApiClient) ISetRequestHeader(key, value string) error {
+	b, err := a.executeTemplate(value)
+	if err != nil {
+		return err
+	}
+
+	a.headers[key] = b.String()
+
 	return nil
 }
 
@@ -526,12 +705,8 @@ func (a *ApiClient) ISaveResponse(key, value string) error {
 
 // doRequest adds auth credentials and makes request.
 func (a *ApiClient) doRequest(req *http.Request) error {
-	// Add auth credentials
-	if a.authApiKey != "" {
-		req.Header.Add(authHeader, a.authApiKey)
-	}
-	if a.basicAuth != nil {
-		req.SetBasicAuth(a.basicAuth.username, a.basicAuth.password)
+	for k, v := range a.headers {
+		req.Header.Set(k, v)
 	}
 
 	// Add session's cookies
@@ -547,11 +722,11 @@ func (a *ApiClient) doRequest(req *http.Request) error {
 	a.response, err = a.client.Do(req)
 	// Read response
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot do request: %w", err)
 	}
 	buf, err := ioutil.ReadAll(a.response.Body)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot fetch response: %w", err)
 	}
 
 	// Parse response
@@ -659,7 +834,7 @@ func (a *ApiClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
 		}).
 		Parse(tpl)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot parse template: %w", err)
 	}
 
 	data := map[string]interface{}{
@@ -674,7 +849,7 @@ func (a *ApiClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
 	buf := new(bytes.Buffer)
 	err = t.Execute(buf, data)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot execute template: %w", err)
 	}
 
 	return buf, nil
@@ -745,4 +920,10 @@ func partialEqual(left, right interface{}) bool {
 	default:
 		return reflect.DeepEqual(left, right)
 	}
+}
+
+func createDiffResponseError(expected, received string) error {
+	dmp := diffmatchpatch.New()
+	diffs := dmp.DiffMain(expected, received, false)
+	return fmt.Errorf("response doesn't match expected response body:%s\n%s\n", ansiReset, dmp.DiffPrettyText(diffs))
 }

@@ -102,7 +102,7 @@ import uid from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
 import { serviceToServiceDependency } from '@/helpers/treeview/service-dependencies';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import ServiceDependencies from '@/components/other/service/table/service-dependencies.vue';
 
