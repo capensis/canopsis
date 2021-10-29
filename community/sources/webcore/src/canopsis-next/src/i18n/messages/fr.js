@@ -1557,7 +1557,7 @@ export default {
           title: 'Modifier la règle de résolution',
         },
         duplicate: {
-          title: 'Règle de résolution en double',
+          title: 'Dupliquer la règle de résolution',
         },
       },
     },
@@ -2525,7 +2525,7 @@ export default {
     },
 
     [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
-      title: 'Résoudre les règles',
+      title: 'Règles de résolution',
       // message: '', // TODO: need to put description
     },
 
