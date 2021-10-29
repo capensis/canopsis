@@ -219,7 +219,7 @@ docker-test-image: $(MONOREPO_ROOT)/.dockerignore docker-check-version
 .PHONY: help
 help:
 	@echo "Available targets are:"
-	@$(MAKE) -pRrq -f "$(CURRENT_MAKEFILE)" : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
+	@$(MAKE) -pRrq -f "$(CURRENT_MAKEFILE)" : 2>/dev/null | awk -F':' '/^[a-zA-Z0-9][^$$#\/\t=]*:([^=]|$$)/ {split($$1,A,/ /);for(i in A)print A[i]}' | sort -u
 	@echo
 	@echo "See also: $(CURRENT_ROOT_DIR)/README.md"
 
