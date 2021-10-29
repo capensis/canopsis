@@ -858,6 +858,7 @@ export const USERS_PERMISSIONS = {
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
+    healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -1771,6 +1772,8 @@ export const TEST_SUITE_COLORS = {
 };
 
 export const TEST_CASE_FILE_MASK = '%test_case%-hh-mm-ss-YYYY-MM-DD';
+
+export const TEST_CASE_FILE_NAME = '%name%_*.xml';
 
 export const TEST_SUITE_HISTORICAL_DATA_MONTHS_DEFAULT_ITEMS = [1, 3, 6, 12];
 
