@@ -702,6 +702,14 @@ export default {
         '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
         '</dl>',
     },
+    reportFileRegexp: {
+      title: 'Masque de fichier de rapport',
+      helpText: '<dl>' +
+        '<dt>Définir le nom de fichier regexp de quel rapport:<dt>\n' +
+        '<dd>Par exemple:</dd>\n' +
+        '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n' +
+        '</dl>',
+    },
   },
   modals: {
     common: {
@@ -1624,7 +1632,8 @@ export default {
     JSONNotValid: 'JSON non valide',
     versionNotFound: 'Erreur dans la récupération du numéro de version...',
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
-    statsWrongEditionError: 'Les widgets de statistiques ne sont pas disponibles dans l\'édition "core" de Canopsis',
+    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
+    socketConnectionProblem: 'Problème de connexion au serveur socket',
   },
   calendar: {
     today: 'Aujourd\'hui',
