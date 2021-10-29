@@ -293,7 +293,7 @@ Les paramètres de l'action sont :
  - `to` (requis) : le nom du champ de l'évènement dans lequel la valeur doit être
    copiée.
 
-Par exemple, l'action suivante va vérifier si l'entité à l'origine de l'évènement existe déjà dans le référentiel interne de Canopsis. Si c'est le cas elle sera copiée dans le champ `Entity` de l'évènement (reportez vous à cet [exemple](#ajout-dinformations-a-lentite) pour l'utilisation du champ entity de l'évènement) :
+Par exemple, l'action suivante va vérifier si l'entité à l'origine de l'évènement existe déjà dans le référentiel interne de Canopsis. Si c'est le cas elle sera copiée dans le champ `Entity` de l'évènement (reportez-vous à cet [exemple](#ajout-dinformations-a-lentite) pour l'utilisation du champ entity de l'évènement) :
 
 ```json
 {
@@ -313,7 +313,7 @@ Les paramètres de l'action sont :
  - `name` (requis) : le nom de l'information.
  - `description` (optionnel) : la description de l'information.
 
-Par exemple, l'action suivante va copier un champs environnement dans les infos de l'entité :
+Par exemple, l'action suivante va copier un champ environnement dans les infos de l'entité :
 
 ``` json
 {
@@ -738,18 +738,12 @@ des évènements.
 | `component`       | `Component` |
 | `connector`       | `Connector` |
 | `connector_name`  | `ConnectorName` |
-| `copy`            | `copy` |
-| `copy_to_entity_info` | `copyToEntityInfo` |
 | `current_entity`  | `Entity` |
 | `event_type`      | `EventType` |
 | `long_output`     | `LongOutput` |
 | `output`          | `Output` |
 | `perf_data`       | `PerfData` |
 | `resource`        | `Resource` |
-| `set_entity_info` | `setEntityInfo` |
-| `set_entity_info_from_template` | `setEntityInfoFromTemplate` |
-| `set_field`       | `setField` |
-| `set_field_from_template` | `setFieldFromTemplate` |
 | `state`           | `State` |
 | `state_type`      | `StateType` |
 | `status`          | `Status` |
