@@ -58,8 +58,6 @@ func GetTestConf() config.CanopsisConf {
 			PrefetchSize:  0,
 		},
 		Alarm: config.SectionAlarm{
-			FlappingFreqLimit:    1,
-			FlappingInterval:     1,
 			StealthyInterval:     100,
 			CancelAutosolveDelay: "1h",
 		},
