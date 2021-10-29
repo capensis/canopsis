@@ -134,7 +134,7 @@ Si cela ne permet pas de rétablir le service, une analyse de logs est nécessai
 
 ### Moteurs Canopsis
 
-Le contrôle de bon fonctionnement des moteurs comportent plusieurs volets.  
+Le contrôle de bon fonctionnement des moteurs comporte plusieurs volets.  
 
 #### L'enchainement des moteurs
 
@@ -191,13 +191,13 @@ Si une seule instance est en cours d'exécution, le module indique
 
 ![module-healthcheck-engines6](img/module-healthcheck-engines6.png)
 
-Le nombre d'instances optimal n'est pas exploitée dans l'interface graphique. Il est à exploiter au travers de l'API.
+Le nombre d'instances optimal n'est pas exploité dans l'interface graphique. Il est à exploiter au travers de l'API.
 
 ## Graphiques
 
 Dans le menu `Graphiques` du module de bilan de santé, vous accédez 
 
-* au graph montrant le nombre de messages traités dans la dernière heure
+* au graphique montrant le nombre de messages traités dans la dernière heure
 
 ![module-healthcheck-graphiques1](img/module-healthcheck-graphiques1.png)
 
