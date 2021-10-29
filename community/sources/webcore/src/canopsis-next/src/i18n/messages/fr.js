@@ -1540,13 +1540,13 @@ export default {
     createAlarmStatusRule: {
       flapping: {
         create: {
-          title: 'Créer une règle de battement',
+          title: 'Créer une règle de bagot',
         },
         edit: {
-          title: 'Modifier la règle de battement',
+          title: 'Modifier la règle de bagot',
         },
         duplicate: {
-          title: 'Règle de battement en double',
+          title: 'Dupliquer la règle de bagot',
         },
       },
       resolve: {
@@ -2485,7 +2485,7 @@ export default {
   },
 
   alarmStatusRules: {
-    frequencyLimit: 'Limite de fréquence',
+    frequencyLimit: 'Nombre d\'oscillations',
   },
 
   icons: {
@@ -2520,7 +2520,7 @@ export default {
     },
 
     [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
-      title: 'Règles de battement',
+      title: 'Règles de bagot',
       // message: '', // TODO: need to put description
     },
 
