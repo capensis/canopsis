@@ -125,14 +125,15 @@ define DOCKER_BUILD_ARGS
 endef
 
 # Build a recursive .dockerignore from the monorepo (https://github.com/moby/moby/issues/20944)
-$(MONOREPO_ROOT)/.dockerignore: FORCE
+# (note: we mark it .PHONY because it won't be able to see its find(1) dependencies)
+.PHONY: $(MONOREPO_ROOT)/.dockerignore
+$(MONOREPO_ROOT)/.dockerignore:
 	cd -- "$(MONOREPO_ROOT)" &&\
 	:> "$(MONOREPO_ROOT)/.dockerignore" &&\
 	for file in $$(find . -name .dockerignore -type f);\
 	do \
 		sed -E 's;^(!?)(.*)$$;\1'$$(dirname "$$file")'/\2;' "$$file" >> .dockerignore;\
 	done
-FORCE:
 
 .PHONY: docker-check-version docker-go-builder $(DOCKER_CMD_TARGETS)
 
