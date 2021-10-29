@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/saml"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -65,6 +66,8 @@ type security struct {
 
 	apiConfigProvider config.ApiConfigProvider
 
+	metricsSender metrics.Sender
+
 	cookieOptions CookieOptions
 }
 
@@ -75,6 +78,7 @@ func NewSecurity(
 	sessionStore libsession.Store,
 	enforcer libsecurity.Enforcer,
 	apiConfigProvider config.ApiConfigProvider,
+	metricsSender metrics.Sender,
 	cookieOptions CookieOptions,
 	logger zerolog.Logger,
 ) Security {
@@ -84,6 +88,8 @@ func NewSecurity(
 		SessionStore: sessionStore,
 		enforcer:     enforcer,
 		Logger:       logger,
+
+		metricsSender: metricsSender,
 
 		cookieOptions: cookieOptions,
 
@@ -141,7 +147,7 @@ func (s *security) RegisterCallbackRoutes(router gin.IRouter) {
 			router.GET("/api/v4/cas/loggedin", s.casCallbackHandler(p))
 		case libsecurity.AuthMethodSaml:
 			sp, err := saml.NewServiceProvider(s.newUserProvider(), s.SessionStore,
-				s.enforcer, s.Config, s.GetTokenService(), s.GetTokenStore(), s.Logger)
+				s.enforcer, s.Config, s.GetTokenService(), s.GetTokenStore(), s.metricsSender, s.Logger)
 			if err != nil {
 				s.Logger.Err(err).Msg("RegisterCallbackRoutes: NewServiceProvider error")
 				panic(err)
@@ -336,11 +342,12 @@ func (s *security) casCallbackHandler(p libsecurity.HttpProvider) gin.HandlerFun
 			panic(err)
 		}
 
+		now := time.Now()
 		err = s.GetTokenStore().Save(c.Request.Context(), token.Token{
 			ID:       accessToken,
 			User:     user.ID,
 			Provider: libsecurity.AuthMethodCas,
-			Created:  types.CpsTime{Time: time.Now()},
+			Created:  types.CpsTime{Time: now},
 			Expired:  types.CpsTime{Time: expiresAt},
 		})
 		if err != nil {
@@ -355,6 +362,8 @@ func (s *security) casCallbackHandler(p libsecurity.HttpProvider) gin.HandlerFun
 		q := redirectUrl.Query()
 		q.Set("access_token", accessToken)
 		redirectUrl.RawQuery = q.Encode()
+
+		s.metricsSender.SendUserLogin(c.Request.Context(), now, user.ID)
 
 		c.Redirect(http.StatusPermanentRedirect, redirectUrl.String())
 	}

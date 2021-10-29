@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"net/http"
 	"os"
 	"time"
@@ -48,6 +49,7 @@ func Default(
 	enforcer libsecurity.Enforcer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	logger zerolog.Logger,
+	metricsSender metrics.Sender,
 	deferFunc DeferFunc,
 ) (API, error) {
 	// Retrieve config.
@@ -106,7 +108,7 @@ func Default(
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = cookieOptions.Secure
 	apiConfigProvider := config.NewApiConfigProvider(cfg, logger)
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, metricsSender, cookieOptions, logger)
 
 	proxyAccessConfig, err := proxy.LoadAccessConfig(configDir)
 	if err != nil {
@@ -221,6 +223,7 @@ func Default(
 			cfg.File.Upload,
 			websocketHub,
 			broadcastMessageChan,
+			metricsSender,
 			logger,
 		)
 	})
