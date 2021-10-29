@@ -17,6 +17,8 @@ type Sender interface {
 	SendCreate(ctx context.Context, alarm types.Alarm, timestamp time.Time)
 	SendCreateAndPbhEnter(ctx context.Context, alarm types.Alarm, timestamp time.Time)
 	SendCorrelation(ctx context.Context, timestamp time.Time, child types.Alarm)
+	SendUserLogin(ctx context.Context, timestamp time.Time, username string)
+	SendUserActivity(ctx context.Context, timestamp time.Time, username string, value int64)
 }
 
 type nullSender struct{}
@@ -47,4 +49,10 @@ func (s *nullSender) SendCreateAndPbhEnter(_ context.Context, _ types.Alarm, _ t
 }
 
 func (s *nullSender) SendCorrelation(_ context.Context, _ time.Time, _ types.Alarm) {
+}
+
+func (s *nullSender) SendUserLogin(_ context.Context, _ time.Time, _ string) {
+}
+
+func (s *nullSender) SendUserActivity(_ context.Context, _ time.Time, _ string, _ int64) {
 }
