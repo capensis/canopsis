@@ -12,6 +12,7 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} AlarmStatusRule
+ * @property {string} name
  * @property {string} description
  * @property {Duration} duration
  * @property {number} priority
@@ -22,6 +23,7 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} AlarmStatusRuleForm
+ * @property {string} name
  * @property {string} description
  * @property {DurationForm} duration
  * @property {number} priority
@@ -38,6 +40,7 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  */
 export const alarmStatusRuleToForm = (rule = {}, flapping = false) => {
   const form = {
+    name: rule.name || '',
     duration: rule.duration
       ? durationToForm(rule.duration)
       : { value: 1, unit: TIME_UNITS.minute },
