@@ -150,6 +150,8 @@ export const API_ROUTES = {
   notification: '/api/v4/notification/',
   idleRules: '/api/v4/idle-rules',
   idleRulesCount: '/api/v4/idle-rules/count',
+  flappingRules: '/api/v4/flapping-rules',
+  resolveRules: '/api/v4/resolve-rules',
   messageRateStats: '/api/v4/message-rate-stats',
 
   /**

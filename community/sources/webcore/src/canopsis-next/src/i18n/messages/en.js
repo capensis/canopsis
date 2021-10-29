@@ -1545,6 +1545,30 @@ export default {
         title: 'Duplicate entity rule',
       },
     },
+    createAlarmStatusRule: {
+      flapping: {
+        create: {
+          title: 'Create flapping rule',
+        },
+        edit: {
+          title: 'Edit flapping rule',
+        },
+        duplicate: {
+          title: 'Duplicate flapping rule',
+        },
+      },
+      resolve: {
+        create: {
+          title: 'Create resolve rule',
+        },
+        edit: {
+          title: 'Edit resolve rule',
+        },
+        duplicate: {
+          title: 'Duplicate resolve rule',
+        },
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1633,6 +1657,7 @@ export default {
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
+    socketConnectionProblem: 'Problem with connection to socket server',
   },
   calendar: {
     today: 'Today',
@@ -2468,6 +2493,10 @@ export default {
     },
   },
 
+  alarmStatusRules: {
+    frequencyLimit: 'Frequency limit',
+  },
+
   icons: {
     noEvents: 'No events received for {duration} by some of dependencies',
   },
@@ -2497,6 +2526,16 @@ export default {
     [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
       title: 'Idle rules',
       message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
+      title: 'Flapping rules',
+      // message: '', // TODO: need to put description
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
+      title: 'Resolve rules',
+      // message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
