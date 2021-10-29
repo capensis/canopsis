@@ -2,6 +2,7 @@
   {
     "_id": "junit",
     "loader_id": "junit",
+    "loader_no_update": true,
     "type": "junit",
     "method": "worst_of_share",
     "junit_thresholds": {
