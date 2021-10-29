@@ -3,17 +3,17 @@ package pbehavior
 import (
 	"context"
 	"encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"go.mongodb.org/mongo-driver/bson"
 	"math"
 	"sort"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 const defaultAggregationStep = 100
 
 // EntityMatcher checks if an entity is matched to filter.
 type EntityMatcher interface {
-	Match(ctx context.Context, entityID string, filter string) (bool, error)
 	MatchAll(ctx context.Context, entityID string, filters map[string]string) (map[string]bool, error)
 }
 
@@ -39,45 +39,6 @@ type entityMatcher struct {
 	dbCollection    mongo.DbCollection
 }
 
-// Match matches entity by mongo expression.
-func (m *entityMatcher) Match(
-	ctx context.Context,
-	entityID string,
-	filter string,
-) (res bool, resErr error) {
-	if filter == "" {
-		return true, nil
-	}
-
-	pipeline, err := transformFilter(filter)
-	if err != nil {
-		return false, err
-	}
-
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-	cursor, err := m.dbCollection.Find(ctx, []bson.M{
-		{"$match": bson.M{"_id": entityID}},
-		pipeline,
-	})
-	if err != nil {
-		return false, err
-	}
-
-	defer func() {
-		err := cursor.Close(ctx)
-		if resErr == nil && err != nil {
-			resErr = err
-		}
-	}()
-
-	for cursor.Next(ctx) {
-		return true, nil
-	}
-
-	return false, nil
-}
-
 // MatchAll matches entity by mongo expression. It uses $facet to reduce amount
 // of requests to mongo. It makes query for "aggregationStep" filters per mongo request
 // to not reach $facet expression limit.
@@ -87,8 +48,6 @@ func (m *entityMatcher) MatchAll(
 	filters map[string]string,
 ) (map[string]bool, error) {
 	res := make(map[string]bool)
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
 	filtersLen := len(filters)
 	offsetCount := int(math.Ceil(float64(filtersLen) / float64(m.aggregationStep)))
 	filtersArr := make([]keyValue, filtersLen)
@@ -106,7 +65,7 @@ func (m *entityMatcher) MatchAll(
 		b := offset * m.aggregationStep
 		e := int(math.Min(float64(filtersLen), float64(b+m.aggregationStep)))
 		subFilters := filtersArr[b:e]
-		pipeline, err := getAggregatePipeline([]string{entityID}, subFilters)
+		pipeline, err := getEntityAggregatePipeline(entityID, subFilters)
 		if err != nil {
 			return nil, err
 		}
@@ -119,7 +78,7 @@ func (m *entityMatcher) MatchAll(
 		// Check context done.
 		select {
 		case <-ctx.Done():
-			return nil, ctx.Err()
+			return nil, nil
 		default:
 		}
 
@@ -159,9 +118,9 @@ func transformFilter(filter string) (bson.M, error) {
 	return bson.M{"$match": bsonFilter}, nil
 }
 
-// getAggregatePipeline returns doc where key is filter key and value is 1 or 0.
-func getAggregatePipeline(
-	entityIDs []string,
+// getEntityAggregatePipeline returns doc where key is filter key and value is 1 or 0.
+func getEntityAggregatePipeline(
+	entityID string,
 	filters []keyValue,
 ) ([]bson.M, error) {
 	facetPipeline := bson.M{}
@@ -176,7 +135,7 @@ func getAggregatePipeline(
 	}
 
 	return []bson.M{
-		{"$match": bson.M{"_id": bson.M{"$in": entityIDs}}},
+		{"$match": bson.M{"_id": entityID}},
 		{"$facet": facetPipeline},
 		{"$addFields": bson.M{
 			"ids": bson.M{

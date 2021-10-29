@@ -470,6 +470,8 @@ definitions:
         type: integer
       edition:
         type: string
+      file_upload_max_size:
+        type: integer
       footer:
         type: string
       language:
@@ -595,10 +597,20 @@ definitions:
     type: object
   associativetable.Content:
     type: object
-  auth.sessionsCountResponse:
+  auth.loginRequest:
     properties:
-      count:
-        type: integer
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  auth.loginResponse:
+    properties:
+      access_token:
+        type: string
     type: object
   broadcastmessage.BroadcastMessage:
     properties:
@@ -673,96 +685,42 @@ definitions:
           type: string
         type: object
     type: object
-  contextgraph.ConfigurationItem:
+  contextgraph.ImportJob:
     properties:
       _id:
         type: string
-      action:
-        type: string
-      action_properties:
-        type: object
-      category:
-        type: string
-      enabled:
-        type: boolean
-      entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
-        type: object
-      impact_level:
-        type: integer
-      infos:
-        additionalProperties: true
-        type: object
-      measurements:
-        items:
-          type: object
-        type: array
-      name:
-        type: string
-      output_template:
-        type: string
-      type:
-        type: string
-    type: object
-  contextgraph.ImportJob:
-    properties:
       creation:
         type: string
-      execTime:
-        type: string
-      id:
+      exec_time:
         type: string
       info:
         type: string
+      source:
+        type: string
       stats:
-        $ref: '#/definitions/contextgraph.JobStats'
+        $ref: '#/definitions/importcontextgraph.Stats'
         type: object
       status:
         type: string
     type: object
-  contextgraph.ImportResponse:
-    properties:
-      _id:
-        type: string
-    type: object
-  contextgraph.JobStats:
-    properties:
-      deleted:
-        type: integer
-      updated:
-        type: integer
-    type: object
-  contextgraph.Link:
-    properties:
-      _id:
-        type: string
-      action:
-        type: string
-      action_properties:
-        type: object
-      from:
-        items:
-          type: string
-        type: array
-      infos:
-        additionalProperties: true
-        type: object
-      to:
-        type: string
-    type: object
-  contextgraph.Request:
+  contextgraph.ImportRequest:
     properties:
       json:
         properties:
           cis:
             items:
-              $ref: '#/definitions/contextgraph.ConfigurationItem'
+              $ref: '#/definitions/importcontextgraph.ConfigurationItem'
             type: array
           links:
             items:
-              $ref: '#/definitions/contextgraph.Link'
+              $ref: '#/definitions/importcontextgraph.Link'
             type: array
         type: object
+    type: object
+  contextgraph.ImportResponse:
+    properties:
+      _id:
+        type: string
     type: object
   datastorage.Config:
     properties:
@@ -771,6 +729,12 @@ definitions:
           archive_after:
             $ref: '#/definitions/types.DurationWithEnabled'
             type: object
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+        type: object
+      health_check:
+        properties:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
             type: object
@@ -814,6 +778,8 @@ definitions:
       entity:
         $ref: '#/definitions/datastorage.HistoryWithCount'
         type: object
+      health_check:
+        type: integer
       junit:
         type: integer
       pbehavior:
@@ -1232,6 +1198,17 @@ definitions:
     items:
       $ref: '#/definitions/export.Field'
     type: array
+  file.File:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      filename:
+        type: string
+      mediatype:
+        type: string
+    type: object
   http.Response:
     properties:
       body:
@@ -1381,21 +1358,67 @@ definitions:
         $ref: '#/definitions/types.CpsTime'
         type: object
     type: object
+  importcontextgraph.ConfigurationItem:
+    properties:
+      _id:
+        type: string
+      action:
+        type: string
+      action_properties:
+        type: object
+      category:
+        type: string
+      enabled:
+        type: boolean
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      impact_level:
+        type: integer
+      infos:
+        additionalProperties: true
+        type: object
+      measurements:
+        items:
+          type: object
+        type: array
+      name:
+        type: string
+      output_template:
+        type: string
+      type:
+        type: string
+    type: object
+  importcontextgraph.Link:
+    properties:
+      _id:
+        type: string
+      action:
+        type: string
+      action_properties:
+        type: object
+      from:
+        items:
+          type: string
+        type: array
+      infos:
+        additionalProperties: true
+        type: object
+      to:
+        type: string
+    type: object
+  importcontextgraph.Stats:
+    properties:
+      deleted:
+        type: integer
+      updated:
+        type: integer
+    type: object
   messageratestats.ListRequest:
     properties:
       from:
         type: integer
       interval:
-        type: string
-      limit:
-        type: integer
-      page:
-        type: integer
-      paginate:
-        type: boolean
-      sort:
-        type: string
-      sort_by:
         type: string
       to:
         type: integer
@@ -1404,11 +1427,23 @@ definitions:
     - interval
     - to
     type: object
+  messageratestats.StatsListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/messageratestats.StatsResponse'
+        type: array
+      meta:
+        properties:
+          deleted_before:
+            type: integer
+        type: object
+    type: object
   messageratestats.StatsResponse:
     properties:
-      _id:
+      rate:
         type: integer
-      received:
+      time:
         type: integer
     type: object
   notification.InstructionNotification:
@@ -2198,6 +2233,33 @@ definitions:
     required:
     - filter
     type: object
+  pbehavior.PatchRequest:
+    properties:
+      enabled:
+        type: boolean
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      filter:
+        type: object
+      name:
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    type: object
   pbehavior.Response:
     properties:
       _id:
@@ -2852,6 +2914,11 @@ definitions:
       links:
         type: object
     type: object
+  sessionauth.sessionsCountResponse:
+    properties:
+      count:
+        type: integer
+    type: object
   statesettings.JUnitThresholds:
     properties:
       errors:
@@ -2908,6 +2975,37 @@ definitions:
     - major
     - minor
     - type
+    type: object
+  stats.Stats:
+    properties:
+      _id:
+        type: string
+      id_beaker_session:
+        description: Deprecated
+        type: string
+      last_ping:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      last_visible_path:
+        type: object
+      last_visible_ping:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      session_id:
+        type: string
+      start:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      tab_duration:
+        additionalProperties: true
+        type: object
+      user_id:
+        type: string
+      username:
+        description: Deprecated
+        type: string
+      visible_duration:
+        type: integer
     type: object
   types.Alarm:
     properties:
@@ -3235,6 +3333,9 @@ definitions:
     properties:
       _id:
         type: string
+      defaultview:
+        $ref: '#/definitions/user.View'
+        type: object
       name:
         type: string
     type: object
@@ -3490,6 +3591,45 @@ definitions:
         items:
           $ref: '#/definitions/viewgroup.View'
         type: array
+    type: object
+  viewstats.listRequest:
+    properties:
+      isActive:
+        type: boolean
+      startedAfter:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      stoppedBefore:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      usernames:
+        items:
+          type: string
+        type: array
+    type: object
+  viewstats.listResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/stats.Stats'
+        type: array
+    type: object
+  viewstats.pingRequest:
+    properties:
+      path:
+        items:
+          type: string
+        type: array
+      visible:
+        type: boolean
+    required:
+    - path
+    - visible
+    type: object
+  viewstats.pingResponse:
+    properties:
+      _id:
+        type: string
     type: object
 info:
   contact: {}
@@ -3829,7 +3969,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -3980,7 +4121,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4068,7 +4210,8 @@ paths:
         required: true
         type: array
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4162,7 +4305,8 @@ paths:
         required: true
         type: array
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4250,12 +4394,17 @@ paths:
       description: Create import task
       operationId: contextgraph-import-create-import
       parameters:
+      - description: source
+        in: query
+        name: source
+        required: true
+        type: string
       - description: body
         in: body
         name: body
         required: true
         schema:
-          $ref: '#/definitions/contextgraph.Request'
+          $ref: '#/definitions/contextgraph.ImportRequest'
       produces:
       - application/json
       responses:
@@ -4424,7 +4573,8 @@ paths:
       produces:
       - application/json
       responses:
-        "202": {}
+        "202":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -4559,7 +4709,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4735,7 +4886,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -4943,7 +5095,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5133,7 +5286,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5208,6 +5362,149 @@ paths:
       summary: Update eventfilter by id
       tags:
       - eventfilters
+  /file:
+    get:
+      consumes:
+      - application/json
+      description: Get list of file objects by ID
+      operationId: files-list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/file.File'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: List files by ID
+      tags:
+      - files
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload files
+      operationId: file-upload
+      parameters:
+      - description: request
+        in: formData
+        name: files
+        required: true
+        type: string
+      - description: file visibility
+        in: query
+        name: public
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/file.File'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Upload files
+      tags:
+      - files
+  /file-access:
+    get:
+      consumes:
+      - application/json
+      description: Get file access
+      operationId: auth-get-file-access
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - JWTAuth: []
+      summary: Get file access
+      tags:
+      - auth
+  /file/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete file by ID
+      operationId: files-delete
+      parameters:
+      - description: file id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Delete file
+      tags:
+      - files
+    get:
+      consumes:
+      - application/json
+      description: Get file content by ID or download with file name
+      operationId: files-get
+      parameters:
+      - description: file id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get file by ID
+      tags:
+      - files
   /idle-rules:
     get:
       consumes:
@@ -5301,7 +5598,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5446,7 +5744,8 @@ paths:
       description: delete user interface
       operationId: internal-delete-user-interface
       responses:
-        "204": {}
+        "204":
+          description: ""
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -5482,6 +5781,62 @@ paths:
       summary: update user interface
       tags:
       - internal
+  /logged-user-count:
+    get:
+      consumes:
+      - application/json
+      description: Get logged user count
+      operationId: auth-logged-user-count
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get logged user count
+      tags:
+      - auth
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Log in
+      operationId: auth-login
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.loginResponse'
+      summary: Log in
+      tags:
+      - auth
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: Log out
+      operationId: auth-logout
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - JWTAuth: []
+      summary: Log out
+      tags:
+      - auth
   /message-rate-stats:
     get:
       consumes:
@@ -5498,21 +5853,6 @@ paths:
         required: true
         type: string
       - in: query
-        name: limit
-        type: integer
-      - in: query
-        name: page
-        type: integer
-      - in: query
-        name: paginate
-        type: boolean
-      - in: query
-        name: sort
-        type: string
-      - in: query
-        name: sort_by
-        type: string
-      - in: query
         name: to
         required: true
         type: integer
@@ -5522,14 +5862,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/common.PaginatedListResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/messageratestats.StatsResponse'
-                  type: array
-              type: object
+            $ref: '#/definitions/messageratestats.StatsListResponse'
         "400":
           description: Bad Request
           schema:
@@ -5656,7 +5989,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5764,7 +6098,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -5856,7 +6191,8 @@ paths:
       produces:
       - application/octet-stream
       responses:
-        "200": {}
+        "200":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5964,7 +6300,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -6171,7 +6508,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -6343,7 +6681,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6378,6 +6717,44 @@ paths:
       - ApiKeyAuth: []
       - BasicAuth: []
       summary: Get pbehavior by id
+      tags:
+      - pbehaviors
+    patch:
+      consumes:
+      - application/json
+      description: Patch partial set of behavior attributes by id
+      operationId: pbehaviors-patch-by-id
+      parameters:
+      - description: pbehavior id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehavior.PatchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehavior.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Patch partial set of behavior attributes by id
       tags:
       - pbehaviors
     put:
@@ -6658,7 +7035,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6826,7 +7204,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6994,7 +7373,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7128,7 +7508,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.sessionsCountResponse'
+            $ref: '#/definitions/sessionauth.sessionsCountResponse'
         "400":
           description: Bad Request
           schema:
@@ -7312,7 +7692,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7480,7 +7861,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -7577,7 +7959,8 @@ paths:
       produces:
       - application/json
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7588,6 +7971,96 @@ paths:
       summary: Update views positions
       tags:
       - views
+  /view-stats:
+    get:
+      consumes:
+      - application/json
+      description: Get list of view stats
+      operationId: view-stats-find-all
+      parameters:
+      - in: query
+        name: isActive
+        type: boolean
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: usernames
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewstats.listResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find view stats
+      tags:
+      - view-stats
+    post:
+      consumes:
+      - application/json
+      description: Create view stats
+      operationId: view-stats-create
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/viewstats.pingResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Create view stats
+      tags:
+      - view-stats
+  /view-stats/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update view stats by id
+      operationId: view-stats-update-by-id
+      parameters:
+      - description: view stats id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/viewstats.pingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewstats.pingResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Update view stats by id
+      tags:
+      - view-stats
   /views:
     get:
       consumes:
@@ -7681,7 +8154,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7874,4 +8348,8 @@ securityDefinitions:
     type: apiKey
   BasicAuth:
     type: basic
+  JWTAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

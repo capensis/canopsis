@@ -1,7 +1,7 @@
 <template lang="pug">
   v-app#app
     v-layout(v-if="!pending")
-      the-navigation#main-navigation(v-if="$route.name !== 'login'")
+      the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
         active-broadcast-message
         router-view(:key="routeViewKey")
@@ -11,10 +11,13 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import { isEmpty } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
-import { MAX_LIMIT } from '@/constants';
+import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
+import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
+
+import { reloadPageWithTrailingSlashes } from '@/helpers/url';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import TheSideBars from '@/components/side-bars/the-sidebars.vue';
@@ -22,11 +25,13 @@ import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active
 
 import { authMixin } from '@/mixins/auth';
 import systemMixin from '@/mixins/system';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { entitiesViewStatsMixin } from '@/mixins/entities/view-stats';
 import entitiesUserMixin from '@/mixins/entities/user';
-import keepaliveMixin from '@/mixins/entities/keepalive';
 
 import '@/assets/styles/main.scss';
+
+import localStorageService from '@/services/local-storage';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
@@ -40,8 +45,8 @@ export default {
     authMixin,
     systemMixin,
     entitiesInfoMixin,
+    entitiesViewStatsMixin,
     entitiesUserMixin,
-    keepaliveMixin,
   ],
   data() {
     return {
@@ -50,23 +55,36 @@ export default {
   },
   computed: {
     routeViewKey() {
-      if (this.$route.name === 'view') {
+      if (this.$route.name === ROUTES_NAMES.view) {
         return this.$route.path;
       }
 
       return this.$route.fullPath;
     },
+
+    shownNavigation() {
+      return ![ROUTES_NAMES.login, ROUTES_NAMES.error].includes(this.$route.name);
+    },
+  },
+  beforeCreate() {
+    reloadPageWithTrailingSlashes();
   },
   created() {
     this.registerCurrentUserOnceWatcher();
   },
   async mounted() {
-    await this.fetchCurrentUser();
-
-    this.pending = false;
+    try {
+      await this.fetchCurrentUser();
+    } catch ({ status }) {
+      if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(status)) {
+        this.$router.push({ name: ROUTES_NAMES.error });
+      }
+    } finally {
+      this.pending = false;
+    }
   },
   beforeDestroy() {
-    this.stopKeepalive();
+    this.stopViewStats();
   },
   methods: {
     ...mapActions({
@@ -76,15 +94,25 @@ export default {
     registerCurrentUserOnceWatcher() {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
-          await this.fetchAppInfos();
+          try {
+            this.$socket.connect(`${SOCKET_URL}?token=${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
+          } catch (err) {
+            this.$popups.error({ text: this.$t('errors.socketConnectionProblem'), autoClose: false });
+
+            console.error(err);
+          }
+
+          await Promise.all([
+            this.fetchAppInfos(),
+            this.filesAccess(),
+          ]);
 
           this.setSystemData({
             timezone: this.timezone,
           });
 
           this.setTitle();
-
-          this.startKeepalive();
+          this.startViewStats();
           this.showPausedExecutionsPopup();
 
           unwatch();

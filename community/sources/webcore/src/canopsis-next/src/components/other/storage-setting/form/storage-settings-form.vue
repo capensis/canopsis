@@ -1,21 +1,21 @@
 <template lang="pug">
   v-layout(column)
-    storage-setting-block(
+    c-information-block(
       :title="$t('storageSetting.alarm.title')",
       :help-text="$t('storageSetting.alarm.titleHelp')"
     )
       template(v-if="history.alarm", slot="subtitle") {{ alarmSubTitle }}
-      storage-setting-duration-field(
+      c-enabled-duration-field(
         v-field="form.alarm.archive_after",
         :label="$t('storageSetting.alarm.archiveAfter')",
         :name="alarmArchiveAfterFieldName"
       )
-      storage-setting-duration-field(
+      c-enabled-duration-field(
         v-field="form.alarm.delete_after",
         :label="$t('storageSetting.alarm.deleteAfter')",
         :name="alarmDeleteAfterFieldName"
       )
-    storage-setting-block(
+    c-information-block(
       :title="$t('storageSetting.entity.title')",
       :help-text="$t('storageSetting.entity.titleHelp')"
     )
@@ -36,34 +36,41 @@
         )
       v-flex
         v-btn.primary.ma-0.mb-4(@click="$emit('clean-entities')") {{ $t('storageSetting.entity.cleanStorage') }}
-    storage-setting-block(:title="$t('storageSetting.remediation.title')")
+    c-information-block(:title="$t('storageSetting.remediation.title')")
       template(v-if="history.remediation", slot="subtitle") {{ remediationSubTitle }}
-      storage-setting-duration-field(
+      c-enabled-duration-field(
         v-field="form.remediation.accumulate_after",
         :label="$t('storageSetting.remediation.accumulateAfter')",
         :name="remediationAccumulateAfterFieldName"
       )
-      storage-setting-duration-field(
+      c-enabled-duration-field(
         v-field="form.remediation.delete_after",
         :label="$t('storageSetting.remediation.deleteAfter')",
         :help-text="$t('storageSetting.remediation.deleteAfterHelpText')",
         :name="remediationDeleteAfterFieldName"
       )
-    storage-setting-block(:title="$t('storageSetting.pbehavior.title')")
+    c-information-block(:title="$t('storageSetting.pbehavior.title')")
       template(v-if="history.pbehavior", slot="subtitle") {{ pbehaviorSubTitle }}
-      storage-setting-duration-field(
+      c-enabled-duration-field(
         v-field="form.pbehavior.delete_after",
         :label="$t('storageSetting.pbehavior.deleteAfter')",
         :help-text="$t('storageSetting.pbehavior.deleteAfterHelpText')",
         :name="pbehaviorDeleteAfterFieldName"
       )
-    storage-setting-block(:title="$t('storageSetting.junit.title')")
+    c-information-block(:title="$t('storageSetting.junit.title')")
       template(v-if="history.junit", slot="subtitle") {{ junitSubTitle }}
-      storage-setting-duration-field(
+      c-enabled-duration-field(
         v-field="form.junit.delete_after",
         :label="$t('storageSetting.junit.deleteAfter')",
         :help-text="$t('storageSetting.junit.deleteAfterHelpText')",
         :name="junitDeleteAfterFieldName"
+      )
+    c-information-block(:title="$t('storageSetting.healthCheck.title')")
+      template(v-if="history.health_check", slot="subtitle") {{ healthCheckSubTitle }}
+      c-enabled-duration-field(
+        v-field="form.health_check.delete_after",
+        :label="$t('storageSetting.healthCheck.deleteAfter')",
+        :name="healthCheckDeleteAfterFieldName"
       )
 </template>
 
@@ -72,12 +79,8 @@ import { isNumber } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import StorageSettingBlock from './partials/storage-setting-block.vue';
-import StorageSettingDurationField from './partials/storage-setting-duration-field.vue';
-
 export default {
   inject: ['$validator'],
-  components: { StorageSettingDurationField, StorageSettingBlock },
   model: {
     prop: 'form',
     event: 'input',
@@ -117,6 +120,10 @@ export default {
       return 'pbehavior.delete_after';
     },
 
+    healthCheckDeleteAfterFieldName() {
+      return 'health_check.delete_after';
+    },
+
     junitSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
         launchedAt: this.$options.filters.date(this.history.junit, DATETIME_FORMATS.long, true),
@@ -132,6 +139,12 @@ export default {
     pbehaviorSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
         launchedAt: this.$options.filters.date(this.history.pbehavior, DATETIME_FORMATS.long, true),
+      });
+    },
+
+    healthCheckSubTitle() {
+      return this.$t('storageSetting.history.scriptLaunched', {
+        launchedAt: this.$options.filters.date(this.history.health_check, DATETIME_FORMATS.long, true),
       });
     },
 

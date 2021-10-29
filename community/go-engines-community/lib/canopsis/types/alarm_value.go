@@ -351,6 +351,9 @@ type AlarmValue struct {
 
 	// store version of dynamic-infos rule
 	RuleVersion map[string]string `bson:"infos_rule_version"`
+
+	SnoozeDuration            int64 `bson:"snooze_duration" json:"snooze_duration"`
+	PbehaviorInactiveDuration int64 `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
 }
 
 func (v *AlarmValue) Transform() {

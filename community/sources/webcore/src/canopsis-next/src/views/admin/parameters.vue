@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { permissionsTechnicalParametersMixin } from '@/mixins/permissions/technical/parameters';
 
 import UserInterface from '@/components/other/user-interface/user-interface.vue';

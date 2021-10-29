@@ -1,10 +1,10 @@
 # Reconnexion automatique des services et des moteurs
 
-A partir de la version 4.1 de Canopsis, le fichier de configuration [`canopsis.toml`](./variables-environnement.md#chemin-dacces-au-fichier-de-configuration-global-canopsistoml) supporte de nouveaux paramètres permettant de configurer la reconnexion automatique en cas d'erreur.
+À partir de Canopsis 4.1.0, le fichier de configuration [`canopsis.toml`](modification-canopsis-toml.md) prend en charge de nouveaux paramètres permettant de configurer la reconnexion automatique en cas d'erreur.
 
 ## Configuration de la reconnexion
 
-Les paramètres par défaut, présents dans le fichier `canopsis.toml` sont les suivants :
+Les paramètres présents par défaut dans le fichier `canopsis.toml` pour la reconnexion automatique sont les suivants :
 
 ```ini
 [Canopsis.global]
@@ -13,36 +13,41 @@ ReconnectTimeoutMilliseconds = 8
 ```
 
 - `ReconnectRetries` représente le nombre de tentatives de reconnexion en cas d'erreur, 3 par défaut.
-- `ReconnectTimeoutMilliseconds` est le délai **minimum** entre chaque tentative. Par défaut, il est de 8 millisecondes et on parle de délai minimum car celui-ci double à chaque tentative de reconnexion. Soit, avec la configuration par défaut, 8 ms avant le premier essai de reconnexion, 16 ms avant le second, 32 ms avant le troisième.
+- `ReconnectTimeoutMilliseconds` est le délai **minimum** entre chaque tentative. Par défaut, il est de 8 millisecondes et on parle de délai minimum, car celui-ci double à chaque tentative de reconnexion. Soit, avec la configuration par défaut, 8 ms avant le premier essai de reconnexion, 16 ms avant le second, 32 ms avant le troisième.
 
-Ce mécanisme de reconnexion automatique est utilisé par MongoDB, Redis, RabbitMQ, les moteurs Canopsis ainsi que les services `canopsis-api` et [`external-job-executor`](../remediation/index.md#architecture).
+Ce mécanisme de reconnexion automatique est utilisé par MongoDB, Redis, RabbitMQ, les moteurs Canopsis ainsi que `canopsis-api`.
 
-## MongoDB
+Ce mécanisme de reconnexion automatique est utilisé par MongoDB, Redis, RabbitMQ, les moteurs Canopsis ainsi que `canopsis-api`.
 
-Lors de l'exécution d'une commande, si une erreur de connexion est retournée, elle sera automatiquement exécutée de nouveau. Le nombre de tentatives d'exécution supplémentaires est égal à `ReconnectRetries`.
+!!! note
+    Toute modification d'une de ces valeurs implique de suivre de le [Guide de modification du fichier `canopsis.toml`](modification-canopsis-toml.md).
 
-MongoDB dispose également d'options supplémentaires telles que `SocketTimeout` et `ServerSelectionTimeout` permettant de gérer les incidents de connexion. Reportez vous à la documentation MongoDB pour obtenir plus d'informations concernant l'utilisation de ces paramètres.
+## Perte de connexion à MongoDB
 
-## Redis
+Lors de l'exécution d'une commande, si une erreur de connexion est reçue, la commande sera automatiquement exécutée de nouveau. Le nombre de tentatives d'exécution supplémentaires est égal à `ReconnectRetries`.
+
+MongoDB dispose également d'options supplémentaires telles que `SocketTimeout` et `ServerSelectionTimeout` permettant de gérer les incidents de connexion. Reportez-vous à la documentation MongoDB pour obtenir plus d'informations concernant l'utilisation de ces paramètres.
+
+## Perte de connexion à Redis
 
 Le fonctionnement est le même que pour MongoDB mais Redis n'a pas d'options internes pour gérer les incidents de connexion.
 
-## RabbitMQ
+## Perte de connexion à RabbitMQ
 
 Le comportement est identique à celui de Redis.
 
-## Moteurs Canopsis
+## Comportement de la reconnexion dans les moteurs et services Canopsis
 
-### [Processus périodique](../../../guide-utilisation/vocabulaire/#battement)
+### Processus périodique
 
-En cas d'incident de connexion, le processus exécute de nouveau la commande autant de fois que la valeur de `ReconnectRetries`. Si l'incident subsiste à l'issue des nouvelles tentatives, il inscrit l'erreur dans les logs et attend le prochain battement.
+En cas d'incident de connexion, le processus exécute de nouveau la commande autant de fois que la valeur de `ReconnectRetries`. Si l'incident subsiste à l'issue des nouvelles tentatives, il inscrit l'erreur dans les logs et attend le prochain [battement](../../../guide-utilisation/vocabulaire/#battement).
 
 ### Processus de travail
 
-En cas d'erreur de connexion, le processus tente à nouveau d'exécuter la commande en fonction de la valeur de `ReconnectRetries`. Si l'incident persiste, il envoie un message de type `nack` à RabbitMQ, inscrit l'erreur dans les logs et arrête le moteur.
+En cas d'erreur de connexion, le processus tente de nouveau d'exécuter la commande en fonction de la valeur de `ReconnectRetries`. Si l'incident persiste, il envoie un message de type `nack` à RabbitMQ, inscrit l'erreur dans les logs et arrête le moteur.
 
 S'il s'agit d'une erreur d'un autre type, le processus envoie un message de type `ack` à RabbitMQ, inscrit l'erreur dans les logs et passe à la tâche suivante.
 
-## Services `canopsis-api` et `external-job-executor`
+## Service `canopsis-api`
 
-Ces services ne s'arrêtent jamais de fonctionner, quel que soit le type d'erreur rencontré. S'il s'agit d'une erreur de connexion ils essaient de se reconnecter indéfiniment.
+Ce service ne s'arrête jamais de fonctionner, quel que soit le type d'erreur rencontré. S'il s'agit d'une erreur de connexion, il essaie de se reconnecter indéfiniment.

@@ -14,7 +14,7 @@
       )
       state-setting-threshold-field.pl-4.pt-2(
         v-field="form.junit_thresholds.errors",
-        :label="$t('common.errors')",
+        :label="$tc('common.error', 2)",
         name="errors"
       )
       state-setting-threshold-field.pl-4.pt-2(
