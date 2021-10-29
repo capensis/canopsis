@@ -25,7 +25,11 @@ Par ailleurs, l'état global ou l'état de chaque composant est mis à dispositi
 !!! Note
     Le contrôle des composants est effectué une fois par minute.
 
-## API Canopsis
+En parallèle de l'état de santé des composants, vous avez accès à des graphiques montrant le nombre de messages traités dans Canopsis.
+
+## Etat de santé des composants
+
+### API Canopsis
 
 Lorsque l'API de Canopsis est indisponible, vous ne pouvez plus accéder à l'interface graphique.  
 La réponse technique lors de [l'appel à l'API](../../guide-developpement/swagger/#/healthcheck/healthcheck-get) sera de la forme
@@ -58,7 +62,7 @@ Il s'agit en réalité de la réponse renvoyée par le reverse proxy `nginx`.
 
 Si cela ne permet pas de rétablir le service, une analyse de logs est nécessaire.
 
-## Cache Redis
+### Cache Redis
 
 Lorsque le système de cache `redis` est indisponible, la pastille associée passe au rouge.  
 Canopsis ne peut alors pas fonctionner correctement.
@@ -82,7 +86,7 @@ Canopsis ne peut alors pas fonctionner correctement.
 Si cela ne permet pas de rétablir le service, une analyse de logs est nécessaire.
 
 
-## Base de données MongoDB
+### Base de données MongoDB
 
 Lorsque la base de données `mongoDB` est indisponible, la pastille associée passe au rouge.  
 Canopsis ne peut alors pas fonctionner correctement.
@@ -105,7 +109,7 @@ Canopsis ne peut alors pas fonctionner correctement.
 
 Si cela ne permet pas de rétablir le service, une analyse de logs est nécessaire.
 
-## Bus RabbitMQ
+### Bus RabbitMQ
 
 Lorsque la base de données `rabbitmq` est indisponible, la pastille associée passe au rouge.  
 Canopsis ne peut alors pas fonctionner correctement.
@@ -128,11 +132,11 @@ Canopsis ne peut alors pas fonctionner correctement.
 
 Si cela ne permet pas de rétablir le service, une analyse de logs est nécessaire.
 
-## Moteurs Canopsis
+### Moteurs Canopsis
 
 Le contrôle de bon fonctionnement des moteurs comportent plusieurs volets.  
 
-### L'enchainement des moteurs
+#### L'enchainement des moteurs
 
 La transmission d'événements d'un moteur à un moteur respecte un [ordre précis](../../guide-administration/moteurs/schema-enchainement-moteurs). 
 Lorsque l'ordre est respecté, le schéma d'enchainement reste au vert.
@@ -150,7 +154,7 @@ Dans le cas présent, on constate que le moteur `engine-correlation` n'est alime
 Vous devez vous assurer que les options de lancement des moteurs sont correctement positionnées.
 
 
-### L'empilement de messages dans les files d'attente
+#### L'empilement de messages dans les files d'attente
 
 Chaque moteur de Canopsis est associé à une file d'attente de messages.  
 Si le nombre de messages dépasse une limite, on peut en déduire que le moteur n'arrive pas à consommer les messages dans les temps.  
@@ -170,7 +174,7 @@ Les pistes à envisager dans ce cas sont :
 * Les ressources locales allouées sont consommées.
 * Envisager une instance supplémentaire du moteur
 
-### Le nombre d'instances minimal ou optimal d'un moteur n'est pas respecté
+#### Le nombre d'instances minimal ou optimal d'un moteur n'est pas respecté
 
 Le nombre d'instances minimal et optimal d'un moteur peut être défini dans le menu `Paramètres` du Bilan de santé.  
 Si le nombre minimal d'instances n'est pas respecté, alors un avertissement est montré par le module.
@@ -188,3 +192,15 @@ Si une seule instance est en cours d'exécution, le module indique
 ![module-healthcheck-engines6](img/module-healthcheck-engines6.png)
 
 Le nombre d'instances optimal n'est pas exploitée dans l'interface graphique. Il est à exploiter au travers de l'API.
+
+## Graphiques
+
+Dans le menu `Graphiques` du module de bilan de santé, vous accédez 
+
+* au graph montrant le nombre de messages traités dans la dernière heure
+
+![module-healthcheck-graphiques1](img/module-healthcheck-graphiques1.png)
+
+* à l'historique du nombre de messages traités dans Canopsis
+
+![module-healthcheck-graphiques2](img/module-healthcheck-graphiques2.png)
