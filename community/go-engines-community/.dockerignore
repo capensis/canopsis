@@ -2,7 +2,6 @@
 !build_all.sh
 !go.mod
 !go.sum
-!go-test.sh
 !cmd/
 !lib/
 !.git/

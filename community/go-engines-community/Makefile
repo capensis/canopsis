@@ -193,7 +193,7 @@ install: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDIT
 #
 # TESTS
 #
-.PHONY: test docker-test-image
+.PHONY: test
 
 test: $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/ready $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/canopsis-reconfigure
 	@echo "==> Running tests"
@@ -204,13 +204,6 @@ test: $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/ready $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/
 	# environment variables.
 	cd -- "$(CURRENT_ROOT_DIR)" && \
 	go test -p 1 -parallel 1 ./...
-
-docker-test-image: $(MONOREPO_ROOT)/.dockerignore docker-check-version
-	docker build \
-		-t "canopsis-go-test:latest" \
-		$(DOCKER_BUILD_ARGS) \
-		--file "$(COMMUNITY_ROOT_DIR)/Dockerfile.test" \
-		"$(MONOREPO_ROOT)"
 
 #
 # HELP
