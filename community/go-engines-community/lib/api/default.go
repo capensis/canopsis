@@ -316,10 +316,5 @@ func updateConfig(
 				return
 			}
 		}
-	})
-	api.AddWorker("data export", func(ctx context.Context) {
-		exportExecutor.Execute(ctx)
-	})
-
-	return api, nil
+	}
 }
