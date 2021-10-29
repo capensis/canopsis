@@ -99,11 +99,13 @@ export default {
           value: 'name',
           width: 150,
         },
+
         this.hasCreateAnyRemediationInstructionAccess && {
           text: this.$t('common.type'),
           value: 'type',
           width: 100,
         },
+
         {
           text: this.$t('remediationInstructionStats.lastExecutedOn'),
           value: 'last_executed_on',

@@ -3,19 +3,23 @@ package executor
 import (
 	"context"
 	"fmt"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // NewChangeStateExecutor creates new executor.
-func NewChangeStateExecutor(configProvider config.AlarmConfigProvider) operationlib.Executor {
-	return &changeStateExecutor{configProvider: configProvider}
+func NewChangeStateExecutor(configProvider config.AlarmConfigProvider, alarmStatusService alarmstatus.Service) operationlib.Executor {
+	return &changeStateExecutor{configProvider: configProvider, alarmStatusService: alarmStatusService}
 }
 
 type changeStateExecutor struct {
-	configProvider config.AlarmConfigProvider
+	configProvider     config.AlarmConfigProvider
+	alarmStatusService alarmstatus.Service
 }
 
 // Exec emits change state event.
@@ -23,6 +27,7 @@ func (e *changeStateExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
+	entity types.Entity,
 	time types.CpsTime,
 	role, initiator string,
 ) (types.AlarmChangeType, error) {
@@ -32,27 +37,56 @@ func (e *changeStateExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
-	if alarm.Value.State == nil || alarm.Value.State.Value == types.AlarmStateOK {
+	currentState := alarm.Value.State.Value
+	if currentState == types.AlarmStateOK {
 		return "", fmt.Errorf("cannot change ok state")
 	}
 
-	if alarm.Value.State != nil && alarm.Value.State.Value == params.State {
+	if currentState == params.State {
 		return "", nil
 	}
 
 	conf := e.configProvider.Get()
-	err := alarm.PartialUpdateChangeState(
-		params.State,
-		time,
-		params.Author,
-		utils.TruncateString(params.Output, conf.OutputLength),
-		role,
-		initiator,
-		conf,
-	)
+	output := utils.TruncateString(params.Output, conf.OutputLength)
+
+	newStep := types.NewAlarmStep(types.AlarmStepChangeState, time, params.Author, output, role, initiator)
+	newStep.Value = params.State
+	alarm.Value.State = &newStep
+
+	err := alarm.Value.Steps.Add(newStep)
 	if err != nil {
 		return "", err
 	}
+
+	currentStatus := alarm.Value.Status.Value
+	newStatus := e.alarmStatusService.ComputeStatus(*alarm, entity)
+
+	if newStatus == currentStatus {
+		alarm.AddUpdate("$set", bson.M{"v.state": alarm.Value.State})
+		alarm.AddUpdate("$push", bson.M{"v.steps": alarm.Value.State})
+		return types.AlarmChangeTypeChangeState, nil
+	}
+
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, time, params.Author, output, role, initiator)
+	newStepStatus.Value = newStatus
+	if alarm.Value.Status != nil && newStepStatus.Value < alarm.Value.Status.Value {
+		newStepStatus.Type = types.AlarmStepStatusDecrease
+	}
+	alarm.Value.Status = &newStepStatus
+	if err := alarm.Value.Steps.Add(newStepStatus); err != nil {
+		return "", err
+	}
+
+	alarm.Value.StateChangesSinceStatusUpdate = 0
+	alarm.Value.LastUpdateDate = time
+
+	alarm.AddUpdate("$set", bson.M{
+		"v.state":                             alarm.Value.State,
+		"v.status":                            alarm.Value.Status,
+		"v.state_changes_since_status_update": alarm.Value.StateChangesSinceStatusUpdate,
+		"v.last_update_date":                  alarm.Value.LastUpdateDate,
+	})
+	alarm.AddUpdate("$push", bson.M{"v.steps": bson.M{"$each": bson.A{alarm.Value.State, alarm.Value.Status}}})
 
 	return types.AlarmChangeTypeChangeState, nil
 }
