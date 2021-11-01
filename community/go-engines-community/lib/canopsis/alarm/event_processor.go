@@ -144,6 +144,10 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		return alarmChange, nil
 	}
 
+	if event.Entity == nil {
+		return alarmChange, nil
+	}
+
 	operation := s.createOperationFromEvent(event)
 	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, *event.Entity, event.Timestamp, event.Role, event.Initiator)
 	if err != nil {

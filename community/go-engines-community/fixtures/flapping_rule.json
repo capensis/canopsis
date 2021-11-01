@@ -4,7 +4,7 @@
     "author": "root",
     "name": "test-flapping-rule-to-get-1-name",
     "description": "test-flapping-rule-to-get-1-description",
-    "interval": {
+    "duration": {
       "seconds": 10,
       "unit": "s"
     },
@@ -30,7 +30,7 @@
     "author": "root",
     "name": "test-flapping-rule-to-get-2-name",
     "description": "test-flapping-rule-to-get-2-description",
-    "interval": {
+    "duration": {
       "seconds": 10,
       "unit": "s"
     },
@@ -56,7 +56,7 @@
     "author": "root",
     "name": "test-flapping-rule-to-delete-name",
     "description": "test-flapping-rule-to-delete-description",
-    "interval": {
+    "duration": {
       "seconds": 10,
       "unit": "s"
     },
@@ -82,7 +82,7 @@
     "author": "root",
     "name": "test-flapping-rule-to-update-1-name",
     "description": "test-flapping-rule-to-update-1-description",
-    "interval": {
+    "duration": {
       "seconds": 10,
       "unit": "s"
     },
@@ -108,7 +108,7 @@
     "author": "root",
     "name": "test-flapping-rule-to-check-unique-name",
     "description": "test-flapping-rule-to-check-unique-description",
-    "interval": {
+    "duration": {
       "seconds": 10,
       "unit": "s"
     },
