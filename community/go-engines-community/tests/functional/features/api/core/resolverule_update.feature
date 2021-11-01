@@ -7,6 +7,7 @@ Feature: Update an resolve rule
     Then I do PUT /api/v4/resolve-rules/test-resolve-rule-to-update-1:
     """json
     {
+      "name": "test-resolve-rule-to-update-1-name-updated",
       "description": "test-resolve-rule-to-update-1-description-updated",
       "alarm_patterns": [
         {
@@ -36,6 +37,7 @@ Feature: Update an resolve rule
         "name": "root"
       },
       "created": 1619083733,
+      "name": "test-resolve-rule-to-update-1-name-updated",
       "description": "test-resolve-rule-to-update-1-description-updated",
       "alarm_patterns": [
         {
@@ -71,6 +73,7 @@ Feature: Update an resolve rule
     When I do PUT /api/v4/resolve-rules/test-resolve-rule-not-found:
     """json
     {
+      "name": "test-resolve-rule-to-update-2-name-updated",
       "description": "test-resolve-rule-to-update-2-description-updated",
       "alarm_patterns": [
         {
@@ -110,12 +113,28 @@ Feature: Update an resolve rule
     """json
     {
       "errors": {
-        "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
-        "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
-        "description": "Description is missing.",
+        "name": "Name is missing.",
         "duration.seconds": "Seconds is missing.",
         "duration.unit": "Unit is missing.",
         "priority": "Priority is missing."
+      }
+    }
+    """
+
+  Scenario: given create request with already exists id and name should return error
+    When I am admin
+    When I do PUT /api/v4/resolve-rules/test-resolve-rule-to-update-1:
+    """json
+    {
+      "name": "test-resolve-rule-to-check-unique-name"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "name": "Name already exists."
       }
     }
     """

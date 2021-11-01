@@ -8,7 +8,8 @@ import (
 )
 
 type EditRequest struct {
-	Description    string                    `json:"description" binding:"required,max=255"`
+	Name           string                    `json:"name" binding:"required,max=255"`
+	Description    string                    `json:"description" binding:"max=255"`
 	Duration       types.DurationWithUnit    `json:"duration" binding:"required"`
 	AlarmPatterns  pattern.AlarmPatternList  `json:"alarm_patterns"`
 	EntityPatterns pattern.EntityPatternList `json:"entity_patterns"`
@@ -28,6 +29,7 @@ type UpdateRequest struct {
 
 type Response struct {
 	ID             string                    `bson:"_id" json:"_id"`
+	Name           string                    `bson:"name" json:"name"`
 	Description    string                    `bson:"description" json:"description"`
 	Duration       types.DurationWithUnit    `bson:"duration" json:"duration"`
 	AlarmPatterns  pattern.AlarmPatternList  `bson:"alarm_patterns" json:"alarm_patterns"`
@@ -53,5 +55,5 @@ func (r *AggregationResult) GetTotal() int64 {
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id description duration author created updated priority"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name description duration author created updated priority"`
 }

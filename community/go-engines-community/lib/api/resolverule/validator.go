@@ -8,12 +8,8 @@ import (
 
 func ValidateEditRequest(sl validator.StructLevel) {
 	var r = sl.Current().Interface().(EditRequest)
-	entityPatternsIsSet := validateEntityPatterns(sl, r.EntityPatterns)
-	alarmPatternsIsSet := validateAlarmPatterns(sl, r.AlarmPatterns)
-	if !entityPatternsIsSet && !alarmPatternsIsSet {
-		sl.ReportError(r.AlarmPatterns, "AlarmPatterns", "AlarmPatterns", "required_or", "EntityPatterns")
-		sl.ReportError(r.EntityPatterns, "EntityPatterns", "EntityPatterns", "required_or", "AlarmPatterns")
-	}
+	validateEntityPatterns(sl, r.EntityPatterns)
+	validateAlarmPatterns(sl, r.AlarmPatterns)
 }
 
 func validateEntityPatterns(sl validator.StructLevel, patterns pattern.EntityPatternList) bool {

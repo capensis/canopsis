@@ -131,13 +131,14 @@ func (a api) Get(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /resolve-rules/{id} [put]
 func (a api) Update(c *gin.Context) {
-	var request UpdateRequest
+	request := UpdateRequest{
+		ID: c.Param("id"),
+	}
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	request.ID = c.Param("id")
 	rule, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
