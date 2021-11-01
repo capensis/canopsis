@@ -16,13 +16,10 @@ configuration:
   configuration_3:
     _id: global_config
     alarm:
-      baggottime: 1h
       cancelautosolvedelay: 1h
       displaynamescheme: '{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3
         }}'
       enablelasteventdate: true
-      flappingfreqlimit: 0
-      flappinginterval: 0
       longoutputlength: 1024
       outputlength: 255
       stealthyinterval: 0
