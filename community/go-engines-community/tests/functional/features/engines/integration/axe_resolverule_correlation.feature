@@ -26,6 +26,7 @@ Feature: resolve meta alarm
     """json
     {
       "_id": "test-resolve-rule-axe-resolverule-correlation-1",
+      "name": "test-resolve-rule-axe-resolverule-correlation-1-name",
       "description": "test-resolve-rule-axe-resolverule-correlation-1-desc",
       "entity_patterns":[
         {

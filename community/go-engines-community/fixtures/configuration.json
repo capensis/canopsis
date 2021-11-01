@@ -170,7 +170,7 @@
     "launch_job_retries_interval": "1s",
     "wait_job_complete_retries_amount": 1,
     "wait_job_complete_retries_interval": "1s",
-    "pause_manual_instruction_interval": "1m"
+    "pause_manual_instruction_interval": "30m"
   },
   {
     "_id": "health_check",
