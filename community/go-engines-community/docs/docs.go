@@ -8239,6 +8239,9 @@ var doc = `{
                 "activation_date": {
                     "type": "integer"
                 },
+                "active_duration": {
+                    "type": "integer"
+                },
                 "canceled": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
@@ -8335,6 +8338,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "pbh_inactive_duration": {
+                    "type": "integer"
+                },
                 "resolved": {
                     "type": "integer"
                 },
@@ -8344,6 +8350,9 @@ var doc = `{
                 "snooze": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "snooze_duration": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "object",
@@ -9827,9 +9836,9 @@ var doc = `{
         "flappingrule.CreateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
                 "freq_limit",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -9853,6 +9862,9 @@ var doc = `{
                 },
                 "freq_limit": {
                     "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -9890,6 +9902,9 @@ var doc = `{
                 "freq_limit": {
                     "type": "integer"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "priority": {
                     "type": "integer"
                 },
@@ -9901,9 +9916,9 @@ var doc = `{
         "flappingrule.UpdateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
                 "freq_limit",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -9924,6 +9939,9 @@ var doc = `{
                 },
                 "freq_limit": {
                     "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -11642,8 +11660,8 @@ var doc = `{
         "resolverule.CreateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -11664,6 +11682,9 @@ var doc = `{
                 "entity_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -11698,6 +11719,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.EntityPatternList"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "priority": {
                     "type": "integer"
                 },
@@ -11709,8 +11733,8 @@ var doc = `{
         "resolverule.UpdateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -11728,6 +11752,9 @@ var doc = `{
                 "entity_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -12554,6 +12581,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "pbh_inactive_duration": {
+                    "type": "integer"
+                },
                 "related_parents": {
                     "type": "array",
                     "items": {
@@ -12577,6 +12607,9 @@ var doc = `{
                 "snooze": {
                     "type": "object",
                     "$ref": "#/definitions/types.AlarmStep"
+                },
+                "snooze_duration": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "object",
@@ -12641,33 +12674,33 @@ var doc = `{
             "type": "object",
             "required": [
                 "enabled",
-                "seconds",
-                "unit"
+                "unit",
+                "value"
             ],
             "properties": {
                 "enabled": {
                     "type": "boolean"
                 },
-                "seconds": {
-                    "type": "integer"
-                },
                 "unit": {
                     "type": "string"
+                },
+                "value": {
+                    "type": "integer"
                 }
             }
         },
         "types.DurationWithUnit": {
             "type": "object",
             "required": [
-                "seconds",
-                "unit"
+                "unit",
+                "value"
             ],
             "properties": {
-                "seconds": {
-                    "type": "integer"
-                },
                 "unit": {
                     "type": "string"
+                },
+                "value": {
+                    "type": "integer"
                 }
             }
         },
@@ -12756,6 +12789,11 @@ var doc = `{
                 "reason": {
                     "description": "Reason is Name of pbehavior.Reason.",
                     "type": "string"
+                },
+                "timestamp": {
+                    "description": "Timestamp is time when entity enters pbehavior.\nUse pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.",
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
                 },
                 "type": {
                     "description": "TypeID is ID of pbehavior.Type.",
