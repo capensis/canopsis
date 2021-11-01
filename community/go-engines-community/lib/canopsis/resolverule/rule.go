@@ -7,6 +7,7 @@ import (
 
 type Rule struct {
 	ID             string                    `bson:"_id"`
+	Name           string                    `bson:"name"`
 	Description    string                    `bson:"description"`
 	Duration       types.DurationWithUnit    `bson:"duration"`
 	AlarmPatterns  pattern.AlarmPatternList  `bson:"alarm_patterns"`

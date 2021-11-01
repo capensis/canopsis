@@ -44,6 +44,12 @@
       "models_exploitation_idleRules": {
         "checksum": 15
       },
+      "models_exploitation_flappingRules": {
+        "checksum": 15
+      },
+      "models_exploitation_resolveRules": {
+        "checksum": 15
+      },
       "models_healthcheck": {
         "checksum": 1
       },

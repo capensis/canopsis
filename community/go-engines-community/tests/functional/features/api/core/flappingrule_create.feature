@@ -7,6 +7,7 @@ Feature: Create an flapping rule
     When I do POST /api/v4/flapping-rules:
     """json
     {
+      "name": "test-flapping-rule-to-create-1-name",
       "description": "test-flapping-rule-to-create-1-description",
       "alarm_patterns": [
         {
@@ -36,6 +37,7 @@ Feature: Create an flapping rule
         "_id": "root",
         "name": "root"
       },
+      "name": "test-flapping-rule-to-create-1-name",
       "description": "test-flapping-rule-to-create-1-description",
       "alarm_patterns": [
         {
@@ -66,6 +68,7 @@ Feature: Create an flapping rule
         "_id": "root",
         "name": "root"
       },
+      "name": "test-flapping-rule-to-create-1-name",
       "description": "test-flapping-rule-to-create-1-description",
       "alarm_patterns": [
         {
@@ -93,6 +96,7 @@ Feature: Create an flapping rule
     When I do POST /api/v4/flapping-rules:
     """json
     {
+      "name": "test-flapping-rule-to-create-2-priority-1-name",
       "description": "test-flapping-rule-to-create-2-priority-1-description",
       "alarm_patterns": [
         {
@@ -118,6 +122,7 @@ Feature: Create an flapping rule
     When I do POST /api/v4/flapping-rules:
     """json
     {
+      "name": "test-flapping-rule-to-create-2-priority-2-name",
       "description": "test-flapping-rule-to-create-2-priority-2-description",
       "alarm_patterns": [
         {
@@ -147,10 +152,10 @@ Feature: Create an flapping rule
     {
       "data": [
         {
-          "description": "test-flapping-rule-to-create-2-priority-2-description"
+          "name": "test-flapping-rule-to-create-2-priority-2-name"
         },
         {
-          "description": "test-flapping-rule-to-create-2-priority-1-description"
+          "name": "test-flapping-rule-to-create-2-priority-1-name"
         }
       ]
     }
@@ -170,7 +175,7 @@ Feature: Create an flapping rule
       "errors": {
         "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
         "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
-        "description": "Description is missing.",
+        "name": "Name is missing.",
         "freq_limit": "FreqLimit is missing.",
         "duration.seconds": "Seconds is missing.",
         "duration.unit": "Unit is missing.",
@@ -218,7 +223,7 @@ Feature: Create an flapping rule
     When I do POST /api/v4/flapping-rules
     Then the response code should be 403
 
-  Scenario: given create request with already exists id should return error
+  Scenario: given create request with already exists id and name should return error
     When I am admin
     When I do POST /api/v4/flapping-rules:
     """json
@@ -232,6 +237,21 @@ Feature: Create an flapping rule
     {
       "errors": {
         "_id": "ID already exists."
+      }
+    }
+    """
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-check-unique-name"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "name": "Name already exists."
       }
     }
     """

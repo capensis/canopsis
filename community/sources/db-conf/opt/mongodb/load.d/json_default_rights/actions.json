@@ -490,6 +490,22 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_exploitation_flappingRules",
+        "loader_id": "models_exploitation_flappingRules",
+        "crecord_name": "models_exploitation_flappingRules",
+        "crecord_type": "action",
+        "desc": "Exploitation: Flapping rules",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_exploitation_resolveRules",
+        "loader_id": "models_exploitation_resolveRules",
+        "crecord_name": "models_exploitation_resolveRules",
+        "crecord_type": "action",
+        "desc": "Exploitation: Resolve rules",
+        "type": "CRUD"
+    },
+    {
         "_id": "models_healthcheck",
         "loader_id": "models_healthcheck",
         "crecord_name": "models_healthcheck",
@@ -1426,6 +1442,7 @@
     },
     {
         "_id": "api_resolve_rule",
+        "loader_id": "api_resolve_rule",
         "crecord_name": "api_resolve_rule",
         "crecord_type": "action",
         "desc": "Resolve rule",
@@ -1433,6 +1450,7 @@
     },
     {
         "_id": "api_flapping_rule",
+        "loader_id": "api_flapping_rule",
         "crecord_name": "api_flapping_rule",
         "crecord_type": "action",
         "desc": "Flapping rule",
