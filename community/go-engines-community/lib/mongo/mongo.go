@@ -70,6 +70,9 @@ const (
 	ArchivedEntitiesMongoCollection = "archived_entities"
 
 	TokenMongoCollection = "token"
+
+	ResolveRuleMongoCollection  = "resolve_rule"
+	FlappingRuleMongoCollection = "flapping_rule"
 )
 
 type SingleResultHelper interface {

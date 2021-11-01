@@ -115,7 +115,7 @@ l'heure en utilisant le seul fuseau horaire local.
 | id      | varchar(200) | PK          | Id de l'entité                                          |
 | name    | varchar(200) | not null    | Nom de l'entité                                         |
 | enabled | boolean      | not null    | L'entité est-elle activée ?                             |
-| type    | varchar(100) | not null    | Type d'entité (connector, component, resource, watcher) |
+| type    | varchar(100) | not null    | Type d'entité (connector, component, resource, service) |
 
 !!! Note
     Une entité arbitraire « [NOT FOUND] » est créée dans cette table par le
@@ -352,11 +352,6 @@ alimentées par le moteur `kpi`) peut être déclenchée en envoyant l'évèneme
     "component": "kpi"
 }
 ```
-
-La route d'API Canopsis `POST /api/v2/event` est utilisable pour envoyer cet
-évènement. Se référer à la [documentation de l'API event][api-event].
-
-[api-event]: ../../guide-developpement/api/api-v2-event.md
 
 En conséquence, le moteur exécute sa procédure de purge qui consiste en une
 succession de requêtes SQL `TRUNCATE` sur les tables de statistiques.

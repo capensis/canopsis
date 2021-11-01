@@ -15,7 +15,7 @@
       v-list-tile(
         v-for="playlist in availablePlaylists",
         :key="playlist._id",
-        :to="{ name: 'playlist', params: { id: playlist._id } }"
+        :to="{ name: $constants.ROUTES_NAMES.playlist, params: { id: playlist._id } }"
       )
         v-list-tile-title
           span {{ playlist.name }}

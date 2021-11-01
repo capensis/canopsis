@@ -280,10 +280,7 @@ JunitApi = "/tmp/canopsis/junit"
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.alarm]
-FlappingFreqLimit = 0
-FlappingInterval = 0
 StealthyInterval = 0
-BaggotTime = "60s"
 EnableLastEventDate = false
 CancelAutosolveDelay = "1h"
 DisplayNameScheme = "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}"

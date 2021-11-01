@@ -18,14 +18,14 @@ La commande `engine-action -help` liste toutes les options acceptées par le mot
 
 Les types d'actions disponibles sont :
 
-* `changestate`, qui correspond à un évènement [`changestate`](../../guide-developpement/struct-event.md#event-changestate-structure) : change et verrouille la criticité de l'alarme jusqu'à sa résolution.
+* `changestate`, qui correspond à un évènement `changestate` : change et verrouille la criticité de l'alarme jusqu'à sa résolution.
 * `pbehavior`, met en place un [comportement périodique](moteur-pbehavior.md).
-* `snooze`, qui correspond à un évènement [`snooze`](../../guide-developpement/struct-event.md#event-snooze-structure) : pose une mise en veille automatique sur l'alarme.
-* `ack`, qui correspond à un événement [`ack`](../../guide-developpement/struct-event.md#event-acknowledgment-structure) : pose un acquittement sur l'alarme.
-* `ackremove`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-ackremove-structure) : supprime l'acquittement sur l'alarme.
-* `assocticket`, qui correspond à un événement [`assocticket`](../../guide-developpement/struct-event.md#event-assocticket-structure) : associe un ticket à l'alarme.
-* `declareticket`, qui correspond à un événement [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : déclarer un ticket pour l'alarme.
-* `cancel`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-cancel-structure) : annule l'alarme.
+* `snooze`, qui correspond à un évènement `snooze` : pose une mise en veille automatique sur l'alarme.
+* `ack`, qui correspond à un événement `ack` : pose un acquittement sur l'alarme.
+* `ackremove`, qui correspond à un événement `ackremove` : supprime l'acquittement sur l'alarme.
+* `assocticket`, qui correspond à un événement `assocticket` : associe un ticket à l'alarme.
+* `declareticket`, qui correspond à un événement `declareticket` : déclarer un ticket pour l'alarme.
+* `cancel`, qui correspond à un événement `ackremove` : annule l'alarme.
 
 ### Paramètres généraux
 
@@ -40,7 +40,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
     * [`triggers`](../architecture-interne/triggers.md) : obligatoire. Ils servent comme point de déclenchement pour les actions automatisées, en général lors de la réception d'un évènement.
 
 !!! attention
-    Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
+    Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des évènements, ils ne sont pas utilisables avec les `event_patterns`.
 
 ### Paramètres spécifiques
 
