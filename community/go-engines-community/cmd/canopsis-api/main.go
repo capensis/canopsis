@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"os"
 	"os/signal"
 
@@ -73,6 +74,7 @@ func main() {
 		enforcer,
 		nil,
 		logger,
+		metrics.NewNullSender(),
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {

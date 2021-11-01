@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"net/http"
 	"strings"
 	"time"
@@ -37,6 +38,7 @@ func NewApi(
 	cookieName string,
 	cookieMaxAge int,
 	cookieSecure bool,
+	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) API {
 	return &api{
@@ -51,6 +53,8 @@ func NewApi(
 		cookieMaxAge:   cookieMaxAge,
 		cookieSecure:   cookieSecure,
 		cookieSameSite: http.SameSiteNoneMode,
+
+		metricsSender: metricsSender,
 	}
 }
 
@@ -65,6 +69,8 @@ type api struct {
 	cookieMaxAge   int
 	cookieSecure   bool
 	cookieSameSite http.SameSite
+
+	metricsSender metrics.Sender
 
 	sessionStore session.Store
 }
@@ -112,11 +118,12 @@ func (a *api) Login(c *gin.Context) {
 		panic(err)
 	}
 
+	now := time.Now()
 	err = a.tokenStore.Save(c.Request.Context(), token.Token{
 		ID:       accessToken,
 		User:     user.ID,
 		Provider: provider,
-		Created:  types.CpsTime{Time: time.Now()},
+		Created:  types.CpsTime{Time: now},
 		Expired:  types.CpsTime{Time: expiresAt},
 	})
 	if err != nil {
@@ -125,6 +132,7 @@ func (a *api) Login(c *gin.Context) {
 
 	a.sendWebsocketMessage(c.Request.Context())
 
+	a.metricsSender.SendUserLogin(c.Request.Context(), now, user.ID)
 	response := loginResponse{AccessToken: accessToken}
 
 	c.JSON(http.StatusOK, response)

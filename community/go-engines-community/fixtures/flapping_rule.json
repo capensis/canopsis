@@ -2,6 +2,7 @@
   {
     "_id": "test-flapping-rule-to-get-1",
     "author": "root",
+    "name": "test-flapping-rule-to-get-1-name",
     "description": "test-flapping-rule-to-get-1-description",
     "interval": {
       "seconds": 10,
@@ -27,6 +28,7 @@
   {
     "_id": "test-flapping-rule-to-get-2",
     "author": "root",
+    "name": "test-flapping-rule-to-get-2-name",
     "description": "test-flapping-rule-to-get-2-description",
     "interval": {
       "seconds": 10,
@@ -52,6 +54,7 @@
   {
     "_id": "test-flapping-rule-to-delete",
     "author": "root",
+    "name": "test-flapping-rule-to-delete-name",
     "description": "test-flapping-rule-to-delete-description",
     "interval": {
       "seconds": 10,
@@ -77,6 +80,7 @@
   {
     "_id": "test-flapping-rule-to-update-1",
     "author": "root",
+    "name": "test-flapping-rule-to-update-1-name",
     "description": "test-flapping-rule-to-update-1-description",
     "interval": {
       "seconds": 10,
@@ -102,6 +106,7 @@
   {
     "_id": "test-flapping-rule-to-check-unique",
     "author": "root",
+    "name": "test-flapping-rule-to-check-unique-name",
     "description": "test-flapping-rule-to-check-unique-description",
     "interval": {
       "seconds": 10,

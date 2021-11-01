@@ -9,6 +9,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
@@ -43,14 +44,15 @@ type ServiceProvider interface {
 }
 
 type serviceProvider struct {
-	samlSP       *saml2.SAMLServiceProvider
-	userProvider security.UserProvider
-	sessionStore libsession.Store
-	enforcer     security.Enforcer
-	config       *security.Config
-	tokenService token.Service
-	tokenStore   token.Store
-	logger       zerolog.Logger
+	samlSP        *saml2.SAMLServiceProvider
+	userProvider  security.UserProvider
+	sessionStore  libsession.Store
+	enforcer      security.Enforcer
+	config        *security.Config
+	tokenService  token.Service
+	tokenStore    token.Store
+	metricsSender metrics.Sender
+	logger        zerolog.Logger
 }
 
 func NewServiceProvider(
@@ -60,6 +62,7 @@ func NewServiceProvider(
 	config *security.Config,
 	tokenService token.Service,
 	tokenStore token.Store,
+	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) (ServiceProvider, error) {
 	if config.Security.Saml.IdpMetadataUrl != "" && config.Security.Saml.IdpMetadataXml != "" {
@@ -163,13 +166,14 @@ func NewServiceProvider(
 			NameIdFormat:                config.Security.Saml.NameIdFormat,
 			SkipSignatureValidation:     config.Security.Saml.SkipSignatureValidation,
 		},
-		userProvider: userProvider,
-		sessionStore: sessionStore,
-		enforcer:     enforcer,
-		config:       config,
-		tokenService: tokenService,
-		tokenStore:   tokenStore,
-		logger:       logger,
+		userProvider:  userProvider,
+		sessionStore:  sessionStore,
+		enforcer:      enforcer,
+		config:        config,
+		tokenService:  tokenService,
+		tokenStore:    tokenStore,
+		metricsSender: metricsSender,
+		logger:        logger,
 	}, nil
 }
 
@@ -447,11 +451,12 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 			panic(err)
 		}
 
+		now := time.Now()
 		err = sp.tokenStore.Save(c.Request.Context(), token.Token{
 			ID:       accessToken,
 			User:     user.ID,
 			Provider: security.AuthMethodSaml,
-			Created:  types.CpsTime{Time: time.Now()},
+			Created:  types.CpsTime{Time: now},
 			Expired:  types.CpsTime{Time: expiresAt},
 		})
 		if err != nil {
@@ -461,6 +466,8 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 		query := relayUrl.Query()
 		query.Set("access_token", accessToken)
 		relayUrl.RawQuery = query.Encode()
+
+		sp.metricsSender.SendUserLogin(c.Request.Context(), now, user.ID)
 
 		c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
 	}

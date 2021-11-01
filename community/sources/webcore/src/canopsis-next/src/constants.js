@@ -45,6 +45,8 @@ export const ENTITIES_TYPES = {
   testSuiteHistory: 'testSuiteHistory',
   stateSetting: 'stateSetting',
   idleRules: 'idleRules',
+  flappingRules: 'flappingRules',
+  resolveRules: 'resolveRules',
 };
 
 export const MODALS = {
@@ -126,6 +128,7 @@ export const MODALS = {
   stateSetting: 'state-setting',
   testSuite: 'test-suite',
   createIdleRule: 'create-idle-rule',
+  createAlarmStatusRule: 'create-alarm-status-rule',
   healthcheckEngine: 'healthcheck-engine',
   healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
 };
@@ -867,6 +870,8 @@ export const USERS_PERMISSIONS = {
       metaAlarmRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_metaAlarmRule`,
       scenario: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_scenario`,
       idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
+      flappingRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_flappingRules`,
+      resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
@@ -1020,6 +1025,8 @@ export const USERS_PERMISSIONS = {
     datastorageRead: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_read`,
     datastorageUpdate: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_update`,
     instructionApprove: `${USER_PERMISSIONS_PREFIXES.api}_instruction_approve`,
+    flappingRule: `${USER_PERMISSIONS_PREFIXES.api}_flapping_rule`,
+    resolveRule: `${USER_PERMISSIONS_PREFIXES.api}_resolve_rule`,
   },
 };
 
@@ -1773,6 +1780,8 @@ export const TEST_SUITE_COLORS = {
 
 export const TEST_CASE_FILE_MASK = '%test_case%-hh-mm-ss-YYYY-MM-DD';
 
+export const TEST_CASE_FILE_NAME = '%name%_*.xml';
+
 export const TEST_SUITE_HISTORICAL_DATA_MONTHS_DEFAULT_ITEMS = [1, 3, 6, 12];
 
 export const JUNIT_ALARM_CONNECTOR = 'junit';
@@ -1916,6 +1925,8 @@ export const ROUTES_NAMES = {
   exploitationMetaAlarmRules: 'exploitation-meta-alarm-rules',
   exploitationScenarios: 'exploitation-scenarios',
   exploitationIdleRules: 'exploitation-idle-rules',
+  exploitationFlappingRules: 'exploitation-flapping-rules',
+  exploitationResolveRules: 'exploitation-resolve-rules',
   notificationInstructionStats: 'notification-instruction-stats',
 };
 
@@ -1942,6 +1953,8 @@ export const ROUTES = {
   exploitationMetaAlarmRules: '/exploitation/meta-alarm-rule',
   exploitationScenarios: '/exploitation/scenarios',
   exploitationIdleRules: '/exploitation/idle-rules',
+  exploitationFlappingRules: '/exploitation/flapping-rules',
+  exploitationResolveRules: '/exploitation/resolve-rules',
   notificationInstructionStats: '/notification/instruction-stats',
 };
 
