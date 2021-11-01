@@ -15,7 +15,7 @@ Cette partie présente la création d'une règle qui ajoute une consigne "Consig
 
 ### Création de la consigne
 
-Pour créer une règle d'informations dynamiques, ouvrir le menu *Exploitation* (en haut à droite), cliquer sur *Informations dynamiques*, puis sur le bouton *Créer une information dynamique* (en bas à droite). Il est également possible de créer des règles en utilisant l'[API Informations Dynamiques](../../guide-developpement/api/api-v2-dynamic-infos.md).
+Pour créer une règle d'informations dynamiques, ouvrir le menu *Exploitation* (en haut à droite), cliquer sur *Informations dynamiques*, puis sur le bouton *Créer une information dynamique* (en bas à droite).
 
 Le premier onglet de la modale *Créer une information dynamique* permet de donner un nom et une description à la règle.
 

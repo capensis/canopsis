@@ -31,10 +31,11 @@ func (e *resolveStatExecutor) Exec(
 	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
+	entity types.Entity,
 	timestamp types.CpsTime,
 	role, initiator string,
 ) (types.AlarmChangeType, error) {
-	changeType, err := e.executor.Exec(ctx, operation, alarm, timestamp, role, initiator)
+	changeType, err := e.executor.Exec(ctx, operation, alarm, entity, timestamp, role, initiator)
 	if err != nil {
 		return "", err
 	}
