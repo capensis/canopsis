@@ -131,6 +131,8 @@ definitions:
         type: object
       activation_date:
         type: integer
+      active_duration:
+        type: integer
       canceled:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
@@ -197,6 +199,8 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      pbh_inactive_duration:
+        type: integer
       resolved:
         type: integer
       resource:
@@ -204,6 +208,8 @@ definitions:
       snooze:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
+      snooze_duration:
+        type: integer
       state:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
@@ -1211,12 +1217,14 @@ definitions:
         type: object
       freq_limit:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
     - freq_limit
+    - name
     - priority
     type: object
   flappingrule.Response:
@@ -1241,6 +1249,8 @@ definitions:
         type: object
       freq_limit:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
       updated:
@@ -1261,12 +1271,14 @@ definitions:
         type: object
       freq_limit:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
     - freq_limit
+    - name
     - priority
     type: object
   http.Response:
@@ -2633,11 +2645,13 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
+    - name
     - priority
     type: object
   resolverule.Response:
@@ -2660,6 +2674,8 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
+      name:
+        type: string
       priority:
         type: integer
       updated:
@@ -2678,11 +2694,13 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
+    - name
     - priority
     type: object
   role.CreateRequest:
@@ -3245,6 +3263,8 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      pbh_inactive_duration:
+        type: integer
       related_parents:
         items:
           type: string
@@ -3262,6 +3282,8 @@ definitions:
       snooze:
         $ref: '#/definitions/types.AlarmStep'
         type: object
+      snooze_duration:
+        type: integer
       state:
         $ref: '#/definitions/types.AlarmStep'
         type: object
@@ -3306,24 +3328,24 @@ definitions:
     properties:
       enabled:
         type: boolean
-      seconds:
-        type: integer
       unit:
         type: string
+      value:
+        type: integer
     required:
     - enabled
-    - seconds
     - unit
+    - value
     type: object
   types.DurationWithUnit:
     properties:
-      seconds:
-        type: integer
       unit:
         type: string
+      value:
+        type: integer
     required:
-    - seconds
     - unit
+    - value
     type: object
   types.OptionalBool:
     properties:
@@ -3393,6 +3415,12 @@ definitions:
       reason:
         description: Reason is Name of pbehavior.Reason.
         type: string
+      timestamp:
+        $ref: '#/definitions/types.CpsTime'
+        description: |-
+          Timestamp is time when entity enters pbehavior.
+          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+        type: object
       type:
         description: TypeID is ID of pbehavior.Type.
         type: string
