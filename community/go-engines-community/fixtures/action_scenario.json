@@ -94,7 +94,7 @@
           "type": "test-type-to-edit-scenario",
           "start_on_trigger": true,
           "duration": {
-            "seconds": 3,
+            "value": 3,
             "unit": "s"
           },
           "tstart": null,
@@ -136,7 +136,7 @@
       }
     ],
     "delay": {
-      "seconds": 10,
+      "value": 10,
       "unit": "s"
     },
     "triggers": ["create"],

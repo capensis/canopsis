@@ -251,7 +251,11 @@ func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) error {
 				return err
 			}
 		case AlarmStepSnooze:
-			err := a.PartialUpdateSnooze(ts, step.Value, step.Author, step.Message, step.Role, step.Initiator)
+			d := DurationWithUnit{
+				Value: int64(step.Value) - step.Timestamp.Unix(),
+				Unit:  "s",
+			}
+			err := a.PartialUpdateSnooze(ts, d, step.Author, step.Message, step.Role, step.Initiator)
 			if err != nil {
 				return err
 			}

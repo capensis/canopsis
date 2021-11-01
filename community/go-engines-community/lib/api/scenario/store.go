@@ -191,7 +191,7 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 	}
 
 	if sortBy == "delay" {
-		sortBy = "delay.seconds"
+		sortBy = "delay.value"
 	}
 
 	return common.GetSortQuery(sortBy, r.Sort)

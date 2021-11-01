@@ -110,13 +110,17 @@ func (r *Rule) Matches(alarm *types.Alarm, entity *types.Entity) bool {
 }
 
 func (r *Rule) matchesByAlarmLastEventDate(alarm *types.Alarm) bool {
+	before := r.Duration.SubFrom(time.Now())
+
 	return r.Type != RuleTypeAlarm || r.AlarmCondition != RuleAlarmConditionLastEvent ||
-		time.Since(alarm.Value.LastEventDate.Time) >= r.Duration.Duration()
+		alarm.Value.LastEventDate.Before(before)
 }
 
 func (r *Rule) matchesByAlarmLastUpdateDate(alarm *types.Alarm) bool {
+	before := r.Duration.SubFrom(time.Now())
+
 	return r.Type != RuleTypeAlarm || r.AlarmCondition != RuleAlarmConditionLastUpdate ||
-		time.Since(alarm.Value.LastUpdateDate.Time) >= r.Duration.Duration()
+		alarm.Value.LastUpdateDate.Before(before)
 }
 
 func (r *Rule) matchesByEntityLastEventDate(entity *types.Entity) bool {
@@ -124,12 +128,14 @@ func (r *Rule) matchesByEntityLastEventDate(entity *types.Entity) bool {
 		return true
 	}
 
+	before := r.Duration.SubFrom(time.Now())
+
 	if entity.LastEventDate != nil {
-		return time.Since(entity.LastEventDate.Time) >= r.Duration.Duration()
+		return entity.LastEventDate.Before(before)
 	}
 
 	if !entity.Created.IsZero() {
-		return time.Since(entity.Created.Time) >= r.Duration.Duration()
+		return entity.Created.Before(before)
 	}
 
 	return true

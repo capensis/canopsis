@@ -152,10 +152,10 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 		start = &types.CpsTime{Time: time.Unix(*params.Tstart, 0)}
 		stop = &types.CpsTime{Time: time.Unix(*params.Tstop, 0)}
 	} else if params.StartOnTrigger != nil && *params.StartOnTrigger &&
-		params.Duration != nil && params.Duration.Seconds > 0 {
+		params.Duration != nil && params.Duration.Value > 0 {
 		now := time.Now()
 		start = &types.CpsTime{Time: now}
-		stop = &types.CpsTime{Time: now.Add(time.Duration(params.Duration.Seconds) * time.Second)}
+		stop = &types.CpsTime{Time: params.Duration.AddTo(now)}
 	}
 
 	if start == nil {

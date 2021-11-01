@@ -47,16 +47,13 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) error {
 		return nil
 	}
 
-	if conf.Config.Pbehavior.DeleteAfter == nil || !*conf.Config.Pbehavior.DeleteAfter.Enabled {
+	d := conf.Config.Pbehavior.DeleteAfter
+	if d == nil || !*d.Enabled || d.Value == 0 {
 		return nil
 	}
 
-	d := conf.Config.Pbehavior.DeleteAfter.Duration()
-	if d == 0 {
-		return nil
-	}
-
-	deleted, err := w.PbehaviorCleaner.Clean(ctx, d)
+	before := d.SubFrom(now)
+	deleted, err := w.PbehaviorCleaner.Clean(ctx, types.CpsTime{Time: before})
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot accumulate week statistics")
 	} else if deleted > 0 {

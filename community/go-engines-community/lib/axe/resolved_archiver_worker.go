@@ -50,30 +50,28 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) error {
 	var archived, deleted int64
 
 	updated := false
-	if conf.Config.Alarm.ArchiveAfter != nil && *conf.Config.Alarm.ArchiveAfter.Enabled {
-		d := conf.Config.Alarm.ArchiveAfter.Duration()
-		if d > 0 {
-			updated = true
-			archived, err = w.AlarmAdapter.ArchiveResolvedAlarms(ctx, d)
-			if err != nil {
-				w.Logger.Err(err).Msg("cannot archive resolved alarms")
-				return err
-			}
-
-			w.Logger.Info().Int64("alarm number", archived).Msg("resolved alarm archiving")
+	archiveAfter := conf.Config.Alarm.ArchiveAfter
+	if archiveAfter != nil && *archiveAfter.Enabled && archiveAfter.Value > 0 {
+		updated = true
+		before := archiveAfter.SubFrom(now)
+		archived, err = w.AlarmAdapter.ArchiveResolvedAlarms(ctx, types.CpsTime{Time: before})
+		if err != nil {
+			w.Logger.Err(err).Msg("cannot archive resolved alarms")
+			return err
 		}
+
+		w.Logger.Info().Int64("alarm number", archived).Msg("resolved alarm archiving")
 	}
 
-	if conf.Config.Alarm.DeleteAfter != nil && *conf.Config.Alarm.DeleteAfter.Enabled {
-		d := conf.Config.Alarm.DeleteAfter.Duration()
-		if d > 0 {
-			updated = true
-			deleted, err = w.AlarmAdapter.DeleteArchivedResolvedAlarms(ctx, d)
-			if err != nil {
-				w.Logger.Err(err).Msg("cannot delete resolved alarms")
-			} else if deleted > 0 {
-				w.Logger.Info().Int64("alarm number", deleted).Msg("resolved alarm removing")
-			}
+	deleteAfter := conf.Config.Alarm.DeleteAfter
+	if deleteAfter != nil && *deleteAfter.Enabled && deleteAfter.Value > 0 {
+		updated = true
+		before := deleteAfter.SubFrom(now)
+		deleted, err = w.AlarmAdapter.DeleteArchivedResolvedAlarms(ctx, types.CpsTime{Time: before})
+		if err != nil {
+			w.Logger.Err(err).Msg("cannot delete resolved alarms")
+		} else if deleted > 0 {
+			w.Logger.Info().Int64("alarm number", deleted).Msg("resolved alarm removing")
 		}
 	}
 

@@ -10,7 +10,7 @@ Feature: rate an instruction
       "instruction": {
         "rate": true,
         "rate_frequency": {
-          "seconds": 1,
+          "value": 1,
           "unit": "s"
         }
       }
@@ -78,7 +78,7 @@ Feature: rate an instruction
       "instruction": {
         "rate": true,
         "rate_frequency": {
-          "seconds": 1,
+          "value": 1,
           "unit": "s"
         }
       }

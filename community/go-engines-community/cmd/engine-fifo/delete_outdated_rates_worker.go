@@ -48,16 +48,15 @@ func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) error {
 	}
 
 	updated := false
-	if conf.Config.HealthCheck.DeleteAfter != nil && *conf.Config.HealthCheck.DeleteAfter.Enabled {
-		d := conf.Config.HealthCheck.DeleteAfter.Duration()
-		if d > 0 {
-			updated = true
-			deleted, err := w.RateLimitAdapter.DeleteBefore(ctx, now.Add(-d).Unix())
-			if err != nil {
-				w.Logger.Err(err).Msg("cannot delete message rates")
-			} else if deleted > 0 {
-				w.Logger.Info().Int64("count", deleted).Msg("message rates were deleted")
-			}
+	d := conf.Config.HealthCheck.DeleteAfter
+	if d != nil && *d.Enabled && d.Value > 0 {
+		updated = true
+		before := d.SubFrom(now)
+		deleted, err := w.RateLimitAdapter.DeleteBefore(ctx, types.CpsTime{Time: before})
+		if err != nil {
+			w.Logger.Err(err).Msg("cannot delete message rates")
+		} else if deleted > 0 {
+			w.Logger.Info().Int64("count", deleted).Msg("message rates were deleted")
 		}
 	}
 
