@@ -24,6 +24,7 @@ Feature: Get a resolve rule
             "name": "root"
           },
           "created": 1619083733,
+          "name": "test-resolve-rule-to-get-1-name",
           "description": "test-resolve-rule-to-get-1-description",
           "duration": {
             "seconds": 10,
@@ -51,6 +52,7 @@ Feature: Get a resolve rule
             "name": "root"
           },
           "created": 1619083733,
+          "name": "test-resolve-rule-to-get-2-name",
           "description": "test-resolve-rule-to-get-2-description",
           "duration": {
             "seconds": 10,
@@ -94,6 +96,7 @@ Feature: Get a resolve rule
         "name": "root"
       },
       "created": 1619083733,
+      "name": "test-resolve-rule-to-get-1-name",
       "description": "test-resolve-rule-to-get-1-description",
       "duration": {
         "seconds": 10,
