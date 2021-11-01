@@ -41,6 +41,13 @@ const snapshotFactory = (options = {}) => mount(JunitGanttChart, {
   ...options,
 });
 
+const tooltipFactory = (dataIndex = 0) => ({
+  opacity: 1,
+  caretX: 100,
+  caretY: 100,
+  dataPoints: [{ dataIndex }],
+});
+
 describe('junit-gantt-chart', () => {
   const query = { page: 1, rowsPerPage: 10 };
   const historicalItems = [
@@ -83,9 +90,9 @@ describe('junit-gantt-chart', () => {
     {
       _id: 'ea7a3f46-7edd-4dbb-ba04-6429588552db',
       name: 'test_case_9_1_3',
-      time: 0.91,
+      time: 0.9,
       from: 2.58,
-      to: 3.49,
+      to: 3.48,
       status: 0,
       message: '',
       avg_to: 3.49,
@@ -98,11 +105,45 @@ describe('junit-gantt-chart', () => {
       time: 0.89,
       from: 3.49,
       to: 4.38,
-      status: 1,
+      status: 0,
       message: 'test_case_msg_9_1_4',
-      avg_to: 3.49,
-      avg_time: 0.00,
+      avg_to: 4.29,
+      avg_time: 0.8,
+      avg_status: 0,
+    },
+    {
+      _id: '6661fd90-c418-46f7-9310-525d9619261d',
+      name: 'test_case_9_1_5',
+      time: 0.22,
+      from: 4.38,
+      to: 4.60,
+      status: 0,
+      message: 'test_case_msg_9_1_5',
+      avg_to: 4.60,
+      avg_time: 0.22,
+      avg_status: 3,
+    },
+    { // Without time and avg_time
+      _id: '80982d6e-afdd-42c2-9cb1-ef996d207595',
+      name: 'test_case_9_1_6',
+      from: 4.60,
+      to: 4.60,
+      status: 1,
+      message: 'test_case_msg_9_1_6',
+      avg_to: 4.60,
       avg_status: 1,
+    },
+    {
+      _id: '560ed17e-4ef8-4558-9b82-ff020f6e1aad',
+      name: 'test_case_9_1_7',
+      time: 0.87,
+      from: 4.60,
+      to: 5.47,
+      status: 2,
+      message: 'test_case_msg_9_1_7',
+      avg_to: 5.47,
+      avg_time: 0.87,
+      avg_status: 0,
     },
   ];
 
@@ -150,14 +191,12 @@ describe('junit-gantt-chart', () => {
     avg_to: 0,
     avg_time: 0,
     avg_status: 0,
-  }, {
+  }, { // Without time and message
     _id: 'c3ec3087-c9f0-48a7-94d8-53a8dd0614ac',
     name: 'test_case_9_6_4',
-    time: 0.91,
     from: 1.8,
-    to: 2.71,
+    to: 1.8,
     status: 1,
-    message: 'test_case_msg_9_6_4',
     avg_to: 0,
     avg_time: 0,
     avg_status: 0,
@@ -243,16 +282,23 @@ describe('junit-gantt-chart', () => {
       },
     });
 
-    const tooltip = {
-      opacity: 1,
-      caretX: 100,
-      caretY: 100,
-      dataPoints: [{ dataIndex: 0 }],
-    };
+    await flushPromises();
+
+    wrapper.vm.getTooltip({ tooltip: tooltipFactory(0) });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `junit-gantt-chart` tooltip without.', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        items,
+      },
+    });
 
     await flushPromises();
 
-    wrapper.vm.getTooltip({ tooltip });
+    wrapper.vm.getTooltip({ tooltip: tooltipFactory(4) });
 
     expect(wrapper.element).toMatchSnapshot();
   });
@@ -264,21 +310,20 @@ describe('junit-gantt-chart', () => {
       },
     });
 
-    const tooltip = {
-      opacity: 0,
-      caretX: 100,
-      caretY: 100,
-      dataPoints: [{ dataIndex: 0 }],
-    };
-
     await flushPromises();
 
-    wrapper.vm.getTooltip({ tooltip });
+    wrapper.vm.getTooltip({
+      tooltip: {
+        ...tooltipFactory(0),
+
+        opacity: 0,
+      },
+    });
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `junit-gantt-chart` historical tooltip.', async () => {
+  it('Renders `junit-gantt-chart` historical and tooltip (no icon).', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: historicalItems,
@@ -286,18 +331,123 @@ describe('junit-gantt-chart', () => {
       },
     });
 
-    const tooltip = {
-      opacity: 1,
-      caretX: 100,
-      caretY: 100,
-      dataPoints: [{ dataIndex: 0 }],
-    };
+    await flushPromises();
+
+    const tooltip = wrapper.find('.v-tooltip__content');
+    const canvas = wrapper.find('canvas');
+
+    wrapper.vm.getTooltip({
+      tooltip: {
+        ...tooltipFactory(0),
+
+        caretX: -100,
+      },
+    });
+
+    expect(tooltip.element).toMatchSnapshot();
+    expect(canvas.element).toMatchCanvasSnapshot();
+  });
+
+  it('Renders `junit-gantt-chart` historical tooltip (no icon).', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        items: historicalItems,
+        historical: true,
+      },
+    });
 
     await flushPromises();
 
-    wrapper.vm.getTooltip({ tooltip });
+    const tooltip = wrapper.find('.v-tooltip__content');
 
-    expect(wrapper.element).toMatchSnapshot(); // TODO: check icons
+    wrapper.vm.getTooltip({ tooltip: tooltipFactory(1) });
+
+    expect(tooltip.element).toMatchSnapshot();
+  });
+
+  it('Renders `junit-gantt-chart` historical tooltip (no icon).', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        items: historicalItems,
+        historical: true,
+      },
+    });
+
+    await flushPromises();
+
+    const tooltip = wrapper.find('.v-tooltip__content');
+
+    wrapper.vm.getTooltip({ tooltip: tooltipFactory(6) });
+
+    expect(tooltip.element).toMatchSnapshot();
+  });
+
+  it('Renders `junit-gantt-chart` historical tooltip (arrow upward).', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        items: historicalItems,
+        historical: true,
+      },
+    });
+
+    await flushPromises();
+
+    const tooltip = wrapper.find('.v-tooltip__content');
+
+    wrapper.vm.getTooltip({ tooltip: tooltipFactory(3) });
+
+    expect(tooltip.element).toMatchSnapshot();
+  });
+
+  it('Renders `junit-gantt-chart` historical tooltip (arrow downward).', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        items: historicalItems,
+        historical: true,
+      },
+    });
+
+    const tooltip = wrapper.find('.v-tooltip__content');
+
+    await flushPromises();
+
+    wrapper.vm.getTooltip({ tooltip: tooltipFactory(4) });
+
+    expect(tooltip.element).toMatchSnapshot();
+  });
+
+  it('Renders `junit-gantt-chart` historical tooltip (done).', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        items: historicalItems,
+        historical: true,
+      },
+    });
+
+    await flushPromises();
+
+    const tooltip = wrapper.find('.v-tooltip__content');
+
+    wrapper.vm.getTooltip({ tooltip: tooltipFactory(5) });
+
+    expect(tooltip.element).toMatchSnapshot();
+  });
+
+  it('Renders `junit-gantt-chart` historical tooltip (close).', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        items: historicalItems,
+        historical: true,
+      },
+    });
+
+    await flushPromises();
+
+    const tooltip = wrapper.find('.v-tooltip__content');
+
+    wrapper.vm.getTooltip({ tooltip: tooltipFactory(7) });
+
+    expect(tooltip.element).toMatchSnapshot();
   });
 
   it('Renders `junit-gantt-chart` with default props.', async () => {
@@ -307,7 +457,10 @@ describe('junit-gantt-chart', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(canvas.element).toMatchCanvasSnapshot({
+      failureThreshold: 2,
+      failureThresholdType: 'percent',
+    });
   });
 
   it('Renders `junit-gantt-chart` with items prop.', async () => {
@@ -321,22 +474,10 @@ describe('junit-gantt-chart', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(canvas.element).toMatchCanvasSnapshot();
-  });
-
-  it('Renders `junit-gantt-chart` with historical items and prop.', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        items: historicalItems,
-        historical: true,
-      },
+    expect(canvas.element).toMatchCanvasSnapshot({
+      failureThreshold: 2,
+      failureThresholdType: 'percent',
     });
-
-    await flushPromises();
-
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
   });
 
   it('Renders `junit-gantt-chart` with default, required props and updated items.', async () => {
@@ -350,6 +491,9 @@ describe('junit-gantt-chart', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(canvas.element).toMatchCanvasSnapshot({
+      failureThreshold: 2,
+      failureThresholdType: 'percent',
+    });
   });
 });
