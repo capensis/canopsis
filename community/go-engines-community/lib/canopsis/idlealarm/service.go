@@ -53,24 +53,25 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 		s.logger.Debug().Msg("process idle alarms")
 	}()
 
+	now := time.Now()
 	eventGenerator := libevent.NewGenerator(s.entityAdapter)
 	rules, err := s.ruleAdapter.GetEnabled(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	var allMinDuration, entityMinDuration time.Duration
+	var allMinDuration, entityMinDuration types.DurationWithUnit
 	for _, rule := range rules {
-		if allMinDuration == 0 || allMinDuration > rule.Duration.Duration() {
-			allMinDuration = rule.Duration.Duration()
+		if allMinDuration.Value == 0 || allMinDuration.AddTo(now).After(rule.Duration.AddTo(now)) {
+			allMinDuration = rule.Duration
 		}
 
 		switch rule.Type {
 		case idlerule.RuleTypeAlarm:
 			/*do nothing*/
 		case idlerule.RuleTypeEntity:
-			if entityMinDuration == 0 || entityMinDuration > rule.Duration.Duration() {
-				entityMinDuration = rule.Duration.Duration()
+			if entityMinDuration.Value == 0 || entityMinDuration.AddTo(now).After(rule.Duration.AddTo(now)) {
+				entityMinDuration = rule.Duration
 			}
 		default:
 			return nil, fmt.Errorf("unknown type of idle rule: %v for id=%s", rule.Type, rule.ID)
@@ -79,10 +80,9 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 
 	events := make([]types.Event, 0)
 	checkedEntities := make([]string, 0)
-	now := time.Now()
 
-	if allMinDuration > 0 {
-		before := types.CpsTime{Time: now.Add(-allMinDuration)}
+	if allMinDuration.Value > 0 {
+		before := types.CpsTime{Time: allMinDuration.SubFrom(now)}
 		cursor, err := s.alarmAdapter.GetOpenedAlarmsWithLastDatesBefore(ctx, before)
 		if err != nil {
 			return events, err
@@ -97,7 +97,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 				return events, err
 			}
 
-			event, err := s.applyRules(ctx, rules, alarm.Entity, &alarm.Alarm, eventGenerator)
+			event, err := s.applyRules(ctx, rules, alarm.Entity, &alarm.Alarm, eventGenerator, now)
 			if err != nil {
 				return events, err
 			}
@@ -110,8 +110,8 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 		}
 	}
 
-	if entityMinDuration > 0 {
-		before := types.CpsTime{Time: now.Add(-entityMinDuration)}
+	if entityMinDuration.Value > 0 {
+		before := types.CpsTime{Time: entityMinDuration.SubFrom(now)}
 		cursor, err := s.entityAdapter.GetAllWithLastUpdateDateBefore(ctx, before, checkedEntities)
 		if err != nil {
 			return events, err
@@ -126,7 +126,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 				return events, err
 			}
 
-			event, err := s.applyRules(ctx, rules, entity, nil, eventGenerator)
+			event, err := s.applyRules(ctx, rules, entity, nil, eventGenerator, now)
 			if err != nil {
 				return events, err
 			}
@@ -156,6 +156,7 @@ func (s *baseService) applyRules(
 	entity types.Entity,
 	alarm *types.Alarm,
 	eventGenerator libevent.Generator,
+	now time.Time,
 ) (*types.Event, error) {
 	lastAlarm := alarm
 
@@ -163,7 +164,7 @@ func (s *baseService) applyRules(
 		switch rule.Type {
 		case idlerule.RuleTypeAlarm:
 			if alarm != nil && rule.Matches(alarm, &entity) && !alarm.Value.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
-				return s.applyAlarmRule(rule, *alarm)
+				return s.applyAlarmRule(rule, *alarm, now)
 			}
 		case idlerule.RuleTypeEntity:
 			if !rule.Matches(nil, &entity) || entity.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
@@ -194,6 +195,7 @@ func (s *baseService) applyRules(
 func (s *baseService) applyAlarmRule(
 	rule idlerule.Rule,
 	alarm types.Alarm,
+	now time.Time,
 ) (*types.Event, error) {
 	event := types.Event{
 		Connector:     alarm.Value.Connector,
@@ -252,7 +254,7 @@ func (s *baseService) applyAlarmRule(
 	case types.ActionTypeSnooze:
 		if params, ok := rule.Operation.Parameters.(types.OperationSnoozeParameters); ok {
 			event.EventType = types.EventTypeSnooze
-			d := types.CpsNumber(params.Duration.Seconds)
+			d := types.CpsNumber(params.Duration.AddTo(now).Sub(now).Seconds())
 			event.Duration = &d
 			event.Output = params.Output
 			event.Author = params.Author

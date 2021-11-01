@@ -684,9 +684,9 @@ func (a mongoAdapter) DeleteResolvedAlarms(ctx context.Context, duration time.Du
 	return err
 }
 
-func (a mongoAdapter) DeleteArchivedResolvedAlarms(ctx context.Context, duration time.Duration) (int64, error) {
+func (a mongoAdapter) DeleteArchivedResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error) {
 	return a.archivedDbCollection.DeleteMany(ctx, bson.M{
-		"v.resolved": bson.M{"$lte": time.Now().Unix() - int64(duration.Seconds())},
+		"v.resolved": bson.M{"$lte": before},
 	})
 }
 
@@ -701,12 +701,12 @@ func (a *mongoAdapter) CopyAlarmToResolvedCollection(ctx context.Context, alarm 
 	return err
 }
 
-func (a *mongoAdapter) ArchiveResolvedAlarms(ctx context.Context, duration time.Duration) (int64, error) {
+func (a *mongoAdapter) ArchiveResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error) {
 	writeModels := make([]mongo.WriteModel, 0, bulkMaxSize)
 	archivedIds := make([]string, 0, bulkMaxSize)
 
 	cursor, err := a.resolvedDbCollection.Find(ctx, bson.M{
-		"v.resolved": bson.M{"$lte": time.Now().Unix() - int64(duration.Seconds())},
+		"v.resolved": bson.M{"$lte": before},
 	})
 
 	if err != nil {

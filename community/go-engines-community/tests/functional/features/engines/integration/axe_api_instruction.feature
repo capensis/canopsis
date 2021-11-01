@@ -33,7 +33,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -42,7 +42,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-1-step-1-operation-1-description"
             }
           ],
@@ -121,7 +121,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-2-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -130,7 +130,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-2-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-2-step-1-operation-1-description"
             }
           ],
@@ -142,7 +142,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-2-step-2-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-2-step-2-operation-1-description"
             }
           ],
@@ -227,7 +227,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-3-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -236,7 +236,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-3-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-3-step-1-operation-1-description"
             }
           ],
@@ -319,7 +319,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-4-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -328,7 +328,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-4-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-4-step-1-operation-1-description"
             }
           ],
@@ -423,7 +423,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-5-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -432,7 +432,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-5-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-5-step-1-operation-1-description"
             }
           ],
@@ -515,7 +515,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-6-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -524,7 +524,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-6-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-6-step-1-operation-1-description"
             }
           ],
@@ -536,7 +536,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-6-step-2-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-6-step-2-operation-1-description"
             }
           ],
@@ -636,7 +636,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-8-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -645,7 +645,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-8-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-8-step-1-operation-1-description"
             }
           ],
@@ -681,7 +681,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-8-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -690,7 +690,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-8-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-8-step-1-operation-1-description"
             }
           ],

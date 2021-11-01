@@ -15,7 +15,7 @@ Feature: resolve alarm on resolve rule
         }
       ],
       "duration": {
-        "seconds": 2,
+        "value": 2,
         "unit": "s"
       },
       "priority": 10

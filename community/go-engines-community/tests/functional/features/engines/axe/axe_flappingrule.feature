@@ -16,7 +16,7 @@ Feature: update alarm status on flapping rule
       ],
       "freq_limit": 2,
       "duration": {
-        "seconds": 2,
+        "value": 2,
         "unit": "s"
       },
       "priority": 10

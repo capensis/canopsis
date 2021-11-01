@@ -44,8 +44,8 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 		Type:           idlerule.RuleTypeAlarm,
 		AlarmCondition: idlerule.RuleAlarmConditionLastEvent,
 		Duration: types.DurationWithUnit{
-			Seconds: 10,
-			Unit:    "s",
+			Value: 10,
+			Unit:  "s",
 		},
 		Operation: &idlerule.Operation{
 			Type: types.ActionTypeAck,
@@ -134,8 +134,8 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 		Type:           idlerule.RuleTypeAlarm,
 		AlarmCondition: idlerule.RuleAlarmConditionLastUpdate,
 		Duration: types.DurationWithUnit{
-			Seconds: 10,
-			Unit:    "s",
+			Value: 10,
+			Unit:  "s",
 		},
 		Operation: &idlerule.Operation{
 			Type: types.ActionTypeAck,
@@ -230,8 +230,8 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		Name:   "test-rule-name",
 		Author: author,
 		Duration: types.DurationWithUnit{
-			Seconds: 10,
-			Unit:    "s",
+			Value: 10,
+			Unit:  "s",
 		},
 	}
 
@@ -396,8 +396,8 @@ func TestService_Process_GivenEntityRuleAndTwoAffectedComponents_ShouldFindConne
 		Name:   "test-rule-name",
 		Author: author,
 		Duration: types.DurationWithUnit{
-			Seconds: 10,
-			Unit:    "s",
+			Value: 10,
+			Unit:  "s",
 		},
 	}
 

@@ -10,7 +10,7 @@
     "created": 1616567033,
     "description": "test-idle-rule-to-check-unique-name-description",
     "duration": {
-      "seconds": 3,
+      "value": 3,
       "unit": "s"
     },
     "enabled": true,
@@ -24,7 +24,7 @@
       "type": "snooze",
       "parameters": {
         "duration": {
-          "seconds": 3,
+          "value": 3,
           "unit": "s"
         },
         "output": "test-idle-rule-to-check-unique-name-operation-output",
@@ -48,7 +48,7 @@
     "description": "test-idle-rule-to-get-1-description",
     "disable_during_periods": ["pause"],
     "duration": {
-      "seconds": 3,
+      "value": 3,
       "unit": "s"
     },
     "enabled": true,
@@ -62,7 +62,7 @@
       "type": "snooze",
       "parameters": {
         "duration": {
-          "seconds": 3,
+          "value": 3,
           "unit": "s"
         },
         "output": "test-idle-rule-to-get-1-operation-output",
@@ -80,7 +80,7 @@
     "created": 1616567033,
     "description": "test-idle-rule-to-get-2-description",
     "duration": {
-      "seconds": 5,
+      "value": 5,
       "unit": "s"
     },
     "enabled": true,
@@ -104,7 +104,7 @@
     "author": "test-idle-rule-to-delete-author",
     "created": 1616567033,
     "duration": {
-      "seconds": 3,
+      "value": 3,
       "unit": "s"
     },
     "enabled": true,
@@ -118,7 +118,7 @@
       "type": "snooze",
       "parameters": {
         "duration": {
-          "seconds": 3,
+          "value": 3,
           "unit": "s"
         },
         "output": "test-idle-rule-to-delete-operation-output",
@@ -142,7 +142,7 @@
     "description": "test-idle-rule-to-update-description",
     "disable_during_periods": ["pause"],
     "duration": {
-      "seconds": 3,
+      "value": 3,
       "unit": "s"
     },
     "enabled": true,
@@ -156,7 +156,7 @@
       "type": "snooze",
       "parameters": {
         "duration": {
-          "seconds": 3,
+          "value": 3,
           "unit": "s"
         },
         "output": "test-idle-rule-to-update-operation-output",

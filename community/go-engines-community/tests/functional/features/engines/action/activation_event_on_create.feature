@@ -125,7 +125,7 @@ Feature: send activation event on create
           "type":"snooze",
           "parameters":{
             "duration": {
-              "seconds": 600,
+              "value": 10,
               "unit": "m"
             }
           },
@@ -268,7 +268,7 @@ Feature: send activation event on create
             "name": "pbehavior-action-activation-event-5",
             "start_on_trigger": true,
             "duration": {
-              "seconds": 600,
+              "value": 600,
               "unit": "s"
             },
             "type": "test-maintenance-type-to-engine",

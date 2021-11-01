@@ -49,18 +49,14 @@ type DelayedScenarioTask struct {
 }
 
 func (m *delayedScenarioManager) AddDelayedScenario(ctx context.Context, alarm types.Alarm, scenario Scenario) error {
-	var delay time.Duration
-	if scenario.Delay != nil {
-		delay = time.Duration(scenario.Delay.Seconds) * time.Second
-	}
-	if delay == 0 {
+	if scenario.Delay == nil || scenario.Delay.Value == 0 {
 		return errors.New("scenario is not delayed")
 	}
 
 	now := time.Now()
 	delayedScenario := DelayedScenario{
 		ScenarioID:    scenario.ID,
-		ExecutionTime: types.CpsTime{Time: now.Add(delay)},
+		ExecutionTime: types.CpsTime{Time: scenario.Delay.AddTo(now)},
 		AlarmID:       alarm.ID,
 	}
 	id, err := m.storage.Add(ctx, delayedScenario)
