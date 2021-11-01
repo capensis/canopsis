@@ -28,7 +28,6 @@ const stubs = {
 const factory = (options = {}) => shallowMount(JunitGanttChart, {
   localVue,
   stubs,
-  attachTo: document.body,
 
   ...options,
 });
