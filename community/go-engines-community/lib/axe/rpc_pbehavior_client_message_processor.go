@@ -69,7 +69,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 				},
 			},
 			event.Alarm,
-			*event.Entity,
+			event.Entity,
 			event.PbhEvent.Timestamp,
 			"",
 			types.InitiatorSystem,

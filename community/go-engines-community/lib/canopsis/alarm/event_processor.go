@@ -102,9 +102,6 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		}
 
 		alarmChange.Type = changeType
-		if event.Alarm != nil {
-			s.updateEntity(ctx, event.Entity, *event.Alarm, changeType)
-		}
 		return alarmChange, err
 	case types.EventTypeNoEvents:
 		changeType, err := s.processNoEvents(ctx, event)
@@ -121,25 +118,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 			return alarmChange, nil
 		}
 
-		switch event.EventType {
-		case types.EventTypePbhEnter, types.EventTypePbhLeave, types.EventTypePbhLeaveAndEnter:
-			if event.Entity.PbehaviorInfo != event.PbehaviorInfo {
-				alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
-				alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
-				if alarmChange.PreviousPbehaviorTypeID == "" {
-					alarmChange.Type = types.AlarmChangeTypePbhEnter
-				} else if event.PbehaviorInfo.TypeID == "" {
-					alarmChange.Type = types.AlarmChangeTypePbhLeave
-				} else {
-					alarmChange.Type = types.AlarmChangeTypePbhLeaveAndEnter
-				}
-				event.Entity.PbehaviorInfo = event.PbehaviorInfo
-				err := s.entityAdapter.UpdatePbehaviorInfo(ctx, event.Entity.ID, event.Entity.PbehaviorInfo)
-				if err != nil {
-					s.logger.Err(err).Msg("cannot update entity")
-				}
-			}
-		}
+		s.processPbhEventsForEntity(ctx, event, &alarmChange)
 
 		return alarmChange, nil
 	}
@@ -149,7 +128,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	operation := s.createOperationFromEvent(event)
-	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, *event.Entity, event.Timestamp, event.Role, event.Initiator)
+	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, event.Entity, event.Timestamp, event.Role, event.Initiator)
 	if err != nil {
 		return alarmChange, err
 	}
@@ -188,8 +167,6 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	alarmChange.Type = changeType
-
-	s.updateEntity(ctx, event.Entity, *event.Alarm, changeType)
 
 	return alarmChange, nil
 }
@@ -282,6 +259,12 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 	}
 
 	if changeType == types.AlarmChangeTypeCreateAndPbhEnter {
+		event.Entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
+		err := s.entityAdapter.UpdatePbehaviorInfo(ctx, event.Entity.ID, event.Entity.PbehaviorInfo)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot update entity")
+		}
+
 		go s.metricsSender.SendCreateAndPbhEnter(ctx, alarm, alarm.Value.CreationDate.Time)
 	}
 
@@ -353,6 +336,8 @@ func (s *eventProcessor) updateAlarm(ctx context.Context, event *types.Event) (t
 		}
 	}
 
+	go s.metricsSender.SendUpdateState(ctx, *event.Alarm, *event.Entity, previousState)
+
 	return changeType, nil
 }
 
@@ -415,8 +400,10 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 		newStatus := alarm.Value.Status.Value
 		if newState > previousState {
 			changeType = types.AlarmChangeTypeStateIncrease
+			go s.metricsSender.SendUpdateState(ctx, *alarm, *event.Entity, previousState)
 		} else if newState < previousState {
 			changeType = types.AlarmChangeTypeStateDecrease
+			go s.metricsSender.SendUpdateState(ctx, *alarm, *event.Entity, previousState)
 		} else if newStatus != previousStatus {
 			changeType = types.AlarmChangeTypeUpdateStatus
 		}
@@ -434,6 +421,16 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 		event.Entity.LastIdleRuleApply)
 	if err != nil {
 		return changeType, err
+	}
+
+	if changeType == types.AlarmChangeTypeCreateAndPbhEnter {
+		event.Entity.PbehaviorInfo = event.Alarm.Value.PbehaviorInfo
+		err := s.entityAdapter.UpdatePbehaviorInfo(ctx, event.Entity.ID, event.Entity.PbehaviorInfo)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot update entity")
+		}
+
+		go s.metricsSender.SendCreateAndPbhEnter(ctx, *event.Alarm, event.Alarm.Value.CreationDate.Time)
 	}
 
 	return changeType, nil
@@ -504,7 +501,7 @@ func (s *eventProcessor) processAckResources(ctx context.Context, event *types.E
 	}
 
 	for _, alarm := range alarms {
-		_, err := s.executor.Exec(ctx, operation, &alarm.Alarm, alarm.Entity, event.Timestamp, event.Role, event.Initiator)
+		_, err := s.executor.Exec(ctx, operation, &alarm.Alarm, &alarm.Entity, event.Timestamp, event.Role, event.Initiator)
 		if err != nil {
 			return err
 		}
@@ -638,7 +635,7 @@ func (s *eventProcessor) processMetaAlarmChildren(ctx context.Context, event *ty
 		return err
 	}
 	for _, alarm := range alarms {
-		_, err := s.executor.Exec(ctx, operation, &alarm.Alarm, alarm.Entity, event.Timestamp, event.Role, event.Initiator)
+		_, err := s.executor.Exec(ctx, operation, &alarm.Alarm, &alarm.Entity, event.Timestamp, event.Role, event.Initiator)
 		if err != nil {
 			s.logger.Error().Err(err).Msg("error updating meta-alarm child alarm")
 			return err
@@ -805,7 +802,7 @@ func (s *eventProcessor) resolveAlarmForDisabledEntity(ctx context.Context, even
 			Author: event.Author,
 		},
 	}
-	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, *event.Entity, event.Timestamp, event.Role, event.Initiator)
+	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, event.Entity, event.Timestamp, event.Role, event.Initiator)
 	if err != nil {
 		return alarmChange, err
 	}
@@ -957,14 +954,29 @@ func (s *eventProcessor) updateMetaAlarmToWorstState(ctx context.Context, metaAl
 	return UpdateAlarmState(metaAlarm, metaAlarmEntity, stepTs, worstState, metaAlarm.Value.Output, s.alarmStatusService)
 }
 
-func (s *eventProcessor) updateEntity(ctx context.Context, entity *types.Entity, alarm types.Alarm, changeType types.AlarmChangeType) {
-	switch changeType {
-	case types.AlarmChangeTypeCreateAndPbhEnter, types.AlarmChangeTypePbhEnter,
-		types.AlarmChangeTypePbhLeave, types.AlarmChangeTypePbhLeaveAndEnter:
-		entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
-		err := s.entityAdapter.UpdatePbehaviorInfo(ctx, entity.ID, entity.PbehaviorInfo)
-		if err != nil {
-			s.logger.Err(err).Msg("cannot update entity")
+func (s *eventProcessor) processPbhEventsForEntity(ctx context.Context, event *types.Event, alarmChange *types.AlarmChange) {
+	switch event.EventType {
+	case types.EventTypePbhEnter, types.EventTypePbhLeave, types.EventTypePbhLeaveAndEnter:
+		curPbehaviorInfo := event.Entity.PbehaviorInfo
+		if curPbehaviorInfo != event.PbehaviorInfo {
+			alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
+			alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
+			event.Entity.PbehaviorInfo = event.PbehaviorInfo
+			err := s.entityAdapter.UpdatePbehaviorInfo(ctx, event.Entity.ID, event.Entity.PbehaviorInfo)
+			if err != nil {
+				s.logger.Err(err).Msg("cannot update entity")
+			}
+
+			if alarmChange.PreviousPbehaviorTypeID == "" {
+				alarmChange.Type = types.AlarmChangeTypePbhEnter
+				go s.metricsSender.SendPbhEnter(ctx, nil, *event.Entity)
+			} else if event.PbehaviorInfo.TypeID == "" {
+				alarmChange.Type = types.AlarmChangeTypePbhLeave
+				go s.metricsSender.SendPbhLeave(ctx, *event.Entity, event.Timestamp.Time, curPbehaviorInfo.CanonicalType, curPbehaviorInfo.Timestamp.Time)
+			} else {
+				alarmChange.Type = types.AlarmChangeTypePbhLeaveAndEnter
+				go s.metricsSender.SendPbhLeaveAndEnter(ctx, nil, *event.Entity, curPbehaviorInfo.CanonicalType, curPbehaviorInfo.Timestamp.Time)
+			}
 		}
 	}
 }

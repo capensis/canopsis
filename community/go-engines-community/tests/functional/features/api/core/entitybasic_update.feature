@@ -4,12 +4,13 @@ Feature: Update entity basic
   Scenario: given update request should update entity
     When I am admin
     When I do PUT /api/v4/entitybasics?_id=test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name:
-    """
+    """json
     {
       "description": "test-entitybasic-to-update-connector-description-updated",
       "enabled": true,
       "category": "test-category-to-entitybasic-edit",
       "impact_level": 3,
+      "sli_avail_state": 1,
       "infos": [
         {
           "description": "test-entitybasic-to-update-info-1-description",
@@ -54,7 +55,7 @@ Feature: Update entity basic
     """
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name",
       "category": {
@@ -118,13 +119,14 @@ Feature: Update entity basic
       },
       "measurements": null,
       "name": "test-entitybasic-to-update-connector-name",
+      "sli_avail_state": 1,
       "type": "connector"
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-component-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-entitybasic-to-update-component-2",
       "changeable_depends": [
@@ -140,7 +142,7 @@ Feature: Update entity basic
     When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-component-3
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-entitybasic-to-update-component-3",
       "changeable_depends": [
@@ -160,7 +162,7 @@ Feature: Update entity basic
     When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2",
       "changeable_depends": [],
@@ -176,7 +178,7 @@ Feature: Update entity basic
     When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3",
       "changeable_depends": [
@@ -197,16 +199,17 @@ Feature: Update entity basic
   Scenario: given invalid update request should return errors
     When I am admin
     When I do PUT /api/v4/entitybasics?_id=test-entitybasic-not-found:
-    """
+    """json
     {}
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "enabled": "Enabled is missing.",
-        "impact_level": "ImpactLevel is missing."
+        "impact_level": "ImpactLevel is missing.",
+        "sli_avail_state": "SliAvailState is missing."
       }
     }
     """
@@ -214,12 +217,13 @@ Feature: Update entity basic
   Scenario: given invalid update request should return errors
     When I am admin
     When I do PUT /api/v4/entitybasics?_id=test-entitybasic-to-update:
-    """
+    """json
     {
       "description": "test-entitybasic-to-update-description",
       "enabled": true,
       "category": "test-category-not-exist",
-      "impact_level": 1,
+      "impact_level": 11,
+      "sli_avail_state": 4,
       "infos": [
         {}
       ],
@@ -233,9 +237,11 @@ Feature: Update entity basic
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
+        "impact_level": "ImpactLevel should be 10 or less.",
+        "sli_avail_state": "SliAvailState should be 3 or less.",
         "category": "Category doesn't exist.",
         "impact": "Impacts doesn't exist.",
         "depends": "Depends doesn't exist.",
@@ -247,13 +253,8 @@ Feature: Update entity basic
   Scenario: given invalid update request should return errors
     When I am admin
     When I do PUT /api/v4/entitybasics?_id=test-entitybasic-to-update:
-    """
+    """json
     {
-      "description": "test-entitybasic-to-update-description",
-      "enabled": true,
-      "category": "test-category-to-entitybasic-edit",
-      "impact_level": 1,
-      "infos": [],
       "impact": [
         "test-entitybasic-to-edit-impact-1",
         "test-entitybasic-to-edit-impact-1"
@@ -265,8 +266,8 @@ Feature: Update entity basic
     }
     """
     Then the response code should be 400
-    Then the response body should be:
-    """
+    Then the response body should contain:
+    """json
     {
       "errors": {
         "depends": "Depends contains duplicate values.",
@@ -278,13 +279,8 @@ Feature: Update entity basic
   Scenario: given invalid update request should return errors
     When I am admin
     When I do PUT /api/v4/entitybasics?_id=test-entitybasic-to-update:
-    """
+    """json
     {
-      "description": "test-entitybasic-to-update-description",
-      "enabled": true,
-      "category": "test-category-to-entitybasic-edit",
-      "impact_level": 1,
-      "infos": [],
       "impact": [
         "test-entitybasic-to-edit-impact-1"
       ],
@@ -294,8 +290,8 @@ Feature: Update entity basic
     }
     """
     Then the response code should be 400
-    Then the response body should be:
-    """
+    Then the response body should contain:
+    """json
     {
       "errors": {
         "depends": "Depends contains duplicate values with Impacts."
@@ -315,12 +311,13 @@ Feature: Update entity basic
   Scenario: given update request with not exist id should return not found error
     When I am admin
     When I do PUT /api/v4/entitybasics?_id=test-entitybasic-not-found:
-    """
+    """json
     {
       "description": "test-entitybasic-not-found-description",
       "enabled": true,
       "category": "test-category-to-entitybasic-edit",
       "impact_level": 1,
+      "sli_avail_state": 0,
       "infos": [],
       "impact": [],
       "depends": []
@@ -328,7 +325,7 @@ Feature: Update entity basic
     """
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }
