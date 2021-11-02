@@ -371,7 +371,7 @@ func (a *api) Patch(c *gin.Context) {
 
 			// Validation
 			if model.Type.Type != pbehavior.TypePause && model.Stop == nil ||
-				(model.Stop != nil && model.Stop.Before(model.Start.Time)) {
+				(model.Stop != nil && model.Stop.Before(*model.Start)) {
 				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("invalid fields start, stop, type")))
 				return
 			}

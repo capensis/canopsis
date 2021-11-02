@@ -438,7 +438,7 @@ func (a Alarm) IsSnoozed() bool {
 	}
 
 	snoozeEnd := a.Value.Snooze.Value.CpsTimestamp()
-	return snoozeEnd.After(time.Now())
+	return snoozeEnd.After(NewCpsTime())
 }
 
 // IsStateLocked checks that the Alarm is not Locked (by manual intervention for example)

@@ -41,7 +41,7 @@ func NewService(
 func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 	defer trace.StartRegion(ctx, "alarm.ResolveAlarms").End()
 
-	now := time.Now()
+	now := types.NewCpsTime()
 
 	rules, err := s.resolveRuleAdapter.Get(ctx)
 	if err != nil {
@@ -71,7 +71,7 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 
 				if alarmState == types.AlarmStateOK {
 					lastStep := alarmWithEntity.Alarm.Value.Steps[len(alarmWithEntity.Alarm.Value.Steps)-1]
-					resolveAt := rule.Duration.AddTo(lastStep.Timestamp.Time)
+					resolveAt := rule.Duration.AddTo(lastStep.Timestamp)
 
 					if resolveAt.After(now) {
 						alarmsToResolve = append(alarmsToResolve, alarmWithEntity.Alarm)

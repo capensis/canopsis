@@ -72,7 +72,7 @@ func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) bool {
 	s.flappingRulesMx.RLock()
 	defer s.flappingRulesMx.RUnlock()
 
-	now := time.Now()
+	now := types.NewCpsTime()
 	alarmWithEntity := types.AlarmWithEntity{
 		Alarm:  alarm,
 		Entity: entity,

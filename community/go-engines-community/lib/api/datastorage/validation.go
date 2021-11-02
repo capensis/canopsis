@@ -2,13 +2,13 @@ package datastorage
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/go-playground/validator/v10"
-	"time"
 )
 
 func ValidateConfig(sl validator.StructLevel) {
 	r := sl.Current().Interface().(datastorage.Config)
-	now := time.Now()
+	now := types.NewCpsTime()
 
 	if r.Remediation.AccumulateAfter != nil && r.Remediation.DeleteAfter != nil &&
 		r.Remediation.AccumulateAfter.Value > 0 && r.Remediation.DeleteAfter.Value > 0 {

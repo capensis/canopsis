@@ -10,7 +10,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
-	"time"
 )
 
 const (
@@ -101,34 +100,34 @@ func (o *Operation) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
 }
 
 // Matches returns true if alarm and entity match time condition and field patterns.
-func (r *Rule) Matches(alarm *types.Alarm, entity *types.Entity) bool {
-	return r.matchesByAlarmLastEventDate(alarm) &&
-		r.matchesByAlarmLastUpdateDate(alarm) &&
-		r.matchesByEntityLastEventDate(entity) &&
+func (r *Rule) Matches(alarm *types.Alarm, entity *types.Entity, now types.CpsTime) bool {
+	return r.matchesByAlarmLastEventDate(alarm, now) &&
+		r.matchesByAlarmLastUpdateDate(alarm, now) &&
+		r.matchesByEntityLastEventDate(entity, now) &&
 		(alarm == nil || r.AlarmPatterns.Matches(alarm)) &&
 		(entity == nil || r.EntityPatterns.Matches(entity))
 }
 
-func (r *Rule) matchesByAlarmLastEventDate(alarm *types.Alarm) bool {
-	before := r.Duration.SubFrom(time.Now())
+func (r *Rule) matchesByAlarmLastEventDate(alarm *types.Alarm, now types.CpsTime) bool {
+	before := r.Duration.SubFrom(now)
 
 	return r.Type != RuleTypeAlarm || r.AlarmCondition != RuleAlarmConditionLastEvent ||
 		alarm.Value.LastEventDate.Before(before)
 }
 
-func (r *Rule) matchesByAlarmLastUpdateDate(alarm *types.Alarm) bool {
-	before := r.Duration.SubFrom(time.Now())
+func (r *Rule) matchesByAlarmLastUpdateDate(alarm *types.Alarm, now types.CpsTime) bool {
+	before := r.Duration.SubFrom(now)
 
 	return r.Type != RuleTypeAlarm || r.AlarmCondition != RuleAlarmConditionLastUpdate ||
 		alarm.Value.LastUpdateDate.Before(before)
 }
 
-func (r *Rule) matchesByEntityLastEventDate(entity *types.Entity) bool {
+func (r *Rule) matchesByEntityLastEventDate(entity *types.Entity, now types.CpsTime) bool {
 	if r.Type != RuleTypeEntity {
 		return true
 	}
 
-	before := r.Duration.SubFrom(time.Now())
+	before := r.Duration.SubFrom(now)
 
 	if entity.LastEventDate != nil {
 		return entity.LastEventDate.Before(before)

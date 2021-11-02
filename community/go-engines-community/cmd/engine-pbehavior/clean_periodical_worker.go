@@ -31,7 +31,7 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) error {
 	}
 	// Check now = schedule.
 	location := w.TimezoneConfigProvider.Get().Location
-	now := time.Now().In(location)
+	now := types.NewCpsTime().In(location)
 	if now.Weekday() != schedule.Weekday || now.Hour() != schedule.Hour {
 		return nil
 	}
@@ -42,8 +42,7 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) error {
 		return nil
 	}
 	// Skip if already executed today.
-	dateFormat := "2006-01-02"
-	if conf.History.Pbehavior != nil && conf.History.Pbehavior.Time.Format(dateFormat) == now.Format(dateFormat) {
+	if conf.History.Pbehavior != nil && conf.History.Pbehavior.EqualDay(now) {
 		return nil
 	}
 
@@ -52,15 +51,14 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) error {
 		return nil
 	}
 
-	before := d.SubFrom(now)
-	deleted, err := w.PbehaviorCleaner.Clean(ctx, types.CpsTime{Time: before})
+	deleted, err := w.PbehaviorCleaner.Clean(ctx, d.SubFrom(now))
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot accumulate week statistics")
 	} else if deleted > 0 {
 		w.Logger.Info().Int64("count", deleted).Msg("pbehaviors were deleted")
 	}
 
-	err = w.LimitConfigAdapter.UpdateHistoryPbehavior(ctx, types.CpsTime{Time: now})
+	err = w.LimitConfigAdapter.UpdateHistoryPbehavior(ctx, now)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot update config history")
 	}
