@@ -9395,7 +9395,8 @@ var doc = `{
             "type": "object",
             "required": [
                 "enabled",
-                "impact_level"
+                "impact_level",
+                "sli_avail_state"
             ],
             "properties": {
                 "category": {
@@ -9427,6 +9428,9 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/entitybasic.InfoRequest"
                     }
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 }
             }
         },
@@ -9501,6 +9505,9 @@ var doc = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"
@@ -9583,7 +9590,8 @@ var doc = `{
                 "enabled",
                 "impact_level",
                 "name",
-                "output_template"
+                "output_template",
+                "sli_avail_state"
             ],
             "properties": {
                 "category": {
@@ -9610,6 +9618,9 @@ var doc = `{
                 },
                 "output_template": {
                     "type": "string"
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 }
             }
         },
@@ -9676,6 +9687,9 @@ var doc = `{
                 },
                 "output_template": {
                     "type": "string"
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"
