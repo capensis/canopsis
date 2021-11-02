@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-flex.white
+  v-flex.white(v-resize="changeHeaderPositionOnResize")
     v-flex.px-3(v-show="selectedIds.length", xs12)
       mass-actions-panel(
         :itemsIds="selectedIds",
@@ -56,6 +56,9 @@
 </template>
 
 <script>
+import { TOP_BAR_HEIGHT } from '@/config';
+import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
+
 import { isResolvedAlarm } from '@/helpers/entities';
 
 import Observer from '@/services/observer';
@@ -134,6 +137,10 @@ export default {
       default: false,
     },
     expandable: {
+      type: Boolean,
+      default: false,
+    },
+    stickyHeader: {
       type: Boolean,
       default: false,
     },
@@ -217,11 +224,40 @@ export default {
 
       return {};
     },
+
+    tableHeader() {
+      return this.$el.querySelector('.v-table__overflow > table > thead');
+    },
+
+    tableBody() {
+      return this.$el.querySelector('.v-table__overflow > table > tbody');
+    },
   },
+
   watch: {
     ...featuresService.get('components.alarmListTable.watch', {}),
+
+    stickyHeader(stickyHeader) {
+      if (stickyHeader) {
+        window.addEventListener('scroll', this.changeHeaderPosition);
+      } else {
+        window.removeEventListener('scroll', this.changeHeaderPosition);
+
+        this.resetHeaderPosition();
+      }
+    },
   },
+
+  created() {
+    this.pixels = 0;
+    this.previousPixels = 0;
+  },
+
   async mounted() {
+    if (this.stickyHeader) {
+      window.addEventListener('scroll', this.changeHeaderPosition);
+    }
+
     if (featuresService.has('components.alarmListTable.mounted')) {
       featuresService.call('components.alarmListTable.mounted', this, {});
     }
@@ -231,6 +267,8 @@ export default {
     this.columnsFiltersPending = false;
   },
   beforeDestroy() {
+    window.removeEventListener('scroll', this.changeHeaderPosition);
+
     if (featuresService.has('components.alarmListTable.beforeDestroy')) {
       featuresService.call('components.alarmListTable.beforeDestroy', this, {});
     }
@@ -238,6 +276,86 @@ export default {
 
   methods: {
     ...featuresService.get('components.alarmListTable.methods', {}),
+
+    startScrolling() {
+      if (this.pixels !== this.previousPixels) {
+        this.tableHeader.style.opacity = '0';
+      }
+
+      this.scrooling = true;
+    },
+
+    finishScrolling() {
+      if (!Number(this.tableHeader.style.opacity)) {
+        this.tableHeader.style.opacity = '1.0';
+      }
+
+      this.scrooling = false;
+    },
+
+    clearFinishTimer() {
+      if (this.finishTimer) {
+        clearTimeout(this.finishTimer);
+      }
+    },
+
+    setHeaderPosition() {
+      this.tableHeader.style.transform = `translateY(${this.pixels}px)`;
+    },
+
+    calculateHeaderOffsetPosition() {
+      const { top } = this.tableHeader.getBoundingClientRect();
+      const { height: bodyHeight } = this.tableBody.getBoundingClientRect();
+
+      const offset = top - this.pixels - TOP_BAR_HEIGHT;
+
+      this.previousPixels = this.pixels;
+      this.pixels = Math.min(bodyHeight, Math.max(0, -offset));
+    },
+
+    addShadowToHeader() {
+      this.tableHeader.classList.add('head-shadow');
+    },
+
+    removeShadowFromHeader() {
+      this.tableHeader.classList.remove('head-shadow');
+    },
+
+    changeHeaderPosition() {
+      this.clearFinishTimer();
+
+      this.calculateHeaderOffsetPosition();
+      this.setHeaderPosition();
+
+      if (!this.pixels) {
+        this.removeShadowFromHeader();
+        this.finishScrolling();
+
+        return;
+      }
+
+      if (!this.scrooling) {
+        this.addShadowToHeader();
+        this.startScrolling();
+      }
+
+      this.finishTimer = setTimeout(this.finishScrolling, ALARMS_LIST_HEADER_OPACITY_DELAY);
+    },
+
+    resetHeaderPosition() {
+      this.pixels = 0;
+      this.previousPixels = 0;
+
+      this.setHeaderPosition();
+      this.clearFinishTimer();
+      this.removeShadowFromHeader();
+    },
+
+    changeHeaderPositionOnResize() {
+      if (this.stickyHeader) {
+        this.changeHeaderPosition();
+      }
+    },
 
     checkIsTourEnabledForAlarmByIndex(index) {
       return this.isTourEnabled && index === 0;
@@ -256,6 +374,28 @@ export default {
 
 <style lang="scss">
   .alarms-list-table {
+    tbody {
+      position: relative;
+      z-index: 1;
+    }
+
+    thead {
+      position: relative;
+      transition: opacity 0.16s;
+      z-index: 2;
+
+      &.head-shadow {
+        tr {
+          border-bottom: none !important;
+          box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
+        }
+      }
+
+      tr {
+        background: white;
+      }
+    }
+
     &.columns-lg {
       table.v-table {
         tbody, thead {
