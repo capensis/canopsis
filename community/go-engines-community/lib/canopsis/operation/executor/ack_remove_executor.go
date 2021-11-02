@@ -28,6 +28,7 @@ func (e *ackRemoveExecutor) Exec(
 	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
+	_ *types.Entity,
 	time types.CpsTime,
 	role, initiator string,
 ) (types.AlarmChangeType, error) {

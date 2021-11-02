@@ -112,6 +112,7 @@ type RPCPBehaviorEvent struct {
 
 type RPCPBehaviorResultEvent struct {
 	Alarm    *Alarm    `json:"alarm"`
+	Entity   *Entity   `json:"entity"`
 	PbhEvent Event     `json:"event"`
 	Error    *RPCError `json:"error"`
 }
@@ -139,6 +140,7 @@ func (e *RPCError) UnmarshalJSON(b []byte) error {
 type RPCWebhookEvent struct {
 	Parameters   WebhookParameters      `json:"parameters"`
 	Alarm        *Alarm                 `json:"alarm"`
+	Entity       *Entity                `json:"entity"`
 	AckResources bool                   `json:"ack_resources"`
 	Header       map[string]string      `json:"header,omitempty"`
 	Response     map[string]interface{} `json:"response,omitempty"`

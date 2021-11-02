@@ -700,8 +700,8 @@ func (h *hub) removeConnsFromRoom(room string, connIds []string) {
 }
 
 func (h *hub) GetUniqueUsers() []string {
-	h.connsMx.Lock()
-	defer h.connsMx.Unlock()
+	h.connsMx.RLock()
+	defer h.connsMx.RUnlock()
 
 	users := make([]string, 0)
 	usersMap := make(map[string]bool)
