@@ -176,3 +176,5 @@ export const ALARMS_OPENED_VALUES = {
 export const ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP = {
   priority: 'impact_state',
 };
+
+export const ALARMS_LIST_HEADER_OPACITY_DELAY = 500;
