@@ -102,7 +102,7 @@ import { enabledToForm } from './shared/common';
  * @property {PbehaviorCommentForm[]} comments
  * @property {PbehaviorExceptionForm[]} exceptions
  * @property {PbehaviorExdateForm[]} exdates
- * @property {DurationForm} duration
+ * @property {Duration} duration
  */
 
 /**

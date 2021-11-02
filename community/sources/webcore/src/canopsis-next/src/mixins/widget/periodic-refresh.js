@@ -1,3 +1,5 @@
+import { toSeconds } from '@/helpers/date/duration';
+
 export const widgetPeriodicRefreshMixin = {
   data() {
     return {
@@ -11,18 +13,18 @@ export const widgetPeriodicRefreshMixin = {
         const periodicRefresh = value || {};
         const oldPeriodicRefresh = oldValue || {};
 
-        if (periodicRefresh.enabled && periodicRefresh.seconds) {
-          const secondsIsChanged = periodicRefresh.seconds !== oldPeriodicRefresh.seconds;
+        if (periodicRefresh.enabled && periodicRefresh.value) {
+          const valueIsChanged = periodicRefresh.value !== oldPeriodicRefresh.value;
           const enabledIsChanged = periodicRefresh.enabled !== oldPeriodicRefresh.enabled;
 
-          if (secondsIsChanged || enabledIsChanged) {
+          if (valueIsChanged || enabledIsChanged) {
             if (this.periodicRefreshInterval) {
               clearInterval(this.periodicRefreshInterval);
             }
 
             this.periodicRefreshInterval = setInterval(() => {
               this.fetchList({ isPeriodicRefresh: true });
-            }, periodicRefresh.seconds * 1000);
+            }, toSeconds(periodicRefresh.value, periodicRefresh.unit) * 1000);
           }
         } else {
           clearInterval(this.periodicRefreshInterval);

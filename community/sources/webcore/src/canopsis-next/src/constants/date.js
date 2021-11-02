@@ -50,34 +50,24 @@ export const AVAILABLE_TIME_UNITS = {
   },
 };
 
-export const DURATION_UNITS = {
-  minute: AVAILABLE_TIME_UNITS.minute,
-  hour: AVAILABLE_TIME_UNITS.hour,
-  day: AVAILABLE_TIME_UNITS.day,
-  week: AVAILABLE_TIME_UNITS.week,
-  month: AVAILABLE_TIME_UNITS.month,
-  year: AVAILABLE_TIME_UNITS.month,
-};
-
-export const SNOOZE_DURATION_UNITS = {
-  second: AVAILABLE_TIME_UNITS.second,
-  ...DURATION_UNITS,
-};
-
 export const PERIODIC_REFRESH_UNITS = {
   second: AVAILABLE_TIME_UNITS.second,
   minute: AVAILABLE_TIME_UNITS.minute,
   hour: AVAILABLE_TIME_UNITS.hour,
 };
 
+export const SNOOZE_DURATION_UNITS = {
+  ...PERIODIC_REFRESH_UNITS,
+};
+
 export const DEFAULT_PERIODIC_REFRESH = {
-  seconds: 60,
+  value: 60,
   unit: TIME_UNITS.second,
   enabled: false,
 };
 
 export const DEFAULT_TIME_INTERVAL = {
-  interval: 60,
+  value: 60,
   unit: TIME_UNITS.second,
 };
 
