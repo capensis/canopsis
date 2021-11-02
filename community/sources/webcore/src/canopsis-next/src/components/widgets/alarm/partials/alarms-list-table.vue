@@ -239,6 +239,10 @@ export default {
 
     stickyHeader(stickyHeader) {
       if (stickyHeader) {
+        this.calculateHeaderOffsetPosition();
+        this.setHeaderPosition();
+        this.addShadowToHeader();
+
         window.addEventListener('scroll', this.changeHeaderPosition);
       } else {
         window.removeEventListener('scroll', this.changeHeaderPosition);
@@ -249,8 +253,8 @@ export default {
   },
 
   created() {
-    this.pixels = 0;
-    this.previousPixels = 0;
+    this.ranslateY = 0;
+    this.previousTranslateY = 0;
   },
 
   async mounted() {
@@ -278,7 +282,7 @@ export default {
     ...featuresService.get('components.alarmListTable.methods', {}),
 
     startScrolling() {
-      if (this.pixels !== this.previousPixels) {
+      if (this.ranslateY !== this.previousTranslateY) {
         this.tableHeader.style.opacity = '0';
       }
 
@@ -300,17 +304,17 @@ export default {
     },
 
     setHeaderPosition() {
-      this.tableHeader.style.transform = `translateY(${this.pixels}px)`;
+      this.tableHeader.style.transform = `translateY(${this.ranslateY}px)`;
     },
 
     calculateHeaderOffsetPosition() {
       const { top } = this.tableHeader.getBoundingClientRect();
       const { height: bodyHeight } = this.tableBody.getBoundingClientRect();
 
-      const offset = top - this.pixels - TOP_BAR_HEIGHT;
+      const offset = top - this.ranslateY - TOP_BAR_HEIGHT;
 
-      this.previousPixels = this.pixels;
-      this.pixels = Math.min(bodyHeight, Math.max(0, -offset));
+      this.previousTranslateY = this.ranslateY;
+      this.ranslateY = Math.min(bodyHeight, Math.max(0, -offset));
     },
 
     addShadowToHeader() {
@@ -327,7 +331,7 @@ export default {
       this.calculateHeaderOffsetPosition();
       this.setHeaderPosition();
 
-      if (!this.pixels) {
+      if (!this.ranslateY) {
         this.removeShadowFromHeader();
         this.finishScrolling();
 
@@ -343,8 +347,8 @@ export default {
     },
 
     resetHeaderPosition() {
-      this.pixels = 0;
-      this.previousPixels = 0;
+      this.ranslateY = 0;
+      this.previousTranslateY = 0;
 
       this.setHeaderPosition();
       this.clearFinishTimer();
@@ -385,7 +389,7 @@ export default {
       z-index: 2;
 
       &.head-shadow {
-        tr {
+        tr:first-child {
           border-bottom: none !important;
           box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
         }
