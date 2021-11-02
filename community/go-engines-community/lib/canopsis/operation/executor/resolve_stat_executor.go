@@ -2,7 +2,6 @@ package executor
 
 import (
 	"context"
-	"fmt"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -35,7 +34,7 @@ func (e *resolveStatExecutor) Exec(
 	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	entity types.Entity,
+	entity *types.Entity,
 	timestamp types.CpsTime,
 	role, initiator string,
 ) (types.AlarmChangeType, error) {
@@ -45,17 +44,12 @@ func (e *resolveStatExecutor) Exec(
 	}
 
 	if changeType != "" {
-		entity, ok := e.entityAdapter.Get(ctx, alarm.EntityID)
-		if !ok {
-			return "", fmt.Errorf("cannot found entity")
-		}
-
-		err = e.statService.ProcessResolvedAlarm(*alarm, entity)
+		err = e.statService.ProcessResolvedAlarm(*alarm, *entity)
 		if err != nil {
 			return "", err
 		}
 
-		go e.metricsSender.SendResolve(ctx, *alarm, timestamp.Time)
+		go e.metricsSender.SendResolve(ctx, *alarm, *entity, timestamp.Time)
 	}
 
 	return changeType, nil

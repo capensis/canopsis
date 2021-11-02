@@ -313,15 +313,15 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeActivate, executor.NewActivateExecutor())
 	container.Set(types.EventTypeAssocTicket, executor.NewAssocTicketExecutor(metricsSender))
 	container.Set(types.EventTypeCancel, executor.NewCancelExecutor(configProvider, alarmStatusService))
-	container.Set(types.EventTypeChangestate, executor.NewChangeStateExecutor(configProvider, alarmStatusService))
+	container.Set(types.EventTypeChangestate, executor.NewChangeStateExecutor(configProvider, alarmStatusService, metricsSender))
 	container.Set(types.EventTypeComment, executor.NewCommentExecutor(configProvider))
 	container.Set(types.EventTypeDeclareTicket, executor.NewDeclareTicketExecutor())
 	container.Set(types.EventTypeDeclareTicketWebhook, executor.NewDeclareTicketWebhookExecutor(configProvider))
 	container.Set(types.EventTypeDone, executor.NewDoneExecutor(configProvider))
-	container.Set(types.EventTypeKeepstate, executor.NewChangeStateExecutor(configProvider, alarmStatusService))
-	container.Set(types.EventTypePbhEnter, executor.NewPbhEnterExecutor(configProvider))
-	container.Set(types.EventTypePbhLeave, executor.NewPbhLeaveExecutor(configProvider))
-	container.Set(types.EventTypePbhLeaveAndEnter, executor.NewPbhLeaveAndEnterExecutor(configProvider))
+	container.Set(types.EventTypeKeepstate, executor.NewChangeStateExecutor(configProvider, alarmStatusService, metricsSender))
+	container.Set(types.EventTypePbhEnter, executor.NewPbhEnterExecutor(configProvider, metricsSender))
+	container.Set(types.EventTypePbhLeave, executor.NewPbhLeaveExecutor(configProvider, metricsSender))
+	container.Set(types.EventTypePbhLeaveAndEnter, executor.NewPbhLeaveAndEnterExecutor(configProvider, metricsSender))
 	container.Set(types.EventTypeResolveDone, executor.NewResolveStatExecutor(executor.NewResolveDoneExecutor(), entityAdapter, statsService, metricsSender))
 	container.Set(types.EventTypeResolveCancel, executor.NewResolveStatExecutor(executor.NewResolveCancelExecutor(), entityAdapter, statsService, metricsSender))
 	container.Set(types.EventTypeResolveClose, executor.NewResolveStatExecutor(executor.NewResolveCloseExecutor(), entityAdapter, statsService, metricsSender))
@@ -350,5 +350,6 @@ func (m DependencyMaker) depOperationExecutor(
 	return executor.NewMongoUpdateExecutor(
 		executor.NewCombinedExecutor(container),
 		alarm.NewAdapter(dbClient),
+		entity.NewAdapter(dbClient),
 	)
 }
