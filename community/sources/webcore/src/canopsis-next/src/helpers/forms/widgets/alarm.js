@@ -15,7 +15,7 @@ import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
 import { widgetToForm } from '@/helpers/forms/widgets/common';
-import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/date/duration';
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} FastAckOutput
@@ -279,7 +279,6 @@ export const formToAlarmListWidget = (form = {}) => {
       serviceDependenciesColumns: formWidgetColumnsToColumns(parameters.serviceDependenciesColumns),
       infoPopups: formInfoPopupsToInfoPopups(parameters.infoPopups),
       sort: formSortToWidgetSort(parameters.sort),
-      periodic_refresh: formToDurationWithEnabled(parameters.periodic_refresh),
     },
   };
 };

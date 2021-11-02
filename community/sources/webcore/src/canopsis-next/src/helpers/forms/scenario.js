@@ -3,7 +3,7 @@ import { omit, isNumber } from 'lodash';
 import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
 import { getLocaleTimezone } from '@/helpers/date/date';
 
-import { durationToForm, formToDuration } from '../date/duration';
+import { durationToForm } from '../date/duration';
 
 import { formToAction, actionToForm } from './action';
 import { enabledToForm } from './shared/common';
@@ -22,7 +22,6 @@ import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {Scenario} ScenarioForm
- * @property {DurationForm} delay
  * @property {ActionForm[]} actions
  */
 
@@ -57,7 +56,7 @@ export const scenarioToForm = (scenario = {}, timezone = getLocaleTimezone()) =>
 export const formToScenario = (form, timezone = getLocaleTimezone()) => ({
   ...omit(form, ['delay', 'actions']),
   delay: form.delay && isNumber(form.delay.value)
-    ? formToDuration(form.delay)
+    ? form.delay
     : undefined,
   actions: form.actions.map(action => formToAction(action, timezone)),
 });

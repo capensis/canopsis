@@ -2,7 +2,7 @@ import { cloneDeep, omit, pick, isNumber } from 'lodash';
 
 import { DEFAULT_TIME_INTERVAL, META_ALARMS_RULE_TYPES, META_ALARMS_THRESHOLD_TYPES } from '@/constants';
 
-import { convertDurationToIntervalObject, toSeconds } from '@/helpers/date/duration';
+import { durationToForm } from '@/helpers/date/duration';
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 
 import { getConditionsForRemovingEmptyPatterns } from './shared/patterns';
@@ -144,8 +144,8 @@ export const metaAlarmRuleToForm = (rule = {}) => {
         ? META_ALARMS_THRESHOLD_TYPES.thresholdCount
         : META_ALARMS_THRESHOLD_TYPES.thresholdRate,
       time_interval: config.time_interval
-        ? convertDurationToIntervalObject(config.time_interval)
-        : DEFAULT_TIME_INTERVAL,
+        ? durationToForm(config.time_interval)
+        : { ...DEFAULT_TIME_INTERVAL },
     },
   };
 };
@@ -204,14 +204,8 @@ export const formToMetaAlarmRule = (form = {}) => {
       break;
     }
     case META_ALARMS_RULE_TYPES.timebased:
-      metaAlarmRule.config = pick(form.config, ['time_interval']);
+      metaAlarmRule.config = form.config;
       break;
-  }
-
-  if (metaAlarmRule.config && metaAlarmRule.config.time_interval) {
-    const { unit, interval } = metaAlarmRule.config.time_interval;
-
-    metaAlarmRule.config.time_interval = toSeconds(interval, unit);
   }
 
   return metaAlarmRule;
