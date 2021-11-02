@@ -50,8 +50,16 @@ type CpsTime struct {
 }
 
 // NewCpsTime create a CpsTime from a timestamp
-func NewCpsTime(timestamp int64) CpsTime {
-	return CpsTime{time.Unix(timestamp, 0)}
+func NewCpsTime(timestamp ...int64) CpsTime {
+	if len(timestamp) == 0 {
+		return CpsTime{Time: time.Now()}
+	}
+
+	if len(timestamp) > 1 {
+		panic(fmt.Errorf("too much arguments, expected one: %+v", timestamp))
+	}
+
+	return CpsTime{time.Unix(timestamp[0], 0)}
 }
 
 // MarshalJSON converts from CpsTime to timestamp as bytes
@@ -125,52 +133,77 @@ func (t CpsTime) Format() string {
 	return t.Time.Format(time.RFC3339Nano)
 }
 
+func (t CpsTime) Before(u CpsTime) bool {
+	return t.Time.Before(u.Time)
+}
+
+func (t CpsTime) After(u CpsTime) bool {
+	return t.Time.After(u.Time)
+}
+
+func (t CpsTime) In(loc *time.Location) CpsTime {
+	return CpsTime{Time: t.Time.In(loc)}
+}
+
+func (t CpsTime) EqualDay(u CpsTime) bool {
+	dateFormat := "2006-01-02"
+	return t.Time.In(time.UTC).Format(dateFormat) == u.Time.In(time.UTC).Format(dateFormat)
+}
+
 // DurationWithUnit represent duration with user-preferred units
 type DurationWithUnit struct {
 	Value int64  `bson:"value" json:"value" binding:"required,min=1"`
 	Unit  string `bson:"unit" json:"unit" binding:"required,oneof=s m h d w M y"`
 }
 
-func (d DurationWithUnit) AddTo(t time.Time) time.Time {
+func (d DurationWithUnit) AddTo(t CpsTime) CpsTime {
+	var r time.Time
+
 	switch d.Unit {
 	case "s":
-		return t.Add(time.Duration(d.Value) * time.Second)
+		r = t.Add(time.Duration(d.Value) * time.Second)
 	case "m":
-		return t.Add(time.Duration(d.Value) * time.Minute)
+		r = t.Add(time.Duration(d.Value) * time.Minute)
 	case "h":
-		return t.Add(time.Duration(d.Value) * time.Hour)
+		r = t.Add(time.Duration(d.Value) * time.Hour)
 	case "d":
-		return t.AddDate(0, 0, int(d.Value))
+		r = t.AddDate(0, 0, int(d.Value))
 	case "w":
-		return t.AddDate(0, 0, 7*int(d.Value))
+		r = t.AddDate(0, 0, 7*int(d.Value))
 	case "M":
-		return t.AddDate(0, int(d.Value), 0)
+		r = t.AddDate(0, int(d.Value), 0)
 	case "y":
-		return t.AddDate(int(d.Value), 0, 0)
+		r = t.AddDate(int(d.Value), 0, 0)
 	default:
-		return t.Add(time.Duration(d.Value) * time.Second)
+		r = t.Add(time.Duration(d.Value) * time.Second)
 	}
+
+	return CpsTime{Time: r}
 }
 
-func (d DurationWithUnit) SubFrom(t time.Time) time.Time {
+func (d DurationWithUnit) SubFrom(t CpsTime) CpsTime {
+	var r time.Time
+
 	switch d.Unit {
 	case "s":
-		return t.Add(-time.Duration(d.Value) * time.Second)
+		r = t.Add(-time.Duration(d.Value) * time.Second)
 	case "m":
-		return t.Add(-time.Duration(d.Value) * time.Minute)
+		r = t.Add(-time.Duration(d.Value) * time.Minute)
 	case "h":
-		return t.Add(-time.Duration(d.Value) * time.Hour)
+		r = t.Add(-time.Duration(d.Value) * time.Hour)
 	case "d":
-		return t.AddDate(0, 0, -int(d.Value))
+		r = t.AddDate(0, 0, -int(d.Value))
 	case "w":
-		return t.AddDate(0, 0, -7*int(d.Value))
+		r = t.AddDate(0, 0, -7*int(d.Value))
 	case "M":
-		return t.AddDate(0, -int(d.Value), 0)
+		r = t.AddDate(0, -int(d.Value), 0)
 	case "y":
-		return t.AddDate(-int(d.Value), 0, 0)
+		r = t.AddDate(-int(d.Value), 0, 0)
 	default:
-		return t.Add(-time.Duration(d.Value) * time.Second)
+		r = t.Add(-time.Duration(d.Value) * time.Second)
 	}
+
+	return CpsTime{Time: r}
 }
 
 func (d DurationWithUnit) To(unit string) (DurationWithUnit, error) {

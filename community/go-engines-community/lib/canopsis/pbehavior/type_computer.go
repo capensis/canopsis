@@ -387,14 +387,14 @@ func (c *typeComputer) computePbehavior(
 	stop = stop.In(location)
 
 	if pbehavior.RRule == "" {
-		event = NewEvent(pbehavior.Start.In(location), stop)
+		event = NewEvent(pbehavior.Start.Time.In(location), stop)
 	} else {
 		rOption, err := rrule.StrToROption(pbehavior.RRule)
 		if err != nil {
 			return ComputedPbehavior{}, err
 		}
 
-		event = NewRecEvent(pbehavior.Start.In(location), stop, rOption)
+		event = NewRecEvent(pbehavior.Start.Time.In(location), stop, rOption)
 	}
 
 	resByExdate, err := c.computeByExdate(pbehavior, event, span, models)
@@ -450,8 +450,8 @@ func (c *typeComputer) computeByExdate(
 	location := event.span.From().Location()
 	res := make([]computedType, 0)
 	for _, exdate := range exdateList {
-		from := maxTime(span.From(), exdate.Begin.In(location))
-		to := minTime(span.To(), exdate.End.In(location))
+		from := maxTime(span.From(), exdate.Begin.Time.In(location))
+		to := minTime(span.To(), exdate.End.Time.In(location))
 		if from.After(to) {
 			continue
 		}

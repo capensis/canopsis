@@ -53,7 +53,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 		s.logger.Debug().Msg("process idle alarms")
 	}()
 
-	now := time.Now()
+	now := types.NewCpsTime()
 	eventGenerator := libevent.NewGenerator(s.entityAdapter)
 	rules, err := s.ruleAdapter.GetEnabled(ctx)
 	if err != nil {
@@ -82,7 +82,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 	checkedEntities := make([]string, 0)
 
 	if allMinDuration.Value > 0 {
-		before := types.CpsTime{Time: allMinDuration.SubFrom(now)}
+		before := allMinDuration.SubFrom(now)
 		cursor, err := s.alarmAdapter.GetOpenedAlarmsWithLastDatesBefore(ctx, before)
 		if err != nil {
 			return events, err
@@ -111,7 +111,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 	}
 
 	if entityMinDuration.Value > 0 {
-		before := types.CpsTime{Time: entityMinDuration.SubFrom(now)}
+		before := entityMinDuration.SubFrom(now)
 		cursor, err := s.entityAdapter.GetAllWithLastUpdateDateBefore(ctx, before, checkedEntities)
 		if err != nil {
 			return events, err
@@ -156,18 +156,18 @@ func (s *baseService) applyRules(
 	entity types.Entity,
 	alarm *types.Alarm,
 	eventGenerator libevent.Generator,
-	now time.Time,
+	now types.CpsTime,
 ) (*types.Event, error) {
 	lastAlarm := alarm
 
 	for _, rule := range rules {
 		switch rule.Type {
 		case idlerule.RuleTypeAlarm:
-			if alarm != nil && rule.Matches(alarm, &entity) && !alarm.Value.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
+			if alarm != nil && rule.Matches(alarm, &entity, now) && !alarm.Value.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
 				return s.applyAlarmRule(rule, *alarm, now)
 			}
 		case idlerule.RuleTypeEntity:
-			if !rule.Matches(nil, &entity) || entity.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
+			if !rule.Matches(nil, &entity, now) || entity.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
 				continue
 			}
 
@@ -195,14 +195,14 @@ func (s *baseService) applyRules(
 func (s *baseService) applyAlarmRule(
 	rule idlerule.Rule,
 	alarm types.Alarm,
-	now time.Time,
+	now types.CpsTime,
 ) (*types.Event, error) {
 	event := types.Event{
 		Connector:     alarm.Value.Connector,
 		ConnectorName: alarm.Value.ConnectorName,
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
-		Timestamp:     types.CpsTime{Time: time.Now()},
+		Timestamp:     now,
 		Initiator:     types.InitiatorSystem,
 		IdleRuleApply: fmt.Sprintf("%s_%s", rule.Type, rule.AlarmCondition),
 	}
@@ -254,7 +254,7 @@ func (s *baseService) applyAlarmRule(
 	case types.ActionTypeSnooze:
 		if params, ok := rule.Operation.Parameters.(types.OperationSnoozeParameters); ok {
 			event.EventType = types.EventTypeSnooze
-			d := types.CpsNumber(params.Duration.AddTo(now).Sub(now).Seconds())
+			d := types.CpsNumber(params.Duration.AddTo(now).Sub(now.Time).Seconds())
 			event.Duration = &d
 			event.Output = params.Output
 			event.Author = params.Author

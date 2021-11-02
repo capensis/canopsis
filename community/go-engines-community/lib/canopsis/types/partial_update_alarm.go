@@ -75,7 +75,7 @@ func (a *Alarm) PartialUpdateSnooze(timestamp CpsTime, duration DurationWithUnit
 	if duration.Value == 0 {
 		return errt.NewUnknownError(errors.New("no duration for snoozing"))
 	}
-	newStep.Value = CpsNumber(duration.AddTo(timestamp.Time).Unix())
+	newStep.Value = CpsNumber(duration.AddTo(timestamp).Unix())
 	a.Value.Snooze = &newStep
 
 	err := a.Value.Steps.Add(newStep)

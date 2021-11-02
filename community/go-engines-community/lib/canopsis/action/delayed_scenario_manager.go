@@ -53,10 +53,10 @@ func (m *delayedScenarioManager) AddDelayedScenario(ctx context.Context, alarm t
 		return errors.New("scenario is not delayed")
 	}
 
-	now := time.Now()
+	now := types.NewCpsTime()
 	delayedScenario := DelayedScenario{
 		ScenarioID:    scenario.ID,
-		ExecutionTime: types.CpsTime{Time: scenario.Delay.AddTo(now)},
+		ExecutionTime: scenario.Delay.AddTo(now),
 		AlarmID:       alarm.ID,
 	}
 	id, err := m.storage.Add(ctx, delayedScenario)
