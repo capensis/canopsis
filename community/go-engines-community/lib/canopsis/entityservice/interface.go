@@ -32,8 +32,8 @@ type Adapter interface {
 	// UpdateBulk bulk update
 	UpdateBulk(ctx context.Context, writeModels []mongodriver.WriteModel) error
 
-	// GetCounters calculates service counters base on dependencies alarms state.
-	GetCounters(ctx context.Context, serviceID string) (mongo.Cursor, error)
+	GetOpenAlarmsOfServiceDependencies(ctx context.Context, serviceID string) (mongo.Cursor, error)
+	GetServiceDependencies(ctx context.Context, serviceID string) (mongo.Cursor, error)
 }
 
 // Manager is used to implement context graph modifier for entity service.

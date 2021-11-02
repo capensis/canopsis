@@ -1,7 +1,7 @@
 Feature: update service when alarm is updated by action pbehavior
   I need to be able to update service when action pbehavior is applied to alarm.
 
-  Scenario: given entity service and scenario should update meta alarm and update children
+  Scenario: given entity service and scenario with pbehavior action for dependency should update service alarm
     Given I am admin
     When I do POST /api/v4/entityservices:
     """json

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -11,17 +12,20 @@ import (
 
 type pbhLeaveAndEnterExecutor struct {
 	configProvider config.AlarmConfigProvider
+
+	metricsSender metrics.Sender
 }
 
 // NewAckExecutor creates new executor.
-func NewPbhLeaveAndEnterExecutor(configProvider config.AlarmConfigProvider) operationlib.Executor {
-	return &pbhLeaveAndEnterExecutor{configProvider: configProvider}
+func NewPbhLeaveAndEnterExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
+	return &pbhLeaveAndEnterExecutor{configProvider: configProvider, metricsSender: metricsSender}
 }
 
 func (e *pbhLeaveAndEnterExecutor) Exec(
-	_ context.Context,
+	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
+	entity *types.Entity,
 	time types.CpsTime,
 	role, initiator string,
 ) (types.AlarmChangeType, error) {
@@ -31,7 +35,9 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
-	if alarm.Value.PbehaviorInfo == params.PbehaviorInfo {
+	currPbehaviorInfo := alarm.Value.PbehaviorInfo
+
+	if currPbehaviorInfo == params.PbehaviorInfo {
 		return "", nil
 	}
 
@@ -46,6 +52,8 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 	if err != nil {
 		return "", err
 	}
+
+	go e.metricsSender.SendPbhLeaveAndEnter(ctx, alarm, *entity, currPbehaviorInfo.CanonicalType, currPbehaviorInfo.Timestamp.Time)
 
 	return types.AlarmChangeTypePbhLeaveAndEnter, nil
 }

@@ -374,6 +374,21 @@ func createTimescaleDBTables(ctx context.Context) error {
 	_, err = postgresPool.Exec(
 		ctx,
 		`
+			CREATE TABLE IF NOT EXISTS sli_duration (
+			time TIMESTAMP NOT NULL,
+			entity_id VARCHAR(500),
+			type SMALLINT,
+			value INT);
+			SELECT create_hypertable('sli_duration', 'time', if_not_exists => TRUE);
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
 			CREATE TABLE IF NOT EXISTS entity_metadata (
 			id VARCHAR(500) PRIMARY KEY,
 			entity_name VARCHAR(500),

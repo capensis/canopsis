@@ -3742,7 +3742,22 @@
         "m": "",
         "val": 1
       },
-      "steps": [],
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        }
+      ],
       "component": "test-component-to-not-run-auto-instruction-manually",
       "connector": "test-connector-to-not-run-auto-instruction-manually",
       "connector_name": "test-connector-name-to-not-run-auto-instruction-manually",

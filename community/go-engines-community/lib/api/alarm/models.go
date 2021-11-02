@@ -152,6 +152,9 @@ type AlarmValue struct {
 	RuleVersion                   map[string]string      `bson:"infos_rule_version" json:"infos_rule_version"`
 	Duration                      int                    `bson:"duration" json:"duration"`
 	CurrentStateDuration          int                    `bson:"current_state_duration" json:"current_state_duration"`
+	SnoozeDuration                int64                  `bson:"snooze_duration" json:"snooze_duration"`
+	PbehaviorInactiveDuration     int64                  `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
+	ActiveDuration                int64                  `bson:"active_duration" json:"active_duration"`
 	EventsCount                   types.CpsNumber        `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
 	Infos map[string]map[string]interface{} `bson:"infos" json:"infos"`

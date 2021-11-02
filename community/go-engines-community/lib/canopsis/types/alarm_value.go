@@ -258,6 +258,9 @@ func (s ByTimestamp) Less(i, j int) bool {
 
 // PbehaviorInfo represents current state of entity.
 type PbehaviorInfo struct {
+	// Timestamp is time when entity enters pbehavior.
+	// Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+	Timestamp *CpsTime `bson:"timestamp" json:"timestamp"`
 	// ID is ID of pbehavior.PBehavior.
 	ID string `bson:"id" json:"id"`
 	// Name is Name of pbehavior.PBehavior.
@@ -351,6 +354,9 @@ type AlarmValue struct {
 
 	// store version of dynamic-infos rule
 	RuleVersion map[string]string `bson:"infos_rule_version"`
+
+	SnoozeDuration            int64 `bson:"snooze_duration" json:"snooze_duration"`
+	PbehaviorInactiveDuration int64 `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
 }
 
 func (v *AlarmValue) Transform() {

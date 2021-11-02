@@ -50,6 +50,7 @@ type WidgetRequest struct {
 type WidgetParametersJunitRequest struct {
 	IsAPI                 bool                   `json:"is_api" mapstructure:"is_api"`
 	Directory             string                 `json:"directory" mapstructure:"directory"`
+	ReportFileRegexp      string                 `json:"report_fileregexp" mapstructure:"report_fileregexp"`
 	ScreenshotDirectories []string               `json:"screenshot_directories" mapstructure:"screenshot_directories"`
 	VideoDirectories      []string               `json:"video_directories" mapstructure:"video_directories"`
 	ScreenshotFilemask    string                 `json:"screenshot_filemask" mapstructure:"screenshot_filemask"`

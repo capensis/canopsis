@@ -7,12 +7,15 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 	"strings"
+	"time"
 )
 
 type rpcPBehaviorClientMessageProcessor struct {
@@ -20,6 +23,8 @@ type rpcPBehaviorClientMessageProcessor struct {
 	PublishCh                libamqp.Channel
 	ServiceRpc               engine.RPCClient
 	Executor                 operation.Executor
+	EntityAdapter            libentity.Adapter
+	PbehaviorAdapter         pbehavior.Adapter
 	Decoder                  encoding.Decoder
 	Encoder                  encoding.Encoder
 	Logger                   zerolog.Logger
@@ -37,7 +42,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 	var replyEvent []byte
 	var event types.RPCPBehaviorResultEvent
 	err := p.Decoder.Decode(msg.Body, &event)
-	if err != nil || event.Alarm == nil {
+	if err != nil || event.Alarm == nil || event.Entity == nil {
 		p.logError(err, "RPC PBehavior Client: invalid event", msg.Body)
 
 		return p.publishResult(routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("invalid event")))
@@ -64,6 +69,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 				},
 			},
 			event.Alarm,
+			event.Entity,
 			event.PbhEvent.Timestamp,
 			"",
 			types.InitiatorSystem,
@@ -76,6 +82,9 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 			p.logError(err, "RPC PBehavior Client: cannot update alarm", msg.Body)
 			return p.publishResult(routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %v", err)))
 		}
+
+		p.updateEntity(ctx, event.PbhEvent.Entity, *event.Alarm, alarmChangeType)
+		go p.updatePbhLastAlarmDate(ctx, alarmChangeType, event.Alarm.Value.PbehaviorInfo)
 
 		alarmChange.Type = alarmChangeType
 		body, err := p.Encoder.Encode(types.RPCServiceEvent{
@@ -157,4 +166,29 @@ func (p *rpcPBehaviorClientMessageProcessor) getRpcEvent(event types.RPCAxeResul
 	}
 
 	return msg, nil
+}
+
+func (p *rpcPBehaviorClientMessageProcessor) updateEntity(ctx context.Context, entity *types.Entity, alarm types.Alarm, changeType types.AlarmChangeType) {
+	switch changeType {
+	case types.AlarmChangeTypeCreateAndPbhEnter, types.AlarmChangeTypePbhEnter,
+		types.AlarmChangeTypePbhLeave, types.AlarmChangeTypePbhLeaveAndEnter:
+		entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
+		err := p.EntityAdapter.UpdatePbehaviorInfo(ctx, entity.ID, entity.PbehaviorInfo)
+		if err != nil {
+			p.Logger.Err(err).Msg("cannot update entity")
+		}
+	}
+}
+
+func (p *rpcPBehaviorClientMessageProcessor) updatePbhLastAlarmDate(ctx context.Context, changeType types.AlarmChangeType, pbehaviorInfo types.PbehaviorInfo) {
+	if changeType != types.AlarmChangeTypeCreateAndPbhEnter &&
+		changeType != types.AlarmChangeTypePbhEnter &&
+		changeType != types.AlarmChangeTypePbhLeaveAndEnter {
+		return
+	}
+
+	err := p.PbehaviorAdapter.UpdateLastAlarmDate(ctx, pbehaviorInfo.ID, types.CpsTime{Time: time.Now()})
+	if err != nil {
+		p.Logger.Err(err).Msg("cannot update pbehavior")
+	}
 }
