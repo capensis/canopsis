@@ -99,7 +99,10 @@ function errorResponseHandler(responseWithError) {
   return Promise.reject(responseWithError);
 }
 
-const request = axios.create({ baseURL: API_HOST });
+const request = axios.create({
+  baseURL: API_HOST,
+  withCredentials: true,
+});
 
 request.interceptors.request.use(requestHandler);
 request.interceptors.response.use(successResponseHandler, errorResponseHandler);

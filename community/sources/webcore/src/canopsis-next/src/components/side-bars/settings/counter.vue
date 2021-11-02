@@ -4,9 +4,9 @@
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
       field-filters(
-        :entitiesType="$constants.ENTITIES_TYPES.alarm",
+        :entities-type="$constants.ENTITIES_TYPES.alarm",
         :filters.sync="settings.widget.parameters.viewFilters",
-        hideSelect
+        hide-select
       )
       v-divider
       field-opened-resolved-filter(v-model="settings.widget.parameters.opened")

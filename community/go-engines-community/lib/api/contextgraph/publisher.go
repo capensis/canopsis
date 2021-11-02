@@ -3,24 +3,31 @@ package contextgraph
 import (
 	"fmt"
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/streadway/amqp"
 	"time"
 )
 
 type rmqPublisher struct {
-	encoder       encoding.Encoder
-	amqpPublisher libamqp.Publisher
+	exchange, queue string
+	encoder         encoding.Encoder
+	contentType     string
+	amqpPublisher   libamqp.Publisher
 }
 
-func NewRMQPublisher(
+func NewEventPublisher(
+	exchange, queue string,
 	encoder encoding.Encoder,
+	contentType string,
 	amqpPublisher libamqp.Publisher,
 ) EventPublisher {
 	return &rmqPublisher{
+		exchange:      exchange,
+		queue:         queue,
 		encoder:       encoder,
+		contentType:   contentType,
 		amqpPublisher: amqpPublisher,
 	}
 }
@@ -50,7 +57,7 @@ func (p *rmqPublisher) SendImportResultEvent(uuid string, execTime time.Duration
 	})
 }
 
-func (p *rmqPublisher) SendPerfDataEvent(uuid string, stats JobStats, state types.CpsNumber) error {
+func (p *rmqPublisher) SendPerfDataEvent(uuid string, stats importcontextgraph.Stats, state types.CpsNumber) error {
 	stateType := new(types.CpsNumber)
 	*stateType = 1
 
@@ -84,18 +91,6 @@ func (p *rmqPublisher) SendPerfDataEvent(uuid string, stats JobStats, state type
 	})
 }
 
-func (p *rmqPublisher) SendUpdateEntityServiceEvent(serviceId string) error {
-	return p.sendEvent(types.Event{
-		EventType:     types.EventTypeRecomputeEntityService,
-		Connector:     types.ConnectorEngineService,
-		ConnectorName: types.ConnectorEngineService,
-		Component:     serviceId,
-		Timestamp:     types.CpsTime{Time: time.Now()},
-		Author:        canopsis.DefaultEventAuthor,
-		SourceType:    types.SourceTypeService,
-	})
-}
-
 func (p *rmqPublisher) sendEvent(event types.Event) error {
 	bevent, err := p.encoder.Encode(event)
 	if err != nil {
@@ -103,12 +98,12 @@ func (p *rmqPublisher) sendEvent(event types.Event) error {
 	}
 
 	return p.amqpPublisher.Publish(
-		"canopsis.events",
-		"",
+		p.exchange,
+		p.queue,
 		false,
 		false,
 		amqp.Publishing{
-			ContentType:  "application/json", // this type is mandatory to avoid bad conversions into Python.
+			ContentType:  p.contentType,
 			Body:         bevent,
 			DeliveryMode: amqp.Persistent,
 		},

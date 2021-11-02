@@ -11,13 +11,11 @@ import {
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
-import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
 import { authMixin } from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
@@ -28,7 +26,6 @@ export const widgetActionsPanelAlarmMixin = {
     queryMixin,
     eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
-    entitiesRemediationInstructionExecutionMixin,
   ],
   methods: {
     createFastAckEvent() {
@@ -48,20 +45,6 @@ export const widgetActionsPanelAlarmMixin = {
           ...this.modalConfig,
           action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.item, data),
         },
-      });
-    },
-
-    async createMassFastAckEvent() {
-      let eventData = {};
-
-      if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
-        eventData = { output: this.widget.parameters.fastAckOutput.value };
-      }
-
-      const ackEventData = prepareEventsByAlarms(EVENT_ENTITY_TYPES.ack, this.items, eventData);
-
-      await this.createEventAction({
-        data: ackEventData,
       });
     },
 

@@ -29,6 +29,10 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name x-canopsis-authkey
+
+// @securityDefinitions.apikey JWTAuth
+// @in header
+// @name Authorization
 func main() {
 	var flags Flags
 	flags.ParseArgs()
@@ -69,13 +73,11 @@ func main() {
 		enforcer,
 		nil,
 		logger,
-		func(ctx context.Context) error {
+		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {
-				return err
+				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
-
-			return nil
 		},
 	)
 	if err != nil {

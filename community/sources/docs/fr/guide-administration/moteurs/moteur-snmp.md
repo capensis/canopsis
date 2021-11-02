@@ -1,6 +1,6 @@
 # Moteur `snmp` (Python, Pro)
 
-!!! attention
+!!! info
     Ce moteur n'est disponible que dans l'édition Pro de Canopsis.
 
 Le moteur `snmp` permet de traiter les traps SNMP récupérés par le connecteur `snmp2canopsis` selon des règles prédéfinies par l'utilisateur.
@@ -15,7 +15,7 @@ Comme observé sur le schéma de cycle de vie, les traps SNMP bruts sont traduit
 
 Pour rappel, le résultat de la traduction doit se concrétiser par la génération d'un message compréhensible par Canopsis.
 
-Ce message doit comporter à minima les informations suivantes :
+Ce message doit comporter au minimum les informations suivantes :
 
 *  `connector`
 *  `connector_name`

@@ -25,22 +25,12 @@
       ) {{ $t('modals.createDynamicInfo.steps.patterns.title') }}
         small(v-if="hasPatternsFormAnyError") {{ $t('modals.createDynamicInfo.errors.invalid') }}
     v-stepper-items
-      v-stepper-content.pa-4(:step="steps.GENERAL")
-        v-card
-          v-card-text.pa-0
-            dynamic-info-general-form(
-              v-field="form",
-              :is-disabled-id-field="isDisabledIdField",
-              ref="generalForm"
-            )
-      v-stepper-content.pa-4(:step="steps.INFOS")
-        v-card
-          v-card-text.pa-0
-            dynamic-info-infos-form(v-field="form.infos", ref="infosForm")
-      v-stepper-content.pa-4(:step="steps.PATTERNS")
-        v-card
-          v-card-text.pa-0
-            c-patterns-field(v-field="form.patterns", ref="patternsForm", alarm, entity, some-required)
+      v-stepper-content.pa-0(:step="steps.GENERAL")
+        dynamic-info-general-form.pa-4(v-field="form", :is-disabled-id-field="isDisabledIdField", ref="generalForm")
+      v-stepper-content.pa-0(:step="steps.INFOS")
+        dynamic-info-infos-form.pa-4(v-field="form.infos", ref="infosForm")
+      v-stepper-content.pa-0(:step="steps.PATTERNS")
+        c-patterns-field.pa-4(v-field="form.patterns", ref="patternsForm", alarm, entity, some-required)
 </template>
 
 <script>

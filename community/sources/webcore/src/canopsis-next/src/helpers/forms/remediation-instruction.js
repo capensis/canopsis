@@ -20,6 +20,7 @@ import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {Object} RemediationInstructionStepOperation
+ * @property {string} operation_id
  * @property {string} name
  * @property {string} description
  * @property {Array} jobs

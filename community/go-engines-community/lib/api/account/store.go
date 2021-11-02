@@ -115,6 +115,13 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 			"as":           "defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$defaultview", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.ViewMongoCollection,
+			"localField":   "role.defaultview",
+			"foreignField": "_id",
+			"as":           "role.defaultview",
+		}},
+		{"$unwind": bson.M{"path": "$role.defaultview", "preserveNullAndEmptyArrays": true}},
 	})
 
 	if err != nil {

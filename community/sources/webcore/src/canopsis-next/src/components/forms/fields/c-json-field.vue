@@ -75,7 +75,7 @@ export default {
     validateOn: {
       type: String,
       default: 'blur',
-      validate: value => ['blur', 'button'].includes(value),
+      validator: value => ['blur', 'button'].includes(value),
     },
     helpText: {
       type: String,
