@@ -317,6 +317,20 @@ func (mr *MockHubMockRecorder) Connect(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockHub)(nil).Connect), arg0, arg1)
 }
 
+// GetUniqueUsers mocks base method
+func (m *MockHub) GetUniqueUsers() []string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUniqueUsers")
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// GetUniqueUsers indicates an expected call of GetUniqueUsers
+func (mr *MockHubMockRecorder) GetUniqueUsers() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUniqueUsers", reflect.TypeOf((*MockHub)(nil).GetUniqueUsers))
+}
+
 // RegisterRoom mocks base method
 func (m *MockHub) RegisterRoom(arg0 string, arg1 ...string) error {
 	m.ctrl.T.Helper()
