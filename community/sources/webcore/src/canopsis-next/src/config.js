@@ -43,10 +43,6 @@ export const LOCALE_PRIORITIES = {
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
 
-export const ACTIVE_LOGGED_USERS_COUNT_FETCHING_INTERVAL = 60000;
-
-export const ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL = 60000;
-
 export const VUETIFY_ANIMATION_DELAY = 300;
 
 export const POPUP_TICK_DELAY = 100;
@@ -71,6 +67,15 @@ export const MAX_LOGO_SIZE_IN_KB = 16384;
 export const DEFAULT_APP_TITLE = 'Canopsis';
 
 export const EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX = 'canopsis_groups_views-';
+
+export const SOCKET_ROOMS = {
+  healthcheck: 'healthcheck',
+  healthcheckStatus: 'healthcheck-status',
+  messageRates: 'message-rates',
+  loggedUserCount: 'logged-user-count',
+  broadcastMessages: 'broadcast-messages',
+  execution: 'execution',
+};
 
 export const API_ROUTES = {
   login: '/api/v4/login',
@@ -100,6 +105,8 @@ export const API_ROUTES = {
   users: '/api/v4/users',
   roles: '/api/v4/roles',
   eventFilterRules: '/api/v4/eventfilter/rules',
+  file: '/api/v4/file',
+  fileAccess: '/api/v4/file-access',
   snmpRule: {
     list: '/snmprule',
     create: '/snmprule/put',
@@ -152,7 +159,6 @@ export const API_ROUTES = {
   /**
    * Cat routes
    */
-  file: '/api/v4/cat/file',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
   remediation: {
@@ -263,10 +269,6 @@ export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
 
-export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
-
-export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS = 10;
-
 export const EXPORT_FETCHING_INTERVAL = 2000;
 
 export const DEFAULT_CATEGORIES_LIMIT = 3;
@@ -275,6 +277,6 @@ export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
 
 export const HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX = 'healthcheck_last_hour-';
 
-export const LOGIN_INFOS_FETCHING_INTERVAL = 10000;
+export const APP_INFO_FETCHING_INTERVAL = 10000;
 
 export const MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED = 100;

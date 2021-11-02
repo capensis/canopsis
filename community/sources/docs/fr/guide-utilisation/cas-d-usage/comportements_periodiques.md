@@ -19,7 +19,7 @@ Les cas d'usage détaillés dans cette documentation vous permettront de :
 
 ## Contexte
 
-Considérons l'application `ERP` (sous forme d'observateur) composée de différentes entités.
+Considérons l'application `ERP` composée de différentes entités.
 
 ![Situation initiale](./img/pbh_situation_initiale.png)
 
@@ -27,7 +27,7 @@ Vous aurez également créé une ou plusieurs raisons personnalisées par le bia
 
 ## Définition de la plage de service
 
-Rendez-vous dans l'explorateur de contexte et recherchez votre observateur `ERP`.
+Rendez-vous dans l'explorateur de contexte et recherchez votre service `ERP`.
 
 Ajoutez-lui ensuite un comportement périodique en cliquant sur ce bouton.
 
@@ -45,7 +45,7 @@ Pour créer une plage, du lundi au vendredi, de 19h15 à 8h :
 
 ## Aperçu de la plage de service
 
-Après avoir validé les différents formulaires, vous pouvez visualiser le résultat dans le calendrier.
+Après avoir validé les différents formulaires, vous pouvez observer le résultat dans le calendrier.
 
 ![Aperçu de la plage de service](./img/pbh_apercu_plage_19h15-08h.png)
 
@@ -89,7 +89,7 @@ Vous observez que l'application est passée en pause.
 
 En parallèle des plages de services, vous pouvez déclarer des entités en maintenance par exemple.
 
-Vous avez la possibilité d'effectuer cette opération :
+Vous avez la possibilité de réaliser cette opération :
 
 * **Depuis le panneau d'exploitation des comportements périodiques** : la mise en maintenance s'effectue à partir d'un filtre.
 * **Depuis le Bac à alarmes** : dans ce cas, la mise en maintenance se fait de manière unitaire (en sélectionnant individuellement les alarmes concernées).

@@ -5,7 +5,9 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
+import { isEqual, debounce } from 'lodash';
+
+import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
 
 import cytoscape from '@/services/cytoscape';
 
@@ -37,13 +39,25 @@ export default {
       }
     },
   },
+  created() {
+    this.debouncedResizeHandler = debounce(this.resizeHandler, 50);
+  },
   mounted() {
     this.mountCytoscape();
+
+    window.addEventListener('resize', this.debouncedResizeHandler);
   },
   beforeDestroy() {
     this.destroyCytoscape();
+
+    window.removeEventListener('resize', this.debouncedResizeHandler);
   },
   methods: {
+    resizeHandler() {
+      this.$cy.invalidateSize();
+      this.$cy.fit(this.$cy.nodes(), HEALTHCHECK_NETWORK_GRAPH_OPTIONS.fitPadding);
+    },
+
     mountCytoscape(options = this.options) {
       this.$cy = cytoscape({
         container: this.$refs.canvasWrapper,

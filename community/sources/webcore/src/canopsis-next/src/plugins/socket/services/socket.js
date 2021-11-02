@@ -1,17 +1,29 @@
 import { find } from 'lodash';
 
-import { SOCKET_EVENTS_TYPES, MAX_RECONNECTS_COUNT } from '../constants';
+import {
+  REQUEST_MESSAGES_TYPES,
+  RESPONSE_MESSAGES_TYPES,
+  MAX_RECONNECTS_COUNT,
+  PING_INTERVAL,
+  RECONNECT_INTERVAL,
+  EVENTS_TYPES,
+} from '../constants';
 
 import SocketRoom from './socket-room';
 
 class Socket {
   constructor() {
     this.rooms = {};
+    this.token = '';
     this.url = '';
     this.protocols = '';
     this.sendQueue = [];
     this.reconnectsCount = 0;
+    this.lastPingedAt = 0;
+    this.lastPongedAt = 0;
+    this.isReconnecting = true;
     this.baseOpenHandler = this.baseOpenHandler.bind(this);
+    this.baseCloseHandler = this.baseCloseHandler.bind(this);
     this.baseErrorHandler = this.baseErrorHandler.bind(this);
     this.baseMessageHandler = this.baseMessageHandler.bind(this);
   }
@@ -38,6 +50,7 @@ class Socket {
     this.connection = new WebSocket(url, protocols);
 
     this.on('open', this.baseOpenHandler);
+    this.on('close', this.baseCloseHandler);
     this.on('error', this.baseErrorHandler);
     this.on('message', this.baseMessageHandler);
 
@@ -51,8 +64,14 @@ class Socket {
    */
   reconnect() {
     this.reconnectsCount += 1;
+    this.lastPingedAt = 0;
+    this.lastPongedAt = 0;
     this.disconnect();
     this.connect(this.url, this.protocols);
+
+    if (this.token) {
+      this.authenticate();
+    }
 
     Object.keys(this.rooms).forEach(name => this.join(name));
 
@@ -127,44 +146,122 @@ class Socket {
    * Join to a room
    *
    * @param {string} room
-   * @returns {Socket}
+   * @returns {SocketRoom}
    */
   join(room) {
-    this.send({
-      room,
-      type: SOCKET_EVENTS_TYPES.join,
-    });
-
     if (!this.rooms[room]) {
       this.rooms[room] = new SocketRoom(room);
     } else {
       this.rooms[room].increment();
     }
 
-    return this;
+    this.send({
+      room,
+      type: REQUEST_MESSAGES_TYPES.join,
+    });
+
+    return this.rooms[room];
   }
 
   /**
    * Leave a room
    *
    * @param {string} room
-   * @returns {Socket}
+   * @returns {SocketRoom}
    */
   leave(room) {
-    this.send({
-      room,
-      type: SOCKET_EVENTS_TYPES.leave,
-    });
+    const socketRoom = this.rooms[room];
 
-    if (this.rooms[room]) {
-      this.rooms[room].decrement();
+    if (socketRoom) {
+      socketRoom.decrement();
 
-      if (!this.rooms[room].count) {
+      if (!socketRoom.count) {
         delete this.rooms[room];
       }
     }
 
+    this.send({
+      room,
+      type: REQUEST_MESSAGES_TYPES.leave,
+    });
+
+    return socketRoom ?? new SocketRoom(room);
+  }
+
+  /**
+   * Authenticate by token
+   *
+   * @param {string} [token = this.token]
+   * @return {Socket}
+   */
+  authenticate(token = this.token) {
+    this.token = token;
+
+    this.send({
+      token,
+      type: REQUEST_MESSAGES_TYPES.authenticate,
+    });
+
     return this;
+  }
+
+  /**
+   * Send ping message
+   *
+   * @return {Socket}
+   */
+  ping() {
+    this.send({
+      type: REQUEST_MESSAGES_TYPES.ping,
+    });
+
+    this.lastPingedAt = Date.now();
+
+    return this;
+  }
+
+  /**
+   * Start custom ping mechanism
+   */
+  startPinging() {
+    if (!this.isConnectionOpen) {
+      return;
+    }
+
+    if (this.lastPingedAt > this.lastPongedAt) {
+      this.connection.close();
+
+      /**
+       * We need to use this code block to avoid problem with a long waiting for connection closing
+       * without internet on Google Chrome on Linux
+       */
+      const closeEvent = new CloseEvent(EVENTS_TYPES.customClose, { code: 1006, reason: '', wasClean: false });
+
+      this.connection.dispatchEvent(closeEvent);
+
+      return;
+    }
+
+    this.ping();
+
+    setTimeout(() => this.startPinging(), PING_INTERVAL);
+  }
+
+  /**
+   * Start reconnecting mechanism
+   */
+  startReconnecting() {
+    if (this.isConnectionOpen) {
+      return;
+    }
+
+    if (this.reconnectsCount >= MAX_RECONNECTS_COUNT) {
+      throw new Error('Network problem');
+    }
+
+    this.reconnect();
+
+    setTimeout(() => this.startReconnecting(), RECONNECT_INTERVAL);
   }
 
   /**
@@ -178,6 +275,18 @@ class Socket {
     }
 
     this.sendQueue = [];
+    this.startPinging();
+  }
+
+  /**
+   * Base handler for 'close' event
+   */
+  baseCloseHandler() {
+    if (this.reconnectsCount) {
+      return;
+    }
+
+    this.startReconnecting();
   }
 
   /**
@@ -192,11 +301,11 @@ class Socket {
       return;
     }
 
-    if (this.reconnectsCount >= MAX_RECONNECTS_COUNT) {
-      throw new Error(err);
+    if (this.reconnectsCount) {
+      return;
     }
 
-    this.reconnect();
+    this.startReconnecting();
   }
 
   /**
@@ -205,18 +314,42 @@ class Socket {
    * @param {string} data
    */
   baseMessageHandler({ data }) {
-    try {
-      const { room, msg, error } = JSON.parse(data);
+    const { type, room, msg, error } = JSON.parse(data);
 
-      if (error) {
-        throw error;
-      }
+    if (type === RESPONSE_MESSAGES_TYPES.error) {
+      const event = new ErrorEvent('error', { message: error });
 
-      if (this.rooms[room] && msg) {
-        this.rooms[room].call(null, msg);
-      }
-    } catch (err) {
-      console.error(err);
+      this.connection.dispatchEvent(event);
+      return;
+    }
+
+    if (type === RESPONSE_MESSAGES_TYPES.pong) {
+      this.lastPongedAt = Date.now();
+      return;
+    }
+
+    switch (type) {
+      case RESPONSE_MESSAGES_TYPES.pong:
+        this.lastPongedAt = Date.now();
+        break;
+      case RESPONSE_MESSAGES_TYPES.ok:
+        // eslint-disable-next-line no-unused-expressions
+        this.rooms[room]?.call(null, msg);
+        break;
+      case RESPONSE_MESSAGES_TYPES.error:
+        this.connection.dispatchEvent(
+          new ErrorEvent('error', { message: error }),
+        );
+        break;
+      case RESPONSE_MESSAGES_TYPES.close:
+        this.connection.dispatchEvent(
+          new Event(EVENTS_TYPES.closeRoom),
+        );
+        break;
+      default:
+        this.connection.dispatchEvent(
+          new ErrorEvent('error', { message: 'Unknown message type' }),
+        );
     }
   }
 
@@ -236,5 +369,7 @@ class Socket {
     return room;
   }
 }
+
+Socket.EVENTS_TYPES = EVENTS_TYPES;
 
 export default Socket;

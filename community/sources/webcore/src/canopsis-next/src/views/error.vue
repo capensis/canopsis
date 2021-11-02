@@ -9,7 +9,7 @@
 <script>
 import { isEmpty } from 'lodash';
 
-import { LOGIN_INFOS_FETCHING_INTERVAL } from '@/config';
+import { APP_INFO_FETCHING_INTERVAL } from '@/config';
 
 import { ROUTES_NAMES } from '@/constants';
 
@@ -23,8 +23,7 @@ export default {
     entitiesInfoMixin,
     pollingMixinCreator({
       method: 'fetchInfo',
-      delay: LOGIN_INFOS_FETCHING_INTERVAL,
-      startOnMount: true,
+      delayField: 'pollingDelay',
     }),
   ],
   props: {
@@ -35,6 +34,11 @@ export default {
     redirect: {
       type: String,
       default: '',
+    },
+  },
+  computed: {
+    pollingDelay() {
+      return APP_INFO_FETCHING_INTERVAL;
     },
   },
   mounted() {

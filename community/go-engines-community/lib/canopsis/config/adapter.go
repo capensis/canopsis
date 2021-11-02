@@ -90,3 +90,32 @@ func (a *remediationAdapter) UpsertConfig(ctx context.Context, conf RemediationC
 
 	return err
 }
+
+type HealthCheckAdapter interface {
+	GetConfig(ctx context.Context) (HealthCheckConf, error)
+	UpsertConfig(ctx context.Context, conf HealthCheckConf) error
+}
+
+type healthCheckAdapter struct {
+	collection mongo.DbCollection
+}
+
+func NewHealthCheckAdapter(client mongo.DbClient) HealthCheckAdapter {
+	return &healthCheckAdapter{
+		collection: client.Collection(mongo.ConfigurationMongoCollection),
+	}
+}
+
+func (a *healthCheckAdapter) GetConfig(ctx context.Context) (HealthCheckConf, error) {
+	conf := HealthCheckConf{}
+	err := a.collection.FindOne(ctx, bson.M{"_id": HealthCheckName}).Decode(&conf)
+
+	return conf, err
+}
+
+func (a *healthCheckAdapter) UpsertConfig(ctx context.Context, conf HealthCheckConf) error {
+	_, err := a.collection.UpdateOne(ctx, bson.M{"_id": HealthCheckName},
+		bson.M{"$set": conf}, options.Update().SetUpsert(true))
+
+	return err
+}

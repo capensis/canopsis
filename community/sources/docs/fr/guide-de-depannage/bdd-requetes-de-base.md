@@ -174,6 +174,6 @@ Supprimer une alarme qui a été annulée :
 db.periodical_alarm.remove({"v.component" : "XXXX", "v.resource" : "Ping", "v.resolved" : null, "v.status.val" : 4})
 ```
 
-## État des services
+## État des composants de Canopsis
 
-[Rendez-vous ici](etat-des-services.md)
+[Rendez-vous ici](etat-des-composants.md).

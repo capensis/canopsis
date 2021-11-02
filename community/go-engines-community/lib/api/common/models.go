@@ -147,16 +147,20 @@ loop:
 		switch k {
 		case reflect.Struct:
 			if f, ok := val.Type().FieldByName(path[i]); ok {
-				jsonTag := f.Tag.Get("json")
-				tags := strings.Split(jsonTag, ",")
-				if len(tags) > 1 && tags[len(tags)-1] == "omitempty" {
-					jsonTag = strings.Join(tags[:len(tags)-1], ",")
+				tag := f.Tag.Get("json")
+				if tag == "" {
+					tag = f.Tag.Get("form")
 				}
-				if jsonTag == "-" {
-					jsonTag = strings.ToLower(path[i])
+
+				tags := strings.Split(tag, ",")
+				if len(tags) > 1 && tags[len(tags)-1] == "omitempty" {
+					tag = strings.Join(tags[:len(tags)-1], ",")
+				}
+				if tag == "-" {
+					tag = strings.ToLower(path[i])
 				}
 				val = val.FieldByName(path[i])
-				path[i] = jsonTag
+				path[i] = tag
 			}
 		case reflect.Slice, reflect.Array:
 			index, err := strconv.Atoi(path[i])

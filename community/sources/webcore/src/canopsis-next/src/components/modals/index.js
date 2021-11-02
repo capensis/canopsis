@@ -72,8 +72,8 @@ export const SelectExceptionsLists = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/select-exceptions-lists.vue'),
   loading: ModalLoaderOverlay,
 });
-export const CreateRRule = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-r-rule.vue'),
+export const CreateRecurrenceRule = () => ({
+  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-recurrence-rule.vue'),
   loading: ModalLoaderOverlay,
 });
 export const PbehaviorRecurrentChangesConfirmation = () => ({
@@ -154,6 +154,10 @@ export const CreateServicePauseEvent = () => ({
 });
 export const SelectView = () => ({
   component: import(/* webpackChunkName: "View" */ './view/select-view.vue'),
+  loading: ModalLoaderOverlay,
+});
+export const SelectViewTab = () => ({
+  component: import(/* webpackChunkName: "View" */ './view/select-view-tab.vue'),
   loading: ModalLoaderOverlay,
 });
 export const CreateView = () => ({

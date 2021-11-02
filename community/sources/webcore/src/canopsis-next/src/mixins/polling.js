@@ -24,7 +24,7 @@ export const pollingMixinCreator = ({ method, delayField = 'pollingDelay' }) => 
   },
   methods: {
     async polling() {
-      if (isFunction(this[method])) {
+      if (!isFunction(this[method])) {
         throw new Error(`Method ${method} not found`);
       }
 
