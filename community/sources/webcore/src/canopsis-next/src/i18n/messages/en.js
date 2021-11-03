@@ -198,7 +198,10 @@ export default {
     graph: 'Graph | Graphs',
     systemStatus: 'System status',
     downloadAsPng: 'Download as PNG',
-    rating: 'Rating',
+    rating: 'Rating | Ratings',
+    uptime: 'Uptime',
+    maintenance: 'Maintenance',
+    downtime: 'Downtime',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -2570,6 +2573,8 @@ export default {
   },
 
   kpi: {
+    alarmMetrics: 'Alarm metrics',
+    sli: 'SLI',
     tabs: {
       dataSlices: 'Data slices',
       detailedMetrics: 'Detailed metrics',

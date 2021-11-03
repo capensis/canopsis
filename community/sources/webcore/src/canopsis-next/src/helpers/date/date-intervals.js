@@ -84,10 +84,13 @@ export const convertDateIntervalToTimestamp = (date, type, format) => convertDat
  * Convert from value to timestamp or moment
  *
  * @param {LocalDate} date
- * @param {string} format
+ * @param {string} [format = DATETIME_FORMATS.datePicker]
  * @return {number | moment.Moment}
  */
-export const convertStartDateIntervalToMoment = (date, format) => convertDateIntervalToMoment(
+export const convertStartDateIntervalToMoment = (
+  date,
+  format = DATETIME_FORMATS.datePicker,
+) => convertDateIntervalToMoment(
   date,
   DATETIME_INTERVAL_TYPES.start,
   format,
@@ -97,10 +100,13 @@ export const convertStartDateIntervalToMoment = (date, format) => convertDateInt
  * Convert from value to timestamp or moment
  *
  * @param {LocalDate} date
- * @param {string} format
+ * @param {string} [format = DATETIME_FORMATS.datePicker]
  * @return {number | moment.Moment}
  */
-export const convertStartDateIntervalToTimestamp = (date, format) => convertDateIntervalToTimestamp(
+export const convertStartDateIntervalToTimestamp = (
+  date,
+  format = DATETIME_FORMATS.datePicker,
+) => convertDateIntervalToTimestamp(
   date,
   DATETIME_INTERVAL_TYPES.start,
   format,
@@ -110,10 +116,13 @@ export const convertStartDateIntervalToTimestamp = (date, format) => convertDate
  * Convert to value to timestamp or moment
  *
  * @param {LocalDate} date
- * @param {string} format
+ * @param {string} [format = DATETIME_FORMATS.datePicker]
  * @return {number | moment.Moment}
  */
-export const convertStopDateIntervalToMoment = (date, format) => convertDateIntervalToMoment(
+export const convertStopDateIntervalToMoment = (
+  date,
+  format = DATETIME_FORMATS.datePicker,
+) => convertDateIntervalToMoment(
   date,
   DATETIME_INTERVAL_TYPES.stop,
   format,
@@ -123,10 +132,13 @@ export const convertStopDateIntervalToMoment = (date, format) => convertDateInte
  * Convert to value to timestamp or moment
  *
  * @param {LocalDate} date
- * @param {string} format
+ * @param {string} [format = DATETIME_FORMATS.datePicker]
  * @return {number | moment.Moment}
  */
-export const convertStopDateIntervalToTimestamp = (date, format) => convertDateIntervalToTimestamp(
+export const convertStopDateIntervalToTimestamp = (
+  date,
+  format = DATETIME_FORMATS.datePicker,
+) => convertDateIntervalToTimestamp(
   date,
   DATETIME_INTERVAL_TYPES.stop,
   format,
