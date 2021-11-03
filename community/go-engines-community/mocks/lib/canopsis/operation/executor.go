@@ -35,7 +35,7 @@ func (m *MockExecutor) EXPECT() *MockExecutorMockRecorder {
 }
 
 // Exec mocks base method
-func (m *MockExecutor) Exec(arg0 context.Context, arg1 types.Operation, arg2 *types.Alarm, arg3 types.Entity, arg4 types.CpsTime, arg5, arg6 string) (types.AlarmChangeType, error) {
+func (m *MockExecutor) Exec(arg0 context.Context, arg1 types.Operation, arg2 *types.Alarm, arg3 *types.Entity, arg4 types.CpsTime, arg5, arg6 string) (types.AlarmChangeType, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Exec", arg0, arg1, arg2, arg3, arg4, arg5, arg6)
 	ret0, _ := ret[0].(types.AlarmChangeType)
