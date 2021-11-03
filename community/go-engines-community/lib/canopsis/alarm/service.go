@@ -71,9 +71,9 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 
 				if alarmState == types.AlarmStateOK {
 					lastStep := alarmWithEntity.Alarm.Value.Steps[len(alarmWithEntity.Alarm.Value.Steps)-1]
-					resolveAt := rule.Duration.AddTo(lastStep.Timestamp)
+					before := rule.Duration.SubFrom(now)
 
-					if resolveAt.After(now) {
+					if lastStep.Timestamp.Before(before) {
 						alarmsToResolve = append(alarmsToResolve, alarmWithEntity.Alarm)
 					}
 				}
