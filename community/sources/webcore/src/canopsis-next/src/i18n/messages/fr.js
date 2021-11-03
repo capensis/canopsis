@@ -23,7 +23,8 @@ import {
   ALARMS_OPENED_VALUES,
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_NAMES,
-  GROUPS_NAVIGATION_TYPES, SAMPLINGS,
+  GROUPS_NAVIGATION_TYPES,
+  SAMPLINGS,
 } from '@/constants';
 
 import featureService from '@/services/features';
