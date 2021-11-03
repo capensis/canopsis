@@ -74,11 +74,11 @@ export default {
     },
 
     intervalFromAsTimestamp() {
-      return convertStartDateIntervalToTimestamp(this.interval.from, DATETIME_FORMATS.datePicker);
+      return convertStartDateIntervalToTimestamp(this.interval.from);
     },
 
     intervalToAsTimestamp() {
-      return convertStopDateIntervalToTimestamp(this.interval.to, DATETIME_FORMATS.datePicker);
+      return convertStopDateIntervalToTimestamp(this.interval.to);
     },
 
     intervalFromString() {
@@ -168,8 +168,8 @@ export default {
         return true;
       }
 
-      const startTimestamp = convertStartDateIntervalToTimestamp(start, DATETIME_FORMATS.datePicker);
-      const stopTimestamp = convertStopDateIntervalToTimestamp(start, DATETIME_FORMATS.datePicker);
+      const startTimestamp = convertStartDateIntervalToTimestamp(start);
+      const stopTimestamp = convertStopDateIntervalToTimestamp(start);
 
       return this.isGreaterMinDate(startTimestamp)
         && this.isAllowedAccumulatedFromDate(startTimestamp)

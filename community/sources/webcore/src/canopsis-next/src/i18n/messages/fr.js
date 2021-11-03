@@ -199,7 +199,10 @@ export default {
     graph: 'Graphique | Graphiques',
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
-    rating: 'Notation',
+    rating: 'Notation | Notations',
+    uptime: 'Uptime',
+    maintenance: 'Maintenance',
+    downtime: 'Downtime',
     sampling: 'Échantillonnage',
     parametersToDisplay: '{count} paramètres à afficher',
     actions: {
@@ -2587,6 +2590,8 @@ export default {
   },
 
   kpi: {
+    alarmMetrics: 'Métriques d\'alarme',
+    sli: 'SLI',
     tabs: {
       dataSlices: 'Tranches de données',
       detailedMetrics: 'Métriques détaillées',

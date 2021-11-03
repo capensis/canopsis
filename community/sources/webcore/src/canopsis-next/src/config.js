@@ -184,6 +184,9 @@ export const API_ROUTES = {
     status: '/api/v4/cat/healthcheck/status',
     parameters: '/api/v4/cat/healthcheck/parameters',
   },
+  metrics: {
+    sli: '/api/v4/cat/metrics/sli',
+  },
 };
 
 export const COLORS = {
@@ -263,6 +266,11 @@ export const COLORS = {
     '#AD1457',
     '#880E4F',
   ],
+  kpi: {
+    downtime: '#c4c4c4',
+    maintenance: '#ffa800',
+    uptime: '#5b6E7F',
+  },
 };
 
 export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;

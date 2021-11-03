@@ -199,7 +199,10 @@ export default {
     graph: 'Graph | Graphs',
     systemStatus: 'System status',
     downloadAsPng: 'Download as PNG',
-    rating: 'Rating',
+    rating: 'Rating | Ratings',
+    uptime: 'Uptime',
+    maintenance: 'Maintenance',
+    downtime: 'Downtime',
     sampling: 'Sampling',
     parametersToDisplay: '{count} parameters to display',
     actions: {
@@ -2587,6 +2590,8 @@ export default {
   },
 
   kpi: {
+    alarmMetrics: 'Alarm metrics',
+    sli: 'SLI',
     tabs: {
       dataSlices: 'Data slices',
       detailedMetrics: 'Detailed metrics',
