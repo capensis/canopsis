@@ -391,11 +391,14 @@ func createTimescaleDBTables(ctx context.Context) error {
 		`
 			CREATE TABLE IF NOT EXISTS entity_metadata (
 			id VARCHAR(500) PRIMARY KEY,
-			entity_name VARCHAR(500),
+			name VARCHAR(500),
 		   	category VARCHAR(255),
 		   	impact_level INT,
 		   	type VARCHAR(255),
-			infos jsonb
+			enabled BOOLEAN,
+			infos jsonb,
+			component_infos jsonb,
+			component VARCHAR(500) 
 			);
        	`,
 	)
@@ -464,7 +467,7 @@ func defaultCriteria() []CriteriaConfig {
 		{
 			ID:   1,
 			Type: metrics.EntityCriteriaType,
-			Name: "entity_name",
+			Name: "name",
 		},
 		{
 			ID:   2,

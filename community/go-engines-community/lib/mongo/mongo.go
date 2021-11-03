@@ -73,6 +73,8 @@ const (
 
 	ResolveRuleMongoCollection  = "resolve_rule"
 	FlappingRuleMongoCollection = "flapping_rule"
+
+	FilterMongoCollection = "filter"
 )
 
 type SingleResultHelper interface {
