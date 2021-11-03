@@ -169,6 +169,19 @@
         }
     });
 
+    db.meta_alarm_rules.find().forEach(function (doc) {
+        if (doc.config && doc.config.time_interval) {
+            db.meta_alarm_rules.updateOne({_id: doc._id}, {
+                $set: {
+                    "config.time_interval": {
+                        value: doc.config.time_interval,
+                        unit: "s"
+                    }
+                }
+            });
+        }
+    });
+
     function migrateDurWithUnit(d) {
         var value = d.seconds;
         var unit = d.unit;
