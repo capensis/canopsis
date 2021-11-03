@@ -26,7 +26,8 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-pbehavior-weather-service-entity-1"}]
+      "entity_patterns": [{"name": "test-resource-pbehavior-weather-service-entity-1"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -104,7 +105,8 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-pbehavior-weather-service-entity-2"}]
+      "entity_patterns": [{"name": "test-resource-pbehavior-weather-service-entity-2"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -199,7 +201,8 @@ Feature: get service entities
       "entity_patterns": [
          {"name": "test-resource-pbehavior-weather-service-entity-3-1"},
          {"name": "test-resource-pbehavior-weather-service-entity-3-2"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -287,7 +290,8 @@ Feature: get service entities
       "enabled": true,
       "entity_patterns": [
          {"name": "test-resource-pbehavior-weather-service-entity-4"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -362,7 +366,8 @@ Feature: get service entities
       "enabled": true,
       "entity_patterns": [
          {"name": "test-resource-pbehavior-weather-service-entity-5"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -437,7 +442,8 @@ Feature: get service entities
       "enabled": true,
       "entity_patterns": [
          {"name": "test-resource-pbehavior-weather-service-entity-6"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201

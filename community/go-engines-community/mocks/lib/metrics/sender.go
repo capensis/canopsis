@@ -119,16 +119,64 @@ func (mr *MockSenderMockRecorder) SendCreateAndPbhEnter(arg0, arg1, arg2 interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCreateAndPbhEnter", reflect.TypeOf((*MockSender)(nil).SendCreateAndPbhEnter), arg0, arg1, arg2)
 }
 
-// SendResolve mocks base method
-func (m *MockSender) SendResolve(arg0 context.Context, arg1 types.Alarm, arg2 time.Time) {
+// SendPbhEnter mocks base method
+func (m *MockSender) SendPbhEnter(arg0 context.Context, arg1 *types.Alarm, arg2 types.Entity) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendResolve", arg0, arg1, arg2)
+	m.ctrl.Call(m, "SendPbhEnter", arg0, arg1, arg2)
+}
+
+// SendPbhEnter indicates an expected call of SendPbhEnter
+func (mr *MockSenderMockRecorder) SendPbhEnter(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPbhEnter", reflect.TypeOf((*MockSender)(nil).SendPbhEnter), arg0, arg1, arg2)
+}
+
+// SendPbhLeave mocks base method
+func (m *MockSender) SendPbhLeave(arg0 context.Context, arg1 types.Entity, arg2 time.Time, arg3 string, arg4 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendPbhLeave", arg0, arg1, arg2, arg3, arg4)
+}
+
+// SendPbhLeave indicates an expected call of SendPbhLeave
+func (mr *MockSenderMockRecorder) SendPbhLeave(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPbhLeave", reflect.TypeOf((*MockSender)(nil).SendPbhLeave), arg0, arg1, arg2, arg3, arg4)
+}
+
+// SendPbhLeaveAndEnter mocks base method
+func (m *MockSender) SendPbhLeaveAndEnter(arg0 context.Context, arg1 *types.Alarm, arg2 types.Entity, arg3 string, arg4 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendPbhLeaveAndEnter", arg0, arg1, arg2, arg3, arg4)
+}
+
+// SendPbhLeaveAndEnter indicates an expected call of SendPbhLeaveAndEnter
+func (mr *MockSenderMockRecorder) SendPbhLeaveAndEnter(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPbhLeaveAndEnter", reflect.TypeOf((*MockSender)(nil).SendPbhLeaveAndEnter), arg0, arg1, arg2, arg3, arg4)
+}
+
+// SendResolve mocks base method
+func (m *MockSender) SendResolve(arg0 context.Context, arg1 types.Alarm, arg2 types.Entity, arg3 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendResolve", arg0, arg1, arg2, arg3)
 }
 
 // SendResolve indicates an expected call of SendResolve
-func (mr *MockSenderMockRecorder) SendResolve(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockSenderMockRecorder) SendResolve(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendResolve", reflect.TypeOf((*MockSender)(nil).SendResolve), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendResolve", reflect.TypeOf((*MockSender)(nil).SendResolve), arg0, arg1, arg2, arg3)
+}
+
+// SendUpdateState mocks base method
+func (m *MockSender) SendUpdateState(arg0 context.Context, arg1 types.Alarm, arg2 types.Entity, arg3 types.CpsNumber) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendUpdateState", arg0, arg1, arg2, arg3)
+}
+
+// SendUpdateState indicates an expected call of SendUpdateState
+func (mr *MockSenderMockRecorder) SendUpdateState(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendUpdateState", reflect.TypeOf((*MockSender)(nil).SendUpdateState), arg0, arg1, arg2, arg3)
 }
 
 // SendUserActivity mocks base method
