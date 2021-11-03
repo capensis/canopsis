@@ -23,7 +23,7 @@ import {
   ALARMS_OPENED_VALUES,
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_NAMES,
-  GROUPS_NAVIGATION_TYPES,
+  GROUPS_NAVIGATION_TYPES, SAMPLINGS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -198,6 +198,7 @@ export default {
     graph: 'Graphique | Graphiques',
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
+    sampling: 'Échantillonnage',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -254,6 +255,12 @@ export default {
       october: 'Octobre',
       november: 'Novembre',
       december: 'Décembre',
+    },
+    samplings: {
+      [SAMPLINGS.hour]: 'Heure',
+      [SAMPLINGS.day]: 'Jour',
+      [SAMPLINGS.week]: 'Semaine',
+      [SAMPLINGS.month]: 'Mois',
     },
   },
   variableTypes: {
