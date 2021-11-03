@@ -434,4 +434,12 @@ export const convertDateToEndOfDayDateObject = date => convertDateToEndOfDayMome
  */
 export const isSameOrBeforeDate = (left, right) => convertDateToMoment(left).isSameOrBefore(right);
 
+/**
+ * Get days count in month
+ *
+ * @param {LocalDate} value
+ * @return {number}
+ */
+export const getDaysInMonth = value => convertDateToMoment(value).daysInMonth();
+
 export default convertDateToMoment;
