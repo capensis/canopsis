@@ -6,7 +6,7 @@
         v-tab {{ $tc('common.graph', 2) }}
         v-tab {{ $t('kpi.tabs.dataSlices') }}
         v-tab {{ $t('kpi.tabs.detailedMetrics') }}
-        v-tab {{ $t('common.rating') }}
+        v-tab {{ $tc('common.rating') }}
         v-tab {{ $t('kpi.tabs.sliPatterns') }}
 
       v-tabs-items(v-model="activeTab")

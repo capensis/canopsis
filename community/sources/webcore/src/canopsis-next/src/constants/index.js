@@ -19,3 +19,4 @@ export * from './snmp';
 export * from './stats';
 export * from './store';
 export * from './widget';
+export * from './kpi';
