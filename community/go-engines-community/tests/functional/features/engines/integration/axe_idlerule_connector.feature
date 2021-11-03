@@ -252,7 +252,8 @@ Feature: update connector alarm
         {
           "_id": "test-connector-axe-idlerule-connector-3/test-connector-name-axe-idlerule-connector-3"
         }
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
