@@ -659,7 +659,8 @@ Feature: create entities on event
       ],
       "depends": [
         "test-connector-che-7/test-connector-name-che-7"
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
