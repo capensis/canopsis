@@ -107,6 +107,7 @@ func (w *periodicalWorker) processAlarms(ctx context.Context, now time.Time, com
 				return processedEntityIds
 			}
 
+			processedEntityIds = append(processedEntityIds, alarm.EntityID)
 			w.Logger.Debug().
 				Str("resolve pbehavior", resolveResult.ResolvedPbhID).
 				Str("resolve type", fmt.Sprintf("%+v", resolveResult.ResolvedType)).
@@ -167,7 +168,7 @@ func (w *periodicalWorker) processEntities(ctx context.Context, now time.Time, c
 			event.ConnectorName = lastAlarm.Value.ConnectorName
 			event.Component = lastAlarm.Value.Component
 			event.Resource = lastAlarm.Value.Resource
-			event.DetectSourceType()
+			event.SourceType = event.DetectSourceType()
 		}
 
 		event.EventType = eventType
