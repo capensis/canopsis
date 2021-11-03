@@ -83,6 +83,60 @@ func (e EntityFields) AsMongoDriverQuery() bson.M {
 	return query
 }
 
+func (e EntityFields) AsSqlQuery(table ...string) (string, error) {
+	prefix := ""
+	if len(table) > 1 {
+		panic(fmt.Errorf("too many arguments, expected one: %+v", table))
+	}
+	if len(table) > 0 {
+		prefix = table[0] + "."
+	}
+
+	conds := make([]string, 0)
+	if !e.ID.Empty() {
+		conds = append(conds, fmt.Sprintf("%sid %s", prefix, e.ID.AsSqlQuery()))
+	}
+	if !e.Name.Empty() {
+		conds = append(conds, fmt.Sprintf("%sname %s", prefix, e.Name.AsSqlQuery()))
+	}
+	if !e.Type.Empty() {
+		conds = append(conds, fmt.Sprintf("%stype %s", prefix, e.Type.AsSqlQuery()))
+	}
+	if !e.Component.Empty() {
+		conds = append(conds, fmt.Sprintf("%scomponent %s", prefix, e.Component.AsSqlQuery()))
+	}
+	if !e.Enabled.Empty() {
+		conds = append(conds, fmt.Sprintf("%senabled %s", prefix, e.Enabled.AsSqlQuery()))
+	}
+	if len(e.Infos) != 0 {
+		for key, value := range e.Infos {
+			if value.Value.IsSet() {
+				conds = append(conds, fmt.Sprintf("%sinfos->>'%s' %s", prefix, key, value.Value.AsSqlQuery()))
+			}
+			if value.Name.IsSet() {
+				return "", fmt.Errorf("where clause for infos.name is not supported for SQL")
+			}
+			if value.Description.IsSet() {
+				return "", fmt.Errorf("where clause for infos.description is not supported for SQL")
+			}
+		}
+	}
+	if len(e.ComponentInfos) != 0 {
+		for key, value := range e.ComponentInfos {
+			if value.Value.IsSet() {
+				conds = append(conds, fmt.Sprintf("%scomponent_infos->>'%s' %s", prefix, key, value.Value.AsSqlQuery()))
+			}
+			if value.Name.IsSet() {
+				return "", fmt.Errorf("where clause for infos.name is not supported for SQL")
+			}
+			if value.Description.IsSet() {
+				return "", fmt.Errorf("where clause for infos.description is not supported for SQL")
+			}
+		}
+	}
+	return strings.Join(conds, " AND "), nil
+}
+
 // EntityPattern is a type representing a pattern that can be applied to an
 // entity
 type EntityPattern struct {
@@ -121,6 +175,14 @@ func (e EntityPattern) AsMongoDriverQuery() bson.M {
 		return e.EntityFields.AsMongoDriverQuery()
 	}
 	return query
+}
+
+func (e EntityPattern) AsSqlQuery(table ...string) (string, error) {
+	if e.ShouldNotBeNil {
+		return e.EntityFields.AsSqlQuery(table...)
+	}
+
+	return "", nil
 }
 
 // Matches returns true if an entity is matched by a pattern. If the pattern
@@ -380,6 +442,22 @@ func (l EntityPatternList) AsNegativeMongoDriverQuery() bson.M {
 		patternFilters = append(patternFilters, entitiesPattern.AsMongoDriverQuery())
 	}
 	return bson.M{"$nor": patternFilters}
+}
+
+func (l EntityPatternList) AsSqlQuery(table ...string) (string, error) {
+	if !l.Set {
+		return "", nil
+	}
+
+	conds := make([]string, len(l.Patterns))
+	var err error
+	for i, v := range l.Patterns {
+		conds[i], err = v.AsSqlQuery(table...)
+		if err != nil {
+			return "", err
+		}
+	}
+	return strings.Join(conds, " OR "), nil
 }
 
 // Matches returns true if the entity is matched by the EntityPatternList.

@@ -42,7 +42,7 @@ func (a api) Create(c *gin.Context) {
 	err = a.actionLogger.Action(c, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeResolveRule,
-		ValueID:   request.ID,
+		ValueID:   rule.ID,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
