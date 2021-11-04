@@ -1,19 +1,23 @@
 # Canopsis Go-engines (Open Core)
 
-This repository contains the open-source “new generation” engines, written in Go.
+This directory contains the open-source “new generation” engines for Canopsis, written in Go.
 
 Licensed under the [GNU AGPLv3](COPYING).
 
 ## Requirements
 
-Requires [Go](https://golang.org/dl/) and GNU Make.
-
-See the `GOLANG_IMAGE_TAG` variable in [Makefile.var](Makefile.var) for the exact version.
+* A native build requires Requires [Go](https://golang.org/dl/) (see the `DOCKER_GOLANG_VERSION` variable in the [Makefile](Makefile) for the exact version) and GNU Make.
+* A Docker build requires Docker and GNU Make.
 
 ## Building
 
-Run `make build` to natively build the binaries in your current environment (Linux x86-64 only, for the moment). Resulting binaries will appear in the `build/` directory.
+Run `make` to do a native build in your local environment. Resulting binaries will appear in the `build/` directory.
 
-Run `make docker_images TAG="1.2.3" VERSION="1.2.3"` to build the engines through Docker images. Replace `1.2.3` with your current Git tag.
+Run `make docker-images` to build the engines through Docker; the resulting images use the same format as our official containers.
 
-Run `make help` for more information.
+Available targets can be listed with `make help`.
+
+## Notes
+
+* The Canopsis Community tree only builds the Canopsis Community parts. If you need a full set of Canopsis engines, you need to build Canopsis Community **AND** Canopsis Pro.
+* Plugins should be run and built with the exact same version of Canopsis. A plugin built with `go-engines` 3.20.0 will not work with an engine in version 3.20.1.
