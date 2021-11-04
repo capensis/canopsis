@@ -71,7 +71,8 @@ DOCKER_GOLANG_VERSION = 1.17.2
 # (note: Alpine 3.14+ is currenly on hold; see issue canopsis/canopsis-pro#3871)
 DOCKER_ALPINE_BUILD_VERSION = 3.13
 DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
-DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
+#DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
+DOCKER_IMAGE_BASE_PATH = canopsis
 
 .PHONY: all docker-images deps
 all: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
