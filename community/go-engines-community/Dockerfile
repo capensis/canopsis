@@ -44,8 +44,9 @@ COPY community/go-engines-community/config /opt/canopsis/share/config/
 ARG CANOPSIS_EDITION
 ARG CMD
 
+RUN ln -sf /canopsis-${CANOPSIS_EDITION}.toml /canopsis.toml
+COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml /canopsis-${CANOPSIS_EDITION}.toml
 RUN ln -sf /${CMD} /opt/canopsis/bin/${CMD}
-COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml /canopsis.toml
 COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /${CMD}
 
 USER canopsis:canopsis
@@ -74,9 +75,14 @@ RUN mkdir -p /tmp/canopsis/junit && chown canopsis:canopsis /tmp/canopsis /tmp/c
 USER canopsis:canopsis
 
 #
-# canopsis-api override
+# canopsis-api-* override
 #
 
-FROM final-container AS canopsis-api
+FROM final-container AS canopsis-api-${CANOPSIS_EDITION}
+
+USER root
+RUN mkdir -p /opt/canopsis/var/lib/remediation-files && chown canopsis:canopsis /opt/canopsis/var/lib/remediation-files
+RUN ln -sf /canopsis-api-${CANOPSIS_EDITION} /canopsis-api && ( cd /opt/canopsis/bin && ln -sf canopsis-api-${CANOPSIS_EDITION} canopsis-api )
+USER canopsis:canopsis
 
 EXPOSE 8082

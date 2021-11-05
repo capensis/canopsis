@@ -19,9 +19,9 @@ CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 MONOREPO_ROOT := $(realpath $(dir $(COMMUNITY_MAKEFILE))/../..)
 VPATH = $(dir $(CURRENT_MAKEFILE))
 
-# List of cmds/engines to build and install (eg: canopsis-api connector-junit...)
+# List of cmds/engines to build and install (eg: engine-che connector-junit...)
 CMDS = $(notdir $(wildcard $(CURRENT_ROOT_DIR)/cmd/*))
-# List of cmd binary paths (eg: build/cmd/canopsis-api build/cmd/connector-junit...)
+# List of cmd binary paths (eg: build/cmd/engine-che build/cmd/connector-junit...)
 CMDS_BINARY_TARGETS = $(addprefix $(CURRENT_BUILD_OUTPUT_DIR)/cmd/,$(CMDS))
 
 # List of plugins to build and install (eg: datasource/mongo.so)
@@ -71,7 +71,8 @@ DOCKER_GOLANG_VERSION = 1.17.2
 # (note: Alpine 3.14+ is currenly on hold; see issue canopsis/canopsis-pro#3871)
 DOCKER_ALPINE_BUILD_VERSION = 3.13
 DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
-DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
+#DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
+DOCKER_IMAGE_BASE_PATH = canopsis
 
 .PHONY: all docker-images deps
 all: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
@@ -166,7 +167,8 @@ $(DOCKER_CMD_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker-go-builder
 		"$(MONOREPO_ROOT)"
 
 # Targets having some extra content on top of the generic final-container
-docker-cmd-canopsis-api: TARGET=canopsis-api
+docker-cmd-canopsis-api-community: TARGET=canopsis-api-community
+docker-cmd-canopsis-api-pro: TARGET=canopsis-api-pro
 docker-cmd-connector-junit: TARGET=connector-junit
 docker-cmd-engine-webhook: TARGET=engine-webhook
 
@@ -177,18 +179,20 @@ docker-cmd-engine-webhook: TARGET=engine-webhook
 .PHONY: install
 
 # You can modify the content of the CMDS and PLUGINS variables to change what will be built/installed
-# Example : make install DESTDIR=/tmp/installroot PLUGINS=datasource/mongo.so CMDS="canopsis-api connector-junit"
-# will only install the mongo datasource plugin, canopsis-api and connector-junit
+# Example : make install DESTDIR=/tmp/installroot PLUGINS=datasource/mongo.so CMDS="engine-che connector-junit"
+# will only install the mongo datasource plugin, engine-che and connector-junit
 install: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
 	@echo "==> Installing files for $(CANOPSIS_EDITION)"
 	# Install cmds
 	install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/bin"
 	install -c -m 755 -- $(foreach cmd,$(CMDS),"$(CURRENT_BUILD_OUTPUT_DIR)/cmd/$(cmd)") "$(DESTDIR)$(PREFIX)/opt/canopsis/bin/"
+	( cd -- "$(DESTDIR)$(PREFIX)/opt/canopsis/bin" && ln -sf "canopsis-api-$(CANOPSIS_EDITION)" canopsis-api )
 	# Install plugins
 	$(foreach plugin,$(PLUGINS),install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(dir $(plugin))" && install -c -m 644 -- "$(CURRENT_BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(dir $(plugin))")
 	# Install configuration files
 	install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/etc"
-	install -c -m 644 -- "$(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml" "$(DESTDIR)$(PREFIX)/opt/canopsis/etc/canopsis.toml"
+	install -c -m 644 -- "$(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml" "$(DESTDIR)$(PREFIX)/opt/canopsis/etc/"
+	( cd -- "$(DESTDIR)$(PREFIX)/opt/canopsis/etc" && ln -sf "canopsis-$(CANOPSIS_EDITION).toml" canopsis.toml )
 
 #
 # TESTS
