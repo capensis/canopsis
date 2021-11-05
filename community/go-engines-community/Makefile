@@ -169,7 +169,6 @@ $(DOCKER_CMD_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker-go-builder
 # Targets having some extra content on top of the generic final-container
 docker-cmd-canopsis-api-community: TARGET=canopsis-api-community
 docker-cmd-canopsis-api-pro: TARGET=canopsis-api-pro
-docker-cmd-connector-junit: TARGET=connector-junit
 docker-cmd-engine-webhook: TARGET=engine-webhook
 
 #
