@@ -44,6 +44,7 @@ COPY community/go-engines-community/config /opt/canopsis/share/config/
 
 ARG CANOPSIS_EDITION
 ARG CMD
+ENV CMD ${CMD}
 
 RUN ln -sf /canopsis-${CANOPSIS_EDITION}.toml /canopsis.toml
 COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml /canopsis-${CANOPSIS_EDITION}.toml
