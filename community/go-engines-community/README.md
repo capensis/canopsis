@@ -1,8 +1,6 @@
-# Canopsis Go-engines (Open Core)
+# Canopsis Community Go engines
 
-This directory contains the open-source “new generation” engines for Canopsis, written in Go.
-
-Licensed under the [GNU AGPLv3](COPYING).
+This directory contains the open-source “new generation” engines for Canopsis Community. They are written in Go and licensed under the [GNU AGPLv3](COPYING).
 
 ## Requirements
 

@@ -140,7 +140,7 @@ $(MONOREPO_ROOT)/.dockerignore:
 
 # We require at least Docker 19.03 for the BuildKit features we use
 docker-check-version:
-	@if test "$$(docker version --format '{{.Server.Version}}' | awk -F'.' '{print $$1 $$2}')" -lt 1903 ; then\
+	@if test "$$(docker version --format '{{.Server.Version}}' 2>/dev/null | awk -F'.' '{print 0+$$1 $$2}')" -lt 1903 ; then\
 		echo "ERROR: Docker >= 19.03 is required";\
 		exit 1;\
 	fi
@@ -169,6 +169,7 @@ $(DOCKER_CMD_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker-go-builder
 # Targets having some extra content on top of the generic final-container
 docker-cmd-canopsis-api-community: TARGET=canopsis-api-community
 docker-cmd-canopsis-api-pro: TARGET=canopsis-api-pro
+docker-cmd-canopsis-reconfigure: TARGET=canopsis-reconfigure
 docker-cmd-engine-webhook: TARGET=engine-webhook
 
 #
