@@ -13,4 +13,4 @@ RUN \
     go get -u github.com/swaggo/http-swagger && \
     go get -u github.com/alecthomas/template
 
-CMD swag init -g ./cmd/canopsis-api/main.go
+CMD swag init -g ./cmd/canopsis-api-community/main.go
