@@ -140,7 +140,7 @@ $(MONOREPO_ROOT)/.dockerignore:
 
 # We require at least Docker 19.03 for the BuildKit features we use
 docker-check-version:
-	@if test "$$(docker version --format '{{.Server.Version}}' | awk -F'.' '{print $$1 $$2}')" -lt 1903 ; then\
+	@if test "$$(docker version --format '{{.Server.Version}}' 2>/dev/null | awk -F'.' '{print 0+$$1 $$2}')" -lt 1903 ; then\
 		echo "ERROR: Docker >= 19.03 is required";\
 		exit 1;\
 	fi
