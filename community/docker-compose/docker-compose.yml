@@ -71,7 +71,7 @@ services:
   provisioning:
     image: canopsis/canopsis-prov:${CANOPSIS_IMAGE_TAG}
     environment:
-      - CPS_EDITION=core
+      - CPS_EDITION=community
     env_file:
       - compose.env
     depends_on:

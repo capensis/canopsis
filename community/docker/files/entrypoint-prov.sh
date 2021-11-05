@@ -9,7 +9,17 @@ if [ "x$1" == "xshell" ]; then
 else
     sudo /opt/canopsis/bin/env2cfg
     sudo /entrypoint-prov-sync.sh
-    options=""
-    [[ "$CPS_EDITION" ]] && options="$options --canopsis-edition $CPS_EDITION"
+
+    case "$CPS_EDITION" in
+    core|community)
+        options="--canopsis-edition core"
+	;;
+    cat|pro)
+        options="--canopsis-edition cat"
+        ;;
+    ""|*)
+        options=""
+        ;;
+    esac
     /opt/canopsis/bin/canopsinit $options
 fi
