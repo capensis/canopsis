@@ -78,6 +78,7 @@ USER canopsis:canopsis
 # canopsis-api-* override
 #
 
+ARG CANOPSIS_EDITION
 FROM final-container AS canopsis-api-${CANOPSIS_EDITION}
 
 USER root
