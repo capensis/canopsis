@@ -38,22 +38,37 @@ RUN apk add --no-cache ca-certificates tzdata
 RUN addgroup --system canopsis && adduser --system --disabled-password --shell /sbin/nologin --no-create-home --home /opt/canopsis --ingroup canopsis canopsis
 RUN mkdir -p /opt/canopsis/bin /opt/canopsis/etc /opt/canopsis/share
 RUN mkdir -p /opt/canopsis/var/lib/junit-files /opt/canopsis/var/lib/remediation-files /tmp/canopsis/junit && chown canopsis:canopsis /opt/canopsis/var/lib/junit-files /opt/canopsis/var/lib/remediation-files /tmp/canopsis/junit
-RUN ln -sf /canopsis.toml /opt/canopsis/etc/canopsis.toml
 
 COPY community/go-engines-community/config /opt/canopsis/share/config/
 
 ARG CANOPSIS_EDITION
 ARG CMD
+ENV CMD ${CMD}
 
-RUN ln -sf /canopsis-${CANOPSIS_EDITION}.toml /canopsis.toml
-COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-${CANOPSIS_EDITION}.toml /canopsis-${CANOPSIS_EDITION}.toml
 RUN ln -sf /${CMD} /opt/canopsis/bin/${CMD}
-COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /${CMD}
 RUN case "${CMD}" in canopsis-api*) ln -sf /canopsis-api-${CANOPSIS_EDITION} /canopsis-api && ( cd /opt/canopsis/bin && ln -sf canopsis-api-${CANOPSIS_EDITION} canopsis-api ) ;; esac
+COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /${CMD}
 
 USER canopsis:canopsis
 
 CMD ["/bin/sh", "-c", "/${CMD}"]
+
+#
+# canopsis-reconfigure override
+#
+
+FROM final-container AS canopsis-reconfigure
+
+USER root
+COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml /canopsis-community.toml
+COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml /canopsis-pro.toml
+USER canopsis:canopsis
+
+ARG CMD
+ENV CMD ${CMD}
+
+# note: CPS_EDITION is defined at Docker Compose runtime in the .env file
+CMD ["/bin/sh", "-c", "/${CMD} -conf /canopsis-${CPS_EDITION:-community}.toml"]
 
 #
 # engine-webhook override
