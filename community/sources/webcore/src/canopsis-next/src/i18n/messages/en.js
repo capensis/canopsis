@@ -2504,7 +2504,7 @@ export default {
     },
     [USERS_PERMISSIONS.technical.kpi]: {
       title: 'KPI',
-      message: '',
+      message: '', // TODO: add correct message
     },
 
     /**
