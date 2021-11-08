@@ -389,7 +389,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 	_, err = postgresPool.Exec(
 		ctx,
 		`
-			CREATE TABLE IF NOT EXISTS entity_metadata (
+			CREATE TABLE IF NOT EXISTS entities (
 			id VARCHAR(500) PRIMARY KEY,
 			name VARCHAR(500),
 		   	category VARCHAR(255),
@@ -409,7 +409,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 	_, err = postgresPool.Exec(
 		ctx,
 		`
-			CREATE TABLE IF NOT EXISTS user_metadata (
+			CREATE TABLE IF NOT EXISTS users (
 			id VARCHAR(255) PRIMARY KEY,
 			username VARCHAR(255),
 		   	role VARCHAR(255)
