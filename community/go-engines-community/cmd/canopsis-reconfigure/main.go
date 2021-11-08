@@ -395,7 +395,10 @@ func createTimescaleDBTables(ctx context.Context) error {
 		   	category VARCHAR(255),
 		   	impact_level INT,
 		   	type VARCHAR(255),
-			infos jsonb
+			enabled BOOLEAN,
+			infos jsonb,
+			component_infos jsonb,
+			component VARCHAR(500) 
 			);
        	`,
 	)
@@ -464,7 +467,7 @@ func defaultCriteria() []CriteriaConfig {
 		{
 			ID:   1,
 			Type: metrics.EntityCriteriaType,
-			Name: "entity_name",
+			Name: "name",
 		},
 		{
 			ID:   2,
