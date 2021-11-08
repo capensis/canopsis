@@ -6,6 +6,8 @@ const localVue = createVueInstance();
 
 const snapshotFactory = (options = {}) => mount(HorizontalBar, {
   localVue,
+  attachTo: document.body,
+
   ...options,
 });
 
@@ -46,9 +48,8 @@ describe('horizontal-bar', () => {
     },
   };
 
-  it('Renders `horizontal-bar` with default props correctly.', () => {
+  it('Renders `horizontal-bar` with default props and options.', () => {
     const wrapper = snapshotFactory({
-      attachTo: document.body,
       propsData: {
         options,
       },
@@ -56,14 +57,11 @@ describe('horizontal-bar', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(canvas.element).toMatchCanvasSnapshot({
-      customSnapshotIdentifier: '`horizontal-bar` with default props',
-    });
+    expect(canvas.element).toMatchCanvasSnapshot();
   });
 
-  it('Renders `horizontal-bar` with custom props correctly.', () => {
+  it('Renders `horizontal-bar` with custom props.', () => {
     const wrapper = snapshotFactory({
-      attachTo: document.body,
       propsData: {
         labels,
         datasets,
@@ -73,14 +71,11 @@ describe('horizontal-bar', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(canvas.element).toMatchCanvasSnapshot({
-      customSnapshotIdentifier: '`horizontal-bar` with custom props',
-    });
+    expect(canvas.element).toMatchCanvasSnapshot();
   });
 
-  it('Renders `horizontal-bar` after update data correctly.', async () => {
+  it('Renders `horizontal-bar` after update data.', async () => {
     const wrapper = snapshotFactory({
-      attachTo: document.body,
       propsData: {
         labels,
         datasets,
@@ -95,14 +90,11 @@ describe('horizontal-bar', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(canvas.element).toMatchCanvasSnapshot({
-      customSnapshotIdentifier: '`horizontal-bar` after update data',
-    });
+    expect(canvas.element).toMatchCanvasSnapshot();
   });
 
-  it('Renders `horizontal-bar` after update options correctly.', async () => {
+  it('Renders `horizontal-bar` after update options.', async () => {
     const wrapper = snapshotFactory({
-      attachTo: document.body,
       propsData: {
         labels,
         datasets,
@@ -116,8 +108,6 @@ describe('horizontal-bar', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(canvas.element).toMatchCanvasSnapshot({
-      customSnapshotIdentifier: '`horizontal-bar` after update options',
-    });
+    expect(canvas.element).toMatchCanvasSnapshot();
   });
 });

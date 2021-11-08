@@ -1,3 +1,4 @@
+import { kebabCase } from 'lodash';
 import registerRequireContextHook from 'babel-plugin-require-context-hook/register';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -8,10 +9,19 @@ global.ResizeObserver = ResizeObserver;
 
 expect.extend({
   toMatchImageSnapshot,
-  toMatchCanvasSnapshot(canvas, ...args) {
+  toMatchCanvasSnapshot(canvas, options, ...args) {
     const img = canvas.toDataURL();
     const data = img.replace(/^data:image\/(png|jpg);base64,/, '');
+    const newOptions = {
+      failureThreshold: 2,
+      failureThresholdType: 'percent',
+      customSnapshotIdentifier: ({ currentTestName, counter }) => (
+        kebabCase(`${currentTestName.replace(/(.*\sRenders\s)|(.$)/g, '')}-${counter}`)
+      ),
 
-    return toMatchImageSnapshot.call(this, data, ...args);
+      ...options,
+    };
+
+    return toMatchImageSnapshot.call(this, data, newOptions, ...args);
   },
 });
