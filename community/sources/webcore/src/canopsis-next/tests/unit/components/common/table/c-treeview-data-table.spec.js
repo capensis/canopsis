@@ -9,9 +9,6 @@ const localVue = createVueInstance();
 
 const snapshotFactory = (options = {}) => mount(CTreeviewDataTable, {
   localVue,
-  stubs: {
-    transition: true,
-  },
 
   ...options,
 });
@@ -25,7 +22,7 @@ describe('c-treeview-data-table', () => {
     { text: 'Email', value: 'email' },
   ];
 
-  it('Renders `c-treeview-data-table` with default and required props', () => {
+  it('Renders `c-treeview-data-table` with default and required props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         headers,
@@ -33,10 +30,12 @@ describe('c-treeview-data-table', () => {
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `c-treeview-data-table` with default and required props', () => {
+  it('Renders `c-treeview-data-table` with default and required props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         headers,
@@ -44,10 +43,12 @@ describe('c-treeview-data-table', () => {
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `c-treeview-data-table` with custom props', () => {
+  it('Renders `c-treeview-data-table` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         headers,
@@ -57,10 +58,12 @@ describe('c-treeview-data-table', () => {
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `c-treeview-data-table` with `openAll` prop', () => {
+  it('Renders `c-treeview-data-table` with `openAll` prop', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         headers,
@@ -69,10 +72,12 @@ describe('c-treeview-data-table', () => {
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `c-treeview-data-table` with custom props and expand slots', () => {
+  it('Renders `c-treeview-data-table` with custom props and expand slots', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         headers,
@@ -85,10 +90,12 @@ describe('c-treeview-data-table', () => {
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `c-treeview-data-table` with default props and data-table `items` slot', () => {
+  it('Renders `c-treeview-data-table` with default props and data-table `items` slot', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         headers,
@@ -100,10 +107,12 @@ describe('c-treeview-data-table', () => {
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `c-treeview-data-table` with default props and data-table values slots', () => {
+  it('Renders `c-treeview-data-table` with default props and data-table values slots', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         headers,
@@ -116,6 +125,8 @@ describe('c-treeview-data-table', () => {
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
@@ -126,6 +137,8 @@ describe('c-treeview-data-table', () => {
         items: snapshotItems,
       },
     });
+
+    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
   });
