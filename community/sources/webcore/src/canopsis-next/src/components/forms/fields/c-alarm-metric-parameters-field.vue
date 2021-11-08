@@ -19,7 +19,7 @@ export default {
   },
   props: {
     value: {
-      type: [Array, String],
+      type: Array,
       required: true,
     },
     name: {
