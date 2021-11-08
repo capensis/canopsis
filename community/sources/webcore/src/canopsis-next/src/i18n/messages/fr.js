@@ -199,6 +199,7 @@ export default {
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
     rating: 'Notation',
+    sampling: 'Échantillonnage',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',

@@ -199,6 +199,7 @@ export default {
     systemStatus: 'System status',
     downloadAsPng: 'Download as PNG',
     rating: 'Rating',
+    sampling: 'Sampling',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
