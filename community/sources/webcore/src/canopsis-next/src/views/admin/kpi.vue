@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import KpiCharts from '@/components/other/kpi/graphs/kpi-charts.vue';
+import KpiCharts from '@/components/other/kpi/charts/kpi-charts.vue';
 import KpiDataSlices from '@/components/other/kpi/data-slices/kpi-data-slices.vue';
 import KpiDetailedMetrics from '@/components/other/kpi/detailed-metrics/kpi-detailed-metrics.vue';
 import KpiRating from '@/components/other/kpi/rating/kpi-rating.vue';
