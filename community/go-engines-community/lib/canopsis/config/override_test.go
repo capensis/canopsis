@@ -45,7 +45,7 @@ func TestOverride(t *testing.T) {
 		"Canopsis": map[string]interface{}{
 			"alarm": map[string]interface{}{
 				"StealthyInterval":    replacementIntValue,
-				"BaggotTime":          replacementStrValue,
+				"DisplayNameScheme":   replacementStrValue,
 				"EnableLastEventDate": replacementBoolValue,
 			},
 			"logger": map[string]interface{}{
