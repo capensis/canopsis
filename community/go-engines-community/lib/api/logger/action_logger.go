@@ -50,6 +50,8 @@ const (
 
 	ValueTypeResolveRule  = "resolverule"
 	ValueTypeFlappingRule = "flappingrule"
+
+	ValueTypeFilter = "filter"
 )
 
 type ActionLogger interface {
