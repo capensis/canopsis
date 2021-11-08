@@ -3,15 +3,15 @@
     c-information-block.mb-5(:title="$t('kpi.alarmMetrics')")
     c-information-block.mb-5(:title="$tc('common.rating', 2)")
     c-information-block.mb-5(:title="$t('kpi.sli')")
-      kpi-sli-graph
+      kpi-sli
 </template>
 
 <script>
-import KpiSliGraph from './partials/kpi-sli-graph.vue';
+import KpiSli from './kpi-sli.vue';
 
 export default {
   components: {
-    KpiSliGraph,
+    KpiSli,
   },
 };
 </script>
