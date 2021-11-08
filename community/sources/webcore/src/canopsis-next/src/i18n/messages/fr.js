@@ -200,6 +200,7 @@ export default {
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
     rating: 'Notation',
+    sampling: 'Échantillonnage',
     parametersToDisplay: '{count} paramètres à afficher',
     actions: {
       close: 'Fermer',
