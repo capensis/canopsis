@@ -7,7 +7,7 @@
       :close-on-content-click="false",
       :open-on-click="false"
     )
-      span.ml-1(slot="activator", small, depressed, @click.stop="openFullTextMenu") ...
+      span.ml-1(slot="activator", @click.stop="openFullTextMenu") ...
       v-card(dark)
         v-card-title.pre-wrap {{ text }}
 </template>
