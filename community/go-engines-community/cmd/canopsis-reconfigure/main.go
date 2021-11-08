@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"io/ioutil"
 	"os"
@@ -274,7 +275,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 			CREATE TABLE IF NOT EXISTS ticket_alarm_number (
 		   	time TIMESTAMP NOT NULL,
 		   	entity_id VARCHAR(500),
-			username VARCHAR(255),
+			user_id VARCHAR(255),
 		   	value INT);
 		   	SELECT create_hypertable('ticket_alarm_number', 'time', if_not_exists => TRUE);   
        	`,
@@ -289,7 +290,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 			CREATE TABLE IF NOT EXISTS ack_alarm_number (
 		   	time TIMESTAMP NOT NULL,
 		   	entity_id VARCHAR(500),
-			username VARCHAR(255),
+			user_id VARCHAR(255),
 		   	value INT);
 		   	SELECT create_hypertable('ack_alarm_number', 'time', if_not_exists => TRUE);   
        	`,
@@ -304,7 +305,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 			CREATE TABLE IF NOT EXISTS cancel_ack_alarm_number (
 		   	time TIMESTAMP NOT NULL,
 		   	entity_id VARCHAR(500),
-			username VARCHAR(255),
+			user_id VARCHAR(255),
 		   	value INT);
 		   	SELECT create_hypertable('cancel_ack_alarm_number', 'time', if_not_exists => TRUE);   
        	`,
@@ -319,7 +320,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 			CREATE TABLE IF NOT EXISTS ack_duration (
 			time TIMESTAMP NOT NULL,
 			entity_id VARCHAR(500),
-			username VARCHAR(255),
+			user_id VARCHAR(255),
 			value INT);
 			SELECT create_hypertable('ack_duration', 'time', if_not_exists => TRUE);
        	`,
@@ -385,7 +386,112 @@ func createTimescaleDBTables(ctx context.Context) error {
 		return err
 	}
 
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS entities (
+			id VARCHAR(500) PRIMARY KEY,
+			name VARCHAR(500),
+		   	category VARCHAR(255),
+		   	impact_level INT,
+		   	type VARCHAR(255),
+			infos jsonb
+			);
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS users (
+			id VARCHAR(255) PRIMARY KEY,
+			username VARCHAR(255),
+		   	role VARCHAR(255)
+			);
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = postgresPool.Exec(
+		ctx,
+		`
+			CREATE TABLE IF NOT EXISTS metrics_criteria (
+			id INT PRIMARY KEY,
+			type INT,
+		   	name VARCHAR(255)
+			);
+       	`,
+	)
+	if err != nil {
+		return err
+	}
+
+	for _, c := range defaultCriteria() {
+		_, err := postgresPool.Exec(
+			ctx,
+			fmt.Sprintf(
+				`
+				INSERT INTO %s (id, type, name) VALUES($1, $2, $3)
+				ON CONFLICT ON CONSTRAINT metrics_criteria_pkey DO UPDATE SET type = $2, name = $3
+			`,
+				postgres.MetricsCriteria,
+			),
+			c.ID,
+			c.Type,
+			c.Name,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
+}
+
+type CriteriaConfig struct {
+	ID   int
+	Type int
+	Name string
+}
+
+func defaultCriteria() []CriteriaConfig {
+	return []CriteriaConfig{
+		{
+			ID:   1,
+			Type: metrics.EntityCriteriaType,
+			Name: "entity_name",
+		},
+		{
+			ID:   2,
+			Type: metrics.EntityCriteriaType,
+			Name: "category",
+		},
+		{
+			ID:   3,
+			Type: metrics.EntityCriteriaType,
+			Name: "impact_level",
+		},
+		{
+			ID:   4,
+			Type: metrics.EntityCriteriaType,
+			Name: "type",
+		},
+		{
+			ID:   5,
+			Type: metrics.UserCriteriaType,
+			Name: "username",
+		},
+		{
+			ID:   6,
+			Type: metrics.UserCriteriaType,
+			Name: "role",
+		},
+	}
 }
 
 func createMongoIndexes(ctx context.Context, client mongo.DbClient, mongoConfPath string, logger zerolog.Logger) error {
