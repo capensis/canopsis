@@ -102,3 +102,10 @@ export const DATETIME_INTERVAL_TYPES = {
   start: 'start',
   stop: 'stop',
 };
+
+export const SAMPLINGS = {
+  hour: 'hour',
+  day: 'day',
+  week: 'week',
+  month: 'month',
+};
