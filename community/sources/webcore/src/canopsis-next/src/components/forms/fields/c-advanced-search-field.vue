@@ -32,7 +32,7 @@ export default {
   },
   data() {
     return {
-      searchingText: '',
+      searchingText: this.query.search || '',
     };
   },
   methods: {

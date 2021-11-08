@@ -8,7 +8,7 @@
           @submit="updateSearchHandler",
           @clear="clearSearchHandler"
         )
-        c-advanced-search(
+        c-advanced-search-field(
           v-else,
           :query="pagination",
           :columns="headers",
