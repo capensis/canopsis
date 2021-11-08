@@ -11,7 +11,7 @@ import { findField } from './helpers/find-field';
 export default {
   install(Vue, { i18n } = {}) {
     Validator.extend('json', {
-      getMessage: () => i18n.$t('errors.JSONNotValid'),
+      getMessage: () => i18n.t('errors.JSONNotValid'),
       validate: isValidJson,
     });
 
