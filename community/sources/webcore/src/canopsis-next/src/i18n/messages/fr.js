@@ -199,6 +199,7 @@ export default {
     graph: 'Graphique | Graphiques',
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
+    rating: 'Notation',
     sampling: 'Échantillonnage',
     actions: {
       close: 'Fermer',
@@ -2151,7 +2152,6 @@ export default {
     executionCount: 'Nombre de\nexécutions',
     alarmStates: 'Alarmes affectées par l\'état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
-    rating: 'Notation',
     notAvailable: 'N/a',
     instructionChanged: 'L\'instruction a été modifiée',
     actions: {
@@ -2510,6 +2510,10 @@ export default {
       title: 'Bilan de santé',
       message: 'La fonction Healthcheck est le tableau de bord avec des indications d\'états et d\'erreurs de tous les systèmes inclus dans Canopsis.',
     },
+    [USERS_PERMISSIONS.technical.kpi]: {
+      title: 'KPI',
+      message: '', // TODO: add correct message
+    },
 
     /**
      * Admin general
@@ -2570,6 +2574,14 @@ export default {
     tooltips: {
       maxMatchedItems: 'il doit avertir l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
       checkCountRequestTimeout: 'il doit définir la valeur du délai d\'attente de la demande pour la vérification du nombre maximal d\'éléments correspondants',
+    },
+  },
+
+  kpi: {
+    tabs: {
+      dataSlices: 'Tranches de données',
+      detailedMetrics: 'Métriques détaillées',
+      sliPatterns: 'Modèles SLI',
     },
   },
 

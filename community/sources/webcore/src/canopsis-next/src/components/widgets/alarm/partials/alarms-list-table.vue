@@ -2,7 +2,7 @@
   v-flex.white
     v-flex.px-3(v-show="selectedIds.length", xs12)
       mass-actions-panel(
-        :itemsIds="selectedIds",
+        :items-ids="selectedIds",
         :widget="widget",
         @clear:items="clearSelected"
       )
