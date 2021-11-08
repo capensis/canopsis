@@ -24,7 +24,6 @@ import {
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
-  SAMPLINGS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -257,12 +256,6 @@ export default {
       october: 'October',
       november: 'November',
       december: 'December',
-    },
-    samplings: {
-      [SAMPLINGS.hour]: 'Hour',
-      [SAMPLINGS.day]: 'Day',
-      [SAMPLINGS.week]: 'Week',
-      [SAMPLINGS.month]: 'Month',
     },
   },
   variableTypes: {

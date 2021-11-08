@@ -6,6 +6,8 @@
     :label="label || $t('common.sampling')",
     :name="name"
   )
+    template(#item="{ item }")
+      span.text-capitalize {{ item.text }}
 </template>
 
 <script>
@@ -38,7 +40,7 @@ export default {
     samplings() {
       return Object.values(SAMPLINGS).map(value => ({
         value,
-        text: this.$tc(`common.samplings.${value}`),
+        text: this.$tc(`common.times.${value}`, 2),
       }));
     },
   },
