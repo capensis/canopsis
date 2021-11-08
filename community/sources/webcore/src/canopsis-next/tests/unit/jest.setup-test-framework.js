@@ -7,10 +7,6 @@ registerRequireContextHook();
 
 global.ResizeObserver = ResizeObserver;
 
-/**
- * @typedef {object} expect
- */
-
 expect.extend({
   toMatchImageSnapshot,
   toMatchCanvasSnapshot(canvas, options, ...args) {
