@@ -11,3 +11,8 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
 *  [Vocabulaire](vocabulaire/index.md)
 *  [Formats et syntaxe](formats-et-syntaxe/index.md)
 *  [Limitations de Canopsis](limitations/index.md)
+
+### Menu **Exploitation**
+  * [Règles d'inactivité](menu-exploitation/regles-inactivite.md)
+  * [Règles de bagot](menu-exploitation/regles-bagot.md)
+  * [Règles de résolution](menu-exploitation/regles-resolution.md)
