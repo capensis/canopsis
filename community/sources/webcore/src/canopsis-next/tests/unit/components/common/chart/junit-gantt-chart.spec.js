@@ -456,10 +456,7 @@ describe('junit-gantt-chart', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(canvas.element).toMatchCanvasSnapshot({
-      failureThreshold: 2,
-      failureThresholdType: 'percent',
-    });
+    expect(canvas.element).toMatchCanvasSnapshot();
   });
 
   it('Renders `junit-gantt-chart` with items prop.', async () => {
@@ -473,10 +470,7 @@ describe('junit-gantt-chart', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(canvas.element).toMatchCanvasSnapshot({
-      failureThreshold: 2,
-      failureThresholdType: 'percent',
-    });
+    expect(canvas.element).toMatchCanvasSnapshot();
   });
 
   it('Renders `junit-gantt-chart` with default, required props and updated items.', async () => {
@@ -490,9 +484,6 @@ describe('junit-gantt-chart', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(canvas.element).toMatchCanvasSnapshot({
-      failureThreshold: 2,
-      failureThresholdType: 'percent',
-    });
+    expect(canvas.element).toMatchCanvasSnapshot();
   });
 });

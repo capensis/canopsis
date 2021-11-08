@@ -43,7 +43,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
           >
             <i
               aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
             >
               arrow_drop_down
             </i>
@@ -58,6 +58,152 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   style="height: 32px; width: 32px;"
                 >
                   3
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-treeview-node__children"
+          >
+            <div
+              class="v-treeview-node v-treeview-node--leaf"
+            >
+              <div
+                class="v-treeview-node__root"
+              >
+                <div
+                  class="v-treeview-node__content"
+                >
+                  <div
+                    class="v-treeview-node__label"
+                  >
+                    <div
+                      class="v-avatar white--text primary"
+                      style="height: 32px; width: 32px;"
+                    >
+                      0
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="v-treeview-node"
+            >
+              <div
+                class="v-treeview-node__root"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
+                >
+                  arrow_drop_down
+                </i>
+                <div
+                  class="v-treeview-node__content"
+                >
+                  <div
+                    class="v-treeview-node__label"
+                  >
+                    <div
+                      class="v-avatar white--text primary"
+                      style="height: 32px; width: 32px;"
+                    >
+                      3
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="v-treeview-node__children"
+              >
+                <div
+                  class="v-treeview-node v-treeview-node--leaf"
+                >
+                  <div
+                    class="v-treeview-node__root"
+                  >
+                    <div
+                      class="v-treeview-node__content"
+                    >
+                      <div
+                        class="v-treeview-node__label"
+                      >
+                        <div
+                          class="v-avatar white--text primary"
+                          style="height: 32px; width: 32px;"
+                        >
+                          0
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="v-treeview-node v-treeview-node--leaf"
+                >
+                  <div
+                    class="v-treeview-node__root"
+                  >
+                    <div
+                      class="v-treeview-node__content"
+                    >
+                      <div
+                        class="v-treeview-node__label"
+                      >
+                        <div
+                          class="v-avatar white--text primary"
+                          style="height: 32px; width: 32px;"
+                        >
+                          0
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="v-treeview-node v-treeview-node--leaf"
+                >
+                  <div
+                    class="v-treeview-node__root"
+                  >
+                    <div
+                      class="v-treeview-node__content"
+                    >
+                      <div
+                        class="v-treeview-node__label"
+                      >
+                        <div
+                          class="v-avatar white--text primary"
+                          style="height: 32px; width: 32px;"
+                        >
+                          0
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="v-treeview-node v-treeview-node--leaf"
+            >
+              <div
+                class="v-treeview-node__root"
+              >
+                <div
+                  class="v-treeview-node__content"
+                >
+                  <div
+                    class="v-treeview-node__label"
+                  >
+                    <div
+                      class="v-avatar white--text primary"
+                      style="height: 32px; width: 32px;"
+                    >
+                      0
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -204,6 +350,90 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                 </td>
                 <td>
                   internet.email7
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName73
+                </td>
+                <td>
+                  name.firstName73
+                </td>
+                <td>
+                  name.lastName73
+                </td>
+                <td>
+                  internet.email73
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName74
+                </td>
+                <td>
+                  name.firstName74
+                </td>
+                <td>
+                  name.lastName74
+                </td>
+                <td>
+                  internet.email74
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName740
+                </td>
+                <td>
+                  name.firstName740
+                </td>
+                <td>
+                  name.lastName740
+                </td>
+                <td>
+                  internet.email740
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName741
+                </td>
+                <td>
+                  name.firstName741
+                </td>
+                <td>
+                  name.lastName741
+                </td>
+                <td>
+                  internet.email741
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName742
+                </td>
+                <td>
+                  name.firstName742
+                </td>
+                <td>
+                  name.lastName742
+                </td>
+                <td>
+                  internet.email742
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName75
+                </td>
+                <td>
+                  name.firstName75
+                </td>
+                <td>
+                  name.lastName75
+                </td>
+                <td>
+                  internet.email75
                 </td>
               </tr>
               <tr>
