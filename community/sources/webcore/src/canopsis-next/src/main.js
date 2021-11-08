@@ -105,7 +105,7 @@ import CColorPickerField from '@/components/forms/fields/c-color-picker-field.vu
 import CEntityTypeField from '@/components/forms/fields/c-entity-type-field.vue';
 import CImpactLevelField from '@/components/forms/fields/c-impact-level-field.vue';
 import CSearchField from '@/components/forms/fields/c-search-field.vue';
-import CAdvancedSearch from '@/components/common/search/c-advanced-search.vue';
+import CAdvancedSearchField from '@/components/forms/fields/c-advanced-search-field.vue';
 import CEntityCategoryField from '@/components/forms/fields/c-entity-category-field.vue';
 import CStoragesField from '@/components/forms/fields/c-storages-field.vue';
 import CStorageField from '@/components/forms/fields/c-storage-field.vue';
@@ -125,6 +125,7 @@ import CEnabledDurationField from '@/components/forms/fields/c-enabled-duration-
 import CEnabledLimitField from '@/components/forms/fields/c-enabled-limit-field.vue';
 import CTimezoneField from '@/components/forms/fields/c-timezone-field.vue';
 import CLanguageField from '@/components/forms/fields/c-language-field.vue';
+import CSamplingField from '@/components/forms/fields/c-sampling-field.vue';
 
 /**
  * Icons
@@ -283,7 +284,7 @@ Vue.component('c-color-picker-field', CColorPickerField);
 Vue.component('c-entity-type-field', CEntityTypeField);
 Vue.component('c-impact-level-field', CImpactLevelField);
 Vue.component('c-search-field', CSearchField);
-Vue.component('c-advanced-search', CAdvancedSearch);
+Vue.component('c-advanced-search-field', CAdvancedSearchField);
 Vue.component('c-entity-category-field', CEntityCategoryField);
 Vue.component('c-storages-field', CStoragesField);
 Vue.component('c-storage-field', CStorageField);
@@ -309,6 +310,7 @@ Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
 Vue.component('c-information-block-row', CInformationBlockRow);
 Vue.component('c-responsive-list', CResponsiveList);
+Vue.component('c-sampling-field', CSamplingField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
