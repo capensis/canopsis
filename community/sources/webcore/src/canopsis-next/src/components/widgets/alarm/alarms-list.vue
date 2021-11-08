@@ -2,7 +2,7 @@
   div(data-test="tableWidget")
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
-        c-advanced-search(
+        c-advanced-search-field(
           :query.sync="query",
           :columns="columns",
           :tooltip="$t('search.alarmAdvancedSearch')"

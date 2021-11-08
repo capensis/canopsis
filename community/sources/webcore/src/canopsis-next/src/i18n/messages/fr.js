@@ -199,6 +199,7 @@ export default {
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
     rating: 'Notation | Notations',
+    sampling: 'Échantillonnage',
     uptime: 'Uptime',
     maintenance: 'Maintenance',
     downtime: 'Downtime',
@@ -2507,7 +2508,7 @@ export default {
     },
     [USERS_PERMISSIONS.technical.kpi]: {
       title: 'KPI',
-      message: '',
+      message: '', // TODO: add correct message
     },
 
     /**
