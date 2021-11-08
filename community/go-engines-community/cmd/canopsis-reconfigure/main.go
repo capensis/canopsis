@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -21,11 +20,6 @@ import (
 const (
 	ErrGeneral    = 1
 	ErrRabbitInit = 2
-
-	DefaultCfgFile = "/opt/canopsis/etc/canopsis.toml"
-	FlagUsageConf  = "The configuration file used to initialize Canopsis."
-
-	DefaultMongoConfPath = "/opt/canopsis/share/config/mongo"
 )
 
 type Conf struct {
@@ -39,29 +33,12 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	var confFile string
-	var mongoConfPath string
-	var migrationDirectory string
-	var modeDebug bool
-	var mongoContainer string
-	var mongoURL string
-	var modeMigrateOnly bool
-	var modeMigrate bool
+	f := flags{}
+	f.Parse()
 
-	flag.StringVar(&confFile, "conf", DefaultCfgFile, FlagUsageConf)
-	flag.StringVar(&mongoConfPath, "mongoConf", DefaultMongoConfPath, "The configuration file path is used to create mongo indexes.")
-	flag.BoolVar(&modeDebug, "d", false, "debug mode")
-	flag.BoolVar(&modeMigrate, "migrate", false, "If true, it will execute migration scripts")
-	flag.BoolVar(&modeMigrateOnly, "migrate-only", false, "If true, it will only execute migration scripts")
-	flag.StringVar(&migrationDirectory, "migration-directory", "", "The directory with migration scripts")
-	flag.StringVar(&mongoContainer, "mongo-container", "", "Should contain docker container_id. If set, it will execute migration scripts inside the container")
-	flag.StringVar(&mongoURL, "mongo-url", "", "mongo url")
+	logger := log.NewLogger(f.modeDebug)
 
-	flag.Parse()
-
-	logger := log.NewLogger(modeDebug)
-
-	data, err := ioutil.ReadFile(confFile)
+	data, err := ioutil.ReadFile(f.confFile)
 	if err != nil {
 		logger.Error().Err(err).Int("exit status", 1).Msg("")
 		os.Exit(1)
@@ -73,25 +50,29 @@ func main() {
 		os.Exit(2)
 	}
 
+	if err := loadOverrideConfig(logger, &conf, f.overrideConfFile); err != nil {
+		logger.Error().Err(err).Msgf("skipped configuration overriding")
+	}
+
 	err = GracefullStart(ctx, logger)
 	utils.FailOnError(err, "Failed to open one of required sessions")
 
-	if modeMigrate || modeMigrateOnly {
-		if migrationDirectory == "" {
+	if f.modeMigrate || f.modeMigrateOnly {
+		if f.migrationDirectory == "" {
 			logger.Error().Msg("-migration-directory is not set")
 			os.Exit(ErrGeneral)
 		}
 
 		logger.Info().Msg("Start migrations")
 
-		err = executeMigrations(logger, migrationDirectory, mongoURL, mongoContainer)
+		err = executeMigrations(logger, f.migrationDirectory, f.mongoURL, f.mongoContainer)
 		if err != nil {
 			utils.FailOnError(err, "Failed to migrate")
 		}
 
 		logger.Info().Msg("Finish migrations")
 
-		if modeMigrateOnly {
+		if f.modeMigrateOnly {
 			return
 		}
 	}
@@ -179,7 +160,7 @@ func main() {
 	utils.FailOnError(err, "Failed to save config into mongo")
 
 	logger.Info().Msg("Initialising Mongo indexes")
-	err = createMongoIndexes(ctx, client, mongoConfPath, logger)
+	err = createMongoIndexes(ctx, client, f.mongoConfPath, logger)
 	utils.FailOnError(err, "Failed to create Mongo indexes")
 }
 
@@ -227,4 +208,30 @@ func executeMigrations(logger zerolog.Logger, migrationDirectory, mongoURL, mong
 
 		return nil
 	})
+}
+
+// Clone returns pointer to a new deep copy of current Config
+func (c *Conf) Clone() interface{} {
+	cloned := *c
+	return &cloned
+}
+
+func loadOverrideConfig(logger zerolog.Logger, conf *Conf, overrideConfFile string) error {
+	data, err := ioutil.ReadFile(overrideConfFile)
+	if err != nil {
+		return fmt.Errorf("no configuration file found")
+	}
+
+	var overrideConf map[string]interface{}
+	if err = toml.Unmarshal(data, &overrideConf); err != nil {
+		return err
+	}
+
+	newPtr, err := config.Override(conf, overrideConf)
+	if err != nil {
+		return err
+	}
+
+	*conf = *newPtr.(*Conf)
+	return nil
 }
