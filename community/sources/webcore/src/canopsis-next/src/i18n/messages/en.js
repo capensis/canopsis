@@ -200,6 +200,7 @@ export default {
     systemStatus: 'System status',
     downloadAsPng: 'Download as PNG',
     rating: 'Rating',
+    sampling: 'Sampling',
     parametersToDisplay: '{count} parameters to display',
     actions: {
       close: 'Close',

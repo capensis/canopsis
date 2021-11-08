@@ -125,6 +125,7 @@ import CEnabledDurationField from '@/components/forms/fields/c-enabled-duration-
 import CEnabledLimitField from '@/components/forms/fields/c-enabled-limit-field.vue';
 import CTimezoneField from '@/components/forms/fields/c-timezone-field.vue';
 import CLanguageField from '@/components/forms/fields/c-language-field.vue';
+import CSamplingField from '@/components/forms/fields/c-sampling-field.vue';
 import CAlarmMetricParametersField from '@/components/forms/fields/c-alarm-metric-parameters-field.vue';
 
 /**
@@ -310,6 +311,7 @@ Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
 Vue.component('c-information-block-row', CInformationBlockRow);
 Vue.component('c-responsive-list', CResponsiveList);
+Vue.component('c-sampling-field', CSamplingField);
 Vue.component('c-alarm-metric-parameters-field', CAlarmMetricParametersField);
 
 Vue.use(VueMq, {
