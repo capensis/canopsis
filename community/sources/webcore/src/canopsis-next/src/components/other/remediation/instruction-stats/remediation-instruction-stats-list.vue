@@ -141,7 +141,7 @@ export default {
           width: 150,
         },
         {
-          text: this.$t('remediationInstructionStats.rating'),
+          text: this.$t('common.rating'),
           value: 'rating',
           sortable: false,
           width: 250,
