@@ -46,12 +46,6 @@ const ICONS_COLORS = {
   [ICON_NAMES.arrowDownward]: 'error',
 };
 
-const FAILED_STATUSES = [
-  TEST_SUITE_STATUSES.error,
-  TEST_SUITE_STATUSES.skipped,
-  TEST_SUITE_STATUSES.failed,
-];
-
 const MIN_SKIPPED_TO_SECTIONS_COUNT = 40;
 
 export default {
@@ -195,10 +189,10 @@ export default {
           } else if (time > avgTime) {
             icon = ICON_NAMES.arrowDownward;
           }
-        } else if (FAILED_STATUSES.includes(avgStatus)) {
+        } else {
           icon = ICON_NAMES.done;
         }
-      } else if (avgStatus === TEST_SUITE_STATUSES.passed && FAILED_STATUSES.includes(status)) {
+      } else if (avgStatus === TEST_SUITE_STATUSES.passed) {
         icon = ICON_NAMES.close;
       }
 
@@ -213,7 +207,7 @@ export default {
 
     getHistoricalTooltipContent(tooltipModel) {
       const { dataPoints: [dataPoint] } = tooltipModel;
-      const item = this.items[dataPoint.dataIndex] || {};
+      const item = this.items[dataPoint.dataIndex];
       const {
         time = 0,
         status,
