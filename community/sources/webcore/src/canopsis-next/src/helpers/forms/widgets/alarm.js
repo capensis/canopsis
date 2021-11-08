@@ -62,6 +62,7 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
  * @property {boolean} isSnoozeNoteRequired
  * @property {boolean} isMultiAckEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
+ * @property {boolean} sticky_header
  */
 
 /**
@@ -160,6 +161,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
+  sticky_header: !!parameters.sticky_header,
   fastAckOutput: parameters.fastAckOutput || {
     enabled: false,
     value: 'auto ack',

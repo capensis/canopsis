@@ -198,6 +198,7 @@ export default {
     graph: 'Graphique | Graphiques',
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
+    toTheTop: 'Jusqu\'au sommet',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -697,6 +698,7 @@ export default {
         + '<dd>- temps d\'exécution (hh, mm, ss)</dd>'
         + '</dl>',
     },
+    stickyHeader: 'En-tête collant',
   },
   modals: {
     common: {

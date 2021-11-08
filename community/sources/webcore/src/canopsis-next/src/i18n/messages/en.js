@@ -198,6 +198,7 @@ export default {
     graph: 'Graph | Graphs',
     systemStatus: 'System status',
     downloadAsPng: 'Download as PNG',
+    toTheTop: 'To the top',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -697,6 +698,7 @@ export default {
         + '<dd>- time of execution (hh, mm, ss)</dd>'
         + '</dl>',
     },
+    stickyHeader: 'Sticky header',
   },
   modals: {
     common: {
