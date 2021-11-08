@@ -1,30 +1,19 @@
 <template lang="pug">
-  div(@touchend.stop)
-    v-layout.ml-4.mb-4(align-center)
-      c-quick-date-interval-field(
-        :interval="pagination.interval",
-        @input="updateInterval"
-      )
-    div
-      bar-chart(:datasets="datasets", :options="sliChartOptions")
+  bar-chart(:datasets="datasets", :options="sliChartOptions")
 </template>
 
 <script>
 import { COLORS } from '@/config';
 import {
   DATETIME_FORMATS,
-  QUICK_RANGES,
   KPI_SLI_GRAPH_BAR_PERCENTAGE,
   SAMPLINGS,
   TIME_UNITS,
   KPI_SLI_GRAPH_DATA_TYPE,
 } from '@/constants';
 
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
 import { colorToRgba } from '@/helpers/color';
 
-import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
-import { localQueryMixin } from '@/mixins/query-local/query';
 import { convertNumberToFixedString } from '@/helpers/string';
 import { addUnitToDate, convertDateToString, getDaysInMonth } from '@/helpers/date/date';
 import { convertDurationToString, fromSeconds, toSeconds } from '@/helpers/date/duration';
@@ -33,39 +22,32 @@ const BarChart = () => import(/* webpackChunkName: "Charts" */ '@/components/com
 
 export default {
   components: { BarChart },
-  mixins: [entitiesMetricsMixin, localQueryMixin],
-  data() {
-    return {
-      sliMetrics: [],
-      query: {
-        sampling: SAMPLINGS.day,
-        type: KPI_SLI_GRAPH_DATA_TYPE.percent,
-        interval: {
-          from: QUICK_RANGES.last30Days.start,
-          to: QUICK_RANGES.last30Days.stop,
-        },
-      },
-    };
+  props: {
+    metrics: {
+      type: Array,
+      default: () => [],
+    },
+    dataType: {
+      type: String,
+      default: KPI_SLI_GRAPH_DATA_TYPE.percent,
+    },
+    sampling: {
+      type: String,
+      default: SAMPLINGS.day,
+    },
   },
   computed: {
-    interval() {
-      return {
-        from: convertStartDateIntervalToTimestamp(this.pagination.interval.from),
-        to: convertStopDateIntervalToTimestamp(this.pagination.interval.to),
-      };
-    },
-
     maxValueBySampling() {
       return {
         [SAMPLINGS.hour]: 60,
         [SAMPLINGS.day]: 24,
         [SAMPLINGS.week]: 7,
         [SAMPLINGS.month]: 31,
-      }[this.pagination.sampling];
+      }[this.sampling];
     },
 
     maxValueByType() {
-      if (this.pagination.type === KPI_SLI_GRAPH_DATA_TYPE.percent) {
+      if (this.dataType === KPI_SLI_GRAPH_DATA_TYPE.percent) {
         return 100;
       }
 
@@ -78,11 +60,11 @@ export default {
         [SAMPLINGS.day]: TIME_UNITS.hour,
         [SAMPLINGS.week]: TIME_UNITS.day,
         [SAMPLINGS.month]: TIME_UNITS.day,
-      }[this.pagination.sampling];
+      }[this.sampling];
     },
 
     unit() {
-      if (this.pagination.type === KPI_SLI_GRAPH_DATA_TYPE.percent) {
+      if (this.dataType === KPI_SLI_GRAPH_DATA_TYPE.percent) {
         return '%';
       }
 
@@ -90,7 +72,7 @@ export default {
     },
 
     datasets() {
-      const { downtime, maintenance, uptime } = this.sliMetrics.reduce((acc, metric) => {
+      const { downtime, maintenance, uptime } = this.metrics.reduce((acc, metric) => {
         const x = metric.timestamp * 1000;
 
         acc.downtime.push({ x, y: this.convertSecondsToValue(metric.downtime) });
@@ -175,9 +157,6 @@ export default {
       };
     },
   },
-  mounted() {
-    this.fetchList();
-  },
   methods: {
     getLabelBySampling(value, sampling) {
       switch (sampling) {
@@ -202,14 +181,14 @@ export default {
     getChartTimeTickLabel(_, index, data) {
       const { value } = data[index] ?? {};
 
-      return this.getLabelBySampling(value, this.pagination.sampling).split('\n');
+      return this.getLabelBySampling(value, this.sampling).split('\n');
     },
 
     getChartTooltipTitle(data) {
       const [dataset] = data;
       const { x: timestamp } = dataset.raw;
 
-      return this.getLabelBySampling(timestamp, this.pagination.sampling);
+      return this.getLabelBySampling(timestamp, this.sampling);
     },
 
     getChartTooltipLabel(tooltip) {
@@ -217,7 +196,7 @@ export default {
 
       const label = dataset.label.toLowerCase();
 
-      if (this.pagination.type === KPI_SLI_GRAPH_DATA_TYPE.percent) {
+      if (this.dataType === KPI_SLI_GRAPH_DATA_TYPE.percent) {
         return `${raw.y}${this.unit} ${label}`;
       }
 
@@ -227,7 +206,7 @@ export default {
     },
 
     convertSecondsToValue(value) {
-      if (this.pagination.type === KPI_SLI_GRAPH_DATA_TYPE.percent) {
+      if (this.dataType === KPI_SLI_GRAPH_DATA_TYPE.percent) {
         return this.convertSecondsToPercent(value);
       }
 
@@ -235,13 +214,10 @@ export default {
     },
 
     getMaxValueForPercent(value) {
-      if (this.pagination.sampling === SAMPLINGS.month) {
+      if (this.sampling === SAMPLINGS.month) {
         return toSeconds(getDaysInMonth(value), TIME_UNITS.day);
       }
 
-      /**
-       * We have 86400 seconds in day, 86400 / 100 = 864
-       */
       return toSeconds(this.maxValueBySampling, this.samplingUnit);
     },
 
@@ -249,23 +225,6 @@ export default {
       const maxValue = this.getMaxValueForPercent(value);
 
       return convertNumberToFixedString((value / maxValue) * 100, 2);
-    },
-
-    updateInterval(interval) {
-      this.query = {
-        ...this.query,
-        interval,
-      };
-    },
-
-    async fetchList() {
-      this.sliMetrics = await this.fetchSliMetricsWithoutStore({
-        params: {
-          from: this.interval.from,
-          to: this.interval.to,
-          sampling: this.pagination.sampling,
-        },
-      });
     },
   },
 };
