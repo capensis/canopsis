@@ -9,7 +9,8 @@
       kpi-sli-chart(
         :metrics="sliMetrics",
         :data-type="pagination.type",
-        :sampling="pagination.sampling"
+        :sampling="pagination.sampling",
+        responsive
       )
 </template>
 
@@ -34,8 +35,8 @@ export default {
     return {
       sliMetrics: [],
       query: {
-        sampling: SAMPLINGS.day,
-        type: KPI_SLI_GRAPH_DATA_TYPE.percent,
+        sampling: SAMPLINGS.month,
+        type: KPI_SLI_GRAPH_DATA_TYPE.time,
         interval: {
           from: QUICK_RANGES.last30Days.start,
           to: QUICK_RANGES.last30Days.stop,
@@ -63,14 +64,20 @@ export default {
     },
 
     async fetchList() {
-      this.sliMetrics = await this.fetchSliMetricsWithoutStore({
-        params: {
-          from: this.interval.from,
-          to: this.interval.to,
-          in_percents: this.pagination.type === KPI_SLI_GRAPH_DATA_TYPE.percent,
-          sampling: this.pagination.sampling,
+      this.sliMetrics = [
+        {
+          timestamp: 1631145600,
+          uptime: 846720,
+          downtime: 362880,
+          maintenance: 241920,
         },
-      });
+        {
+          timestamp: 1633737600,
+          uptime: 864864,
+          downtime: 825552,
+          maintenance: 326592,
+        },
+      ];
     },
   },
 };

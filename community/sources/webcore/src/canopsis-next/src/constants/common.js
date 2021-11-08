@@ -234,10 +234,3 @@ export const ASSOCIATIVE_TABLES_NAMES = {
   dynamicInfoTemplates: 'dynamic-info-templates',
   filterHints: 'filterhints',
 };
-
-export const SAMPLINGS = {
-  hour: 'hour',
-  day: 'day',
-  week: 'week',
-  month: 'month',
-};
