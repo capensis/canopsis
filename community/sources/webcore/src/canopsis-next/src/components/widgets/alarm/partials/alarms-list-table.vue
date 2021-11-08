@@ -253,7 +253,7 @@ export default {
   },
 
   created() {
-    this.ranslateY = 0;
+    this.translateY = 0;
     this.previousTranslateY = 0;
   },
 
@@ -282,7 +282,7 @@ export default {
     ...featuresService.get('components.alarmListTable.methods', {}),
 
     startScrolling() {
-      if (this.ranslateY !== this.previousTranslateY) {
+      if (this.translateY !== this.previousTranslateY) {
         this.tableHeader.style.opacity = '0';
       }
 
@@ -304,17 +304,17 @@ export default {
     },
 
     setHeaderPosition() {
-      this.tableHeader.style.transform = `translateY(${this.ranslateY}px)`;
+      this.tableHeader.style.transform = `translateY(${this.translateY}px)`;
     },
 
     calculateHeaderOffsetPosition() {
       const { top } = this.tableHeader.getBoundingClientRect();
       const { height: bodyHeight } = this.tableBody.getBoundingClientRect();
 
-      const offset = top - this.ranslateY - TOP_BAR_HEIGHT;
+      const offset = top - this.translateY - TOP_BAR_HEIGHT;
 
-      this.previousTranslateY = this.ranslateY;
-      this.ranslateY = Math.min(bodyHeight, Math.max(0, -offset));
+      this.previousTranslateY = this.translateY;
+      this.translateY = Math.min(bodyHeight, Math.max(0, -offset));
     },
 
     addShadowToHeader() {
@@ -331,7 +331,7 @@ export default {
       this.calculateHeaderOffsetPosition();
       this.setHeaderPosition();
 
-      if (!this.ranslateY) {
+      if (!this.translateY) {
         this.removeShadowFromHeader();
         this.finishScrolling();
 
@@ -347,7 +347,7 @@ export default {
     },
 
     resetHeaderPosition() {
-      this.ranslateY = 0;
+      this.translateY = 0;
       this.previousTranslateY = 0;
 
       this.setHeaderPosition();
