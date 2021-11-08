@@ -34,6 +34,10 @@ export default {
       type: String,
       default: SAMPLINGS.day,
     },
+    responsive: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     maxValueBySampling() {
@@ -112,6 +116,7 @@ export default {
     sliChartOptions() {
       return {
         animation: false,
+        responsive: this.responsive,
         scales: {
           x: {
             type: 'time',
