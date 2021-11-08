@@ -16,7 +16,7 @@ Also, use variables from vendored roles before doing the same task yourself in t
 
 ## License
 
-BSD
+See the license of each individual role within this playbook
 
 ## Author Information
 
