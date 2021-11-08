@@ -67,6 +67,7 @@ export default {
         params: {
           from: this.interval.from,
           to: this.interval.to,
+          in_percents: this.pagination.type === KPI_SLI_GRAPH_DATA_TYPE.percent,
           sampling: this.pagination.sampling,
         },
       });

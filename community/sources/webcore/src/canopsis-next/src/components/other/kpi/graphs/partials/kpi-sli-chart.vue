@@ -14,9 +14,8 @@ import {
 
 import { colorToRgba } from '@/helpers/color';
 
-import { convertNumberToFixedString } from '@/helpers/string';
-import { addUnitToDate, convertDateToString, getDaysInMonth } from '@/helpers/date/date';
-import { convertDurationToString, fromSeconds, toSeconds } from '@/helpers/date/duration';
+import { addUnitToDate, convertDateToString } from '@/helpers/date/date';
+import { convertDurationToString, fromSeconds } from '@/helpers/date/duration';
 
 const BarChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/bar-chart.vue');
 
@@ -75,9 +74,9 @@ export default {
       const { downtime, maintenance, uptime } = this.metrics.reduce((acc, metric) => {
         const x = metric.timestamp * 1000;
 
-        acc.downtime.push({ x, y: this.convertSecondsToValue(metric.downtime) });
-        acc.maintenance.push({ x, y: this.convertSecondsToValue(metric.maintenance) });
-        acc.uptime.push({ x, y: this.convertSecondsToValue(metric.uptime) });
+        acc.downtime.push({ x, y: this.convertValueBySamplingUnit(metric.downtime) });
+        acc.maintenance.push({ x, y: this.convertValueBySamplingUnit(metric.maintenance) });
+        acc.uptime.push({ x, y: this.convertValueBySamplingUnit(metric.uptime) });
 
         return acc;
       }, {
@@ -205,26 +204,12 @@ export default {
       return `${duration} ${label}`;
     },
 
-    convertSecondsToValue(value) {
+    convertValueBySamplingUnit(value) {
       if (this.dataType === KPI_SLI_GRAPH_DATA_TYPE.percent) {
-        return this.convertSecondsToPercent(value);
+        return value;
       }
 
       return fromSeconds(value, this.samplingUnit);
-    },
-
-    getMaxValueForPercent(value) {
-      if (this.sampling === SAMPLINGS.month) {
-        return toSeconds(getDaysInMonth(value), TIME_UNITS.day);
-      }
-
-      return toSeconds(this.maxValueBySampling, this.samplingUnit);
-    },
-
-    convertSecondsToPercent(value) {
-      const maxValue = this.getMaxValueForPercent(value);
-
-      return convertNumberToFixedString((value / maxValue) * 100, 2);
     },
   },
 };
