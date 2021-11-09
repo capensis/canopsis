@@ -33,6 +33,7 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
       <!---->
     </div>
     <!---->
+    <kpi-rating-stub />
   </div>
   <div
     class="layout column mb-5"

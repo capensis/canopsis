@@ -8,5 +8,9 @@ export default {
     fetchSliMetricsWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.metrics.sli, { params });
     },
+
+    fetchRatingMetricsWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.metrics.rating, { params });
+    },
   },
 };

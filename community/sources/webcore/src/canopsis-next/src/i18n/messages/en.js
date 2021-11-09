@@ -25,6 +25,7 @@ import {
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
+  USER_METRIC_PARAMETERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2294,6 +2295,10 @@ export default {
       [GROUPS_NAVIGATION_TYPES.sideBar]: 'Side bar',
       [GROUPS_NAVIGATION_TYPES.topBar]: 'Top bar',
     },
+    metrics: {
+      [USER_METRIC_PARAMETERS.averageSession]: 'Average session duration',
+      [USER_METRIC_PARAMETERS.loginsNumber]: 'Number of logins',
+    },
   },
 
   testSuite: {
@@ -2596,6 +2601,27 @@ export default {
       dataSlices: 'Data slices',
       detailedMetrics: 'Detailed metrics',
       sliPatterns: 'SLI patterns',
+    },
+  },
+
+  kpiRating: {
+    tooltip: {
+      [USER_METRIC_PARAMETERS.loginsNumber]: '{value} logins',
+      [USER_METRIC_PARAMETERS.averageSession]: '{value} average session',
+
+      [ALARM_METRIC_PARAMETERS.totalAlarms]: '{value} alarms',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: '{value} non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: '{value} alarms under auto remediation',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: '{value} alarms under PBehavior',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} cancelled acks',
+      [ALARM_METRIC_PARAMETERS.ticketAlarms]: '{value} tickets created',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% of alarms with auto remediation',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% alarms with instructions',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% of alarms with tickets created',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.averageAck]: '{value} to ack alarms',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} to resolve alarms',
     },
   },
 

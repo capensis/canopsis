@@ -25,6 +25,7 @@ import {
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
+  USER_METRIC_PARAMETERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2294,6 +2295,10 @@ export default {
       [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',
       [GROUPS_NAVIGATION_TYPES.topBar]: 'Barre d\'entête',
     },
+    metrics: {
+      [USER_METRIC_PARAMETERS.averageSession]: 'Durée moyenne des sessions',
+      [USER_METRIC_PARAMETERS.loginsNumber]: 'Nombre de connexions',
+    },
   },
 
   testSuite: {
@@ -2596,6 +2601,27 @@ export default {
       dataSlices: 'Tranches de données',
       detailedMetrics: 'Métriques détaillées',
       sliPatterns: 'Modèles SLI',
+    },
+  },
+
+  kpiRating: {
+    tooltip: {
+      [USER_METRIC_PARAMETERS.loginsNumber]: '{value} connexions',
+      [USER_METRIC_PARAMETERS.averageSession]: '{value} séance moyenne',
+
+      [ALARM_METRIC_PARAMETERS.totalAlarms]: '{value} alarmes',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: '{value} alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: '{value} alarmes en cours de correction automatique',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: '{value} alarmes sous PBehavior',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} acks annulés',
+      [ALARM_METRIC_PARAMETERS.ticketAlarms]: '{value} billets créés',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% d\'alarmes avec correction automatique',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% d\'alarmes avec instructions',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% des alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.averageAck]: '{value} accuser les alarmes',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} pour résoudre les alarmes',
     },
   },
 

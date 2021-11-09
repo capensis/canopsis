@@ -186,6 +186,7 @@ export const API_ROUTES = {
   },
   metrics: {
     sli: '/api/v4/cat/metrics/sli',
+    rating: '/api/v4/cat/metrics/rating',
   },
 };
 
