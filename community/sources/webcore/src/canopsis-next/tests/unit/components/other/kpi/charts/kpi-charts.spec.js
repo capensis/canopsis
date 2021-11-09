@@ -10,6 +10,7 @@ const snapshotStubs = {
   'c-information-block': CInformationBlock,
   'c-help-icon': CHelpIcon,
   'kpi-sli': true,
+  'kpi-rating': true,
 };
 
 const snapshotFactory = (options = {}) => mount(KpiCharts, {

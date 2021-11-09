@@ -6,6 +6,7 @@ export const entitiesMetricsMixin = {
   methods: {
     ...mapActions({
       fetchSliMetricsWithoutStore: 'fetchSliMetricsWithoutStore',
+      fetchRatingMetricsWithoutStore: 'fetchRatingMetricsWithoutStore',
     }),
   },
 };
