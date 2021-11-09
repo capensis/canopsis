@@ -22,9 +22,15 @@ export const widgetPeriodicRefreshMixin = {
               clearInterval(this.periodicRefreshInterval);
             }
 
+            const periodicRefreshSeconds = toSeconds(periodicRefresh.value, periodicRefresh.unit);
+
+            if (!periodicRefreshSeconds) {
+              return;
+            }
+
             this.periodicRefreshInterval = setInterval(() => {
               this.fetchList({ isPeriodicRefresh: true });
-            }, toSeconds(periodicRefresh.value, periodicRefresh.unit) * 1000);
+            }, periodicRefreshSeconds * 1000);
           }
         } else {
           clearInterval(this.periodicRefreshInterval);
