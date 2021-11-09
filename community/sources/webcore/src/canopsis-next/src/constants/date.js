@@ -50,6 +50,12 @@ export const AVAILABLE_TIME_UNITS = {
   },
 };
 
+export const SHORT_AVAILABLE_TIME_UNITS = {
+  second: AVAILABLE_TIME_UNITS.second,
+  minute: AVAILABLE_TIME_UNITS.minute,
+  hour: AVAILABLE_TIME_UNITS.hour,
+};
+
 export const PERIODIC_REFRESH_UNITS = {
   second: AVAILABLE_TIME_UNITS.second,
   minute: AVAILABLE_TIME_UNITS.minute,

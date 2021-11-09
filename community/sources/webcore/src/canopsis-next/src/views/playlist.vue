@@ -199,7 +199,7 @@ export default {
   }
 
   &__actions {
-    width: 250px;
+    width: 310px;
   }
 
   &__timer {
