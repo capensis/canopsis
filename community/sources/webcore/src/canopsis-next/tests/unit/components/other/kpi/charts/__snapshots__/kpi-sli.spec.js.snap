@@ -13,6 +13,7 @@ exports[`kpi-charts Renders \`kpi-sli\` without metrics 1`] = `
     <kpi-sli-chart-stub
       datatype="percent"
       metrics=""
+      responsive="true"
       sampling="day"
     />
   </div>
