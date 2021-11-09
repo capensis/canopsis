@@ -44,33 +44,26 @@ export default {
       },
     };
   },
-  computed: {
-    interval() {
-      return {
-        from: convertStartDateIntervalToTimestamp(this.pagination.interval.from),
-        to: convertStopDateIntervalToTimestamp(this.pagination.interval.to),
-      };
-    },
-  },
   mounted() {
     this.fetchList();
   },
   methods: {
     updateInterval(interval) {
-      this.query = {
-        ...this.query,
-        interval,
+      this.updateQueryField('interval', interval);
+    },
+
+    getQuery() {
+      return {
+        from: convertStartDateIntervalToTimestamp(this.pagination.interval.from),
+        to: convertStopDateIntervalToTimestamp(this.pagination.interval.to),
+        in_percents: this.pagination.type === KPI_SLI_GRAPH_DATA_TYPE.percent,
+        sampling: this.pagination.sampling,
       };
     },
 
     async fetchList() {
       this.sliMetrics = await this.fetchSliMetricsWithoutStore({
-        params: {
-          from: this.interval.from,
-          to: this.interval.to,
-          in_percents: this.pagination.type === KPI_SLI_GRAPH_DATA_TYPE.percent,
-          sampling: this.pagination.sampling,
-        },
+        params: this.getQuery(),
       });
     },
   },
