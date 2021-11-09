@@ -205,7 +205,7 @@ describe('kpi-sli-chart', () => {
     expect(canvas.element).toMatchCanvasSnapshot();
   });
 
-  it('Renders `kpi-sli-chart` with tooltip', async () => {
+  it('Renders `kpi-sli-chart` with time metrics by month', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         metrics: metricsByMonth,
