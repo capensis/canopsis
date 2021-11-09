@@ -92,21 +92,18 @@ export default {
       return [{
         backgroundColor: colorToRgba(COLORS.kpi.uptime),
         barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
-        fill: true,
         label: this.$t('common.uptime'),
         order: 1,
         data: uptime,
       }, {
         backgroundColor: colorToRgba(COLORS.kpi.downtime),
         barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
-        fill: true,
         label: this.$t('common.downtime'),
         order: 2,
         data: downtime,
       }, {
         backgroundColor: colorToRgba(COLORS.kpi.maintenance),
         barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
-        fill: true,
         label: this.$t('common.maintenance'),
         order: 3,
         data: maintenance,
