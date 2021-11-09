@@ -5,7 +5,6 @@
 <script>
 import { COLORS } from '@/config';
 import {
-  ALARM_METRIC_PARAMETERS,
   DATETIME_FORMATS,
   KPI_SLI_GRAPH_BAR_PERCENTAGE,
   TIME_UNITS,
@@ -18,6 +17,7 @@ import {
   convertDurationToString,
   fromSeconds,
 } from '@/helpers/date/duration';
+import { isRatioMetric, isTimeMetric } from '@/helpers/metrics';
 
 const BarChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/bar-chart.vue');
 
@@ -62,20 +62,11 @@ export default {
     },
 
     isTimeMetric() {
-      return [
-        USER_METRIC_PARAMETERS.averageSession,
-        ALARM_METRIC_PARAMETERS.averageAck,
-        ALARM_METRIC_PARAMETERS.averageResolve,
-      ].includes(this.metric);
+      return isTimeMetric(this.metric);
     },
 
     isRatioMetric() {
-      return [
-        ALARM_METRIC_PARAMETERS.ratioCorrelation,
-        ALARM_METRIC_PARAMETERS.ratioInstructions,
-        ALARM_METRIC_PARAMETERS.ratioTickets,
-        ALARM_METRIC_PARAMETERS.ratioNonDisplayed,
-      ].includes(this.metric);
+      return isRatioMetric(this.metric);
     },
 
     maxValueByMetric() {
