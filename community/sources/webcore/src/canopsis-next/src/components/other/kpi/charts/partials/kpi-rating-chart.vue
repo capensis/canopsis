@@ -5,6 +5,7 @@
 <script>
 import { COLORS } from '@/config';
 import {
+  ALARM_METRIC_PARAMETERS,
   DATETIME_FORMATS,
   KPI_SLI_GRAPH_BAR_PERCENTAGE,
   TIME_UNITS,
@@ -42,8 +43,12 @@ export default {
       return this.metrics.map(({ label }) => label);
     },
 
+    values() {
+      return this.metrics.map(({ value }) => value);
+    },
+
     maxValue() {
-      return Math.max.apply(null, this.metrics.map(({ value }) => value));
+      return Math.max.apply(null, this.values);
     },
 
     maxDuration() {
@@ -57,7 +62,7 @@ export default {
       return [{
         backgroundColor: colorToRgba(COLORS.kpi.uptime),
         barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
-        data: this.metrics.map(({ value }) => this.convertValueByMetric(value)),
+        data: this.values.map(this.convertValueByMetric),
       }];
     },
 
