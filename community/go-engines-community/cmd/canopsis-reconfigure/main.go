@@ -424,7 +424,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS metrics_criteria (
-			id SERIAL,
+			id SERIAL PRIMARY KEY,
 			type INT,
 		   	name VARCHAR(255) UNIQUE,
 			label VARCHAR(255), 
