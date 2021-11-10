@@ -400,6 +400,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 			infos JSONB,
 			component_infos JSONB,
 			component VARCHAR(500),
+			updated_at TIMESTAMP NOT NULL,
 			UNIQUE(custom_id)
 			);
        	`,
@@ -414,7 +415,8 @@ func createTimescaleDBTables(ctx context.Context) error {
 			CREATE TABLE IF NOT EXISTS users (
 			id VARCHAR(255) PRIMARY KEY,
 			username VARCHAR(255),
-		   	role VARCHAR(255)
+		   	role VARCHAR(255),
+			updated_at TIMESTAMP NOT NULL
 			);
        	`,
 	)
