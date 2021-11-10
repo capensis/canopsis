@@ -30,3 +30,7 @@ noWait = false
 Events get into the engine Che from the engine Fifo, through the queue `"Engine_che"`, so
 `-publishQueue` startup parameter of the engine Fifo should be set as `"Engine_che"`.  
 (example of engine Fifo start command: `"./engine-fifo -publishQueue Engine_che"`)
+
+### Metrics
+
+Use pro version of engine to support metrics.
