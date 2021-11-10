@@ -5,13 +5,16 @@ export const {
   VUE_APP_API_HOST,
   VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY,
   VUE_APP_PAGINATION_LIMIT,
-} = process.env;
+} = {
+  ...process.env,
+  ...window.injectedEnv,
+};
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
 
-export const API_HOST = VUE_APP_API_HOST;
+export const API_HOST = VUE_APP_API_HOST || removeTrailingSlashes(`${window.location.origin}/backend`);
 
-export const SOCKET_HOST = VUE_APP_API_HOST.replace(/^http(s?)/, 'wss');
+export const SOCKET_HOST = API_HOST.replace(/^http(s?)/, 'wss');
 
 export const SOCKET_ROUTE = '/api/v4/ws';
 
