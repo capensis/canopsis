@@ -3049,7 +3049,7 @@
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -3122,7 +3122,7 @@
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -3171,7 +3171,7 @@
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -3213,7 +3213,7 @@
             "put": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -3273,7 +3273,7 @@
             "delete": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth`": []
@@ -5908,7 +5908,7 @@
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -5981,7 +5981,7 @@
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -6030,7 +6030,7 @@
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -6072,7 +6072,7 @@
             "put": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -6132,7 +6132,7 @@
             "delete": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth`": []
@@ -6938,6 +6938,100 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/statesettings.StateSetting"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-preferences": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Find all user preferences",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userpreference"
+                ],
+                "summary": "Find all user preferences",
+                "operationId": "userpreference-find-all",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/userpreferences.Response"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user-preferences/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update user preferences by widget id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userpreference"
+                ],
+                "summary": "Update user preferences by widget id",
+                "operationId": "userpreference-update-by-widget-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "widget id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userpreferences.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userpreferences.Response"
                         }
                     },
                     "400": {
@@ -8360,6 +8454,9 @@
                 "activation_date": {
                     "type": "integer"
                 },
+                "active_duration": {
+                    "type": "integer"
+                },
                 "canceled": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
@@ -8456,6 +8553,9 @@
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "pbh_inactive_duration": {
+                    "type": "integer"
+                },
                 "resolved": {
                     "type": "integer"
                 },
@@ -8465,6 +8565,9 @@
                 "snooze": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "snooze_duration": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "object",
@@ -9981,9 +10084,9 @@
         "flappingrule.CreateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
                 "freq_limit",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -10007,6 +10110,9 @@
                 },
                 "freq_limit": {
                     "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -10044,6 +10150,9 @@
                 "freq_limit": {
                     "type": "integer"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "priority": {
                     "type": "integer"
                 },
@@ -10055,9 +10164,9 @@
         "flappingrule.UpdateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
                 "freq_limit",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -10078,6 +10187,9 @@
                 },
                 "freq_limit": {
                     "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -11796,8 +11908,8 @@
         "resolverule.CreateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -11818,6 +11930,9 @@
                 "entity_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -11852,6 +11967,9 @@
                     "type": "object",
                     "$ref": "#/definitions/pattern.EntityPatternList"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "priority": {
                     "type": "integer"
                 },
@@ -11863,8 +11981,8 @@
         "resolverule.UpdateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -11882,6 +12000,9 @@
                 "entity_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -12746,6 +12867,9 @@
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "pbh_inactive_duration": {
+                    "type": "integer"
+                },
                 "related_parents": {
                     "type": "array",
                     "items": {
@@ -12769,6 +12893,9 @@
                 "snooze": {
                     "type": "object",
                     "$ref": "#/definitions/types.AlarmStep"
+                },
+                "snooze_duration": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "object",
@@ -13080,6 +13207,30 @@
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "userpreferences.EditRequest": {
+            "type": "object",
+            "required": [
+                "content"
+            ],
+            "properties": {
+                "content": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "userpreferences.Response": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "widget": {
                     "type": "string"
                 }
             }

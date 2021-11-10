@@ -1095,5 +1095,21 @@
     "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f4191",
     "enable": true
+  },
+  {
+    "_id": "test-role-to-user-preferences-update",
+    "crecord_type": "role",
+    "crecord_name": "test-role-to-user-preferences-update",
+    "rights": {}
+  },
+  {
+    "_id": "test-user-to-user-preferences-update",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-user-preferences-update",
+    "role": "test-role-to-user-preferences-update",
+    "mail": "test-user-to-user-preferences-update@canopsis.net",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f5202",
+    "enable": true
   }
 ]
