@@ -5,10 +5,7 @@ export const {
   VUE_APP_API_HOST,
   VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY,
   VUE_APP_PAGINATION_LIMIT,
-} = {
-  ...process.env,
-  ...window.injectedEnv,
-};
+} = process.env;
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
 
