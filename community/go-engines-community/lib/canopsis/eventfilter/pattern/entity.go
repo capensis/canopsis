@@ -94,7 +94,8 @@ func (e EntityFields) AsSqlQuery(table ...string) (string, error) {
 
 	conds := make([]string, 0)
 	if !e.ID.Empty() {
-		conds = append(conds, fmt.Sprintf("%sid %s", prefix, e.ID.AsSqlQuery()))
+		// Int id is used in SQL database. String id is stored to custom_id field.
+		conds = append(conds, fmt.Sprintf("%scustom_id %s", prefix, e.ID.AsSqlQuery()))
 	}
 	if !e.Name.Empty() {
 		conds = append(conds, fmt.Sprintf("%sname %s", prefix, e.Name.AsSqlQuery()))
