@@ -204,7 +204,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		`
 			CREATE TABLE IF NOT EXISTS total_alarm_number (
 		   	time TIMESTAMP NOT NULL,
-		   	entity_id VARCHAR(500),
+		   	entity_id INT,
 		   	value INT);
 		   	SELECT create_hypertable('total_alarm_number', 'time', if_not_exists => TRUE);   
        	`,
@@ -218,7 +218,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		`
 			CREATE TABLE IF NOT EXISTS non_displayed_alarm_number (
 		   	time TIMESTAMP NOT NULL,
-		   	entity_id VARCHAR(500),
+		   	entity_id INT,
 		   	value INT);
 		   	SELECT create_hypertable('non_displayed_alarm_number', 'time', if_not_exists => TRUE);   
        	`,
@@ -232,7 +232,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		`
 			CREATE TABLE IF NOT EXISTS pbh_alarm_number (
 		   	time TIMESTAMP NOT NULL,
-		   	entity_id VARCHAR(500),
+		   	entity_id INT,
 		   	value INT);
 		   	SELECT create_hypertable('pbh_alarm_number', 'time', if_not_exists => TRUE);   
        	`,
@@ -246,7 +246,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		`
 			CREATE TABLE IF NOT EXISTS instruction_alarm_number (
 		   	time TIMESTAMP NOT NULL,
-		   	entity_id VARCHAR(500),
+		   	entity_id INT,
 		   	value INT);
 		   	SELECT create_hypertable('instruction_alarm_number', 'time', if_not_exists => TRUE);   
        	`,
@@ -260,7 +260,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		`
 			CREATE TABLE IF NOT EXISTS correlation_alarm_number (
 		   	time TIMESTAMP NOT NULL,
-		   	entity_id VARCHAR(500),
+		   	entity_id INT,
 		   	value INT);
 		   	SELECT create_hypertable('correlation_alarm_number', 'time', if_not_exists => TRUE);   
        	`,
@@ -274,7 +274,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		`
 			CREATE TABLE IF NOT EXISTS ticket_alarm_number (
 		   	time TIMESTAMP NOT NULL,
-		   	entity_id VARCHAR(500),
+		   	entity_id INT,
 			user_id VARCHAR(255),
 		   	value INT);
 		   	SELECT create_hypertable('ticket_alarm_number', 'time', if_not_exists => TRUE);   
@@ -289,7 +289,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		`
 			CREATE TABLE IF NOT EXISTS ack_alarm_number (
 		   	time TIMESTAMP NOT NULL,
-		   	entity_id VARCHAR(500),
+		   	entity_id INT,
 			user_id VARCHAR(255),
 		   	value INT);
 		   	SELECT create_hypertable('ack_alarm_number', 'time', if_not_exists => TRUE);   
@@ -304,7 +304,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		`
 			CREATE TABLE IF NOT EXISTS cancel_ack_alarm_number (
 		   	time TIMESTAMP NOT NULL,
-		   	entity_id VARCHAR(500),
+		   	entity_id INT,
 			user_id VARCHAR(255),
 		   	value INT);
 		   	SELECT create_hypertable('cancel_ack_alarm_number', 'time', if_not_exists => TRUE);   
@@ -319,7 +319,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		`
 			CREATE TABLE IF NOT EXISTS ack_duration (
 			time TIMESTAMP NOT NULL,
-			entity_id VARCHAR(500),
+			entity_id INT,
 			user_id VARCHAR(255),
 			value INT);
 			SELECT create_hypertable('ack_duration', 'time', if_not_exists => TRUE);
@@ -334,7 +334,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		`
 			CREATE TABLE IF NOT EXISTS resolve_duration (
 			time TIMESTAMP NOT NULL,
-			entity_id VARCHAR(500),
+			entity_id INT,
 			value INT);
 			SELECT create_hypertable('resolve_duration', 'time', if_not_exists => TRUE);
        	`,
@@ -376,7 +376,7 @@ func createTimescaleDBTables(ctx context.Context) error {
 		`
 			CREATE TABLE IF NOT EXISTS sli_duration (
 			time TIMESTAMP NOT NULL,
-			entity_id VARCHAR(500),
+			entity_id INT,
 			type SMALLINT,
 			value INT);
 			SELECT create_hypertable('sli_duration', 'time', if_not_exists => TRUE);
@@ -390,15 +390,17 @@ func createTimescaleDBTables(ctx context.Context) error {
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS entities (
-			id VARCHAR(500) PRIMARY KEY,
+			id SERIAL PRIMARY KEY,
+			custom_id VARCHAR(500),
 			name VARCHAR(500),
 		   	category VARCHAR(255),
 		   	impact_level INT,
 		   	type VARCHAR(255),
 			enabled BOOLEAN,
-			infos jsonb,
-			component_infos jsonb,
-			component VARCHAR(500) 
+			infos JSONB,
+			component_infos JSONB,
+			component VARCHAR(500),
+			UNIQUE(custom_id)
 			);
        	`,
 	)
