@@ -1,7 +1,7 @@
 Feature: Update user preferences
   I need to be able to update user preferences.
 
-  Scenario: given user should  update user preferences
+  Scenario: given user should update user preferences
     When I am test-role-to-user-preferences-update
     When I do GET /api/v4/user-preferences
     Then the response code should be 200
