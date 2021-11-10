@@ -131,6 +131,8 @@ definitions:
         type: object
       activation_date:
         type: integer
+      active_duration:
+        type: integer
       canceled:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
@@ -197,6 +199,8 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      pbh_inactive_duration:
+        type: integer
       resolved:
         type: integer
       resource:
@@ -204,6 +208,8 @@ definitions:
       snooze:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
+      snooze_duration:
+        type: integer
       state:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
@@ -1233,12 +1239,14 @@ definitions:
         type: object
       freq_limit:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
     - freq_limit
+    - name
     - priority
     type: object
   flappingrule.Response:
@@ -1263,6 +1271,8 @@ definitions:
         type: object
       freq_limit:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
       updated:
@@ -1283,12 +1293,14 @@ definitions:
         type: object
       freq_limit:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
     - freq_limit
+    - name
     - priority
     type: object
   http.Response:
@@ -2655,11 +2667,13 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
+    - name
     - priority
     type: object
   resolverule.Response:
@@ -2682,6 +2696,8 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
+      name:
+        type: string
       priority:
         type: integer
       updated:
@@ -2700,11 +2716,13 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
+    - name
     - priority
     type: object
   role.CreateRequest:
@@ -3291,6 +3309,8 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      pbh_inactive_duration:
+        type: integer
       related_parents:
         items:
           type: string
@@ -3308,6 +3328,8 @@ definitions:
       snooze:
         $ref: '#/definitions/types.AlarmStep'
         type: object
+      snooze_duration:
+        type: integer
       state:
         $ref: '#/definitions/types.AlarmStep'
         type: object
@@ -3528,6 +3550,22 @@ definitions:
       _id:
         type: string
       title:
+        type: string
+    type: object
+  userpreferences.EditRequest:
+    properties:
+      content:
+        additionalProperties: true
+        type: object
+    required:
+    - content
+    type: object
+  userpreferences.Response:
+    properties:
+      content:
+        additionalProperties: true
+        type: object
+      widget:
         type: string
     type: object
   utils.RegexExpression:
@@ -5694,7 +5732,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find all flapping rule
       tags:
@@ -5723,7 +5761,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Create flapping rule
       tags:
@@ -5746,7 +5784,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth`: []
       summary: Delete flapping rule by id
       tags:
@@ -5772,7 +5810,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Get flapping rule by id
       tags:
@@ -5810,7 +5848,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Update flapping rule by id
       tags:
@@ -7461,7 +7499,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find all resolve rule
       tags:
@@ -7490,7 +7528,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Create resolve rule
       tags:
@@ -7513,7 +7551,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth`: []
       summary: Delete resolve rule by id
       tags:
@@ -7539,7 +7577,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Get resolve rule by id
       tags:
@@ -7577,7 +7615,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Update resolve rule by id
       tags:
@@ -8066,6 +8104,64 @@ paths:
       summary: Update state setting type by id
       tags:
       - state-settings
+  /user-preferences:
+    get:
+      description: Find all user preferences
+      operationId: userpreference-find-all
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/userpreferences.Response'
+            type: array
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Find all user preferences
+      tags:
+      - userpreference
+  /user-preferences/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update user preferences by widget id
+      operationId: userpreference-update-by-widget-id
+      parameters:
+      - description: widget id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/userpreferences.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userpreferences.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update user preferences by widget id
+      tags:
+      - userpreference
   /users:
     get:
       consumes:

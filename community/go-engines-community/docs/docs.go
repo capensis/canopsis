@@ -3065,7 +3065,7 @@ var doc = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -3138,7 +3138,7 @@ var doc = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -3187,7 +3187,7 @@ var doc = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -3229,7 +3229,7 @@ var doc = `{
             "put": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -3289,7 +3289,7 @@ var doc = `{
             "delete": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth` + "`" + `": []
@@ -5924,7 +5924,7 @@ var doc = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -5997,7 +5997,7 @@ var doc = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -6046,7 +6046,7 @@ var doc = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -6088,7 +6088,7 @@ var doc = `{
             "put": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -6148,7 +6148,7 @@ var doc = `{
             "delete": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth` + "`" + `": []
@@ -6954,6 +6954,100 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/statesettings.StateSetting"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-preferences": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Find all user preferences",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userpreference"
+                ],
+                "summary": "Find all user preferences",
+                "operationId": "userpreference-find-all",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/userpreferences.Response"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user-preferences/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update user preferences by widget id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userpreference"
+                ],
+                "summary": "Update user preferences by widget id",
+                "operationId": "userpreference-update-by-widget-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "widget id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userpreferences.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userpreferences.Response"
                         }
                     },
                     "400": {
@@ -8376,6 +8470,9 @@ var doc = `{
                 "activation_date": {
                     "type": "integer"
                 },
+                "active_duration": {
+                    "type": "integer"
+                },
                 "canceled": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
@@ -8472,6 +8569,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "pbh_inactive_duration": {
+                    "type": "integer"
+                },
                 "resolved": {
                     "type": "integer"
                 },
@@ -8481,6 +8581,9 @@ var doc = `{
                 "snooze": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "snooze_duration": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "object",
@@ -9997,9 +10100,9 @@ var doc = `{
         "flappingrule.CreateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
                 "freq_limit",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -10023,6 +10126,9 @@ var doc = `{
                 },
                 "freq_limit": {
                     "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -10060,6 +10166,9 @@ var doc = `{
                 "freq_limit": {
                     "type": "integer"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "priority": {
                     "type": "integer"
                 },
@@ -10071,9 +10180,9 @@ var doc = `{
         "flappingrule.UpdateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
                 "freq_limit",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -10094,6 +10203,9 @@ var doc = `{
                 },
                 "freq_limit": {
                     "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -11812,8 +11924,8 @@ var doc = `{
         "resolverule.CreateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -11834,6 +11946,9 @@ var doc = `{
                 "entity_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -11868,6 +11983,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.EntityPatternList"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "priority": {
                     "type": "integer"
                 },
@@ -11879,8 +11997,8 @@ var doc = `{
         "resolverule.UpdateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -11898,6 +12016,9 @@ var doc = `{
                 "entity_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -12762,6 +12883,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "pbh_inactive_duration": {
+                    "type": "integer"
+                },
                 "related_parents": {
                     "type": "array",
                     "items": {
@@ -12785,6 +12909,9 @@ var doc = `{
                 "snooze": {
                     "type": "object",
                     "$ref": "#/definitions/types.AlarmStep"
+                },
+                "snooze_duration": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "object",
@@ -13096,6 +13223,30 @@ var doc = `{
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "userpreferences.EditRequest": {
+            "type": "object",
+            "required": [
+                "content"
+            ],
+            "properties": {
+                "content": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "userpreferences.Response": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "widget": {
                     "type": "string"
                 }
             }
