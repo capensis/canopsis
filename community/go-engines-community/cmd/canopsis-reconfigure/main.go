@@ -426,9 +426,11 @@ func createTimescaleDBTables(ctx context.Context) error {
 		ctx,
 		`
 			CREATE TABLE IF NOT EXISTS metrics_criteria (
-			id INT PRIMARY KEY,
+			id SERIAL PRIMARY KEY,
 			type INT,
-		   	name VARCHAR(255)
+		   	name VARCHAR(255) UNIQUE,
+			label VARCHAR(255), 
+			enabled BOOLEAN
 			);
        	`,
 	)
@@ -441,14 +443,15 @@ func createTimescaleDBTables(ctx context.Context) error {
 			ctx,
 			fmt.Sprintf(
 				`
-				INSERT INTO %s (id, type, name) VALUES($1, $2, $3)
-				ON CONFLICT ON CONSTRAINT metrics_criteria_pkey DO UPDATE SET type = $2, name = $3
+				INSERT INTO %s (type, name, label, enabled) VALUES($1, $2, $3, $4)
+				ON CONFLICT ON CONSTRAINT metrics_criteria_name_key DO UPDATE SET type = $1, name = $2
 			`,
 				postgres.MetricsCriteria,
 			),
-			c.ID,
 			c.Type,
 			c.Name,
+			c.Label,
+			true,
 		)
 		if err != nil {
 			return err
@@ -459,42 +462,33 @@ func createTimescaleDBTables(ctx context.Context) error {
 }
 
 type CriteriaConfig struct {
-	ID   int
-	Type int
-	Name string
+	ID    int
+	Type  int
+	Name  string
+	Label string
 }
 
 func defaultCriteria() []CriteriaConfig {
 	return []CriteriaConfig{
 		{
-			ID:   1,
-			Type: metrics.EntityCriteriaType,
-			Name: "name",
+			Type:  metrics.UserCriteriaType,
+			Name:  "username",
+			Label: "username",
 		},
 		{
-			ID:   2,
-			Type: metrics.EntityCriteriaType,
-			Name: "category",
+			Type:  metrics.UserCriteriaType,
+			Name:  "role",
+			Label: "role",
 		},
 		{
-			ID:   3,
-			Type: metrics.EntityCriteriaType,
-			Name: "impact_level",
+			Type:  metrics.EntityCriteriaType,
+			Name:  "category",
+			Label: "category",
 		},
 		{
-			ID:   4,
-			Type: metrics.EntityCriteriaType,
-			Name: "type",
-		},
-		{
-			ID:   5,
-			Type: metrics.UserCriteriaType,
-			Name: "username",
-		},
-		{
-			ID:   6,
-			Type: metrics.UserCriteriaType,
-			Name: "role",
+			Type:  metrics.EntityCriteriaType,
+			Name:  "impact_level",
+			Label: "impact_level",
 		},
 	}
 }

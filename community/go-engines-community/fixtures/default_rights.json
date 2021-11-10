@@ -235,6 +235,19 @@
     "type": "CRUD"
   },
   {
+    "_id": "api_metrics",
+    "crecord_type": "action",
+    "crecord_name": "api_metrics",
+    "desc": "Metrics api"
+  },
+  {
+    "_id": "api_rating_settings",
+    "crecord_type": "action",
+    "crecord_name": "api_rating_settings",
+    "desc": "Rating settings api",
+    "type": "CRUD"
+  },
+  {
     "_id": "admin",
     "crecord_type": "role",
     "crecord_name": "admin",
@@ -464,6 +477,14 @@
         "crecord_type": "right"
       },
       "api_flapping_rule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_metrics": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_rating_settings": {
         "checksum": 15,
         "crecord_type": "right"
       }

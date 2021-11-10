@@ -11,6 +11,7 @@ const EnvURL = "CPS_POSTGRES_URL"
 
 const (
 	MetricsCriteria = "metrics_criteria"
+	Entities = "entities"
 )
 
 func NewPool(ctx context.Context) (*pgxpool.Pool, error) {
