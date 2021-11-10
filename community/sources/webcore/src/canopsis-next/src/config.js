@@ -9,7 +9,7 @@ export const {
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
 
-export const API_HOST = VUE_APP_API_HOST || removeTrailingSlashes(`${window.location.origin}/backend`);
+export const API_HOST = VUE_APP_API_HOST || window.location.origin;
 
 export const SOCKET_HOST = API_HOST.replace(/^http(s?)/, 'wss');
 
