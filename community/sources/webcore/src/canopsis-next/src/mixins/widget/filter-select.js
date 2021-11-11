@@ -23,7 +23,7 @@ export default {
     },
 
     viewFilters() {
-      return this.userPreference.widget_preferences.viewFilters || [];
+      return this.userPreference.content.viewFilters || [];
     },
 
     widgetViewFilters() {
@@ -41,8 +41,7 @@ export default {
       const hasAccessToUserFilter = this.hasAccessToUserFilter || !isBoolean(this.hasAccessToUserFilter);
 
       if (hasAccessToUserFilter) {
-        return this.updateWidgetPreferencesInUserPreference({
-          ...this.userPreference.widget_preferences,
+        return this.updateContentInUserPreference({
           ...fields,
         });
       }
