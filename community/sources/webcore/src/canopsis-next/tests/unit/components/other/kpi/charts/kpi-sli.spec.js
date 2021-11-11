@@ -35,7 +35,7 @@ const snapshotFactory = (options = {}) => mount(KpiSli, {
   ...options,
 });
 
-describe('kpi-charts', () => {
+describe('kpi-sli', () => {
   const nowTimestamp = 1386435600000;
   const nowUnix = nowTimestamp / 1000;
 
@@ -103,7 +103,7 @@ describe('kpi-charts', () => {
     );
   });
 
-  it('Renders `kpi-sli` without metrics', () => {
+  it('Renders `kpi-sli` without metrics', async () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModule('metrics', {
         actions: {
@@ -111,6 +111,8 @@ describe('kpi-charts', () => {
         },
       }),
     });
+
+    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
   });
