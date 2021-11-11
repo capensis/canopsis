@@ -121,14 +121,16 @@ CREATE TABLE IF NOT EXISTS entities
     infos           JSONB,
     component_infos JSONB,
     component       VARCHAR(500),
+    updated_at      TIMESTAMP NOT NULL,
     UNIQUE (custom_id)
 );
 
 CREATE TABLE IF NOT EXISTS users
 (
-    id       VARCHAR(255) PRIMARY KEY,
-    username VARCHAR(255),
-    role     VARCHAR(255)
+    id         VARCHAR(255) PRIMARY KEY,
+    username   VARCHAR(255),
+    role       VARCHAR(255),
+    updated_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS metrics_criteria
