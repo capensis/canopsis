@@ -3,11 +3,13 @@ package userpreferences
 import (
 	"context"
 	"errors"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"time"
 )
 
 type Store interface {
@@ -58,6 +60,7 @@ func (s *store) Update(ctx context.Context, userId, widgetId string, request Edi
 	}, bson.M{
 		"$set": bson.M{
 			"content": request.Content,
+			"updated": types.CpsTime{Time: time.Now()},
 		},
 		"$setOnInsert": bson.M{
 			"_id":    utils.NewID(),
