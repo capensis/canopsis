@@ -272,6 +272,8 @@ export const COLORS = {
     downtime: '#c4c4c4',
     maintenance: '#ffa800',
     uptime: '#5b6E7f',
+  },
+  metrics: {
     totalAlarms: '#5a6d7e',
     nonDisplayedAlarms: '#fd693b',
     instructionAlarms: '#7bb242',
