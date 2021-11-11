@@ -141,9 +141,9 @@ CREATE TABLE IF NOT EXISTS metrics_criteria
 );
 
 INSERT INTO metrics_criteria (type, name, label, enabled)
-VALUES (0, 'username', 'username', true),
-       (0, 'role', 'role', true),
-       (1, 'category', 'category', true),
-       (1, 'impact_level', 'impact_level', true);
+VALUES (1, 'username', 'username', true),
+       (1, 'role', 'role', true),
+       (0, 'category', 'category', true),
+       (0, 'impact_level', 'impact_level', true);
 
 COMMIT;
