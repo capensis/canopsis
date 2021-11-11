@@ -89,7 +89,7 @@ export const API_ROUTES = {
   contextExport: '/api/v4/entity-export',
   actions: '/api/v2/actions',
   event: '/api/v4/event',
-  userPreferences: '/rest/userpreferences/userpreferences',
+  userPreferences: '/api/v4/user-preferences',
   view: '/api/v4/views',
   bulkView: '/api/v4/bulk/views',
   viewPosition: '/api/v4/view-positions',

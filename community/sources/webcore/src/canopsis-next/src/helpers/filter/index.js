@@ -46,7 +46,7 @@ export function getMainFilterAndCondition(widget, userPreference) {
     mainFilter: userMainFilter,
     mainFilterCondition: userMainFilterCondition = FILTER_MONGO_OPERATORS.and,
     mainFilterUpdatedAt: userMainFilterUpdatedAt = 0,
-  } = userPreference.widget_preferences;
+  } = userPreference.content;
 
   const {
     mainFilter: widgetMainFilter,
