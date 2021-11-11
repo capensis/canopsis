@@ -3,8 +3,6 @@
 </template>
 
 <script>
-import { camelCase } from 'lodash';
-import { COLORS } from '@/config';
 import {
   DATETIME_FORMATS,
   KPI_ALARMS_GRAPH_BAR_PERCENTAGE,
@@ -17,6 +15,7 @@ import {
   fromSeconds,
 } from '@/helpers/date/duration';
 import { getDateLabelBySampling, isRatioMetric, isTimeMetric } from '@/helpers/metrics';
+import { getMetricColor } from '@/helpers/color';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
 
@@ -73,7 +72,7 @@ export default {
     datasets() {
       return this.metrics.map(({ title: metric, data }) => ({
         metric,
-        backgroundColor: COLORS.kpi[camelCase(metric)],
+        backgroundColor: getMetricColor(metric),
         barPercentage: KPI_ALARMS_GRAPH_BAR_PERCENTAGE,
         yAxisID: this.getMetricYAxisId(metric),
         label: this.$t(`alarmList.metrics.${metric}`),
