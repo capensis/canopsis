@@ -2,10 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/pgx"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -43,19 +47,27 @@ func main() {
 
 	var confFile string
 	var mongoConfPath string
-	var migrationDirectory string
+	var mongoMigrationDirectory string
 	var modeDebug bool
 	var mongoContainer string
 	var mongoURL string
 	var modeMigrateOnly bool
-	var modeMigrate bool
+	var modeMigrateMongo bool
+	var modeMigratePostgres bool
+	var postgresMigrationDirectory string
+	var postgresMigrationMode string
+	var postgresMigrationSteps int
 
 	flag.StringVar(&confFile, "conf", DefaultCfgFile, FlagUsageConf)
 	flag.StringVar(&mongoConfPath, "mongoConf", DefaultMongoConfPath, "The configuration file path is used to create mongo indexes.")
 	flag.BoolVar(&modeDebug, "d", false, "debug mode")
-	flag.BoolVar(&modeMigrate, "migrate", false, "If true, it will execute migration scripts")
 	flag.BoolVar(&modeMigrateOnly, "migrate-only", false, "If true, it will only execute migration scripts")
-	flag.StringVar(&migrationDirectory, "migration-directory", "", "The directory with migration scripts")
+	flag.BoolVar(&modeMigrateMongo, "migrate-mongo", false, "If true, it will execute mongo migration scripts")
+	flag.BoolVar(&modeMigratePostgres, "migrate-postgres", false, "If true, it will execute postgres migration scripts")
+	flag.StringVar(&mongoMigrationDirectory, "mongo-migration-directory", "", "The directory with migration scripts")
+	flag.StringVar(&postgresMigrationDirectory, "postgres-migration-directory", "", "The directory with migration scripts")
+	flag.StringVar(&postgresMigrationMode, "postgres-migration-mode", "", "should be up or down")
+	flag.IntVar(&postgresMigrationSteps, "postgres-migration-steps", 0, "number of migration steps, will execute all migrations if empty or 0")
 	flag.StringVar(&mongoContainer, "mongo-container", "", "Should contain docker container_id. If set, it will execute migration scripts inside the container")
 	flag.StringVar(&mongoURL, "mongo-url", "", "mongo url")
 
@@ -78,24 +90,40 @@ func main() {
 	err = GracefullStart(ctx, logger)
 	utils.FailOnError(err, "Failed to open one of required sessions")
 
-	if modeMigrate || modeMigrateOnly {
-		if migrationDirectory == "" {
-			logger.Error().Msg("-migration-directory is not set")
+	if modeMigrateMongo {
+		if mongoMigrationDirectory == "" {
+			logger.Error().Msg("-mongo-migration-directory is not set")
 			os.Exit(ErrGeneral)
 		}
 
-		logger.Info().Msg("Start migrations")
+		logger.Info().Msg("Start mongo migrations")
 
-		err = executeMigrations(logger, migrationDirectory, mongoURL, mongoContainer)
+		err = executeMigrations(logger, mongoMigrationDirectory, mongoURL, mongoContainer)
 		if err != nil {
 			utils.FailOnError(err, "Failed to migrate")
 		}
 
-		logger.Info().Msg("Finish migrations")
+		logger.Info().Msg("Finish mongo migrations")
+	}
 
-		if modeMigrateOnly {
-			return
+	if modeMigratePostgres {
+		if postgresMigrationDirectory == "" {
+			logger.Error().Msg("-postgres-migration-directory is not set")
+			os.Exit(ErrGeneral)
 		}
+
+		logger.Info().Msg("Start postgres migrations")
+
+		err = runPostgresMigrations(postgresMigrationDirectory, postgresMigrationMode, postgresMigrationSteps)
+		if err != nil {
+			utils.FailOnError(err, "Failed to migrate")
+		}
+
+		logger.Info().Msg("Finish postgres migrations")
+	}
+
+	if modeMigrateOnly {
+		return
 	}
 
 	amqpConn, err := amqp.NewConnection(logger, 0, 0)
@@ -180,284 +208,51 @@ func main() {
 	err = config.NewHealthCheckAdapter(client).UpsertConfig(ctx, conf.HealthCheck)
 	utils.FailOnError(err, "Failed to save config into mongo")
 
-	logger.Info().Msg("Initialise TimescaleDB")
-	err = createTimescaleDBTables(ctx)
-	if os.Getenv(postgres.EnvURL) != "" && err != nil {
-		utils.FailOnError(err, "Failed to create timescaleDB tables")
-	}
-
 	logger.Info().Msg("Initialising Mongo indexes")
 	err = createMongoIndexes(ctx, client, mongoConfPath, logger)
 	utils.FailOnError(err, "Failed to create Mongo indexes")
 }
 
-func createTimescaleDBTables(ctx context.Context) error {
-	postgresPool, err := postgres.NewPool(ctx)
+func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
+	connStr := os.Getenv(postgres.EnvURL)
+	if connStr == "" {
+		return fmt.Errorf("environment variable %s empty", postgres.EnvURL)
+	}
+
+	p := &pgx.Postgres{}
+	driver, err := p.Open(connStr)
 	if err != nil {
 		return err
 	}
 
-	defer postgresPool.Close()
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS total_alarm_number (
-		   	time TIMESTAMP NOT NULL,
-		   	entity_id INT,
-		   	value INT);
-		   	SELECT create_hypertable('total_alarm_number', 'time', if_not_exists => TRUE);   
-       	`,
-	)
+	m, err := migrate.NewWithDatabaseInstance(fmt.Sprintf("file://%s", migrationDirectory), "pgx", driver)
 	if err != nil {
 		return err
 	}
 
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS non_displayed_alarm_number (
-		   	time TIMESTAMP NOT NULL,
-		   	entity_id INT,
-		   	value INT);
-		   	SELECT create_hypertable('non_displayed_alarm_number', 'time', if_not_exists => TRUE);   
-       	`,
-	)
-	if err != nil {
-		return err
+	if steps < 0 {
+		return errors.New("postgres migration steps should be >= 0")
 	}
 
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS pbh_alarm_number (
-		   	time TIMESTAMP NOT NULL,
-		   	entity_id INT,
-		   	value INT);
-		   	SELECT create_hypertable('pbh_alarm_number', 'time', if_not_exists => TRUE);   
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS instruction_alarm_number (
-		   	time TIMESTAMP NOT NULL,
-		   	entity_id INT,
-		   	value INT);
-		   	SELECT create_hypertable('instruction_alarm_number', 'time', if_not_exists => TRUE);   
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS correlation_alarm_number (
-		   	time TIMESTAMP NOT NULL,
-		   	entity_id INT,
-		   	value INT);
-		   	SELECT create_hypertable('correlation_alarm_number', 'time', if_not_exists => TRUE);   
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS ticket_alarm_number (
-		   	time TIMESTAMP NOT NULL,
-		   	entity_id INT,
-			user_id VARCHAR(255),
-		   	value INT);
-		   	SELECT create_hypertable('ticket_alarm_number', 'time', if_not_exists => TRUE);   
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS ack_alarm_number (
-		   	time TIMESTAMP NOT NULL,
-		   	entity_id INT,
-			user_id VARCHAR(255),
-		   	value INT);
-		   	SELECT create_hypertable('ack_alarm_number', 'time', if_not_exists => TRUE);   
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS cancel_ack_alarm_number (
-		   	time TIMESTAMP NOT NULL,
-		   	entity_id INT,
-			user_id VARCHAR(255),
-		   	value INT);
-		   	SELECT create_hypertable('cancel_ack_alarm_number', 'time', if_not_exists => TRUE);   
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS ack_duration (
-			time TIMESTAMP NOT NULL,
-			entity_id INT,
-			user_id VARCHAR(255),
-			value INT);
-			SELECT create_hypertable('ack_duration', 'time', if_not_exists => TRUE);
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS resolve_duration (
-			time TIMESTAMP NOT NULL,
-			entity_id INT,
-			value INT);
-			SELECT create_hypertable('resolve_duration', 'time', if_not_exists => TRUE);
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS user_logins (
-		   	time TIMESTAMP NOT NULL,
-		   	user_id VARCHAR(255),
-		   	value INT);
-		   	SELECT create_hypertable('user_logins', 'time', if_not_exists => TRUE);   
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS user_activity (
-		   	time TIMESTAMP NOT NULL,
-		   	user_id VARCHAR(255),
-		   	value INT);
-		   	SELECT create_hypertable('user_activity', 'time', if_not_exists => TRUE);   
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS sli_duration (
-			time TIMESTAMP NOT NULL,
-			entity_id INT,
-			type SMALLINT,
-			value INT);
-			SELECT create_hypertable('sli_duration', 'time', if_not_exists => TRUE);
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS entities (
-			id SERIAL PRIMARY KEY,
-			custom_id VARCHAR(500),
-			name VARCHAR(500),
-		   	category VARCHAR(255),
-		   	impact_level INT,
-		   	type VARCHAR(255),
-			enabled BOOLEAN,
-			infos JSONB,
-			component_infos JSONB,
-			component VARCHAR(500),
-			updated_at TIMESTAMP NOT NULL,
-			UNIQUE(custom_id)
-			);
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS users (
-			id VARCHAR(255) PRIMARY KEY,
-			username VARCHAR(255),
-		   	role VARCHAR(255),
-			updated_at TIMESTAMP NOT NULL
-			);
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, err = postgresPool.Exec(
-		ctx,
-		`
-			CREATE TABLE IF NOT EXISTS metrics_criteria (
-			id SERIAL PRIMARY KEY,
-			type INT,
-		   	name VARCHAR(255) UNIQUE,
-			label VARCHAR(255), 
-			enabled BOOLEAN
-			);
-       	`,
-	)
-	if err != nil {
-		return err
-	}
-
-	for _, c := range defaultCriteria() {
-		_, err := postgresPool.Exec(
-			ctx,
-			fmt.Sprintf(
-				`
-				INSERT INTO %s (type, name, label, enabled) VALUES($1, $2, $3, $4)
-				ON CONFLICT ON CONSTRAINT metrics_criteria_name_key DO UPDATE SET type = $1, name = $2
-			`,
-				postgres.MetricsCriteria,
-			),
-			c.Type,
-			c.Name,
-			c.Label,
-			true,
-		)
-		if err != nil {
-			return err
+	switch mode {
+	case "up":
+		if steps != 0 {
+			err = m.Steps(steps)
+		} else {
+			err = m.Up()
 		}
+	case "down":
+		if steps != 0 {
+			err = m.Steps(-steps)
+		} else {
+			err = m.Down()
+		}
+	default:
+		return errors.New("postgres migration mode should be up or down")
+	}
+
+	if err == migrate.ErrNoChange {
+		err = nil
 	}
 
 	return nil
