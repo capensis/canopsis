@@ -2604,7 +2604,7 @@ export default {
     },
   },
 
-  kpiRating: {
+  kpiMetrics: {
     tooltip: {
       [USER_METRIC_PARAMETERS.loginsNumber]: '{value} connexions',
       [USER_METRIC_PARAMETERS.averageSession]: '{value} séance moyenne',

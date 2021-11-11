@@ -20,7 +20,7 @@ import {
 } from '@/helpers/date/duration';
 import { isRatioMetric, isTimeMetric } from '@/helpers/metrics';
 
-const BarChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/bar-chart.vue');
+import BarChart from '@/components/common/chart/bar-chart.vue';
 
 export default {
   components: { BarChart },
@@ -75,10 +75,6 @@ export default {
         return 100;
       }
 
-      if (this.isTimeMetric) {
-        return this.maxDuration.value + 1;
-      }
-
       return undefined;
     },
 
@@ -89,14 +85,18 @@ export default {
         scales: {
           x: {
             ticks: {
-              fontSize: 11,
+              font: {
+                size: 11,
+              },
             },
           },
           y: {
             beginAtZero: true,
             max: this.maxValueByMetric,
             ticks: {
-              fontSize: 11,
+              font: {
+                size: 11,
+              },
               callback: this.getChartYTick,
             },
           },
@@ -140,14 +140,12 @@ export default {
       return value;
     },
 
-    getChartTooltipLabel(tooltip) {
-      const { raw } = tooltip;
-
+    getChartTooltipLabel({ raw }) {
       const value = this.isTimeMetric
         ? convertDurationToString(raw, DATETIME_FORMATS.refreshFieldFormat, this.maxDuration.unit)
         : raw;
 
-      return this.$t(`kpiRating.tooltip.${this.metric}`, { value });
+      return this.$t(`kpiMetrics.tooltip.${this.metric}`, { value });
     },
   },
 };
