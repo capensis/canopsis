@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`kpi-charts Renders \`kpi-sli\` without metrics 1`] = `
+exports[`kpi-sli Renders \`kpi-sli\` without metrics 1`] = `
 <div>
   <div
     class="layout ml-4 mb-4 align-center"
@@ -11,9 +11,9 @@ exports[`kpi-charts Renders \`kpi-sli\` without metrics 1`] = `
   </div>
   <div>
     <kpi-sli-chart-stub
-      datatype="percent"
+      data-type="percent"
       metrics=""
-      responsive="true"
+      responsive="responsive"
       sampling="day"
     />
   </div>

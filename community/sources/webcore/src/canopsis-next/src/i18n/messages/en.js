@@ -468,9 +468,13 @@ export default {
       [ALARM_METRIC_PARAMETERS.totalAlarms]: 'Total number of alarms',
       [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Number of non-displayed alarms',
       [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Number of alarms under automatic remediation',
-      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Number of correlated alarms',
+      // [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Number of alarms with PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Number of alarms with correlation',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Total number of acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Number of canceled acks',
+      // [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Number of alarms with acks (excluding canceled acks)',
       [ALARM_METRIC_PARAMETERS.ticketAlarms]: 'Number of alarms with tickets created',
-      [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Number of alarms with acks',
+      // [ALARM_METRIC_PARAMETERS.ticketAlarms]: 'Number of alarms with no tickets created',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% of correlated alarms',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% of alarms with auto remediation',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '% of alarms with tickets created',
@@ -2604,7 +2608,7 @@ export default {
     },
   },
 
-  kpiRating: {
+  kpiMetrics: {
     tooltip: {
       [USER_METRIC_PARAMETERS.loginsNumber]: '{value} logins',
       [USER_METRIC_PARAMETERS.averageSession]: '{value} average session',
