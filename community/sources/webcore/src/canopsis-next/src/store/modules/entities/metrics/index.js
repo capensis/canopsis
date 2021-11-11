@@ -12,5 +12,9 @@ export default {
     fetchRatingMetricsWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.metrics.rating, { params });
     },
+
+    fetchAlarmsMetricsWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.metrics.alarm, { params });
+    },
   },
 };

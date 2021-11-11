@@ -9,8 +9,9 @@ const localVue = createVueInstance();
 const snapshotStubs = {
   'c-information-block': CInformationBlock,
   'c-help-icon': CHelpIcon,
-  'kpi-sli': true,
+  'kpi-alarms': true,
   'kpi-rating': true,
+  'kpi-sli': true,
 };
 
 const snapshotFactory = (options = {}) => mount(KpiCharts, {
