@@ -10,7 +10,7 @@ import (
 )
 
 type API interface {
-	List(c *gin.Context)
+	Get(c *gin.Context)
 	Update(c *gin.Context)
 }
 
@@ -26,21 +26,28 @@ func NewApi(store Store, actionLogger logger.ActionLogger) API {
 	}
 }
 
-// Find all user preferences
-// @Summary Find all user preferences
-// @Description Find all user preferences
+// Get user preferences by widget id
+// @Summary Get user preferences by widget id
+// @Description Get user preferences by widget id
 // @Tags userpreference
-// @ID userpreference-find-all
+// @ID userpreference-get-by-id
 // @Produce json
 // @Security JWTAuth
 // @Security BasicAuth
-// @Success 200 {array} Response
-// @Router /user-preferences [get]
-func (a api) List(c *gin.Context) {
+// @Param id path string true "widget id"
+// @Success 200 {object} Response
+// @Failure 404 {object} common.ErrorResponse
+// @Router /user-preferences/{id} [get]
+func (a *api) Get(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-	response, err := a.store.Find(c.Request.Context(), userId)
+	response, err := a.store.Find(c.Request.Context(), userId, c.Param("id"))
 	if err != nil {
 		panic(err)
+	}
+
+	if response == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
 	c.JSON(http.StatusOK, response)
@@ -55,12 +62,11 @@ func (a api) List(c *gin.Context) {
 // @Produce json
 // @Security JWTAuth
 // @Security BasicAuth
-// @Param id path string true "widget id"
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
-// @Router /user-preferences/{id} [put]
+// @Router /user-preferences [put]
 func (a api) Update(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{}
@@ -69,8 +75,7 @@ func (a api) Update(c *gin.Context) {
 		return
 	}
 
-	widgetId := c.Param("id")
-	response, isNew, err := a.store.Update(c.Request.Context(), userId, widgetId, request)
+	response, isNew, err := a.store.Update(c.Request.Context(), userId, request)
 	if err != nil {
 		panic(err)
 	}
@@ -88,7 +93,7 @@ func (a api) Update(c *gin.Context) {
 	err = a.actionLogger.Action(c, logger.LogEntry{
 		Action:    action,
 		ValueType: logger.ValueTypeUserPreferences,
-		ValueID:   widgetId,
+		ValueID:   response.Widget,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")

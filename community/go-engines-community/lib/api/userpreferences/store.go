@@ -13,8 +13,8 @@ import (
 )
 
 type Store interface {
-	Find(ctx context.Context, userId string) ([]Response, error)
-	Update(ctx context.Context, userId, widgetId string, request EditRequest) (*Response, bool, error)
+	Find(ctx context.Context, userId, widgetId string) (*Response, error)
+	Update(ctx context.Context, userId string, request EditRequest) (*Response, bool, error)
 }
 
 type store struct {
@@ -30,33 +30,35 @@ func NewStore(
 	}
 }
 
-func (s *store) Find(ctx context.Context, userId string) ([]Response, error) {
-	cursor, err := s.collection.Find(ctx, bson.M{"user": userId})
-	if err != nil {
+func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, error) {
+	ok, err := s.existWidget(ctx, widgetId)
+	if err != nil || !ok {
 		return nil, err
 	}
 
-	res := make([]Response, 0)
-	err = cursor.All(ctx, &res)
-	if err != nil {
+	res := Response{
+		Widget: widgetId,
+	}
+	err = s.collection.FindOne(ctx, bson.M{
+		"user":   userId,
+		"widget": widgetId,
+	}).Decode(&res)
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		return nil, err
 	}
 
-	return res, nil
+	return &res, nil
 }
 
-func (s *store) Update(ctx context.Context, userId, widgetId string, request EditRequest) (*Response, bool, error) {
-	err := s.viewCollection.FindOne(ctx, bson.M{"tabs.widgets._id": widgetId}).Err()
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, false, nil
-		}
+func (s *store) Update(ctx context.Context, userId string, request EditRequest) (*Response, bool, error) {
+	ok, err := s.existWidget(ctx, request.Widget)
+	if err != nil || !ok {
 		return nil, false, err
 	}
 
 	res, err := s.collection.UpdateOne(ctx, bson.M{
 		"user":   userId,
-		"widget": widgetId,
+		"widget": request.Widget,
 	}, bson.M{
 		"$set": bson.M{
 			"content": request.Content,
@@ -65,7 +67,7 @@ func (s *store) Update(ctx context.Context, userId, widgetId string, request Edi
 		"$setOnInsert": bson.M{
 			"_id":    utils.NewID(),
 			"user":   userId,
-			"widget": widgetId,
+			"widget": request.Widget,
 		},
 	}, options.Update().SetUpsert(true))
 
@@ -76,7 +78,19 @@ func (s *store) Update(ctx context.Context, userId, widgetId string, request Edi
 	isNew := res.UpsertedCount > 0
 
 	return &Response{
-		Widget:  widgetId,
+		Widget:  request.Widget,
 		Content: request.Content,
 	}, isNew, nil
+}
+
+func (s *store) existWidget(ctx context.Context, widgetId string) (bool, error) {
+	err := s.viewCollection.FindOne(ctx, bson.M{"tabs.widgets._id": widgetId}).Err()
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
 }
