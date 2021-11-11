@@ -27,37 +27,31 @@ Feature: Delete user preferences on widget delete.
     """
     Then the response code should be 201
     When I save response viewID={{ .lastResponse._id }}
-    When I do PUT /api/v4/user-preferences/test-view-to-user-preferences-delete-1-tab-1-widget-1:
+    When I do PUT /api/v4/user-preferences:
     """json
     {
+      "widget": "test-view-to-user-preferences-delete-1-tab-1-widget-1",
       "content": {
         "test": 1
       }
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/user-preferences
+    When I do GET /api/v4/user-preferences/test-view-to-user-preferences-delete-1-tab-1-widget-1
     Then the response code should be 200
     Then the response body should be:
     """json
-    [
-      {
-        "widget": "test-view-to-user-preferences-delete-1-tab-1-widget-1",
-        "content": {
-          "test": 1
-        }
+    {
+      "widget": "test-view-to-user-preferences-delete-1-tab-1-widget-1",
+      "content": {
+        "test": 1
       }
-    ]
+    }
 	"""
     When I do DELETE /api/v4/views/{{ .viewID }}
     Then the response code should be 204
-    When I do GET /api/v4/user-preferences
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    [
-    ]
-	"""
+    When I do GET /api/v4/user-preferences/test-view-to-user-preferences-delete-1-tab-1-widget-1
+    Then the response code should be 404
 
   Scenario: given deleted widget should delete user preferences
     When I am test-role-to-user-preferences-delete-2
@@ -90,42 +84,47 @@ Feature: Delete user preferences on widget delete.
     """
     Then the response code should be 201
     When I save response viewID={{ .lastResponse._id }}
-    When I do PUT /api/v4/user-preferences/test-view-to-user-preferences-delete-2-tab-1-widget-1:
+    When I do PUT /api/v4/user-preferences:
     """json
     {
+      "widget": "test-view-to-user-preferences-delete-2-tab-1-widget-1",
       "content": {
         "test": 1
       }
     }
     """
     Then the response code should be 200
-    When I do PUT /api/v4/user-preferences/test-view-to-user-preferences-delete-2-tab-1-widget-2:
+    When I do PUT /api/v4/user-preferences:
     """json
     {
+      "widget": "test-view-to-user-preferences-delete-2-tab-1-widget-2",
       "content": {
         "test": 2
       }
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/user-preferences
+    When I do GET /api/v4/user-preferences/test-view-to-user-preferences-delete-2-tab-1-widget-1
     Then the response code should be 200
     Then the response body should be:
     """json
-    [
-      {
-        "widget": "test-view-to-user-preferences-delete-2-tab-1-widget-1",
-        "content": {
-          "test": 1
-        }
-      },
-      {
-        "widget": "test-view-to-user-preferences-delete-2-tab-1-widget-2",
-        "content": {
-          "test": 2
-        }
+    {
+      "widget": "test-view-to-user-preferences-delete-2-tab-1-widget-1",
+      "content": {
+        "test": 1
       }
-    ]
+    }
+	"""
+    When I do GET /api/v4/user-preferences/test-view-to-user-preferences-delete-2-tab-1-widget-2
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "widget": "test-view-to-user-preferences-delete-2-tab-1-widget-2",
+      "content": {
+        "test": 2
+      }
+    }
 	"""
     When I do PUT /api/v4/views/{{ .viewID }}:
     """json
@@ -150,16 +149,16 @@ Feature: Delete user preferences on widget delete.
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/user-preferences
+    When I do GET /api/v4/user-preferences/test-view-to-user-preferences-delete-2-tab-1-widget-1
     Then the response code should be 200
     Then the response body should be:
     """json
-    [
-      {
-        "widget": "test-view-to-user-preferences-delete-2-tab-1-widget-1",
-        "content": {
-          "test": 1
-        }
+    {
+      "widget": "test-view-to-user-preferences-delete-2-tab-1-widget-1",
+      "content": {
+        "test": 1
       }
-    ]
+    }
 	"""
+    When I do GET /api/v4/user-preferences/test-view-to-user-preferences-delete-2-tab-1-widget-2
+    Then the response code should be 404

@@ -198,8 +198,8 @@ func RegisterRoutes(
 		{
 			userPreferencesRouter.Use(middleware.OnlyAuth())
 			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient), actionLogger)
-			userPreferencesRouter.GET("", userPreferencesApi.List)
-			userPreferencesRouter.PUT("/:id", userPreferencesApi.Update)
+			userPreferencesRouter.GET("/:id", userPreferencesApi.Get)
+			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
 		viewStatsRouter := protected.Group("/view-stats")

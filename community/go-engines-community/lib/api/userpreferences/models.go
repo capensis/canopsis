@@ -1,6 +1,7 @@
 package userpreferences
 
 type EditRequest struct {
+	Widget  string                 `json:"widget" binding:"required"`
 	Content map[string]interface{} `json:"content" binding:"required"`
 }
 

@@ -3557,8 +3557,11 @@ definitions:
       content:
         additionalProperties: true
         type: object
+      widget:
+        type: string
     required:
     - content
+    - widget
     type: object
   userpreferences.Response:
     properties:
@@ -8105,36 +8108,12 @@ paths:
       tags:
       - state-settings
   /user-preferences:
-    get:
-      description: Find all user preferences
-      operationId: userpreference-find-all
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/userpreferences.Response'
-            type: array
-      security:
-      - JWTAuth: []
-      - BasicAuth: []
-      summary: Find all user preferences
-      tags:
-      - userpreference
-  /user-preferences/{id}:
     put:
       consumes:
       - application/json
       description: Update user preferences by widget id
       operationId: userpreference-update-by-widget-id
       parameters:
-      - description: widget id
-        in: path
-        name: id
-        required: true
-        type: string
       - description: body
         in: body
         name: body
@@ -8160,6 +8139,33 @@ paths:
       - JWTAuth: []
       - BasicAuth: []
       summary: Update user preferences by widget id
+      tags:
+      - userpreference
+  /user-preferences/{id}:
+    get:
+      description: Get user preferences by widget id
+      operationId: userpreference-get-by-id
+      parameters:
+      - description: widget id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userpreferences.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get user preferences by widget id
       tags:
       - userpreference
   /users:

@@ -6972,38 +6972,6 @@ var doc = `{
             }
         },
         "/user-preferences": {
-            "get": {
-                "security": [
-                    {
-                        "JWTAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Find all user preferences",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "userpreference"
-                ],
-                "summary": "Find all user preferences",
-                "operationId": "userpreference-find-all",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/userpreferences.Response"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/user-preferences/{id}": {
             "put": {
                 "security": [
                     {
@@ -7027,13 +6995,6 @@ var doc = `{
                 "operationId": "userpreference-update-by-widget-id",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "widget id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "body",
                         "name": "body",
                         "in": "body",
@@ -7054,6 +7015,50 @@ var doc = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-preferences/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get user preferences by widget id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userpreference"
+                ],
+                "summary": "Get user preferences by widget id",
+                "operationId": "userpreference-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "widget id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userpreferences.Response"
                         }
                     },
                     "404": {
@@ -13230,12 +13235,16 @@ var doc = `{
         "userpreferences.EditRequest": {
             "type": "object",
             "required": [
-                "content"
+                "content",
+                "widget"
             ],
             "properties": {
                 "content": {
                     "type": "object",
                     "additionalProperties": true
+                },
+                "widget": {
+                    "type": "string"
                 }
             }
         },
