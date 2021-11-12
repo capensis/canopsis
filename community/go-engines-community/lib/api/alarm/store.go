@@ -37,6 +37,8 @@ const linkFetchTimeout = 30 * time.Second
 
 type Store interface {
 	Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error)
+	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]InstructionWithAlarms, error)
+	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string) (map[string]ExecutionStatus, error)
 	Count(ctx context.Context, r FilterRequest) (*Count, error)
 }
 
@@ -387,7 +389,7 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 			childrenAlarmIds[idx] = ch.ID
 		}
 
-		assignedInstructionMap, err := s.getAssignedInstructionsMap(ctx, childrenAlarmIds)
+		assignedInstructionMap, err := s.GetAssignedInstructionsMap(ctx, childrenAlarmIds)
 		if err != nil {
 			return err
 		}
@@ -415,7 +417,7 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	return nil
 }
 
-func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]InstructionWithAlarms, error) {
+func (s *store) GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]InstructionWithAlarms, error) {
 	instructionCursor, err := s.dbInstructionCollection.Aggregate(
 		ctx,
 		[]bson.M{
@@ -575,38 +577,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 	return assignedInstructionsMap, nil
 }
 
-func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult) error {
-	var alarmIds []string
-	for _, alarmDocument := range result.Data {
-		alarmIds = append(alarmIds, alarmDocument.ID)
-	}
-
-	if len(alarmIds) == 0 {
-		return nil
-	}
-
-	assignedInstructionsMap, err := s.getAssignedInstructionsMap(ctx, alarmIds)
-	if err != nil {
-		return err
-	}
-
-	for i, alarmDocument := range result.Data {
-		sort.Slice(assignedInstructionsMap[alarmDocument.ID], func(i, j int) bool {
-			return assignedInstructionsMap[alarmDocument.ID][i].Name < assignedInstructionsMap[alarmDocument.ID][j].Name
-		})
-
-		result.Data[i].AssignedInstructions = assignedInstructionsMap[alarmDocument.ID]
-	}
-
-	return nil
-}
-
-func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationResult) error {
-	alarmIDs := make([]string, len(result.Data))
-	for i, item := range result.Data {
-		alarmIDs[i] = item.ID
-	}
-
+func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string) (map[string]ExecutionStatus, error) {
 	cursor, err := s.dbInstructionExecutionCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"alarm": bson.M{"$in": alarmIDs},
@@ -655,23 +626,57 @@ func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationRes
 		}},
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	type status struct {
-		ID               string `bson:"_id"`
-		AutoRunning      *bool  `bson:"auto_running"`
-		ManualRunning    *bool  `bson:"manual_running"`
-		AutoAllCompleted *bool  `bson:"auto_all_completed"`
-	}
-	executionStatuses := make([]status, 0)
+	executionStatuses := make([]ExecutionStatus, 0)
 	err = cursor.All(ctx, &executionStatuses)
+	if err != nil {
+		return nil, err
+	}
+	statusesByAlarm := make(map[string]ExecutionStatus, len(executionStatuses))
+	for _, v := range executionStatuses {
+		statusesByAlarm[v.ID] = v
+	}
+
+	return statusesByAlarm, nil
+}
+
+func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult) error {
+	var alarmIds []string
+	for _, alarmDocument := range result.Data {
+		alarmIds = append(alarmIds, alarmDocument.ID)
+	}
+
+	if len(alarmIds) == 0 {
+		return nil
+	}
+
+	assignedInstructionsMap, err := s.GetAssignedInstructionsMap(ctx, alarmIds)
 	if err != nil {
 		return err
 	}
-	statusesByAlarm := make(map[string]status, len(executionStatuses))
-	for _, v := range executionStatuses {
-		statusesByAlarm[v.ID] = v
+
+	for i, alarmDocument := range result.Data {
+		sort.Slice(assignedInstructionsMap[alarmDocument.ID], func(i, j int) bool {
+			return assignedInstructionsMap[alarmDocument.ID][i].Name < assignedInstructionsMap[alarmDocument.ID][j].Name
+		})
+
+		result.Data[i].AssignedInstructions = assignedInstructionsMap[alarmDocument.ID]
+	}
+
+	return nil
+}
+
+func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationResult) error {
+	alarmIDs := make([]string, len(result.Data))
+	for i, item := range result.Data {
+		alarmIDs[i] = item.ID
+	}
+
+	statusesByAlarm, err := s.GetInstructionExecutionStatuses(ctx, alarmIDs)
+	if err != nil {
+		return err
 	}
 
 	for i, v := range result.Data {
