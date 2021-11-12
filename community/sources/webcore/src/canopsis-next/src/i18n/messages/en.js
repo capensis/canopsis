@@ -206,6 +206,7 @@ export default {
     downtime: 'Downtime',
     sampling: 'Sampling',
     parametersToDisplay: '{count} parameters to display',
+    time: 'Time',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

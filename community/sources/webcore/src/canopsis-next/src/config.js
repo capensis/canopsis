@@ -155,6 +155,7 @@ export const API_ROUTES = {
   idleRules: '/api/v4/idle-rules',
   idleRulesCount: '/api/v4/idle-rules/count',
   messageRateStats: '/api/v4/message-rate-stats',
+  filters: '/api/v4/cat/filters',
 
   /**
    * Cat routes

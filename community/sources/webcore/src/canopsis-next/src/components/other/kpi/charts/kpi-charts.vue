@@ -1,11 +1,12 @@
 <template lang="pug">
-  v-flex.pa-4(md10, offset-md1, lg8, offset-lg2)
-    c-information-block.mb-5(:title="$t('kpi.alarmMetrics')")
-      kpi-alarms
-    c-information-block.mb-5(:title="$tc('common.rating', 2)")
-      kpi-rating
-    c-information-block.mb-5(:title="$t('kpi.sli')")
-      kpi-sli
+  v-layout.pa-4(column, align-center)
+    div.kpi-charts
+      c-information-block.mb-5(:title="$t('kpi.alarmMetrics')")
+        kpi-alarms
+      c-information-block.mb-5(:title="$tc('common.rating', 2)")
+        kpi-rating
+      c-information-block.mb-5(:title="$t('kpi.sli')")
+        kpi-sli
 </template>
 
 <script>
@@ -21,3 +22,10 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.kpi-charts {
+  max-width: 1500px;
+  width: 100%;
+}
+</style>

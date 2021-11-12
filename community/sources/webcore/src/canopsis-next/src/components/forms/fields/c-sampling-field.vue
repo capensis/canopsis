@@ -6,6 +6,8 @@
     :label="label || $t('common.sampling')",
     :name="name"
   )
+    template(#selection="{ item }")
+      span.text-capitalize {{ item.text }}
     template(#item="{ item }")
       span.text-capitalize {{ item.text }}
 </template>

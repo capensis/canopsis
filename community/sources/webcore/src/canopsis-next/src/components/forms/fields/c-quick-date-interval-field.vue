@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(row, align-center, wrap)
+  div.c-quick-interval
     date-picker-field(
       :value="intervalFromString",
       :label="$t('common.from')",
@@ -16,7 +16,7 @@
       @input="updateToDate"
     )
       v-icon(slot="append", color="black") calendar_today
-    v-flex(xs2)
+    div.c-quick-interval__range
       v-select.ml-4(
         v-model="range",
         :items="quickRanges",
@@ -187,3 +187,14 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.c-quick-interval {
+  display: inline-flex;
+
+  &__range {
+    display: flex;
+    max-width: 180px;
+  }
+}
+</style>
