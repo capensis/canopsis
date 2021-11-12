@@ -24,6 +24,7 @@ import {
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
+  ALARM_METRIC_PARAMETERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -200,6 +201,7 @@ export default {
     downloadAsPng: 'Télécharger en PNG',
     rating: 'Notation',
     sampling: 'Échantillonnage',
+    parametersToDisplay: '{count} paramètres à afficher',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -457,6 +459,20 @@ export default {
       hasAutoInstructionInRunning: 'Instruction automatique en cours',
       allAutoInstructionExecuted: 'Toutes les instructions automatiques ont été exécutées',
       awaitingInstructionComplete: 'En attente de l\'instruction pour terminer',
+    },
+    metrics: {
+      [ALARM_METRIC_PARAMETERS.totalAlarms]: 'Nombre total d\'alarmes',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Nombre d\'alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre d\'alarmes en cours de correction automatique',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Nombre d\'alarmes corrélées',
+      [ALARM_METRIC_PARAMETERS.ticketAlarms]: 'Nombre d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Nombre d\'alarmes avec acquittement',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% d\'alarmes corrélées',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec correction automatique',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '% d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% d\'alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.averageAck]: 'Délai moyen d\'acquittement des alarmes',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: 'Temps moyen pour résoudre les alarmes',
     },
   },
   weather: {
