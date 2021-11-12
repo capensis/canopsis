@@ -127,6 +127,7 @@ import CTimezoneField from '@/components/forms/fields/c-timezone-field.vue';
 import CLanguageField from '@/components/forms/fields/c-language-field.vue';
 import CSamplingField from '@/components/forms/fields/c-sampling-field.vue';
 import CAlarmMetricParametersField from '@/components/forms/fields/c-alarm-metric-parameters-field.vue';
+import CFiltersField from '@/components/forms/fields/c-filters-field.vue';
 
 /**
  * Icons
@@ -307,6 +308,7 @@ Vue.component('c-enabled-duration-field', CEnabledDurationField);
 Vue.component('c-enabled-limit-field', CEnabledLimitField);
 Vue.component('c-timezone-field', CTimezoneField);
 Vue.component('c-language-field', CLanguageField);
+Vue.component('c-filters-field', CFiltersField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
 Vue.component('c-information-block-row', CInformationBlockRow);

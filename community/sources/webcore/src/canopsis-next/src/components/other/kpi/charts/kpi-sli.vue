@@ -1,10 +1,6 @@
 <template lang="pug">
   div
-    v-layout.ml-4.mb-4(align-center)
-      c-quick-date-interval-field(
-        :interval="pagination.interval",
-        @input="updateInterval"
-      )
+    kpi-sli-filters(v-model="pagination")
     div
       kpi-sli-chart(
         :metrics="sliMetrics",
@@ -26,10 +22,12 @@ import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
+import KpiSliFilters from './partials/kpi-sli-filters.vue';
+
 const KpiSliChart = () => import(/* webpackChunkName: "Charts" */ './partials/kpi-sli-chart.vue');
 
 export default {
-  components: { KpiSliChart },
+  components: { KpiSliFilters, KpiSliChart },
   mixins: [entitiesMetricsMixin, localQueryMixin],
   data() {
     return {
@@ -37,6 +35,7 @@ export default {
       query: {
         sampling: SAMPLINGS.day,
         type: KPI_SLI_GRAPH_DATA_TYPE.percent,
+        filter: null,
         interval: {
           from: QUICK_RANGES.last30Days.start,
           to: QUICK_RANGES.last30Days.stop,
@@ -48,16 +47,13 @@ export default {
     this.fetchList();
   },
   methods: {
-    updateInterval(interval) {
-      this.updateQueryField('interval', interval);
-    },
-
     getQuery() {
       return {
-        from: convertStartDateIntervalToTimestamp(this.pagination.interval.from),
-        to: convertStopDateIntervalToTimestamp(this.pagination.interval.to),
-        in_percents: this.pagination.type === KPI_SLI_GRAPH_DATA_TYPE.percent,
-        sampling: this.pagination.sampling,
+        from: convertStartDateIntervalToTimestamp(this.query.interval.from),
+        to: convertStopDateIntervalToTimestamp(this.query.interval.to),
+        in_percents: this.query.type === KPI_SLI_GRAPH_DATA_TYPE.percent,
+        sampling: this.query.sampling,
+        filter: this.query.filter,
       };
     },
 
@@ -69,3 +65,11 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.kpi-sli-filters {
+  &__sampling {
+    max-width: 200px;
+  }
+}
+</style>

@@ -33,4 +33,5 @@ export const ENTITIES_TYPES = {
   testSuiteHistory: 'testSuiteHistory',
   stateSetting: 'stateSetting',
   idleRules: 'idleRules',
+  filter: 'filter',
 };
