@@ -51,6 +51,8 @@ func Default(
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	logger zerolog.Logger,
 	metricsSender metrics.Sender,
+	metricsEntityMetaUpdater metrics.MetaUpdater,
+	metricsUserMetaUpdater metrics.MetaUpdater,
 	deferFunc DeferFunc,
 ) (API, error) {
 	// Retrieve config.
@@ -136,7 +138,11 @@ func Default(
 		contextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 		contextgraph.NewMongoStatusReporter(dbClient),
 		jobQueue,
-		importcontextgraph.NewWorker(dbClient, importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel)),
+		importcontextgraph.NewWorker(
+			dbClient,
+			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+			metricsEntityMetaUpdater,
+		),
 		logger,
 	)
 
@@ -144,6 +150,7 @@ func Default(
 	disabledEntityCleaner := entity.NewDisabledCleaner(
 		entity.NewStore(dbClient),
 		datastorage.NewAdapter(dbClient),
+		metricsEntityMetaUpdater,
 		logger,
 	)
 
@@ -233,6 +240,8 @@ func Default(
 			websocketHub,
 			broadcastMessageChan,
 			metricsSender,
+			metricsEntityMetaUpdater,
+			metricsUserMetaUpdater,
 			logger,
 		)
 	})
