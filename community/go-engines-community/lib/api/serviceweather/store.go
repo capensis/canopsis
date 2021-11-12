@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"sort"
 	"time"
 
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
@@ -31,6 +32,7 @@ func NewStore(
 	dbClient mongo.DbClient,
 	legacyURL fmt.Stringer,
 	statsStore StatsStore,
+	alarmStore alarmapi.Store,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	entityTypeResolver pbehaviorlib.EntityTypeResolver,
 ) Store {
@@ -38,6 +40,7 @@ func NewStore(
 		dbCollection:           dbClient.Collection(mongo.EntityMongoCollection),
 		pbehaviorCollection:    dbClient.Collection(mongo.PbehaviorMongoCollection),
 		statsStore:             statsStore,
+		alarmStore:             alarmStore,
 		defaultSortBy:          "name",
 		links:                  alarmapi.NewLinksFetcher(legacyURL, linkFetchTimeout),
 		timezoneConfigProvider: timezoneConfigProvider,
@@ -50,6 +53,7 @@ type store struct {
 	pbehaviorCollection    mongo.DbCollection
 	links                  alarmapi.LinksFetcher
 	statsStore             StatsStore
+	alarmStore             alarmapi.Store
 	defaultSortBy          string
 	timezoneConfigProvider config.TimezoneConfigProvider
 	entityTypeResolver     pbehaviorlib.EntityTypeResolver
@@ -195,9 +199,15 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 	pbhIDs := make([]string, 0)
 	entitiesWithoutPbh := make([]int, 0, len(res.Data))
 	entityIDs := make([]string, 0, len(res.Data))
+	alarmIds := make([]string, 0, len(res.Data))
+
 	for idx, v := range res.Data {
 		if v.PbehaviorInfo.ID != "" {
 			pbhIDs = append(pbhIDs, v.PbehaviorInfo.ID)
+		}
+
+		if v.AlarmID != "" {
+			alarmIds = append(alarmIds, v.AlarmID)
 		}
 
 		if !v.PbehaviorInfo.IsActive() || service.Alarm != nil && !service.Alarm.Value.PbehaviorInfo.IsActive() {
@@ -207,6 +217,29 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 		if v.PbehaviorInfo.ID == "" && !res.Data[idx].IsGrey {
 			entitiesWithoutPbh = append(entitiesWithoutPbh, idx)
 			entityIDs = append(entityIDs, v.ID)
+		}
+	}
+
+	if query.WithInstructions {
+		assignedInstructionsMap, err := s.alarmStore.GetAssignedInstructionsMap(ctx, alarmIds)
+		if err != nil {
+			return nil, err
+		}
+
+		statusesByAlarm, err := s.alarmStore.GetInstructionExecutionStatuses(ctx, alarmIds)
+		if err != nil {
+			return nil, err
+		}
+
+		for idx, v := range res.Data {
+			sort.Slice(assignedInstructionsMap[v.AlarmID], func(i, j int) bool {
+				return assignedInstructionsMap[v.AlarmID][i].Name < assignedInstructionsMap[v.AlarmID][j].Name
+			})
+
+			res.Data[idx].AssignedInstructions = assignedInstructionsMap[v.AlarmID]
+			res.Data[idx].IsAutoInstructionRunning = statusesByAlarm[v.AlarmID].AutoRunning
+			res.Data[idx].IsAllAutoInstructionsCompleted = statusesByAlarm[v.AlarmID].AutoAllCompleted
+			res.Data[idx].IsManualInstructionWaitingResult = statusesByAlarm[v.AlarmID].ManualRunning
 		}
 	}
 
@@ -603,6 +636,7 @@ func getFindEntitiesPipeline() []bson.M {
 		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
 		// Add alarms fields to result
 		{"$addFields": bson.M{
+			"alarm_id":         "$alarm._id",
 			"connector":        "$alarm.v.connector",
 			"connector_name":   "$alarm.v.connector_name",
 			"component":        "$alarm.v.component",
