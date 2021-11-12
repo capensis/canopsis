@@ -37,7 +37,8 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 	}
 
 	res := Response{
-		Widget: widgetId,
+		Widget:  widgetId,
+		Content: map[string]interface{}{},
 	}
 	err = s.collection.FindOne(ctx, bson.M{
 		"user":   userId,

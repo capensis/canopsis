@@ -9,7 +9,7 @@ Feature: Update user preferences
     """json
     {
       "widget": "test-view-to-update-user-preferences-tab-1-widget-1",
-      "content": null
+      "content": {}
     }
 	"""
     When I do PUT /api/v4/user-preferences:
