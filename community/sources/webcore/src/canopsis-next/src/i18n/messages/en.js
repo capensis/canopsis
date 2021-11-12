@@ -24,6 +24,7 @@ import {
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
+  ALARM_METRIC_PARAMETERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -200,6 +201,7 @@ export default {
     downloadAsPng: 'Download as PNG',
     rating: 'Rating',
     sampling: 'Sampling',
+    parametersToDisplay: '{count} parameters to display',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -457,6 +459,20 @@ export default {
       hasAutoInstructionInRunning: 'Automatic instruction in progress',
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
       awaitingInstructionComplete: 'Awaiting for the instruction to complete',
+    },
+    metrics: {
+      [ALARM_METRIC_PARAMETERS.totalAlarms]: 'Total number of alarms',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Number of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Number of alarms under automatic remediation',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Number of correlated alarms',
+      [ALARM_METRIC_PARAMETERS.ticketAlarms]: 'Number of alarms with tickets created',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Number of alarms with acks',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% of correlated alarms',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% of alarms with auto remediation',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '% of alarms with tickets created',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.averageAck]: 'Average time to ack alarms',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: 'Average time to resolve alarms',
     },
   },
   weather: {
