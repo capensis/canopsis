@@ -53,6 +53,7 @@ func Default(
 	metricsSender metrics.Sender,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
+	exportExecutor export.TaskExecutor,
 	deferFunc DeferFunc,
 ) (API, error) {
 	// Retrieve config.
@@ -169,7 +170,9 @@ func Default(
 	}
 
 	// Create csv exporter.
-	exportExecutor := export.NewTaskExecutor(dbClient, logger)
+	if exportExecutor == nil {
+		exportExecutor = export.NewTaskExecutor(dbClient, logger)
+	}
 
 	websocketHub := newWebsocketHub(enforcer, security.GetTokenProvider(), logger)
 
