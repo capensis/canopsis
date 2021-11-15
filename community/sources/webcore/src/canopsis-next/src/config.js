@@ -185,6 +185,7 @@ export const API_ROUTES = {
     parameters: '/api/v4/cat/healthcheck/parameters',
   },
   metrics: {
+    alarm: '/api/v4/cat/metrics/alarm',
     sli: '/api/v4/cat/metrics/sli',
     rating: '/api/v4/cat/metrics/rating',
   },
@@ -270,7 +271,22 @@ export const COLORS = {
   kpi: {
     downtime: '#c4c4c4',
     maintenance: '#ffa800',
-    uptime: '#5b6E7F',
+    uptime: '#5b6E7f',
+  },
+  metrics: {
+    totalAlarms: '#5a6d7e',
+    nonDisplayedAlarms: '#fd693b',
+    instructionAlarms: '#7bb242',
+    correlationAlarms: '#fdef75',
+    ackAlarms: '#fd5252',
+    cancelAckAlarms: '#9b27af',
+    ticketAlarms: '#2faa63',
+    ratioCorrelation: '#c31162',
+    ratioInstructions: '#cbda39',
+    ratioTickets: '#2195f1',
+    ratioNonDisplayed: '#f9bf2d',
+    averageAck: '#f5c6ab',
+    averageResolve: '#fda701',
   },
 };
 

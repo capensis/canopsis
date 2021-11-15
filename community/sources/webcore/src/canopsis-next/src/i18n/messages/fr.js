@@ -443,6 +443,24 @@ export default {
         [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'La suite de tests a été mise à jour',
         [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'Le cas de test a été mis à jour',
       },
+      metrics: {
+        [ALARM_METRIC_PARAMETERS.totalAlarms]: 'Nombre total d\'alarmes',
+        [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Nombre d\'alarmes non affichées',
+        [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre d\'alarmes en cours de correction automatique',
+        // [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Nombre d'alarmes avec PBehavior',
+        [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Nombre d\'alarmes avec corrélation',
+        [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Nombre total d\'accusés de réception',
+        [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Nombre d\'accusés de réception annulés',
+        // [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Nombre d'alarmes avec acquittement (hors acquittement annulés)',
+        [ALARM_METRIC_PARAMETERS.ticketAlarms]: 'Nombre d\'alarmes avec tickets créés',
+        // [ALARM_METRIC_PARAMETERS.ticketAlarms]: 'Nombre d'alarmes sans ticket créé',
+        [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% d\'alarmes corrélées',
+        [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec correction automatique',
+        [ALARM_METRIC_PARAMETERS.ratioTickets]: '% d\'alarmes avec tickets créés',
+        [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% d\'alarmes non affichées',
+        [ALARM_METRIC_PARAMETERS.averageAck]: 'Délai moyen d\'acquittement des alarmes',
+        [ALARM_METRIC_PARAMETERS.averageResolve]: 'Temps moyen pour résoudre les alarmes',
+      },
     },
     tabs: {
       moreInfos: 'Plus d\'infos',
@@ -2604,7 +2622,7 @@ export default {
     },
   },
 
-  kpiRating: {
+  kpiMetrics: {
     tooltip: {
       [USER_METRIC_PARAMETERS.loginsNumber]: '{value} connexions',
       [USER_METRIC_PARAMETERS.averageSession]: '{value} séance moyenne',

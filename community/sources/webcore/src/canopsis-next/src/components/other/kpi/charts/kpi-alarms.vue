@@ -6,14 +6,14 @@
         @input="updateInterval"
       )
     div
-      kpi-rating-chart(:metrics="ratingMetrics", :metric="pagination.metric", responsive)
+      kpi-alarms-chart(:metrics="alarmsMetrics", :sampling="pagination.sampling", responsive)
 </template>
 
 <script>
 import {
   QUICK_RANGES,
   ALARM_METRIC_PARAMETERS,
-  KPI_RATING_CRITERIA,
+  SAMPLINGS,
 } from '@/constants';
 
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
@@ -21,17 +21,17 @@ import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
-const KpiRatingChart = () => import(/* webpackChunkName: "Charts" */ './partials/kpi-rating-chart.vue');
+const KpiAlarmsChart = () => import(/* webpackChunkName: "Charts" */'./partials/kpi-alarms-chart.vue');
 
 export default {
-  components: { KpiRatingChart },
+  components: { KpiAlarmsChart },
   mixins: [entitiesMetricsMixin, localQueryMixin],
   data() {
     return {
-      ratingMetrics: [],
+      alarmsMetrics: [],
       query: {
-        criteria: KPI_RATING_CRITERIA.user,
-        metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
+        sampling: SAMPLINGS.day,
+        parameters: [ALARM_METRIC_PARAMETERS.totalAlarms],
         interval: {
           from: QUICK_RANGES.last30Days.start,
           to: QUICK_RANGES.last30Days.stop,
@@ -51,14 +51,13 @@ export default {
       return {
         from: convertStartDateIntervalToTimestamp(this.pagination.interval.from),
         to: convertStopDateIntervalToTimestamp(this.pagination.interval.to),
-        criteria: this.pagination.criteria,
-        metric: this.pagination.metric,
-        limit: this.pagination.rowsPerPage,
+        parameters: this.pagination.parameters,
+        sampling: this.pagination.sampling,
       };
     },
 
     async fetchList() {
-      this.ratingMetrics = await this.fetchRatingMetricsWithoutStore({
+      this.alarmsMetrics = await this.fetchAlarmsMetricsWithoutStore({
         params: this.getQuery(),
       });
     },
