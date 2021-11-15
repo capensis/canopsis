@@ -24,11 +24,11 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with custom props 1`] = `
         <div
           class="v-select__selections"
         >
-          <div
-            class="v-select__selection v-select__selection--comma v-select__selection--disabled"
+          <span
+            class="text-capitalize"
           >
             common.times.hour:2
-          </div>
+          </span>
           <input
             aria-label="Custom label"
             aria-readonly="false"
@@ -167,11 +167,11 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with default props 1`] = 
         <div
           class="v-select__selections"
         >
-          <div
-            class="v-select__selection v-select__selection--comma"
+          <span
+            class="text-capitalize"
           >
             common.times.day:2
-          </div>
+          </span>
           <input
             aria-label="common.sampling"
             aria-readonly="false"
