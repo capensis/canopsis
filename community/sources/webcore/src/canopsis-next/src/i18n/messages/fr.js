@@ -201,11 +201,11 @@ export default {
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
     rating: 'Notation | Notations',
+    sampling: 'Échantillonnage',
+    parametersToDisplay: '{count} paramètres à afficher',
     uptime: 'Uptime',
     maintenance: 'Maintenance',
     downtime: 'Downtime',
-    sampling: 'Échantillonnage',
-    parametersToDisplay: '{count} paramètres à afficher',
     time: 'Temps',
     actions: {
       close: 'Fermer',
