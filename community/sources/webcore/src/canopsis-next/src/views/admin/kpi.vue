@@ -6,13 +6,13 @@
         v-tab {{ $tc('common.graph', 2) }}
         v-tab {{ $t('kpi.tabs.dataSlices') }}
         v-tab {{ $t('kpi.tabs.detailedMetrics') }}
-        v-tab {{ $t('common.rating') }}
+        v-tab {{ $tc('common.rating') }}
         v-tab {{ $t('kpi.tabs.sliPatterns') }}
 
       v-tabs-items(v-model="activeTab")
         v-card-text
           v-tab-item
-            kpi-graphs
+            kpi-charts
           v-tab-item(lazy)
             kpi-data-slices
           v-tab-item(lazy)
@@ -24,14 +24,14 @@
 </template>
 
 <script>
-import KpiGraphs from '@/components/other/kpi/graphs/kpi-graphs.vue';
+import KpiCharts from '@/components/other/kpi/charts/kpi-charts.vue';
 import KpiDataSlices from '@/components/other/kpi/data-slices/kpi-data-slices.vue';
 import KpiDetailedMetrics from '@/components/other/kpi/detailed-metrics/kpi-detailed-metrics.vue';
 import KpiRating from '@/components/other/kpi/rating/kpi-rating.vue';
 import KpiSliPatterns from '@/components/other/kpi/sli-patterns/kpi-sli-patterns.vue';
 
 export default {
-  components: { KpiGraphs, KpiDataSlices, KpiDetailedMetrics, KpiRating, KpiSliPatterns },
+  components: { KpiCharts, KpiDataSlices, KpiDetailedMetrics, KpiRating, KpiSliPatterns },
   data() {
     return {
       activeTab: 0,
