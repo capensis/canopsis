@@ -201,11 +201,11 @@ export default {
     systemStatus: 'System status',
     downloadAsPng: 'Download as PNG',
     rating: 'Rating | Ratings',
+    sampling: 'Sampling',
+    parametersToDisplay: '{count} parameters to display',
     uptime: 'Uptime',
     maintenance: 'Maintenance',
     downtime: 'Downtime',
-    sampling: 'Sampling',
-    parametersToDisplay: '{count} parameters to display',
     time: 'Time',
     actions: {
       close: 'Close',

@@ -85,7 +85,7 @@ export const convertDateIntervalToTimestamp = (date, type, format) => convertDat
  *
  * @param {LocalDate} date
  * @param {string} [format = DATETIME_FORMATS.datePicker]
- * @return {number | moment.Moment}
+ * @return {moment.Moment}
  */
 export const convertStartDateIntervalToMoment = (
   date,
@@ -101,7 +101,7 @@ export const convertStartDateIntervalToMoment = (
  *
  * @param {LocalDate} date
  * @param {string} [format = DATETIME_FORMATS.datePicker]
- * @return {number | moment.Moment}
+ * @return {number}
  */
 export const convertStartDateIntervalToTimestamp = (
   date,
@@ -117,7 +117,7 @@ export const convertStartDateIntervalToTimestamp = (
  *
  * @param {LocalDate} date
  * @param {string} [format = DATETIME_FORMATS.datePicker]
- * @return {number | moment.Moment}
+ * @return {moment.Moment}
  */
 export const convertStopDateIntervalToMoment = (
   date,
@@ -133,7 +133,7 @@ export const convertStopDateIntervalToMoment = (
  *
  * @param {LocalDate} date
  * @param {string} [format = DATETIME_FORMATS.datePicker]
- * @return {number | moment.Moment}
+ * @return {number}
  */
 export const convertStopDateIntervalToTimestamp = (
   date,
