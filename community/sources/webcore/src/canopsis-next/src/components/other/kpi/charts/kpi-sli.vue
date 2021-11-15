@@ -70,11 +70,3 @@ export default {
   },
 };
 </script>
-
-<style scoped lang="scss">
-.kpi-sli-filters {
-  &__sampling {
-    max-width: 200px;
-  }
-}
-</style>
