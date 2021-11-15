@@ -74,7 +74,6 @@ func main() {
 		enforcer,
 		nil,
 		logger,
-		metrics.NewNullSender(),
 		metrics.NewNullMetaUpdater(),
 		metrics.NewNullMetaUpdater(),
 		nil,
