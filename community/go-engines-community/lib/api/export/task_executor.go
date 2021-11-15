@@ -22,7 +22,7 @@ const (
 	TaskStatusFailed
 )
 
-const fileNameTimeLayout = "2006-01-02T15:04:05"
+const fileNameTimeLayout = "2006-01-02T15-04-05"
 
 // TaskExecutor is used to implement export task executor.
 type TaskExecutor interface {
@@ -274,7 +274,7 @@ func (e *taskExecutor) deleteTasks(ctx context.Context) {
 
 		if t.File != "" {
 			err = os.Remove(t.File)
-			if err != nil {
+			if err != nil && !os.IsNotExist(err) {
 				e.logger.Err(err).Msg("cannot remove export file")
 				continue
 			}
