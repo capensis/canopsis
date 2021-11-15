@@ -183,6 +183,7 @@ export const ALARM_METRIC_PARAMETERS = {
   instructionAlarms: 'instruction_alarms',
   correlationAlarms: 'correlation_alarms',
   ackAlarms: 'ack_alarms',
+  cancelAckAlarms: 'cancel_ack_alarms',
   ticketAlarms: 'ticket_alarms',
   ratioCorrelation: 'ratio_correlation',
   ratioInstructions: 'ratio_instructions',
