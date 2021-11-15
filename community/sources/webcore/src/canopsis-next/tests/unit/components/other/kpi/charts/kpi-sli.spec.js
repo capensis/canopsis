@@ -12,11 +12,7 @@ import KpiSli from '@/components/other/kpi/charts/kpi-sli';
 const localVue = createVueInstance();
 
 const stubs = {
-  'kpi-sli-filters': true,
-  'kpi-sli-chart': true,
-};
-
-const snapshotStubs = {
+  'c-progress-overlay': true,
   'kpi-sli-filters': true,
   'kpi-sli-chart': true,
 };
@@ -30,7 +26,7 @@ const factory = (options = {}) => shallowMount(KpiSli, {
 
 const snapshotFactory = (options = {}) => mount(KpiSli, {
   localVue,
-  stubs: snapshotStubs,
+  stubs,
 
   ...options,
 });

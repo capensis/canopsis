@@ -4,7 +4,7 @@ exports[`kpi-sli Renders \`kpi-sli\` without metrics 1`] = `
 <div
   class="position-relative"
 >
-  <c-progress-overlay />
+  <c-progress-overlay-stub />
   <kpi-sli-filters-stub
     query="[object Object]"
   />
