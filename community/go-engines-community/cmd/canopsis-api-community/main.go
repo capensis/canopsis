@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 
@@ -34,7 +33,7 @@ import (
 // @in header
 // @name Authorization
 func main() {
-	var flags Flags
+	var flags libapi.Flags
 	flags.ParseArgs()
 	logger := liblog.NewLogger(flags.Debug)
 	// Graceful shutdown.
@@ -66,10 +65,7 @@ func main() {
 
 	api, err := libapi.Default(
 		ctx,
-		fmt.Sprintf(":%d", flags.Port),
-		flags.ConfigDir,
-		flags.SecureSession,
-		flags.Test,
+		flags,
 		enforcer,
 		nil,
 		logger,
@@ -84,7 +80,7 @@ func main() {
 		logger.Fatal().Err(err).Msg("fail create api")
 	}
 
-	if flags.Debug {
+	if flags.EnableDocs {
 		api.AddRouter(func(router gin.IRouter) {
 			router.GET("/swagger/*any", ginswagger.WrapHandler(swaggerfiles.Handler))
 		})
