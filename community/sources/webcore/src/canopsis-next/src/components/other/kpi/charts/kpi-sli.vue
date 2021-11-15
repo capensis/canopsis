@@ -1,13 +1,12 @@
 <template lang="pug">
   div
     kpi-sli-filters(v-model="pagination")
-    div
-      kpi-sli-chart(
-        :metrics="sliMetrics",
-        :data-type="pagination.type",
-        :sampling="pagination.sampling",
-        responsive
-      )
+    kpi-sli-chart(
+      :metrics="sliMetrics",
+      :data-type="pagination.type",
+      :sampling="pagination.sampling",
+      responsive
+    )
 </template>
 
 <script>

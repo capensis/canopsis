@@ -5,13 +5,11 @@ exports[`kpi-sli Renders \`kpi-sli\` without metrics 1`] = `
   <kpi-sli-filters-stub
     query="[object Object]"
   />
-  <div>
-    <kpi-sli-chart-stub
-      data-type="percent"
-      metrics=""
-      responsive="responsive"
-      sampling="day"
-    />
-  </div>
+  <kpi-sli-chart-stub
+    data-type="percent"
+    metrics=""
+    responsive="responsive"
+    sampling="day"
+  />
 </div>
 `;
