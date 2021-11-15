@@ -1,5 +1,6 @@
 <template lang="pug">
-  div
+  div.position-relative
+    c-progress-overlay(:pending="pending")
     kpi-sli-filters(v-model="pagination")
     kpi-sli-chart(
       :metrics="sliMetrics",
@@ -31,6 +32,7 @@ export default {
   data() {
     return {
       sliMetrics: [],
+      pending: false,
       query: {
         sampling: SAMPLINGS.day,
         type: KPI_SLI_GRAPH_DATA_TYPE.percent,
@@ -57,9 +59,13 @@ export default {
     },
 
     async fetchList() {
+      this.pending = true;
+
       this.sliMetrics = await this.fetchSliMetricsWithoutStore({
         params: this.getQuery(),
       });
+
+      this.pending = false;
     },
   },
 };
