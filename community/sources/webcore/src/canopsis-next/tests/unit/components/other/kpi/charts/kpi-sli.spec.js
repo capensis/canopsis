@@ -16,11 +16,6 @@ const stubs = {
   'kpi-sli-chart': true,
 };
 
-const snapshotStubs = {
-  'c-quick-date-interval-field': true,
-  'kpi-sli-chart': true,
-};
-
 const factory = (options = {}) => shallowMount(KpiSli, {
   localVue,
   stubs,
@@ -30,7 +25,7 @@ const factory = (options = {}) => shallowMount(KpiSli, {
 
 const snapshotFactory = (options = {}) => mount(KpiSli, {
   localVue,
-  stubs: snapshotStubs,
+  stubs,
 
   ...options,
 });
