@@ -16,11 +16,6 @@ const stubs = {
   'kpi-alarms-chart': true,
 };
 
-const snapshotStubs = {
-  'c-quick-date-interval-field': true,
-  'kpi-alarms-chart': true,
-};
-
 const factory = (options = {}) => shallowMount(KpiAlarms, {
   localVue,
   stubs,
@@ -30,7 +25,7 @@ const factory = (options = {}) => shallowMount(KpiAlarms, {
 
 const snapshotFactory = (options = {}) => mount(KpiAlarms, {
   localVue,
-  stubs: snapshotStubs,
+  stubs,
 
   ...options,
 });

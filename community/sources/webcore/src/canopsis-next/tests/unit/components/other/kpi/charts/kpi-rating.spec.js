@@ -16,11 +16,6 @@ const stubs = {
   'kpi-rating-chart': true,
 };
 
-const snapshotStubs = {
-  'c-quick-date-interval-field': true,
-  'kpi-rating-chart': true,
-};
-
 const factory = (options = {}) => shallowMount(KpiRating, {
   localVue,
   stubs,
@@ -30,7 +25,7 @@ const factory = (options = {}) => shallowMount(KpiRating, {
 
 const snapshotFactory = (options = {}) => mount(KpiRating, {
   localVue,
-  stubs: snapshotStubs,
+  stubs,
 
   ...options,
 });
