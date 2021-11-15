@@ -29,11 +29,7 @@ export default {
     },
     name: {
       type: String,
-      default: 'role',
-    },
-    required: {
-      type: Boolean,
-      default: false,
+      default: 'filter',
     },
   },
   data() {
@@ -47,7 +43,7 @@ export default {
   },
   methods: {
     fetchList() {
-      if (!this.filtersPending || !this.filters.length) {
+      if (!this.filtersPending) {
         this.fetchFiltersList({ params: { limit: MAX_LIMIT } });
       }
     },

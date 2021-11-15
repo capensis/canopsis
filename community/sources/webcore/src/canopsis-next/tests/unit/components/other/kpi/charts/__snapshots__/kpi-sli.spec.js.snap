@@ -2,13 +2,9 @@
 
 exports[`kpi-sli Renders \`kpi-sli\` without metrics 1`] = `
 <div>
-  <div
-    class="layout ml-4 mb-4 align-center"
-  >
-    <c-quick-date-interval-field-stub
-      interval="[object Object]"
-    />
-  </div>
+  <kpi-sli-filters-stub
+    query="[object Object]"
+  />
   <div>
     <kpi-sli-chart-stub
       data-type="percent"
