@@ -7,6 +7,7 @@ export const entitiesMetricsMixin = {
     ...mapActions({
       fetchSliMetricsWithoutStore: 'fetchSliMetricsWithoutStore',
       fetchRatingMetricsWithoutStore: 'fetchRatingMetricsWithoutStore',
+      fetchAlarmsMetricsWithoutStore: 'fetchAlarmsMetricsWithoutStore',
     }),
   },
 };

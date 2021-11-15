@@ -26,7 +26,7 @@ import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
-import KpiSliChart from './partials/kpi-sli-chart.vue';
+const KpiSliChart = () => import(/* webpackChunkName: "Charts" */ './partials/kpi-sli-chart.vue');
 
 export default {
   components: { KpiSliChart },

@@ -14,10 +14,10 @@ import {
 
 import { colorToRgba } from '@/helpers/color';
 
-import { addUnitToDate, convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString, fromSeconds } from '@/helpers/date/duration';
+import { getDateLabelBySampling } from '@/helpers/metrics';
 
-const BarChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/bar-chart.vue');
+import BarChart from '@/components/common/chart/bar-chart.vue';
 
 export default {
   components: { BarChart },
@@ -120,7 +120,9 @@ export default {
             stacked: true,
             ticks: {
               source: 'data',
-              fontSize: 11,
+              font: {
+                size: 11,
+              },
               callback: this.getChartTimeTickLabel,
             },
           },
@@ -129,7 +131,9 @@ export default {
             max: this.maxValueByType,
             beginAtZero: true,
             ticks: {
-              fontSize: 11,
+              font: {
+                size: 11,
+              },
               callback: this.getChartValueTickLabel,
             },
           },
@@ -159,22 +163,6 @@ export default {
     },
   },
   methods: {
-    getLabelBySampling(value, sampling) {
-      switch (sampling) {
-        case SAMPLINGS.hour:
-          return convertDateToString(value, DATETIME_FORMATS.long);
-        case SAMPLINGS.day:
-          return convertDateToString(value, DATETIME_FORMATS.short);
-        case SAMPLINGS.week:
-          return [
-            convertDateToString(value, DATETIME_FORMATS.short),
-            convertDateToString(addUnitToDate(value, 1, TIME_UNITS.week), DATETIME_FORMATS.short),
-          ].join(' - \n');
-      }
-
-      return convertDateToString(value, DATETIME_FORMATS.yearWithMonth);
-    },
-
     getChartValueTickLabel(value) {
       return `${value}${this.unit}`;
     },
@@ -182,14 +170,14 @@ export default {
     getChartTimeTickLabel(_, index, data) {
       const { value } = data[index] ?? {};
 
-      return this.getLabelBySampling(value, this.sampling).split('\n');
+      return getDateLabelBySampling(value, this.sampling).split('\n');
     },
 
     getChartTooltipTitle(data) {
       const [dataset] = data;
       const { x: timestamp } = dataset.raw;
 
-      return this.getLabelBySampling(timestamp, this.sampling);
+      return getDateLabelBySampling(timestamp, this.sampling);
     },
 
     getChartTooltipLabel(tooltip) {
