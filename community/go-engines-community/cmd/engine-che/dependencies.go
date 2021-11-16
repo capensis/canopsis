@@ -57,8 +57,9 @@ func NewEngineCHE(ctx context.Context, options Options, logger zerolog.Logger) l
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
+	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 
-	eventFilterService := eventfilter.NewService(eventFilterAdapter, logger)
+	eventFilterService := eventfilter.NewService(eventFilterAdapter, timezoneConfigProvider, logger)
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
 		options.FeatureContextEnrich,
