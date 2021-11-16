@@ -48,7 +48,6 @@ func Default(
 	enforcer libsecurity.Enforcer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	logger zerolog.Logger,
-	metricsSender metrics.Sender,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	exportExecutor export.TaskExecutor,
@@ -110,7 +109,7 @@ func Default(
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = cookieOptions.Secure
 	apiConfigProvider := config.NewApiConfigProvider(cfg, logger)
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, metricsSender, cookieOptions, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
 
 	proxyAccessConfig, err := proxy.LoadAccessConfig(flags.ConfigDir)
 	if err != nil {
@@ -240,7 +239,6 @@ func Default(
 			cfg.File.Upload,
 			websocketHub,
 			broadcastMessageChan,
-			metricsSender,
 			metricsEntityMetaUpdater,
 			metricsUserMetaUpdater,
 			logger,
