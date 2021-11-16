@@ -23,6 +23,7 @@
             var value = popupTimeout[key].interval;
             delete popupTimeout[key].interval;
             popupTimeout[key].value = value;
+            popupTimeout[key] = transformDurWithUnitToHours(popupTimeout[key]);
         });
 
         db.configuration.updateOne({_id: doc._id}, {
@@ -35,13 +36,13 @@
     db.action_scenario.find({
         $or: [
             {"delay.seconds": {"$gt": 0}},
-            {"actions.type": {$in: ["webhook", "pbehavior"]}},
+            {"actions.type": {$in: ["webhook", "snooze", "pbehavior"]}},
         ]
     }).forEach(function (doc) {
         var set = {};
 
         if (doc.delay) {
-            set["delay"] = migrateDurWithUnit(doc.delay);
+            set["delay"] = migrateDurWithUnitToHours(doc.delay);
         }
 
         doc.actions.forEach(function (action, actionIndex) {
@@ -50,15 +51,15 @@
             switch (action.type) {
                 case "webhook":
                     if (action.parameters.retry_delay) {
-                        set[paramPrefix + "retry_delay"] = migrateDurWithUnit(action.parameters.retry_delay);
+                        set[paramPrefix + "retry_delay"] = migrateDurWithUnitToHours(action.parameters.retry_delay);
                     }
                     break;
                 case "snooze":
-                    set[paramPrefix + "duration"] = migrateDurWithUnit(action.parameters.duration);
+                    set[paramPrefix + "duration"] = migrateDurWithUnitToHours(action.parameters.duration);
                     break;
                 case "pbehavior":
                     if (action.parameters.duration) {
-                        set[paramPrefix + "duration"] = migrateDurWithUnit(action.parameters.duration);
+                        set[paramPrefix + "duration"] = migrateDurWithUnitToHours(action.parameters.duration);
                     }
                     break;
             }
@@ -74,7 +75,7 @@
     db.flapping_rule.find().forEach(function (doc) {
         db.flapping_rule.updateOne({_id: doc._id}, {
             $set: {
-                duration: migrateDurWithUnit(doc.duration),
+                duration: migrateDurWithUnitToHours(doc.duration),
             }
         });
     });
@@ -82,24 +83,24 @@
     db.resolve_rule.find().forEach(function (doc) {
         db.resolve_rule.updateOne({_id: doc._id}, {
             $set: {
-                duration: migrateDurWithUnit(doc.duration),
+                duration: migrateDurWithUnitToHours(doc.duration),
             }
         });
     });
 
     db.idle_rule.find().forEach(function (doc) {
         var set = {
-            duration: migrateDurWithUnit(doc.duration),
+            duration: migrateDurWithUnitToHours(doc.duration),
         };
 
         if (doc.operation) {
             switch (doc.operation.type) {
                 case "snooze":
-                    set["operation.parameters.duration"] = migrateDurWithUnit(doc.operation.parameters.duration);
+                    set["operation.parameters.duration"] = migrateDurWithUnitToHours(doc.operation.parameters.duration);
                     break;
                 case "pbehavior":
                     if (doc.operation.parameters.duration) {
-                        set["operation.parameters.duration"] = migrateDurWithUnit(doc.operation.parameters.duration);
+                        set["operation.parameters.duration"] = migrateDurWithUnitToHours(doc.operation.parameters.duration);
                     }
                     break;
             }
@@ -112,13 +113,13 @@
 
     db.instruction.find().forEach(function (doc) {
         var set = {
-            timeout_after_execution: migrateDurWithUnit(doc.timeout_after_execution),
+            timeout_after_execution: migrateDurWithUnitToHours(doc.timeout_after_execution),
         };
 
         if (doc.steps) {
             doc.steps.forEach(function (step, stepIndex) {
                 step.operations.forEach(function (operation, operationsIndex) {
-                    set["steps." + stepIndex + ".operations." + operationsIndex + ".time_to_complete"] = migrateDurWithUnit(operation.time_to_complete);
+                    set["steps." + stepIndex + ".operations." + operationsIndex + ".time_to_complete"] = migrateDurWithUnitToHours(operation.time_to_complete);
                 });
             });
         }
@@ -139,7 +140,7 @@
     db.view_playlist.find().forEach(function (doc) {
         db.view_playlist.updateOne({_id: doc._id}, {
             $set: {
-                interval: migrateDurWithUnit(doc.interval),
+                interval: migrateDurWithUnitToHours(doc.interval),
             }
         });
     });
@@ -148,7 +149,7 @@
         var set = {};
 
         if (doc.periodic_refresh) {
-            set.periodic_refresh = migrateDurWithEnabled(doc.periodic_refresh);
+            set.periodic_refresh = migrateDurWithEnabledToHours(doc.periodic_refresh);
         }
 
         if (doc.tabs) {
@@ -157,7 +158,7 @@
                     tab.widgets.forEach(function (widget, widgetIndex) {
                         if (widget.parameters.periodic_refresh) {
                             var key = 'tabs.' + tabIndex + '.widgets.' + widgetIndex + '.parameters.periodic_refresh';
-                            set[key] = migrateDurWithEnabled(widget.parameters.periodic_refresh);
+                            set[key] = migrateDurWithEnabledToHours(widget.parameters.periodic_refresh);
                         }
                     });
                 }
@@ -222,6 +223,51 @@
             value: v.value,
             unit: v.unit,
             enabled: d.enabled,
+        };
+    }
+
+    function migrateDurWithEnabledToHours(d) {
+        var v = migrateDurWithUnitToHours(d);
+
+        return {
+            value: v.value,
+            unit: v.unit,
+            enabled: d.enabled,
+        };
+    }
+
+    function migrateDurWithUnitToHours(d) {
+        var v = migrateDurWithUnit(d);
+
+        return transformDurWithUnitToHours(v);
+    }
+
+    function transformDurWithUnitToHours(v) {
+        var value = v.value;
+        var unit = v.unit;
+
+        switch (unit) {
+            case "d":
+                value = value * 24;
+                unit = "h";
+                break;
+            case "w":
+                value = value * 24 * 7;
+                unit = "h";
+                break;
+            case "M":
+                value = value * 24 * 30;
+                unit = "h";
+                break;
+            case "y":
+                value = value * 24 * 365;
+                unit = "h";
+                break;
+        }
+
+        return {
+            value: value,
+            unit: unit,
         };
     }
 })();
