@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -17,6 +17,7 @@ import (
 	devmiddleware "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware/dev"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -24,6 +25,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -42,14 +44,14 @@ const sessionStoreAutoCleanInterval = 10 * time.Second
 
 func Default(
 	ctx context.Context,
-	addr string,
-	configDir string,
-	secureSession bool,
-	test bool,
+	flags Flags,
 	enforcer libsecurity.Enforcer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	logger zerolog.Logger,
 	metricsSender metrics.Sender,
+	metricsEntityMetaUpdater metrics.MetaUpdater,
+	metricsUserMetaUpdater metrics.MetaUpdater,
+	exportExecutor export.TaskExecutor,
 	deferFunc DeferFunc,
 ) (API, error) {
 	// Retrieve config.
@@ -93,7 +95,7 @@ func Default(
 		logger.Err(err).Msg("cannot connect to redis")
 		return nil, err
 	}
-	securityConfig, err := libsecurity.LoadConfig(configDir)
+	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir)
 	if err != nil {
 		logger.Err(err).Msg("cannot load security config")
 		return nil, err
@@ -102,7 +104,7 @@ func Default(
 	cookieOptions := CookieOptions{
 		FileAccessName: "token",
 		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
-		Secure:         secureSession,
+		Secure:         flags.SecureSession,
 	}
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
@@ -110,7 +112,7 @@ func Default(
 	apiConfigProvider := config.NewApiConfigProvider(cfg, logger)
 	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, metricsSender, cookieOptions, logger)
 
-	proxyAccessConfig, err := proxy.LoadAccessConfig(configDir)
+	proxyAccessConfig, err := proxy.LoadAccessConfig(flags.ConfigDir)
 	if err != nil {
 		logger.Err(err).Msg("cannot load access config")
 		return nil, err
@@ -135,7 +137,11 @@ func Default(
 		contextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 		contextgraph.NewMongoStatusReporter(dbClient),
 		jobQueue,
-		importcontextgraph.NewWorker(dbClient, importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel)),
+		importcontextgraph.NewWorker(
+			dbClient,
+			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+			metricsEntityMetaUpdater,
+		),
 		logger,
 	)
 
@@ -143,6 +149,7 @@ func Default(
 	disabledEntityCleaner := entity.NewDisabledCleaner(
 		entity.NewStore(dbClient),
 		datastorage.NewAdapter(dbClient),
+		metricsEntityMetaUpdater,
 		logger,
 	)
 
@@ -153,8 +160,17 @@ func Default(
 	}
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
 
+	// Create and compute scenario priority intervals.
+	scenarioPriorityIntervals := action.NewPriorityIntervals()
+	err = scenarioPriorityIntervals.Recalculate(ctx, dbClient.Collection(mongo.ScenarioMongoCollection))
+	if err != nil {
+		return nil, err
+	}
+
 	// Create csv exporter.
-	exportExecutor := export.NewTaskExecutor(dbClient, logger)
+	if exportExecutor == nil {
+		exportExecutor = export.NewTaskExecutor(dbClient, logger)
+	}
 
 	websocketHub := newWebsocketHub(enforcer, security.GetTokenProvider(), logger)
 
@@ -162,7 +178,7 @@ func Default(
 
 	// Create api.
 	api := New(
-		addr,
+		fmt.Sprintf(":%d", flags.Port),
 		func(ctx context.Context) {
 			close(pbhComputeChan)
 			close(entityPublChan)
@@ -197,7 +213,7 @@ func Default(
 	api.AddRouter(func(router gin.IRouter) {
 		router.Use(middleware.Cache())
 
-		if test {
+		if flags.Test {
 			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
 		}
 
@@ -220,10 +236,13 @@ func Default(
 			amqpChannel,
 			jobQueue,
 			userInterfaceConfigProvider,
+			scenarioPriorityIntervals,
 			cfg.File.Upload,
 			websocketHub,
 			broadcastMessageChan,
 			metricsSender,
+			metricsEntityMetaUpdater,
+			metricsUserMetaUpdater,
 			logger,
 		)
 	})
@@ -258,7 +277,7 @@ func Default(
 		importWorker.Run(ctx)
 	})
 	api.AddWorker("config reload", updateConfig(timezoneConfigProvider, apiConfigProvider,
-		configAdapter, userInterfaceConfigProvider, userInterfaceAdapter, test, logger))
+		configAdapter, userInterfaceConfigProvider, userInterfaceAdapter, flags.Test, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})

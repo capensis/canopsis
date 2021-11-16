@@ -2817,6 +2817,20 @@ definitions:
     - emit_trigger
     - type
     type: object
+  scenario.CheckPriorityRequest:
+    properties:
+      priority:
+        type: integer
+    required:
+    - priority
+    type: object
+  scenario.CheckPriorityResponse:
+    properties:
+      recommended_priority:
+        type: integer
+      valid:
+        type: boolean
+    type: object
   scenario.EditRequest:
     properties:
       actions:
@@ -2849,6 +2863,11 @@ definitions:
     - name
     - priority
     - triggers
+    type: object
+  scenario.GetMinimalPriorityResponse:
+    properties:
+      priority:
+        type: integer
     type: object
   scenario.Scenario:
     properties:
@@ -7896,6 +7915,53 @@ paths:
       - ApiKeyAuth: []
       - BasicAuth: []
       summary: Update scenario by id
+      tags:
+      - scenarios
+  /scenarios/check-priority:
+    post:
+      consumes:
+      - application/json
+      description: Check priority
+      operationId: scenarios-check-priority
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/scenario.CheckPriorityRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/scenario.CheckPriorityResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Check priority
+      tags:
+      - scenarios
+  /scenarios/minimal-priority:
+    get:
+      description: Get minimal priority
+      operationId: scenarios-get-minimal-priority
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/scenario.GetMinimalPriorityResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get minimal priority
       tags:
       - scenarios
   /state-settings:

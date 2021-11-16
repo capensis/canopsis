@@ -15,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -123,6 +124,88 @@ func ExportCsv(
 			if err != nil {
 				return "", err
 			}
+		}
+	}
+
+	return file.Name(), nil
+}
+
+func ExportCsvByCursor(
+	ctx context.Context,
+	exportFields Fields,
+	separator rune,
+	dataCursor DataCursor,
+) (resFileName string, resErr error) {
+	defer dataCursor.Close()
+	file, err := ioutil.TempFile("", "export.*.csv")
+	if err != nil {
+		return "", err
+	}
+
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			return
+		}
+
+		if resErr != nil {
+			err := os.Remove(file.Name())
+			if err != nil {
+				return
+			}
+		}
+	}()
+
+	w := csv.NewWriter(file)
+	if separator != 0 {
+		w.Comma = separator
+	}
+
+	var fields []string
+	if len(exportFields) > 0 {
+		fieldsLabels := exportFields.Labels()
+		fields = exportFields.Fields()
+
+		err = w.WriteAll([][]string{fieldsLabels})
+		if err != nil {
+			return "", err
+		}
+	}
+
+	var data []map[string]string
+	for dataCursor.Next(ctx) {
+		var item map[string]string
+		err := dataCursor.Scan(&item)
+		if err != nil {
+			return "", err
+		}
+
+		if len(fields) == 0 {
+			for field := range item {
+				fields = append(fields, field)
+			}
+
+			err = w.WriteAll([][]string{fields})
+			if err != nil {
+				return "", err
+			}
+		}
+
+		data = append(data, item)
+
+		if len(data) >= canopsis.DefaultBulkSize {
+			err = writeToCsv(w, data, fields)
+			if err != nil {
+				return "", err
+			}
+			data = nil
+		}
+	}
+
+	if len(data) > 0 {
+		err = writeToCsv(w, data, fields)
+		if err != nil {
+			return "", err
 		}
 	}
 
