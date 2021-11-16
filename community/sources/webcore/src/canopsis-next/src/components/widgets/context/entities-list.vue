@@ -15,7 +15,7 @@
     )
       template(slot="toolbar", slot-scope="props")
         v-flex
-          c-advanced-search(
+          c-advanced-search-field(
             :query.sync="query",
             :columns="columns",
             :tooltip="$t('search.contextAdvancedSearch')"
@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { omit, isString } from 'lodash';
+import { omit, isString, isObject } from 'lodash';
 
 import { USERS_PERMISSIONS } from '@/constants';
 
@@ -294,7 +294,10 @@ export default {
           category: query.category,
           filter: JSON.stringify(query.filter),
           separator: exportCsvSeparator,
-          time_format: exportCsvDatetimeFormat,
+          /**
+           * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+           */
+          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
         },
       });
     },

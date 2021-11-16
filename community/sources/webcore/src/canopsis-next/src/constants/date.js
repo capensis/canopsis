@@ -84,6 +84,7 @@ export const DATETIME_FORMATS = {
   short: 'DD/MM/YYYY',
   shortWithDayOfWeek: 'ddd DD/MM/YYYY',
   time: 'H:mm:ss',
+  yearWithMonth: 'MMMM YYYY',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
   dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
   datePicker: 'YYYY-MM-DD',
@@ -97,4 +98,11 @@ export const DATETIME_FORMATS = {
 export const DATETIME_INTERVAL_TYPES = {
   start: 'start',
   stop: 'stop',
+};
+
+export const SAMPLINGS = {
+  hour: 'hour',
+  day: 'day',
+  week: 'week',
+  month: 'month',
 };

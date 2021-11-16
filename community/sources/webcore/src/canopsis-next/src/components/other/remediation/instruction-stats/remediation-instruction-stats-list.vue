@@ -101,11 +101,13 @@ export default {
           value: 'name',
           width: 150,
         },
+
         this.hasCreateAnyRemediationInstructionAccess && {
           text: this.$t('common.type'),
           value: 'type',
           width: 100,
         },
+
         {
           text: this.$t('remediationInstructionStats.lastExecutedOn'),
           value: 'last_executed_on',
@@ -141,7 +143,7 @@ export default {
           width: 150,
         },
         {
-          text: this.$t('remediationInstructionStats.rating'),
+          text: this.$tc('common.rating'),
           value: 'rating',
           sortable: false,
           width: 250,

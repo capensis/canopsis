@@ -2,7 +2,7 @@
   div(data-test="tableWidget")
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
-        c-advanced-search(
+        c-advanced-search-field(
           :query.sync="query",
           :columns="columns",
           :tooltip="$t('search.alarmAdvancedSearch')"
@@ -82,6 +82,7 @@
       :hide-groups="!query.correlation",
       :has-columns="hasColumns",
       :columns="columns",
+      :sticky-header="widget.parameters.sticky_header",
       selectable,
       expandable
     )
@@ -96,7 +97,7 @@
 </template>
 
 <script>
-import { omit, pick, isEmpty } from 'lodash';
+import { omit, pick, isEmpty, isObject } from 'lodash';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
@@ -327,7 +328,10 @@ export default {
           fields: columns.map(({ label, value }) => ({ label, name: value })),
           filter: JSON.stringify(query.filter),
           separator: exportCsvSeparator,
-          time_format: exportCsvDatetimeFormat,
+          /**
+           * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+           */
+          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
         },
       });
     },

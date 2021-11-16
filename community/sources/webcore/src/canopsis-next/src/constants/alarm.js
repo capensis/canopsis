@@ -176,3 +176,21 @@ export const ALARMS_OPENED_VALUES = {
 export const ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP = {
   priority: 'impact_state',
 };
+
+export const ALARM_METRIC_PARAMETERS = {
+  totalAlarms: 'total_alarms',
+  nonDisplayedAlarms: 'non_displayed_alarms',
+  instructionAlarms: 'instruction_alarms',
+  correlationAlarms: 'correlation_alarms',
+  ackAlarms: 'ack_alarms',
+  cancelAckAlarms: 'cancel_ack_alarms',
+  ticketAlarms: 'ticket_alarms',
+  ratioCorrelation: 'ratio_correlation',
+  ratioInstructions: 'ratio_instructions',
+  ratioTickets: 'ratio_tickets',
+  ratioNonDisplayed: 'ratio_non_displayed',
+  averageAck: 'average_ack',
+  averageResolve: 'average_resolve',
+};
+
+export const ALARMS_LIST_HEADER_OPACITY_DELAY = 500;

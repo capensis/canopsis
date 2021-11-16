@@ -20,7 +20,7 @@ type EditRequest struct {
 	Name                 string                  `json:"name" binding:"required,max=255"`
 	Author               string                  `json:"author" binding:"required,max=255"`
 	Enabled              *bool                   `json:"enabled" binding:"required"`
-	Priority             int                     `json:"priority" binding:"required"`
+	Priority             int                     `json:"priority" binding:"required,gt=0"`
 	Triggers             []string                `json:"triggers" binding:"required,notblank"`
 	DisableDuringPeriods []string                `json:"disable_during_periods"`
 	Delay                *types.DurationWithUnit `json:"delay"`
@@ -35,6 +35,19 @@ type CreateRequest struct {
 type UpdateRequest struct {
 	EditRequest
 	ID string `json:"-"`
+}
+
+type GetMinimalPriorityResponse struct {
+	Priority int `json:"priority"`
+}
+
+type CheckPriorityRequest struct {
+	Priority int `json:"priority" binding:"required,gt=0"`
+}
+
+type CheckPriorityResponse struct {
+	Valid               bool `json:"valid"`
+	RecommendedPriority int  `json:"recommended_priority,omitempty"`
 }
 
 type ActionRequest struct {

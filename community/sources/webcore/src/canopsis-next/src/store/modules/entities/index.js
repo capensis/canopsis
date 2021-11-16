@@ -36,10 +36,13 @@ import associativeTableModule from './associative-table';
 import dataStorageModule from './data-storage';
 import notificationSettingsModule from './notification-settings';
 import idleRulesModule from './idle-rules';
+import flappingRulesModule from './flapping-rules';
+import resolveRulesModule from './resolve-rules';
 import healthcheckModule from './healthcheck';
 import healthcheckParametersModule from './healthcheck-parameters';
 import messageRateStatsModule from './message-rate-stats';
 import viewStatsModule from './view-stats';
+import metricsModule from './metrics';
 
 export default {
   alarm: alarmModule,
@@ -80,8 +83,11 @@ export default {
   dataStorage: dataStorageModule,
   notificationSettings: notificationSettingsModule,
   idleRules: idleRulesModule,
+  flappingRules: flappingRulesModule,
+  resolveRules: resolveRulesModule,
   healthcheck: healthcheckModule,
   healthcheckParameters: healthcheckParametersModule,
   messageRateStats: messageRateStatsModule,
   viewStats: viewStatsModule,
+  metrics: metricsModule,
 };

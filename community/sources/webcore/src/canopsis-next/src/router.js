@@ -30,6 +30,7 @@ const AdminPlaylists = () => import(/* webpackChunkName: "Playlist" */ '@/views/
 const AdminPlanning = () => import(/* webpackChunkName: "Planning" */ '@/views/admin/planning.vue');
 const AdminRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/views/admin/remediation.vue');
 const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
+const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilter = () => import(/* webpackChunkName: "EventFilter" */ '@/views/exploitation/event-filter.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
@@ -37,6 +38,8 @@ const ExploitationDynamicInfos = () => import(/* webpackChunkName: "DynamicInfo"
 const ExploitationMetaAlarmRules = () => import(/* webpackChunkName: "MetaAlarmRule" */ '@/views/exploitation/meta-alarm-rules.vue');
 const ExploitationScenarios = () => import(/* webpackChunkName: "Scenario" */ '@/views/exploitation/scenarios.vue');
 const ExploitationIdleRules = () => import(/* webpackChunkName: "IdleRule" */ '@/views/exploitation/idle-rules.vue');
+const ExploitationFlappingRules = () => import(/* webpackChunkName: "AlarmStatusRule" */ '@/views/exploitation/flapping-rules.vue');
+const ExploitationResolveRules = () => import(/* webpackChunkName: "AlarmStatusRule" */ '@/views/exploitation/resolve-rules.vue');
 const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
 const NotificationInstructionStats = () => import(/* webpackChunkName: "InstructionStats" */ '@/views/notification/instruction-stats.vue');
 
@@ -184,6 +187,18 @@ const routes = [
     },
   },
   {
+    path: ROUTES.adminKPI,
+    name: ROUTES_NAMES.adminKPI,
+    component: AdminKPI,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        action: CRUD_ACTIONS.can,
+        id: USERS_PERMISSIONS.technical.kpi,
+      },
+    },
+  },
+  {
     path: ROUTES.exploitationPbehaviors,
     name: ROUTES_NAMES.exploitationPbehaviors,
     component: ExploitationPbehaviors,
@@ -270,6 +285,28 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.idleRules,
+      },
+    },
+  },
+  {
+    path: ROUTES.exploitationFlappingRules,
+    name: ROUTES_NAMES.exploitationFlappingRules,
+    component: ExploitationFlappingRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.flappingRules,
+      },
+    },
+  },
+  {
+    path: ROUTES.exploitationResolveRules,
+    name: ROUTES_NAMES.exploitationResolveRules,
+    component: ExploitationResolveRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.resolveRules,
       },
     },
   },

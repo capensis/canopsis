@@ -48,7 +48,7 @@ export default {
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.rating'),
+          text: this.$tc('common.rating'),
           value: 'rating',
           sortable: false,
         },

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { MODALS, DATETIME_FORMATS, QUICK_RANGES } from '@/constants';
+import { MODALS, QUICK_RANGES } from '@/constants';
 
 import {
   convertStartDateIntervalToTimestamp,
@@ -75,11 +75,9 @@ export default {
 
       params.from = convertDateToStartOfDayTimestamp(convertStartDateIntervalToTimestamp(
         this.pagination.interval.from,
-        DATETIME_FORMATS.datePicker,
       ));
       params.to = convertDateToEndOfDayTimestamp(convertStopDateIntervalToTimestamp(
         this.pagination.interval.to,
-        DATETIME_FORMATS.datePicker,
       ));
 
       this.fetchRemediationInstructionStatsList({ params });
