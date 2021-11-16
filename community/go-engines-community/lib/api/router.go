@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -50,9 +49,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewstats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -132,10 +133,13 @@ func RegisterRoutes(
 	publisher amqp.Publisher,
 	jobQueue contextgraph.JobQueue,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
+	scenarioPriorityIntervals action.PriorityIntervals,
 	filesRoot string,
 	websocketHub websocket.Hub,
 	broadcastMessageChan chan<- bool,
 	metricsSender metrics.Sender,
+	metricsEntityMetaUpdater metrics.MetaUpdater,
+	metricsUserMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -209,7 +213,7 @@ func RegisterRoutes(
 
 		userRouter := protected.Group("/users")
 		{
-			userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger)
+			userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, metricsUserMetaUpdater)
 			userRouter.POST("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
 				userApi.Create,
@@ -459,7 +463,8 @@ func RegisterRoutes(
 		}
 		entitybasicsRouter := protected.Group("/entitybasics")
 		{
-			entitybasicsAPI := entitybasic.NewApi(entitybasic.NewStore(dbClient), entityPublChan, actionLogger, logger)
+			entitybasicsAPI := entitybasic.NewApi(entitybasic.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
+				actionLogger, logger)
 			entitybasicsRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -478,7 +483,8 @@ func RegisterRoutes(
 		}
 		entityserviceRouter := protected.Group("/entityservices")
 		{
-			entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, actionLogger, logger)
+			entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
+				actionLogger, logger)
 			entityserviceRouter.POST(
 				"",
 				middleware.Authorize(authObjEntityService, permCreate, enforcer),
@@ -823,7 +829,7 @@ func RegisterRoutes(
 
 		scenarioRouter := protected.Group("/scenarios")
 		{
-			scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger)
+			scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, scenarioPriorityIntervals)
 			scenarioRouter.POST(
 				"",
 				middleware.Authorize(authObjAction, permCreate, enforcer),
@@ -850,6 +856,16 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(authObjAction, permDelete, enforcer),
 				scenarioAPI.Delete,
+			)
+			scenarioRouter.GET(
+				"/minimal-priority",
+				middleware.Authorize(authObjAction, permRead, enforcer),
+				scenarioAPI.GetMinimalPriority,
+			)
+			scenarioRouter.POST(
+				"/check-priority",
+				middleware.Authorize(authObjAction, permRead, enforcer),
+				scenarioAPI.CheckPriority,
 			)
 		}
 

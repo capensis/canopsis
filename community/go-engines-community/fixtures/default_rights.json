@@ -229,6 +229,25 @@
     "crecord_name": "api_healthcheck"
   },
   {
+    "_id": "api_filter",
+    "crecord_type": "action",
+    "crecord_name": "api_filter",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_metrics",
+    "crecord_type": "action",
+    "crecord_name": "api_metrics",
+    "desc": "Metrics api"
+  },
+  {
+    "_id": "api_rating_settings",
+    "crecord_type": "action",
+    "crecord_name": "api_rating_settings",
+    "desc": "Rating settings api",
+    "type": "CRUD"
+  },
+  {
     "_id": "admin",
     "crecord_type": "role",
     "crecord_name": "admin",
@@ -365,6 +384,10 @@
         "checksum": 1,
         "crecord_type": "right"
       },
+      "api_filter": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
       "test-view-to-get-1": {
         "checksum": 4,
         "crecord_type": "right"
@@ -454,6 +477,14 @@
         "crecord_type": "right"
       },
       "api_flapping_rule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_metrics": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_rating_settings": {
         "checksum": 15,
         "crecord_type": "right"
       }

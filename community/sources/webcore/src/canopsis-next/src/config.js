@@ -9,9 +9,9 @@ export const {
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
 
-export const API_HOST = VUE_APP_API_HOST;
+export const API_HOST = VUE_APP_API_HOST || window.location.origin;
 
-export const SOCKET_HOST = VUE_APP_API_HOST.replace(/^http(s?)/, 'wss');
+export const SOCKET_HOST = API_HOST.replace(/^http(s?)/, 'wss');
 
 export const SOCKET_ROUTE = '/api/v4/ws';
 
@@ -143,7 +143,10 @@ export const API_ROUTES = {
   saml: {
     auth: '/api/v4/saml/auth',
   },
-  scenarios: '/api/v4/scenarios',
+  scenario: {
+    scenarios: '/api/v4/scenarios',
+    checkPriority: '/api/v4/scenarios/check-priority',
+  },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings/',
   dataStorage: '/api/v4/data-storage',
