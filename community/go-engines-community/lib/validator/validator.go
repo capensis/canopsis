@@ -301,6 +301,12 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("multi_sort_invalid", fe.StructField())
 		return t
 	})
+	_ = v.RegisterTranslation("regexp", trans, func(ut ut.Translator) error {
+		return ut.Add("regexp", "Invalid regexp.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("regexp", fe.StructField())
+		return t
+	})
 }
 
 // TranslateError returns custom validation error message.

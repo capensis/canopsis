@@ -146,6 +146,10 @@ export const stateSettingSchema = new schema.Entity(ENTITIES_TYPES.stateSetting,
 
 export const idleRulesSchema = new schema.Entity(ENTITIES_TYPES.idleRules, {}, { idAttribute: '_id' });
 
+export const flappingRulesSchema = new schema.Entity(ENTITIES_TYPES.flappingRules, {}, { idAttribute: '_id' });
+
+export const resolveRulesSchema = new schema.Entity(ENTITIES_TYPES.resolveRules, {}, { idAttribute: '_id' });
+
 export const filterSchema = new schema.Entity(ENTITIES_TYPES.filter, {}, { idAttribute: '_id' });
 
 export default {
@@ -180,5 +184,7 @@ export default {
   [ENTITIES_TYPES.stateSetting]: stateSettingSchema,
   [ENTITIES_TYPES.remediationInstructionStats]: remediationInstructionStatsSchema,
   [ENTITIES_TYPES.idleRules]: idleRulesSchema,
+  [ENTITIES_TYPES.flappingRules]: flappingRulesSchema,
+  [ENTITIES_TYPES.resolveRules]: resolveRulesSchema,
   [ENTITIES_TYPES.filter]: filterSchema,
 };
