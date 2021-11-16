@@ -25,7 +25,7 @@ import {
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
-  USER_METRIC_PARAMETERS,
+  USER_METRIC_PARAMETERS, KPI_RATING_CRITERIA,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2610,6 +2610,14 @@ export default {
   },
 
   kpiMetrics: {
+    criteria: 'Criteria',
+    parameter: 'Parameter to compare',
+    criteriaTypes: {
+      [KPI_RATING_CRITERIA.user]: 'User',
+      [KPI_RATING_CRITERIA.role]: 'Role',
+      [KPI_RATING_CRITERIA.category]: 'Category',
+      [KPI_RATING_CRITERIA.impactLevel]: 'Impact level',
+    },
     tooltip: {
       [USER_METRIC_PARAMETERS.loginsNumber]: '{value} logins',
       [USER_METRIC_PARAMETERS.averageSession]: '{value} average session',

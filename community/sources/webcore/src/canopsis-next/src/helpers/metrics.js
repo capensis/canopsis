@@ -1,8 +1,21 @@
-import { ALARM_METRIC_PARAMETERS, DATETIME_FORMATS, SAMPLINGS, TIME_UNITS, USER_METRIC_PARAMETERS } from '@/constants';
+import {
+  ALARM_METRIC_PARAMETERS,
+  DATETIME_FORMATS,
+  KPI_RATING_ENTITY_METRICS,
+  KPI_RATING_USER_CRITERIA,
+  KPI_RATING_USER_METRICS,
+  SAMPLINGS,
+  TIME_UNITS,
+  USER_METRIC_PARAMETERS,
+} from '@/constants';
 import { addUnitToDate, convertDateToString } from '@/helpers/date/date';
 
 /**
  * @typedef { 'hour' | 'day' | 'week' | 'month' } Sampling
+ */
+
+/**
+ * @typedef { 1 | 2 | 3 | 4 } Criteria
  */
 
 /**
@@ -57,4 +70,53 @@ export const getDateLabelBySampling = (value, sampling) => {
   }
 
   return convertDateToString(value, DATETIME_FORMATS.yearWithMonth);
+};
+
+/**
+ * Check is user criteria
+ *
+ * @param {Criteria} criteria
+ * @returns {boolean}
+ */
+const isUserCriteria = criteria => KPI_RATING_USER_CRITERIA.includes(criteria);
+
+/**
+ * Get all metrics by criteria
+ *
+ * @param {Criteria} criteria
+ * @returns {string[]}
+ */
+export const getAvailableMetricsByCriteria = criteria => (
+  isUserCriteria(criteria)
+    ? KPI_RATING_USER_METRICS
+    : KPI_RATING_ENTITY_METRICS
+);
+
+/**
+ * Check metric is available for criteria
+ *
+ * @param {string} metric
+ * @param {Criteria} criteria
+ * @returns {boolean}
+ */
+export const isAvailableMetricByCriteria = (metric, criteria) => (
+  getAvailableMetricsByCriteria(criteria)
+    .includes(metric)
+);
+
+/**
+ * Ша metric available for criteria return metric, else return first available metric
+ *
+ * @param {string} metric
+ * @param {Criteria} criteria
+ * @returns {string}
+ */
+export const getAvailableMetricByCriteria = (metric, criteria) => {
+  if (isAvailableMetricByCriteria(metric, criteria)) {
+    return metric;
+  }
+
+  const [firstMetric] = getAvailableMetricsByCriteria(criteria);
+
+  return firstMetric;
 };
