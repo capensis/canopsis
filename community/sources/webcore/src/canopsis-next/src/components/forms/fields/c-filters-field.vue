@@ -7,6 +7,7 @@
     :name="name",
     item-text="name",
     item-value="_id",
+    hide-details,
     clearable
   )
 </template>

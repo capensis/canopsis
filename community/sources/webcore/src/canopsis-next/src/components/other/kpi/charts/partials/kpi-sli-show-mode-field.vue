@@ -2,7 +2,8 @@
   v-select(
     v-field="value",
     :items="showingTypes",
-    :label="$t('common.show')"
+    :label="$t('common.show')",
+    hide-details
   )
 </template>
 
