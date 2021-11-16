@@ -12,7 +12,8 @@ import KpiRating from '@/components/other/kpi/charts/kpi-rating';
 const localVue = createVueInstance();
 
 const stubs = {
-  'c-quick-date-interval-field': true,
+  'c-progress-overlay': true,
+  'kpi-rating-filters': true,
   'kpi-rating-chart': true,
 };
 
@@ -83,11 +84,17 @@ describe('kpi-rating', () => {
       }),
     });
 
-    const quickIntervalField = wrapper.find('c-quick-date-interval-field-stub');
+    const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    quickIntervalField.vm.$emit('input', {
-      from: start,
-      to: stop,
+    kpiRatingFiltersElement.vm.$emit('input', {
+      filter: null,
+      criteria: KPI_RATING_CRITERIA.user,
+      metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
+      limit: 10,
+      interval: {
+        from: start,
+        to: stop,
+      },
     });
 
     await flushPromises();
