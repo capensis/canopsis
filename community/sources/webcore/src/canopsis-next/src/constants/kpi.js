@@ -25,13 +25,17 @@ export const KPI_RATING_USER_METRICS = [
   ALARM_METRIC_PARAMETERS.ticketAlarms,
   ALARM_METRIC_PARAMETERS.ackAlarms,
   ALARM_METRIC_PARAMETERS.cancelAckAlarms,
-  USER_METRIC_PARAMETERS.averageSession,
+  ALARM_METRIC_PARAMETERS.ackWithoutCancelAlarms,
+  ALARM_METRIC_PARAMETERS.averageAck,
+  USER_METRIC_PARAMETERS.totalUserActivity,
 ];
 
 export const KPI_RATING_ENTITY_METRICS = [
   ALARM_METRIC_PARAMETERS.totalAlarms,
   ALARM_METRIC_PARAMETERS.instructionAlarms,
+  ALARM_METRIC_PARAMETERS.pbehaviorAlarms,
   ALARM_METRIC_PARAMETERS.ticketAlarms,
+  ALARM_METRIC_PARAMETERS.withoutTicketAlarms,
   ALARM_METRIC_PARAMETERS.nonDisplayedAlarms,
   ALARM_METRIC_PARAMETERS.ratioCorrelation,
   ALARM_METRIC_PARAMETERS.ratioInstructions,
