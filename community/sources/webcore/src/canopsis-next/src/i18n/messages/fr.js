@@ -24,6 +24,8 @@ import {
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
+  USER_METRIC_PARAMETERS,
+  ALARM_METRIC_PARAMETERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -198,6 +200,13 @@ export default {
     graph: 'Graphique | Graphiques',
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
+    rating: 'Notation | Notations',
+    sampling: 'Échantillonnage',
+    parametersToDisplay: '{count} paramètres à afficher',
+    uptime: 'Uptime',
+    maintenance: 'Maintenance',
+    downtime: 'Downtime',
+    toTheTop: 'Jusqu\'au sommet',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -435,6 +444,24 @@ export default {
         [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'La suite de tests a été mise à jour',
         [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'Le cas de test a été mis à jour',
       },
+      metrics: {
+        [ALARM_METRIC_PARAMETERS.totalAlarms]: 'Nombre total d\'alarmes',
+        [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Nombre d\'alarmes non affichées',
+        [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre d\'alarmes en cours de correction automatique',
+        // [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Nombre d'alarmes avec PBehavior',
+        [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Nombre d\'alarmes avec corrélation',
+        [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Nombre total d\'accusés de réception',
+        [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Nombre d\'accusés de réception annulés',
+        // [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Nombre d'alarmes avec acquittement (hors acquittement annulés)',
+        [ALARM_METRIC_PARAMETERS.ticketAlarms]: 'Nombre d\'alarmes avec tickets créés',
+        // [ALARM_METRIC_PARAMETERS.ticketAlarms]: 'Nombre d'alarmes sans ticket créé',
+        [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% d\'alarmes corrélées',
+        [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec correction automatique',
+        [ALARM_METRIC_PARAMETERS.ratioTickets]: '% d\'alarmes avec tickets créés',
+        [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% d\'alarmes non affichées',
+        [ALARM_METRIC_PARAMETERS.averageAck]: 'Délai moyen d\'acquittement des alarmes',
+        [ALARM_METRIC_PARAMETERS.averageResolve]: 'Temps moyen pour résoudre les alarmes',
+      },
     },
     tabs: {
       moreInfos: 'Plus d\'infos',
@@ -455,6 +482,20 @@ export default {
       hasAutoInstructionInRunning: 'Instruction automatique en cours',
       allAutoInstructionExecuted: 'Toutes les instructions automatiques ont été exécutées',
       awaitingInstructionComplete: 'En attente de l\'instruction pour terminer',
+    },
+    metrics: {
+      [ALARM_METRIC_PARAMETERS.totalAlarms]: 'Nombre total d\'alarmes',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Nombre d\'alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre d\'alarmes en cours de correction automatique',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Nombre d\'alarmes corrélées',
+      [ALARM_METRIC_PARAMETERS.ticketAlarms]: 'Nombre d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Nombre d\'alarmes avec acquittement',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% d\'alarmes corrélées',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec correction automatique',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '% d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% d\'alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.averageAck]: 'Délai moyen d\'acquittement des alarmes',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: 'Temps moyen pour résoudre les alarmes',
     },
   },
   weather: {
@@ -695,6 +736,15 @@ export default {
         + '<dd>- nom du cas de test %test_case%</dd>\n'
         + '<dd>- date (YYYY, MM, DD)</dd>\n'
         + '<dd>- temps d\'exécution (hh, mm, ss)</dd>'
+        + '</dl>',
+    },
+    stickyHeader: 'En-tête collant',
+    reportFileRegexp: {
+      title: 'Masque de fichier de rapport',
+      helpText: '<dl>'
+        + '<dt>Définir le nom de fichier regexp de quel rapport:<dt>\n'
+        + '<dd>Par exemple:</dd>\n'
+        + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
     },
   },
@@ -1532,6 +1582,30 @@ export default {
         title: 'Règle d\'entité en double',
       },
     },
+    createAlarmStatusRule: {
+      flapping: {
+        create: {
+          title: 'Créer une règle de bagot',
+        },
+        edit: {
+          title: 'Modifier la règle de bagot',
+        },
+        duplicate: {
+          title: 'Dupliquer la règle de bagot',
+        },
+      },
+      resolve: {
+        create: {
+          title: 'Créer une règle de résolution',
+        },
+        edit: {
+          title: 'Modifier la règle de résolution',
+        },
+        duplicate: {
+          title: 'Dupliquer la règle de résolution',
+        },
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -2143,7 +2217,6 @@ export default {
     executionCount: 'Nombre de\nexécutions',
     alarmStates: 'Alarmes affectées par l\'état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
-    rating: 'Notation',
     notAvailable: 'N/a',
     instructionChanged: 'L\'instruction a été modifiée',
     actions: {
@@ -2165,6 +2238,15 @@ export default {
   },
 
   scenario: {
+    triggers: 'Triggers',
+    emitTrigger: 'Émettre un trigger',
+    withAuth: 'Avez-vous besoin de champs d\'authentification ?',
+    emptyResponse: 'Réponse vide',
+    isRegexp: 'La valeur peut être une RegExp',
+    headerKey: "Clé d'en-tête",
+    headerValue: "Valeur d'en-tête",
+    key: 'Clé',
+    skipVerify: 'Ne pas vérifier les certificats HTTPS',
     headers: 'En-têtes',
     declareTicket: 'Déclarer un ticket',
     workflow: 'Workflow si cette action ne correspond pas :',
@@ -2198,22 +2280,12 @@ export default {
       [ACTION_TYPES.cancel]: 'Cancel',
       [ACTION_TYPES.webhook]: 'Webhook',
     },
-    fields: {
-      triggers: 'Triggers',
-      emitTrigger: 'Émettre un trigger',
-      withAuth: 'Avez-vous besoin de champs d\'authentification ?',
-      emptyResponse: 'Réponse vide',
-      isRegexp: 'La valeur peut être une RegExp',
-      headerKey: "Clé d'en-tête",
-      headerValue: "Valeur d'en-tête",
-      key: 'Clé',
-      skipVerify: 'Ne pas vérifier les certificats HTTPS',
-    },
     tabs: {
       pattern: 'Pattern',
     },
     errors: {
       actionRequired: 'Veuillez ajouter au moins une action',
+      priorityExist: 'La priorité du scénario actuel est déjà utilisée. Voulez-vous changer la priorité actuelle du scénario en {priority} ?',
     },
   },
 
@@ -2273,6 +2345,10 @@ export default {
     navigationTypes: {
       [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',
       [GROUPS_NAVIGATION_TYPES.topBar]: 'Barre d\'entête',
+    },
+    metrics: {
+      [USER_METRIC_PARAMETERS.averageSession]: 'Durée moyenne des sessions',
+      [USER_METRIC_PARAMETERS.loginsNumber]: 'Nombre de connexions',
     },
   },
 
@@ -2428,6 +2504,10 @@ export default {
     },
   },
 
+  alarmStatusRules: {
+    frequencyLimit: 'Nombre d\'oscillations',
+  },
+
   icons: {
     noEvents: 'Aucun événement reçu pendant {duration} par certaines dépendances',
   },
@@ -2457,6 +2537,16 @@ export default {
     [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
       title: 'Règles d\'inactivité',
       message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
+      title: 'Règles de bagot',
+      // message: '', // TODO: need to put description
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
+      title: 'Règles de résolution',
+      // message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
@@ -2501,6 +2591,10 @@ export default {
     [USERS_PERMISSIONS.technical.healthcheck]: {
       title: 'Bilan de santé',
       message: 'La fonction Healthcheck est le tableau de bord avec des indications d\'états et d\'erreurs de tous les systèmes inclus dans Canopsis.',
+    },
+    [USERS_PERMISSIONS.technical.kpi]: {
+      title: 'KPI',
+      message: '', // TODO: add correct message
     },
 
     /**
@@ -2562,6 +2656,37 @@ export default {
     tooltips: {
       maxMatchedItems: 'il doit avertir l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
       checkCountRequestTimeout: 'il doit définir la valeur du délai d\'attente de la demande pour la vérification du nombre maximal d\'éléments correspondants',
+    },
+  },
+
+  kpi: {
+    alarmMetrics: 'Métriques d\'alarme',
+    sli: 'SLI',
+    tabs: {
+      dataSlices: 'Tranches de données',
+      detailedMetrics: 'Métriques détaillées',
+      sliPatterns: 'Modèles SLI',
+    },
+  },
+
+  kpiMetrics: {
+    tooltip: {
+      [USER_METRIC_PARAMETERS.loginsNumber]: '{value} connexions',
+      [USER_METRIC_PARAMETERS.averageSession]: '{value} séance moyenne',
+
+      [ALARM_METRIC_PARAMETERS.totalAlarms]: '{value} alarmes',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: '{value} alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: '{value} alarmes en cours de correction automatique',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: '{value} alarmes sous PBehavior',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} acks annulés',
+      [ALARM_METRIC_PARAMETERS.ticketAlarms]: '{value} billets créés',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% d\'alarmes avec correction automatique',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% d\'alarmes avec instructions',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% des alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.averageAck]: '{value} accuser les alarmes',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} pour résoudre les alarmes',
     },
   },
 

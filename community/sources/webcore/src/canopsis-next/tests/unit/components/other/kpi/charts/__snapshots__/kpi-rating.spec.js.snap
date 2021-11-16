@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`kpi-rating Renders \`kpi-rating\` without metrics 1`] = `
+<div>
+  <div
+    class="layout ml-4 mb-4 align-center"
+  >
+    <c-quick-date-interval-field-stub
+      interval="[object Object]"
+    />
+  </div>
+  <div>
+    <kpi-rating-chart-stub
+      metric="ticket_alarms"
+      metrics=""
+      responsive="responsive"
+    />
+  </div>
+</div>
+`;

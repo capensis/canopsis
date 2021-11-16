@@ -6,15 +6,15 @@
         v-bind="action",
         :key="`multiple-${index}`"
       )
-    mq-layout(mq="t")
-      v-menu(bottom, left, @click.native.stop)
+    mq-layout(:mq="['m', 't']")
+      v-menu(bottom, left, @click.native.stop="")
         v-btn(icon, slot="activator")
           v-icon more_vert
         v-list
           actions-panel-item(
             v-for="(action, index) in actions",
             v-bind="action",
-            isDropDown,
+            is-drop-down,
             :key="`mobile-multiple-${index}`"
           )
 </template>

@@ -24,6 +24,8 @@ import {
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
+  ALARM_METRIC_PARAMETERS,
+  USER_METRIC_PARAMETERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -198,6 +200,13 @@ export default {
     graph: 'Graph | Graphs',
     systemStatus: 'System status',
     downloadAsPng: 'Download as PNG',
+    rating: 'Rating | Ratings',
+    sampling: 'Sampling',
+    parametersToDisplay: '{count} parameters to display',
+    uptime: 'Uptime',
+    maintenance: 'Maintenance',
+    downtime: 'Downtime',
+    toTheTop: 'To the top',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -456,6 +465,24 @@ export default {
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
       awaitingInstructionComplete: 'Awaiting for the instruction to complete',
     },
+    metrics: {
+      [ALARM_METRIC_PARAMETERS.totalAlarms]: 'Total number of alarms',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Number of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Number of alarms under automatic remediation',
+      // [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Number of alarms with PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Number of alarms with correlation',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Total number of acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Number of canceled acks',
+      // [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Number of alarms with acks (excluding canceled acks)',
+      [ALARM_METRIC_PARAMETERS.ticketAlarms]: 'Number of alarms with tickets created',
+      // [ALARM_METRIC_PARAMETERS.ticketAlarms]: 'Number of alarms with no tickets created',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% of correlated alarms',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% of alarms with auto remediation',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '% of alarms with tickets created',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.averageAck]: 'Average time to ack alarms',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: 'Average time to resolve alarms',
+    },
   },
   weather: {
     moreInfos: 'More info',
@@ -695,6 +722,15 @@ export default {
         + '<dd>- test case name %test_case%</dd>\n'
         + '<dd>- date (YYYY, MM, DD)</dd>\n'
         + '<dd>- time of execution (hh, mm, ss)</dd>'
+        + '</dl>',
+    },
+    stickyHeader: 'Sticky header',
+    reportFileRegexp: {
+      title: 'Report file mask',
+      helpText: '<dl>'
+        + '<dt>Define the filename regexp of which report:<dt>\n'
+        + '<dd>For example:</dd>\n'
+        + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
     },
   },
@@ -1532,6 +1568,30 @@ export default {
         title: 'Duplicate entity rule',
       },
     },
+    createAlarmStatusRule: {
+      flapping: {
+        create: {
+          title: 'Create flapping rule',
+        },
+        edit: {
+          title: 'Edit flapping rule',
+        },
+        duplicate: {
+          title: 'Duplicate flapping rule',
+        },
+      },
+      resolve: {
+        create: {
+          title: 'Create resolve rule',
+        },
+        edit: {
+          title: 'Edit resolve rule',
+        },
+        duplicate: {
+          title: 'Duplicate resolve rule',
+        },
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -2143,7 +2203,6 @@ export default {
     executionCount: 'Number of\nexecutions',
     alarmStates: 'Alarms affected by state',
     okAlarmStates: 'Number of resulting\nOK states',
-    rating: 'Rating',
     notAvailable: 'N/a',
     instructionChanged: 'The instruction has been changed',
     actions: {
@@ -2165,6 +2224,15 @@ export default {
   },
 
   scenario: {
+    triggers: 'Triggers',
+    emitTrigger: 'Emit trigger',
+    withAuth: 'Do you need auth fields?',
+    emptyResponse: 'Empty response',
+    isRegexp: 'The value can be a RegExp',
+    headerKey: 'Header key',
+    headerValue: 'Header value',
+    key: 'Key',
+    skipVerify: 'Ignore HTTPS certificate verification',
     headers: 'Headers',
     declareTicket: 'Declare ticket',
     workflow: 'Workflow if this action didn’t match:',
@@ -2198,22 +2266,12 @@ export default {
       [ACTION_TYPES.cancel]: 'Cancel',
       [ACTION_TYPES.webhook]: 'Webhook',
     },
-    fields: {
-      triggers: 'Triggers',
-      emitTrigger: 'Emit trigger',
-      withAuth: 'Do you need auth fields?',
-      emptyResponse: 'Empty response',
-      isRegexp: 'The value can be a RegExp',
-      headerKey: 'Header key',
-      headerValue: 'Header value',
-      key: 'Key',
-      skipVerify: 'Ignore HTTPS certificate verification',
-    },
     tabs: {
       pattern: 'Pattern',
     },
     errors: {
       actionRequired: 'Please add at least one action',
+      priorityExist: 'The priority of current scenario is already in use. Do you want to change the current scenario priority to {priority}?',
     },
   },
 
@@ -2273,6 +2331,10 @@ export default {
     navigationTypes: {
       [GROUPS_NAVIGATION_TYPES.sideBar]: 'Side bar',
       [GROUPS_NAVIGATION_TYPES.topBar]: 'Top bar',
+    },
+    metrics: {
+      [USER_METRIC_PARAMETERS.averageSession]: 'Average session duration',
+      [USER_METRIC_PARAMETERS.loginsNumber]: 'Number of logins',
     },
   },
 
@@ -2428,6 +2490,10 @@ export default {
     },
   },
 
+  alarmStatusRules: {
+    frequencyLimit: 'Frequency limit',
+  },
+
   icons: {
     noEvents: 'No events received for {duration} by some of dependencies',
   },
@@ -2457,6 +2523,16 @@ export default {
     [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
       title: 'Idle rules',
       message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
+      title: 'Flapping rules',
+      // message: '', // TODO: need to put description
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
+      title: 'Resolve rules',
+      // message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
@@ -2501,6 +2577,10 @@ export default {
     [USERS_PERMISSIONS.technical.healthcheck]: {
       title: 'Healthcheck',
       message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
+    },
+    [USERS_PERMISSIONS.technical.kpi]: {
+      title: 'KPI',
+      message: '', // TODO: add correct message
     },
 
     /**
@@ -2562,6 +2642,37 @@ export default {
     tooltips: {
       maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
       checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',
+    },
+  },
+
+  kpi: {
+    alarmMetrics: 'Alarm metrics',
+    sli: 'SLI',
+    tabs: {
+      dataSlices: 'Data slices',
+      detailedMetrics: 'Detailed metrics',
+      sliPatterns: 'SLI patterns',
+    },
+  },
+
+  kpiMetrics: {
+    tooltip: {
+      [USER_METRIC_PARAMETERS.loginsNumber]: '{value} logins',
+      [USER_METRIC_PARAMETERS.averageSession]: '{value} average session',
+
+      [ALARM_METRIC_PARAMETERS.totalAlarms]: '{value} alarms',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: '{value} non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: '{value} alarms under auto remediation',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: '{value} alarms under PBehavior',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} cancelled acks',
+      [ALARM_METRIC_PARAMETERS.ticketAlarms]: '{value} tickets created',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% of alarms with auto remediation',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% alarms with instructions',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% of alarms with tickets created',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.averageAck]: '{value} to ack alarms',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} to resolve alarms',
     },
   },
 

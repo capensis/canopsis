@@ -9,9 +9,9 @@ export const {
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
 
-export const API_HOST = VUE_APP_API_HOST;
+export const API_HOST = VUE_APP_API_HOST || window.location.origin;
 
-export const SOCKET_HOST = VUE_APP_API_HOST.replace(/^http(s?)/, 'wss');
+export const SOCKET_HOST = API_HOST.replace(/^http(s?)/, 'wss');
 
 export const SOCKET_ROUTE = '/api/v4/ws';
 
@@ -147,13 +147,18 @@ export const API_ROUTES = {
   saml: {
     auth: '/api/v4/saml/auth',
   },
-  scenarios: '/api/v4/scenarios',
+  scenario: {
+    scenarios: '/api/v4/scenarios',
+    checkPriority: '/api/v4/scenarios/check-priority',
+  },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings/',
   dataStorage: '/api/v4/data-storage',
   notification: '/api/v4/notification/',
   idleRules: '/api/v4/idle-rules',
   idleRulesCount: '/api/v4/idle-rules/count',
+  flappingRules: '/api/v4/flapping-rules',
+  resolveRules: '/api/v4/resolve-rules',
   messageRateStats: '/api/v4/message-rate-stats',
 
   /**
@@ -183,6 +188,11 @@ export const API_ROUTES = {
     engines: '/api/v4/cat/healthcheck',
     status: '/api/v4/cat/healthcheck/status',
     parameters: '/api/v4/cat/healthcheck/parameters',
+  },
+  metrics: {
+    alarm: '/api/v4/cat/metrics/alarm',
+    sli: '/api/v4/cat/metrics/sli',
+    rating: '/api/v4/cat/metrics/rating',
   },
 };
 
@@ -263,6 +273,26 @@ export const COLORS = {
     '#AD1457',
     '#880E4F',
   ],
+  kpi: {
+    downtime: '#c4c4c4',
+    maintenance: '#ffa800',
+    uptime: '#5b6E7f',
+  },
+  metrics: {
+    totalAlarms: '#5a6d7e',
+    nonDisplayedAlarms: '#fd693b',
+    instructionAlarms: '#7bb242',
+    correlationAlarms: '#fdef75',
+    ackAlarms: '#fd5252',
+    cancelAckAlarms: '#9b27af',
+    ticketAlarms: '#2faa63',
+    ratioCorrelation: '#c31162',
+    ratioInstructions: '#cbda39',
+    ratioTickets: '#2195f1',
+    ratioNonDisplayed: '#f9bf2d',
+    averageAck: '#f5c6ab',
+    averageResolve: '#fda701',
+  },
 };
 
 export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;

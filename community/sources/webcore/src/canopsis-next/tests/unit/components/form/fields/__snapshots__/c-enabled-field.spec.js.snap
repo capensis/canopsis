@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-enabled-field Renders \`c-enabled-field\` with custom props correctly 1`] = `
+<div
+  class="v-input v-input--selection-controls v-input--switch v-input--hide-details v-input--is-disabled theme--light"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-input--selection-controls__input"
+      >
+        <input
+          aria-checked="false"
+          aria-label="Custom label"
+          disabled="disabled"
+          role="checkbox"
+          type="checkbox"
+          value=""
+        />
+        <div
+          class="v-input--selection-controls__ripple"
+        />
+        <div
+          class="v-input--switch__track theme--light"
+        />
+        <div
+          class="v-input--switch__thumb theme--light"
+        >
+          <transition-stub
+            mode="out-in"
+            name="fab-transition"
+          />
+        </div>
+      </div>
+      <label
+        aria-hidden="true"
+        class="v-label theme--light"
+        style="left: 0px; position: relative;"
+      >
+        Custom label
+      </label>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-enabled-field Renders \`c-enabled-field\` with default props correctly 1`] = `
+<div
+  class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-input--selection-controls__input"
+      >
+        <input
+          aria-checked="true"
+          aria-label="common.enabled"
+          role="checkbox"
+          type="checkbox"
+          value=""
+        />
+        <div
+          class="v-input--selection-controls__ripple primary--text"
+        />
+        <div
+          class="v-input--switch__track theme--light primary--text"
+        />
+        <div
+          class="v-input--switch__thumb theme--light primary--text"
+        >
+          <transition-stub
+            mode="out-in"
+            name="fab-transition"
+          />
+        </div>
+      </div>
+      <label
+        aria-hidden="true"
+        class="v-label theme--light"
+        style="left: 0px; position: relative;"
+      >
+        common.enabled
+      </label>
+    </div>
+    <div
+      class="v-messages theme--light"
+    >
+      <transition-group-stub
+        class="v-messages__wrapper"
+        name="message-transition"
+        tag="div"
+      />
+    </div>
+  </div>
+</div>
+`;

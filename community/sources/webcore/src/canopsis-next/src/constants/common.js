@@ -13,6 +13,7 @@ export const ROUTES_NAMES = {
   adminPlanning: 'admin-planning-administration',
   adminRemediation: 'admin-remediation-administration',
   adminHealthcheck: 'admin-healthcheck',
+  adminKPI: 'admin-kpi',
   exploitationPbehaviors: 'exploitation-pbehaviors',
   exploitationEventFilter: 'exploitation-event-filter',
   exploitationSnmpRules: 'exploitation-snmp-rules',
@@ -21,6 +22,8 @@ export const ROUTES_NAMES = {
   exploitationMetaAlarmRules: 'exploitation-meta-alarm-rules',
   exploitationScenarios: 'exploitation-scenarios',
   exploitationIdleRules: 'exploitation-idle-rules',
+  exploitationFlappingRules: 'exploitation-flapping-rules',
+  exploitationResolveRules: 'exploitation-resolve-rules',
   notificationInstructionStats: 'notification-instruction-stats',
 };
 
@@ -39,6 +42,7 @@ export const ROUTES = {
   adminPlanning: '/admin/planning',
   adminRemediation: '/admin/remediation',
   adminHealthcheck: '/admin/healthcheck',
+  adminKPI: '/admin/kpi',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilter: '/exploitation/event-filter',
   exploitationSnmpRules: '/exploitation/snmp-rules',
@@ -47,6 +51,8 @@ export const ROUTES = {
   exploitationMetaAlarmRules: '/exploitation/meta-alarm-rule',
   exploitationScenarios: '/exploitation/scenarios',
   exploitationIdleRules: '/exploitation/idle-rules',
+  exploitationFlappingRules: '/exploitation/flapping-rules',
+  exploitationResolveRules: '/exploitation/resolve-rules',
   notificationInstructionStats: '/notification/instruction-stats',
 };
 
