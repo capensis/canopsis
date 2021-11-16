@@ -23,6 +23,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/cucumber/godog"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/sergi/go-diff/diffmatchpatch"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -34,6 +35,11 @@ const (
 	headerContentType   = "Content-Type"
 	basicPrefix         = "Basic"
 	bearerPrefix        = "Bearer"
+
+	repeatRequestCount    = 20
+	repeatRequestInterval = time.Millisecond * 100
+
+	ansiReset = "\x1b[0m"
 )
 
 // ApiClient represents utility struct which implements API steps to feature context.
@@ -138,7 +144,7 @@ func (a *ApiClient) TheResponseBodyShouldBe(doc string) error {
 		return fmt.Errorf("response is nil")
 	}
 
-	// Try execute template on expected body
+	// Try to execute template on expected body
 	b, err := a.executeTemplate(doc)
 	if err != nil {
 		return err
@@ -154,8 +160,7 @@ func (a *ApiClient) TheResponseBodyShouldBe(doc string) error {
 
 	if !reflect.DeepEqual(a.responseBody, expectedBody) {
 		expectedBodyOutput, _ := json.MarshalIndent(expectedBody, "", "  ")
-		return fmt.Errorf("expected response body to be:\n%v\n, but actual is:\n%v",
-			string(expectedBodyOutput), a.responseBodyOutput)
+		return createDiffResponseError(string(expectedBodyOutput), a.responseBodyOutput)
 	}
 
 	return nil
@@ -177,8 +182,7 @@ func (a *ApiClient) TheResponseRawBodyShouldBe(doc string) error {
 
 	expectedBody := b.String()
 	if a.responseBodyOutput != expectedBody {
-		return fmt.Errorf("expected response body to be:\n%v\n, but actual is:\n%v",
-			expectedBody, a.responseBodyOutput)
+		return createDiffResponseError(expectedBody, a.responseBodyOutput)
 	}
 
 	return nil
@@ -216,8 +220,7 @@ func (a *ApiClient) TheResponseBodyShouldContain(doc string) error {
 
 	if !partialEqual(expectedBody, a.responseBody) {
 		expectedBodyOutput, _ := json.MarshalIndent(expectedBody, "", "  ")
-		return fmt.Errorf("expected response body to be:\n%v\n, but actual is:\n%v",
-			string(expectedBodyOutput), a.responseBodyOutput)
+		return createDiffResponseError(string(expectedBodyOutput), a.responseBodyOutput)
 	}
 
 	return nil
@@ -515,6 +518,159 @@ func (a *ApiClient) IDoRequestWithBody(method, uri string, doc string) error {
 
 /**
 Step example:
+	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}} until response code is 200
+*/
+func (a *ApiClient) IDoRequestUntilResponseCode(method, uri string, code int) error {
+	uri, err := a.getRequestURL(uri)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return fmt.Errorf("cannot create request: %w", err)
+	}
+
+	for i := 0; i < repeatRequestCount; i++ {
+		if i != 0 {
+			time.Sleep(repeatRequestInterval)
+		}
+
+		err := a.doRequest(req)
+		if err != nil {
+			return err
+		}
+
+		if code == a.response.StatusCode {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("max retries exceeded, expected response code to be: %d, but actual is: %d\nresponse body: %v",
+		code,
+		a.response.StatusCode,
+		a.responseBodyOutput,
+	)
+}
+
+/**
+Step example:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body is:
+    """
+    {
+      "status": "done"
+    }
+    """
+*/
+func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc string) error {
+	uri, err := a.getRequestURL(uri)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return fmt.Errorf("cannot create request: %w", err)
+	}
+
+	b, err := a.executeTemplate(doc)
+	if err != nil {
+		return err
+	}
+	content := b.Bytes()
+	var expectedBody interface{}
+	err = json.Unmarshal(content, &expectedBody)
+	if err != nil {
+		return fmt.Errorf("cannot decode expected response body: %w", err)
+	}
+
+	for i := 0; i < repeatRequestCount; i++ {
+		if i != 0 {
+			time.Sleep(repeatRequestInterval)
+		}
+
+		err := a.doRequest(req)
+		if err != nil {
+			return err
+		}
+
+		if code == a.response.StatusCode && reflect.DeepEqual(a.responseBody, expectedBody) {
+			return nil
+		}
+	}
+
+	if code != a.response.StatusCode {
+		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+			code,
+			a.response.StatusCode,
+			a.responseBodyOutput,
+		)
+	}
+
+	expectedBodyOutput, _ := json.MarshalIndent(expectedBody, "", "  ")
+	return fmt.Errorf("max retries exceeded: %w", createDiffResponseError(string(expectedBodyOutput), a.responseBodyOutput))
+}
+
+/**
+Step example:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """
+    {
+      "status": "done"
+    }
+    """
+*/
+func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int, doc string) error {
+	uri, err := a.getRequestURL(uri)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return fmt.Errorf("cannot create request: %w", err)
+	}
+
+	b, err := a.executeTemplate(doc)
+	if err != nil {
+		return err
+	}
+	content := b.Bytes()
+	var expectedBody interface{}
+	err = json.Unmarshal(content, &expectedBody)
+	if err != nil {
+		return fmt.Errorf("cannot decode expected response body: %w", err)
+	}
+
+	for i := 0; i < repeatRequestCount; i++ {
+		if i != 0 {
+			time.Sleep(repeatRequestInterval)
+		}
+
+		err := a.doRequest(req)
+		if err != nil {
+			return err
+		}
+
+		if code == a.response.StatusCode && partialEqual(expectedBody, a.responseBody) {
+			return nil
+		}
+	}
+
+	if code != a.response.StatusCode {
+		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+			code,
+			a.response.StatusCode,
+			a.responseBodyOutput,
+		)
+	}
+
+	expectedBodyOutput, _ := json.MarshalIndent(expectedBody, "", "  ")
+	return fmt.Errorf("max retries exceeded: %w", createDiffResponseError(string(expectedBodyOutput), a.responseBodyOutput))
+}
+
+/**
+Step example:
     When I set header Content-Type=application/json
 */
 func (a *ApiClient) ISetRequestHeader(key, value string) error {
@@ -764,4 +920,10 @@ func partialEqual(left, right interface{}) bool {
 	default:
 		return reflect.DeepEqual(left, right)
 	}
+}
+
+func createDiffResponseError(expected, received string) error {
+	dmp := diffmatchpatch.New()
+	diffs := dmp.DiffMain(expected, received, false)
+	return fmt.Errorf("response doesn't match expected response body:%s\n%s\n", ansiReset, dmp.DiffPrettyText(diffs))
 }
