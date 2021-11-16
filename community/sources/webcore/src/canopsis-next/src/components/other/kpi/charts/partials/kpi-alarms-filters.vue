@@ -1,6 +1,6 @@
 <template lang="pug">
   div.kpi-alarms-toolbar
-    v-layout.ml-4.mt-4(align-content-end, wrap)
+    v-layout.ml-4.my-4(wrap)
       c-quick-date-interval-field.mr-4(v-field="query.interval")
       c-sampling-field.mr-4.kpi-alarms-toolbar__sampling(v-field="query.sampling")
       c-filters-field.mr-4.kpi-alarms-toolbar__filters(v-field="query.filter")

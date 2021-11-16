@@ -131,6 +131,9 @@ export default {
         'v.duration': convertDurationToString,
         'v.current_state_duration': convertDurationToString,
         t: convertDateToStringWithFormatForToday,
+        'v.active_duration': convertDateToStringWithFormatForToday,
+        'v.snooze_duration': convertDateToStringWithFormatForToday,
+        'v.pbh_inactive_duration': convertDateToStringWithFormatForToday,
 
         ...this.columnsFiltersMap,
       };
