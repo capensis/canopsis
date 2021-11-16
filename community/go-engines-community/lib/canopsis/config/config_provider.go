@@ -52,10 +52,7 @@ type UserInterfaceConfigProvider interface {
 }
 
 type AlarmConfig struct {
-	FlappingFreqLimit     int
-	FlappingInterval      time.Duration
 	StealthyInterval      time.Duration
-	BaggotTime            time.Duration
 	EnableLastEventDate   bool
 	CancelAutosolveDelay  time.Duration
 	DisplayNameScheme     *template.Template
@@ -102,10 +99,7 @@ func (t ScheduledTime) String() string {
 func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmConfigProvider {
 	sectionName := "alarm"
 	conf := AlarmConfig{
-		FlappingFreqLimit:             parseInt(cfg.Alarm.FlappingFreqLimit, 0, "FlappingFreqLimit", sectionName, logger),
-		FlappingInterval:              parseTimeDurationBySeconds(cfg.Alarm.FlappingInterval, 0, "FlappingInterval", sectionName, logger),
 		StealthyInterval:              parseTimeDurationBySeconds(cfg.Alarm.StealthyInterval, 0, "StealthyInterval", sectionName, logger),
-		BaggotTime:                    parseTimeDurationByStr(cfg.Alarm.BaggotTime, AlarmBaggotTime, "BaggotTime", sectionName, logger),
 		EnableLastEventDate:           parseBool(cfg.Alarm.EnableLastEventDate, "EnableLastEventDate", sectionName, logger),
 		CancelAutosolveDelay:          parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
 		DisableActionSnoozeDelayOnPbh: parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
@@ -148,12 +142,7 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
 	defer p.mx.Unlock()
 
 	sectionName := "alarm"
-	d, ok := parseUpdatedTimeDurationByStr(cfg.Alarm.BaggotTime, p.conf.BaggotTime, "BaggotTime", sectionName, p.logger)
-	if ok {
-		p.conf.BaggotTime = d
-	}
-
-	d, ok = parseUpdatedTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, p.conf.CancelAutosolveDelay, "CancelAutosolveDelay", sectionName, p.logger)
+	d, ok := parseUpdatedTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, p.conf.CancelAutosolveDelay, "CancelAutosolveDelay", sectionName, p.logger)
 	if ok {
 		p.conf.CancelAutosolveDelay = d
 	}
@@ -178,16 +167,6 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
 				Int("new", cfg.Alarm.OutputLength).
 				Msg("OutputLength of alarm config section is loaded")
 		}
-	}
-
-	i, ok := parseUpdatedInt(cfg.Alarm.FlappingFreqLimit, p.conf.FlappingFreqLimit, "FlappingFreqLimit", sectionName, p.logger)
-	if ok {
-		p.conf.FlappingFreqLimit = i
-	}
-
-	d, ok = parseUpdatedTimeDurationBySeconds(cfg.Alarm.FlappingInterval, p.conf.FlappingInterval, "FlappingInterval", sectionName, p.logger)
-	if ok {
-		p.conf.FlappingInterval = d
 	}
 
 	d, ok = parseUpdatedTimeDurationBySeconds(cfg.Alarm.StealthyInterval, p.conf.StealthyInterval, "StealthyInterval", sectionName, p.logger)

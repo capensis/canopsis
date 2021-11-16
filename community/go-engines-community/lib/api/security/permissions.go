@@ -48,4 +48,7 @@ const (
 	PermHealthcheck = "api_healthcheck"
 
 	ObjFile = "api_file"
+
+	ObjFlappingRule = "api_flapping_rule"
+	ObjResolveRule  = "api_resolve_rule"
 )

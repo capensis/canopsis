@@ -192,3 +192,5 @@ export const ALARM_METRIC_PARAMETERS = {
   averageAck: 'average_ack',
   averageResolve: 'average_resolve',
 };
+
+export const ALARMS_LIST_HEADER_OPACITY_DELAY = 500;

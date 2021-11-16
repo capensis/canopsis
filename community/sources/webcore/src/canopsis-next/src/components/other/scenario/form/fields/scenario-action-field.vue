@@ -16,7 +16,7 @@
       v-expand-transition(mode="out-in")
         v-layout(v-show="expanded", column)
           v-layout(row)
-            c-enabled-field(v-field="action.emit_trigger", :label="$t('scenario.fields.emitTrigger')")
+            c-enabled-field(v-field="action.emit_trigger", :label="$t('scenario.emitTrigger')")
           v-layout(row)
             c-workflow-field(
               v-field="action.drop_scenario_if_not_matched",
