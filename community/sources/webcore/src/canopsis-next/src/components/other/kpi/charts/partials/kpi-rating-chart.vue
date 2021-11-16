@@ -5,7 +5,6 @@
 <script>
 import { COLORS } from '@/config';
 import {
-  ALARM_METRIC_PARAMETERS,
   DATETIME_FORMATS,
   KPI_SLI_GRAPH_BAR_PERCENTAGE,
   TIME_UNITS,
@@ -14,7 +13,7 @@ import {
 
 import { colorToRgba } from '@/helpers/color';
 import {
-  convertDurationFormToMaxUnitDurationForm,
+  convertDurationToMaxUnitDuration,
   convertDurationToString,
   fromSeconds,
 } from '@/helpers/date/duration';
@@ -48,7 +47,7 @@ export default {
     },
 
     maxDuration() {
-      return convertDurationFormToMaxUnitDurationForm({
+      return convertDurationToMaxUnitDuration({
         value: this.maxValue,
         unit: TIME_UNITS.second,
       });
