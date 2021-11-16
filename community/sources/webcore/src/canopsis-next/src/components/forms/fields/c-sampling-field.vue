@@ -4,7 +4,8 @@
     :items="samplings",
     :disabled="disabled",
     :label="label || $t('common.sampling')",
-    :name="name"
+    :name="name",
+    hide-details
   )
     template(#selection="{ item }")
       span.text-capitalize {{ item.text }}

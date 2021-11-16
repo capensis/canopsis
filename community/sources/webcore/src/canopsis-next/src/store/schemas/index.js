@@ -146,7 +146,7 @@ export const stateSettingSchema = new schema.Entity(ENTITIES_TYPES.stateSetting,
 
 export const idleRulesSchema = new schema.Entity(ENTITIES_TYPES.idleRules, {}, { idAttribute: '_id' });
 
-export const idleFilterSchema = new schema.Entity(ENTITIES_TYPES.filter, {}, { idAttribute: '_id' });
+export const filterSchema = new schema.Entity(ENTITIES_TYPES.filter, {}, { idAttribute: '_id' });
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
@@ -180,5 +180,5 @@ export default {
   [ENTITIES_TYPES.stateSetting]: stateSettingSchema,
   [ENTITIES_TYPES.remediationInstructionStats]: remediationInstructionStatsSchema,
   [ENTITIES_TYPES.idleRules]: idleRulesSchema,
-  [ENTITIES_TYPES.filter]: idleFilterSchema,
+  [ENTITIES_TYPES.filter]: filterSchema,
 };
