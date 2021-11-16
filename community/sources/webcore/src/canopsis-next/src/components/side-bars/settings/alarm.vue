@@ -109,6 +109,11 @@
           )
           v-divider
           export-csv-form(v-model="settings.widget.parameters", datetime-format)
+          v-divider
+          field-switcher(
+            v-model="settings.widget.parameters.sticky_header",
+            :title="$t('settings.stickyHeader')"
+          )
       v-divider
     v-btn.primary(data-test="submitAlarms", @click="submit") {{ $t('common.save') }}
 </template>

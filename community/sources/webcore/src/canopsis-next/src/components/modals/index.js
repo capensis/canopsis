@@ -60,6 +60,7 @@ export const CreateMetaAlarmRule = () => ({
   component: import(/* webpackChunkName: "Alarm" */ './meta-alarm-rule/create-meta-alarm-rule.vue'),
   loading: ModalLoaderOverlay,
 });
+
 export const PbehaviorList = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-list.vue'),
   loading: ModalLoaderOverlay,
@@ -310,5 +311,9 @@ export const HealthcheckEnginesChainReference = () => ({
 });
 export const CreateScenario = () => ({
   component: import(/* webpackChunkName: "Scenario" */ './scenario/create-scenario.vue'),
+  loading: ModalLoaderOverlay,
+});
+export const CreateAlarmStatusRule = () => ({
+  component: import(/* webpackChunkName: "AlarmStatusRule" */ './alarm-status-rule/create-alarm-status-rule.vue'),
   loading: ModalLoaderOverlay,
 });

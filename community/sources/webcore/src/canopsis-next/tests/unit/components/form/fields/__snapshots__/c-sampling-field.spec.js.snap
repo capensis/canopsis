@@ -2,7 +2,7 @@
 
 exports[`c-sampling-field Renders \`c-sampling-field\` with custom props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+  class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
   role="combobox"
 >
   <div
@@ -57,17 +57,6 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with custom props 1`] = `
       <div
         class="v-menu"
       />
-    </div>
-    <div
-      class="v-text-field__details"
-    >
-      <div
-        class="v-messages theme--light"
-      >
-        <div
-          class="v-messages__wrapper"
-        />
-      </div>
     </div>
   </div>
 </div>
@@ -145,7 +134,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with custom props 2`] = `
 
 exports[`c-sampling-field Renders \`c-sampling-field\` with default props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
   role="combobox"
 >
   <div
@@ -199,17 +188,6 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with default props 1`] = 
       <div
         class="v-menu"
       />
-    </div>
-    <div
-      class="v-text-field__details"
-    >
-      <div
-        class="v-messages theme--light"
-      >
-        <div
-          class="v-messages__wrapper"
-        />
-      </div>
     </div>
   </div>
 </div>

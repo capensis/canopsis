@@ -29,7 +29,11 @@ import { CRUD_ACTIONS } from '@/constants';
  * @typedef {Role} RoleForm
  * @property {PermissionsForm} permissions
  * @property {string} defaultview
- * @property {string} role
+ */
+
+/**
+ * @typedef {Role} RoleRequest
+ * @property {string} defaultview
  */
 
 /**
@@ -86,12 +90,12 @@ const permissionsFormToRolePermissions = (permissionsForm = {}) => Object.entrie
 /**
  * Convert role form to role object
  *
- * @param {RoleForm} [form = {}]
- * @returns {Role}
+ * @param {RoleForm | {}} [form = {}]
+ * @returns {RoleRequest}
  */
 export const formToRole = (form = {}) => ({
   ...form,
 
-  defaultview: form.defaultview && form.defaultview._id,
+  defaultview: form.defaultview,
   permissions: permissionsFormToRolePermissions(form.permissions),
 });
