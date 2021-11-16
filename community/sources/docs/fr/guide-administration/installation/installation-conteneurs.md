@@ -31,6 +31,13 @@ Vous devez tout d'abord [installer Docker](https://docs.docker.com/get-docker/),
 
 Une fois Docker installé, vous devez ensuite [installer Docker Compose](https://docs.docker.com/compose/install/#install-compose).
 
+!!! attention
+    Dans certaines configurations, les versions les plus récentes de Docker Compose peuvent activer Compose v2 par défaut.
+
+    Compose v2 est une réécriture importante de Docker Compose mais elle est, à ce jour, en partie incomplète et instable par rapport à Compose v1. Canopsis ne prend donc pas en charge Compose v2 pour le moment.
+
+    Si la commande `docker-compose version --short` vous renvoie un numéro de version supérieur ou égal à `2.0.0`, vous devez désactiver Compose v2 avec la commande `docker-compose disable-v2`. Voyez [la documentation de Compose V2](https://docs.docker.com/compose/cli-command/#compose-v2-and-the-new-docker-compose-command) pour en savoir plus.
+
 ## Lancement de Canopsis avec Docker Compose
 
 Les images Docker officielles de Canopsis sont hébergées sur Docker Hub : <https://hub.docker.com/u/canopsis/> et seront prochainement migrées vers notre propre registre Docker.

@@ -33,4 +33,6 @@ export const ENTITIES_TYPES = {
   testSuiteHistory: 'testSuiteHistory',
   stateSetting: 'stateSetting',
   idleRules: 'idleRules',
+  flappingRules: 'flappingRules',
+  resolveRules: 'resolveRules',
 };

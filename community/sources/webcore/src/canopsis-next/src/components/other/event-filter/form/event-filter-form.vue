@@ -21,7 +21,7 @@
       :error-messages="errors.collect('description')",
       name="description"
     )
-    c-priority-field(v-model="form.priority")
+    c-priority-field(v-field="form.priority")
     c-enabled-field(v-field="form.enabled")
     patterns-list(v-field="form.patterns")
 </template>

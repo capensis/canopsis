@@ -25,13 +25,3 @@ type ActionPBehaviorParameters struct {
 		Unit    string `bson:"unit" json:"unit"`
 	} `bson:"duration,omitempty" json:"duration,omitempty"`
 }
-
-func (p *ActionPBehaviorParameters) Template(data interface{}) error {
-	author, err := renderTemplate(p.Author, data, GetTemplateFunc())
-	if err != nil {
-		return err
-	}
-	p.Author = author
-
-	return nil
-}

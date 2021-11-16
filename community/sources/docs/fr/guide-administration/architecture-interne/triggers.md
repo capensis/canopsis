@@ -4,7 +4,7 @@ Dans Canopsis, le traitement des [évènements](../../guide-utilisation/vocabula
 
 Ces `triggers` peuvent servir comme point de déclenchement pour les [actions automatisées](../moteurs/moteur-action.md) et les [webhooks](../moteurs/moteur-webhook.md).
 
-Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"`, `"changestate"`, `"comment"`, `"create"`, `"declareticket"`, `"declareticketwebhook"`, `"done"`, `"resolve"`, `"snooze"`, `"statedec"`, `"stateinc"`, `"statusdec"`, `"statusinc"`, `"uncancel"`, et `"unsnooze"`.
+Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"activate"`, `"cancel"`, `"changestate"`, `"comment"`, `"create"`, `"declareticket"`, `"declareticketwebhook"`, `"done"`,  `"pbhenter"`,  `"pbhleave"`, `"resolve"`, `"snooze"`, `"statedec"`, `"stateinc"`, `"statusdec"`, `"statusinc"`, `"uncancel"`, et `"unsnooze"`.
 
 !!! note
     Les triggers `declareticketwebhook`, `resolve` et `unsnooze` ne correspondent pas à un évènement mais à un traitement interne par Canopsis
@@ -13,6 +13,7 @@ Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"
 |:------------------------ |:--------------------------------------------------------------------------------------------------- | ---------------------------- |
 | `"ack"`                  | Acquittement d'une [alerte](../../guide-utilisation/vocabulaire/index.md#alarme)                    | ✅                           |
 | `"ackremove"`            | Suppression de l'acquittement                                                                       | ✅                           |
+| `"activate"`            | Passage d'une alerte en mode activation (soit dès sa création s'il n'y a pas de pbehavior ou de snooze en cours, ou soit en sortie de Snooze ou de Pbehavior retardant ainsi le début de l'alerte à prendre en compte, par exemple dans un calcul de SLA)                                                                       | ❌                           |
 | `"assocticket"`          | Association d'un ticket à l'alarme                                                                  | ✅                           |
 | `"cancel"`               | Annulation de l'évènement                                                                           | ✅                           |
 | `"changestate"`          | Modification et verrouillage de la [criticité](../../guide-utilisation/vocabulaire/index.md#criticité) de l'alarme | ✅                           |
@@ -21,6 +22,8 @@ Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"
 | `"declareticket"`        | Action du bac à alarmes de déclaration d'un ticket                                                  | ✅                           |
 | `"declareticketwebhook"` | Déclaration d'un ticket à l'alarme par un webhook                                                   | ❌                           |
 | `"done"`                 | Fin de l'alarme                                                                                     | ✅                           |
+| `"pbhenter"` | Démarrage d'un pbehavior                                                   | ❌                           |
+| `"pbhleave"` | Sortie d'un pbehavior                                                   | ❌                           |
 | `"resolve"`              | Résolution de l'alarme                                                                              | ❌                           |
 | `"snooze"`               | Mise en veille de l'alarme                                                                          | ✅                           |
 | `"statedec"`             | Diminution de la [criticité](../../guide-utilisation/vocabulaire/index.md#criticité) de l'alarme    | ✅                           |
