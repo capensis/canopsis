@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { get } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import { formToScenario, scenarioToForm, scenarioErrorToForm } from '@/helpers/forms/scenario';
@@ -53,6 +55,10 @@ export default {
     title() {
       return this.config.title || this.$t('modals.createScenario.create.title');
     },
+
+    originalPriority() {
+      return get(this.config, 'scenario.priority');
+    },
   },
   methods: {
     showConfirmScenarioPriorityChange(priority) {
@@ -79,12 +85,14 @@ export default {
       if (isFormValid) {
         try {
           if (this.config.action) {
-            const { valid, recommended_priority: recommendedPriority } = await this.checkScenarioPriority({
-              data: { priority: this.form.priority },
-            });
+            if (this.form.priority !== this.originalPriority) {
+              const { valid, recommended_priority: recommendedPriority } = await this.checkScenarioPriority({
+                data: { priority: this.form.priority },
+              });
 
-            if (!valid) {
-              await this.showConfirmScenarioPriorityChange(recommendedPriority);
+              if (!valid) {
+                await this.showConfirmScenarioPriorityChange(recommendedPriority);
+              }
             }
 
             await this.config.action(formToScenario(this.form, this.$system.timezone));
