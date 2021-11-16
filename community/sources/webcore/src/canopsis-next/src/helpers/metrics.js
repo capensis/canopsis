@@ -25,7 +25,7 @@ import { addUnitToDate, convertDateToString } from '@/helpers/date/date';
  * @returns {boolean}
  */
 export const isTimeMetric = metric => [
-  USER_METRIC_PARAMETERS.averageSession,
+  USER_METRIC_PARAMETERS.totalUserActivity,
   ALARM_METRIC_PARAMETERS.averageAck,
   ALARM_METRIC_PARAMETERS.averageResolve,
 ].includes(metric);

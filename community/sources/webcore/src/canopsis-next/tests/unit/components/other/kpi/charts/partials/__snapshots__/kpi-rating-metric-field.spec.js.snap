@@ -136,7 +136,41 @@ exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without pro
             <div
               class="v-list__tile__title"
             >
-              users.metrics.average_session
+              users.metrics.ack_without_cancel_alarms
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              users.metrics.average_ack
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              users.metrics.total_user_activity
             </div>
           </div>
         </a>
