@@ -52,7 +52,7 @@ func (lf *linksFetcher) Fetch(ctx context.Context, apiKey string, ae []AlarmEnti
 		return nil, err
 	}
 	req.Header.Set("content-type", "application/json")
-	// Add proxy auth credentials
+	// Add old API auth credentials
 	if apiKey != "" {
 		req.Header.Add(security.HeaderApiKey, apiKey)
 	}
