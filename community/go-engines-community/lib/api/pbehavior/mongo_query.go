@@ -22,6 +22,7 @@ type MongoQuery struct {
 
 	match             bson.M
 	sort              bson.M
+	lookupBeforeMatch map[string][]bson.M
 	lookupBeforeLimit map[string][]bson.M
 	lookupAfterLimit  map[string][]bson.M
 	project           []bson.M
@@ -33,6 +34,7 @@ func CreateMongoQuery(client mongo.DbClient) MongoQuery {
 		reasonCollection:      client.Collection(mongo.PbehaviorReasonMongoCollection),
 		defaultSearchByFields: []string{"_id", "name", "author", "comments.author", "comments.message", "filter", "author"},
 		defaultSortBy:         "created",
+		lookupBeforeMatch:     map[string][]bson.M{},
 		lookupBeforeLimit:     map[string][]bson.M{},
 		lookupAfterLimit: map[string][]bson.M{
 			"type":   GetNestedTypePipeline(),
@@ -63,6 +65,9 @@ func (q *MongoQuery) CreateAggregationPipeline(ctx context.Context, r ListReques
 	}
 
 	beforeLimit := make([]bson.M, 0)
+	for _, m := range q.lookupBeforeMatch {
+		beforeLimit = append(beforeLimit, m...)
+	}
 	if len(q.match) > 0 {
 		beforeLimit = append(beforeLimit, bson.M{"$match": q.match})
 	}
@@ -101,13 +106,7 @@ func (q *MongoQuery) handleSort(_ context.Context, r ListRequest) error {
 		sortBy = q.defaultSortBy
 	}
 
-	for k, v := range q.lookupAfterLimit {
-		if strings.HasPrefix(sortBy, k) {
-			delete(q.lookupAfterLimit, k)
-			q.lookupBeforeLimit[k] = v
-		}
-	}
-
+	q.adjustLookupsForSort(sortBy)
 	q.sort = common.GetSortQuery(sortBy, r.Sort)
 
 	return nil
@@ -124,6 +123,8 @@ func (q *MongoQuery) getSearchFilter(ctx context.Context, search string) (bson.M
 	p := parser.NewParser()
 	expr, err := p.Parse(search)
 	if err == nil {
+		q.adjustLookupsForFilter(expr.GetFields())
+
 		return expr.Query(), nil
 	}
 
@@ -185,6 +186,34 @@ func (q *MongoQuery) getSearchFilter(ctx context.Context, search string) (bson.M
 	}
 
 	return bson.M{"$or": conditions}, nil
+}
+
+func (q *MongoQuery) adjustLookupsForFilter(fields []string) {
+	for k, v := range q.lookupAfterLimit {
+		for _, field := range fields {
+			if strings.HasPrefix(field, k) {
+				delete(q.lookupAfterLimit, k)
+				q.lookupBeforeMatch[k] = v
+			}
+		}
+	}
+	for k, v := range q.lookupBeforeLimit {
+		for _, field := range fields {
+			if strings.HasPrefix(field, k) {
+				delete(q.lookupBeforeLimit, k)
+				q.lookupBeforeMatch[k] = v
+			}
+		}
+	}
+}
+
+func (q *MongoQuery) adjustLookupsForSort(sortBy string) {
+	for k, v := range q.lookupAfterLimit {
+		if strings.HasPrefix(sortBy, k) {
+			delete(q.lookupAfterLimit, k)
+			q.lookupBeforeLimit[k] = v
+		}
+	}
 }
 
 func GetNestedObjectsPipeline() []bson.M {
