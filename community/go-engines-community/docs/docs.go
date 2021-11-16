@@ -3061,6 +3061,268 @@ var doc = `{
                 }
             }
         },
+        "/flapping-rules": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of flapping rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flappingrules"
+                ],
+                "summary": "Find all flapping rule",
+                "operationId": "flappingrules-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/flappingrule.Response"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create flapping rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flappingrules"
+                ],
+                "summary": "Create flapping rule",
+                "operationId": "flappingrules-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/flappingrule.CreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/flappingrule.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/flapping-rules/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get flapping rule by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flappingrules"
+                ],
+                "summary": "Get flapping rule by id",
+                "operationId": "flappingrules-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "flapping rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/flappingrule.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update flapping rule by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flappingrules"
+                ],
+                "summary": "Update flapping rule by id",
+                "operationId": "flappingrules-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "flapping rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/flappingrule.UpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/flappingrule.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth` + "`" + `": []
+                    }
+                ],
+                "description": "Delete flapping rule by id",
+                "tags": [
+                    "flappingrules"
+                ],
+                "summary": "Delete flapping rule by id",
+                "operationId": "flappingrules-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "flapping rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/idle-rules": {
             "get": {
                 "security": [
@@ -5658,6 +5920,268 @@ var doc = `{
                 }
             }
         },
+        "/resolve-rules": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of resolve rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Find all resolve rule",
+                "operationId": "resolverules-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/resolverule.Response"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create resolve rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Create resolve rule",
+                "operationId": "resolverules-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.CreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/resolve-rules/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get resolve rule by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Get resolve rule by id",
+                "operationId": "resolverules-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "resolve rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update resolve rule by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Update resolve rule by id",
+                "operationId": "resolverules-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "resolve rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.UpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth` + "`" + `": []
+                    }
+                ],
+                "description": "Delete resolve rule by id",
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Delete resolve rule by id",
+                "operationId": "resolverules-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "resolve rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/roles": {
             "get": {
                 "security": [
@@ -6061,6 +6585,84 @@ var doc = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/scenarios/check-priority": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Check priority",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Check priority",
+                "operationId": "scenarios-check-priority",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/scenario.CheckPriorityRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/scenario.CheckPriorityResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/scenarios/minimal-priority": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get minimal priority",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Get minimal priority",
+                "operationId": "scenarios-get-minimal-priority",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/scenario.GetMinimalPriorityResponse"
                         }
                     }
                 }
@@ -8592,6 +9194,17 @@ var doc = `{
                 }
             }
         },
+        "common.User": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "common.ValidationErrorResponse": {
             "type": "object",
             "properties": {
@@ -9378,6 +9991,112 @@ var doc = `{
                 },
                 "mediatype": {
                     "type": "string"
+                }
+            }
+        },
+        "flappingrule.CreateRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "duration",
+                "freq_limit",
+                "priority"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "freq_limit": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
+        "flappingrule.Response": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "author": {
+                    "type": "object",
+                    "$ref": "#/definitions/common.User"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "freq_limit": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "flappingrule.UpdateRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "duration",
+                "freq_limit",
+                "priority"
+            ],
+            "properties": {
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "freq_limit": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "integer"
                 }
             }
         },
@@ -11090,6 +11809,101 @@ var doc = `{
                 }
             }
         },
+        "resolverule.CreateRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "duration",
+                "priority"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
+        "resolverule.Response": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "author": {
+                    "type": "object",
+                    "$ref": "#/definitions/common.User"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "resolverule.UpdateRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "duration",
+                "priority"
+            ],
+            "properties": {
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
         "role.CreateRequest": {
             "type": "object",
             "required": [
@@ -11246,6 +12060,28 @@ var doc = `{
                 }
             }
         },
+        "scenario.CheckPriorityRequest": {
+            "type": "object",
+            "required": [
+                "priority"
+            ],
+            "properties": {
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
+        "scenario.CheckPriorityResponse": {
+            "type": "object",
+            "properties": {
+                "recommended_priority": {
+                    "type": "integer"
+                },
+                "valid": {
+                    "type": "boolean"
+                }
+            }
+        },
         "scenario.EditRequest": {
             "type": "object",
             "required": [
@@ -11290,6 +12126,14 @@ var doc = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "scenario.GetMinimalPriorityResponse": {
+            "type": "object",
+            "properties": {
+                "priority": {
+                    "type": "integer"
                 }
             }
         },

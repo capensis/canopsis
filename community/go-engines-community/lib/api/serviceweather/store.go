@@ -595,6 +595,10 @@ func getFindEntitiesPipeline() []bson.M {
 			"let":  bson.M{"eid": "$_id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$d", "$$eid"}}}},
+				{"$match": bson.M{"$or": []bson.M{
+					{"v.resolved": bson.M{"$in": bson.A{false, nil}}},
+					{"v.resolved": bson.M{"$exists": false}},
+				}}},
 				{"$sort": bson.M{"v.creation_date": -1}},
 				{"$limit": 1},
 			},

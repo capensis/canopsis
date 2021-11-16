@@ -699,6 +699,14 @@ export default {
         + '</dl>',
     },
     stickyHeader: 'En-tête collant',
+    reportFileRegexp: {
+      title: 'Masque de fichier de rapport',
+      helpText: '<dl>'
+        + '<dt>Définir le nom de fichier regexp de quel rapport:<dt>\n'
+        + '<dd>Par exemple:</dd>\n'
+        + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
+        + '</dl>',
+    },
   },
   modals: {
     common: {
@@ -1534,6 +1542,30 @@ export default {
         title: 'Règle d\'entité en double',
       },
     },
+    createAlarmStatusRule: {
+      flapping: {
+        create: {
+          title: 'Créer une règle de bagot',
+        },
+        edit: {
+          title: 'Modifier la règle de bagot',
+        },
+        duplicate: {
+          title: 'Dupliquer la règle de bagot',
+        },
+      },
+      resolve: {
+        create: {
+          title: 'Créer une règle de résolution',
+        },
+        edit: {
+          title: 'Modifier la règle de résolution',
+        },
+        duplicate: {
+          title: 'Dupliquer la règle de résolution',
+        },
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -2167,6 +2199,15 @@ export default {
   },
 
   scenario: {
+    triggers: 'Triggers',
+    emitTrigger: 'Émettre un trigger',
+    withAuth: 'Avez-vous besoin de champs d\'authentification ?',
+    emptyResponse: 'Réponse vide',
+    isRegexp: 'La valeur peut être une RegExp',
+    headerKey: "Clé d'en-tête",
+    headerValue: "Valeur d'en-tête",
+    key: 'Clé',
+    skipVerify: 'Ne pas vérifier les certificats HTTPS',
     headers: 'En-têtes',
     declareTicket: 'Déclarer un ticket',
     workflow: 'Workflow si cette action ne correspond pas :',
@@ -2200,22 +2241,12 @@ export default {
       [ACTION_TYPES.cancel]: 'Cancel',
       [ACTION_TYPES.webhook]: 'Webhook',
     },
-    fields: {
-      triggers: 'Triggers',
-      emitTrigger: 'Émettre un trigger',
-      withAuth: 'Avez-vous besoin de champs d\'authentification ?',
-      emptyResponse: 'Réponse vide',
-      isRegexp: 'La valeur peut être une RegExp',
-      headerKey: "Clé d'en-tête",
-      headerValue: "Valeur d'en-tête",
-      key: 'Clé',
-      skipVerify: 'Ne pas vérifier les certificats HTTPS',
-    },
     tabs: {
       pattern: 'Pattern',
     },
     errors: {
       actionRequired: 'Veuillez ajouter au moins une action',
+      priorityExist: 'La priorité du scénario actuel est déjà utilisée. Voulez-vous changer la priorité actuelle du scénario en {priority} ?',
     },
   },
 
@@ -2430,6 +2461,10 @@ export default {
     },
   },
 
+  alarmStatusRules: {
+    frequencyLimit: 'Nombre d\'oscillations',
+  },
+
   icons: {
     noEvents: 'Aucun événement reçu pendant {duration} par certaines dépendances',
   },
@@ -2459,6 +2494,16 @@ export default {
     [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
       title: 'Règles d\'inactivité',
       message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
+      title: 'Règles de bagot',
+      // message: '', // TODO: need to put description
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
+      title: 'Règles de résolution',
+      // message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {

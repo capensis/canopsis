@@ -21,6 +21,8 @@ export const ROUTES_NAMES = {
   exploitationMetaAlarmRules: 'exploitation-meta-alarm-rules',
   exploitationScenarios: 'exploitation-scenarios',
   exploitationIdleRules: 'exploitation-idle-rules',
+  exploitationFlappingRules: 'exploitation-flapping-rules',
+  exploitationResolveRules: 'exploitation-resolve-rules',
   notificationInstructionStats: 'notification-instruction-stats',
 };
 
@@ -47,6 +49,8 @@ export const ROUTES = {
   exploitationMetaAlarmRules: '/exploitation/meta-alarm-rule',
   exploitationScenarios: '/exploitation/scenarios',
   exploitationIdleRules: '/exploitation/idle-rules',
+  exploitationFlappingRules: '/exploitation/flapping-rules',
+  exploitationResolveRules: '/exploitation/resolve-rules',
   notificationInstructionStats: '/notification/instruction-stats',
 };
 

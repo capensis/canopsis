@@ -20,6 +20,7 @@ func (e *combinedExecutor) Exec(
 	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
+	entity types.Entity,
 	time types.CpsTime,
 	role, initiator string,
 ) (types.AlarmChangeType, error) {
@@ -28,5 +29,5 @@ func (e *combinedExecutor) Exec(
 		return "", nil
 	}
 
-	return executor.Exec(ctx, operation, alarm, time, role, initiator)
+	return executor.Exec(ctx, operation, alarm, entity, time, role, initiator)
 }
