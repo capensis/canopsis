@@ -105,7 +105,7 @@ export const isAvailableMetricByCriteria = (metric, criteria) => (
 );
 
 /**
- * Ша metric available for criteria return metric, else return first available metric
+ * If metric available for criteria return metric, else return first available metric
  *
  * @param {string} metric
  * @param {Criteria} criteria
