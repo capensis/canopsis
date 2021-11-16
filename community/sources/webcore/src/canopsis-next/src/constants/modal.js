@@ -76,6 +76,7 @@ export const MODALS = {
   stateSetting: 'state-setting',
   testSuite: 'test-suite',
   createIdleRule: 'create-idle-rule',
+  createAlarmStatusRule: 'create-alarm-status-rule',
   healthcheckEngine: 'healthcheck-engine',
   healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
 };

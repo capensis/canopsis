@@ -33,7 +33,6 @@ func TestConfWriteAndRead(t *testing.T) {
 		Convey("Readed conf should be good", func() {
 			conf, err := c.GetConfig(ctx)
 			So(err, ShouldBeNil)
-			So(conf.Alarm.FlappingFreqLimit, ShouldEqual, 1)
 			So(conf.Alarm.CancelAutosolveDelay, ShouldEqual, "1h")
 		})
 	})
@@ -53,14 +52,12 @@ func TestConfSave(t *testing.T) {
 		source := testutils.GetTestConf()
 
 		Convey("When we set a value", func() {
-			source.Alarm.FlappingInterval = 666
 			err := c.UpsertConfig(ctx, source)
 			So(err, ShouldBeNil)
 
 			Convey("The the value is on the database", func() {
-				conf, err := c.GetConfig(ctx)
+				_, err := c.GetConfig(ctx)
 				So(err, ShouldBeNil)
-				So(conf.Alarm.FlappingInterval, ShouldEqual, 666)
 			})
 		})
 	})
