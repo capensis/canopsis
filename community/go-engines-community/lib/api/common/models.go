@@ -83,6 +83,7 @@ func NewErrorResponse(err error) ErrorResponse {
 }
 
 var NotFoundResponse = ErrorResponse{Error: "Not found"}
+var MethodNotAllowedResponse = ErrorResponse{Error: "Method not allowed"}
 var UnauthorizedResponse = ErrorResponse{Error: "Unauthorized"}
 var InternalServerErrorResponse = ErrorResponse{Error: "Internal server error"}
 var ForbiddenResponse = ErrorResponse{Error: "Forbidden"}
