@@ -2,7 +2,7 @@
 
 exports[`kpi-sli-show-mode-field Renders \`kpi-sli-show-mode-field\` without props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
   role="combobox"
 >
   <div
@@ -55,17 +55,6 @@ exports[`kpi-sli-show-mode-field Renders \`kpi-sli-show-mode-field\` without pro
       <div
         class="v-menu"
       />
-    </div>
-    <div
-      class="v-text-field__details"
-    >
-      <div
-        class="v-messages theme--light"
-      >
-        <div
-          class="v-messages__wrapper"
-        />
-      </div>
     </div>
   </div>
 </div>

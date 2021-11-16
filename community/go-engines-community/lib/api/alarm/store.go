@@ -99,17 +99,24 @@ func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
 	return s
 }
 
-// move $sort to the end of $project when sorting by added field v.duration
-func (s *store) adjustSort(sort bson.M, project []bson.M) []bson.M {
+func (s *store) isSortByDuration(sort bson.M) bool {
+	durationFields := []string{"v.duration", "v.active_duration"}
 	srt := sort["$sort"]
-	if sortExpr, ok := srt.(bson.D); ok && len(sortExpr) > 1 && sortExpr[0].Key == "v.duration" {
-		project = append(project, bson.M{"$sort": sortExpr})
-		delete(sort, "$sort")
-	} else if sortExpr, ok := srt.(bson.M); ok && sortExpr != nil && sortExpr["v.duration"] != nil {
-		project = append(project, bson.M{"$sort": bson.M{"v.duration": sortExpr["v.duration"]}})
-		delete(sort, "$sort")
+	if sortExpr, ok := srt.(bson.D); ok && len(sortExpr) > 1 {
+		for _, f := range durationFields {
+			if sortExpr[0].Key == f {
+				return true
+			}
+		}
+	} else if sortExpr, ok := srt.(bson.M); ok && sortExpr != nil {
+		for _, f := range durationFields {
+			if sortExpr[f] != nil {
+				return true
+			}
+		}
 	}
-	return project
+
+	return false
 }
 
 // insertDeferred iserts deferredNestedObjects at the beginning of pipeline or project stages depending on Filter
@@ -150,7 +157,11 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 	entitiesToProject := s.resetEntities(r.ListRequest, &pipeline)
 	project := s.getProject(r.ListRequest, entitiesToProject)
 	project = s.insertDeferred(r.FilterRequest, &pipeline, project)
-	project = s.adjustSort(sort, project)
+	if s.isSortByDuration(sort) {
+		pipeline = append(pipeline, s.getDurationFields())
+	} else {
+		project = append(project, s.getDurationFields())
+	}
 	cursor, err := collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
@@ -1065,7 +1076,6 @@ func (s *store) resetEntities(r ListRequest, pipeline *[]bson.M) bool {
 }
 
 func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
-	now := time.Now().Unix()
 	addFields := bson.M{
 		"infos": "$v.infos",
 		// outer field lastComment to make use it in $project
@@ -1087,26 +1097,6 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 				"in":           bson.M{"$mergeObjects": bson.A{bson.M{}, "$$this"}},
 			},
 		},
-		"v.duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			bson.M{"$cond": bson.M{
-				"if":   "$v.activation_date",
-				"then": "$v.activation_date",
-				"else": "$v.creation_date",
-			}},
-		}},
-		"v.current_state_duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			"$v.state.t",
-		}},
 	}
 
 	project := bson.M{
@@ -1335,4 +1325,39 @@ func (s *store) resolveAlias(v string) string {
 	}
 
 	return v
+}
+
+func (s *store) getDurationFields() bson.M {
+	now := time.Now().Unix()
+
+	return bson.M{"$addFields": bson.M{
+		"v.duration": bson.M{"$subtract": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$v.resolved",
+				"then": "$v.resolved",
+				"else": now,
+			}},
+			"$v.creation_date",
+		}},
+		"v.current_state_duration": bson.M{"$subtract": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$v.resolved",
+				"then": "$v.resolved",
+				"else": now,
+			}},
+			"$v.state.t",
+		}},
+		"v.active_duration": bson.M{"$subtract": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$v.resolved",
+				"then": "$v.resolved",
+				"else": now,
+			}},
+			bson.M{"$sum": bson.A{
+				"$v.creation_date",
+				"$v.snooze_duration",
+				"$v.pbh_inactive_duration",
+			}},
+		}},
+	}}
 }

@@ -20,6 +20,7 @@ import { MODALS } from '@/constants';
 import { formToScenario, scenarioToForm, scenarioErrorToForm } from '@/helpers/forms/scenario';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
+import { entitiesScenarioMixin } from '@/mixins/entities/scenario';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
@@ -40,6 +41,7 @@ export default {
   },
   mixins: [
     modalInnerMixin,
+    entitiesScenarioMixin,
     validationErrorsMixinCreator(),
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
@@ -55,12 +57,38 @@ export default {
     },
   },
   methods: {
+    showConfirmScenarioPriorityChange(priority) {
+      return new Promise((resolve) => {
+        this.$modals.show({
+          name: MODALS.confirmation,
+          dialogProps: { persistent: true },
+          config: {
+            text: this.$t('scenario.errors.priorityExist', { priority }),
+            action: () => {
+              this.form.priority = priority;
+
+              resolve();
+            },
+            cancel: resolve,
+          },
+        });
+      });
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
         try {
           if (this.config.action) {
+            const { valid, recommended_priority: recommendedPriority } = await this.checkScenarioPriority({
+              data: { priority: this.form.priority },
+            });
+
+            if (!valid) {
+              await this.showConfirmScenarioPriorityChange(recommendedPriority);
+            }
+
             await this.config.action(formToScenario(this.form, this.$system.timezone));
           }
 
