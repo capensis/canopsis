@@ -22,7 +22,6 @@ const (
 	ObjectMongoCollection             = "object"
 	RightsMongoCollection             = "default_rights"
 	SessionMongoCollection            = "session"
-	SessionStatsMongoCollection       = "default_session"
 	AlarmMongoCollection              = "periodical_alarm"
 	EntityMongoCollection             = "default_entities"
 	PbehaviorMongoCollection          = "pbehavior"
