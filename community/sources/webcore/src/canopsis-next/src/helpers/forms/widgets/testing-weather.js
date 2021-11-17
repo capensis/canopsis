@@ -57,7 +57,7 @@ const storagesToFormStorages = (storages = []) => addKeyInEntities(storages.map(
  * @return {TestingWeatherWidgetParametersForm}
  */
 const testingWeatherWidgetParametersToForm = (parameters = {}) => ({
-  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh || DEFAULT_PERIODIC_REFRESH),
+  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
   directory: parameters.directory || '',
   is_api: !!parameters.is_api,
   screenshot_directories: storagesToFormStorages(parameters.screenshot_directories),

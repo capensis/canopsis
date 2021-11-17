@@ -191,7 +191,7 @@ const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...parameters,
   ...alarmListWidgetDefaultParametersToForm(parameters),
 
-  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh || DEFAULT_PERIODIC_REFRESH),
+  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
   viewFilters: parameters.viewFilters || [],
   mainFilter: parameters.mainFilter || null,
   mainFilterUpdatedAt: parameters.mainFilterUpdatedAt || 0,

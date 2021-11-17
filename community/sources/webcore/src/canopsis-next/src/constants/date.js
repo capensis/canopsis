@@ -56,25 +56,15 @@ export const SHORT_AVAILABLE_TIME_UNITS = {
   hour: AVAILABLE_TIME_UNITS.hour,
 };
 
-export const PERIODIC_REFRESH_UNITS = {
-  second: AVAILABLE_TIME_UNITS.second,
-  minute: AVAILABLE_TIME_UNITS.minute,
-  hour: AVAILABLE_TIME_UNITS.hour,
-};
-
-export const SNOOZE_DURATION_UNITS = {
-  ...PERIODIC_REFRESH_UNITS,
+export const DEFAULT_TIME_INTERVAL = {
+  value: 60,
+  unit: TIME_UNITS.second,
 };
 
 export const DEFAULT_PERIODIC_REFRESH = {
   value: 60,
   unit: TIME_UNITS.second,
   enabled: false,
-};
-
-export const DEFAULT_TIME_INTERVAL = {
-  value: 60,
-  unit: TIME_UNITS.second,
 };
 
 export const DATETIME_FORMATS = {

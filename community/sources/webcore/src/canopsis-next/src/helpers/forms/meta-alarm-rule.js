@@ -143,9 +143,7 @@ export const metaAlarmRuleToForm = (rule = {}) => {
       threshold_type: isNumber(config.threshold_count)
         ? META_ALARMS_THRESHOLD_TYPES.thresholdCount
         : META_ALARMS_THRESHOLD_TYPES.thresholdRate,
-      time_interval: config.time_interval
-        ? durationToForm(config.time_interval)
-        : { ...DEFAULT_TIME_INTERVAL },
+      time_interval: durationToForm(config.time_interval ?? DEFAULT_TIME_INTERVAL),
     },
   };
 };
