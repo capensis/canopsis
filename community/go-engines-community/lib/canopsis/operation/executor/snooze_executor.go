@@ -25,7 +25,7 @@ func (e *snoozeExecutor) Exec(
 	alarm *types.Alarm,
 	_ types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationSnoozeParameters
 	var ok bool
@@ -42,6 +42,7 @@ func (e *snoozeExecutor) Exec(
 		types.CpsNumber(params.Duration.Seconds),
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
+		userID,
 		role,
 		initiator,
 	)
