@@ -44,13 +44,10 @@ func TestAlarmPatternToMongoDriverQuery(t *testing.T) {
 					"ticket": bson.M{
 						"_t": "test7",
 					},
-					"component":      "test8",
-					"connector":      "test9",
-					"connector_name": "test10",
-					"creation_date":  bson.M{">": 10},
-					"extra": bson.M{
-						"key": "test11",
-					},
+					"component":                         "test8",
+					"connector":                         "test9",
+					"connector_name":                    "test10",
+					"creation_date":                     bson.M{">": 10},
 					"hard_limit":                        bson.M{"<": 11},
 					"initial_output":                    "test12",
 					"last_update_date":                  bson.M{"<=": 12},
@@ -78,7 +75,6 @@ func TestAlarmPatternToMongoDriverQuery(t *testing.T) {
 			"v.connector":        bson.M{"$eq": "test9"},
 			"v.connector_name":   bson.M{"$eq": "test10"},
 			"v.creation_date":    bson.M{"$gt": int64(10)},
-			"v.extra.key":        bson.M{"$eq": "test11"},
 			"v.hard_limit":       bson.M{"$lt": int64(11)},
 			"v.initial_output":   bson.M{"$eq": "test12"},
 			"v.last_update_date": bson.M{"$lte": int64(12)},
@@ -136,13 +132,10 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 							},
 						},
 					},
-					"component":      "test8",
-					"connector":      "test9",
-					"connector_name": "test10",
-					"creation_date":  bson.M{">": 10},
-					"extra": bson.M{
-						"key": "test11",
-					},
+					"component":                         "test8",
+					"connector":                         "test9",
+					"connector_name":                    "test10",
+					"creation_date":                     bson.M{">": 10},
 					"hard_limit":                        bson.M{"<": 11},
 					"initial_output":                    "test12",
 					"last_update_date":                  bson.M{"<=": 12},
@@ -194,13 +187,10 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 							"priority_id": "2 - Critical",
 						},
 					},
-					Component:     "test8",
-					Connector:     "test9",
-					ConnectorName: "test10",
-					CreationDate:  types.NewCpsTime(12),
-					Extra: map[string]interface{}{
-						"key": "test11",
-					},
+					Component:                     "test8",
+					Connector:                     "test9",
+					ConnectorName:                 "test10",
+					CreationDate:                  types.NewCpsTime(12),
 					HardLimit:                     &hardLimit,
 					InitialOutput:                 "test12",
 					LastUpdateDate:                types.NewCpsTime(12),
@@ -243,61 +233,10 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 					Ticket: &types.AlarmTicket{
 						Type: "test7",
 					},
-					Component:     "test8",
-					Connector:     "test9",
-					ConnectorName: "test10",
-					CreationDate:  types.NewCpsTime(12),
-					Extra: map[string]interface{}{
-						"key": "test11",
-					},
-					HardLimit:                     &hardLimit,
-					InitialOutput:                 "test12",
-					LastUpdateDate:                types.NewCpsTime(12),
-					LastEventDate:                 types.NewCpsTime(13),
-					Resource:                      "test13",
-					Resolved:                      nil,
-					StateChangesSinceStatusUpdate: types.CpsNumber(14),
-					TotalStateChanges:             types.CpsNumber(15),
-				},
-			}
-
-			So(p.Matches(&alarm, &matches), ShouldBeFalse)
-		})
-
-		Convey("The pattern should not match an alarm value with the wrong extra", func() {
-			matches := pattern.NewAlarmRegexMatches()
-			hardLimit := types.CpsNumber(10)
-			alarm := types.Alarm{
-				ID:       "abc",
-				Time:     types.NewCpsTime(9),
-				EntityID: "def",
-				Value: types.AlarmValue{
-					ACK: &types.AlarmStep{
-						Type: "test2",
-					},
-					Canceled: &types.AlarmStep{
-						Type: "test2",
-					},
-					Done: &types.AlarmStep{
-						Type: "test3",
-					},
-					Snooze: &types.AlarmStep{
-						Type: "test4",
-					},
-					State: &types.AlarmStep{
-						Type: "test5",
-					},
-					Status: &types.AlarmStep{
-						Type: "test6",
-					},
-					Ticket: &types.AlarmTicket{
-						Type: "test7",
-					},
 					Component:                     "test8",
 					Connector:                     "test9",
 					ConnectorName:                 "test10",
 					CreationDate:                  types.NewCpsTime(12),
-					Extra:                         map[string]interface{}{},
 					HardLimit:                     &hardLimit,
 					InitialOutput:                 "test12",
 					LastUpdateDate:                types.NewCpsTime(12),
@@ -308,6 +247,7 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 					TotalStateChanges:             types.CpsNumber(15),
 				},
 			}
+
 			So(p.Matches(&alarm, &matches), ShouldBeFalse)
 		})
 	})
@@ -352,13 +292,10 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 						"ticket": bson.M{
 							"_t": "test7",
 						},
-						"component":      "test8",
-						"connector":      "test9",
-						"connector_name": "test10",
-						"creation_date":  bson.M{">": int64(10)},
-						"extra": bson.M{
-							"key": "test11",
-						},
+						"component":                         "test8",
+						"connector":                         "test9",
+						"connector_name":                    "test10",
+						"creation_date":                     bson.M{">": int64(10)},
 						"hard_limit":                        bson.M{"<": int64(11)},
 						"initial_output":                    "test12",
 						"last_update_date":                  bson.M{"<=": int64(12)},
@@ -508,16 +445,6 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 										Gt: types.OptionalInt64{
 											Set:   true,
 											Value: 10,
-										},
-									},
-								},
-							},
-							Extra: map[string]pattern.InterfacePattern{
-								"key": {
-									StringConditions: pattern.StringConditions{
-										Equal: types.OptionalString{
-											Set:   true,
-											Value: "test11",
 										},
 									},
 								},

@@ -79,8 +79,6 @@ func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
 			"output":         "v.output",
 			"opened":         "t",
 			"resolved":       "v.resolved",
-			"domain":         "v.extra.domain",
-			"perimeter":      "v.extra.perimeter",
 		},
 		fieldsAliasesByRegex: map[string]string{
 			"^infos\\.(.+)":           "entity.infos.$1",
