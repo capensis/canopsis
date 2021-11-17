@@ -190,15 +190,3 @@ func (mr *MockSenderMockRecorder) SendUserActivity(arg0, arg1, arg2, arg3 interf
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendUserActivity", reflect.TypeOf((*MockSender)(nil).SendUserActivity), arg0, arg1, arg2, arg3)
 }
-
-// SendUserLogin mocks base method
-func (m *MockSender) SendUserLogin(arg0 context.Context, arg1 time.Time, arg2 string) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendUserLogin", arg0, arg1, arg2)
-}
-
-// SendUserLogin indicates an expected call of SendUserLogin
-func (mr *MockSenderMockRecorder) SendUserLogin(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendUserLogin", reflect.TypeOf((*MockSender)(nil).SendUserLogin), arg0, arg1, arg2)
-}

@@ -136,7 +136,6 @@ func RegisterRoutes(
 	filesRoot string,
 	websocketHub websocket.Hub,
 	broadcastMessageChan chan<- bool,
-	metricsSender metrics.Sender,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
@@ -153,7 +152,6 @@ func RegisterRoutes(
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
 		security.GetCookieOptions().Secure,
-		metricsSender,
 		logger,
 	)
 	sessionauthApi := sessionauth.NewApi(
@@ -161,7 +159,6 @@ func RegisterRoutes(
 		security.GetAuthProviders(),
 		websocketHub,
 		security.GetTokenStore(),
-		metricsSender,
 		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())
