@@ -5,73 +5,63 @@ Feature: Create an dynamic-infos
   Scenario: given create request should return ok
     When I am admin
     When I do POST /api/v4/cat/dynamic-infos:
-    """
+    """json
     {
-      "_id": "dynamic_infos_3",
       "entity_patterns": [
         {
           "infos": {
             "alert_name": {
               "value": {
-                "regex_match": "NAGIOSPTSR_.*FILESYSTEMS.*"
+                "regex_match": "test-dynamic-infos-to-create-1-pattern"
               }
             }
           }
         }
       ],
-      "name": "dynamic_infos_3",
+      "name": "test-dynamic-infos-to-create-1-name",
       "alarm_patterns": null,
-      "description": "test dynamic infos",
+      "description": "test-dynamic-infos-to-create-1-description",
       "enabled": true,
       "infos": [
         {
-          "name": "type",
-          "value": "consigne"
+          "name": "test-dynamic-infos-to-create-1-info-1-name",
+          "value": "test-dynamic-infos-to-create-1-info-1-value"
         },
         {
-          "name": "label",
-          "value": "Proc_NagiosPtsr_Filesystems"
-        },
-        {
-          "name": "colibri",
-          "value": "153028"
+          "name": "test-dynamic-infos-to-create-1-info-2-name",
+          "value": "test-dynamic-infos-to-create-1-info-2-value"
         }
       ]
     }
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
-      "_id": "dynamic_infos_3",
       "entity_patterns": [
         {
           "infos": {
             "alert_name": {
               "value": {
-                "regex_match": "NAGIOSPTSR_.*FILESYSTEMS.*"
+                "regex_match": "test-dynamic-infos-to-create-1-pattern"
               }
             }
           }
         }
       ],
-      "name": "dynamic_infos_3",
+      "name": "test-dynamic-infos-to-create-1-name",
       "author": "root",
       "alarm_patterns": null,
-      "description": "test dynamic infos",
+      "description": "test-dynamic-infos-to-create-1-description",
       "enabled": true,
       "infos": [
         {
-          "name": "type",
-          "value": "consigne"
+          "name": "test-dynamic-infos-to-create-1-info-1-name",
+          "value": "test-dynamic-infos-to-create-1-info-1-value"
         },
         {
-          "name": "label",
-          "value": "Proc_NagiosPtsr_Filesystems"
-        },
-        {
-          "name": "colibri",
-          "value": "153028"
+          "name": "test-dynamic-infos-to-create-1-info-2-name",
+          "value": "test-dynamic-infos-to-create-1-info-2-value"
         }
       ]
     }
@@ -79,82 +69,86 @@ Feature: Create an dynamic-infos
     When I do GET /api/v4/cat/dynamic-infos/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
-      "_id": "dynamic_infos_3",
       "entity_patterns": [
         {
           "infos": {
             "alert_name": {
               "value": {
-                "regex_match": "NAGIOSPTSR_.*FILESYSTEMS.*"
+                "regex_match": "test-dynamic-infos-to-create-1-pattern"
               }
             }
           }
         }
       ],
-      "name": "dynamic_infos_3",
+      "name": "test-dynamic-infos-to-create-1-name",
       "author": "root",
       "alarm_patterns": null,
-      "description": "test dynamic infos",
+      "description": "test-dynamic-infos-to-create-1-description",
       "enabled": true,
       "infos": [
         {
-          "name": "type",
-          "value": "consigne"
+          "name": "test-dynamic-infos-to-create-1-info-1-name",
+          "value": "test-dynamic-infos-to-create-1-info-1-value"
         },
         {
-          "name": "label",
-          "value": "Proc_NagiosPtsr_Filesystems"
-        },
-        {
-          "name": "colibri",
-          "value": "153028"
+          "name": "test-dynamic-infos-to-create-1-info-2-name",
+          "value": "test-dynamic-infos-to-create-1-info-2-value"
         }
       ]
     }
     """
 
-  Scenario: given search DSL request should return dynamic-infos
+  Scenario: given search DSL request should return dynamic infos
     When I am admin
-    When I do GET /api/v4/cat/dynamic-infos?search=pattern%20LIKE%20NAGIOSPTSR
+    When I do POST /api/v4/cat/dynamic-infos:
+    """json
+    {
+      "entity_patterns": [
+        {
+          "infos": {
+            "alert_name": {
+              "value": {
+                "regex_match": "test-dynamic-infos-to-create-2-entity-pattern"
+              }
+            }
+          }
+        }
+      ],
+      "name": "test-dynamic-infos-to-create-2-name",
+      "alarm_patterns": [
+        {
+          "v": {
+            "connector": {
+              "regex_match": "test-dynamic-infos-to-create-2-alarm-pattern"
+            }
+          }
+        }
+      ],
+      "description": "test-dynamic-infos-to-create-2-description",
+      "enabled": true,
+      "infos": [
+        {
+          "name": "test-dynamic-infos-to-create-2-info-1-name",
+          "value": "test-dynamic-infos-to-create-2-info-1-value"
+        },
+        {
+          "name": "test-dynamic-infos-to-create-2-info-2-name",
+          "value": "test-dynamic-infos-to-create-2-info-2-value"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/cat/dynamic-infos?search=pattern%20LIKE%20"test-dynamic-infos-to-create-2"
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
-          "_id": "dynamic_infos_3",
-          "entity_patterns": [
-            {
-              "infos": {
-                "alert_name": {
-                  "value": {
-                    "regex_match": "NAGIOSPTSR_.*FILESYSTEMS.*"
-                  }
-                }
-              }
-            }
-          ],
-          "name": "dynamic_infos_3",
-          "author": "root",
-          "alarm_patterns": null,
-          "description": "test dynamic infos",
-          "enabled": true,
-          "infos": [
-            {
-              "name": "type",
-              "value": "consigne"
-            },
-            {
-              "name": "label",
-              "value": "Proc_NagiosPtsr_Filesystems"
-            },
-            {
-              "name": "colibri",
-              "value": "153028"
-            }
-          ]
+          "name": "test-dynamic-infos-to-create-2-name"
         }
       ],
       "meta": {
@@ -166,181 +160,87 @@ Feature: Create an dynamic-infos
     }
     """
 
-  Scenario: given create request with wrong type should return bad request
+  Scenario: given invalid create request should return bad request
     When I am admin
     When I do POST /api/v4/cat/dynamic-infos:
+    """json
+    {}
     """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
     {
-      "_id": "test_insert1",
-      "entity_patterns": [
-        {
-          "infos": {
-            "alert_name": {
-              "value": {
-                "regex_match": "(ATOS|EMC|ECONOCOM|HPSIM|PURESTORAGE|NUTANIX|HPE)_MAILS_TICKET.*"
-              }
-            }
-          }
-        }
-      ],
-      "name": "Consigne sur réception mail Mainteneur",
-      "alarm_patterns": null,
-      "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
-      "enabled": true,
+      "errors": {
+        "description": "Description is missing.",
+        "name": "Name is missing.",
+        "enabled": "Enabled is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/dynamic-infos:
+    """json
+    {
       "infos": [
-        {
-          "name": "name"
-        }
+        {},
+        {"name": "test-name"}
       ]
     }
     """
     Then the response code should be 400
-    Then the response body should be:
-    """
+    Then the response body should contain:
+    """json
     {
       "errors": {
-        "infos.0.value": "Value is missing."
+        "infos.0.name": "Name is missing.",
+        "infos.1.value": "Value is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/dynamic-infos:
+    """json
+    {
+      "entity_patterns": [
+        {"not-exist-field": "test-value"}
+      ],
+      "alarm_patterns": [
+        {"not-exist-field": "test-value"}
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_patterns": "Invalid alarm patterns.",
+        "entity_patterns": "Invalid entity patterns."
       }
     }
     """
 
   Scenario: given create request and no auth user should not allow access
-    When I do POST /api/v4/cat/dynamic-infos:
-    """
-    {
-      "_id": "test_insert1",
-      "entity_patterns": [
-        {
-          "infos": {
-            "alert_name": {
-              "value": {
-                "regex_match": "(ATOS|EMC|ECONOCOM|HPSIM|PURESTORAGE|NUTANIX|HPE)_MAILS_TICKET.*"
-              }
-            }
-          }
-        }
-      ],
-      "last_modified_date": 1593679995,
-      "name": "Consigne sur réception mail Mainteneur",
-      "author": "root",
-      "alarm_patterns": null,
-      "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
-      "enabled": true,
-      "infos": [
-        {
-          "name": "name",
-          "value": "test"
-        }
-      ],
-      "creation_date": 1581423405
-    }
-    """
+    When I do POST /api/v4/cat/dynamic-infos
     Then the response code should be 401
 
-  Scenario: given create request and auth user by api key without permissions should not allow access
+  Scenario: given create request and auth user without permissions should not allow access
     When I am noperms
-    When I do POST /api/v4/cat/dynamic-infos:
-    """
-    {
-      "_id": "test_insert1",
-      "entity_patterns": [
-        {
-          "infos": {
-            "alert_name": {
-              "value": {
-                "regex_match": "(ATOS|EMC|ECONOCOM|HPSIM|PURESTORAGE|NUTANIX|HPE)_MAILS_TICKET.*"
-              }
-            }
-          }
-        }
-      ],
-      "last_modified_date": 1593679995,
-      "name": "Consigne sur réception mail Mainteneur",
-      "alarm_patterns": null,
-      "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
-      "enabled": true,
-      "infos": [
-        {
-          "name": "name",
-          "value": "test"
-        }
-      ],
-      "creation_date": 1581423405
-    }
-    """
+    When I do POST /api/v4/cat/dynamic-infos
     Then the response code should be 403
 
-  Scenario: given create request with already exists _id should return error
+  Scenario: given create request with already exists id should return error
     When I am admin
     When I do POST /api/v4/cat/dynamic-infos:
-    """
+    """json
     {
-      "_id": "dynamic_infos_3",
-      "entity_patterns": [
-        {
-          "infos": {
-            "alert_name": {
-              "value": {
-                "regex_match": "(ATOS|EMC|ECONOCOM|HPSIM|PURESTORAGE|NUTANIX|HPE)_MAILS_TICKET.*"
-              }
-            }
-          }
-        }
-      ],
-      "name": "Consigne sur réception mail Mainteneur",
-      "alarm_patterns": null,
-      "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
-      "enabled": true,
-      "infos": [
-        {
-          "name": "name",
-          "value": "test"
-        }
-      ]
+      "_id": "test-dynamic-infos-to-check-unique"
     }
     """
     Then the response code should be 400
-    Then the response body should be:
-    """
+    Then the response body should contain:
+    """json
     {
       "errors": {
         "_id": "ID already exists."
-      }
-    }
-    """
-
-  Scenario: given create request with wrong alarm pattern should return error
-    When I am admin
-    When I do POST /api/v4/cat/dynamic-infos:
-    """
-    {
-      "_id" : "2a531090-8288-4db5-84f0-32b9d62fd8b2",
-      "entity_patterns" : null,
-      "disable_during_periods" : [ ],
-      "name" : "Name",
-      "alarm_patterns" : [
-              {
-                      "v" : {
-
-                      }
-              }
-      ],
-      "description" : "Desc",
-      "enabled": true,
-      "infos" : [
-              {
-                      "name" : "Name",
-                      "value" : ""
-              }
-      ]
-    }
-    """
-    Then the response code should be 400
-    Then the response body should be:
-    """
-    {
-      "errors": {
-        "alarm_patterns": "Invalid alarm patterns."
       }
     }
     """
