@@ -15,8 +15,6 @@
 </template>
 
 <script>
-import { get } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import { formToScenario, scenarioToForm, scenarioErrorToForm } from '@/helpers/forms/scenario';
@@ -59,7 +57,7 @@ export default {
     },
 
     originalPriority() {
-      return get(this.config, 'scenario.priority');
+      return this.config?.scenario?.priority;
     },
   },
   methods: {
