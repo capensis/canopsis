@@ -42,12 +42,10 @@ import (
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionauth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionstats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewstats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -60,7 +58,6 @@ import (
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/stats"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -163,26 +160,12 @@ func RegisterRoutes(
 		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())
-	sessionStatsApi := sessionstats.NewApi(sessionStore, stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
+
 	sessionProtected := router.Group("")
 	{
 		sessionProtected.Use(middleware.SessionAuth(dbClient, sessionStore), middleware.OnlyAuth())
 		sessionProtected.GET("/logout", sessionauthApi.LogoutHandler())
-
-		{
-			sessionProtected.GET("/api/v2/sessionstart", sessionStatsApi.StartHandler())
-			sessionProtected.POST("/api/v2/keepalive", sessionStatsApi.PingHandler())
-			sessionProtected.POST("/api/v2/session_tracepath", sessionStatsApi.ChangePathHandler())
-		}
 	}
-
-	getStatsHandlers := append(
-		authMiddleware,
-		middleware.SessionAuth(dbClient, sessionStore),
-		middleware.OnlyAuth(),
-		sessionStatsApi.ListHandler(),
-	)
-	router.GET("/api/v2/sessions", getStatsHandlers...)
 
 	unprotected := router.Group(baseUrl)
 	{
@@ -199,14 +182,6 @@ func RegisterRoutes(
 		protected.GET("/account/me", account.NewApi(account.NewStore(dbClient)).Me)
 		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
 		protected.GET("/file-access", authApi.GetFileAccess)
-
-		viewStatsRouter := protected.Group("/view-stats")
-		{
-			viewStatsApi := viewstats.NewApi(stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
-			viewStatsRouter.GET("", middleware.OnlyAuth(), viewStatsApi.List)
-			viewStatsRouter.POST("", middleware.OnlyAuth(), viewStatsApi.Create)
-			viewStatsRouter.PUT("/:id", middleware.OnlyAuth(), viewStatsApi.Update)
-		}
 
 		userRouter := protected.Group("/users")
 		{
