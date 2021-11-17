@@ -112,7 +112,7 @@ export const durationToSeconds = ({ value, unit } = {}) => toSeconds(value, unit
  * @param {Duration} [duration = { value: 1, unit: TIME_UNITS.second }]
  * @returns {Duration}
  */
-export const durationToForm = (duration = { value: 1, unit: TIME_UNITS.second }) => ({ ...duration });
+export const durationToForm = duration => (duration ? { ...duration } : { value: 1, unit: TIME_UNITS.second });
 
 /**
  * Convert DurationWithEnabled object to form

@@ -1,5 +1,7 @@
 import { isBoolean, cloneDeep } from 'lodash';
 
+import { TIME_UNITS } from '@/constants';
+
 import { durationToForm } from '@/helpers/date/duration';
 
 /**
@@ -25,8 +27,8 @@ import { durationToForm } from '@/helpers/date/duration';
  * @returns {Playlist}
  */
 export const playlistToForm = (playlist = {}) => ({
-  interval: durationToForm(playlist.interval),
-  name: playlist.name || '',
+  interval: durationToForm(playlist.interval ?? { value: 10, unit: TIME_UNITS.second }),
+  name: playlist.name ?? '',
   fullscreen: isBoolean(playlist.fullscreen) ? playlist.fullscreen : true,
   enabled: isBoolean(playlist.enabled) ? playlist.enabled : true,
   tabs_list: playlist.tabs_list ? cloneDeep(playlist.tabs_list) : [],

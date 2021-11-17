@@ -55,7 +55,7 @@ export const scenarioToForm = (scenario = {}, timezone = getLocaleTimezone()) =>
  */
 export const formToScenario = (form, timezone = getLocaleTimezone()) => ({
   ...omit(form, ['delay', 'actions']),
-  delay: form.delay && isNumber(form.delay.value)
+  delay: isNumber(form.delay?.value)
     ? form.delay
     : undefined,
   actions: form.actions.map(action => formToAction(action, timezone)),
