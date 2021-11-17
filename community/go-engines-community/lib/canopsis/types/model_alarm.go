@@ -227,7 +227,7 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
 		steps = append(steps, *a.Value.ACK)
 	}
 	if ticket = a.Value.Ticket; ticket != nil {
-		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, ticket.Role, ""))
+		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, "", ticket.Role, ""))
 	}
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)
@@ -246,12 +246,12 @@ func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) error {
 		step.Timestamp = ts
 		switch step.Type {
 		case AlarmStepAck:
-			err := a.PartialUpdateAck(ts, step.Author, step.Message, step.Role, step.Initiator)
+			err := a.PartialUpdateAck(ts, step.Author, step.Message, step.UserID, step.Role, step.Initiator)
 			if err != nil {
 				return err
 			}
 		case AlarmStepSnooze:
-			err := a.PartialUpdateSnooze(ts, step.Value, step.Author, step.Message, step.Role, step.Initiator)
+			err := a.PartialUpdateSnooze(ts, step.Value, step.Author, step.Message, step.UserID, step.Role, step.Initiator)
 			if err != nil {
 				return err
 			}
@@ -264,7 +264,7 @@ func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) error {
 				continue
 			}
 
-			err := a.PartialUpdateAssocTicket(ts, ticket.Data, step.Author, ticket.Value, step.Role, step.Initiator)
+			err := a.PartialUpdateAssocTicket(ts, ticket.Data, step.Author, ticket.Value, step.UserID, step.Role, step.Initiator)
 			if err != nil {
 				return err
 			}
@@ -277,7 +277,7 @@ func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) error {
 				continue
 			}
 
-			err := a.PartialUpdateDeclareTicket(ts, step.Author, step.Message, ticket.Value, ticket.Data, step.Role, step.Initiator)
+			err := a.PartialUpdateDeclareTicket(ts, step.Author, step.Message, ticket.Value, ticket.Data, step.UserID, step.Role, step.Initiator)
 			if err != nil {
 				return err
 			}
