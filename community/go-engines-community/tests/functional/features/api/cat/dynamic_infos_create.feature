@@ -141,7 +141,7 @@ Feature: Create an dynamic-infos
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/cat/dynamic-infos?search=pattern%20LIKE%20"test-dynamic-infos-to-create-2"
+    When I do GET /api/v4/cat/dynamic-infos?search=pattern%20LIKE%20"infos-to-create-2-entity-pattern"
     Then the response code should be 200
     Then the response body should contain:
     """json
