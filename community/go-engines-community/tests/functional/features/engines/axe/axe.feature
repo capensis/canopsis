@@ -248,6 +248,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-3",
       "long_output" : "test-long-output-axe-3",
       "author" : "test-author-axe-3",
+      "user_id": "test-author-id-3",
       "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
     }
     """
@@ -265,6 +266,7 @@ Feature: create and update alarm by main event stream
               "_t": "ack",
               "a": "test-author-axe-3",
               "m": "test-output-axe-3",
+              "user_id": "test-author-id-3",
               "t": {{ .ackEventTimestamp }},
               "val": 0
             },
@@ -337,6 +339,7 @@ Feature: create and update alarm by main event stream
       "source_type" : "resource",
       "component" :  "test-component-axe-4",
       "resource" : "test-resource-axe-4",
+      "user_id": "test-author-id-4",
       "output" : "test-output-axe-4",
       "long_output" : "test-long-output-axe-4",
       "author" : "test-author-axe-4",
@@ -354,6 +357,7 @@ Feature: create and update alarm by main event stream
       "source_type" : "resource",
       "component" :  "test-component-axe-4",
       "resource" : "test-resource-axe-4",
+      "user_id": "test-author-id-4",
       "output" : "test-output-axe-4",
       "long_output" : "test-long-output-axe-4",
       "author" : "test-author-axe-4",
@@ -393,6 +397,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "ack",
                 "a": "test-author-axe-4",
+                "user_id": "test-author-id-4",
                 "m": "test-output-axe-4",
                 "t": {{ .ackEventTimestamp }},
                 "val": 0
@@ -400,6 +405,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "ackremove",
                 "a": "test-author-axe-4",
+                "user_id": "test-author-id-4",
                 "m": "test-output-axe-4",
                 "t": {{ .ackRemoveEventTimestamp }},
                 "val": 0
@@ -449,6 +455,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-5",
       "long_output" : "test-long-output-axe-5",
       "author" : "test-author-axe-5",
+      "user_id": "test-author-id-5",
       "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
     }
     """
@@ -465,6 +472,7 @@ Feature: create and update alarm by main event stream
             "canceled": {
               "_t": "cancel",
               "a": "test-author-axe-5",
+              "user_id": "test-author-id-5",
               "m": "test-output-axe-5",
               "t": {{ .cancelEventTimestamp }},
               "val": 0
@@ -551,6 +559,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-6",
       "long_output" : "test-long-output-axe-6",
       "author" : "test-author-axe-6",
+      "user_id": "test-author-id-6",
       "timestamp": {{ (now.Add (parseDuration "-7s")).UTC.Unix }}
     }
     """
@@ -568,6 +577,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-6",
       "long_output" : "test-long-output-axe-6",
       "author" : "test-author-axe-6",
+      "user_id": "test-author-id-6",
       "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
     }
     """
@@ -608,6 +618,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "cancel",
                 "a": "test-author-axe-6",
+                "user_id": "test-author-id-6",
                 "m": "test-output-axe-6",
                 "t": {{ .cancelEventTimestamp }},
                 "val": 0
@@ -622,6 +633,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "uncancel",
                 "a": "test-author-axe-6",
+                "user_id": "test-author-id-6",
                 "m": "test-output-axe-6",
                 "t": {{ .uncancelEventTimestamp }},
                 "val": 0
@@ -679,6 +691,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-7",
       "long_output" : "test-long-output-axe-7",
       "author" : "test-author-axe-7",
+      "user_id": "test-author-id-7",
       "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
     }
     """
@@ -699,6 +712,7 @@ Feature: create and update alarm by main event stream
             "lastComment": {
               "_t": "comment",
               "a": "test-author-axe-7",
+              "user_id": "test-author-id-7",
               "m": "test-output-axe-7",
               "t": {{ .commentEventTimestamp }},
               "val": 0
@@ -771,6 +785,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-8",
       "long_output" : "test-long-output-axe-8",
       "author" : "test-author-axe-8",
+      "user_id": "test-author-id-8",
       "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
     }
     """
@@ -787,6 +802,7 @@ Feature: create and update alarm by main event stream
             "done": {
               "_t": "done",
               "a": "test-author-axe-8",
+              "user_id": "test-author-id-8",
               "m": "test-output-axe-8",
               "t": {{ .doneEventTimestamp }},
               "val": 0
@@ -814,6 +830,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "done",
                 "a": "test-author-axe-8",
+                "user_id": "test-author-id-8",
                 "m": "test-output-axe-8",
                 "t": {{ .doneEventTimestamp }},
                 "val": 0
@@ -864,6 +881,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-9",
       "long_output" : "test-long-output-axe-9",
       "author" : "test-author-axe-9",
+      "user_id": "test-author-id-9",
       "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
     }
     """
@@ -907,6 +925,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "assocticket",
                 "a": "test-author-axe-9",
+                "user_id": "test-author-id-9",
                 "m": "testticket",
                 "t": {{ .ticketEventTimestamp }},
                 "val": 0
@@ -957,6 +976,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-10",
       "long_output" : "test-long-output-axe-10",
       "author" : "test-author-axe-10",
+      "user_id": "test-author-id-10",
       "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
     }
     """
@@ -978,6 +998,7 @@ Feature: create and update alarm by main event stream
             "state": {
               "_t": "changestate",
               "a": "test-author-axe-10",
+              "user_id": "test-author-id-10",
               "m": "test-output-axe-10",
               "t": {{ .changeStateEventTimestamp }},
               "val": 3
@@ -997,6 +1018,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "changestate",
                 "a": "test-author-axe-10",
+                "user_id": "test-author-id-10",
                 "m": "test-output-axe-10",
                 "t": {{ .changeStateEventTimestamp }},
                 "val": 3
@@ -1047,6 +1069,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-11",
       "long_output" : "test-long-output-axe-11",
       "author" : "test-author-axe-11",
+      "user_id": "test-author-id-11",
       "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
     }
     """
@@ -1063,6 +1086,7 @@ Feature: create and update alarm by main event stream
             "snooze": {
               "_t": "snooze",
               "a": "test-author-axe-11",
+              "user_id": "test-author-id-11",
               "m": "test-output-axe-11",
               "t": {{ .snoozeEventTimestamp }},
               "val": {{ .snoozeEventTimestamp | sum 600 }}
@@ -1090,6 +1114,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "snooze",
                 "a": "test-author-axe-11",
+                "user_id": "test-author-id-11",
                 "m": "test-output-axe-11",
                 "t": {{ .snoozeEventTimestamp }},
                 "val": {{ .snoozeEventTimestamp | sum 600 }}
@@ -1140,6 +1165,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-12",
       "long_output" : "test-long-output-axe-12",
       "author" : "test-author-axe-12",
+      "user_id": "test-author-id-12",
       "timestamp": {{ (now.Add (parseDuration "-7s")).UTC.Unix }}
     }
     """
@@ -1157,6 +1183,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-12",
       "long_output" : "test-long-output-axe-12",
       "author" : "test-author-axe-12",
+      "user_id": "test-author-id-12",
       "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
     }
     """
@@ -1192,6 +1219,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "snooze",
                 "a": "test-author-axe-12",
+                "user_id": "test-author-id-12",
                 "m": "test-output-axe-12",
                 "t": {{ .snoozeEventTimestamp }},
                 "val": {{ .snoozeEventTimestamp | sum 600 }}
