@@ -1,192 +1,145 @@
-Feature: Get a dynamic-infos
-  I need to be able to get a dynamic-infos
-  Only admin should be able to get a dynamic-infos
+Feature: Get a dynamic infos
+  I need to be able to get a dynamic infos
+  Only admin should be able to get a dynamic infos
 
-  Scenario: given search request should return dynamic-infos
+  Scenario: given search request should return dynamic infos
     When I am admin
-    When I do GET /api/v4/cat/dynamic-infos?search=dynamic_info_
+    When I do GET /api/v4/cat/dynamic-infos?search=test-dynamic-infos-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
-          {
-              "_id": "dynamic_info_1",
-              "entity_patterns": [
-                  {
-                      "infos": {
-                          "alert_name": {
-                              "value": {
-                                  "regex_match": "(AWS|GCP|HPE)_MAILS_TICKET.*"
-                              }
-                          }
-                      }
-                  }
-              ],
-              "last_modified_date": 1593679995,
-              "name": "dynamic_info_1",
-              "author": "root",
-              "alarm_patterns": null,
-              "description": "Consigne pour les alertes reçu depuis un mail des mainteneurs suivants : EMC ECONOCOM ATOS HPSIM NUTANIX PURESTORAGE",
-              "enabled": true,
-              "disable_during_periods": null,
-              "infos": [
-                  {
-                      "name": "type",
-                      "value": "consigne"
-                  },
-                  {
-                      "name": "label",
-                      "value": "Consigne sur réception mail Mainteneurs"
-                  },
-                  {
-                      "name": "colibri",
-                      "value": "268997"
-                  }
-              ],
-              "creation_date": 1581423405
-          },
-          {
-              "_id": "dynamic_info_2",
-              "entity_patterns": [
-                  {
-                      "infos": {
-                          "alert_name": {
-                              "value": {
-                                  "regex_match": "CENTREONIET_.*IMPORT_POSTES-IET.*"
-                              }
-                          }
-                      }
-                  }
-              ],
-              "last_modified_date": 1593677536,
-              "name": "dynamic_info_2",
-              "author": "root",
-              "alarm_patterns": null,
-              "description": "le service d’import des postes dans l’annuaire ne fonctionne pas",
-              "enabled": true,
-              "disable_during_periods": null,
-              "infos": [
-                  {
-                      "name": "type",
-                      "value": "consigne"
-                  },
-                  {
-                      "name": "label",
-                      "value": "Consigne Suivi et Administration de l'Infra Neptune"
-                  },
-                  {
-                      "name": "colibri",
-                      "value": "148768"
-                  }
-              ],
-              "creation_date": 1581504657
-          }
-      ],
-      "meta": {
-          "page": 1,
-          "page_count": 1,
-          "per_page": 10,
-          "total_count": 2
-      }
-    }
-    """
-
-  Scenario: given search DSL request should return dynamic-infos
-    When I am admin
-    When I do GET /api/v4/cat/dynamic-infos?search=pattern%20LIKE%20CENTREONIET
-    Then the response code should be 200
-    Then the response body should be:
-    """
-    {
-      "data": [
-          {
-              "_id": "dynamic_info_2",
-              "entity_patterns": [
-                  {
-                      "infos": {
-                          "alert_name": {
-                              "value": {
-                                  "regex_match": "CENTREONIET_.*IMPORT_POSTES-IET.*"
-                              }
-                          }
-                      }
-                  }
-              ],
-              "last_modified_date": 1593677536,
-              "name": "dynamic_info_2",
-              "author": "root",
-              "alarm_patterns": null,
-              "description": "le service d’import des postes dans l’annuaire ne fonctionne pas",
-              "enabled": true,
-              "infos": [
-                  {
-                      "name": "type",
-                      "value": "consigne"
-                  },
-                  {
-                      "name": "label",
-                      "value": "Consigne Suivi et Administration de l'Infra Neptune"
-                  },
-                  {
-                      "name": "colibri",
-                      "value": "148768"
-                  }
-              ],
-              "creation_date": 1581504657,
-              "disable_during_periods": null
-          }
-      ],
-      "meta": {
-          "page": 1,
-          "page_count": 1,
-          "per_page": 10,
-          "total_count": 1
-      }
-    }
-    """
-
-  Scenario: given get request should return dynamic-infos
-    When I am admin
-    When I do GET /api/v4/cat/dynamic-infos/dynamic_info_2
-    Then the response code should be 200
-    Then the response body should be:
-    """
-    {
-      "_id": "dynamic_info_2",
-      "entity_patterns": [
         {
-          "infos": {
-            "alert_name": {
-              "value": {
-                "regex_match": "CENTREONIET_.*IMPORT_POSTES-IET.*"
+          "_id": "test-dynamic-infos-to-get-1",
+          "alarm_patterns": [
+            {
+              "v": {
+                "connector": "test-dynamic-infos-to-get-1-alarm-pattern"
               }
             }
+          ],
+          "author": "root",
+          "creation_date": 1581423405,
+          "description": "test-dynamic-infos-to-get-1-description",
+          "disable_during_periods": null,
+          "enabled": true,
+          "entity_patterns": [
+            {
+              "_id": "test-dynamic-infos-to-get-1-entity-pattern"
+            }
+          ],
+          "infos": [
+            {
+              "name": "test-dynamic-infos-to-get-1-info-1-name",
+              "value": "test-dynamic-infos-to-get-1-info-1-value"
+            },
+            {
+              "name": "test-dynamic-infos-to-get-1-info-2-name",
+              "value": "test-dynamic-infos-to-get-1-info-2-value"
+            }
+          ],
+          "last_modified_date": 1593679995,
+          "name": "test-dynamic-infos-to-get-1-name"
+        },
+        {
+          "_id": "test-dynamic-infos-to-get-2",
+          "alarm_patterns": [
+            {
+              "v": {
+                "connector": "test-dynamic-infos-to-get-2-alarm-pattern"
+              }
+            }
+          ],
+          "author": "root",
+          "creation_date": 1581423405,
+          "description": "test-dynamic-infos-to-get-2-description",
+          "disable_during_periods": null,
+          "enabled": true,
+          "entity_patterns": [
+            {
+              "_id": "test-dynamic-infos-to-get-2-entity-pattern"
+            }
+          ],
+          "infos": [
+            {
+              "name": "test-dynamic-infos-to-get-2-info-1-name",
+              "value": "test-dynamic-infos-to-get-2-info-1-value"
+            },
+            {
+              "name": "test-dynamic-infos-to-get-2-info-2-name",
+              "value": "test-dynamic-infos-to-get-2-info-2-value"
+            }
+          ],
+          "last_modified_date": 1593679995,
+          "name": "test-dynamic-infos-to-get-2-name"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+
+  Scenario: given search DSL request should return dynamic infos
+    When I am admin
+    When I do GET /api/v4/cat/dynamic-infos?search=pattern%20LIKE%20"test-dynamic-infos-to-get-2"
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {"_id": "test-dynamic-infos-to-get-2"}
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given get request should return dynamic infos
+    When I am admin
+    When I do GET /api/v4/cat/dynamic-infos/test-dynamic-infos-to-get-2
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-dynamic-infos-to-get-2",
+      "alarm_patterns": [
+        {
+          "v": {
+            "connector": "test-dynamic-infos-to-get-2-alarm-pattern"
           }
         }
       ],
-      "last_modified_date": 1593677536,
-      "name": "dynamic_info_2",
       "author": "root",
-      "alarm_patterns": null,
-      "description": "le service d’import des postes dans l’annuaire ne fonctionne pas",
+      "creation_date": 1581423405,
+      "description": "test-dynamic-infos-to-get-2-description",
+      "disable_during_periods": null,
       "enabled": true,
-      "infos": [
+      "entity_patterns": [
         {
-          "name": "type",
-          "value": "consigne"
-        },
-        {
-          "name": "label",
-          "value": "Consigne Suivi et Administration de l'Infra Neptune"
-        },
-        {
-          "name": "colibri",
-          "value": "148768"
+          "_id": "test-dynamic-infos-to-get-2-entity-pattern"
         }
       ],
-      "creation_date": 1581504657,
-      "disable_during_periods": null
+      "infos": [
+        {
+          "name": "test-dynamic-infos-to-get-2-info-1-name",
+          "value": "test-dynamic-infos-to-get-2-info-1-value"
+        },
+        {
+          "name": "test-dynamic-infos-to-get-2-info-2-name",
+          "value": "test-dynamic-infos-to-get-2-info-2-value"
+        }
+      ],
+      "last_modified_date": 1593679995,
+      "name": "test-dynamic-infos-to-get-2-name"
     }
     """
 
@@ -194,7 +147,7 @@ Feature: Get a dynamic-infos
     When I do GET /api/v4/cat/dynamic-infos
     Then the response code should be 401
 
-  Scenario: given get all request and auth user by api key without permissions should not allow access
+  Scenario: given get all request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/cat/dynamic-infos
     Then the response code should be 403
@@ -203,7 +156,7 @@ Feature: Get a dynamic-infos
     When I do GET /api/v4/cat/dynamic-infos/test-dynamic-infos-to-get-1
     Then the response code should be 401
 
-  Scenario: given get request and auth user by api key without permissions should not allow access
+  Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/cat/dynamic-infos/test-dynamic-infos-to-get-1
     Then the response code should be 403
@@ -213,7 +166,7 @@ Feature: Get a dynamic-infos
     When I do GET /api/v4/cat/dynamic-infos/test-dynamic-infos-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }
