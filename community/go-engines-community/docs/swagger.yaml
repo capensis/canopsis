@@ -131,6 +131,8 @@ definitions:
         type: object
       activation_date:
         type: integer
+      active_duration:
+        type: integer
       canceled:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
@@ -157,9 +159,6 @@ definitions:
         type: integer
       events_count:
         type: integer
-      extra:
-        additionalProperties: true
-        type: object
       infos:
         additionalProperties:
           additionalProperties: true
@@ -197,6 +196,8 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      pbh_inactive_duration:
+        type: integer
       resolved:
         type: integer
       resource:
@@ -204,6 +205,8 @@ definitions:
       snooze:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
+      snooze_duration:
+        type: integer
       state:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
@@ -691,6 +694,11 @@ definitions:
         additionalProperties:
           type: string
         type: object
+    type: object
+  config.TimezoneConfig:
+    properties:
+      location:
+        type: string
     type: object
   contextgraph.ImportJob:
     properties:
@@ -1233,12 +1241,14 @@ definitions:
         type: object
       freq_limit:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
     - freq_limit
+    - name
     - priority
     type: object
   flappingrule.Response:
@@ -1263,6 +1273,8 @@ definitions:
         type: object
       freq_limit:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
       updated:
@@ -1283,12 +1295,14 @@ definitions:
         type: object
       freq_limit:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
     - freq_limit
+    - name
     - priority
     type: object
   http.Response:
@@ -1708,10 +1722,6 @@ definitions:
         type: object
       done:
         $ref: '#/definitions/pattern.AlarmStepRefPattern'
-        type: object
-      extra:
-        additionalProperties:
-          $ref: '#/definitions/pattern.InterfacePattern'
         type: object
       hardLimit:
         $ref: '#/definitions/pattern.IntegerRefPattern'
@@ -2655,11 +2665,13 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
+    - name
     - priority
     type: object
   resolverule.Response:
@@ -2682,6 +2694,8 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
+      name:
+        type: string
       priority:
         type: integer
       updated:
@@ -2700,11 +2714,13 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
+    - name
     - priority
     type: object
   role.CreateRequest:
@@ -3252,9 +3268,6 @@ definitions:
       events_count:
         description: EventsCount accumulates count of check events.
         type: integer
-      extra:
-        additionalProperties: true
-        type: object
       hard_limit:
         type: integer
       infos:
@@ -3291,6 +3304,8 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      pbh_inactive_duration:
+        type: integer
       related_parents:
         items:
           type: string
@@ -3308,6 +3323,8 @@ definitions:
       snooze:
         $ref: '#/definitions/types.AlarmStep'
         type: object
+      snooze_duration:
+        type: integer
       state:
         $ref: '#/definitions/types.AlarmStep'
         type: object
