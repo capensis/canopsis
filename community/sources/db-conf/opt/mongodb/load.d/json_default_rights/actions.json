@@ -907,21 +907,21 @@
         "loader_id": "api_app_info_read",
         "crecord_name": "api_app_info_read",
         "crecord_type": "action",
-        "desc": "read app info"
+        "desc": "Read app info"
     },
     {
         "_id": "api_user_interface_update",
         "loader_id": "api_user_interface_update",
         "crecord_name": "api_user_interface_update",
         "crecord_type": "action",
-        "desc": "update user interface"
+        "desc": "Update user interface"
     },
     {
         "_id": "api_user_interface_delete",
         "loader_id": "api_user_interface_delete",
         "crecord_name": "api_user_interface_delete",
         "crecord_type": "action",
-        "desc": "delete user interface"
+        "desc": "Delete user interface"
     },
     {
         "_id": "api_junit",
