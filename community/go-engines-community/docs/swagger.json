@@ -8360,6 +8360,9 @@
                 "activation_date": {
                     "type": "integer"
                 },
+                "active_duration": {
+                    "type": "integer"
+                },
                 "canceled": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
@@ -8397,10 +8400,6 @@
                 },
                 "events_count": {
                     "type": "integer"
-                },
-                "extra": {
-                    "type": "object",
-                    "additionalProperties": true
                 },
                 "infos": {
                     "type": "object",
@@ -8456,6 +8455,9 @@
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "pbh_inactive_duration": {
+                    "type": "integer"
+                },
                 "resolved": {
                     "type": "integer"
                 },
@@ -8465,6 +8467,9 @@
                 "snooze": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "snooze_duration": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "object",
@@ -9197,6 +9202,14 @@
                     "additionalProperties": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "config.TimezoneConfig": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string"
                 }
             }
         },
@@ -9981,9 +9994,9 @@
         "flappingrule.CreateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
                 "freq_limit",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -10007,6 +10020,9 @@
                 },
                 "freq_limit": {
                     "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -10044,6 +10060,9 @@
                 "freq_limit": {
                     "type": "integer"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "priority": {
                     "type": "integer"
                 },
@@ -10055,9 +10074,9 @@
         "flappingrule.UpdateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
                 "freq_limit",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -10078,6 +10097,9 @@
                 },
                 "freq_limit": {
                     "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -10635,12 +10657,6 @@
                 "done": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "extra": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pattern.InterfacePattern"
-                    }
                 },
                 "hardLimit": {
                     "type": "object",
@@ -11796,8 +11812,8 @@
         "resolverule.CreateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -11818,6 +11834,9 @@
                 "entity_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -11852,6 +11871,9 @@
                     "type": "object",
                     "$ref": "#/definitions/pattern.EntityPatternList"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "priority": {
                     "type": "integer"
                 },
@@ -11863,8 +11885,8 @@
         "resolverule.UpdateRequest": {
             "type": "object",
             "required": [
-                "description",
                 "duration",
+                "name",
                 "priority"
             ],
             "properties": {
@@ -11882,6 +11904,9 @@
                 "entity_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
@@ -12690,10 +12715,6 @@
                     "description": "EventsCount accumulates count of check events.",
                     "type": "integer"
                 },
-                "extra": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
                 "hard_limit": {
                     "type": "integer"
                 },
@@ -12746,6 +12767,9 @@
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "pbh_inactive_duration": {
+                    "type": "integer"
+                },
                 "related_parents": {
                     "type": "array",
                     "items": {
@@ -12769,6 +12793,9 @@
                 "snooze": {
                     "type": "object",
                     "$ref": "#/definitions/types.AlarmStep"
+                },
+                "snooze_duration": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "object",
