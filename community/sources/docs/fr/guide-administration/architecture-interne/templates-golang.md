@@ -158,14 +158,14 @@ La [documentation officielle de Go](https://golang.org/pkg/time/#pkg-constants) 
 
 La fonction `localtime` permet de renvoyer une date dans un autre fuseau horaire que celui paramétré par défaut sur votre instance Canopsis.
 
-Cette fonction prend en paramètre un [format de date](#formatteddate) ainsi que le nom de la timzeone souhaitée.
+Cette fonction prend en paramètre un [format de date](#formatteddate) ainsi que le nom de la timezone souhaitée.
 
 Par exemple : 
 
-* `{{ .Alarm.Value.CreationDate | localTime "2006-02-01 15:04:05" }}` va renvoyer la date dans le format indiqué et pour la timezone configurée dans Canopsis.
+* `{{ .Alarm.Value.CreationDate | localTime "2006-02-01 15:04:05" }}` va renvoyer la date dans le format indiqué et pour la timezone configurée par défaut dans Canopsis.
 * `{{ .Alarm.Value.CreationDate | localTime "2006-02-01 15:04:05" "Europe/London" }}` va renvoyer la date dans le format indiqué et pour la timezone "Europe/London".
 
-Une liste de timezones peut être trouvée sur [wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+Une liste de timezones peut être trouvée sur [Wikipédia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ### Cas particulier des méta alarmes
 
