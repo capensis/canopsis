@@ -2,20 +2,32 @@
   div.position-relative
     c-progress-overlay(:pending="pending")
     kpi-rating-filters(v-model="pagination")
-    kpi-rating-chart(:metrics="ratingMetrics", :metric="pagination.metric", responsive)
+    kpi-rating-chart(
+      :metrics="ratingMetrics",
+      :metric="pagination.metric",
+      :downloading="downloading",
+      responsive,
+      @export:csv="exportRatingMetricsAsCsv",
+      @export:png="exportRatingMetricsAsPng"
+    )
 </template>
 
 <script>
+import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
+
 import {
   QUICK_RANGES,
   ALARM_METRIC_PARAMETERS,
-  KPI_RATING_CRITERIA,
+  KPI_RATING_CRITERIA, DATETIME_FORMATS,
 } from '@/constants';
 
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertDateToString } from '@/helpers/date/date';
+import { saveFile } from '@/helpers/file/files';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { exportCsvMixinCreator } from '@/mixins/widget/export';
 
 import KpiRatingFilters from './partials/kpi-rating-filters.vue';
 
@@ -23,11 +35,20 @@ const KpiRatingChart = () => import(/* webpackChunkName: "Charts" */ './partials
 
 export default {
   components: { KpiRatingFilters, KpiRatingChart },
-  mixins: [entitiesMetricsMixin, localQueryMixin],
+  mixins: [
+    entitiesMetricsMixin,
+    localQueryMixin,
+    exportCsvMixinCreator({
+      createExport: 'createKpiRatingExport',
+      fetchExport: 'fetchMetricExport',
+      fetchExportFile: 'fetchMetricCsvFile',
+    }),
+  ],
   data() {
     return {
       ratingMetrics: [],
       pending: false,
+      downloading: false,
       query: {
         criteria: KPI_RATING_CRITERIA.user,
         metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
@@ -42,6 +63,27 @@ export default {
     this.fetchList();
   },
   methods: {
+    getFileName() {
+      const fromTime = convertDateToString(
+        convertStartDateIntervalToTimestamp(this.query.interval.from),
+        DATETIME_FORMATS.short,
+      );
+      const toTime = convertDateToString(
+        convertStopDateIntervalToTimestamp(this.query.interval.to),
+        DATETIME_FORMATS.short,
+      );
+
+      return `${KPI_RATING_METRICS_FILENAME_PREFIX}${fromTime}-${toTime}-${this.metric}-${this.criteria}`;
+    },
+
+    async exportRatingMetricsAsPng(blob) {
+      try {
+        await saveFile(blob, this.getFileName());
+      } catch (err) {
+        this.$popups.error({ text: err.message || this.$t('errors.default') });
+      }
+    },
+
     getQuery() {
       return {
         from: convertStartDateIntervalToTimestamp(this.pagination.interval.from),
@@ -60,6 +102,17 @@ export default {
       });
 
       this.pending = false;
+    },
+
+    async exportRatingMetricsAsCsv() {
+      this.downloading = true;
+
+      await this.exportAsCsv({
+        name: this.getFileName(),
+        data: this.getQuery(),
+      });
+
+      this.downloading = false;
     },
   },
 };
