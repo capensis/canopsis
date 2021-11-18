@@ -18,7 +18,8 @@ import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
 import {
   QUICK_RANGES,
   ALARM_METRIC_PARAMETERS,
-  KPI_RATING_CRITERIA, DATETIME_FORMATS,
+  KPI_RATING_CRITERIA,
+  DATETIME_FORMATS,
 } from '@/constants';
 
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';

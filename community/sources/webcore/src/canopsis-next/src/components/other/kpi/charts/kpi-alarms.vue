@@ -17,7 +17,8 @@ import { KPI_ALARM_METRICS_FILENAME_PREFIX } from '@/config';
 import {
   QUICK_RANGES,
   ALARM_METRIC_PARAMETERS,
-  SAMPLINGS, DATETIME_FORMATS,
+  SAMPLINGS,
+  DATETIME_FORMATS,
 } from '@/constants';
 
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';

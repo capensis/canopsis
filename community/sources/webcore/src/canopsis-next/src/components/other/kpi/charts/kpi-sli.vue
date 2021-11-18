@@ -18,7 +18,8 @@ import { KPI_SLI_METRICS_FILENAME_PREFIX } from '@/config';
 import {
   QUICK_RANGES,
   SAMPLINGS,
-  KPI_SLI_GRAPH_DATA_TYPE, DATETIME_FORMATS,
+  KPI_SLI_GRAPH_DATA_TYPE,
+  DATETIME_FORMATS,
 } from '@/constants';
 
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
