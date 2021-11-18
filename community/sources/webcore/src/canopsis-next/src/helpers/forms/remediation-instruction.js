@@ -127,9 +127,7 @@ import { enabledToForm } from './shared/common';
 export const remediationInstructionStepOperationToForm = (operation = {}) => ({
   name: operation.name || '',
   description: operation.description || '',
-  time_to_complete: operation.time_to_complete
-    ? durationToForm(operation.time_to_complete)
-    : { value: 0, unit: TIME_UNITS.minute },
+  time_to_complete: durationToForm(operation.time_to_complete ?? { value: 1, unit: TIME_UNITS.minute }),
   jobs: operation.jobs ? cloneDeep(operation.jobs) : [],
   key: uuid(),
 });
