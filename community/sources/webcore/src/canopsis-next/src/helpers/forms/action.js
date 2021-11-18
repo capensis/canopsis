@@ -1,16 +1,16 @@
 import { cloneDeep, omit, isEmpty } from 'lodash';
 
-import { ENTITIES_STATES, ACTION_TYPES, TIME_UNITS } from '@/constants';
+import { ENTITIES_STATES, ACTION_TYPES } from '@/constants';
 
 import { objectToTextPairs, textPairsToObject } from '../text-pairs';
 import uid from '../uid';
-import { durationToForm, formToDuration } from '../date/duration';
+import { durationToForm } from '../date/duration';
 import { getLocaleTimezone } from '../date/date';
 
 import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning-pbehavior';
 
 /**
- * @typedef {DurationForm} RetryDurationForm
+ * @typedef {Duration} RetryDuration
  * @property {number} count
  */
 
@@ -38,11 +38,6 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 
 /**
- * @typedef {ActionDefaultParameters} ActionSnoozeFormParameters
- * @property {DurationForm} duration
- */
-
-/**
  * @typedef {ActionDefaultParameters} ActionChangeStateParameters
  * @property {number} state
  */
@@ -65,7 +60,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 /**
  * @typedef {Object} ActionWebhookParameters
  * @property {ActionWebhookRequestParameter} request
- * @property {Object} [declare_ticket]
+ * @property {Object | null} [declare_ticket]
  * @property {boolean} declare_ticket.empty_response
  * @property {boolean} declare_ticket.is_regexp
  * @property {number} retry_count
@@ -75,7 +70,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 /**
  * @typedef {ActionWebhookParameters} ActionWebhookFormParameters
  * @property {ActionWebhookRequestFormParameter} request
- * @property {RetryDurationForm} retry
+ * @property {RetryDuration} retry
  * @property {boolean} empty_response
  * @property {boolean} is_regexp
  * @property {TextPairObject[]} declare_ticket
@@ -112,7 +107,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  * @typedef {
  *   PbehaviorForm |
  *   ActionDefaultParameters |
- *   ActionSnoozeFormParameters |
+ *   ActionSnoozeParameters |
  *   ActionChangeStateParameters |
  *   ActionWebhookFormParameters |
  *   ActionAssocTicketParameters
@@ -175,13 +170,11 @@ const webhookActionParametersToForm = (parameters = {}) => {
  * Convert action snooze parameters to form
  *
  * @param {ActionSnoozeParameters | {}} [parameters = {}]
- * @returns {ActionSnoozeFormParameters}
+ * @returns {ActionSnoozeParameters}
  */
 const snoozeActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
-  duration: parameters.duration
-    ? durationToForm(parameters.duration)
-    : { value: 1, unit: TIME_UNITS.second },
+  duration: durationToForm(parameters.duration),
 });
 
 /**
@@ -308,7 +301,7 @@ export const formToWebhookActionParameters = (parameters = {}) => {
 
   if (parameters.retry.value) {
     webhook.retry_count = parameters.retry.count;
-    webhook.retry_delay = formToDuration(parameters.retry);
+    webhook.retry_delay = parameters.retry;
   }
 
   if (parameters.empty_response || parameters.is_regexp || !isEmpty(parameters.declare_ticket)) {
@@ -326,19 +319,16 @@ export const formToWebhookActionParameters = (parameters = {}) => {
 /**
  * Convert snooze parameters to action
  *
- * @param {ActionSnoozeFormParameters} parameters
+ * @param {ActionSnoozeParameters | {}} parameters
  * @return {ActionSnoozeParameters}
  */
-export const formToSnoozeActionParameters = (parameters = {}) => ({
-  ...parameters,
-  duration: formToDuration(parameters.duration),
-});
+export const formToSnoozeActionParameters = (parameters = {}) => parameters;
 
 /**
  * Convert pbehavior parameters to action
  *
- * @param {PbehaviorForm} parameters
- * @param [timezone = getLocaleTimezone()]
+ * @param {PbehaviorForm | {}} [parameters = {}]
+ * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorRequest}
  */
 export const formToPbehaviorActionParameters = (parameters = {}, timezone = getLocaleTimezone()) => {
@@ -346,7 +336,7 @@ export const formToPbehaviorActionParameters = (parameters = {}, timezone = getL
 
   if (parameters.start_on_trigger) {
     pbehavior.start_on_trigger = parameters.start_on_trigger;
-    pbehavior.duration = formToDuration(parameters.duration);
+    pbehavior.duration = parameters.duration;
   }
 
   return pbehaviorToRequest(pbehavior);

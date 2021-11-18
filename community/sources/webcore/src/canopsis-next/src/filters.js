@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 
-import { convertDurationFormToMaxUnitDurationString, convertDurationToString } from '@/helpers/date/duration';
+import { convertDurationToMaxUnitDurationString, convertDurationToString } from '@/helpers/date/duration';
 import { convertDateToTimezoneDateString, convertDateToString, convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertNumberToFixedString, convertNumberToRoundedPercentString } from '@/helpers/string';
 import { stringifyJsonFilter } from '@/helpers/json';
@@ -13,7 +13,7 @@ export default {
     Vue.filter('duration', convertDurationToString);
     Vue.filter('json', stringifyJsonFilter);
     Vue.filter('percentage', convertNumberToRoundedPercentString);
-    Vue.filter('maxDurationByUnit', convertDurationFormToMaxUnitDurationString);
+    Vue.filter('maxDurationByUnit', convertDurationToMaxUnitDurationString);
     Vue.filter('timezone', convertDateToTimezoneDateString);
     Vue.filter('fixed', convertNumberToFixedString);
   },
