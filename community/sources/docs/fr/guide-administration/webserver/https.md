@@ -146,6 +146,45 @@ Notez au préalable que :
 
     Puis, redémarrez le conteneur `nginx`.
 
+## Sécurisation supplémentaire des cookies (optionnel)
+
+Si vous pouvez garantir que la totalité de vos clients utilisera uniquement une connexion HTTPS (et non pas HTTP), vous pouvez améliorer la sécurité des cookies en leur ajoutant [l'attribut `Secure`](https://developer.mozilla.org/fr/docs/Web/HTTP/Cookies#cookies_secure_et_httponly), garantissant qu'ils ne pourront plus être manipulés sans HTTPS.
+
+Pour cela, le moteur `canopsis-api` doit être lancé avec l'option `-secure`.
+
+=== "Paquets CentOS 7"
+
+    Exécutez les commandes suivantes pour forcer le moteur `canopsis-api` à être lancé avec l'option `-secure` :
+
+    ```sh
+    mkdir -p /etc/systemd/system/canopsis-service@canopsis-api.service.d
+    cat > /etc/systemd/system/canopsis-service@canopsis-api.service.d/override.conf << EOF
+    [Service]
+    ExecStart=
+    ExecStart=/usr/bin/env /opt/canopsis/bin/%i -secure
+    EOF
+
+    systemctl daemon-reload
+    systemctl restart canopsis-service@canopsis-api
+    ```
+
+=== "Docker Compose"
+
+    Ajoutez l'option `-secure` aux arguments de `canopsis-api` :
+
+    ```yaml hl_lines="8"
+      api:
+        ...
+        ports:
+          - "8082:8082"
+        env_file:
+          - compose.env
+        restart: unless-stopped
+        command: /canopsis-api -secure
+    ```
+
+    Puis, relancez ce conteneur.
+
 ## Utilisation d'un autre applicatif ou équipement pour servir les flux HTTPS
 
 Dans la politique de sécurité de certains SI, la terminaison SSL/TLS doit forcément passer par un applicatif ou par un équipement dédié.
