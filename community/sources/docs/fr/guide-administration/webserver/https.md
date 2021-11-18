@@ -1,6 +1,6 @@
 # Activation de HTTPS dans Canopsis
 
-À partir de Canopsis 4.4.0, une configuration HTTPS est proposée avec [Nginx](../administration-avancee/configuration-services/reverse-proxy-nginx.md), mais elle n'est cependant pas encore activée par défaut. Ce guide décrit son activation et son utilisation.
+À partir de Canopsis 4.4.0, une configuration HTTPS est proposée avec [Nginx](../administration-avancee/configuration-services/reverse-proxy-nginx.md), mais elle n'est cependant pas encore activée par défaut. Ce guide décrit sa configuration et son activation.
 
 ## Apports de la configuration HTTPS
 
@@ -15,13 +15,15 @@ La configuration HTTPS proposée dans Nginx vous permet :
 
     * assigner un [FQDN](https://fr.wikipedia.org/wiki/Fully_qualified_domain_name) à votre service web Canopsis (ex : `canopsis.mon-si.fr`) ;
     * avoir un navigateur [officiellement pris en charge](../../guide-utilisation/limitations/index.md#compatibilite-des-anciens-navigateurs) et raisonnablement récent ;
-    * disposer d'HTTP/1.1 et des Websockets dans ce navigateur ;
-    * disposer de TLSv1.2 ou de TLSv1.3 par vos clients HTTPS (note : TLSv1.3 n'est pas disponible dans les paquets CentOS 7) ;
-    * utiliser une autorité de certification SSL/TLS en raccord avec les pratiques internes de votre SI (voir ci-dessous).
+    * disposer d'au moins HTTP/1.1 et des Websockets dans ce navigateur ;
+    * disposer de TLSv1.2 ou de TLSv1.3 sur vos clients HTTPS (note : TLSv1.3 n'est pas disponible dans les paquets CentOS 7) ;
+    * disposer d'OpenSSL sur votre serveur, avec ses dernières mises à jour de sécurité ;
+    * utiliser une autorité de certification SSL/TLS en raccord avec les pratiques internes de votre SI (voir ci-dessous) ;
+    * mettre en place une politique de renouvellement des certificats et une surveillance de leur expiration.
 
 ## Choix du type de certificat HTTPS
 
-De façon générale, l'écosystème HTTPS nécessite la mise en place de certificats devant être reconnus et acceptés par les clients HTTPS.
+De façon générale, l'écosystème HTTPS nécessite la mise en place de certificats devant être reconnus et acceptés par les clients.
 
 Pour cela, trois options s'offrent à vous :
 
@@ -35,11 +37,7 @@ La troisième option ne nécessite pas d'autorité de certification, mais de fa�
 
 ## Activation de la configuration HTTPS
 
-### Ajout d'un certificat standard à Nginx
-
-Rapprochez-vous de votre autorité de certification afin de connaître la procédure à suivre pour la génération de votre clé privée et pour l'obtention d'un certificat signé.
-
-La configuration Nginx proposée par défaut s'attend à ce que ces fichiers soient présents aux emplacements suivants :
+La configuration Nginx proposée par défaut s'attend à ce que votre certificat et sa clé privée soient présents aux emplacements suivants :
 
 | Type de fichier | Emplacement |
 | --------------- | ----------- |
@@ -49,13 +47,27 @@ La configuration Nginx proposée par défaut s'attend à ce que ces fichiers soi
 !!! attention
     Par mesure de sécurité, veillez à ce que le répertoire `/etc/nginx/ssl` soit bien attribué à `root:root` et qu'il dispose bien de permissions restreintes `0700`.
 
+### Ajout d'un certificat sécurisé (recommandé)
+
+En premier lieu, rapprochez-vous de votre autorité de certification afin de connaître la procédure à suivre pour la génération de votre clé privée et pour l'obtention d'un certificat signé.
+
+Vous devez ensuite placer ces fichiers au bon endroit sur votre serveur Canopsis, en fonction de la [méthode d'installation](../installation/index.md#methodes-dinstallation-de-canopsis) que vous avez choisie.
+
 === "Paquets CentOS 7"
 
-    TODO
+    Assurez-vous tout d'abord de la bonne restriction des accès à `/etc/nginx/ssl` avec la commande suivante :
+
+    ```sh
+    install -d -m 0700 -o root -g root /etc/nginx/ssl
+    ```
+
+    Placez ensuite votre certificat dans le fichier `/etc/nginx/ssl/cert.crt` et votre clé privée dans le fichier `/etc/nginx/ssl/key.key`.
 
 === "Docker Compose"
 
-    Exemple avec `./mon_certificat.crt` comme certificat et `./ma_clef_privee.key` comme clé privée :
+    L'injection des fichiers attendus se fait à l'aide de volumes.
+
+    Exemple avec `cert.crt` comme certificat et `key.key` comme clé privée :
 
     ```yaml hl_lines="12-14"
       nginx:
@@ -70,26 +82,26 @@ La configuration Nginx proposée par défaut s'attend à ce que ces fichiers soi
         restart: unless-stopped
         volumes:
           #- nginxcerts:/etc/nginx/ssl
-          - ./mon_certificat.cert:/etc/nginx/ssl/cert.crt:ro
-          - ./ma_clef_privee.key:/etc/nginx/ssl/key.key:ro
+          - ./cert.crt:/etc/nginx/ssl/cert.crt:ro
+          - ./key.key:/etc/nginx/ssl/key.key:ro
     ```
 
-### Ajout d'un certificat autosigné à Nginx (non recommandé)
+### Ajout d'un certificat autosigné (non recommandé)
 
-Les commandes suivantes peuvent être utilisées afin de mettre en place un certificat autosigné sur cet environnement.
+La procédure suivante peut être utilisée afin de mettre en place un certificat autosigné sur votre environnement.
 
-L'outil `openssl` doit être disponible.
+Notez au préalable que :
 
-/bin/bash: q: command not found
-    Vous devrez renouveler les certificats autosignés tous les ans.
-
-    L'utilisation de certificats autosignés provoquera l'affichage d'un message dans votre navigateur lors de la connexion à Canopsis. Vous devrez *manuellement* ajouter une exception sur chaque navigateur où vous voudrez accéder à Canopsis.
+* Vous devez veiller à renouveler les certificats autosignés vous-mêmes chaque année (avec une tolérance jusqu'à 2 ans).
+* L'utilisation de certificats autosignés provoquera l'affichage d'un message dans votre navigateur lors de la connexion à Canopsis. Vous devrez ajouter une exception sur chaque navigateur devant accéder à Canopsis.
+* De façon générale, les certificats autosignés n'assurent pas un niveau de sécurité suffisant dans un SI, et ne sont donc **pas recommandés**.
 
 === "Paquets CentOS 7"
 
-    Sur l'environnement cible, exécutez la commande suivante en tant que `root`, en remplaçant `canopsis.mon-si.fr` par le vrai FQDN de votre service Canopsis :
+    Sur l'environnement cible, exécutez les commandes suivantes en remplaçant `canopsis.mon-si.fr` par le vrai FQDN de votre service Canopsis :
 
     ```sh
+    install -d -m 0700 -o root -g root /etc/nginx/ssl
     ( umask 077 ; openssl req -x509 -nodes -days 730 -newkey rsa:2048 -sha256 \
         -keyout /etc/nginx/ssl/key.key \
         -out /etc/nginx/ssl/cert.crt \
@@ -98,33 +110,41 @@ L'outil `openssl` doit être disponible.
 
 === "Docker Compose"
 
-    Dans le cas de certificats autosigné vous n'avez rien à faire, le conteneur Nginx va en générer automatiquement lors de son démarrage, sauf si vous surchargez les fichiers attendus à l'aide d'un volume.
+    Dans le cas d'un certificat autosigné vous n'avez rien à faire : le conteneur `nginx` va en générer un de façon automatique lors de son démarrage, sauf si vous surchargez les fichiers attendus dans `/etc/nginx/ssl` à l'aide d'un volume.
 
 ## Activation de la configuration HTTPS
 
 === "Paquets CentOS 7"
 
-    (TODO : la modification est manuelle)
+    Éditez le fichier `/etc/nginx/conf.d/default.conf` afin de configurer votre FQDN (ex : `canopsis.mon-si.fr`), et décommentez la ligne `#include /etc/nginx/https.inc` afin d'activer la configuration HTTPS.
 
-    TODO : redémarrage du service
+    ```nginx hl_lines="1 5"
+    set $canopsis_server_name "canopsis.mon-si.fr";
+    server_name $canopsis_server_name;
+
+    # Uncomment the next line to enable HTTPS
+    include /etc/nginx/https.inc;
+    ```
+
+    Puis, redémarrez le service Nginx (`systemctl restart nginx`).
 
 === "Docker Compose"
 
-    Pour activer HTTPS dans le conteneur vous devrez modifier ses variables d'environnement dans le fichier `compose.env`.
+    Pour activer HTTPS dans le conteneur vous devrez modifier ses variables d'environnement dans le fichier `compose.env` lié à votre fichier de configuration Compose.
 
     | Variable | Description |
     | -------- | ----------- |
     | `CPS_SERVER_NAME` | FQDN sur lequel Canopsis sera disponible (ex : `canopsis.mon-si.fr`) |
-    | `CPS_ENABLE_HTTPS` | État d'activation de HTTPS. Si cette variable vaut `true` HTTPS sera activé, dans tous les autres cas il sera désactivé |
+    | `CPS_ENABLE_HTTPS` | État d'activation d'HTTPS. Si cette variable vaut `true` HTTPS sera activé, dans tous les autres cas il sera désactivé |
 
     Exemple de `compose.env` pour activer HTTPS avec `canopsis.mon-si.fr` en FQDN :
 
-    ```python
+    ```ini
     CPS_SERVER_NAME=canopsis.mon-si.fr
     CPS_ENABLE_HTTPS=true
     ```
 
-    TODO : redémarrage du service
+    Puis, redémarrez le conteneur `nginx`.
 
 ## Utilisation d'un autre applicatif ou équipement pour servir les flux HTTPS
 
