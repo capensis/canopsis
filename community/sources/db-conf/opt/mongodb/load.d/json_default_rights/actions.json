@@ -1470,5 +1470,13 @@
         "crecord_name": "api_rating_settings",
         "desc": "Rating settings api",
         "type": "CRUD"
+    },
+    {
+        "_id": "api_filter",
+        "loader_id": "api_filter",
+        "crecord_type": "action",
+        "crecord_name": "api_filter",
+        "desc": "Filters",
+        "type": "CRUD"
     }
 ]

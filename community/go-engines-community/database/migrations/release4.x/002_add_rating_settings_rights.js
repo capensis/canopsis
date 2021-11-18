@@ -1,6 +1,7 @@
 db.default_rights.insertMany([
     {
         "_id": "api_rating_settings",
+        "loader_id": "api_rating_settings",
         "crecord_type": "action",
         "crecord_name": "api_rating_settings",
         "desc": "Rating settings api",
