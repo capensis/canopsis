@@ -202,7 +202,7 @@ export const formToMetaAlarmRule = (form = {}) => {
       break;
     }
     case META_ALARMS_RULE_TYPES.timebased:
-      metaAlarmRule.config = form.config;
+      metaAlarmRule.config = pick(form.config, ['time_interval']);
       break;
   }
 
