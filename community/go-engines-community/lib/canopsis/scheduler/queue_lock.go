@@ -1,10 +1,11 @@
 package scheduler
 
 import (
+	"sort"
 	"time"
 
+	"git.canopsis.net/canopsis/go-engines/lib/keymutex"
 	redismod "github.com/go-redis/redis/v7"
-	"github.com/neverlee/keymutex"
 	"github.com/rs/zerolog"
 )
 
@@ -42,7 +43,7 @@ type baseQueueLock struct {
 	// queueClient is used to set queue.
 	queueClient redismod.Cmdable
 	// mutex is used to synchronize operations on lockClient and queueClient.
-	mutex  *keymutex.KeyMutex
+	mutex  keymutex.KeyMutex
 	logger zerolog.Logger
 }
 
@@ -62,7 +63,7 @@ func NewQueueLock(
 		lockExpirationTime: lockExpirationTime,
 		queueClient:        queueClient,
 		logger:             logger,
-		mutex:              keymutex.New(113),
+		mutex:              keymutex.New(),
 	}
 }
 
@@ -88,14 +89,11 @@ func (s *baseQueueLock) LockMultipleOrPush(
 	lockID string,
 	item []byte,
 ) (bool, error) {
-	for _, lockID := range lockIDList {
-		s.mutex.Lock(lockID)
-	}
+	sort.Strings(lockIDList)
+	s.mutex.LockMultiple(lockIDList...)
 
 	defer func() {
-		for _, lockID := range lockIDList {
-			s.mutex.Unlock(lockID)
-		}
+		s.mutex.UnlockMultiple(lockIDList...)
 	}()
 
 	locked, err := s.lockMultiple(lockIDList)
