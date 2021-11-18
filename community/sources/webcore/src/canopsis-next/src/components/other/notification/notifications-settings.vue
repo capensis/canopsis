@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { notificationsSettingsToForm, formToNotificationsSettings } from '@/helpers/forms/notification';
+import { notificationsSettingsToForm } from '@/helpers/forms/notification';
 
 import { entitiesNotificationSettingsMixin } from '@/mixins/entities/notification-settings';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -51,7 +51,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.updateNotificationSettings({ data: formToNotificationsSettings(this.form) });
+        await this.updateNotificationSettings({ data: this.form });
 
         this.$popups.success({ text: this.$t('success.default') });
       }
