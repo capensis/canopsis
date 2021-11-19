@@ -30,6 +30,8 @@ import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
 import ExploitationMetaAlarmRules from '@/views/exploitation/meta-alarm-rules.vue';
 import ExploitationScenarios from '@/views/exploitation/scenarios.vue';
 import ExploitationIdleRules from '@/views/exploitation/idle-rules.vue';
+import ExploitationFlappingRules from '@/views/exploitation/flapping-rules.vue';
+import ExploitationResolveRules from '@/views/exploitation/resolve-rules.vue';
 import Playlist from '@/views/playlist.vue';
 import NotificationInstructionStats from '@/views/notification/instruction-stats.vue';
 import Error from '@/views/error.vue';
@@ -264,6 +266,28 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.idleRules,
+      },
+    },
+  },
+  {
+    path: ROUTES.exploitationFlappingRules,
+    name: ROUTES_NAMES.exploitationFlappingRules,
+    component: ExploitationFlappingRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.flappingRules,
+      },
+    },
+  },
+  {
+    path: ROUTES.exploitationResolveRules,
+    name: ROUTES_NAMES.exploitationResolveRules,
+    component: ExploitationResolveRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.resolveRules,
       },
     },
   },

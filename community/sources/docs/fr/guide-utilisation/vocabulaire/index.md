@@ -167,7 +167,7 @@ En cours ->> Résolue:
 Note over En cours, Résolue: Envoi d'un événement de type done et délai de 15 minutes (valeur fixe)
 
 Furtive ->> Bagot:   
-Note over Furtive, Bagot: Le nombre de changements de criticité <br/> atteint la valeur de FlappingFreqLimit
+Note over Furtive, Bagot: Le nombre de changements de criticité <br/> atteint la valeur du nombre d'oscillations
 
 Furtive ->> Résolue:   
 Note over Furtive, Résolue: Criticité stable à la fin de de la durée de StealthyInterval
@@ -176,10 +176,11 @@ Furtive ->> En cours:
 Note over Furtive, En cours: Criticité de niveau alerte à la fin de <br /> la durée de StealthyInterval
 
 Bagot ->> En cours:   
-Note over Bagot, En cours: Le délai depuis le dernier changement de criticité <br/> est supérieur à FlappingInterval
+Note over Bagot, En cours: Le délai depuis le dernier changement de criticité <br/> est supérieur à la période de bagot
 
 Annulée ->> Résolue:   
 Note over Annulée, Résolue: Automatique après un délai égal à <br/> la durée de CancelAutosolveDelay
 ```
 
-Note : cliquez sur les liens suivants pour accéder aux informations relatives aux variables utilisées dans ce diagramme : [`StealthyInterval`](../../guide-administration/moteurs/moteur-axe/#option-stealthyinterval), [`FlappingFreqLimit`](../../guide-administration/moteurs/moteur-axe/#option-flappingfreqlimit), [`FlappingInterval`](../../guide-administration/moteurs/moteur-axe/#option-flappinginterval) et [`CancelAutosolveDelay`](../../guide-administration/moteurs/moteur-axe/#option-cancelautosolvedelay).
+Note : cliquez sur les liens suivants pour accéder aux informations relatives aux variables utilisées dans ce diagramme : [`StealthyInterval`](../../guide-administration/moteurs/moteur-axe/#option-stealthyinterval), [`Nombre d'oscillations`](../../guide-utilisation/menu-exploitation/regles-bagot/#anatomie-dune-regle-de-bagot), [`Durée de bagot`](../../guide-utilisation/menu-exploitation/regles-bagot/#anatomie-dune-regle-de-bagot)
+et [`CancelAutosolveDelay`](../../guide-administration/moteurs/moteur-axe/#option-cancelautosolvedelay).

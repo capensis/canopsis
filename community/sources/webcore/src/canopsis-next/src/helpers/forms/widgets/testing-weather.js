@@ -23,6 +23,7 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
  * @property {boolean} is_api
  * @property {Storage[]} screenshot_directories
  * @property {Storage[]} video_directories
+ * @property {string} report_fileregexp
  */
 
 /**
@@ -64,6 +65,7 @@ const testingWeatherWidgetParametersToForm = (parameters = {}) => ({
   video_directories: storagesToFormStorages(parameters.video_directories),
   screenshot_filemask: parameters.screenshot_filemask || TEST_CASE_FILE_MASK,
   video_filemask: parameters.video_filemask || TEST_CASE_FILE_MASK,
+  report_fileregexp: parameters.report_fileregexp,
 });
 
 /**

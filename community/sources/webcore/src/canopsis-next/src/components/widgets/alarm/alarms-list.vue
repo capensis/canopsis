@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { omit, pick, isEmpty } from 'lodash';
+import { omit, pick, isEmpty, isObject } from 'lodash';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
@@ -213,9 +213,7 @@ export default {
     },
 
     updateCorrelation(correlation) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         isCorrelationEnabled: correlation,
       });
 
@@ -229,9 +227,7 @@ export default {
     updateCategory(category) {
       const categoryId = category && category._id;
 
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         category: categoryId,
       });
 
@@ -243,9 +239,7 @@ export default {
     },
 
     updateRecordsPerPage(limit) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         itemsPerPage: limit,
       });
 
@@ -327,7 +321,10 @@ export default {
           fields: columns.map(({ label, value }) => ({ label, name: value })),
           filter: JSON.stringify(query.filter),
           separator: exportCsvSeparator,
-          time_format: exportCsvDatetimeFormat,
+          /**
+           * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+           */
+          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
         },
       });
     },

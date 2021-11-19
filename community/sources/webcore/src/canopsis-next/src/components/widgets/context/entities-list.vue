@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { omit, isString } from 'lodash';
+import { omit, isString, isObject } from 'lodash';
 
 import { USERS_PERMISSIONS } from '@/constants';
 
@@ -191,9 +191,7 @@ export default {
   },
   methods: {
     updateNoEvents(noEvents) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         noEvents,
       });
 
@@ -207,9 +205,7 @@ export default {
     updateCategory(category) {
       const categoryId = category && category._id;
 
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         category: categoryId,
       });
 
@@ -295,7 +291,10 @@ export default {
           category: query.category,
           filter: JSON.stringify(query.filter),
           separator: exportCsvSeparator,
-          time_format: exportCsvDatetimeFormat,
+          /**
+           * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+           */
+          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
         },
       });
     },

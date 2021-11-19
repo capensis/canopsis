@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	devmiddleware "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware/dev"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -37,10 +39,7 @@ const sessionStoreAutoCleanInterval = 10 * time.Second
 
 func Default(
 	ctx context.Context,
-	addr string,
-	configDir string,
-	secureSession bool,
-	test bool,
+	flags Flags,
 	enforcer libsecurity.Enforcer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	apiConfigProvider *config.BaseApiConfigProvider,
@@ -89,7 +88,7 @@ func Default(
 		logger.Err(err).Msg("cannot connect to redis")
 		return nil, err
 	}
-	securityConfig, err := libsecurity.LoadConfig(configDir)
+	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir)
 	if err != nil {
 		logger.Err(err).Msg("cannot load security config")
 		return nil, err
@@ -98,7 +97,7 @@ func Default(
 	cookieOptions := CookieOptions{
 		FileAccessName: "token",
 		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
-		Secure:         secureSession,
+		Secure:         flags.SecureSession,
 	}
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
@@ -108,7 +107,7 @@ func Default(
 	}
 	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
 
-	proxyAccessConfig, err := proxy.LoadAccessConfig(configDir)
+	proxyAccessConfig, err := proxy.LoadAccessConfig(flags.ConfigDir)
 	if err != nil {
 		logger.Err(err).Msg("cannot load access config")
 		return nil, err
@@ -153,12 +152,19 @@ func Default(
 		userInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
 	}
 
+	// Create and compute scenario priority intervals.
+	scenarioPriorityIntervals := action.NewPriorityIntervals()
+	err = scenarioPriorityIntervals.Recalculate(ctx, dbClient.Collection(mongo.ScenarioMongoCollection))
+	if err != nil {
+		return nil, err
+	}
+
 	// Create csv exporter.
 	exportExecutor := export.NewTaskExecutor(dbClient, logger)
 
 	// Create api.
 	api := New(
-		addr,
+		fmt.Sprintf(":%d", flags.Port),
 		func(ctx context.Context) {
 			close(pbhComputeChan)
 			close(entityPublChan)
@@ -192,7 +198,7 @@ func Default(
 	api.AddRouter(func(router gin.IRouter) {
 		router.Use(middleware.Cache())
 
-		if test {
+		if flags.Test {
 			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
 		}
 
@@ -215,6 +221,7 @@ func Default(
 			amqpChannel,
 			jobQueue,
 			userInterfaceConfigProvider,
+			scenarioPriorityIntervals,
 			cfg.File.Upload,
 			logger,
 		)
@@ -249,7 +256,7 @@ func Default(
 		importWorker.Run(ctx)
 	})
 	api.AddWorker("config reload", updateConfig(timezoneConfigProvider, apiConfigProvider,
-		configAdapter, userInterfaceConfigProvider, userInterfaceAdapter, test, logger))
+		configAdapter, userInterfaceConfigProvider, userInterfaceAdapter, flags.Test, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})
