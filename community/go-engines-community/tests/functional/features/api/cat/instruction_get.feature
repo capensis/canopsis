@@ -20,7 +20,10 @@ Feature: get a instruction
           ],
           "alarm_patterns": null,
           "description": "test-instruction-to-get-description",
-          "author": "test-instruction-to-get-author",
+          "author": {
+            "_id": "test-instruction-to-get-author",
+            "name": "test-instruction-to-get-author-1-username"
+          },
           "enabled": true,
           "rating": 0,
           "comments": [],
@@ -38,13 +41,13 @@ Feature: get a instruction
                     {
                       "_id": "test-job-to-test-instruction-to-get-step-1-operation-1-1",
                       "name": "test-job-to-test-instruction-to-get-step-1-operation-1-1-name",
-                      "author": "test_author",
+                      "author": {"_id": "test-author", "name": "test-author-username"},
                       "config": {
                         "_id": "test-job-config-to-link",
                         "name": "test-job-config-name-to-link",
                         "type": "rundeck",
                         "host": "http://example.com",
-                        "author": "test-author",
+                        "author": {"_id": "test-author", "name": "test-author-username"},
                         "auth_token": "test-auth-token"
                       },
                       "job_id": "test-job-id",
@@ -53,13 +56,13 @@ Feature: get a instruction
                     {
                       "_id": "test-job-to-test-instruction-to-get-step-1-operation-1-2",
                       "name": "test-job-to-test-instruction-to-get-step-1-operation-1-2-name",
-                      "author": "test_author",
+                      "author": {"_id": "test-author", "name": "test-author-username"},
                       "config": {
                         "_id": "test-job-config-to-link",
                         "name": "test-job-config-name-to-link",
                         "type": "rundeck",
                         "host": "http://example.com",
-                        "author": "test-author",
+                        "author": {"_id": "test-author", "name": "test-author-username"},
                         "auth_token": "test-auth-token"
                       },
                       "job_id": "test-job-id",
@@ -75,13 +78,13 @@ Feature: get a instruction
                     {
                       "_id": "test-job-to-test-instruction-to-get-step-1-operation-2-1",
                       "name": "test-job-to-test-instruction-to-get-step-1-operation-2-1-name",
-                      "author": "test_author",
+                      "author": {"_id": "test-author", "name": "test-author-username"},
                       "config": {
                         "_id": "test-job-config-to-link",
                         "name": "test-job-config-name-to-link",
                         "type": "rundeck",
                         "host": "http://example.com",
-                        "author": "test-author",
+                        "author": {"_id": "test-author", "name": "test-author-username"},
                         "auth_token": "test-auth-token"
                       },
                       "job_id": "test-job-id",
@@ -104,13 +107,13 @@ Feature: get a instruction
                     {
                       "_id": "test-job-to-test-instruction-to-get-step-2-operation-1-1",
                       "name": "test-job-to-test-instruction-to-get-step-2-operation-1-1-name",
-                      "author": "test_author",
+                      "author": {"_id": "test-author", "name": "test-author-username"},
                       "config": {
                         "_id": "test-job-config-to-link",
                         "name": "test-job-config-name-to-link",
                         "type": "rundeck",
                         "host": "http://example.com",
-                        "author": "test-author",
+                        "author": {"_id": "test-author", "name": "test-author-username"},
                         "auth_token": "test-auth-token"
                       },
                       "job_id": "test-job-id",
@@ -119,13 +122,13 @@ Feature: get a instruction
                     {
                       "_id": "test-job-to-test-instruction-to-get-step-2-operation-1-2",
                       "name": "test-job-to-test-instruction-to-get-step-2-operation-1-2-name",
-                      "author": "test_author",
+                      "author": {"_id": "test-author", "name": "test-author-username"},
                       "config": {
                         "_id": "test-job-config-to-link",
                         "name": "test-job-config-name-to-link",
                         "type": "rundeck",
                         "host": "http://example.com",
-                        "author": "test-author",
+                        "author": {"_id": "test-author", "name": "test-author-username"},
                         "auth_token": "test-auth-token"
                       },
                       "job_id": "test-job-id",
@@ -138,9 +141,10 @@ Feature: get a instruction
               "endpoint": "test-instruction-to-get-step-2-endpoint"
             }
           ],
+          "created": -62135596800,
           "last_executed_by": {
             "_id": "root",
-            "username": "root"
+            "name": "root"
           },
           "last_executed_on": 1596712203,
           "last_modified": 1596712203
@@ -203,10 +207,11 @@ Feature: get a instruction
       ],
       "alarm_patterns": null,
       "description": "test-instruction-to-get-description",
-      "author": "test-instruction-to-get-author",
+      "author": {"_id": "test-instruction-to-get-author", "name": "test-instruction-to-get-author-1-username"},
       "enabled": true,
       "rating": 0,
       "comments": [],
+      "created": -62135596800,
       "avg_complete_time": 10,
       "month_executions": 0,
       "steps": [
@@ -221,13 +226,13 @@ Feature: get a instruction
                {
                  "_id": "test-job-to-test-instruction-to-get-step-1-operation-1-1",
                  "name": "test-job-to-test-instruction-to-get-step-1-operation-1-1-name",
-                 "author": "test_author",
+                 "author": {"_id": "test-author", "name": "test-author-username"},
                  "config": {
                    "_id": "test-job-config-to-link",
                    "name": "test-job-config-name-to-link",
                    "type": "rundeck",
                    "host": "http://example.com",
-                   "author": "test-author",
+                   "author": {"_id": "test-author", "name": "test-author-username"},
                    "auth_token": "test-auth-token"
                  },
                  "job_id": "test-job-id",
@@ -236,13 +241,13 @@ Feature: get a instruction
                {
                  "_id": "test-job-to-test-instruction-to-get-step-1-operation-1-2",
                  "name": "test-job-to-test-instruction-to-get-step-1-operation-1-2-name",
-                 "author": "test_author",
+                 "author": {"_id": "test-author", "name": "test-author-username"},
                  "config": {
                    "_id": "test-job-config-to-link",
                    "name": "test-job-config-name-to-link",
                    "type": "rundeck",
                    "host": "http://example.com",
-                   "author": "test-author",
+                   "author": {"_id": "test-author", "name": "test-author-username"},
                    "auth_token": "test-auth-token"
                  },
                  "job_id": "test-job-id",
@@ -258,13 +263,13 @@ Feature: get a instruction
                {
                  "_id": "test-job-to-test-instruction-to-get-step-1-operation-2-1",
                  "name": "test-job-to-test-instruction-to-get-step-1-operation-2-1-name",
-                 "author": "test_author",
+                 "author": {"_id": "test-author", "name": "test-author-username"},
                  "config": {
                    "_id": "test-job-config-to-link",
                    "name": "test-job-config-name-to-link",
                    "type": "rundeck",
                    "host": "http://example.com",
-                   "author": "test-author",
+                   "author": {"_id": "test-author", "name": "test-author-username"},
                    "auth_token": "test-auth-token"
                  },
                  "job_id": "test-job-id",
@@ -287,13 +292,13 @@ Feature: get a instruction
              {
                "_id": "test-job-to-test-instruction-to-get-step-2-operation-1-1",
                "name": "test-job-to-test-instruction-to-get-step-2-operation-1-1-name",
-               "author": "test_author",
+               "author": {"_id": "test-author", "name": "test-author-username"},
                "config": {
                  "_id": "test-job-config-to-link",
                  "name": "test-job-config-name-to-link",
                  "type": "rundeck",
                  "host": "http://example.com",
-                 "author": "test-author",
+                 "author": {"_id": "test-author", "name": "test-author-username"},
                  "auth_token": "test-auth-token"
                },
                "job_id": "test-job-id",
@@ -302,13 +307,13 @@ Feature: get a instruction
              {
                "_id": "test-job-to-test-instruction-to-get-step-2-operation-1-2",
                "name": "test-job-to-test-instruction-to-get-step-2-operation-1-2-name",
-               "author": "test_author",
+               "author": {"_id": "test-author", "name": "test-author-username"},
                "config": {
                  "_id": "test-job-config-to-link",
                  "name": "test-job-config-name-to-link",
                  "type": "rundeck",
                  "host": "http://example.com",
-                 "author": "test-author",
+                 "author": {"_id": "test-author", "name": "test-author-username"},
                  "auth_token": "test-auth-token"
                },
                "job_id": "test-job-id",
@@ -323,7 +328,7 @@ Feature: get a instruction
       ],
       "last_executed_by": {
         "_id": "root",
-        "username": "root"
+        "name": "root"
       },
       "last_executed_on": 1596712203,
       "last_modified": 1596712203

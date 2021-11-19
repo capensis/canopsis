@@ -42,7 +42,7 @@ Feature: Job's config update
     {
       "_id": "test-job-config-to-update",
       "auth_token": "new token",
-      "author": "root",
+      "author": {"_id": "root", "name": "root"},
       "host": "http://example-2.com",
       "name": "test-job-config-name-to-update-new",
       "type": "rundeck"
@@ -100,7 +100,7 @@ Feature: Job's config update
     {
       "_id": "test-job-config-to-update",
       "auth_token": "new token",
-      "author": "root",
+      "author": {"_id": "root", "name": "root"},
       "host": "http://example-2.com",
       "name": "test-job-config-name-to-update-new",
       "type": "rundeck"
