@@ -36,6 +36,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 		dbCollection:          dbClient.Collection(mongo.ViewMongoCollection),
 		dbGroupCollection:     dbClient.Collection(mongo.ViewGroupMongoCollection),
 		aclDbCollection:       dbClient.Collection(mongo.RightsMongoCollection),
+		userPrefDbCollection:  dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		defaultSearchByFields: []string{"_id", "title", "description", "author"},
 		defaultSortBy:         "position",
 	}
@@ -45,6 +46,7 @@ type store struct {
 	dbCollection          mongo.DbCollection
 	dbGroupCollection     mongo.DbCollection
 	aclDbCollection       mongo.DbCollection
+	userPrefDbCollection  mongo.DbCollection
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
@@ -242,15 +244,37 @@ func (s *store) Update(ctx context.Context, r []BulkUpdateRequestItem) ([]viewgr
 }
 
 func (s *store) Delete(ctx context.Context, ids []string) (bool, error) {
-	if len(ids) > 0 {
-		count, err := s.dbCollection.CountDocuments(ctx, bson.M{"_id": bson.M{"$in": ids}})
+	if len(ids) == 0 {
+		return false, nil
+	}
+
+	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": bson.M{"$in": ids}}},
+		{"$unwind": bson.M{"path": "$tabs", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$tabs.widgets", "preserveNullAndEmptyArrays": true}},
+		{"$project": bson.M{
+			"widget": "$tabs.widgets._id",
+		}},
+	})
+	if err != nil {
+		return false, err
+	}
+	defer cursor.Close(ctx)
+
+	widgetIds := make([]string, 0)
+	foundViews := make(map[string]bool)
+	for cursor.Next(ctx) {
+		data := make(map[string]string)
+		err := cursor.Decode(&data)
 		if err != nil {
 			return false, err
 		}
+		foundViews[data["_id"]] = true
+		widgetIds = append(widgetIds, data["widget"])
+	}
 
-		if count < int64(len(ids)) {
-			return false, nil
-		}
+	if len(foundViews) < len(ids) {
+		return false, nil
 	}
 
 	delCount, err := s.dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
@@ -263,6 +287,11 @@ func (s *store) Delete(ctx context.Context, ids []string) (bool, error) {
 	}
 
 	err = s.deletePermissions(ctx, ids)
+	if err != nil {
+		return false, err
+	}
+
+	err = s.deleteUserPreferences(ctx, widgetIds)
 	if err != nil {
 		return false, err
 	}
@@ -383,7 +412,6 @@ func (s *store) updatePermissions(ctx context.Context, views []viewgroup.View) e
 }
 
 func (s *store) deletePermissions(ctx context.Context, viewIDs []string) error {
-
 	unset := bson.M{}
 	for _, viewID := range viewIDs {
 		unset["rights."+viewID] = ""
@@ -414,6 +442,8 @@ func (s *store) handleWidgets(ctx context.Context, oldTabs, newTabs []view.Tab) 
 		}
 	}
 
+	removedWidgets := make([]string, 0)
+
 	for _, tab := range oldTabs {
 		for _, oldWidget := range tab.Widgets {
 			if newWidget, ok := widgetsByID[tab.ID][oldWidget.ID]; ok {
@@ -424,9 +454,15 @@ func (s *store) handleWidgets(ctx context.Context, oldTabs, newTabs []view.Tab) 
 						return err
 					}
 				}
+			} else {
+				removedWidgets = append(removedWidgets, oldWidget.ID)
 			}
-
 		}
+	}
+
+	err := s.deleteUserPreferences(ctx, removedWidgets)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -575,6 +611,18 @@ func (s *store) updatePositions(
 	}
 
 	return nil
+}
+
+func (s *store) deleteUserPreferences(ctx context.Context, widgetIDs []string) error {
+	if len(widgetIDs) == 0 {
+		return nil
+	}
+
+	_, err := s.userPrefDbCollection.DeleteMany(ctx, bson.M{
+		"widget": bson.M{"$in": widgetIDs},
+	})
+
+	return err
 }
 
 func getNestedObjectsPipeline() []bson.M {

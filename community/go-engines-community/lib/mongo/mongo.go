@@ -59,6 +59,8 @@ const (
 	StateSettingsMongoCollection      = "state_settings"
 	BroadcastMessageMongoCollection   = "broadcast_message"
 	AssociativeTableCollection        = "default_associativetable"
+
+	UserPreferencesMongoCollection = "userpreferences"
 )
 
 type SingleResultHelper interface {
