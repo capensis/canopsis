@@ -5,7 +5,7 @@
       :value="remediationInstruction.created | date"
     )
     remediation-instruction-stats-summary-row(
-      :label="$t('remediationInstructionStats.lastModifiedOn')",
+      :label="$t('common.lastModifiedOn')",
       :value="remediationInstruction.last_modified | date"
     )
     remediation-instruction-stats-summary-row(

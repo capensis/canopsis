@@ -92,6 +92,7 @@ export const USERS_PERMISSIONS = {
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     kpi: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpi`,
+    kpiFilters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiFilters`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -257,6 +258,9 @@ export const USERS_PERMISSIONS = {
     instructionApprove: `${USER_PERMISSIONS_PREFIXES.api}_instruction_approve`,
     flappingRule: `${USER_PERMISSIONS_PREFIXES.api}_flapping_rule`,
     resolveRule: `${USER_PERMISSIONS_PREFIXES.api}_resolve_rule`,
+    metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
+    ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
+    filter: `${USER_PERMISSIONS_PREFIXES.api}_filter`,
   },
 };
 

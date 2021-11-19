@@ -13,3 +13,8 @@ export const KPI_RATING_CRITERIA = {
   category: 3,
   impactLevel: 4,
 };
+
+export const KPI_TABS = {
+  graphs: 'graphs',
+  filters: 'filters',
+};

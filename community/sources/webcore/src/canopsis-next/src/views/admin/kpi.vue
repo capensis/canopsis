@@ -3,39 +3,72 @@
     c-page-header
     v-card.ma-4.mt-0
       v-tabs(v-model="activeTab", slider-color="primary", centered)
-        v-tab {{ $tc('common.graph', 2) }}
-        v-tab {{ $t('kpi.tabs.dataSlices') }}
-        v-tab {{ $t('kpi.tabs.detailedMetrics') }}
-        v-tab {{ $tc('common.rating') }}
-        v-tab {{ $t('kpi.tabs.sliPatterns') }}
+        v-tab(:href="`#${$constants.KPI_TABS.graphs}`") {{ $tc('common.graph', 2) }}
+        v-tab(v-if="hasReadAnyKpiFiltersAccess", :href="`#${$constants.KPI_TABS.filters}`") {{ $t('common.filters') }}
 
       v-tabs-items(v-model="activeTab")
         v-card-text
-          v-tab-item
+          v-tab-item(:value="$constants.KPI_TABS.graphs")
             kpi-charts
-          v-tab-item(lazy)
-            kpi-data-slices
-          v-tab-item(lazy)
-            kpi-detailed-metrics
-          v-tab-item(lazy)
-            kpi-rating
-          v-tab-item(lazy)
-            kpi-sli-patterns
+          v-tab-item(:value="$constants.KPI_TABS.filters", lazy)
+            kpi-filters
+
+    v-slide-x-reverse-transition
+      c-fab-btn(
+        v-if="isFilterTab",
+        @create="showCreateFilterModal",
+        @refresh="fetchFiltersListWithPreviousParams",
+        :has-access="true"
+      )
+        span {{ $t('modals.filter.create.title') }}
 </template>
 
 <script>
+import { KPI_TABS, MODALS } from '@/constants';
+
+import { entitiesFilterMixin } from '@/mixins/entities/filter';
+import { permissionsTechnicalKpiFiltersMixin } from '@/mixins/permissions/technical/kpi-filters';
+
 import KpiCharts from '@/components/other/kpi/charts/kpi-charts.vue';
-import KpiDataSlices from '@/components/other/kpi/data-slices/kpi-data-slices.vue';
-import KpiDetailedMetrics from '@/components/other/kpi/detailed-metrics/kpi-detailed-metrics.vue';
-import KpiRating from '@/components/other/kpi/rating/kpi-rating.vue';
-import KpiSliPatterns from '@/components/other/kpi/sli-patterns/kpi-sli-patterns.vue';
+import KpiFilters from '@/components/other/kpi/filters/kpi-filters.vue';
 
 export default {
-  components: { KpiCharts, KpiDataSlices, KpiDetailedMetrics, KpiRating, KpiSliPatterns },
+  components: { KpiCharts, KpiFilters },
+  mixins: [entitiesFilterMixin, permissionsTechnicalKpiFiltersMixin],
   data() {
     return {
-      activeTab: 0,
+      activeTab: KPI_TABS.graphs,
     };
+  },
+  computed: {
+    isFilterTab() {
+      return this.activeTab === KPI_TABS.filters;
+    },
+
+    hasCreateAccess() {
+      return true;
+    },
+  },
+  methods: {
+    showCreateFilterModal() {
+      this.$modals.show({
+        name: MODALS.patterns,
+        config: {
+          title: this.$t('modals.filter.create.title'),
+          name: true,
+          entity: true,
+          patterns: {
+            name: '',
+            entity_patterns: [],
+          },
+          action: async (data) => {
+            await this.createFilter({ data });
+
+            this.fetchFiltersListWithPreviousParams();
+          },
+        },
+      });
+    },
   },
 };
 </script>
