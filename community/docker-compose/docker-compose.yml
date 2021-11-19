@@ -9,6 +9,7 @@ volumes:
 services:
   rabbitmq:
     image: rabbitmq:${RABBITMQ_TAG}
+    hostname: rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
@@ -52,7 +53,7 @@ services:
   provisioning:
     image: canopsis/canopsis-prov:${CANOPSIS_IMAGE_TAG}
     environment:
-      - CPS_EDITION=core
+      - CPS_EDITION=community
     env_file:
       - compose.env
     depends_on:
@@ -98,8 +99,8 @@ services:
       - compose.env
     restart: unless-stopped
     command: /engine-pbehavior
-  watcher:
-    image: canopsis/engine-watcher:${CANOPSIS_IMAGE_TAG}
+  service:
+    image: canopsis/engine-service:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     restart: unless-stopped

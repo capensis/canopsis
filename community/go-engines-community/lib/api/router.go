@@ -21,6 +21,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
@@ -35,6 +36,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/permission"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/playlist"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
@@ -43,10 +45,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionstats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/userpreferences"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewstats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -131,6 +135,7 @@ func RegisterRoutes(
 	publisher amqp.Publisher,
 	jobQueue contextgraph.JobQueue,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
+	scenarioPriorityIntervals action.PriorityIntervals,
 	filesRoot string,
 	logger zerolog.Logger,
 ) {
@@ -188,6 +193,14 @@ func RegisterRoutes(
 		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
 		protected.GET("/sessions-count", sessionauthApi.GetSessionsCount())
 		protected.GET("/file-access", authApi.GetFileAccess)
+
+		userPreferencesRouter := protected.Group("/user-preferences")
+		{
+			userPreferencesRouter.Use(middleware.OnlyAuth())
+			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient), actionLogger)
+			userPreferencesRouter.GET("/:id", userPreferencesApi.Get)
+			userPreferencesRouter.PUT("", userPreferencesApi.Update)
+		}
 
 		viewStatsRouter := protected.Group("/view-stats")
 		{
@@ -819,7 +832,7 @@ func RegisterRoutes(
 
 		scenarioRouter := protected.Group("/scenarios")
 		{
-			scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger)
+			scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, scenarioPriorityIntervals)
 			scenarioRouter.POST(
 				"",
 				middleware.Authorize(authObjAction, permCreate, enforcer),
@@ -846,6 +859,16 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(authObjAction, permDelete, enforcer),
 				scenarioAPI.Delete,
+			)
+			scenarioRouter.GET(
+				"/minimal-priority",
+				middleware.Authorize(authObjAction, permRead, enforcer),
+				scenarioAPI.GetMinimalPriority,
+			)
+			scenarioRouter.POST(
+				"/check-priority",
+				middleware.Authorize(authObjAction, permRead, enforcer),
+				scenarioAPI.CheckPriority,
 			)
 		}
 
@@ -1066,6 +1089,70 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjFile, permDelete, enforcer),
 				fileAPI.Delete,
+			)
+		}
+
+		resolveRuleRouter := protected.Group("/resolve-rules")
+		{
+			resolveRuleAPI := resolverule.NewApi(resolverule.NewStore(dbClient), actionLogger)
+			resolveRuleRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				resolveRuleAPI.Create,
+			)
+			resolveRuleRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionRead, enforcer),
+				resolveRuleAPI.List,
+			)
+			resolveRuleRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionRead, enforcer),
+				resolveRuleAPI.Get,
+			)
+			resolveRuleRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				resolveRuleAPI.Update,
+			)
+			resolveRuleRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionDelete, enforcer),
+				resolveRuleAPI.Delete,
+			)
+		}
+
+		flappingRuleRouter := protected.Group("/flapping-rules")
+		{
+			flappingRuleAPI := flappingrule.NewApi(flappingrule.NewStore(dbClient), actionLogger)
+			flappingRuleRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				flappingRuleAPI.Create,
+			)
+			flappingRuleRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionRead, enforcer),
+				flappingRuleAPI.List,
+			)
+			flappingRuleRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionRead, enforcer),
+				flappingRuleAPI.Get,
+			)
+			flappingRuleRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				flappingRuleAPI.Update,
+			)
+			flappingRuleRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionDelete, enforcer),
+				flappingRuleAPI.Delete,
 			)
 		}
 	}

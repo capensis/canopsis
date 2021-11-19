@@ -1,36 +1,10 @@
 # `engine-che` - Event-filter
 
-!!! note
-    Cette page concerne l'event-filter nouvelle génération, disponible uniquement
-    avec le moteur Go `engine-che`.
-
 L'event-filter est une fonctionnalité du moteur [`engine-che`](moteur-che.md) permettant de définir des règles manipulant les évènements.
-
-Les règles sont définies dans la collection MongoDB `eventfilter`, et peuvent être ajoutées et modifiées avec l'[API event-filter](../../guide-developpement/api/api-v2-event-filter.md).
 
 Des exemples pratiques d'utilisation de l'event-filter sont disponibles dans la partie [Exemples](#exemples).
 
 ## Règles
-
-!!! important
-    Un changement important est apparu dans cette API à partir de Canopsis 3.48.0 : la liste des `patterns` (au pluriel) peut maintenant contenir plusieurs règles à la fois. Avant Canopsis 3.48.0, il s'agissait d'un champ `pattern` (au singulier) ne pouvant contenir qu'une seule règle.
-
-    Avant Canopsis 3.48.0 :
-    ```js
-    "pattern": {
-        "component": "192.168.0.1", "resource": "foobar"
-    },
-    ```
-
-    À partir de Canopsis 3.48.0 :
-    ```js
-    "patterns": [
-        {"component": "192.168.0.1", "resource": "foobar"},
-        {"resource": "other"}
-    ],
-    ```
-
-    Les exemples suivants utilisent uniquement la nouvelle syntaxe.
 
 Une règle est un document JSON contenant les paramètres suivants :
 
@@ -130,12 +104,11 @@ Il est également possible de créer des patterns basés sur l'absence d'un cham
 ]
 ```
 
-!!! note
-    A partir de Canopsis v3.46.0, de nouveaux opérateurs avancés ont été ajoutés pour tester les éléments d'un tableau.
+Des opérateurs avancés permettent de tester les éléments d'un tableau :
 
- - `has_every` : le tableau doit contenir **tous** les éléments listés dans l'opérateur.
- - `has_one_of` : le tableau doit contenir **au moins un** des éléments listés dans l'opérateur.
- - `has_not` : le tableau ne doit contenir **aucun** des éléments listés dans l'opérateur.
+- `has_every` : le tableau doit contenir **tous** les éléments listés dans l'opérateur.
+- `has_one_of` : le tableau doit contenir **au moins un** des éléments listés dans l'opérateur.
+- `has_not` : le tableau ne doit contenir **aucun** des éléments listés dans l'opérateur.
 
 Par exemple, avec le pattern `has_every` suivant :
 
@@ -179,7 +152,7 @@ Tandis qu'un événement contenant le tableau suivant ne sera pas sélectionné 
 
 ### Types de règles
 
-#### Drop
+#### `drop`
 
 Lorsqu'une règle de type `drop` est appliquée à un évènement, cet évènement est supprimé. Les règles suivantes ne sont pas appliquées à cet évènement, et il est ignoré par Canopsis.
 
@@ -189,15 +162,11 @@ Lorsqu'un évènement provoque le déclenchement d'une règle « drop », le m
 2019/05/02 12:45:19 event dropped by event filter: {"hostgroups":["HG_FOOBAR"],"event_type":"check","execution_time":2.139087200164795,"timestamp":1556793914,"component":"foobar","state_type":0,"source_type":"resource","resource":"PING","current_attempt":1,"connector":"foobar","long_output":"","state":2,"connector_name":"foobar","output":"foo","command_name":"foo","perf_data":"","max_attempts":2}
 ```
 
-#### Break
+#### `break`
 
 Lorsqu'une règle de type `break` est appliquée à un évènement, cet évènement sort de l'event-filter. Les règles suivantes ne sont pas appliquées, et l'évènement est traité par Canopsis.
 
-#### Enrichment
-
-Les règles de types `enrichment` sont des règles d'enrichissement, qui permettent d'appliquer des actions modifiant les évènements.
-
-## Règles d'enrichissement
+#### `enrichment`
 
 Les règles de types `enrichment` sont des règles d'enrichissement, qui permettent d'appliquer des actions modifiant les évènements.
 
@@ -218,11 +187,18 @@ Si le résultat de la règle est `pass`, l'exécution de l'event-filter continue
 
 ### Actions
 
-Une action est un objet JSON contenant un champ `type` indiquant le type de l'action, et des paramètres. Les actions disponibles sont précisées ci-dessous.
+Une action est un objet JSON contenant un champ `type` indiquant le type de l'action, et des paramètres. Les actions disponibles sont les suivantes:
+
+  - `set_field` : Définir un champ d'un événement à une constante.
+  - `set_field_from_template` : Définir un champ de type chaîne de caractères d'un événement en utilisant un modèle.
+  - `set_entity_info` : Définir une info d'une entité à une constante.
+  - `set_entity_info_from_template` : Définir une info de type chaîne de caractères d'une entité en utilisant un modèle.
+  - `copy` : Copier une valeur d'un champ d'un événement à un autre.
+  - `copy_to_entity_info` : Copier une valeur d'un champ d'un événement vers une info d'une entité.
 
 **Note :** Les actions utilisent la représentation interne à Canopsis des évènements. Voir [Champs des évènements](#champs-des-evenements) pour la correspondance entre les noms des champs des évènements en JSON et dans la représentation de Canopsis.
 
-#### `set_field`
+#### Action `set_field`
 
 L'action `set_field` permet de modifier un champ de l'évènement.
 
@@ -241,26 +217,18 @@ Par exemple, l'action suivante passe la criticité d'un évènement en critique 
 }
 ```
 
-#### `set_field_from_template`
+#### Action `set_field_from_template`
 
-L'action `set_field_from_template` permet de modifier un champ de l'évènement
-à partir un template.
+L'action `set_field_from_template` permet de modifier un champ de l'évènement à partir un modèle.
 
 Les paramètres de l'action sont :
 
  - `name` (requis) : le nom du champ (tel que [défini dans l'annexe](#champs-des-evenements)).
- - `value` (requis) : le template utilisé pour déterminer la valeur du champ.
+ - `value` (requis) : le modèle utilisé pour déterminer la valeur du champ.
 
-L'event-filter utilise le [moteur de templates
-Go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent
-être utilisés dans les templates de la manière suivante :
-`{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions
-régulières des patterns pour utiliser des sous-groupes dans les templates (voir
-[Expressions régulières](#expressions-regulieres) pour plus de détails), ou
-d'utiliser des [données externes](#donnees-externes).
+L'event-filter utilise le [moteur de modèles Go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent être utilisés dans les modèles de la manière suivante : `{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions régulières des patterns pour utiliser des sous-groupes dans les modèles (voir [Expressions régulières](#expressions-regulieres) pour plus de détails), ou d'utiliser des [données externes](#donnees-externes).
 
-Par exemple, l'action suivante modifie l'output d'un évènement pour y ajouter
-son auteur :
+Par exemple, l'action suivante modifie l'output d'un évènement pour y ajouter son auteur :
 
 ```json
 {
@@ -269,58 +237,60 @@ son auteur :
     "value": "{{.Event.Output}} (by {{.Event.Author}})"
 }
 ```
+#### Action `set_entity_info`
 
+Cette action permet de définir une info d'entité de n'importe quel type.
 
-#### `set_entity_info_from_template`
+Les paramètres de l'action sont :
 
-L'action `set_entity_info_from_template` permet de modifier une information de
-l'entité correspondant à l'évènement.
+  - `name` (requis) : le nom de l'information.
+  - `description` (optionnel) : la description de l'information.
+  - `value` (requis) : la nouvelle valeur du champ. 
+
+Par exemple, l'action suivante définit le nom du client :
+
+``` json
+{
+    "type": "set_entity_info",
+    "name": "customer",
+    "description": "Client",
+    "value": "StarkTelecom"
+}
+```
+
+#### Action `set_entity_info_from_template`
+
+L'action `set_entity_info_from_template` permet de modifier une information de l'entité correspondant à l'évènement.
 
 Les paramètres de l'action sont :
 
  - `name` (requis) : le nom de l'information.
- - `description` (optionnel) : la description de l'information
- - `value` (requis) : le template utilisé pour déterminer la valeur de
-   l'information.
+ - `description` (optionnel) : la description de l'information.
+ - `value` (requis) : le modèle utilisé pour déterminer la valeur de l'information.
 
-L'event-filter utilise le [moteur de templates
-go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent
-être utilisés dans les templates de la manière suivante :
-`{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions
-régulières des patterns pour utiliser des sous-groupes dans les templates (voir
-[Expressions régulières](#expressions-regulieres) pour plus de détails), ou
-d'utiliser des [données externes](#donnees-externes).
+L'event-filter utilise le [moteur de modèles go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent être utilisés dans les modèles de la manière suivante : `{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions régulières des patterns pour utiliser des sous-groupes dans les modèles (voir [Expressions régulières](#expressions-regulieres) pour plus de détails), ou d'utiliser des [données externes](#donnees-externes).
 
-
-Par exemple, l'action suivante modifie l'information `customer` d'une entité :
+Par exemple, l'action suivante modifie l'information `customer` d'une entité pour y ajouter la localisation :
 
 ```json
 {
     "type": "set_entity_info_from_template",
     "name": "customer",
-    "description": "Client",
-    "value": "jack"
+    "description": "Site client",
+    "value": "StarkTelecom {{.Event.Location}}"
 }
 ```
 
-Cette action échoue si l'entité n'a pas été ajoutée à l'évènement au préalable.
-Pour utiliser cette action, il est donc nécessaire de définir une règle
-[ajoutant les entités aux
-évènements](#ajout-de-lentite-correspondant-a-un-evenement), avec une priorité
-inférieure à celles des règles contenant des actions de type
-`set_entity_info_from_template`.
+Cette action échoue si l'entité n'a pas été ajoutée à l'évènement au préalable. Pour utiliser cette action, il est donc nécessaire de définir une règle [ajoutant les entités aux évènements](#ajout-de-lentite-correspondant-a-un-evenement), avec une priorité inférieure à celles des règles contenant des actions de type `set_entity_info_from_template`.
 
-#### `copy`
+#### Action `copy`
 
 L'action `copy` permet de copier la valeur d'un champ dans un évènement.
 
 Les paramètres de l'action sont :
 
- - `from` : le nom du champ dont la valeur doit être copiée. Il peut s'agir
-   d'un champ de l'évènement (`Event.NomDuChamp`), d'un sous-groupe d'une
-   expression régulière (voir [Expressions régulières](#expressions-regulieres)),
-    ou d'une donnée externe (voir [Données externes](#donnees-externes)).
- - `to` : le nom du champ de l'évènement dans lequel la valeur doit être
+ - `from` (requis) : le nom du champ dont la valeur doit être copiée. Il peut s'agir d'un champ de l'évènement (`Event.NomDuChamp`), d'un sous-groupe d'une expression régulière (voir [Expressions régulières](#expressions-regulieres)), ou d'une donnée externe (voir [Données externes](#donnees-externes)).
+ - `to` (requis) : le nom du champ de l'évènement dans lequel la valeur doit être
    copiée.
 
 Par exemple, l'action suivante va vérifier si l'entité à l'origine de l'évènement existe déjà dans le référentiel interne de Canopsis. Si c'est le cas elle sera copiée dans le champ `Entity` de l'évènement (reportez-vous à cet [exemple](#ajout-dinformations-a-lentite) pour l'utilisation du champ entity de l'évènement) :
@@ -330,6 +300,27 @@ Par exemple, l'action suivante va vérifier si l'entité à l'origine de l'évè
     "type": "copy",
     "from": "ExternalData.entity",
     "to": "Entity"
+}
+```
+
+#### Action `copy_to_entity_info`
+
+Cette action permet de copier une valeur de n'importe quel type dans les infos de l'entité.
+
+Les paramètres de l'action sont :
+
+ - `from` (requis) : le nom du champ dont la valeur doit être copiée. Il peut s'agir d'un champ de l'évènement (`Event.NomDuChamp`), d'un sous-groupe d'une expression régulière (voir [Expressions régulières](#expressions-regulieres)), ou d'une donnée externe (voir [Données externes](#donnees-externes)).
+ - `name` (requis) : le nom de l'information.
+ - `description` (optionnel) : la description de l'information.
+
+Par exemple, l'action suivante va copier un champ environnement dans les infos de l'entité :
+
+``` json
+{
+  "type" : "copy_to_entity_info",
+  "from" : "Event.ExtraInfos.env",
+  "name" : "env",
+  "description" : "Environnement"
 }
 ```
 
@@ -449,7 +440,6 @@ Cet événement met à disposition du moteur d'enrichissement plusieurs attribut
 | .Event.ExtraInfos.Meta.Count       |  Nombre d'alarmes conséquences   |
 | .Event.ExtraInfos.Meta.Children    |  Objet représentant la dernière alarme conséquence attachée |
 | .Event.ExtraInfos.Meta.Rule        |  Les informations de la règle méta en elle-même            |
-
 
 Voici un exemple qui permet d'ajouter un attribut texte sur l'entité de la méta alarme et dont le contenu vaut :
 
@@ -672,7 +662,7 @@ client et le responsable d'un composant dans une collection MongoDB
 ```
 
  - Cette règle n'est appliquée que si les informations `customer` et `manager`
-   ne sont pas déjà définies, pour éviter d'effectuer une requête MongoDB à
+   ne sont pas déjà définies, pour éviter de réaliser une requête MongoDB à
    chaque évènement.
  - Elle a une priorité supérieure à la règle ajoutant l'entité, pour que les
    actions de type `set_entity_info_from_template` n'échouent pas.
@@ -743,22 +733,23 @@ des évènements.
 
 | Nom du champ JSON | Nom de la représentation interne de Canopsis |
 |-------------------|----------------------------------------------|
+| `author`          | `Author` |
+| `debug`           | `Debug` |
+| `component`       | `Component` |
 | `connector`       | `Connector` |
 | `connector_name`  | `ConnectorName` |
-| `event_type`      | `EventType` |
-| `component`       | `Component` |
-| `resource`        | `Resource` |
-| `perf_data`       | `PerfData` |
-| `status`          | `Status` |
-| `timestamp`       | `Timestamp` |
-| `state_type`      | `StateType` |
-| `source_type`     | `SourceType` |
-| `long_output`     | `LongOutput` |
-| `state`           | `State` |
-| `output`          | `Output` |
-| `author`          | `Author` |
-| `ticket`          | `Ticket` |
-| `debug`           | `Debug` |
 | `current_entity`  | `Entity` |
+| `event_type`      | `EventType` |
+| `long_output`     | `LongOutput` |
+| `output`          | `Output` |
+| `perf_data`       | `PerfData` |
+| `resource`        | `Resource` |
+| `state`           | `State` |
+| `state_type`      | `StateType` |
+| `status`          | `Status` |
+| `source_type`     | `SourceType` |
+| `ticket`          | `Ticket` |
+| `timestamp`       | `Timestamp` |
+
 
 **Note :** le champ `Entity` n'est pas défini au début de l'exécution de l'event-filter. Pour y accéder, ou pour modifier les informations de l'entité, il faut utiliser une [règle ajoutant les entités aux évènements](#ajout-de-lentite-correspondant-a-un-evenement).

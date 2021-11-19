@@ -1,4 +1,4 @@
-# Sécurisation d'une installation de Canopsis et des services associés
+# Sécurisation d'une installation de Canopsis et de ses composants
 
 ## SELinux
 
@@ -15,9 +15,9 @@ sed -i 's/^SELINUX=.*$/SELINUX=permissive/' /etc/selinux/config
 
 Puis, redémarrer le système.
 
-## Sécurisation des ports réseau
+## Sécurisation réseau
 
-Cette section décrit les ports utilisés par Canopsis qui doivent être autorisés.
+Pour la configuration du filtrage réseau, se référer à la [matrice des flux réseau](../matrice-des-flux-reseau/index.md). Vous y trouverez le détail des flux réseau à autoriser ou restreindre.
 
 Voir aussi la [matrice des flux entre les services](../installation/pre-requis-parefeu-et-selinux.md).
 

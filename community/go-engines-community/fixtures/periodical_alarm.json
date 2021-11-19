@@ -62,8 +62,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -127,8 +125,6 @@
       ],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -194,8 +190,6 @@
         "test-alarm-get-resource-4/test-alarm-get-component"
       ],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -259,8 +253,6 @@
         "test-alarm-get-resource-2/test-alarm-get-component"
       ],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -322,8 +314,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -385,8 +375,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -449,8 +437,6 @@
       ],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -559,8 +545,6 @@
       ],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -667,8 +651,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -732,8 +714,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -812,8 +792,6 @@
       ],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -878,8 +856,6 @@
         "test-alarmcounter-get-resource-3/test-alarmcounter-get-component"
       ],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -942,8 +918,6 @@
       ],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1050,8 +1024,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1121,8 +1093,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1192,8 +1162,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1263,8 +1231,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1334,8 +1300,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1405,8 +1369,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1476,8 +1438,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1547,8 +1507,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1618,8 +1576,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1689,8 +1645,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1760,8 +1714,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1831,8 +1783,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1902,8 +1852,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -1973,8 +1921,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2044,8 +1990,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2115,8 +2059,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2186,8 +2128,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2248,8 +2188,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2310,8 +2248,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2372,8 +2308,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2434,8 +2368,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2496,8 +2428,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2567,8 +2497,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2638,8 +2566,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2709,8 +2635,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2780,8 +2704,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2851,8 +2773,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2922,8 +2842,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -2993,8 +2911,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -3064,8 +2980,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -3133,8 +3047,6 @@
         "test-child-2"
       ],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -3167,8 +3079,6 @@
       "total_state_changes": 1,
       "pbehavior_info": {
         "type": "pbh-type-for-instruction-with-pbehavior-1"
-      },
-      "extra": {
       },
       "infos": {
       },
@@ -3203,8 +3113,6 @@
       "pbehavior_info": {
         "type": "pbh-type-for-instruction-with-pbehavior-2"
       },
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -3238,8 +3146,6 @@
       "pbehavior_info": {
         "type": "pbh-type-for-instruction-with-pbehavior-3"
       },
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -3271,7 +3177,6 @@
       "children": [],
       "total_state_changes": 1,
       "pbehavior_info": null,
-      "extra": {},
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3301,7 +3206,6 @@
       "children": [],
       "total_state_changes": 1,
       "pbehavior_info": null,
-      "extra": {},
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3360,8 +3264,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -3423,8 +3325,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -3503,8 +3403,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -3565,8 +3463,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -3598,7 +3494,6 @@
       "children": [],
       "total_state_changes": 1,
       "pbehavior_info": null,
-      "extra": {},
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3628,7 +3523,6 @@
       "children": [],
       "total_state_changes": 1,
       "pbehavior_info": null,
-      "extra": {},
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3658,7 +3552,6 @@
       "children": [],
       "total_state_changes": 1,
       "pbehavior_info": null,
-      "extra": {},
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3688,7 +3581,6 @@
       "children": [],
       "total_state_changes": 1,
       "pbehavior_info": null,
-      "extra": {},
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3718,7 +3610,6 @@
       "children": [],
       "total_state_changes": 1,
       "pbehavior_info": null,
-      "extra": {},
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3762,8 +3653,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -3838,8 +3727,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -4493,8 +4380,6 @@
         "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-1"
       ],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -4558,8 +4443,6 @@
         "test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-2"
       ],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -4624,8 +4507,6 @@
         "test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-2"
       ],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -4659,7 +4540,6 @@
       "children": [],
       "total_state_changes": 1,
       "pbehavior_info": null,
-      "extra": {},
       "infos": {},
       "infos_rule_version": {}
     }
@@ -4691,7 +4571,6 @@
       "children": [],
       "total_state_changes": 1,
       "pbehavior_info": null,
-      "extra": {},
       "infos": {},
       "infos_rule_version": {}
     }
@@ -4723,7 +4602,6 @@
       "children": [],
       "total_state_changes": 1,
       "pbehavior_info": null,
-      "extra": {},
       "infos": {},
       "infos_rule_version": {}
     }
@@ -4755,7 +4633,6 @@
       "children": [],
       "total_state_changes": 1,
       "pbehavior_info": null,
-      "extra": {},
       "infos": {},
       "infos_rule_version": {}
     }
@@ -4828,8 +4705,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -4899,8 +4774,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -4970,8 +4843,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -5041,8 +4912,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {
@@ -5112,8 +4981,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "extra": {
-      },
       "infos": {
       },
       "infos_rule_version": {

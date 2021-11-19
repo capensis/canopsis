@@ -48,7 +48,7 @@ services:
   provisionning:
     image: canopsis/canopsis-prov:${CANOPSIS_IMAGE_TAG}
     environment:
-      - CPS_EDITION=core
+      - CPS_EDITION=community
       - CPS_STACK=python
     env_file:
       - compose.env

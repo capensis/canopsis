@@ -9,9 +9,9 @@ export const {
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
 
-export const API_HOST = VUE_APP_API_HOST;
+export const API_HOST = VUE_APP_API_HOST || window.location.origin;
 
-export const SOCKET_HOST = VUE_APP_API_HOST.replace(/^http(s?)/, 'wss');
+export const SOCKET_HOST = API_HOST.replace(/^http(s?)/, 'wss');
 
 export const SOCKET_ROUTE = '/api/v4/ws';
 
@@ -89,7 +89,7 @@ export const API_ROUTES = {
   contextExport: '/api/v4/entity-export',
   actions: '/api/v2/actions',
   event: '/api/v4/event',
-  userPreferences: '/rest/userpreferences/userpreferences',
+  userPreferences: '/api/v4/user-preferences',
   view: '/api/v4/views',
   bulkView: '/api/v4/bulk/views',
   viewPosition: '/api/v4/view-positions',
@@ -103,13 +103,13 @@ export const API_ROUTES = {
   file: '/api/v4/file',
   fileAccess: '/api/v4/file-access',
   snmpRule: {
-    list: '/snmprule',
-    create: '/snmprule/put',
+    list: '/api/snmprule',
+    create: '/api/snmprule/put',
   },
   snmpMib: {
-    list: '/snmpmib',
-    distinct: '/snmpmibdistinct',
-    upload: '/uploadmib',
+    list: '/api/snmpmib',
+    distinct: '/api/snmpmibdistinct',
+    upload: '/api/uploadmib',
   },
   infos: {
     login: '/api/v4/internal/login_info',
@@ -143,13 +143,18 @@ export const API_ROUTES = {
   saml: {
     auth: '/api/v4/saml/auth',
   },
-  scenarios: '/api/v4/scenarios',
+  scenario: {
+    scenarios: '/api/v4/scenarios',
+    checkPriority: '/api/v4/scenarios/check-priority',
+  },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings/',
   dataStorage: '/api/v4/data-storage',
   notification: '/api/v4/notification/',
   idleRules: '/api/v4/idle-rules',
   idleRulesCount: '/api/v4/idle-rules/count',
+  flappingRules: '/api/v4/flapping-rules',
+  resolveRules: '/api/v4/resolve-rules',
   messageRateStats: '/api/v4/message-rate-stats',
 
   /**
