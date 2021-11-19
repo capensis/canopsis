@@ -213,7 +213,7 @@ test: $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/ready $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/
 docker-test-image:
 	docker build \
 		-f docker/functional-test.Dockerfile \
-		--build-arg "DOCKER_GOLANG_VERSION=${DOCKER_GOLANG_VERSION}" \
+		$(DOCKER_BUILD_ARGS) \
 		-t "canopsis/go-functional-test:${TAG}" \
 		../..
 
