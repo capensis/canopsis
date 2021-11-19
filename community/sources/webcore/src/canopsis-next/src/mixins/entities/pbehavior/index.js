@@ -26,6 +26,7 @@ export default {
       updatePbehavior: 'update',
       removePbehavior: 'remove',
       fetchPbehaviorsByEntityId: 'fetchListByEntityId',
+      fetchPbehaviorsByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
     }),
 
     async createPbehaviors(pbehaviors) {

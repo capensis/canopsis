@@ -338,6 +338,7 @@ export function generateUserPreferenceByWidgetAndUser(widget, user) {
     name: user._id,
     widget_id: widget._id,
     widgetXtype: widget.type,
+    crecord_name: user._id,
     crecord_type: 'userpreferences',
   };
 }
