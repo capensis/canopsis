@@ -50,7 +50,7 @@ Concernant les types d'actions d'import :
      *  `disable` : Désactive l'entité (action inverse de l'action `enable`)
      *  (chaîne vide) : le paramètre `missing_action` peut ne pas avoir d'action et donc ne rien faire
 
-Pour plus de détails, se référer à la documentation d'[import de context graph](../../guide-developpement/api/api-v2-import.md).
+Pour plus de détails, référez-vous à la documentation d'import de contexte disponible dans Swagger.
 
 ### Exemple
 
