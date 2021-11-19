@@ -20,7 +20,6 @@ Pour rappel, SELinux n'est pas supporté.
 
 Composant | Versions         |
 ----------|------------------|
-InfluxDB  | 1.5              |
 MongoDB   | 3.6              |
 Nginx     | stable           |
 RabbitMQ  | 3.7 (recommandé) |
