@@ -13,7 +13,10 @@ Feature: correlation feature - complex rule with threshold count
             "component": "test-complex-correlation-1"
           }
         ],
-        "time_interval": 10,
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        },
         "threshold_count": 3
       }
     }
@@ -139,7 +142,10 @@ Feature: correlation feature - complex rule with threshold count
             "component": "test-complex-correlation-2"
           }
         ],
-        "time_interval": 3,
+        "time_interval": {
+          "value": 3,
+          "unit": "s"
+        },
         "threshold_count": 3
       }
     }
@@ -381,7 +387,10 @@ Feature: correlation feature - complex rule with threshold count
             "component": "test-complex-correlation-3"
           }
         ],
-        "time_interval": 3,
+        "time_interval": {
+          "value": 3,
+          "unit": "s"
+        },
         "threshold_count": 3
       }
     }
@@ -540,7 +549,10 @@ Feature: correlation feature - complex rule with threshold count
             "component": "test-complex-correlation-4"
           }
         ],
-        "time_interval": 5,
+        "time_interval": {
+          "value": 5,
+          "unit": "s"
+        },
         "threshold_count": 3
       }
     }

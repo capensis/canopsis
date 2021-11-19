@@ -36,7 +36,7 @@
     ],
     "periodic_refresh": {
       "enabled": true,
-      "seconds": 1,
+      "value": 1,
       "unit": "s"
     },
     "tabs": [
@@ -81,7 +81,7 @@
     ],
     "periodic_refresh": {
       "enabled": true,
-      "seconds": 1,
+      "value": 1,
       "unit": "s"
     },
     "tabs": [
@@ -119,7 +119,7 @@
     ],
     "periodic_refresh": {
       "enabled": true,
-      "seconds": 1,
+      "value": 1,
       "unit": "s"
     },
     "tabs": [
@@ -182,7 +182,7 @@
     ],
     "periodic_refresh": {
       "enabled": true,
-      "seconds": 1,
+      "value": 1,
       "unit": "s"
     },
     "group_id": "test-viewgroup-to-view-edit",
@@ -283,7 +283,7 @@
     ],
     "periodic_refresh": {
       "enabled": true,
-      "seconds": 1,
+      "value": 1,
       "unit": "s"
     },
     "tabs": [
@@ -328,7 +328,7 @@
     ],
     "periodic_refresh": {
       "enabled": true,
-      "seconds": 1,
+      "value": 1,
       "unit": "s"
     },
     "tabs": [
@@ -366,7 +366,7 @@
     ],
     "periodic_refresh": {
       "enabled": true,
-      "seconds": 1,
+      "value": 1,
       "unit": "s"
     },
     "tabs": []
@@ -430,7 +430,7 @@
     ],
     "periodic_refresh": {
       "enabled": true,
-      "seconds": 1,
+      "value": 1,
       "unit": "s"
     },
     "tabs": [
@@ -468,7 +468,7 @@
     ],
     "periodic_refresh": {
       "enabled": true,
-      "seconds": 1,
+      "value": 1,
       "unit": "s"
     },
     "tabs": [

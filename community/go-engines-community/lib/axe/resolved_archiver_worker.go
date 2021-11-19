@@ -31,7 +31,7 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) error {
 	}
 	// Check now = schedule.
 	location := w.TimezoneConfigProvider.Get().Location
-	now := time.Now().In(location)
+	now := types.NewCpsTime().In(location)
 	if now.Weekday() != schedule.Weekday || now.Hour() != schedule.Hour {
 		return nil
 	}
@@ -42,44 +42,39 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) error {
 		return nil
 	}
 	//Skip if already executed today.
-	dateFormat := "2006-01-02"
-	if conf.History.Alarm != nil && conf.History.Alarm.Time.Time.Format(dateFormat) == now.Format(dateFormat) {
+	if conf.History.Alarm != nil && conf.History.Alarm.Time.EqualDay(now) {
 		return nil
 	}
 
 	var archived, deleted int64
 
 	updated := false
-	if conf.Config.Alarm.ArchiveAfter != nil && *conf.Config.Alarm.ArchiveAfter.Enabled {
-		d := conf.Config.Alarm.ArchiveAfter.Duration()
-		if d > 0 {
-			updated = true
-			archived, err = w.AlarmAdapter.ArchiveResolvedAlarms(ctx, d)
-			if err != nil {
-				w.Logger.Err(err).Msg("cannot archive resolved alarms")
-				return err
-			}
-
-			w.Logger.Info().Int64("alarm number", archived).Msg("resolved alarm archiving")
+	archiveAfter := conf.Config.Alarm.ArchiveAfter
+	if archiveAfter != nil && *archiveAfter.Enabled && archiveAfter.Value > 0 {
+		updated = true
+		archived, err = w.AlarmAdapter.ArchiveResolvedAlarms(ctx, archiveAfter.SubFrom(now))
+		if err != nil {
+			w.Logger.Err(err).Msg("cannot archive resolved alarms")
+			return err
 		}
+
+		w.Logger.Info().Int64("alarm number", archived).Msg("resolved alarm archiving")
 	}
 
-	if conf.Config.Alarm.DeleteAfter != nil && *conf.Config.Alarm.DeleteAfter.Enabled {
-		d := conf.Config.Alarm.DeleteAfter.Duration()
-		if d > 0 {
-			updated = true
-			deleted, err = w.AlarmAdapter.DeleteArchivedResolvedAlarms(ctx, d)
-			if err != nil {
-				w.Logger.Err(err).Msg("cannot delete resolved alarms")
-			} else if deleted > 0 {
-				w.Logger.Info().Int64("alarm number", deleted).Msg("resolved alarm removing")
-			}
+	deleteAfter := conf.Config.Alarm.DeleteAfter
+	if deleteAfter != nil && *deleteAfter.Enabled && deleteAfter.Value > 0 {
+		updated = true
+		deleted, err = w.AlarmAdapter.DeleteArchivedResolvedAlarms(ctx, deleteAfter.SubFrom(now))
+		if err != nil {
+			w.Logger.Err(err).Msg("cannot delete resolved alarms")
+		} else if deleted > 0 {
+			w.Logger.Info().Int64("alarm number", deleted).Msg("resolved alarm removing")
 		}
 	}
 
 	if updated {
 		err := w.LimitConfigAdapter.UpdateHistoryAlarm(ctx, datastorage.HistoryWithCount{
-			Time:     types.CpsTime{Time: now},
+			Time:     now,
 			Archived: archived,
 			Deleted:  deleted,
 		})

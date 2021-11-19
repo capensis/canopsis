@@ -3357,24 +3357,24 @@ definitions:
     properties:
       enabled:
         type: boolean
-      seconds:
-        type: integer
       unit:
         type: string
+      value:
+        type: integer
     required:
     - enabled
-    - seconds
     - unit
+    - value
     type: object
   types.DurationWithUnit:
     properties:
-      seconds:
-        type: integer
       unit:
         type: string
+      value:
+        type: integer
     required:
-    - seconds
     - unit
+    - value
     type: object
   types.OptionalBool:
     properties:
