@@ -17,7 +17,10 @@
     "_id": "test-alarm-get-metaalarm-rule-2",
     "auto_resolve": false,
     "config": {
-      "time_interval": 10
+      "time_interval": {
+        "value": 10,
+        "unit": "s"
+      }
     },
     "name": "Test alarm get",
     "patterns": null,
@@ -57,7 +60,10 @@
     "_id": "test-metaalarm-to-get-2",
     "auto_resolve": false,
     "config": {
-      "time_interval": 10
+      "time_interval": {
+        "value": 10,
+        "unit": "s"
+      }
     },
     "name": "Test alarm get",
     "patterns": null,

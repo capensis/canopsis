@@ -142,8 +142,8 @@ func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf,
 
 func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterfaceConf) error {
 	defaultInterval := types.DurationWithUnit{
-		Seconds: defaultPopupInterval,
-		Unit:    "s",
+		Value: defaultPopupInterval,
+		Unit:  "s",
 	}
 
 	if model.PopupTimeout == nil {

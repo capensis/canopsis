@@ -12,7 +12,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 50,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -26,7 +26,7 @@ Feature: update alarm on idle rule
           "name": "test-pbehavior-pbehavior-axe-idlerule-1",
           "start_on_trigger": true,
           "duration": {
-            "seconds": 600,
+            "value": 10,
             "unit": "m"
           },
           "type": "test-maintenance-type-to-engine",
@@ -149,7 +149,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 50,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [
@@ -354,7 +354,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 51,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [
@@ -466,7 +466,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 52,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [

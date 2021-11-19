@@ -27,7 +27,7 @@ Feature: Get a flapping rule
           "name": "test-flapping-rule-to-get-1-name",
           "description": "test-flapping-rule-to-get-1-description",
           "duration": {
-            "seconds": 10,
+            "value": 10,
             "unit": "s"
           },
           "entity_patterns": [
@@ -56,7 +56,7 @@ Feature: Get a flapping rule
           "name": "test-flapping-rule-to-get-2-name",
           "description": "test-flapping-rule-to-get-2-description",
           "duration": {
-            "seconds": 10,
+            "value": 10,
             "unit": "s"
           },
           "entity_patterns": [
@@ -101,7 +101,7 @@ Feature: Get a flapping rule
       "name": "test-flapping-rule-to-get-1-name",
       "description": "test-flapping-rule-to-get-1-description",
       "duration": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "entity_patterns": [
