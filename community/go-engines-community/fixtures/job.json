@@ -2,7 +2,7 @@
   {
     "_id": "test-job-to-get",
     "name": "test-job-name-to-get",
-    "author": "test-author",
+    "author": "test-user-alternate-author-1-id",
     "config": "test-job-config-to-link",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -29,7 +29,7 @@
   {
     "_id": "test-job-to-test-instruction-to-get-step-1-operation-1-1",
     "name": "test-job-to-test-instruction-to-get-step-1-operation-1-1-name",
-    "author": "test_author",
+    "author": "test-author",
     "config": "test-job-config-to-link",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -38,7 +38,7 @@
   {
     "_id": "test-job-to-test-instruction-to-get-step-1-operation-1-2",
     "name": "test-job-to-test-instruction-to-get-step-1-operation-1-2-name",
-    "author": "test_author",
+    "author": "test-author",
     "config": "test-job-config-to-link",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -47,7 +47,7 @@
   {
     "_id": "test-job-to-test-instruction-to-get-step-1-operation-2-1",
     "name": "test-job-to-test-instruction-to-get-step-1-operation-2-1-name",
-    "author": "test_author",
+    "author": "test-author",
     "config": "test-job-config-to-link",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -56,7 +56,7 @@
   {
     "_id": "test-job-to-test-instruction-to-get-step-2-operation-1-1",
     "name": "test-job-to-test-instruction-to-get-step-2-operation-1-1-name",
-    "author": "test_author",
+    "author": "test-author",
     "config": "test-job-config-to-link",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -65,7 +65,7 @@
   {
     "_id": "test-job-to-test-instruction-to-get-step-2-operation-1-2",
     "name": "test-job-to-test-instruction-to-get-step-2-operation-1-2-name",
-    "author": "test_author",
+    "author": "test-author",
     "config": "test-job-config-to-link",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -74,7 +74,7 @@
   {
     "_id": "test-job-to-test-instruction-new-step-1-operation-1-1",
     "name": "test-job-to-test-instruction-new-step-1-operation-1-1-name",
-    "author": "test_author",
+    "author": "test-author",
     "config": "test-job-config-to-link",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -83,7 +83,7 @@
   {
     "_id": "test-job-to-test-instruction-new-step-1-operation-1-2",
     "name": "test-job-to-test-instruction-new-step-1-operation-1-2-name",
-    "author": "test_author",
+    "author": "test-author",
     "config": "test-job-config-to-link",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -92,7 +92,7 @@
   {
     "_id": "test-job-to-test-instruction-new-step-1-operation-2-1",
     "name": "test-job-to-test-instruction-new-step-1-operation-2-1-name",
-    "author": "test_author",
+    "author": "test-author",
     "config": "test-job-config-to-link",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -101,7 +101,7 @@
   {
     "_id": "test-job-to-test-instruction-new-step-2-operation-1-1",
     "name": "test-job-to-test-instruction-new-step-2-operation-1-1-name",
-    "author": "test_author",
+    "author": "test-author",
     "config": "test-job-config-to-link",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -110,7 +110,7 @@
   {
     "_id": "test-job-to-test-instruction-new-step-2-operation-1-2",
     "name": "test-job-to-test-instruction-new-step-2-operation-1-2-name",
-    "author": "test_author",
+    "author": "test-author",
     "config": "test-job-config-to-link",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",

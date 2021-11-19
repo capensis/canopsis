@@ -43,7 +43,7 @@ Feature: create a job
     """
     {
       "name": "test-job-name",
-      "author": "root",
+      "author": {"_id": "root", "name": "root"},
       "config": {
         "_id": "test-job-config-to-link",
         "auth_token": "test-auth-token",
@@ -160,6 +160,8 @@ Feature: create a job
     Then the response body should be:
     """
     {
-      "error": "job's config doesn't exist"
+      "errors": {
+        "config": "Config doesn't exist."
+      }
     }
     """

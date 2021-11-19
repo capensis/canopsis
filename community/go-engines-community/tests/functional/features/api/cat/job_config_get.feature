@@ -16,7 +16,7 @@ Feature: get a job's config
           "host": "http://example.com",
           "name": "test-job-config-name-to-get",
           "type": "rundeck",
-          "author": "test-author"
+          "author": {"_id": "test-user-alternate-author-1-id", "name": "test-user-alternate-author-1-username"}
         }
       ],
       "meta": {
@@ -72,7 +72,7 @@ Feature: get a job's config
       "host": "http://example.com",
       "name": "test-job-config-name-to-get",
       "type": "rundeck",
-      "author": "test-author"
+      "author": {"_id": "test-user-alternate-author-1-id", "name": "test-user-alternate-author-1-username"}
     }
     """
 
