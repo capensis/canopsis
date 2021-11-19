@@ -13,6 +13,11 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+type User struct {
+	ID   string `bson:"_id" json:"_id"`
+	Name string `bson:"crecord_name" json:"name"`
+}
+
 // PaginatedMeta is meta for paginated list data.
 type PaginatedMeta struct {
 	Page       int64 `json:"page"`

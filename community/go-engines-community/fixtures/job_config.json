@@ -3,7 +3,7 @@
     "_id": "test-job-config-to-get",
     "name": "test-job-config-name-to-get",
     "type": "rundeck",
-    "author": "test-author",
+    "author": "test-user-alternate-author-1-id",
     "host": "http://example.com",
     "auth_token": "test-auth-token",
     "created": 1596550518

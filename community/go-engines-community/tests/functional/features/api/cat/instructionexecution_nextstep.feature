@@ -370,7 +370,7 @@ Feature: move a instruction execution to next step
     {
       "last_executed_by": {
         "_id": "root",
-        "username": "root"
+        "name": "root"
       },
       "month_executions": 1
     }
