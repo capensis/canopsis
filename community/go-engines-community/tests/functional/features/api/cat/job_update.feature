@@ -42,13 +42,13 @@ Feature: Job update
     {
       "_id": "test-job-to-update",
       "name": "test-job-name-to-update",
-      "author": "root",
+      "author": {"_id": "root", "name": "root"},
       "config": {
         "_id": "test-job-config-to-link",
         "name": "test-job-config-name-to-link",
         "type": "rundeck",
         "host": "http://example.com",
-        "author": "test-author",
+        "author": {"_id": "test-author", "name": "test-author-username"},
         "auth_token": "test-auth-token"
       },
       "job_id": "test-job-id",
@@ -73,13 +73,13 @@ Feature: Job update
     {
       "_id": "test-job-to-update",
       "name": "test-job-name-to-update",
-      "author": "root",
+      "author": {"_id": "root", "name": "root"},
       "config": {
         "_id": "test-job-config-to-link",
         "name": "test-job-config-name-to-link",
         "type": "rundeck",
         "host": "http://example.com",
-        "author": "test-author",
+        "author": {"_id": "test-author", "name": "test-author-username"},
         "auth_token": "test-auth-token"
       },
       "job_id": "test-job-id",
@@ -136,6 +136,6 @@ Feature: Job update
     Then the response body should be:
     """
     {
-      "error": "job's config doesn't exist"
+      "errors": {"config": "Config doesn't exist."}
     }
     """

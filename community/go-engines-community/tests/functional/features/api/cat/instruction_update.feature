@@ -111,7 +111,7 @@ Feature: Instruction update
         }
       ],
       "description": "test-instruction-to-update-description",
-      "author": "root",
+      "author": {"_id": "root", "name": "root"},
       "enabled": true,
       "rating": 0,
       "avg_complete_time": 10,
@@ -132,7 +132,7 @@ Feature: Instruction update
                 {
                   "_id": "test-job-to-link-3",
                   "name": "test-job-name-to-link-3",
-                  "author": "test-author",
+                  "author": {"_id": "test-author", "name": "test-author-username"},
                   "config": {
                     "_id": "test-job-config-to-link",
                     "name": "test-job-config-name-to-link",
@@ -222,7 +222,7 @@ Feature: Instruction update
         }
       ],
       "description": "test-instruction-to-update-description-changed",
-      "author": "root",
+      "author": {"_id": "root", "name": "root"},
       "enabled": true,
       "rating": 0,
       "avg_complete_time": 10,
@@ -239,7 +239,7 @@ Feature: Instruction update
                 {
                   "_id": "test-job-to-link-3",
                   "name": "test-job-name-to-link-3",
-                  "author": "test-author",
+                  "author": {"_id": "test-author", "name": "test-author-username"},
                   "config": {
                     "_id": "test-job-config-to-link",
                     "name": "test-job-config-name-to-link",
@@ -253,7 +253,7 @@ Feature: Instruction update
                 {
                   "_id": "test-job-to-link-2",
                   "name": "test-job-name-to-link-2",
-                  "author": "test-author",
+                  "author": {"_id": "test-author", "name": "test-author-username"},
                   "config": {
                     "_id": "test-job-config-to-link",
                     "name": "test-job-config-name-to-link",
@@ -274,7 +274,7 @@ Feature: Instruction update
                 {
                   "_id": "test-job-to-link-3",
                   "name": "test-job-name-to-link-3",
-                  "author": "test-author",
+                  "author": {"_id": "test-author", "name": "test-author-username"},
                   "config": {
                     "_id": "test-job-config-to-link",
                     "name": "test-job-config-name-to-link",
@@ -302,7 +302,7 @@ Feature: Instruction update
                 {
                   "_id": "test-job-to-link-3",
                   "name": "test-job-name-to-link-3",
-                  "author": "test-author",
+                  "author": {"_id": "test-author", "name": "test-author-username"},
                   "config": {
                     "_id": "test-job-config-to-link",
                     "name": "test-job-config-name-to-link",
@@ -316,7 +316,7 @@ Feature: Instruction update
                 {
                   "_id": "test-job-to-link-1",
                   "name": "test-job-name-to-link-1",
-                  "author": "test-author",
+                  "author": {"_id": "test-author", "name": "test-author-username"},
                   "config": {
                     "_id": "test-job-config-to-link",
                     "name": "test-job-config-name-to-link",
@@ -501,7 +501,7 @@ Feature: Instruction update
     {
       "name": "test-instruction-with-pbh-to-edit-name",
       "description": "test-instruction-with-pbh-to-edit-description",
-      "author": "root",
+      "author": {"_id": "root", "name": "root"},
       "enabled": true,
       "alarm_patterns": [
         {
