@@ -19,6 +19,7 @@ type rpcMessageProcessor struct {
 	FeaturePrintEventOnError bool
 	PbhRpc                   engine.RPCClient
 	ServiceRpc               engine.RPCClient
+	RemediationRpc           engine.RPCClient
 	Executor                 operation.Executor
 	AlarmAdapter             libalarm.Adapter
 	Decoder                  encoding.Decoder
@@ -37,6 +38,13 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 
 	alarm := event.Alarm
+
+	if alarm.IsResolved() {
+		p.logError(err, "RPC Message Processor: cannot update resolved alarm", msg)
+
+		return p.getErrRpcEvent(errors.New("cannot update resolved alarm"), alarm), nil
+	}
+
 	operationType := event.EventType
 	op := types.Operation{
 		Type:       operationType,
@@ -88,7 +96,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		PreviousPbehaviorTypeID:         alarm.Value.PbehaviorInfo.TypeID,
 		PreviousPbehaviorCannonicalType: alarm.Value.PbehaviorInfo.CanonicalType,
 	}
-	alarmChangeType, err := p.Executor.Exec(ctx, op, alarm,
+	alarmChangeType, err := p.Executor.Exec(ctx, op, alarm, *event.Entity,
 		types.CpsTime{Time: time.Now()}, "", types.InitiatorSystem)
 	if err != nil {
 		if engine.IsConnectionError(err) {
@@ -100,13 +108,13 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 	alarmChange.Type = alarmChangeType
 	if alarm.IsMetaAlarm() {
-		var childrenAlarms []types.Alarm
-		err := p.AlarmAdapter.GetOpenedAlarmsByIDs(ctx, event.Alarm.Value.Children, &childrenAlarms)
+		var childrenAlarms []types.AlarmWithEntity
+		err := p.AlarmAdapter.GetOpenedAlarmsWithEntityByIDs(ctx, event.Alarm.Value.Children, &childrenAlarms)
 		if err != nil {
 			p.logError(err, "RPC Message Processor: error getting meta-alarm children", msg)
 		} else {
 			for _, childAlarm := range childrenAlarms {
-				_, err = p.Executor.Exec(ctx, op, &childAlarm, types.CpsTime{Time: time.Now()}, "", types.InitiatorSystem)
+				_, err = p.Executor.Exec(ctx, op, &childAlarm.Alarm, childAlarm.Entity, types.CpsTime{Time: time.Now()}, "", types.InitiatorSystem)
 				if err != nil {
 					p.logError(err, "RPC Message Processor: cannot update child alarm", msg)
 				}
@@ -131,6 +139,25 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 			})
 			if err != nil {
 				p.logError(err, "RPC Message Processor: failed to send rpc call to engine-service", msg)
+			}
+		}
+	}
+
+	if p.RemediationRpc != nil && alarmChangeType == types.AlarmChangeTypeChangeState {
+		body, err := p.Encoder.Encode(types.RPCRemediationEvent{
+			Alarm:       alarm,
+			Entity:      event.Entity,
+			AlarmChange: alarmChange,
+		})
+		if err != nil {
+			p.logError(err, "RPC Message Processor: failed to encode rpc call to engine-remediation", msg)
+		} else {
+			err = p.RemediationRpc.Call(engine.RPCMessage{
+				CorrelationID: event.Alarm.ID,
+				Body:          body,
+			})
+			if err != nil {
+				p.logError(err, "RPC Message Processor: failed to send rpc call to engine-remediation", msg)
 			}
 		}
 	}

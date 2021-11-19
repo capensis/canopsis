@@ -94,7 +94,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	engineAction := engine.New(
 		func(ctx context.Context) error {
 			manager := action.NewTaskManager(
-				action.NewWorkerPool(options.WorkerPoolSize, axeRpcClient, webhookRpcClient, alarmAdapter, json.NewEncoder(), logger),
+				action.NewWorkerPool(options.WorkerPoolSize, axeRpcClient, webhookRpcClient, alarmAdapter, json.NewEncoder(), logger, config.NewTimezoneConfigProvider(cfg, logger)),
 				storage,
 				actionScenarioStorage,
 				logger,

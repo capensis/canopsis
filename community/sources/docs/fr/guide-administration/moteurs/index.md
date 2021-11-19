@@ -14,7 +14,7 @@ L'organisation de [l'enchaînement des moteurs Canopsis](schema-enchainement-mot
 
 La plupart des moteurs « nouvelle génération » de Canopsis sont écrits en Go.
 
-| Moteur | Rôle | Pro ? |
+| Moteur | Rôle | Exclusif à Canopsis Pro |
 |--------|------|:-----:|
 | [`engine-action`](moteur-action.md) | Applique des actions définies par l'utilisateur | |
 | [`engine-axe`](moteur-axe.md) | Gère le cycle de vie des alarmes | |
@@ -24,7 +24,7 @@ La plupart des moteurs « nouvelle génération » de Canopsis sont écrits en
 | [`engine-dynamic-infos`](moteur-dynamic-infos.md)| Enrichit les alarmes | ✅ |
 | [`engine-fifo`](moteur-fifo.md) | Garantit la cohérence et l'ordre des évènements entrant dans Canopsis | |
 | [`engine-pbehavior`](moteur-pbehavior.md) | Gère les comportements périodiques | |
-| [`engine-watcher`](moteur-watcher.md)| Calcule les états des observateurs | |
+| [`engine-service`](moteur-service.md)| Calcule les états des [services](../../guide-utilisation/vocabulaire/index.md#service) | |
 | [`engine-webhook`](moteur-webhook.md) | Gère le système de webhooks vers des services externes | ✅ |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
@@ -40,7 +40,7 @@ Les moteurs Go acceptent au minimum les options suivantes :
 
 Certains moteurs et composants historiques de Canopsis sont écrits en Python.
 
-| Moteur | Rôle | Pro ? |
+| Moteur | Rôle | Exclusif à Canopsis Pro |
 |--------|------|:-----:|
 | [`kpi`](moteur-kpi.md) | Mise en place de statistiques sur les alarmes, entités et sessions | ✅ |
 | [`snmp`](moteur-snmp.md) | Gère les traps SNMP | ✅ |
@@ -61,8 +61,7 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | `context-graph` (Python) | `engine-che` (Go) |
 | `engine-heartbeat` (Go) | Utilisation des Idle rules |
 | `engine-stat` (Go) | `statsng` (Python) ⇒ n/a |
-| `eventstore` (Python) | n/a |
-| `event_filter` (Python) | `engine-che` (Go) |
+| `engine-watcher` (Go) | `engine-service` (Go) |
 | `metric` (Python) | n/a |
 | `pbehavior` (Python) | `engine-pbehavior` (Go) |
 | `perfdata` (Python) | `metric` (Python) ⇒ n/a |
@@ -73,9 +72,9 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | `task_importctx` (Python) | APIv4 d'import |
 | `task_linklist` (Python) | Utilisation du [linkbuilder](../linkbuilder/index.md) |
 | `task_mail` (Python) | Utilisation d'un [Webhook](moteur-webhook.md) (Pro) vers un service d'envoi d'e-mails |
-| `ticket` | `engine-axe`(Go) |
-| `watcher` (Python) | `engine-watcher` (Go) |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
+
+Tous les autres anciens moteurs Python sont aussi considérés obsolètes et non supportés.
 
 ## Gestion des erreurs
 
@@ -83,7 +82,8 @@ En cas d'erreur fatale, telle qu'une perte prolongée de la connexion à un serv
 
 Les unités systemd (en installation paquets) et les lignes `restart: unless-stopped` (avec Docker Compose) sont configurées de manière à ce que les moteurs soient automatiquement relancés après une erreur fatale.
 
-Ceci est une partie essentielle de l'architecture de Canopsis et de la disponibilité du service. Il ne doit en aucun cas être modifié.
+!!! attention
+    Ceci est une partie essentielle de l'architecture de Canopsis et de la disponibilité du service. Il ne doit en aucun cas être modifié.
 
 ## Variables d'environnement liées aux moteurs
 

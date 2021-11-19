@@ -656,7 +656,7 @@ Feature: execute action on trigger
     {
       "name": "test-scenario-action-webhook-6-name",
       "enabled": true,
-      "priority": 60,
+      "priority": 70,
       "triggers": [
         "create"
       ],

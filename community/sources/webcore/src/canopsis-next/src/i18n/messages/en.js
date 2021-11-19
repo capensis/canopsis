@@ -189,6 +189,7 @@ export default {
     dismiss: 'Dismiss',
     approve: 'Approve',
     summary: 'Summary',
+    recurrence: 'Recurrence',
     statistics: 'Statistics',
     action: 'Action',
     minimal: 'Minimal',
@@ -220,6 +221,38 @@ export default {
       week: 'week | weeks',
       month: 'month | months',
       year: 'year | years',
+    },
+    timeFrequencies: {
+      secondly: 'Secondly',
+      minutely: 'Minutely',
+      hourly: 'Hourly',
+      daily: 'Daily',
+      weekly: 'Weekly',
+      monthly: 'Monthly',
+      yearly: 'Yearly',
+    },
+    weekDays: {
+      monday: 'Monday',
+      tuesday: 'Tuesday',
+      wednesday: 'Wednesday',
+      thursday: 'Thursday',
+      friday: 'Friday',
+      saturday: 'Saturday',
+      sunday: 'Sunday',
+    },
+    months: {
+      january: 'January',
+      february: 'February',
+      march: 'March',
+      april: 'April',
+      may: 'May',
+      june: 'June',
+      july: 'July',
+      august: 'August',
+      september: 'September',
+      october: 'October',
+      november: 'November',
+      december: 'December',
     },
   },
   variableTypes: {
@@ -669,6 +702,14 @@ export default {
         '<dd>- time of execution (hh, mm, ss)</dd>' +
         '</dl>',
     },
+    reportFileRegexp: {
+      title: 'Report file mask',
+      helpText: '<dl>' +
+        '<dt>Define the filename regexp of which report:<dt>\n' +
+        '<dd>For example:</dd>\n' +
+        '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n' +
+        '</dl>',
+    },
   },
   modals: {
     common: {
@@ -835,9 +876,6 @@ export default {
           exdate: 'Exclusion dates',
           buttons: {
             addExdate: 'Add an exclusion date',
-          },
-          fields: {
-            rRuleQuestion: 'Add a recurrence rule to the pbehavior?',
           },
         },
         comments: {
@@ -1507,6 +1545,30 @@ export default {
         title: 'Duplicate entity rule',
       },
     },
+    createAlarmStatusRule: {
+      flapping: {
+        create: {
+          title: 'Create flapping rule',
+        },
+        edit: {
+          title: 'Edit flapping rule',
+        },
+        duplicate: {
+          title: 'Duplicate flapping rule',
+        },
+      },
+      resolve: {
+        create: {
+          title: 'Create resolve rule',
+        },
+        edit: {
+          title: 'Edit resolve rule',
+        },
+        duplicate: {
+          title: 'Duplicate resolve rule',
+        },
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1548,10 +1610,22 @@ export default {
       },
     },
   },
-  rRule: {
+  recurrenceRule: {
     advancedHint: 'Separate numbers with a comma',
-    textLabel: 'Summary',
-    stringLabel: 'Recurrence',
+    freq: 'Frequency',
+    until: 'Until',
+    byweekday: 'By week day',
+    count: 'Repeat',
+    interval: 'Interval',
+    wkst: 'Week start',
+    bymonth: 'By month',
+    bysetpos: 'By set position',
+    bymonthday: 'By month day',
+    byyearday: 'By year day',
+    byweekno: 'By week n°',
+    byhour: 'By hour',
+    byminute: 'By minute',
+    bysecond: 'By second',
     tabs: {
       simple: 'Simple',
       advanced: 'Advanced',
@@ -1566,42 +1640,14 @@ export default {
       [PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth]: 'This month',
       [PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth]: 'Next month',
     },
-    fields: {
-      freq: 'Frequency',
-      until: 'Until',
-      byweekday: 'By week day',
-      count: 'Repeat',
-      interval: 'Interval',
-      wkst: 'Week start',
-      bymonth: 'By month',
-      bysetpos: {
-        label: 'By set position',
-        tooltip: 'If given, it must be one or many integers, positive or negative. Each given integer will specify an occurrence number, corresponding to the nth occurrence of the rule inside the frequency period. For example, a \'bysetpos\' of -1 if combined with a monthly frequency, and a \'byweekday\' of (Monday, Tuesday, Wednesday, Thursday, Friday), will result in the last work day of every month.',
-      },
-      bymonthday: {
-        label: 'By month day',
-        tooltip: 'If given, it must be one or many integers, meaning the month days to apply the recurrence to.',
-      },
-      byyearday: {
-        label: 'By year day',
-        tooltip: 'If given, it must be one or many integers, meaning the year days to apply the recurrence to.',
-      },
-      byweekno: {
-        label: 'By week n°',
-        tooltip: 'If given, it must be on or many integers, meaning the week numbers to apply the recurrence to. Week numbers have the meaning described in ISO8601, that is, the first week of the year is that containing at least four days of the new year.',
-      },
-      byhour: {
-        label: 'By hour',
-        tooltip: 'If given, it must be one or many integers, meaning the hours to apply the recurrence to.',
-      },
-      byminute: {
-        label: 'By minute',
-        tooltip: 'If given, it must be one or many integers, meaning the minutes to apply the recurrence to.',
-      },
-      bysecond: {
-        label: 'By second',
-        tooltip: 'If given, it must be one or many integers, meaning the seconds to apply the recurrence to.',
-      },
+    tooltips: {
+      bysetpos: 'If given, it must be one or many integers, positive or negative. Each given integer will specify an occurrence number, corresponding to the nth occurrence of the rule inside the frequency period. For example, a \'bysetpos\' of -1 if combined with a monthly frequency, and a \'byweekday\' of (Monday, Tuesday, Wednesday, Thursday, Friday), will result in the last work day of every month.',
+      bymonthday: 'If given, it must be one or many integers, meaning the month days to apply the recurrence to.',
+      byyearday: 'If given, it must be one or many integers, meaning the year days to apply the recurrence to.',
+      byweekno: 'If given, it must be on or many integers, meaning the week numbers to apply the recurrence to. Week numbers have the meaning described in ISO8601, that is, the first week of the year is that containing at least four days of the new year.',
+      byhour: 'If given, it must be one or many integers, meaning the hours to apply the recurrence to.',
+      byminute: 'If given, it must be one or many integers, meaning the minutes to apply the recurrence to.',
+      bysecond: 'If given, it must be one or many integers, meaning the seconds to apply the recurrence to.',
     },
   },
   errors: {
@@ -1611,6 +1657,7 @@ export default {
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
+    socketConnectionProblem: 'Problem with connection to socket server',
   },
   calendar: {
     today: 'Today',
@@ -2182,6 +2229,15 @@ export default {
   },
 
   scenario: {
+    triggers: 'Triggers',
+    emitTrigger: 'Emit trigger',
+    withAuth: 'Do you need auth fields?',
+    emptyResponse: 'Empty response',
+    isRegexp: 'The value can be a RegExp',
+    headerKey: 'Header key',
+    headerValue: 'Header value',
+    key: 'Key',
+    skipVerify: 'Ignore HTTPS certificate verification',
     headers: 'Headers',
     declareTicket: 'Declare ticket',
     workflow: 'Workflow if this action didn’t match:',
@@ -2215,22 +2271,12 @@ export default {
       [ACTION_TYPES.cancel]: 'Cancel',
       [ACTION_TYPES.webhook]: 'Webhook',
     },
-    fields: {
-      triggers: 'Triggers',
-      emitTrigger: 'Emit trigger',
-      withAuth: 'Do you need auth fields?',
-      emptyResponse: 'Empty response',
-      isRegexp: 'The value can be a RegExp',
-      headerKey: 'Header key',
-      headerValue: 'Header value',
-      key: 'Key',
-      skipVerify: 'Ignore HTTPS certificate verification',
-    },
     tabs: {
       pattern: 'Pattern',
     },
     errors: {
       actionRequired: 'Please add at least one action',
+      priorityExist: 'The priority of current scenario is already in use. Do you want to change the current scenario priority to {priority}?',
     },
   },
 
@@ -2446,6 +2492,10 @@ export default {
     },
   },
 
+  alarmStatusRules: {
+    frequencyLimit: 'Frequency limit',
+  },
+
   icons: {
     noEvents: 'No events received for {duration} by some of dependencies',
   },
@@ -2475,6 +2525,16 @@ export default {
     [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
       title: 'Idle rules',
       message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
+      title: 'Flapping rules',
+      // message: '', // TODO: need to put description
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
+      title: 'Resolve rules',
+      // message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {

@@ -219,3 +219,17 @@ $mobileBreakpoint: 450px;
     }
   }
 }
+
+.c-word {
+  &-break {
+    &-all {
+      word-break: break-all;
+    }
+  }
+
+  &-wrap {
+    &-break {
+      word-wrap: break-word;
+    }
+  }
+}

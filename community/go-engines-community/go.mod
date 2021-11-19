@@ -1,6 +1,6 @@
 module git.canopsis.net/canopsis/canopsis-community/community/go-engines-community
 
-// Needs to be synced with Makefile.var:GOLANG_IMAGE_TAG and go.mod from Pro
+// Needs to be synced with Makefile:DOCKER_GOLANG_VERSION and go.mod from Pro
 // Only two integers are allowed here (https://golang.org/ref/mod#go-mod-file-go)
 go 1.17
 
@@ -45,6 +45,7 @@ require (
 	github.com/rs/zerolog v1.23.0
 	github.com/russellhaering/gosaml2 v0.6.0
 	github.com/russellhaering/goxmldsig v1.1.0
+	github.com/sergi/go-diff v1.2.0
 	github.com/smartystreets/goconvey v1.6.4
 	github.com/streadway/amqp v1.0.0
 	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2
