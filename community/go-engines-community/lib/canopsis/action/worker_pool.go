@@ -4,12 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
+	"text/template"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"github.com/mitchellh/mapstructure"
 	"github.com/rs/zerolog"
 )
 
@@ -51,12 +55,13 @@ type WorkerPool interface {
 }
 
 type pool struct {
-	size             int
-	axeRpcClient     engine.RPCClient
-	webhookRpcClient engine.RPCClient
-	alarmAdapter     alarm.Adapter
-	encoder          encoding.Encoder
-	logger           zerolog.Logger
+	size                   int
+	axeRpcClient           engine.RPCClient
+	webhookRpcClient       engine.RPCClient
+	alarmAdapter           alarm.Adapter
+	encoder                encoding.Encoder
+	logger                 zerolog.Logger
+	timezoneConfigProvider *config.BaseTimezoneConfigProvider
 }
 
 func NewWorkerPool(
@@ -66,14 +71,16 @@ func NewWorkerPool(
 	alarmAdapter alarm.Adapter,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
+	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 ) WorkerPool {
 	return &pool{
-		size:             size,
-		axeRpcClient:     axeRpcClient,
-		webhookRpcClient: webhookRpcClient,
-		alarmAdapter:     alarmAdapter,
-		encoder:          encoder,
-		logger:           logger,
+		size:                   size,
+		axeRpcClient:           axeRpcClient,
+		webhookRpcClient:       webhookRpcClient,
+		alarmAdapter:           alarmAdapter,
+		encoder:                encoder,
+		logger:                 logger,
+		timezoneConfigProvider: timezoneConfigProvider,
 	}
 }
 
@@ -118,7 +125,7 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 							return
 						}
 
-						s.logger.Debug().Msgf("Worker %d got task - %v", id, task)
+						s.logger.Debug().Interface("task", task).Msgf("Worker %d got task", id)
 
 						if !task.Action.AlarmPatterns.Matches(&task.Alarm) || !task.Action.EntityPatterns.Matches(&task.Entity) {
 							resultChannel <- TaskResult{
@@ -145,7 +152,7 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 							s.logger.Debug().Msgf("Worker %d send rpc for action '%s'", id, task.Action.Type)
 						}
 
-						s.logger.Debug().Msgf("Worker %d finished task - %v", id, task)
+						s.logger.Debug().Interface("task", task).Msgf("Worker %d finished task", id)
 					}
 				}
 			}(i)
@@ -197,31 +204,36 @@ func (s *pool) call(ctx context.Context, task Task, workerId int) error {
 }
 
 func (s *pool) getRPCAxeEvent(task Task) (*types.RPCAxeEvent, error) {
-	if t, ok := task.Action.Parameters.(types.Templater); ok {
-		err := t.Template(types.AlarmWithEntity{
-			Alarm:  task.Alarm,
-			Entity: task.Entity,
-		})
+	params := make(map[string]interface{}, len(task.Action.Parameters))
+	tplData := types.AlarmWithEntity{
+		Alarm:  task.Alarm,
+		Entity: task.Entity,
+	}
 
-		if err != nil {
-			return nil, err
+	for k, v := range task.Action.Parameters {
+		params[k] = v
+
+		switch k {
+		case "author", "output":
+			if str, ok := v.(string); ok {
+				var err error
+				params[k], err = s.renderTemplate(str, tplData)
+				if err != nil {
+					return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+				}
+			}
 		}
 	}
 
 	return &types.RPCAxeEvent{
 		EventType:  task.Action.Type,
-		Parameters: task.Action.Parameters,
+		Parameters: params,
 		Alarm:      &task.Alarm,
 		Entity:     &task.Entity,
 	}, nil
 }
 
 func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWebhookEvent, error) {
-	params, ok := task.Action.Parameters.(*types.WebhookParameters)
-	if !ok {
-		return nil, errors.New("invalid parameters")
-	}
-
 	children := make([]types.Alarm, 0)
 	if len(task.Alarm.Value.Children) > 0 {
 		err := s.alarmAdapter.GetOpenedAlarmsByAlarmIDs(ctx, task.Alarm.Value.Children, &children)
@@ -230,24 +242,95 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 		}
 	}
 
-	err := params.Template(map[string]interface{}{
+	tplData := map[string]interface{}{
 		"Alarm":          task.Alarm,
 		"Entity":         task.Entity,
 		"Children":       children,
 		"Response":       task.Response,
 		"Header":         task.Header,
 		"AdditionalData": task.AdditionalData,
-	})
+	}
+	params := make(map[string]interface{}, len(task.Action.Parameters))
+	for k, v := range task.Action.Parameters {
+		params[k] = v
+
+		switch k {
+		case "request":
+			if m, ok := v.(map[string]interface{}); ok {
+				newRequest := make(map[string]interface{}, len(m))
+
+				for requestKey, requestVal := range m {
+					newRequest[requestKey] = requestVal
+
+					switch requestKey {
+					case "url", "payload":
+						if str, ok := requestVal.(string); ok {
+							var err error
+							newRequest[requestKey], err = s.renderTemplate(str, tplData)
+							if err != nil {
+								return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+							}
+						}
+					case "headers":
+						if headers, ok := requestVal.(map[string]interface{}); ok {
+							newHeaders := make(map[string]interface{}, len(headers))
+
+							for headerKey, headerVal := range headers {
+								newHeaders[headerKey] = headerVal
+
+								if str, ok := headerVal.(string); ok {
+									var err error
+									newHeaders[headerKey], err = s.renderTemplate(str, tplData)
+									if err != nil {
+										return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+									}
+								}
+							}
+
+							newRequest[requestKey] = newHeaders
+						}
+					}
+				}
+
+				params[k] = newRequest
+			}
+		}
+	}
+
+	webhookParams := types.WebhookParameters{}
+	err := mapstructure.Decode(params, &webhookParams)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot decode map struct scenario=%s : %v", task.ScenarioID, err)
 	}
 
 	return &types.RPCWebhookEvent{
-		Parameters:   *params,
+		Parameters:   webhookParams,
 		Alarm:        &task.Alarm,
+		Entity:       &task.Entity,
 		AckResources: task.AckResources,
 		Header:       task.Header,
 		Response:     task.Response,
 		Message:      fmt.Sprintf("step %d of scenario %s", task.Step, task.ScenarioID),
 	}, nil
+}
+
+func (s *pool) renderTemplate(templateStr string, data interface{}) (string, error) {
+	var f template.FuncMap
+	if s.timezoneConfigProvider != nil {
+		timezone := s.timezoneConfigProvider.Get()
+		f = types.GetTemplateFunc(&timezone)
+	} else {
+		f = types.GetTemplateFunc(nil)
+	}
+
+	t, err := template.New("template").Funcs(f).Parse(templateStr)
+	if err != nil {
+		return "", err
+	}
+	b := strings.Builder{}
+	err = t.Execute(&b, data)
+	if err != nil {
+		return "", err
+	}
+	return b.String(), nil
 }

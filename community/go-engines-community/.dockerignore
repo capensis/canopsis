@@ -1,2 +1,10 @@
-releases/**/*.tar.gz
-/vendor
+**
+!build_all.sh
+!go.mod
+!go.sum
+!cmd/
+!lib/
+!.git/
+!Makefile
+!docs/
+!config/

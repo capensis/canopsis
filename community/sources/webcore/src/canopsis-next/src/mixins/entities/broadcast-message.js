@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('broadcastMessage');
 
-export const entitiesBroadcastMessagesMixin = {
+export const entitiesBroadcastMessageMixin = {
   computed: {
     ...mapGetters({
       broadcastMessages: 'items',
