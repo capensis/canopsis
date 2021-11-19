@@ -98,6 +98,14 @@ db.default_rights.insertMany([
         type: "CRUD",
     },
     {
+        _id: "api_watcher",
+        loader_id: "api_watcher",
+        crecord_name: "api_watcher",
+        crecord_type: "action",
+        desc: "Watchers",
+        type: "CRUD",
+    },
+    {
         _id: "api_heartbeat",
         loader_id: "api_heartbeat",
         crecord_name: "api_heartbeat",
@@ -167,6 +175,46 @@ db.default_rights.insertMany([
         crecord_type: "action",
         desc: "Engine Info",
     },
+    /* Remediation rights */
+    {
+        _id: "api_execution",
+        loader_id: "api_execution",
+        crecord_name: "api_execution",
+        crecord_type: "action",
+        desc: "Runs instructions",
+    },
+    {
+        _id: "api_job_config",
+        loader_id: "api_job_config",
+        crecord_name: "api_job_config",
+        crecord_type: "action",
+        desc: "Job configs",
+        type: "CRUD",
+    },
+    {
+        _id: "api_job",
+        loader_id: "api_job",
+        crecord_name: "api_job",
+        crecord_type: "action",
+        desc: "Jobs",
+        type: "CRUD",
+    },
+    {
+        _id: "api_instruction",
+        loader_id: "api_instruction",
+        crecord_name: "api_instruction",
+        crecord_type: "action",
+        desc: "Instructions",
+        type: "CRUD",
+    },
+    {
+        _id: "api_file",
+        loader_id: "api_file",
+        crecord_name: "api_file",
+        crecord_type: "action",
+        desc: "File",
+        type: "CRUD",
+    }
 ]);
 db.default_rights.find({
     "crecord_name": {
@@ -179,6 +227,7 @@ db.default_rights.find({
             "api_alarm_delete",
             "api_event",
             "api_engine",
+            "api_execution",
         ],
     }
 }).forEach(function (doc) {
@@ -209,12 +258,18 @@ db.default_rights.find({
             "api_playlist",
             "api_dynamicinfos",
             "api_heartbeat",
+            "api_watcher",
             "api_viewgroup",
             "api_view",
             "api_pbehavior",
             "api_pbehaviortype",
             "api_pbehaviorreason",
-            "api_pbehaviorexception"
+            "api_pbehaviorexception",
+            /* Remediation rights */
+            "api_job_config",
+            "api_job",
+            "api_instruction",
+            "api_file"
         ],
     }
 }).forEach(function (doc) {
@@ -245,12 +300,18 @@ db.default_rights.find({
             "api_playlist",
             "api_dynamicinfos",
             "api_heartbeat",
+            "api_watcher",
             "api_viewgroup",
             "api_view",
             "api_pbehavior",
             "api_pbehaviortype",
             "api_pbehaviorreason",
-            "api_pbehaviorexception"
+            "api_pbehaviorexception",
+            /* Remediation rights */
+            "api_job_config",
+            "api_job",
+            "api_instruction",
+            "api_file"
         ],
     }
 }).forEach(function (doc) {

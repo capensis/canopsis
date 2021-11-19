@@ -128,3 +128,15 @@ db.default_rights.find({
         }
     )
 });
+
+var ui = db.configuration.find({'_id' : 'user_interface'})[0];
+var d = {};
+if (ui.max_matched_items === undefined) {
+    d['max_matched_items'] = 10000
+}
+if (ui.check_count_request_timeout === undefined) {
+    d['check_count_request_timeout'] = 30
+}
+if (Object.keys(d).length > 0) {
+    db.configuration.update({'_id' : 'user_interface'},{$set : d})
+}

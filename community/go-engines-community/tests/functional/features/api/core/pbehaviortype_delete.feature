@@ -66,7 +66,7 @@ Feature: PBehavior Type delete
 
   Scenario: Given default type Should return error
     When I am admin
-    When I do DELETE /api/v4/pbehavior-types/test-default-pause-type
+    When I do DELETE /api/v4/pbehavior-types/test-default-inactive-type
     Then the response code should be 400
     Then the response body should be:
     """
