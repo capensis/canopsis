@@ -13,7 +13,10 @@ Feature: Create an metaalarmrule
       "type": "complex",
       "output_template": "{{ .Children.Alarm.Value.State.Message }}",
       "config": {
-        "time_interval": 60,
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
         "alarm_patterns": [
           {
             "v": {"resource": "123"}
@@ -34,7 +37,10 @@ Feature: Create an metaalarmrule
       "type": "complex",
       "output_template": "{{ .Children.Alarm.Value.State.Message }}",
       "config": {
-        "time_interval": 60,
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
         "alarm_patterns": [
           {
             "v": {"resource": "123"}
@@ -56,7 +62,10 @@ Feature: Create an metaalarmrule
       "type": "complex",
       "output_template": "{{ .Children.Alarm.Value.State.Message }}",
       "config": {
-        "time_interval": 60,
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
         "alarm_patterns": [
           {
             "v": {"resource": "123"}
@@ -103,7 +112,10 @@ Feature: Create an metaalarmrule
       "type": "complex",
       "output_template": "{{ .Children.Alarm.Value.State.Message }}",
       "config": {
-        "time_interval": 60,
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
         "alarm_patterns": [
           {
             "v": {"resource": "123"}
@@ -205,7 +217,10 @@ Feature: Create an metaalarmrule
         ]
       },
       "config": {
-        "time_interval": 60,
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
         "threshold_rate": 1,
         "entity_patterns": [
           {
@@ -236,7 +251,10 @@ Feature: Create an metaalarmrule
       "type": "complex",
       "output_template": "{{ .Children.Alarm.Value.State.Message }}",
       "config": {
-        "time_interval": 60,
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
         "threshold_rate": 1,
         "event_patterns": [
           {
@@ -270,7 +288,10 @@ Feature: Create an metaalarmrule
       "config": {
         "n": [
           {
-            "time_interval": 60,
+            "time_interval": {
+              "value": 1,
+              "unit": "m"
+            },
             "threshold_rate": 1,
             "event_patterns": [
               {

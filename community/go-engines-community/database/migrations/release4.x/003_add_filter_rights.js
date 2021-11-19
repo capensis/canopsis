@@ -1,10 +1,11 @@
 db.default_rights.insertMany([
     {
-        "_id": "api_metrics",
-        "loader_id": "api_metrics",
+        "_id": "api_filter",
+        "loader_id": "api_filter",
         "crecord_type": "action",
-        "crecord_name": "api_metrics",
-        "desc": "Metrics api"
+        "crecord_name": "api_filter",
+        "desc": "Filters",
+        "type": "CRUD"
     },
 ]);
 
@@ -15,8 +16,8 @@ db.default_rights.update(
     },
     {
         $set: {
-            "rights.api_metrics": {
-                checksum: 1,
+            "rights.api_filter": {
+                checksum: 15,
                 crecord_type: "right",
             },
         },

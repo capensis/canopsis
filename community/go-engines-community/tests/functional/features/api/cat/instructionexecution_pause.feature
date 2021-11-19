@@ -17,7 +17,7 @@ Feature: pause a instruction execution
       "description": "test-instruction-execution-pause-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -26,12 +26,12 @@ Feature: pause a instruction execution
           "operations": [
             {
               "name": "test-instruction-execution-pause-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-pause-1-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-pause-1-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-pause-1-step-1-operation-2-description"
             }
           ],
@@ -43,7 +43,7 @@ Feature: pause a instruction execution
           "operations": [
             {
               "name": "test-instruction-execution-pause-1-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-pause-1-step-2-operation-1-description"
             }
           ],

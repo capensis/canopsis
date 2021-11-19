@@ -134,7 +134,7 @@ Feature: execute action on trigger
       "priority": 21,
       "triggers": ["create"],
       "delay": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "actions": [

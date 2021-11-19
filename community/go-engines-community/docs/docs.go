@@ -12796,33 +12796,33 @@ var doc = `{
             "type": "object",
             "required": [
                 "enabled",
-                "seconds",
-                "unit"
+                "unit",
+                "value"
             ],
             "properties": {
                 "enabled": {
                     "type": "boolean"
                 },
-                "seconds": {
-                    "type": "integer"
-                },
                 "unit": {
                     "type": "string"
+                },
+                "value": {
+                    "type": "integer"
                 }
             }
         },
         "types.DurationWithUnit": {
             "type": "object",
             "required": [
-                "seconds",
-                "unit"
+                "unit",
+                "value"
             ],
             "properties": {
-                "seconds": {
-                    "type": "integer"
-                },
                 "unit": {
                     "type": "string"
+                },
+                "value": {
+                    "type": "integer"
                 }
             }
         },

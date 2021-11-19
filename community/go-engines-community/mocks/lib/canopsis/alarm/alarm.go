@@ -38,7 +38,7 @@ func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 }
 
 // ArchiveResolvedAlarms mocks base method
-func (m *MockAdapter) ArchiveResolvedAlarms(arg0 context.Context, arg1 time.Duration) (int64, error) {
+func (m *MockAdapter) ArchiveResolvedAlarms(arg0 context.Context, arg1 types.CpsTime) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ArchiveResolvedAlarms", arg0, arg1)
 	ret0, _ := ret[0].(int64)
@@ -82,7 +82,7 @@ func (mr *MockAdapterMockRecorder) CountResolvedAlarm(arg0, arg1 interface{}) *g
 }
 
 // DeleteArchivedResolvedAlarms mocks base method
-func (m *MockAdapter) DeleteArchivedResolvedAlarms(arg0 context.Context, arg1 time.Duration) (int64, error) {
+func (m *MockAdapter) DeleteArchivedResolvedAlarms(arg0 context.Context, arg1 types.CpsTime) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteArchivedResolvedAlarms", arg0, arg1)
 	ret0, _ := ret[0].(int64)

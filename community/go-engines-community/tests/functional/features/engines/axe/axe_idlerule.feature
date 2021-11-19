@@ -12,7 +12,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 40,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "entity_patterns": [
@@ -230,7 +230,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 41,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "entity_patterns": [
@@ -531,7 +531,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 42,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "entity_patterns": [
@@ -708,7 +708,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 43,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -852,7 +852,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 44,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -996,7 +996,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 46,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1022,7 +1022,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 45,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1201,7 +1201,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 48,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1221,7 +1221,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 47,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1402,7 +1402,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 49,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1563,7 +1563,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 50,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1590,7 +1590,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 51,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1768,7 +1768,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 53,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1794,7 +1794,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 52,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1996,7 +1996,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 54,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
