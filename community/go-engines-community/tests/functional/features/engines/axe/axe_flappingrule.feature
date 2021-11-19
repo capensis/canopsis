@@ -7,6 +7,7 @@ Feature: update alarm status on flapping rule
     """json
     {
       "_id": "test-flapping-rule-axe-flappingrule-1",
+      "name": "test-flapping-rule-axe-flappingrule-1-name",
       "description": "test-flapping-rule-axe-flappingrule-1-desc",
       "entity_patterns":[
         {
