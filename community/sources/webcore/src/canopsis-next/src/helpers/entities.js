@@ -325,25 +325,6 @@ export function generateViewTab(title = '') {
 }
 
 /**
- * Generate user preference by widget and user objects
- *
- * @param {Object} widget
- * @param {Object} user
- * @returns {Object}
- */
-export function generateUserPreferenceByWidgetAndUser(widget, user) {
-  return {
-    _id: `${widget._id}_${user._id}`,
-    widget_preferences: {},
-    name: user._id,
-    widget_id: widget._id,
-    widgetXtype: widget.type,
-    crecord_name: user._id,
-    crecord_type: 'userpreferences',
-  };
-}
-
-/**
  * Generate copy of view tab
  *
  * @param {ViewTab} tab
