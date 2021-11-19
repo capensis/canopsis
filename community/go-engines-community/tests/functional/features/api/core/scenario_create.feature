@@ -27,7 +27,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test-scenario-to-create-1-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -65,7 +65,7 @@ Feature: Create a scenario
             },
             "retry_count": 3,
             "retry_delay": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -91,7 +91,7 @@ Feature: Create a scenario
             "type": "test-type-to-edit-scenario",
             "start_on_trigger": true,
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -127,7 +127,7 @@ Feature: Create a scenario
             "author": "root",
             "output": "test-scenario-to-create-1-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -165,7 +165,7 @@ Feature: Create a scenario
             },
             "retry_count": 3,
             "retry_delay": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -187,7 +187,7 @@ Feature: Create a scenario
           "parameters": {
             "author": "root",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             },
             "name": "test-scenario-to-create-1-action-3-name",
@@ -241,7 +241,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test-scenario-to-create-2-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -280,7 +280,7 @@ Feature: Create a scenario
             },
             "retry_count": 3,
             "retry_delay": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -306,7 +306,7 @@ Feature: Create a scenario
             "type": "test-type-to-edit-scenario",
             "start_on_trigger": true,
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -344,7 +344,7 @@ Feature: Create a scenario
             "author": "root",
             "output": "test-scenario-to-create-2-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -383,7 +383,7 @@ Feature: Create a scenario
             },
             "retry_count": 3,
             "retry_delay": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -405,7 +405,7 @@ Feature: Create a scenario
           "parameters": {
             "author": "root",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             },
             "name": "test-scenario-to-create-2-action-3-name",
@@ -444,7 +444,7 @@ Feature: Create a scenario
       "priority": 12,
       "triggers": ["create"],
       "delay": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "actions": [
@@ -463,7 +463,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -483,7 +483,7 @@ Feature: Create a scenario
       "priority": 12,
       "triggers": ["create"],
       "delay": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "actions": [
@@ -503,7 +503,7 @@ Feature: Create a scenario
             "author": "root",
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -568,7 +568,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -613,7 +613,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -677,7 +677,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -765,7 +765,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -1012,7 +1012,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test-scenario-to-create-1-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -1064,7 +1064,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test-scenario-to-create-1-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },

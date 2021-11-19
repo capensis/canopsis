@@ -448,7 +448,8 @@ func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Oper
 	case types.EventTypeSnooze:
 		parameters = types.OperationSnoozeParameters{
 			Duration: types.DurationWithUnit{
-				Seconds: int64(*event.Duration),
+				Value: int64(*event.Duration),
+				Unit:  "s",
 			},
 			Output: event.Output,
 			Author: event.Author,

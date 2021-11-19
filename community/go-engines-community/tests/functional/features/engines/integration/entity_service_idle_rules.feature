@@ -28,7 +28,7 @@ Feature: entity_service idle_rules integration
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [
@@ -133,7 +133,7 @@ Feature: entity_service idle_rules integration
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [
@@ -216,7 +216,7 @@ Feature: entity_service idle_rules integration
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [
@@ -305,7 +305,7 @@ Feature: entity_service idle_rules integration
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [
@@ -328,7 +328,7 @@ Feature: entity_service idle_rules integration
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [

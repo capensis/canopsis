@@ -11,7 +11,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 60,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -131,7 +131,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 60,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -229,7 +229,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 60,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -353,7 +353,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 60,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -468,7 +468,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 60,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -550,7 +550,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 44,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -655,7 +655,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 44,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [

@@ -111,7 +111,7 @@ Feature: no execute action when entity is inactive
       "priority": 72,
       "triggers": ["create"],
       "delay": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "actions": [
@@ -317,7 +317,7 @@ Feature: no execute action when entity is inactive
             "name": "pbehavior-action-4",
             "start_on_trigger": true,
             "duration": {
-              "seconds": 600,
+              "value": 600,
               "unit": "s"
             },
             "type": "test-maintenance-type-to-engine",

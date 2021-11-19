@@ -253,7 +253,7 @@ type ByTimestamp struct {
 }
 
 func (s ByTimestamp) Less(i, j int) bool {
-	return s.AlarmSteps[i].Timestamp.Before(s.AlarmSteps[j].Timestamp.Time)
+	return s.AlarmSteps[i].Timestamp.Before(s.AlarmSteps[j].Timestamp)
 }
 
 // PbehaviorInfo represents current state of entity.

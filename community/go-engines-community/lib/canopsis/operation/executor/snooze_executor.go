@@ -39,7 +39,7 @@ func (e *snoozeExecutor) Exec(
 
 	err := alarm.PartialUpdateSnooze(
 		time,
-		types.CpsNumber(params.Duration.Seconds),
+		params.Duration,
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
 		role,

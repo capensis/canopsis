@@ -8,7 +8,7 @@
       "test-view-to-edit-playlist-tab-1"
     ],
     "interval": {
-      "seconds": 10,
+      "value": 10,
       "unit": "s"
     },
     "enabled": true,
@@ -24,7 +24,7 @@
       "test-view-to-edit-playlist-tab-1"
     ],
     "interval": {
-      "seconds": 10,
+      "value": 10,
       "unit": "s"
     },
     "enabled": true,
@@ -40,7 +40,7 @@
       "test-view-to-edit-playlist-tab-1"
     ],
     "interval": {
-      "seconds": 10,
+      "value": 10,
       "unit": "s"
     },
     "enabled": true,
@@ -56,7 +56,7 @@
       "test-view-to-edit-playlist-tab-2"
     ],
     "interval": {
-      "seconds": 20,
+      "value": 20,
       "unit": "s"
     },
     "enabled": true,
@@ -72,7 +72,7 @@
       "test-view-to-edit-playlist-tab-1"
     ],
     "interval": {
-      "seconds": 10,
+      "value": 10,
       "unit": "s"
     },
     "enabled": true,
@@ -88,7 +88,7 @@
       "test-view-to-edit-playlist-tab-1"
     ],
     "interval": {
-      "seconds": 10,
+      "value": 10,
       "unit": "s"
     },
     "enabled": true,
