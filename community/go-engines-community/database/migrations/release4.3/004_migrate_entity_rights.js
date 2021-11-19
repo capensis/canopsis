@@ -20,6 +20,14 @@
             crecord_type: "action",
             desc: "Entity service",
             type: "CRUD"
+        },
+        {
+            _id: "api_entitycategory",
+            loader_id: "api_entitycategory",
+            crecord_name: "api_entitycategory",
+            crecord_type: "action",
+            desc: "Entity categories",
+            type: "CRUD"
         }
     ]);
     db.default_rights.find({crecord_type: "role"}).forEach(function (doc) {
@@ -59,6 +67,12 @@
                         };
                     }
                     break
+            }
+            if (right == "api_watcher" || (right.length > 11 && right.substr(0, 11) == "api_entity_")) {
+                set["rights.api_entitycategory"] = {
+                    checksum: 15,
+                    crecord_type: "right"
+                };
             }
         })
         if (Object.keys(set).length > 0) {

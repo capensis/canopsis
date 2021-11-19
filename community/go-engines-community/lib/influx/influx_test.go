@@ -8,7 +8,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestNewInfluxSession(t *testing.T) {
+func UnsupportedTestNewInfluxSession(t *testing.T) {
 	Convey("Wanna check some good InfluxDB session?", t, func() {
 		Convey("Bad url", func() {
 			ou := os.Getenv(influx.EnvURL)

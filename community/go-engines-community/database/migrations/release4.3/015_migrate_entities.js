@@ -16,10 +16,12 @@
            as: "alarm"
         }},
         {$unwind: "$alarm"},
-        {$sort: {"alarm.t": 1}},
+        {$addFields: {"alarm_t": "$alarm.t"}},
+        {$project: {"alarm": 0}},
+        {$sort: {"alarm_t": 1}},
         {$group: {
             _id: "$_id",
-            created: {$first: "$alarm.t"}
+            created: {$first: "$alarm_t"}
         }},
     ]);
     while (cursor.hasNext()) {

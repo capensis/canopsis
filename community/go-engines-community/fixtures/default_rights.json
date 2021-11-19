@@ -948,5 +948,32 @@
     "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f5204",
     "enable": true
+  },
+  {
+    "_id": "test-instruction-to-get-author",
+    "crecord_type": "user",
+    "crecord_name": "test-instruction-to-get-author-1-username",
+    "role": "noperms",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa",
+    "enable": true
+  },
+  {
+    "_id": "test-user-alternate-author-1-id",
+    "crecord_type": "user",
+    "crecord_name": "test-user-alternate-author-1-username",
+    "role": "noperms",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa",
+    "enable": true
+  },
+  {
+    "_id": "test-author",
+    "crecord_type": "user",
+    "crecord_name": "test-author-username",
+    "role": "noperms",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa",
+    "enable": true
   }
 ]
