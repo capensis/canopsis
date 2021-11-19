@@ -13,13 +13,13 @@ Feature: get a job
         {
           "_id": "test-job-to-get",
           "name": "test-job-name-to-get",
-          "author": "test-author",
+          "author": {"_id": "test-user-alternate-author-1-id", "name": "test-user-alternate-author-1-username"},
           "config": {
             "_id": "test-job-config-to-link",
             "name": "test-job-config-name-to-link",
             "type": "rundeck",
             "host": "http://example.com",
-            "author": "test-author",
+            "author": {"_id": "test-author", "name": "test-author-username"},
             "auth_token": "test-auth-token"
           },
           "job_id": "test-job-id",
@@ -76,13 +76,13 @@ Feature: get a job
     {
       "_id": "test-job-to-get",
       "name": "test-job-name-to-get",
-      "author": "test-author",
+      "author": {"_id": "test-user-alternate-author-1-id", "name": "test-user-alternate-author-1-username"},
       "config": {
         "_id": "test-job-config-to-link",
         "name": "test-job-config-name-to-link",
         "type": "rundeck",
         "host": "http://example.com",
-        "author": "test-author",
+        "author": {"_id": "test-author", "name": "test-author-username"},
         "auth_token": "test-auth-token"
       },
       "job_id": "test-job-id",

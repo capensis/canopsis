@@ -185,12 +185,10 @@ Feature: create a instruction
           "name": "test filter"
         }
       ],
-      "author": "root",
+      "author": {"_id": "root", "name": "root"},
       "avg_complete_time": 0,
       "description": "test-instruction-new-description",
       "enabled": true,
-      "last_executed_by": null,
-      "last_executed_on": null,
       "month_executions": 0,
       "name": "test-instruction-new-name",
       "rating": 0,
@@ -205,11 +203,11 @@ Feature: create a instruction
               "jobs": [
                 {
                   "_id": "test-job-to-test-instruction-new-step-1-operation-1-1",
-                  "author": "test_author",
+                  "author": {"_id": "test-author", "name": "test-author-username"},
                   "config": {
                     "_id": "test-job-config-to-link",
                     "auth_token": "test-auth-token",
-                    "author": "test-author",
+                    "author": {"_id": "test-author", "name": "test-author-username"},
                     "host": "http://example.com",
                     "name": "test-job-config-name-to-link",
                     "type": "rundeck"
@@ -220,11 +218,11 @@ Feature: create a instruction
                 },
                 {
                   "_id": "test-job-to-test-instruction-new-step-1-operation-1-2",
-                  "author": "test_author",
+                  "author": {"_id": "test-author", "name": "test-author-username"},
                   "config": {
                     "_id": "test-job-config-to-link",
                     "auth_token": "test-auth-token",
-                    "author": "test-author",
+                    "author": {"_id": "test-author", "name": "test-author-username"},
                     "host": "http://example.com",
                     "name": "test-job-config-name-to-link",
                     "type": "rundeck"
@@ -242,11 +240,11 @@ Feature: create a instruction
               "jobs": [
                 {
                   "_id": "test-job-to-test-instruction-new-step-1-operation-2-1",
-                  "author": "test_author",
+                  "author": {"_id": "test-author", "name": "test-author-username"},
                   "config": {
                     "_id": "test-job-config-to-link",
                     "auth_token": "test-auth-token",
-                    "author": "test-author",
+                    "author": {"_id": "test-author", "name": "test-author-username"},
                     "host": "http://example.com",
                     "name": "test-job-config-name-to-link",
                     "type": "rundeck"
@@ -271,11 +269,11 @@ Feature: create a instruction
               "jobs": [
                 {
                   "_id": "test-job-to-test-instruction-new-step-2-operation-1-1",
-                  "author": "test_author",
+                  "author": {"_id": "test-author", "name": "test-author-username"},
                   "config": {
                     "_id": "test-job-config-to-link",
                     "auth_token": "test-auth-token",
-                    "author": "test-author",
+                    "author": {"_id": "test-author", "name": "test-author-username"},
                     "host": "http://example.com",
                     "name": "test-job-config-name-to-link",
                     "type": "rundeck"
@@ -286,11 +284,11 @@ Feature: create a instruction
                 },
                 {
                   "_id": "test-job-to-test-instruction-new-step-2-operation-1-2",
-                  "author": "test_author",
+                  "author": {"_id": "test-author", "name": "test-author-username"},
                   "config": {
                     "_id": "test-job-config-to-link",
                     "auth_token": "test-auth-token",
-                    "author": "test-author",
+                    "author": {"_id": "test-author", "name": "test-author-username"},
                     "host": "http://example.com",
                     "name": "test-job-config-name-to-link",
                     "type": "rundeck"

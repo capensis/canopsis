@@ -45,7 +45,10 @@ Feature: create a job's config
       "name": "test-job-config-name",
       "host": "http://example.com",
       "type": "rundeck",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "auth_token": "test-auth-token"
     }
     """

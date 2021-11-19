@@ -11,7 +11,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestInfluxBulk(t *testing.T) {
+func UnsupportedTestInfluxBulk(t *testing.T) {
 	Convey("Setup", t, func() {
 		client, err := influx.NewSession()
 		So(err, ShouldBeNil)
