@@ -527,6 +527,13 @@
         "desc": "KPI"
     },
     {
+        "_id": "models_kpiFilters",
+        "loader_id": "models_kpiFilters",
+        "crecord_name": "models_kpiFilters",
+        "crecord_type": "action",
+        "desc": "KPI Filters"
+    },
+    {
         "_id": "models_notification_instructionStats",
         "loader_id": "models_notification_instructionStats",
         "crecord_name": "models_notification_instructionStats",

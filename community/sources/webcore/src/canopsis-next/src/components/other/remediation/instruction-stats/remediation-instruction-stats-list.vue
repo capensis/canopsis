@@ -114,7 +114,7 @@ export default {
           width: 180,
         },
         {
-          text: this.$t('remediationInstructionStats.lastModifiedOn'),
+          text: this.$t('common.lastModifiedOn'),
           value: 'last_modified',
           width: 180,
         },

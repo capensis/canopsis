@@ -208,6 +208,7 @@ export default {
     downtime: 'Downtime',
     toTheTop: 'Jusqu\'au sommet',
     time: 'Temps',
+    lastModifiedOn: 'Dernière modification le',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -2123,7 +2124,6 @@ export default {
     },
     table: {
       rating: 'Évaluation',
-      lastModifiedOn: 'Dernière modification le',
       monthExecutions: '№ d\'exécutions\nce mois-ci',
       lastExecutedOn: 'Dernière exécution le',
     },
@@ -2199,7 +2199,6 @@ export default {
     executedOn: 'Exécuté sur',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
-    lastModifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\n\'achèvement',
     executionCount: 'Nombre de\nexécutions',
     alarmStates: 'Alarmes affectées par l\'état',
@@ -2648,11 +2647,6 @@ export default {
   kpi: {
     alarmMetrics: 'Métriques d\'alarme',
     sli: 'SLI',
-    tabs: {
-      dataSlices: 'Tranches de données',
-      detailedMetrics: 'Métriques détaillées',
-      sliPatterns: 'Modèles SLI',
-    },
   },
 
   kpiMetrics: {
@@ -2676,6 +2670,10 @@ export default {
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} accuser les alarmes',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} pour résoudre les alarmes',
     },
+  },
+
+  kpiFilters: {
+    helpInformation: 'Ici, les modèles de filtre pour des tranches de données supplémentaires pour les compteurs et les évaluations peuvent être ajoutés.',
   },
 
   ...featureService.get('i18n.fr'),

@@ -208,6 +208,7 @@ export default {
     downtime: 'Downtime',
     toTheTop: 'To the top',
     time: 'Time',
+    lastModifiedOn: 'Last modified on',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -2123,7 +2124,6 @@ export default {
     },
     table: {
       rating: 'Rating',
-      lastModifiedOn: 'Last modified on',
       monthExecutions: '№ of executions\nthis month',
       lastExecutedOn: 'Last executed on',
     },
@@ -2199,7 +2199,6 @@ export default {
     executedOn: 'Executed on',
     lastExecutedOn: 'Last executed on',
     modifiedOn: 'Modified on',
-    lastModifiedOn: 'Last modified on',
     averageCompletionTime: 'Average time\nof completion',
     executionCount: 'Number of\nexecutions',
     alarmStates: 'Alarms affected by state',
@@ -2648,11 +2647,6 @@ export default {
   kpi: {
     alarmMetrics: 'Alarm metrics',
     sli: 'SLI',
-    tabs: {
-      dataSlices: 'Data slices',
-      detailedMetrics: 'Detailed metrics',
-      sliPatterns: 'SLI patterns',
-    },
   },
 
   kpiMetrics: {
@@ -2676,6 +2670,10 @@ export default {
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} to ack alarms',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} to resolve alarms',
     },
+  },
+
+  kpiFilters: {
+    helpInformation: 'Here the filter patterns for additional slices of data for counters and ratings can be added.',
   },
 
   ...featureService.get('i18n.en'),
