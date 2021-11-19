@@ -93,7 +93,7 @@ export default {
         },
         {
           text: this.$t('common.author'),
-          value: 'author',
+          value: 'author.name',
         },
         {
           text: this.$t('common.enabled'),
@@ -117,7 +117,7 @@ export default {
         },
         {
           text: this.$t('remediationInstructions.table.lastExecutedBy'),
-          value: 'last_executed_by.username',
+          value: 'last_executed_by.name',
         },
         {
           text: this.$t('remediationInstructions.table.lastExecutedOn'),
