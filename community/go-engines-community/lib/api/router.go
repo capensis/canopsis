@@ -44,6 +44,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionauth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/userpreferences"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
@@ -181,6 +182,14 @@ func RegisterRoutes(
 		protected.GET("/account/me", account.NewApi(account.NewStore(dbClient)).Me)
 		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
 		protected.GET("/file-access", authApi.GetFileAccess)
+
+		userPreferencesRouter := protected.Group("/user-preferences")
+		{
+			userPreferencesRouter.Use(middleware.OnlyAuth())
+			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient), actionLogger)
+			userPreferencesRouter.GET("/:id", userPreferencesApi.Get)
+			userPreferencesRouter.PUT("", userPreferencesApi.Update)
+		}
 
 		userRouter := protected.Group("/users")
 		{

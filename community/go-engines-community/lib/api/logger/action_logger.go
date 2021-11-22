@@ -51,6 +51,8 @@ const (
 	ValueTypeResolveRule  = "resolverule"
 	ValueTypeFlappingRule = "flappingrule"
 
+	ValueTypeUserPreferences = "userpreferences"
+
 	ValueTypeFilter = "filter"
 )
 
