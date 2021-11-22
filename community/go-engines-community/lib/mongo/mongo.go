@@ -73,6 +73,8 @@ const (
 	ResolveRuleMongoCollection  = "resolve_rule"
 	FlappingRuleMongoCollection = "flapping_rule"
 
+	UserPreferencesMongoCollection = "userpreferences"
+
 	FilterMongoCollection = "filter"
 )
 

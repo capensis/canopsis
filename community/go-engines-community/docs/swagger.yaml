@@ -159,9 +159,6 @@ definitions:
         type: integer
       events_count:
         type: integer
-      extra:
-        additionalProperties: true
-        type: object
       infos:
         additionalProperties:
           additionalProperties: true
@@ -675,6 +672,11 @@ definitions:
         additionalProperties:
           type: string
         type: object
+    type: object
+  config.TimezoneConfig:
+    properties:
+      location:
+        type: string
     type: object
   contextgraph.ImportJob:
     properties:
@@ -1708,10 +1710,6 @@ definitions:
         type: object
       done:
         $ref: '#/definitions/pattern.AlarmStepRefPattern'
-        type: object
-      extra:
-        additionalProperties:
-          $ref: '#/definitions/pattern.InterfacePattern'
         type: object
       hardLimit:
         $ref: '#/definitions/pattern.IntegerRefPattern'
@@ -3253,9 +3251,6 @@ definitions:
       events_count:
         description: EventsCount accumulates count of check events.
         type: integer
-      extra:
-        additionalProperties: true
-        type: object
       hard_limit:
         type: integer
       infos:
@@ -3539,6 +3534,25 @@ definitions:
       _id:
         type: string
       title:
+        type: string
+    type: object
+  userpreferences.EditRequest:
+    properties:
+      content:
+        additionalProperties: true
+        type: object
+      widget:
+        type: string
+    required:
+    - content
+    - widget
+    type: object
+  userpreferences.Response:
+    properties:
+      content:
+        additionalProperties: true
+        type: object
+      widget:
         type: string
     type: object
   utils.RegexExpression:
@@ -5722,7 +5736,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find all flapping rule
       tags:
@@ -5751,7 +5765,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Create flapping rule
       tags:
@@ -5774,7 +5788,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth`: []
       summary: Delete flapping rule by id
       tags:
@@ -5800,7 +5814,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Get flapping rule by id
       tags:
@@ -5838,7 +5852,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Update flapping rule by id
       tags:
@@ -7458,7 +7472,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find all resolve rule
       tags:
@@ -7487,7 +7501,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Create resolve rule
       tags:
@@ -7510,7 +7524,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth`: []
       summary: Delete resolve rule by id
       tags:
@@ -7536,7 +7550,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Get resolve rule by id
       tags:
@@ -7574,7 +7588,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Update resolve rule by id
       tags:
@@ -8040,6 +8054,67 @@ paths:
       summary: Update state setting type by id
       tags:
       - state-settings
+  /user-preferences:
+    put:
+      consumes:
+      - application/json
+      description: Update user preferences by widget id
+      operationId: userpreference-update-by-widget-id
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/userpreferences.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userpreferences.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update user preferences by widget id
+      tags:
+      - userpreference
+  /user-preferences/{id}:
+    get:
+      description: Get user preferences by widget id
+      operationId: userpreference-get-by-id
+      parameters:
+      - description: widget id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userpreferences.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get user preferences by widget id
+      tags:
+      - userpreference
   /users:
     get:
       consumes:

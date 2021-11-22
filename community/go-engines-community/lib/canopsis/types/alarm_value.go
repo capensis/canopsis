@@ -349,7 +349,6 @@ type AlarmValue struct {
 	// EventsCount accumulates count of check events.
 	EventsCount CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	Extra map[string]interface{}            `bson:"extra" json:"extra"`
 	Infos map[string]map[string]interface{} `bson:"infos" json:"infos"`
 
 	// store version of dynamic-infos rule

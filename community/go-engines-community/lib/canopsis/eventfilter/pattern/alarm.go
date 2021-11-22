@@ -20,8 +20,7 @@ type AlarmRegexMatches struct {
 	Value    AlarmValueRegexMatches
 }
 
-// NewAlarmRegexMatches creates an AlarmValueRegexMatches, with the Value.Extra
-// field initialized to an empty map.
+// NewAlarmRegexMatches creates an AlarmValueRegexMatches.
 func NewAlarmRegexMatches() AlarmRegexMatches {
 	return AlarmRegexMatches{
 		Value: NewAlarmValueRegexMatches(),

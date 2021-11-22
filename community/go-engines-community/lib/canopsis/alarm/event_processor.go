@@ -539,7 +539,6 @@ func (s *eventProcessor) processMetaAlarmCreateEvent(ctx context.Context, event 
 	}
 
 	metaAlarm.Value.Tags = []string{}
-	metaAlarm.Value.Extra = map[string]interface{}{}
 	metaAlarm.Value.Infos = map[string]map[string]interface{}{}
 	metaAlarm.Value.RuleVersion = map[string]string{}
 	metaAlarm.Value.Parents = []string{}
@@ -1006,7 +1005,6 @@ func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {
 			Tags:              []string{},
 			Parents:           []string{},
 			Children:          []string{},
-			Extra:             map[string]interface{}{},
 			Infos:             map[string]map[string]interface{}{},
 			RuleVersion:       map[string]string{},
 		},
