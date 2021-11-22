@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 
 import { createVueInstance, mount, shallowMount } from '@unit/utils/vue';
-import { createMockedStoreModule } from '@unit/utils/store';
+import { createMockedStoreModules } from '@unit/utils/store';
 
 import { MAX_LIMIT } from '@/constants';
 
@@ -133,7 +133,7 @@ const entityCategories = [
 const factory = (options = {}) => shallowMount(CEntityCategoryField, {
   localVue,
   stubs,
-  store: createMockedStoreModule('entityCategory'),
+  store: createMockedStoreModules([{ name: 'entityCategory' }]),
 
   parentComponent: {
     $_veeValidate: {
@@ -146,7 +146,8 @@ const factory = (options = {}) => shallowMount(CEntityCategoryField, {
 
 const snapshotFactory = (options = {}) => mount(CEntityCategoryField, {
   localVue,
-  store: createMockedStoreModule('entityCategory', {
+  store: createMockedStoreModules([{
+    name: 'entityCategory',
     getters: {
       pending: false,
       items: entityCategories,
@@ -155,7 +156,7 @@ const snapshotFactory = (options = {}) => mount(CEntityCategoryField, {
       fetchList: jest.fn(),
       create: jest.fn(),
     },
-  }),
+  }]),
 
   parentComponent: {
     $_veeValidate: {
@@ -184,7 +185,8 @@ describe('c-entity-category-field', () => {
     const fetchListMock = jest.fn();
 
     factory({
-      store: createMockedStoreModule('entityCategory', {
+      store: createMockedStoreModules([{
+        name: 'entityCategory',
         getters: {
           items: [],
           pending: true,
@@ -192,7 +194,7 @@ describe('c-entity-category-field', () => {
         actions: {
           fetchList: fetchListMock,
         },
-      }),
+      }]),
     });
 
     expect(fetchListMock).toBeCalledWith(expect.any(Object), { params: { limit: MAX_LIMIT } }, undefined);
@@ -208,7 +210,8 @@ describe('c-entity-category-field', () => {
         name,
         addable: true,
       },
-      store: createMockedStoreModule('entityCategory', {
+      store: createMockedStoreModules([{
+        name: 'entityCategory',
         getters: {
           items: entityCategories,
           pending: false,
@@ -217,7 +220,7 @@ describe('c-entity-category-field', () => {
           fetchList: fetchListMock,
           create: createMock,
         },
-      }),
+      }]),
     });
 
     const validator = wrapper.getValidator();
@@ -256,7 +259,8 @@ describe('c-entity-category-field', () => {
         addable: true,
       },
 
-      store: createMockedStoreModule('entityCategory', {
+      store: createMockedStoreModules([{
+        name: 'entityCategory',
         getters: {
           items: [],
           pending: false,
@@ -265,7 +269,7 @@ describe('c-entity-category-field', () => {
           fetchList: fetchListMock,
           create: createMock,
         },
-      }),
+      }]),
     });
 
     const select = wrapper.find('.v-select');
@@ -306,7 +310,8 @@ describe('c-entity-category-field', () => {
         addable: true,
       },
 
-      store: createMockedStoreModule('entityCategory', {
+      store: createMockedStoreModules([{
+        name: 'entityCategory',
         getters: {
           items: [],
           pending: false,
@@ -315,7 +320,7 @@ describe('c-entity-category-field', () => {
           fetchList: fetchListMock,
           create: createMock,
         },
-      }),
+      }]),
     });
 
     const select = wrapper.find('.v-select');
@@ -344,7 +349,8 @@ describe('c-entity-category-field', () => {
 
   it('Renders `c-entity-category-field` with default props and pending', () => {
     const wrapper = snapshotFactory({
-      store: createMockedStoreModule('entityCategory', {
+      store: createMockedStoreModules([{
+        name: 'entityCategory',
         getters: {
           pending: true,
           items: entityCategories,
@@ -353,7 +359,7 @@ describe('c-entity-category-field', () => {
           fetchList: jest.fn(),
           create: jest.fn(),
         },
-      }),
+      }]),
     });
 
     expect(wrapper.element).toMatchSnapshot();

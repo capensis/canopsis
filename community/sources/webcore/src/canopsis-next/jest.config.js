@@ -4,6 +4,7 @@ module.exports = {
     'jsx',
     'json',
     'vue',
+    'styl',
   ],
   testEnvironment: 'jest-environment-jsdom',
   transform: {
@@ -11,6 +12,7 @@ module.exports = {
     '^.+\\.jsx?$': '<rootDir>/tests/unit/jest.transform',
   },
   moduleNameMapper: {
+    '^.+\\.styl(us)?$': '<rootDir>/tests/unit/mocks/styleMock.js',
     '^@unit/(.*)$': '<rootDir>/tests/unit/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
