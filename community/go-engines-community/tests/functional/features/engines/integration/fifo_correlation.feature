@@ -38,6 +38,17 @@ Feature: create and update meta alarm and child alarm in order
     When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&correlation=true
     Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
     When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
     When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
