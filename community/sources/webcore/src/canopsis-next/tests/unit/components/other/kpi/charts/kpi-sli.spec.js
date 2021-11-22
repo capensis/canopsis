@@ -4,7 +4,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { stubDateNow } from '@unit/utils/stub-hooks';
 
-import { createMockedStoreModule } from '@unit/utils/store';
+import { createMockedStoreModules } from '@unit/utils/store';
 import { QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import KpiSli from '@/components/other/kpi/charts/kpi-sli';
@@ -49,11 +49,12 @@ describe('kpi-sli', () => {
     };
 
     factory({
-      store: createMockedStoreModule('metrics', {
+      store: createMockedStoreModules([{
+        name: 'metrics',
         actions: {
           fetchSliMetricsWithoutStore: fetchSliMetrics,
         },
-      }),
+      }]),
     });
 
     expect(fetchSliMetrics).toBeCalledTimes(1);
@@ -77,11 +78,12 @@ describe('kpi-sli', () => {
     const fetchSliMetrics = jest.fn(() => []);
 
     const wrapper = factory({
-      store: createMockedStoreModule('metrics', {
+      store: createMockedStoreModules([{
+        name: 'metrics',
         actions: {
           fetchSliMetricsWithoutStore: fetchSliMetrics,
         },
-      }),
+      }]),
     });
 
     const kpiSliFiltersElement = wrapper.find('kpi-sli-filters-stub');
@@ -108,11 +110,12 @@ describe('kpi-sli', () => {
 
   it('Renders `kpi-sli` without metrics', async () => {
     const wrapper = snapshotFactory({
-      store: createMockedStoreModule('metrics', {
+      store: createMockedStoreModules([{
+        name: 'metrics',
         actions: {
           fetchSliMetricsWithoutStore: jest.fn(() => []),
         },
-      }),
+      }]),
     });
 
     await flushPromises();

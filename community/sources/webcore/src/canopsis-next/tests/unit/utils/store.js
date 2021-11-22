@@ -1,11 +1,27 @@
 import { isFunction } from 'lodash';
 import Vuex from 'vuex';
+/**
+ * @typedef {Object} Module
+ * @property {string} name
+ * @property {Object.<string, Function | Mock>} [actions]
+ * @property {Object.<string, any>} [getters]
+ */
 
+const convertMockedGettersToStore = (getters = {}) => Object
+  .entries(getters)
+  .reduce((acc, [getterName, getterOrValue]) => {
+    acc[getterName] = isFunction(getterOrValue)
+      ? getterOrValue
+      : () => getterOrValue;
+
+    return acc;
+  }, {});
 /**
  * Create mocked store module.
  *
  * @example
- *  createMockedStoreModule('info', {
+ *  createMockedStoreModules({
+ *    name: 'info',
  *    getters: {
  *      allowChangeSeverityToInfo: true,
  *      timezone: () => 'Timezone'
@@ -15,27 +31,19 @@ import Vuex from 'vuex';
  *    }
  *  })
  *
- * @param {string} name
- * @param {Object.<string, Function | Mock>} [actions]
- * @param {Object.<string, any>} [getters]
+ * @param {Module[]} modules
  * @returns {Store}
  */
-export const createMockedStoreModule = (name, { actions = {}, getters = {} } = {}) => new Vuex.Store({
-  modules: {
-    [name]: {
+export const createMockedStoreModules = modules => new Vuex.Store({
+  modules: modules.reduce((acc, { name, actions = {}, getters }) => {
+    acc[name] = {
       namespaced: true,
       actions,
-      getters: Object
-        .entries(getters)
-        .reduce((acc, [getterName, getterOrValue]) => {
-          acc[getterName] = isFunction(getterOrValue)
-            ? getterOrValue
-            : () => getterOrValue;
+      getters: convertMockedGettersToStore(getters),
+    };
 
-          return acc;
-        }, {}),
-    },
-  },
+    return acc;
+  }, {}),
 });
 
 /**
@@ -45,4 +53,4 @@ export const createMockedStoreModule = (name, { actions = {}, getters = {} } = {
  * @param {Object.<string, any>} getters
  * @returns {Store}
  */
-export const createMockedStoreGetters = (name, getters) => createMockedStoreModule(name, { getters });
+export const createMockedStoreGetters = ({ name, ...getters }) => createMockedStoreModules([{ name, getters }]);

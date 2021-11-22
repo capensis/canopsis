@@ -54,7 +54,7 @@ export default {
     },
     pending: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     removable: {
       type: Boolean,

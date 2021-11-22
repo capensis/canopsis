@@ -248,7 +248,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                 <th
                   aria-label="Username: Sorted ascending. Activate to sort descending."
                   aria-sort="ascending"
-                  class="column sortable active asc text-xs-left"
+                  class="column active asc sortable text-xs-left"
                   role="columnheader"
                   scope="col"
                   tabindex="0"
@@ -561,7 +561,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                 <th
                   aria-label="Username: Sorted ascending. Activate to sort descending."
                   aria-sort="ascending"
-                  class="column sortable active asc text-xs-left"
+                  class="column active asc sortable text-xs-left"
                   role="columnheader"
                   scope="col"
                   tabindex="0"
@@ -824,7 +824,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                 <th
                   aria-label="Username: Sorted ascending. Activate to sort descending."
                   aria-sort="ascending"
-                  class="column sortable active asc text-xs-left"
+                  class="column active asc sortable text-xs-left"
                   role="columnheader"
                   scope="col"
                   tabindex="0"
@@ -1053,7 +1053,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                 <th
                   aria-label="Username: Sorted ascending. Activate to sort descending."
                   aria-sort="ascending"
-                  class="column sortable active asc text-xs-left"
+                  class="column active asc sortable text-xs-left"
                   role="columnheader"
                   scope="col"
                   tabindex="0"
@@ -1256,7 +1256,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                 <th
                   aria-label="Username: Sorted ascending. Activate to sort descending."
                   aria-sort="ascending"
-                  class="column sortable active asc text-xs-left"
+                  class="column active asc sortable text-xs-left"
                   role="columnheader"
                   scope="col"
                   tabindex="0"
@@ -1485,7 +1485,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                 <th
                   aria-label="Username: Sorted ascending. Activate to sort descending."
                   aria-sort="ascending"
-                  class="column sortable active asc text-xs-left"
+                  class="column active asc sortable text-xs-left"
                   role="columnheader"
                   scope="col"
                   tabindex="0"
@@ -1860,7 +1860,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                 <th
                   aria-label="Username: Sorted ascending. Activate to sort descending."
                   aria-sort="ascending"
-                  class="column sortable active asc text-xs-left"
+                  class="column active asc sortable text-xs-left"
                   role="columnheader"
                   scope="col"
                   tabindex="0"
@@ -2173,7 +2173,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                 <th
                   aria-label="Username: Sorted ascending. Activate to sort descending."
                   aria-sort="ascending"
-                  class="column sortable active asc text-xs-left"
+                  class="column active asc sortable text-xs-left"
                   role="columnheader"
                   scope="col"
                   tabindex="0"
@@ -2369,7 +2369,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                 <th
                   aria-label="Username: Sorted ascending. Activate to sort descending."
                   aria-sort="ascending"
-                  class="column sortable active asc text-xs-left"
+                  class="column active asc sortable text-xs-left"
                   role="columnheader"
                   scope="col"
                   tabindex="0"

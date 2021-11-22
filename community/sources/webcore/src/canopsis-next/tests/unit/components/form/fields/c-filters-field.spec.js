@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
 import { createVueInstance, mount, shallowMount } from '@unit/utils/vue';
-import { createMockedStoreModule } from '@unit/utils/store';
+import { createMockedStoreModules } from '@unit/utils/store';
 
 import { MAX_LIMIT } from '@/constants';
 
@@ -41,7 +41,8 @@ const filters = [
 const factory = (options = {}) => shallowMount(CFiltersField, {
   localVue,
   stubs,
-  store: createMockedStoreModule('filter', {
+  store: createMockedStoreModules([{
+    name: 'filter',
     getters: {
       pending: false,
       items: filters,
@@ -49,14 +50,15 @@ const factory = (options = {}) => shallowMount(CFiltersField, {
     actions: {
       fetchList: jest.fn(),
     },
-  }),
+  }]),
 
   ...options,
 });
 
 const snapshotFactory = (options = {}) => mount(CFiltersField, {
   localVue,
-  store: createMockedStoreModule('filter', {
+  store: createMockedStoreModules([{
+    name: 'filter',
     getters: {
       pending: false,
       items: filters,
@@ -64,7 +66,7 @@ const snapshotFactory = (options = {}) => mount(CFiltersField, {
     actions: {
       fetchList: jest.fn(),
     },
-  }),
+  }]),
 
   ...options,
 });
@@ -76,7 +78,8 @@ describe('c-filters-field', () => {
       propsData: {
         value: null,
       },
-      store: createMockedStoreModule('filter', {
+      store: createMockedStoreModules([{
+        name: 'filter',
         getters: {
           pending: false,
           items: [],
@@ -84,7 +87,7 @@ describe('c-filters-field', () => {
         actions: {
           fetchList: fetchFilters,
         },
-      }),
+      }]),
     });
 
     await flushPromises();
@@ -103,7 +106,8 @@ describe('c-filters-field', () => {
       propsData: {
         value: null,
       },
-      store: createMockedStoreModule('filter', {
+      store: createMockedStoreModules([{
+        name: 'filter',
         getters: {
           pending: true,
           items: [],
@@ -111,7 +115,7 @@ describe('c-filters-field', () => {
         actions: {
           fetchList: fetchFilters,
         },
-      }),
+      }]),
     });
 
     await flushPromises();
@@ -125,7 +129,8 @@ describe('c-filters-field', () => {
       propsData: {
         value: '',
       },
-      store: createMockedStoreModule('filter', {
+      store: createMockedStoreModules([{
+        name: 'filter',
         getters: {
           pending: true,
           items: [{
@@ -136,7 +141,7 @@ describe('c-filters-field', () => {
         actions: {
           fetchList: jest.fn(),
         },
-      }),
+      }]),
     });
 
     const valueElement = wrapper.find('select.v-autocomplete');

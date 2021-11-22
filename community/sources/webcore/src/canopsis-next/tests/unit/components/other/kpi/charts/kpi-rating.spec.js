@@ -4,7 +4,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { stubDateNow } from '@unit/utils/stub-hooks';
 
-import { createMockedStoreModule } from '@unit/utils/store';
+import { createMockedStoreModules } from '@unit/utils/store';
 import { ALARM_METRIC_PARAMETERS, KPI_RATING_CRITERIA, QUICK_RANGES } from '@/constants';
 
 import KpiRating from '@/components/other/kpi/charts/kpi-rating';
@@ -48,11 +48,12 @@ describe('kpi-rating', () => {
     };
 
     factory({
-      store: createMockedStoreModule('metrics', {
+      store: createMockedStoreModules([{
+        name: 'metrics',
         actions: {
           fetchRatingMetricsWithoutStore: fetchRatingMetrics,
         },
-      }),
+      }]),
     });
 
     expect(fetchRatingMetrics).toBeCalledTimes(1);
@@ -76,11 +77,12 @@ describe('kpi-rating', () => {
     const fetchRatingMetrics = jest.fn(() => []);
 
     const wrapper = factory({
-      store: createMockedStoreModule('metrics', {
+      store: createMockedStoreModules([{
+        name: 'metrics',
         actions: {
           fetchRatingMetricsWithoutStore: fetchRatingMetrics,
         },
-      }),
+      }]),
     });
 
     const quickIntervalField = wrapper.find('c-quick-date-interval-field-stub');
@@ -102,11 +104,12 @@ describe('kpi-rating', () => {
 
   it('Renders `kpi-rating` without metrics', async () => {
     const wrapper = snapshotFactory({
-      store: createMockedStoreModule('metrics', {
+      store: createMockedStoreModules([{
+        name: 'metrics',
         actions: {
           fetchRatingMetricsWithoutStore: jest.fn(() => []),
         },
-      }),
+      }]),
     });
 
     await flushPromises();
