@@ -20,7 +20,7 @@ func (e *declareTicketExecutor) Exec(
 	_ *types.Alarm,
 	_ types.Entity,
 	_ types.CpsTime,
-	_, _ string,
+	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	return types.AlarmChangeTypeDeclareTicket, nil
 }

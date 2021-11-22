@@ -25,7 +25,7 @@ func (e *ackRemoveExecutor) Exec(
 	alarm *types.Alarm,
 	_ types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationParameters
 	var ok bool
@@ -41,6 +41,7 @@ func (e *ackRemoveExecutor) Exec(
 		time,
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
+		userID,
 		role,
 		initiator,
 	)
