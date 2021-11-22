@@ -84,9 +84,7 @@ export default {
     updateCategory(category) {
       const categoryId = category && category._id;
 
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         category: categoryId,
       });
 
