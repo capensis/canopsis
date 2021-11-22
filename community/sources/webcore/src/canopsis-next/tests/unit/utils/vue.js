@@ -70,7 +70,7 @@ export const mount = (component, options = {}) => {
 
   const wrapper = testUtilsMount(
     component,
-    merge(options, { mocks, stubs }),
+    merge({ mocks, stubs }, options),
   );
 
   wrapper.getValidator = () => wrapper.vm.$validator;

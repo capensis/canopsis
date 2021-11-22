@@ -144,8 +144,8 @@ export default {
               font: {
                 size: 11,
               },
-              boxWidth: 20,
-              boxHeight: 20,
+              boxWidth: 15,
+              boxHeight: 15,
             },
           },
           tooltip: {
