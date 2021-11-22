@@ -1004,6 +1004,12 @@ export const USERS_PERMISSIONS = {
       datastorageUpdate: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_update`,
       associativeTable: `${USER_PERMISSIONS_PREFIXES.api}_associative_table`,
       stateSettings: `${USER_PERMISSIONS_PREFIXES.api}_state_settings`,
+      files: `${USER_PERMISSIONS_PREFIXES.api}_file`,
+      healthcheck: `${USER_PERMISSIONS_PREFIXES.api}_healthcheck`,
+      contextgraph: `${USER_PERMISSIONS_PREFIXES.api}_contextgraph`,
+      broadcastMessage: `${USER_PERMISSIONS_PREFIXES.api}_broadcast_message`,
+      junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
+      notifications: `${USER_PERMISSIONS_PREFIXES.api}_notification`,
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
@@ -1021,9 +1027,9 @@ export const USERS_PERMISSIONS = {
       job: `${USER_PERMISSIONS_PREFIXES.api}_job`,
       execution: `${USER_PERMISSIONS_PREFIXES.api}_execution`,
       instructionApprove: `${USER_PERMISSIONS_PREFIXES.api}_instruction_approve`,
-      files: `${USER_PERMISSIONS_PREFIXES.api}_file`, // ???
+      messageRateStatsRead: `${USER_PERMISSIONS_PREFIXES.api}_message_rate_stats_read`,
     },
-    pbehaviors: {
+    pbehavior: {
       pbehavior: `${USER_PERMISSIONS_PREFIXES.api}_pbehavior`,
       pbehaviorException: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorexception`,
       pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
@@ -1031,7 +1037,6 @@ export const USERS_PERMISSIONS = {
     },
 
     // healthcheck: `${USER_PERMISSIONS_PREFIXES.api}_healthcheck`,
-    // messageRateStatsRead: `${USER_PERMISSIONS_PREFIXES.api}_message_rate_stats_read`,
     // contextgraph: `${USER_PERMISSIONS_PREFIXES.api}_contextgraph`,
     // broadcastMessage: `${USER_PERMISSIONS_PREFIXES.api}_broadcast_message`,
     // junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
