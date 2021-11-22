@@ -1035,12 +1035,6 @@ export const USERS_PERMISSIONS = {
       pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
       pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
     },
-
-    // healthcheck: `${USER_PERMISSIONS_PREFIXES.api}_healthcheck`,
-    // contextgraph: `${USER_PERMISSIONS_PREFIXES.api}_contextgraph`,
-    // broadcastMessage: `${USER_PERMISSIONS_PREFIXES.api}_broadcast_message`,
-    // junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
-    // notifications: `${USER_PERMISSIONS_PREFIXES.api}_notification`,
   },
 };
 
