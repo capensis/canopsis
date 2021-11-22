@@ -17,9 +17,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
-	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/rs/zerolog"
 )
 
@@ -31,7 +31,7 @@ func NewEngine(
 	ctx context.Context,
 	options Options,
 	mongoClient mongo.DbClient,
-	pgPool *pgxpool.Pool,
+	pgPool postgres.Pool,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
 ) libengine.Engine {
@@ -40,6 +40,9 @@ func NewEngine(
 	m := DependencyMaker{}
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
+	if pgPool != nil {
+		config.SetPgPoolRetry(pgPool, cfg)
+	}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
