@@ -22,7 +22,7 @@ func (e *assocTicketExecutor) Exec(
 	alarm *types.Alarm,
 	_ types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationAssocTicketParameters
 	var ok bool
@@ -35,6 +35,7 @@ func (e *assocTicketExecutor) Exec(
 		nil,
 		params.Author,
 		params.Ticket,
+		userID,
 		role,
 		initiator,
 	)

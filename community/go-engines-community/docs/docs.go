@@ -8434,6 +8434,9 @@ var doc = `{
                 "t": {
                     "type": "integer"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "val": {
                     "type": "integer"
                 }
@@ -12743,6 +12746,9 @@ var doc = `{
                 "t": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                },
+                "user_id": {
+                    "type": "string"
                 },
                 "val": {
                     "type": "integer"
