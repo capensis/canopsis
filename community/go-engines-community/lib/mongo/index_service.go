@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"github.com/mitchellh/mapstructure"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	mongooptions "go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -170,9 +172,20 @@ func (s *baseIndexService) createIndexes(ctx context.Context, config *Config) {
 				continue
 			}
 
+			keys := make([]string, 0, len(params.Keys))
+			for k, _ := range params.Keys {
+				keys = append(keys, k)
+			}
+			sort.Strings(keys)
+
+			indexKeys := make(bson.D, 0, len(params.Keys))
+			for _, key := range keys {
+				indexKeys = append(indexKeys, bson.E{Key: key, Value: params.Keys[key]})
+			}
+
 			indexOptions.Name = &indexName
 			_, err = collection.Indexes().CreateOne(ctx, mongo.IndexModel{
-				Keys:    &params.Keys,
+				Keys:    indexKeys,
 				Options: &indexOptions,
 			})
 
