@@ -45,6 +45,8 @@ const (
 	ValueTypeBroadcastMessage   = "broadcastmessage"
 	ValueAssociativeTable       = "associativetable"
 	ValueTypeIdleRule           = "idlerule"
+
+	ValueTypeUserPreferences = "userpreferences"
 )
 
 type ActionLogger interface {
