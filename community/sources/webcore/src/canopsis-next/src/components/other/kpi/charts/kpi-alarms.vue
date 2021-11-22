@@ -1,12 +1,8 @@
 <template lang="pug">
-  div
-    v-layout.ml-4.mb-4(align-center)
-      c-quick-date-interval-field(
-        :interval="pagination.interval",
-        @input="updateInterval"
-      )
-    div
-      kpi-alarms-chart(:metrics="alarmsMetrics", :sampling="pagination.sampling", responsive)
+  div.position-relative
+    c-progress-overlay(:pending="pending")
+    kpi-alarms-filters(v-model="pagination")
+    kpi-alarms-chart(:metrics="alarmsMetrics", :sampling="pagination.sampling", responsive)
 </template>
 
 <script>
@@ -21,17 +17,21 @@ import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
+import KpiAlarmsFilters from './partials/kpi-alarms-filters.vue';
+
 const KpiAlarmsChart = () => import(/* webpackChunkName: "Charts" */'./partials/kpi-alarms-chart.vue');
 
 export default {
-  components: { KpiAlarmsChart },
+  components: { KpiAlarmsFilters, KpiAlarmsChart },
   mixins: [entitiesMetricsMixin, localQueryMixin],
   data() {
     return {
       alarmsMetrics: [],
+      pending: false,
       query: {
         sampling: SAMPLINGS.day,
         parameters: [ALARM_METRIC_PARAMETERS.totalAlarms],
+        filter: null,
         interval: {
           from: QUICK_RANGES.last30Days.start,
           to: QUICK_RANGES.last30Days.stop,
@@ -43,23 +43,24 @@ export default {
     this.fetchList();
   },
   methods: {
-    updateInterval(interval) {
-      this.updateQueryField('interval', interval);
-    },
-
     getQuery() {
       return {
-        from: convertStartDateIntervalToTimestamp(this.pagination.interval.from),
-        to: convertStopDateIntervalToTimestamp(this.pagination.interval.to),
-        parameters: this.pagination.parameters,
-        sampling: this.pagination.sampling,
+        from: convertStartDateIntervalToTimestamp(this.query.interval.from),
+        to: convertStopDateIntervalToTimestamp(this.query.interval.to),
+        parameters: this.query.parameters,
+        sampling: this.query.sampling,
+        filter: this.query.filter,
       };
     },
 
     async fetchList() {
+      this.pending = true;
+
       this.alarmsMetrics = await this.fetchAlarmsMetricsWithoutStore({
         params: this.getQuery(),
       });
+
+      this.pending = false;
     },
   },
 };

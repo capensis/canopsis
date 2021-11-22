@@ -12,7 +12,8 @@ import KpiAlarms from '@/components/other/kpi/charts/kpi-alarms';
 const localVue = createVueInstance();
 
 const stubs = {
-  'c-quick-date-interval-field': true,
+  'c-progress-overlay': true,
+  'kpi-alarms-filters': true,
   'kpi-alarms-chart': true,
 };
 
@@ -43,6 +44,7 @@ describe('kpi-alarms', () => {
       from: 1383843600,
       parameters: [ALARM_METRIC_PARAMETERS.totalAlarms],
       sampling: SAMPLINGS.day,
+      filter: null,
       to: nowUnix,
     };
 
@@ -69,6 +71,7 @@ describe('kpi-alarms', () => {
       from: 1386262800,
       parameters: [ALARM_METRIC_PARAMETERS.totalAlarms],
       sampling: SAMPLINGS.day,
+      filter: null,
       to: nowUnix,
     };
     const fetchAlarmsMetrics = jest.fn(() => []);
@@ -81,11 +84,16 @@ describe('kpi-alarms', () => {
       }),
     });
 
-    const quickIntervalField = wrapper.find('c-quick-date-interval-field-stub');
+    const kpiSliFiltersElement = wrapper.find('kpi-alarms-filters-stub');
 
-    quickIntervalField.vm.$emit('input', {
-      from: start,
-      to: stop,
+    kpiSliFiltersElement.vm.$emit('input', {
+      parameters: [ALARM_METRIC_PARAMETERS.totalAlarms],
+      sampling: SAMPLINGS.day,
+      filter: null,
+      interval: {
+        from: start,
+        to: stop,
+      },
     });
 
     await flushPromises();
