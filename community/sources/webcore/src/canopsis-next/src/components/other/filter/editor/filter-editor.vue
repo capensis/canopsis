@@ -212,11 +212,11 @@ export default {
         this.impactLevelHint,
         this.typeHint,
         {
-          name: this.$t('entity.fields.impact'),
+          name: this.$t('entity.impact'),
           value: 'impact',
         },
         {
-          name: this.$t('entity.fields.depends'),
+          name: this.$t('entity.depends'),
           value: 'depends',
         },
       ];
