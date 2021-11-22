@@ -2,55 +2,59 @@
 
 exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
 <div
-  class="flex pa-4 md10 offset-md1 lg8 offset-lg2"
+  class="layout pa-4 column align-center"
 >
   <div
-    class="layout column mb-5"
+    class="kpi-charts"
   >
     <div
-      class="layout row"
+      class="layout column mb-5"
     >
       <div
-        class="subheading font-weight-bold"
+        class="layout row"
       >
-        kpi.alarmMetrics
+        <div
+          class="subheading font-weight-bold"
+        >
+          kpi.alarmMetrics
+        </div>
+        <!---->
       </div>
       <!---->
+      <kpi-alarms-stub />
     </div>
-    <!---->
-    <kpi-alarms-stub />
-  </div>
-  <div
-    class="layout column mb-5"
-  >
     <div
-      class="layout row"
+      class="layout column mb-5"
     >
       <div
-        class="subheading font-weight-bold"
+        class="layout row"
       >
-        common.rating:2
+        <div
+          class="subheading font-weight-bold"
+        >
+          common.rating:2
+        </div>
+        <!---->
       </div>
       <!---->
+      <kpi-rating-stub />
     </div>
-    <!---->
-    <kpi-rating-stub />
-  </div>
-  <div
-    class="layout column mb-5"
-  >
     <div
-      class="layout row"
+      class="layout column mb-5"
     >
       <div
-        class="subheading font-weight-bold"
+        class="layout row"
       >
-        kpi.sli
+        <div
+          class="subheading font-weight-bold"
+        >
+          kpi.sli
+        </div>
+        <!---->
       </div>
       <!---->
+      <kpi-sli-stub />
     </div>
-    <!---->
-    <kpi-sli-stub />
   </div>
 </div>
 `;
