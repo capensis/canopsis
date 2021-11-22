@@ -18,7 +18,7 @@
         v-if="isFilterTab",
         @create="showCreateFilterModal",
         @refresh="fetchFiltersListWithPreviousParams",
-        :has-access="true"
+        :has-access="hasCreateAnyKpiFiltersAccess"
       )
         span {{ $t('modals.filter.create.title') }}
 </template>
@@ -43,10 +43,6 @@ export default {
   computed: {
     isFilterTab() {
       return this.activeTab === KPI_TABS.filters;
-    },
-
-    hasCreateAccess() {
-      return true;
     },
   },
   methods: {
