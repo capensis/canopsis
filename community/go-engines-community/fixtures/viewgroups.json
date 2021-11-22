@@ -94,5 +94,13 @@
     "position": 11,
     "created": 1611229670,
     "updated": 1611229670
+  },
+  {
+    "_id": "test-viewgroup-to-user-preferences-delete",
+    "title": "test-viewgroup-to-user-preferences-delete",
+    "author": "test-viewgroup-to-user-preferences-delete",
+    "position": 12,
+    "created": 1611229670,
+    "updated": 1611229670
   }
 ]

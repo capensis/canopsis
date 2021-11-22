@@ -490,5 +490,28 @@
         ]
       }
     ]
+  },
+  {
+    "_id": "test-view-to-update-user-preferences",
+    "enabled": true,
+    "title": "test-view-to-update-user-preferences-title",
+    "description": "test-view-to-update-user-preferences-description",
+    "author": "test-view-to-update-user-preferences-author",
+    "position": 20,
+    "created": 1611229670,
+    "updated": 1611229670,
+    "tabs": [
+      {
+        "_id": "test-view-to-update-user-preferences-tab-1",
+        "title": "test-view-to-update-user-preferences-tab-1-title",
+        "widgets": [
+          {
+            "_id": "test-view-to-update-user-preferences-tab-1-widget-1",
+            "title": "test-view-to-update-user-preferences-tab-1-widget-1-title",
+            "type": "test-view-to-update-user-preferences-tab-1-widget-1-type"
+          }
+        ]
+      }
+    ]
   }
 ]
