@@ -1,14 +1,14 @@
 import { isEqual, isEmpty } from 'lodash';
 
-import queryWidgetMixin from '@/mixins/widget/query';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import { prepareQuery } from '@/helpers/query';
+
+import queryWidgetMixin from '@/mixins/widget/query';
 
 /**
  * @mixin Add query logic with fetch
  */
 export const widgetFetchQueryMixin = {
-  mixins: [queryWidgetMixin, entitiesUserPreferenceMixin],
+  mixins: [queryWidgetMixin],
   props: {
     isEditingMode: {
       type: Boolean,
@@ -29,7 +29,7 @@ export const widgetFetchQueryMixin = {
   },
   async mounted() {
     if (!this.isEditingMode) {
-      await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget._id });
+      await this.fetchUserPreference({ id: this.widget._id });
 
       this.query = prepareQuery(this.widget, this.userPreference);
     }

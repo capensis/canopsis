@@ -4,7 +4,7 @@ import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
 
 import uuid from '../uuid';
 import { durationWithEnabledToForm, formToDurationWithEnabled } from '../date/duration';
-import { generateViewTab } from '../entities';
+import { generateViewTab, generateCopyOfViewTab } from '../entities';
 
 /**
  * @typedef {Object} ViewTab
@@ -276,6 +276,15 @@ export const getExportedGroupsWrappers = (groups = []) =>
   }, []);
 
 /**
+ * Prepare imported view tabs
+ *
+ * @param {ViewTab[]} tabs
+ * @return {ViewTab[]}
+ */
+export const prepareImportedViewTabs = (tabs = []) =>
+  tabs.map(generateCopyOfViewTab);
+
+/**
  * Prepare imported views
  *
  * @param {View[]} views
@@ -283,7 +292,12 @@ export const getExportedGroupsWrappers = (groups = []) =>
  * @return {View[]}
  */
 export const prepareImportedViews = (views, group) =>
-  views.map(view => ({ ...view, _id: uuid(), group: group || view.group }));
+  views.map(view => ({
+    ...view,
+    _id: uuid(),
+    group: group || view.group,
+    tabs: prepareImportedViewTabs(view.tabs),
+  }));
 
 /**
  * Prepare imported groups
