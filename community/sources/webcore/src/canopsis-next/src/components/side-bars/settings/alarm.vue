@@ -34,7 +34,7 @@
             with-color-indicator
           )
           v-divider
-          field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
+          field-default-elements-per-page(v-model="settings.userPreferenceContent.itemsPerPage")
           v-divider
           field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
           v-divider
@@ -180,17 +180,15 @@ export default {
     return {
       settings: {
         widget: alarmListWidgetToForm(widget),
-        widget_preferences: {
-          itemsPerPage: PAGINATION_LIMIT,
-        },
+        userPreferenceContent: { itemsPerPage: PAGINATION_LIMIT },
       },
     };
   },
   mounted() {
-    const { widget_preferences: widgetPreference } = this.userPreference;
+    const { content } = this.userPreference;
 
-    this.settings.widget_preferences = {
-      itemsPerPage: get(widgetPreference, 'itemsPerPage', PAGINATION_LIMIT),
+    this.settings.userPreferenceContent = {
+      itemsPerPage: get(content, 'itemsPerPage', PAGINATION_LIMIT),
     };
   },
   methods: {

@@ -21,7 +21,6 @@
         @delete="showDeleteFilterModal(index)"
       )
     v-btn.ml-0(
-      data-test="addFilter",
       v-if="hasAccessToAddFilter",
       color="primary",
       outline,
@@ -102,7 +101,7 @@ export default {
           title: this.$t('modals.filter.edit.title'),
           entitiesType: this.entitiesType,
           existingTitles: this.existingTitles,
-          action: newFilter => this.updateItemInArray(index, newFilter),
+          action: newFilter => this.updateItemInArray(index, { ...filter, ...newFilter }),
         },
       });
     },
