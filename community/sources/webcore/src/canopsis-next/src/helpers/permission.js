@@ -75,6 +75,7 @@ export const getCheckboxValue = (
  */
 export function getGroupedPermissions(permissions, views = [], playlists = []) {
   const allBusinessPermissionsIds = flatten(USERS_PERMISSIONS.business);
+  const apiPermissionsValues = flatten(USERS_PERMISSIONS.api);
 
   const {
     exploitation: exploitationTechnicalPermissions,
@@ -84,7 +85,6 @@ export function getGroupedPermissions(permissions, views = [], playlists = []) {
   const adminTechnicalPermissionsValues = Object.values(adminTechnicalPermissions);
   const exploitationTechnicalPermissionsValues = Object.values(exploitationTechnicalPermissions);
   const notificationTechnicalPermissionsValues = Object.values(notificationTechnicalPermissions);
-  const apiPermissionsValues = Object.values(USERS_PERMISSIONS.api);
   const viewsById = keyBy(views, '_id');
   const playlistsById = keyBy(playlists, '_id');
 
