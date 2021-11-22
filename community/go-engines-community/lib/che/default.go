@@ -41,6 +41,7 @@ func NewEngine(
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
+	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	entityAdapter := entity.NewAdapter(mongoClient)
@@ -51,7 +52,7 @@ func NewEngine(
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
 
-	eventFilterService := eventfilter.NewService(eventFilterAdapter, logger)
+	eventFilterService := eventfilter.NewService(eventFilterAdapter, timezoneConfigProvider, logger)
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
 		options.FeatureContextEnrich,
@@ -189,6 +190,12 @@ func NewEngine(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
 		alarmConfigProvider,
+		logger,
+	))
+	engine.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		config.NewAdapter(mongoClient),
+		timezoneConfigProvider,
 		logger,
 	))
 	engine.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
