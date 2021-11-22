@@ -19,16 +19,28 @@ const stubs = {
       <input class="c-pagination" @input="$listeners.input(+$event.target.value)" />
     `,
   },
-  'c-records-per-page': {
+  'c-records-per-page-field': {
     template: `
-      <input class="c-records-per-page" @input="$listeners.input(+$event.target.value)" />
+      <input class="c-records-per-page-field" @input="$listeners.input(+$event.target.value)" />
     `,
   },
+};
+
+const snapshotStubs = {
+  'c-records-per-page-field': true,
 };
 
 const factory = (options = {}) => shallowMount(CTablePagination, {
   localVue,
   stubs,
+
+  ...options,
+});
+
+const snapshotFactory = (options = {}) => mount(CTablePagination, {
+  localVue,
+  stubs: snapshotStubs,
+
   ...options,
 });
 
@@ -58,7 +70,7 @@ describe('c-table-pagination', () => {
     const { rowsPerPage } = mockData;
     const wrapper = factory();
 
-    const recordsPerPage = wrapper.find('.c-records-per-page');
+    const recordsPerPage = wrapper.find('.c-records-per-page-field');
 
     recordsPerPage.setValue(rowsPerPage);
 
@@ -68,9 +80,8 @@ describe('c-table-pagination', () => {
     expect(updateRowsPerPageEvents[0]).toEqual([rowsPerPage]);
   });
 
-  it('Renders `c-table-pagination` correctly', () => {
-    const wrapper = mount(CTablePagination, {
-      localVue,
+  it('Renders `c-table-pagination` with custom props', () => {
+    const wrapper = snapshotFactory({
       propsData: { page: 3, rowsPerPage: 10, totalItems: 100 },
     });
 
