@@ -2,7 +2,7 @@ import { cloneDeep, omit } from 'lodash';
 
 import { BASIC_ENTITY_TYPES, ENTITIES_STATES } from '@/constants';
 
-import { enabledToForm, infosToArray } from './shared/common';
+import { infosToArray } from './shared/common';
 
 /**
  * @typedef {Object} Entity
@@ -43,7 +43,7 @@ export const entityToForm = (entity = {}) => {
     name: entity.name ?? '',
     description: entity.description ?? '',
     type: entity.type ?? BASIC_ENTITY_TYPES.connector,
-    enabled: enabledToForm(entity.enabled),
+    enabled: entity.enabled ?? true,
     disabled_impact: impact.filter(id => !changeableImpact.includes(id)),
     disabled_depends: depends.filter(id => !changeableDepends.includes(id)),
     infos: infosToArray(entity.infos),
