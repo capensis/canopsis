@@ -7,7 +7,8 @@ import { viewToRequest } from '@/helpers/forms/view';
 import queryMixin from '@/mixins/query';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import entitiesViewMixin from '@/mixins/entities/view';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
+import { confirmableModalMixin } from '@/mixins/confirmable-modal';
 
 export const widgetSettingsMixin = {
   props: {
@@ -21,6 +22,7 @@ export const widgetSettingsMixin = {
     sideBarMixin,
     entitiesViewMixin,
     entitiesUserPreferenceMixin,
+    confirmableModalMixin({ field: 'settings', closeMethod: 'hideSideBar' }),
   ],
   computed: {
     activeView() {
@@ -69,10 +71,10 @@ export const widgetSettingsMixin = {
      *
      * @returns {Object}
      */
-    getPreparedUserPreferences() {
-      return setField(this.userPreference, 'widget_preferences', value => ({
+    getPreparedUserPreference() {
+      return setField(this.userPreference, 'content', value => ({
         ...value,
-        ...this.settings.widget_preferences,
+        ...this.settings.userPreferenceContent,
       }));
     },
 
@@ -119,11 +121,11 @@ export const widgetSettingsMixin = {
       const isFormValid = await this.isFormValid();
 
       if (isFormValid) {
-        const userPreference = this.getPreparedUserPreferences();
+        const userPreference = this.getPreparedUserPreference();
         const { view, widget } = this.getPreparedViewAndWidget();
 
         await Promise.all([
-          this.createUserPreference({ userPreference }),
+          this.updateUserPreference({ data: userPreference }),
           this.updateView({ id: this.activeView._id, data: viewToRequest(view) }),
         ]);
 

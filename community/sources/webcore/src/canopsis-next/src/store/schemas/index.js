@@ -42,7 +42,7 @@ export const serviceSchema = new schema.Entity(ENTITIES_TYPES.service, {}, { idA
 export const weatherServiceSchema = new schema.Entity(ENTITIES_TYPES.weatherService, {}, { idAttribute: '_id' });
 
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
-  idAttribute: '_id',
+  idAttribute: 'widget',
 });
 
 export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {

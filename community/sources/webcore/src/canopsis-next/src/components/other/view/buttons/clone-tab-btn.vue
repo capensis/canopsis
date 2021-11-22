@@ -18,7 +18,7 @@ import { generateCopyOfViewTab, getViewsTabsWidgetsIdsMappings } from '@/helpers
 import { viewToRequest } from '@/helpers/forms/view';
 
 import { authMixin } from '@/mixins/auth';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
 const { mapGetters: viewMapGetters, mapActions: viewMapActions } = createNamespacedHelpers('view');
 
