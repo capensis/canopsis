@@ -43,6 +43,7 @@ import healthcheckParametersModule from './healthcheck-parameters';
 import messageRateStatsModule from './message-rate-stats';
 import viewStatsModule from './view-stats';
 import metricsModule from './metrics';
+import filterModule from './filter';
 
 export default {
   alarm: alarmModule,
@@ -90,4 +91,5 @@ export default {
   messageRateStats: messageRateStatsModule,
   viewStats: viewStatsModule,
   metrics: metricsModule,
+  filter: filterModule,
 };

@@ -160,6 +160,7 @@ export const API_ROUTES = {
   flappingRules: '/api/v4/flapping-rules',
   resolveRules: '/api/v4/resolve-rules',
   messageRateStats: '/api/v4/message-rate-stats',
+  filters: '/api/v4/cat/filters',
 
   /**
    * Cat routes
@@ -282,16 +283,20 @@ export const COLORS = {
     totalAlarms: '#5a6d7e',
     nonDisplayedAlarms: '#fd693b',
     instructionAlarms: '#7bb242',
+    pbehaviorAlarms: '#d64315',
     correlationAlarms: '#fdef75',
     ackAlarms: '#fd5252',
     cancelAckAlarms: '#9b27af',
+    ackWithoutCancelAlarms: '#81b0fd',
     ticketAlarms: '#2faa63',
+    withoutTicketAlarms: '#747474',
     ratioCorrelation: '#c31162',
     ratioInstructions: '#cbda39',
     ratioTickets: '#2195f1',
     ratioNonDisplayed: '#f9bf2d',
     averageAck: '#f5c6ab',
     averageResolve: '#fda701',
+    totalUserActivity: '#1fbbd1',
   },
 };
 

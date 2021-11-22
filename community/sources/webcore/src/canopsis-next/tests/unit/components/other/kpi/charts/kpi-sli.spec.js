@@ -12,7 +12,8 @@ import KpiSli from '@/components/other/kpi/charts/kpi-sli';
 const localVue = createVueInstance();
 
 const stubs = {
-  'c-quick-date-interval-field': true,
+  'c-progress-overlay': true,
+  'kpi-sli-filters': true,
   'kpi-sli-chart': true,
 };
 
@@ -44,6 +45,7 @@ describe('kpi-sli', () => {
       in_percents: true,
       sampling: SAMPLINGS.day,
       to: nowUnix,
+      filter: null,
     };
 
     factory({
@@ -70,6 +72,7 @@ describe('kpi-sli', () => {
       in_percents: true,
       sampling: SAMPLINGS.day,
       to: nowUnix,
+      filter: null,
     };
     const fetchSliMetrics = jest.fn(() => []);
 
@@ -81,11 +84,16 @@ describe('kpi-sli', () => {
       }),
     });
 
-    const quickIntervalField = wrapper.find('c-quick-date-interval-field-stub');
+    const kpiSliFiltersElement = wrapper.find('kpi-sli-filters-stub');
 
-    quickIntervalField.vm.$emit('input', {
-      from: start,
-      to: stop,
+    kpiSliFiltersElement.vm.$emit('input', {
+      sampling: SAMPLINGS.day,
+      filter: null,
+      in_percents: true,
+      interval: {
+        from: start,
+        to: stop,
+      },
     });
 
     await flushPromises();

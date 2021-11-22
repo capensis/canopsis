@@ -18,7 +18,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           class="v-select__selections"
         >
           <span>
-            common.parametersToDisplay:{"count":13}
+            common.parametersToDisplay:{"count":16}
           </span>
           <input
             aria-readonly="false"
@@ -309,6 +309,66 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
+              alarmList.metrics.pbehavior_alarms
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        class="primary--text"
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="true"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple primary--text"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light primary--text"
+                    >
+                      check_box
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
               alarmList.metrics.correlation_alarms
             </div>
           </div>
@@ -489,7 +549,127 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
+              alarmList.metrics.ack_without_cancel_alarms
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        class="primary--text"
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="true"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple primary--text"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light primary--text"
+                    >
+                      check_box
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
               alarmList.metrics.ticket_alarms
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        class="primary--text"
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="true"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple primary--text"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light primary--text"
+                    >
+                      check_box
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              alarmList.metrics.without_ticket_alarms
             </div>
           </div>
         </a>
@@ -1167,6 +1347,65 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
+              alarmList.metrics.pbehavior_alarms
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      check_box_outline_blank
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
               alarmList.metrics.correlation_alarms
             </div>
           </div>
@@ -1344,7 +1583,125 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
+              alarmList.metrics.ack_without_cancel_alarms
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      check_box_outline_blank
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
               alarmList.metrics.ticket_alarms
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      check_box_outline_blank
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              alarmList.metrics.without_ticket_alarms
             </div>
           </div>
         </a>
@@ -2019,6 +2376,65 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
+              alarmList.metrics.pbehavior_alarms
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      check_box_outline_blank
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
               alarmList.metrics.correlation_alarms
             </div>
           </div>
@@ -2196,7 +2612,125 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
+              alarmList.metrics.ack_without_cancel_alarms
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      check_box_outline_blank
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
               alarmList.metrics.ticket_alarms
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      check_box_outline_blank
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              alarmList.metrics.without_ticket_alarms
             </div>
           </div>
         </a>

@@ -35,4 +35,5 @@ export const ENTITIES_TYPES = {
   idleRules: 'idleRules',
   flappingRules: 'flappingRules',
   resolveRules: 'resolveRules',
+  filter: 'filter',
 };

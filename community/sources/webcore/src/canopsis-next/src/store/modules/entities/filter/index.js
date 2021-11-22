@@ -5,14 +5,14 @@ import { createEntityModule } from '@/store/plugins/entities';
 import request from '@/services/request';
 
 export default createEntityModule({
-  route: API_ROUTES.roles,
-  entityType: ENTITIES_TYPES.role,
+  route: API_ROUTES.filters,
+  entityType: ENTITIES_TYPES.filter,
   dataPreparer: d => d.data,
   withMeta: true,
 }, {
   actions: {
     fetchListWithoutStore(context, { params }) {
-      return request.get(API_ROUTES.roles, { params });
+      return request.get(API_ROUTES.filters, { params });
     },
   },
 });
