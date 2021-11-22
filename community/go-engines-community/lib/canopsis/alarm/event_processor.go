@@ -114,7 +114,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	operation := s.createOperationFromEvent(event)
-	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, *event.Entity, event.Timestamp, event.Role, event.Initiator)
+	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, *event.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
 	if err != nil {
 		return alarmChange, err
 	}
@@ -227,7 +227,7 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 		)
 
 		err := alarm.PartialUpdatePbhEnter(event.Timestamp, event.PbehaviorInfo,
-			event.Author, output, event.Role, event.Initiator)
+			event.Author, output, event.UserID, event.Role, event.Initiator)
 		if err != nil {
 			return changeType, err
 		}
@@ -440,7 +440,7 @@ func (s *eventProcessor) processAckResources(ctx context.Context, event *types.E
 	}
 
 	for _, alarm := range alarms {
-		_, err := s.executor.Exec(ctx, operation, &alarm.Alarm, alarm.Entity, event.Timestamp, event.Role, event.Initiator)
+		_, err := s.executor.Exec(ctx, operation, &alarm.Alarm, alarm.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
 		if err != nil {
 			return err
 		}
@@ -562,7 +562,7 @@ func (s *eventProcessor) processMetaAlarmChildren(ctx context.Context, event *ty
 		return err
 	}
 	for _, alarm := range alarms {
-		_, err := s.executor.Exec(ctx, operation, &alarm.Alarm, alarm.Entity, event.Timestamp, event.Role, event.Initiator)
+		_, err := s.executor.Exec(ctx, operation, &alarm.Alarm, alarm.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
 		if err != nil {
 			s.logger.Error().Err(err).Msg("error updating meta-alarm child alarm")
 			return err
@@ -729,7 +729,7 @@ func (s *eventProcessor) resolveAlarmForDisabledEntity(ctx context.Context, even
 			Author: event.Author,
 		},
 	}
-	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, *event.Entity, event.Timestamp, event.Role, event.Initiator)
+	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, *event.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
 	if err != nil {
 		return alarmChange, err
 	}
@@ -772,7 +772,7 @@ func (s *eventProcessor) updateAlarmOnNoEventsEvent(alarm *types.Alarm, entity t
 	state := event.State
 	if currentState != state {
 		// Create new Step to keep track of the alarm history
-		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, event.Timestamp, event.Author, event.Output, event.Role, event.Initiator)
+		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, event.Timestamp, event.Author, event.Output, event.UserID, event.Role, event.Initiator)
 		newStep.Value = state
 
 		if state < currentState {
@@ -802,7 +802,7 @@ func (s *eventProcessor) updateAlarmOnNoEventsEvent(alarm *types.Alarm, entity t
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, event.Timestamp, event.Author, event.Output, event.Role, event.Initiator)
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, event.Timestamp, event.Author, event.Output, event.UserID, event.Role, event.Initiator)
 	newStepStatus.Value = newStatus
 
 	if newStatus < currentStatus {
@@ -926,7 +926,7 @@ func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.C
 		}
 
 		// Create new Step to keep track of the alarm history
-		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, "", "")
+		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, "", "", "")
 		newStep.Value = state
 
 		if state < currentState {
@@ -962,7 +962,7 @@ func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.C
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, "", "")
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, "", "", "")
 	newStepStatus.Value = newStatus
 
 	if newStatus < currentStatus {
