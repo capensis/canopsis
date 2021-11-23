@@ -56,10 +56,12 @@ export default {
     },
 
     columns() {
-      return this.widget.parameters.widgetColumns.map(({ label: text, value }) => ({
-        sortable: false,
+      return this.widget.parameters.widgetColumns.map(({ label: text, value, ...rest }) => ({
+        ...rest,
+
         value,
         text,
+        sortable: false,
       }));
     },
   },
