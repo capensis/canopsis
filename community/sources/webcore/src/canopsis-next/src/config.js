@@ -192,6 +192,10 @@ export const API_ROUTES = {
   },
   metrics: {
     alarm: '/api/v4/cat/metrics/alarm',
+    exportAlarm: '/api/v4/cat/metrics-export/alarm',
+    exportRating: '/api/v4/cat/metrics-export/rating',
+    exportSli: '/api/v4/cat/metrics-export/sli',
+    exportMetric: '/api/v4/cat/metrics-export',
     sli: '/api/v4/cat/metrics/sli',
     rating: '/api/v4/cat/metrics/rating',
   },
@@ -311,6 +315,12 @@ export const DEFAULT_CATEGORIES_LIMIT = 3;
 export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
 
 export const HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX = 'healthcheck_last_hour-';
+
+export const KPI_ALARM_METRICS_FILENAME_PREFIX = 'kpi_alarm_metrics-';
+
+export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics';
+
+export const KPI_SLI_METRICS_FILENAME_PREFIX = 'kpi_sli_metrics';
 
 export const APP_INFO_FETCHING_INTERVAL = 10000;
 

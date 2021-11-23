@@ -1,14 +1,19 @@
 import flushPromises from 'flush-promises';
 
 import { mount, createVueInstance } from '@unit/utils/vue';
+import { KPI_SLI_GRAPH_DATA_TYPE, SAMPLINGS } from '@/constants';
 
 import KpiSliChart from '@/components/other/kpi/charts/partials/kpi-sli-chart';
-import { KPI_SLI_GRAPH_DATA_TYPE, SAMPLINGS } from '@/constants';
 
 const localVue = createVueInstance();
 
+const stubs = {
+  'kpi-chart-export-actions': true,
+};
+
 const snapshotFactory = (options = {}) => mount(KpiSliChart, {
   localVue,
+  stubs,
   attachTo: document.body,
 
   ...options,
@@ -134,6 +139,42 @@ describe('kpi-sli-chart', () => {
     },
   ];
 
+  it('Export csv event emitted', async () => {
+    const exportCsv = jest.fn();
+
+    const wrapper = snapshotFactory({
+      listeners: {
+        'export:csv': exportCsv,
+      },
+    });
+
+    await flushPromises();
+
+    const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
+
+    kpiChartExportActions.vm.$emit('export:csv');
+
+    expect(exportCsv).toHaveBeenCalledTimes(1);
+  });
+
+  it('Export png event emitted', async () => {
+    const exportPng = jest.fn();
+
+    const wrapper = snapshotFactory({
+      listeners: {
+        'export:png': exportPng,
+      },
+    });
+
+    await flushPromises();
+
+    const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
+
+    kpiChartExportActions.vm.$emit('export:png');
+
+    expect(exportPng).toHaveBeenCalledTimes(1);
+  });
+
   it('Renders `kpi-sli-chart` with default props.', async () => {
     const wrapper = snapshotFactory();
 
@@ -219,5 +260,21 @@ describe('kpi-sli-chart', () => {
     const canvas = wrapper.find('canvas');
 
     expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `kpi-sli-chart` with downloading true', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        metrics: metricsByMonth,
+        dataType: KPI_SLI_GRAPH_DATA_TYPE.time,
+        sampling: SAMPLINGS.month,
+        downloading: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
   });
 });

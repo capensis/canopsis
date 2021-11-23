@@ -1,5 +1,7 @@
 <template lang="pug">
   bar-chart(:datasets="datasets", :labels="labels", :options="ratingChartOptions")
+    template(#actions="{ chart }")
+      kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
 </template>
 
 <script>
@@ -21,8 +23,10 @@ import { isRatioMetric, isTimeMetric } from '@/helpers/metrics';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
 
+import KpiChartExportActions from './kpi-chart-export-actions.vue';
+
 export default {
-  components: { BarChart },
+  components: { KpiChartExportActions, BarChart },
   props: {
     metrics: {
       type: Array,
@@ -30,9 +34,13 @@ export default {
     },
     metric: {
       type: String,
-      default: USER_METRIC_PARAMETERS.loginsNumber,
+      default: USER_METRIC_PARAMETERS.totalUserActivity,
     },
     responsive: {
+      type: Boolean,
+      default: false,
+    },
+    downloading: {
       type: Boolean,
       default: false,
     },
@@ -105,6 +113,9 @@ export default {
           mode: 'index',
         },
         plugins: {
+          background: {
+            color: 'white',
+          },
           legend: {
             display: false,
           },

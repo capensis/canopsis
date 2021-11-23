@@ -209,6 +209,7 @@ export default {
     downtime: 'Downtime',
     toTheTop: 'Jusqu\'au sommet',
     time: 'Temps',
+    exportAsCsv: 'Export as csv',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',

@@ -6,21 +6,29 @@
       :metrics="sliMetrics",
       :data-type="pagination.type",
       :sampling="pagination.sampling",
-      responsive
+      :downloading="downloading",
+      responsive,
+      @export:csv="exportSliMetricsAsCsv",
+      @export:png="exportSliMetricsAsPng"
     )
 </template>
 
 <script>
+import { KPI_SLI_METRICS_FILENAME_PREFIX } from '@/config';
 import {
   QUICK_RANGES,
   SAMPLINGS,
   KPI_SLI_GRAPH_DATA_TYPE,
+  DATETIME_FORMATS,
 } from '@/constants';
 
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertDateToString } from '@/helpers/date/date';
+import { saveFile } from '@/helpers/file/files';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { exportCsvMixinCreator } from '@/mixins/widget/export';
 
 import KpiSliFilters from './partials/kpi-sli-filters.vue';
 
@@ -28,11 +36,20 @@ const KpiSliChart = () => import(/* webpackChunkName: "Charts" */ './partials/kp
 
 export default {
   components: { KpiSliFilters, KpiSliChart },
-  mixins: [entitiesMetricsMixin, localQueryMixin],
+  mixins: [
+    entitiesMetricsMixin,
+    localQueryMixin,
+    exportCsvMixinCreator({
+      createExport: 'createKpiSliExport',
+      fetchExport: 'fetchMetricExport',
+      fetchExportFile: 'fetchMetricCsvFile',
+    }),
+  ],
   data() {
     return {
       sliMetrics: [],
       pending: false,
+      downloading: false,
       query: {
         sampling: SAMPLINGS.day,
         type: KPI_SLI_GRAPH_DATA_TYPE.percent,
@@ -48,6 +65,27 @@ export default {
     this.fetchList();
   },
   methods: {
+    getFileName() {
+      const fromTime = convertDateToString(
+        convertStartDateIntervalToTimestamp(this.query.interval.from),
+        DATETIME_FORMATS.short,
+      );
+      const toTime = convertDateToString(
+        convertStopDateIntervalToTimestamp(this.query.interval.to),
+        DATETIME_FORMATS.short,
+      );
+
+      return `${KPI_SLI_METRICS_FILENAME_PREFIX}${fromTime}-${toTime}-${this.query.sampling}`;
+    },
+
+    async exportSliMetricsAsPng(blob) {
+      try {
+        await saveFile(blob, this.getFileName());
+      } catch (err) {
+        this.$popups.error({ text: err.message || this.$t('errors.default') });
+      }
+    },
+
     getQuery() {
       return {
         from: convertStartDateIntervalToTimestamp(this.query.interval.from),
@@ -66,6 +104,17 @@ export default {
       });
 
       this.pending = false;
+    },
+
+    async exportSliMetricsAsCsv() {
+      this.downloading = true;
+
+      await this.exportAsCsv({
+        name: this.getFileName(),
+        data: this.getQuery(),
+      });
+
+      this.downloading = false;
     },
   },
 };

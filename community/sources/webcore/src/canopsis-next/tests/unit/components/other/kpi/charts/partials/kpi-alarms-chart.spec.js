@@ -1,14 +1,19 @@
 import flushPromises from 'flush-promises';
 
 import { mount, createVueInstance } from '@unit/utils/vue';
-
 import { ALARM_METRIC_PARAMETERS, SAMPLINGS } from '@/constants';
+
 import KpiAlarmsChart from '@/components/other/kpi/charts/partials/kpi-alarms-chart';
 
 const localVue = createVueInstance();
 
+const stubs = {
+  'kpi-chart-export-actions': true,
+};
+
 const snapshotFactory = (options = {}) => mount(KpiAlarmsChart, {
   localVue,
+  stubs,
   attachTo: document.body,
 
   ...options,
@@ -177,6 +182,42 @@ describe('kpi-alarms-chart', () => {
       value: 2312,
     },
   ];
+
+  it('Export csv event emitted', async () => {
+    const exportCsv = jest.fn();
+
+    const wrapper = snapshotFactory({
+      listeners: {
+        'export:csv': exportCsv,
+      },
+    });
+
+    await flushPromises();
+
+    const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
+
+    kpiChartExportActions.vm.$emit('export:csv');
+
+    expect(exportCsv).toHaveBeenCalledTimes(1);
+  });
+
+  it('Export png event emitted', async () => {
+    const exportPng = jest.fn();
+
+    const wrapper = snapshotFactory({
+      listeners: {
+        'export:png': exportPng,
+      },
+    });
+
+    await flushPromises();
+
+    const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
+
+    kpiChartExportActions.vm.$emit('export:png');
+
+    expect(exportPng).toHaveBeenCalledTimes(1);
+  });
 
   it('Renders `kpi-alarms-chart` with default props.', async () => {
     const wrapper = snapshotFactory();
@@ -498,5 +539,20 @@ describe('kpi-alarms-chart', () => {
     const canvas = wrapper.find('canvas');
 
     expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `kpi-alarms-chart` with downloading true', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        metrics: [],
+        sampling: SAMPLINGS.month,
+        downloading: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
   });
 });
