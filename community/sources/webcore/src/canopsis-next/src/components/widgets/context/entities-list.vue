@@ -104,7 +104,7 @@ import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
-import widgetExportMixinCreator from '@/mixins/widget/export';
+import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
@@ -135,7 +135,7 @@ export default {
     entitiesAlarmColumnsFiltersMixin,
     permissionsWidgetsContextEntityFilters,
     permissionsWidgetsContextEntityCategory,
-    widgetExportMixinCreator({
+    exportCsvMixinCreator({
       createExport: 'createContextExport',
       fetchExport: 'fetchContextExport',
       fetchExportFile: 'fetchContextCsvFile',
@@ -286,8 +286,9 @@ export default {
         ? widgetExportColumns
         : widgetColumns;
 
-      this.exportWidgetAsCsv({
+      this.exportAsCsv({
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
+        widgetId: this.widget._id,
         data: {
           fields: columns.map(({ label, value }) => ({ label, name: value })),
           search: query.search,

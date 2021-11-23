@@ -210,6 +210,7 @@ export default {
     toTheTop: 'Jusqu\'au sommet',
     time: 'Temps',
     lastModifiedOn: 'Dernière modification le',
+    exportAsCsv: 'Export as csv',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',

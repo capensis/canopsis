@@ -1,10 +1,13 @@
 <script>
 import { merge } from 'lodash';
 
+import { chartBackgroundMixin } from '@/mixins/chart/background';
+
 import { Bar } from '@/externals/vue-chart/components';
 
 export default {
   extends: Bar,
+  mixins: [chartBackgroundMixin],
   props: {
     ...Bar.props,
 
