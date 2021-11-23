@@ -873,7 +873,7 @@ func RegisterRoutes(
 				stateSettingsApi.Update,
 			)
 			stateSettingsRouter.GET(
-				"/",
+				"",
 				middleware.Authorize(authObjStateSettings, permCan, enforcer),
 				stateSettingsApi.List,
 			)
@@ -883,12 +883,12 @@ func RegisterRoutes(
 		{
 			notificationApi := notification.NewApi(notification.NewStore(dbClient), actionLogger)
 			notificationRouter.PUT(
-				"/",
+				"",
 				middleware.Authorize(authObjNotification, permCan, enforcer),
 				notificationApi.Update,
 			)
 			notificationRouter.GET(
-				"/",
+				"",
 				middleware.Authorize(authObjNotification, permCan, enforcer),
 				notificationApi.Get,
 			)
