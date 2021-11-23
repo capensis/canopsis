@@ -62,6 +62,7 @@ describe('c-duration-field', () => {
     const wrapper = factory({
       propsData: {
         duration,
+        long: true,
       },
     });
 
@@ -78,7 +79,7 @@ describe('c-duration-field', () => {
     expect(eventData.value).toBe(duration.value);
   });
 
-  it('Renders `c-duration-field` with default props correctly', () => {
+  it('Renders `c-duration-field` with default props', () => {
     const wrapper = snapshotFactory();
 
     const menuContent = wrapper.find('.v-menu__content');
@@ -87,7 +88,20 @@ describe('c-duration-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-duration-field` with custom props correctly', () => {
+  it('Renders `c-duration-field` with long time list', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        long: true,
+      },
+    });
+
+    const menuContent = wrapper.find('.v-menu__content');
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
+  });
+
+  it('Renders `c-duration-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         duration: {
@@ -117,7 +131,7 @@ describe('c-duration-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-duration-field` with errors correctly', async () => {
+  it('Renders `c-duration-field` with errors', async () => {
     const name = 'customName';
 
     const wrapper = snapshotFactory({
@@ -126,6 +140,7 @@ describe('c-duration-field', () => {
           value: 10,
           unit: TIME_UNITS.week,
         },
+        long: true,
         name,
       },
     });
@@ -151,13 +166,14 @@ describe('c-duration-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-duration-field` with duration value as string correctly', async () => {
+  it('Renders `c-duration-field` with duration value as string', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         duration: {
           value: 'asd',
           unit: TIME_UNITS.week,
         },
+        long: true,
       },
     });
 
@@ -168,20 +184,21 @@ describe('c-duration-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `c-duration-field` with duration value as undefined correctly', async () => {
+  it('Renders `c-duration-field` with duration value as undefined', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         duration: {
           value: undefined,
           unit: TIME_UNITS.week,
         },
+        long: true,
       },
     });
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `c-duration-field` with value is greater than the minimum correctly', async () => {
+  it('Renders `c-duration-field` with value is greater than the minimum', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         duration: {
@@ -189,6 +206,7 @@ describe('c-duration-field', () => {
           unit: TIME_UNITS.second,
         },
         min: 100,
+        long: true,
       },
     });
 
