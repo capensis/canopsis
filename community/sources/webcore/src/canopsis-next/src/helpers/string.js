@@ -1,3 +1,5 @@
+import { isNil } from 'lodash';
+
 const FIRST_LETTER_ALPHABET_CHAR_CODE = 97;
 
 /**
@@ -26,6 +28,10 @@ export const convertNumberToFixedString = (value, digits = 3) => value && Number
  * @returns {string}
  */
 export const convertNumberToRoundedPercentString = (value, precision = 3) => {
+  if (isNil(value)) {
+    return '';
+  }
+
   const tmp = 10 ** precision;
 
   const filteredValue = 100 * value;

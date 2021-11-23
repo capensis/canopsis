@@ -1,34 +1,55 @@
 <template lang="pug">
-  div
-    v-layout.ml-4.mb-4(align-center)
-      c-quick-date-interval-field(
-        :interval="pagination.interval",
-        @input="updateInterval"
-      )
-    div
-      kpi-rating-chart(:metrics="ratingMetrics", :metric="pagination.metric", responsive)
+  div.position-relative
+    c-progress-overlay(:pending="pending")
+    kpi-rating-filters(v-model="pagination")
+    kpi-rating-chart(
+      :metrics="ratingMetrics",
+      :metric="pagination.metric",
+      :downloading="downloading",
+      responsive,
+      @export:csv="exportRatingMetricsAsCsv",
+      @export:png="exportRatingMetricsAsPng"
+    )
 </template>
 
 <script>
+import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
+
 import {
   QUICK_RANGES,
   ALARM_METRIC_PARAMETERS,
   KPI_RATING_CRITERIA,
+  DATETIME_FORMATS,
 } from '@/constants';
 
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertDateToString } from '@/helpers/date/date';
+import { saveFile } from '@/helpers/file/files';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { exportCsvMixinCreator } from '@/mixins/widget/export';
+
+import KpiRatingFilters from './partials/kpi-rating-filters.vue';
 
 const KpiRatingChart = () => import(/* webpackChunkName: "Charts" */ './partials/kpi-rating-chart.vue');
 
 export default {
-  components: { KpiRatingChart },
-  mixins: [entitiesMetricsMixin, localQueryMixin],
+  components: { KpiRatingFilters, KpiRatingChart },
+  mixins: [
+    entitiesMetricsMixin,
+    localQueryMixin,
+    exportCsvMixinCreator({
+      createExport: 'createKpiRatingExport',
+      fetchExport: 'fetchMetricExport',
+      fetchExportFile: 'fetchMetricCsvFile',
+    }),
+  ],
   data() {
     return {
       ratingMetrics: [],
+      pending: false,
+      downloading: false,
       query: {
         criteria: KPI_RATING_CRITERIA.user,
         metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
@@ -43,8 +64,25 @@ export default {
     this.fetchList();
   },
   methods: {
-    updateInterval(interval) {
-      this.updateQueryField('interval', interval);
+    getFileName() {
+      const fromTime = convertDateToString(
+        convertStartDateIntervalToTimestamp(this.query.interval.from),
+        DATETIME_FORMATS.short,
+      );
+      const toTime = convertDateToString(
+        convertStopDateIntervalToTimestamp(this.query.interval.to),
+        DATETIME_FORMATS.short,
+      );
+
+      return `${KPI_RATING_METRICS_FILENAME_PREFIX}${fromTime}-${toTime}-${this.metric}-${this.criteria}`;
+    },
+
+    async exportRatingMetricsAsPng(blob) {
+      try {
+        await saveFile(blob, this.getFileName());
+      } catch (err) {
+        this.$popups.error({ text: err.message || this.$t('errors.default') });
+      }
     },
 
     getQuery() {
@@ -58,9 +96,24 @@ export default {
     },
 
     async fetchList() {
+      this.pending = true;
+
       this.ratingMetrics = await this.fetchRatingMetricsWithoutStore({
         params: this.getQuery(),
       });
+
+      this.pending = false;
+    },
+
+    async exportRatingMetricsAsCsv() {
+      this.downloading = true;
+
+      await this.exportAsCsv({
+        name: this.getFileName(),
+        data: this.getQuery(),
+      });
+
+      this.downloading = false;
     },
   },
 };

@@ -6,7 +6,7 @@
 
 <script>
 import { convertDateToString } from '@/helpers/date/date';
-import { convertDurationToString } from '@/helpers/date/duration';
+import { convertDurationToString, toSeconds } from '@/helpers/date/duration';
 
 export default {
   props: {
@@ -55,8 +55,10 @@ export default {
     },
 
     timeToCompleteLabel() {
+      const { value, unit } = this.timeToComplete;
+
       return this.$t('remediationInstructionExecute.timeToComplete', {
-        duration: convertDurationToString(this.timeToComplete.seconds),
+        duration: convertDurationToString(toSeconds(value, unit)),
       });
     },
 
