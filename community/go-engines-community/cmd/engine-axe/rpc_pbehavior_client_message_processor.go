@@ -67,6 +67,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 			*event.Entity,
 			event.PbhEvent.Timestamp,
 			"",
+			"",
 			types.InitiatorSystem,
 		)
 		if err != nil {

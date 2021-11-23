@@ -227,7 +227,7 @@ export default {
 
       const newValue = this.isMultiple ? selectedFilters : selectedFilters[0];
 
-      return this.$emit('update:filters', filters.map(removeSelectedProperty), newValue);
+      this.$emit('update:filters', filters.map(removeSelectedProperty), newValue);
     },
 
     isFilterEqual(firstFilter, secondFilter) {

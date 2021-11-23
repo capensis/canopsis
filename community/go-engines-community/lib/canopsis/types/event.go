@@ -147,7 +147,10 @@ type Event struct {
 	Output        string     `bson:"output" json:"output"`
 	Alarm         *Alarm     `bson:"current_alarm" json:"current_alarm"`
 	Entity        *Entity    `bson:"current_entity" json:"current_entity"`
+
 	Author        string     `bson:"author" json:"author"`
+	UserID        string     `bson:"user_id" json:"user_id"`
+
 	RK            string     `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.
 	// It also adds declare ticket to all resource alarms on ack webhook.
