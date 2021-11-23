@@ -29,7 +29,7 @@ func (e *changeStateExecutor) Exec(
 	alarm *types.Alarm,
 	entity types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationChangeStateParameters
 	var ok bool
@@ -49,7 +49,7 @@ func (e *changeStateExecutor) Exec(
 	conf := e.configProvider.Get()
 	output := utils.TruncateString(params.Output, conf.OutputLength)
 
-	newStep := types.NewAlarmStep(types.AlarmStepChangeState, time, params.Author, output, role, initiator)
+	newStep := types.NewAlarmStep(types.AlarmStepChangeState, time, params.Author, output, userID, role, initiator)
 	newStep.Value = params.State
 	alarm.Value.State = &newStep
 
@@ -67,7 +67,7 @@ func (e *changeStateExecutor) Exec(
 		return types.AlarmChangeTypeChangeState, nil
 	}
 
-	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, time, params.Author, output, role, initiator)
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, time, params.Author, output, userID, role, initiator)
 	newStepStatus.Value = newStatus
 	if alarm.Value.Status != nil && newStepStatus.Value < alarm.Value.Status.Value {
 		newStepStatus.Type = types.AlarmStepStatusDecrease

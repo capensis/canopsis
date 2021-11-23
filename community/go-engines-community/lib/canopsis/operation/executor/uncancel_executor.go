@@ -27,7 +27,7 @@ func (e *uncancelExecutor) Exec(
 	alarm *types.Alarm,
 	entity types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationParameters
 	var ok bool
@@ -41,7 +41,7 @@ func (e *uncancelExecutor) Exec(
 
 	alarmConfig := e.configProvider.Get()
 	output := utils.TruncateString(params.Output, alarmConfig.OutputLength)
-	newStep := types.NewAlarmStep(types.AlarmStepUncancel, time, params.Author, output, role, initiator)
+	newStep := types.NewAlarmStep(types.AlarmStepUncancel, time, params.Author, output, userID, role, initiator)
 	alarm.Value.Canceled = nil
 
 	if err := alarm.Value.Steps.Add(newStep); err != nil {
@@ -60,7 +60,7 @@ func (e *uncancelExecutor) Exec(
 		return types.AlarmChangeTypeUncancel, nil
 	}
 
-	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, time, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, role, initiator)
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, time, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, userID, role, initiator)
 	newStepStatus.Value = newStatus
 	if alarm.Value.Status != nil && newStepStatus.Value < alarm.Value.Status.Value {
 		newStepStatus.Type = types.AlarmStepStatusDecrease
