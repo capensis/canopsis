@@ -2,18 +2,12 @@ import { DEFAULT_APP_TITLE, DEFAULT_LOCALE, POPUP_AUTO_CLOSE_DELAY } from '@/con
 
 import { TIME_UNITS } from '@/constants';
 
-import { durationToForm, formToDuration } from '@/helpers/date/duration';
+import { durationToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} PopupTimeout
  * @property {Duration} error
  * @property {Duration} info
- */
-
-/**
- * @typedef {Object} PopupTimeoutForm
- * @property {DurationForm} error
- * @property {DurationForm} info
  */
 
 /**
@@ -29,9 +23,9 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  * @property {number} [max_matched_items]
  * @property {number} [check_count_request_timeout]
  */
+
 /**
  * @typedef {UserInterface} UserInterfaceForm
- * @property {PopupTimeoutForm} popup_timeout
  * @property {File} [logo]
  */
 
@@ -44,10 +38,10 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  */
 
 /**
- *
+ * Convert user interface popupTimeout to form
  *
  * @param {PopupTimeout} [popupTimeout = {}]
- * @return {PopupTimeoutForm}
+ * @return {PopupTimeout}
  */
 const userInterfacePopupTimeoutToForm = (popupTimeout = {}) => ({
   info: popupTimeout.info
@@ -74,26 +68,4 @@ export const userInterfaceToForm = (userInterface = {}) => ({
   max_matched_items: userInterface.max_matched_items ?? '',
   check_count_request_timeout: userInterface.check_count_request_timeout ?? '',
   popup_timeout: userInterfacePopupTimeoutToForm(userInterface.popup_timeout),
-});
-
-/**
- * Convert popupTimeoutForm to userInterface popupTimeout
- *
- * @param {PopupTimeoutForm | {}} [popupTimeout = {}]
- * @return {PopupTimeout}
- */
-const formPopupTimeoutToUserInterfacePopupTimeout = (popupTimeout = {}) => ({
-  info: formToDuration(popupTimeout.info),
-  error: formToDuration(popupTimeout.error),
-});
-
-/**
- * Convert form to userInterface object
- *
- * @param {UserInterfaceForm | {}} [form = {}]
- * @returns {UserInterface}
- */
-export const formToUserInterface = (form = {}) => ({
-  ...form,
-  popup_timeout: formPopupTimeoutToUserInterfacePopupTimeout(form.popup_timeout),
 });
