@@ -26,6 +26,7 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  KPI_RATING_CRITERIA,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2650,6 +2651,14 @@ export default {
   },
 
   kpiMetrics: {
+    criteria: 'Critères',
+    parameter: 'Paramètre à comparer',
+    criteriaTypes: {
+      [KPI_RATING_CRITERIA.user]: 'Utilisateur',
+      [KPI_RATING_CRITERIA.role]: 'Rôle',
+      [KPI_RATING_CRITERIA.category]: 'Catégorie',
+      [KPI_RATING_CRITERIA.impactLevel]: 'Niveau d\'impact',
+    },
     tooltip: {
       [USER_METRIC_PARAMETERS.totalUserActivity]: '{value} temps total d\'activité',
 

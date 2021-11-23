@@ -11,7 +11,8 @@ import {
 } from '@/constants';
 
 import {
-  convertDurationFormToMaxUnitDurationForm, convertDurationToString,
+  convertDurationToMaxUnitDuration,
+  convertDurationToString,
   fromSeconds,
 } from '@/helpers/date/duration';
 import { getDateLabelBySampling, isRatioMetric, isTimeMetric } from '@/helpers/metrics';
@@ -63,7 +64,7 @@ export default {
     },
 
     maxTimeDuration() {
-      return convertDurationFormToMaxUnitDurationForm({
+      return convertDurationToMaxUnitDuration({
         value: this.maxTimeValue,
         unit: TIME_UNITS.second,
       });
@@ -143,8 +144,8 @@ export default {
               font: {
                 size: 11,
               },
-              boxWidth: 20,
-              boxHeight: 20,
+              boxWidth: 15,
+              boxHeight: 15,
             },
           },
           tooltip: {
