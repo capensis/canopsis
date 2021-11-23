@@ -14,6 +14,7 @@ export const entitiesFilterMixin = {
   methods: {
     ...mapActions({
       fetchFiltersListWithoutStore: 'fetchListWithoutStore',
+      fetchFiltersListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchFiltersList: 'fetchList',
       removeFilter: 'remove',
       createFilter: 'create',

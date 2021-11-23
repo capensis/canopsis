@@ -8,6 +8,7 @@ export default createEntityModule({
   route: API_ROUTES.filters,
   entityType: ENTITIES_TYPES.filter,
   dataPreparer: d => d.data,
+  withFetchingParams: true,
   withMeta: true,
 }, {
   actions: {

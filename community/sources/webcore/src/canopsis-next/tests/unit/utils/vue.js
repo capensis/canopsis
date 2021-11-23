@@ -7,6 +7,7 @@ import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createL
 import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ValidatorPlugin from '@/plugins/validator';
+import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 import * as constants from '@/constants';
 import * as config from '@/config';
 import { convertDateToString } from '@/helpers/date/date';
@@ -41,6 +42,7 @@ Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin, { i18n });
+Vue.use(VuetifyReplacerPlugin);
 
 Vue.filter('get', get);
 Vue.filter('date', convertDateToString);

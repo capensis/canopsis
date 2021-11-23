@@ -36,7 +36,7 @@ describe('c-change-state-field', () => {
       output: Faker.datatype.string(),
     };
     const wrapper = factory({
-      store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: false }),
+      store: createMockedStoreGetters({ name: 'info', allowChangeSeverityToInfo: false }),
       propsData: {
         value: initialValue,
       },
@@ -64,7 +64,7 @@ describe('c-change-state-field', () => {
       output: Faker.datatype.string(),
     };
     const wrapper = factory({
-      store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: false }),
+      store: createMockedStoreGetters({ name: 'info', allowChangeSeverityToInfo: false }),
       propsData: {
         value: initialValue,
       },
@@ -93,7 +93,7 @@ describe('c-change-state-field', () => {
     };
 
     const wrapper = snapshotFactory({
-      store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: false }),
+      store: createMockedStoreGetters({ name: 'info', allowChangeSeverityToInfo: false }),
       propsData: {
         value,
       },
@@ -108,7 +108,7 @@ describe('c-change-state-field', () => {
 
   it('Renders `c-change-state-field` with custom label correctly', () => {
     const wrapper = snapshotFactory({
-      store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: false }),
+      store: createMockedStoreGetters({ name: 'info', allowChangeSeverityToInfo: false }),
       propsData: {
         value: {
           state: ENTITIES_STATES.ok,
@@ -123,7 +123,7 @@ describe('c-change-state-field', () => {
 
   it('Renders `c-change-state-field` without allowed change severity to info correctly', () => {
     const wrapper = snapshotFactory({
-      store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: false }),
+      store: createMockedStoreGetters({ name: 'info', allowChangeSeverityToInfo: false }),
       propsData: {
         value: {
           state: ENTITIES_STATES.ok,
@@ -138,7 +138,7 @@ describe('c-change-state-field', () => {
 
   it('Renders `c-change-state-field` with allowed change severity to info correctly', () => {
     const wrapper = snapshotFactory({
-      store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: true }),
+      store: createMockedStoreGetters({ name: 'info', allowChangeSeverityToInfo: true }),
       propsData: {
         value: {
           state: ENTITIES_STATES.ok,
@@ -156,7 +156,7 @@ describe('c-change-state-field', () => {
     const name = 'customName';
 
     const wrapper = snapshotFactory({
-      store: createMockedStoreGetters('info', { allowChangeSeverityToInfo: true }),
+      store: createMockedStoreGetters({ name: 'info', allowChangeSeverityToInfo: true }),
       propsData: {
         value: {
           state: ENTITIES_STATES.ok,

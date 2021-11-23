@@ -44,3 +44,8 @@ export const KPI_RATING_ENTITY_METRICS = [
   ALARM_METRIC_PARAMETERS.averageAck,
   ALARM_METRIC_PARAMETERS.averageResolve,
 ];
+
+export const KPI_TABS = {
+  graphs: 'graphs',
+  filters: 'filters',
+};
