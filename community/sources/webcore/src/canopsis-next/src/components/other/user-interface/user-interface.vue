@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { formToUserInterface, userInterfaceToForm } from '@/helpers/forms/user-interface';
+import { userInterfaceToForm } from '@/helpers/forms/user-interface';
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -59,7 +59,7 @@ export default {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
-        const data = formToUserInterface(this.form);
+        const data = { ...this.form };
 
         if (this.form.logo) {
           data.logo = await getFileDataUrlContent(this.form.logo);

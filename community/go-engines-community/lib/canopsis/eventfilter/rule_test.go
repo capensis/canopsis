@@ -8,6 +8,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
+	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -538,6 +540,11 @@ func TestUnmarshal(t *testing.T) {
 
 func TestDropRule(t *testing.T) {
 	ctx := context.Background()
+	ctrl := gomock.NewController(t)
+	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
+	mockTimezoneConfigProvider.EXPECT().Get()
+
+	timeZone := mockTimezoneConfigProvider.Get()
 
 	Convey("Given a valid drop rule", t, func() {
 		bsonRule, err := bson.Marshal(dropRule)
@@ -566,19 +573,19 @@ func TestDropRule(t *testing.T) {
 
 			Convey("The rule's outcome should always be Drop", func() {
 				report := eventfilter.Report{}
-				_, outcome := rule.Apply(ctx, eventCheck0, pattern.NewEventRegexMatches(), &report, log.NewTestLogger())
+				_, outcome := rule.Apply(ctx, eventCheck0, pattern.NewEventRegexMatches(), &report, &timeZone, log.NewTestLogger())
 				So(outcome, ShouldEqual, eventfilter.Drop)
 				So(report.EntityUpdated, ShouldBeFalse)
 
-				_, outcome = rule.Apply(ctx, eventCheck1, pattern.NewEventRegexMatches(), &report, log.NewTestLogger())
+				_, outcome = rule.Apply(ctx, eventCheck1, pattern.NewEventRegexMatches(), &report, &timeZone, log.NewTestLogger())
 				So(outcome, ShouldEqual, eventfilter.Drop)
 				So(report.EntityUpdated, ShouldBeFalse)
 
-				_, outcome = rule.Apply(ctx, eventCheck2, pattern.NewEventRegexMatches(), &report, log.NewTestLogger())
+				_, outcome = rule.Apply(ctx, eventCheck2, pattern.NewEventRegexMatches(), &report, &timeZone, log.NewTestLogger())
 				So(outcome, ShouldEqual, eventfilter.Drop)
 				So(report.EntityUpdated, ShouldBeFalse)
 
-				_, outcome = rule.Apply(ctx, eventCheck3, pattern.NewEventRegexMatches(), &report, log.NewTestLogger())
+				_, outcome = rule.Apply(ctx, eventCheck3, pattern.NewEventRegexMatches(), &report, &timeZone, log.NewTestLogger())
 				So(outcome, ShouldEqual, eventfilter.Drop)
 				So(report.EntityUpdated, ShouldBeFalse)
 			})
@@ -588,6 +595,10 @@ func TestDropRule(t *testing.T) {
 
 func TestBreakRule(t *testing.T) {
 	ctx := context.Background()
+	ctrl := gomock.NewController(t)
+	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
+	mockTimezoneConfigProvider.EXPECT().Get()
+	timeZone := mockTimezoneConfigProvider.Get()
 
 	Convey("Given a valid break rule", t, func() {
 		bsonRule, err := bson.Marshal(breakRule)
@@ -616,19 +627,19 @@ func TestBreakRule(t *testing.T) {
 
 			Convey("The rule's outcome should always be Break", func() {
 				report := eventfilter.Report{}
-				_, outcome := rule.Apply(ctx, eventCheck0, pattern.NewEventRegexMatches(), &report, log.NewTestLogger())
+				_, outcome := rule.Apply(ctx, eventCheck0, pattern.NewEventRegexMatches(), &report, &timeZone, log.NewTestLogger())
 				So(outcome, ShouldEqual, eventfilter.Break)
 				So(report.EntityUpdated, ShouldBeFalse)
 
-				_, outcome = rule.Apply(ctx, eventCheck1, pattern.NewEventRegexMatches(), &report, log.NewTestLogger())
+				_, outcome = rule.Apply(ctx, eventCheck1, pattern.NewEventRegexMatches(), &report, &timeZone, log.NewTestLogger())
 				So(outcome, ShouldEqual, eventfilter.Break)
 				So(report.EntityUpdated, ShouldBeFalse)
 
-				_, outcome = rule.Apply(ctx, eventCheck2, pattern.NewEventRegexMatches(), &report, log.NewTestLogger())
+				_, outcome = rule.Apply(ctx, eventCheck2, pattern.NewEventRegexMatches(), &report, &timeZone, log.NewTestLogger())
 				So(outcome, ShouldEqual, eventfilter.Break)
 				So(report.EntityUpdated, ShouldBeFalse)
 
-				_, outcome = rule.Apply(ctx, eventCheck3, pattern.NewEventRegexMatches(), &report, log.NewTestLogger())
+				_, outcome = rule.Apply(ctx, eventCheck3, pattern.NewEventRegexMatches(), &report, &timeZone, log.NewTestLogger())
 				So(err, ShouldBeNil)
 				So(outcome, ShouldEqual, eventfilter.Break)
 				So(report.EntityUpdated, ShouldBeFalse)
@@ -639,6 +650,10 @@ func TestBreakRule(t *testing.T) {
 
 func TestEnrichmentRule(t *testing.T) {
 	ctx := context.Background()
+	ctrl := gomock.NewController(t)
+	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
+	mockTimezoneConfigProvider.EXPECT().Get()
+	timeZone := mockTimezoneConfigProvider.Get()
 
 	Convey("Given an enrichment rule that changes the output of the events", t, func() {
 		bsonRule, err := bson.Marshal(enrichmentRule)
@@ -662,7 +677,7 @@ func TestEnrichmentRule(t *testing.T) {
 
 			Convey("The rule's outcome should always be Break", func() {
 				report := eventfilter.Report{}
-				event, outcome := rule.Apply(ctx, eventCheck3, pattern.NewEventRegexMatches(), &report, log.NewTestLogger())
+				event, outcome := rule.Apply(ctx, eventCheck3, pattern.NewEventRegexMatches(), &report, &timeZone, log.NewTestLogger())
 				So(event.Output, ShouldEqual, "modified output")
 				So(outcome, ShouldEqual, eventfilter.Pass)
 				So(report.EntityUpdated, ShouldBeFalse)
@@ -673,6 +688,10 @@ func TestEnrichmentRule(t *testing.T) {
 	Convey("Given an enrichment rule that fails", t, func() {
 		bsonRule, err := bson.Marshal(failingEnrichmentRule)
 		So(err, ShouldBeNil)
+		ctrl := gomock.NewController(t)
+		mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
+		mockTimezoneConfigProvider.EXPECT().Get()
+		timeZone := mockTimezoneConfigProvider.Get()
 
 		Convey("The rule should be decoded without errors", func() {
 			var rule eventfilter.RuleUnpacker
@@ -692,7 +711,7 @@ func TestEnrichmentRule(t *testing.T) {
 
 			Convey("The rule's outcome should be OnFailure", func() {
 				report := eventfilter.Report{}
-				_, outcome := rule.Apply(ctx, eventCheck3, pattern.NewEventRegexMatches(), &report, log.NewTestLogger())
+				_, outcome := rule.Apply(ctx, eventCheck3, pattern.NewEventRegexMatches(), &report, &timeZone, log.NewTestLogger())
 				So(outcome, ShouldEqual, eventfilter.Drop)
 				So(report.EntityUpdated, ShouldBeFalse)
 			})
@@ -724,7 +743,7 @@ func TestEnrichmentRule(t *testing.T) {
 				So(match, ShouldBeTrue)
 
 				report := eventfilter.Report{}
-				event, outcome := rule.Apply(ctx, eventCheck3, matches, &report, log.NewTestLogger())
+				event, outcome := rule.Apply(ctx, eventCheck3, matches, &report, &timeZone, log.NewTestLogger())
 				So(event.Output, ShouldEqual, "Attention, la charge CPU est critique (90%)")
 				So(outcome, ShouldEqual, eventfilter.Pass)
 				So(report.EntityUpdated, ShouldBeFalse)

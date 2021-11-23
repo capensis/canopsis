@@ -2,7 +2,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
 
-import CRecordsPerPage from '@/components/common/pagination/c-records-per-page.vue';
+import CRecordsPerPage from '@/components/forms/fields/c-records-per-page-field.vue';
 
 const localVue = createVueInstance();
 
@@ -23,7 +23,13 @@ const factory = (options = {}) => shallowMount(CRecordsPerPage, {
   ...options,
 });
 
-describe('c-records-per-page', () => {
+const snapshotFactory = (options = {}) => mount(CRecordsPerPage, {
+  localVue,
+
+  ...options,
+});
+
+describe('c-records-per-page-field', () => {
   it('Default items is equal to PAGINATION_PER_PAGE_VALUES', () => {
     const wrapper = factory();
 
@@ -90,9 +96,20 @@ describe('c-records-per-page', () => {
     expect(inputEvents[0].map(e => parseInt(e, 10))).toEqual([value]);
   });
 
-  it('Renders `c-records-per-page` correctly', () => {
-    const wrapper = mount(CRecordsPerPage, {
-      localVue,
+  it('Renders `c-records-per-page-field` with default props', () => {
+    const wrapper = snapshotFactory();
+
+    const menuContent = wrapper.find('.v-menu__content');
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
+  });
+
+  it('Renders `c-records-per-page-field` with custom props', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        items: [2, 4, 6],
+      },
     });
 
     const menuContent = wrapper.find('.v-menu__content');

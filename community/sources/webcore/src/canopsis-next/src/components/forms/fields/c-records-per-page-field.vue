@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-select.select.pa-0(
+  v-select.select(
     :items="items",
     :value="value",
     @input="$emit('input', $event)",

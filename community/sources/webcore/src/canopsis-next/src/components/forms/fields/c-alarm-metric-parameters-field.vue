@@ -3,6 +3,7 @@
     v-field="value",
     :items="availableParameters",
     :name="name",
+    hide-details,
     multiple
   )
     template(#selection="{ item, index }")
