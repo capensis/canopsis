@@ -393,7 +393,7 @@ export function uppercaseHelper(str) {
  * @param {string} pattern
  * @param {string} replacement
  * @param {Object} [options = {}]
- * @return {*}
+ * @return {string}
  */
 export function replaceHelper(source, pattern, replacement, options = {}) {
   if (arguments.length < 4) {
