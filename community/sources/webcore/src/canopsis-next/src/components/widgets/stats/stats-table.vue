@@ -40,7 +40,6 @@ import { dataTableCustomSortWithNullIgnoring } from '@/helpers/sort';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
@@ -49,7 +48,6 @@ export default {
   mixins: [
     entitiesStatsMixin,
     widgetFetchQueryMixin,
-    entitiesUserPreferenceMixin,
     widgetStatsQueryMixin,
     widgetStatsWrapperMixin,
     widgetStatsTableWrapperMixin,

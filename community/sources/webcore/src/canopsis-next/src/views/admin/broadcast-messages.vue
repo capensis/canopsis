@@ -21,7 +21,7 @@
 import { MODALS } from '@/constants';
 
 import { permissionsTechnicalBroadcastMessageMixin } from '@/mixins/permissions/technical/broadcast-message';
-import { entitiesBroadcastMessagesMixin } from '@/mixins/entities/broadcast-message';
+import { entitiesBroadcastMessageMixin } from '@/mixins/entities/broadcast-message';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
 import BroadcastMessagesList from '@/components/other/broadcast-message/broadcast-messages-list.vue';
@@ -33,7 +33,7 @@ export default {
   mixins: [
     localQueryMixin,
     permissionsTechnicalBroadcastMessageMixin,
-    entitiesBroadcastMessagesMixin,
+    entitiesBroadcastMessageMixin,
   ],
   mounted() {
     this.fetchList();

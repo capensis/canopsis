@@ -214,9 +214,7 @@ export default {
     },
 
     updateCorrelation(correlation) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         isCorrelationEnabled: correlation,
       });
 
@@ -230,9 +228,7 @@ export default {
     updateCategory(category) {
       const categoryId = category && category._id;
 
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         category: categoryId,
       });
 
@@ -244,9 +240,7 @@ export default {
     },
 
     updateRecordsPerPage(limit) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         itemsPerPage: limit,
       });
 
