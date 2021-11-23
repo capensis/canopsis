@@ -8,6 +8,11 @@ export const entitiesMetricsMixin = {
       fetchSliMetricsWithoutStore: 'fetchSliMetricsWithoutStore',
       fetchRatingMetricsWithoutStore: 'fetchRatingMetricsWithoutStore',
       fetchAlarmsMetricsWithoutStore: 'fetchAlarmsMetricsWithoutStore',
+      createKpiAlarmExport: 'createKpiAlarmExport',
+      createKpiRatingExport: 'createKpiRatingExport',
+      createKpiSliExport: 'createKpiSliExport',
+      fetchMetricExport: 'fetchMetricExport',
+      fetchMetricCsvFile: 'fetchMetricCsvFile',
     }),
   },
 };
