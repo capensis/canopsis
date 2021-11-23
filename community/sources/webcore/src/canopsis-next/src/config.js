@@ -160,11 +160,11 @@ export const API_ROUTES = {
   flappingRules: '/api/v4/flapping-rules',
   resolveRules: '/api/v4/resolve-rules',
   messageRateStats: '/api/v4/message-rate-stats',
-  filters: '/api/v4/cat/filters',
 
   /**
    * Cat routes
    */
+  filters: '/api/v4/cat/filters',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
   remediation: {
