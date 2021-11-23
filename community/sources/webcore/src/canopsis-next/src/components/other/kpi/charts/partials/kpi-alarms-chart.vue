@@ -13,7 +13,7 @@ import {
 } from '@/constants';
 
 import {
-  convertDurationFormToMaxUnitDurationForm,
+  convertDurationToMaxUnitDuration,
   convertDurationToString,
   fromSeconds,
 } from '@/helpers/date/duration';
@@ -72,7 +72,7 @@ export default {
     },
 
     maxTimeDuration() {
-      return convertDurationFormToMaxUnitDurationForm({
+      return convertDurationToMaxUnitDuration({
         value: this.maxTimeValue,
         unit: TIME_UNITS.second,
       });

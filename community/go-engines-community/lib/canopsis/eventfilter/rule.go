@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
@@ -54,14 +55,15 @@ func (r Rule) IsEnabled() bool {
 
 // Apply applies the rule to an event. Note that Apply does not check that the
 // rule is enabled or that its pattern match the event.
-func (r Rule) Apply(ctx context.Context, event types.Event, regexMatches pattern.EventRegexMatches, report *Report, logger zerolog.Logger) (types.Event, Outcome) {
+func (r Rule) Apply(ctx context.Context, event types.Event, regexMatches pattern.EventRegexMatches, report *Report,
+	timezoneConfig *config.TimezoneConfig, logger zerolog.Logger) (types.Event, Outcome) {
 	switch r.Type {
 	case RuleTypeBreak:
 		return event, Break
 	case RuleTypeDrop:
 		return event, Drop
 	case RuleTypeEnrichment:
-		return r.EnrichmentRule.Apply(ctx, event, regexMatches, report, logger, r.ID)
+		return r.EnrichmentRule.Apply(ctx, event, regexMatches, report, timezoneConfig, logger, r.ID)
 	default:
 		logger.Info().Msgf("Skipping rule with unknown rule type: %s", r.Type)
 		return event, Pass

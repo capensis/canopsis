@@ -59,7 +59,7 @@ server {
 
 	# /api/v4/ws is like /api/ below, but it needs websocket upgrades as well
 	# (and thus, HTTPS if you effectively use this)
-	location /api/v4/ws {
+	location = /api/v4/ws {
 		include /etc/nginx/cors.inc;
 		proxy_pass $canopsis_api_url/api/v4/ws$is_args$args;
 		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';

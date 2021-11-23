@@ -2,7 +2,6 @@ package eventfilter_test
 
 import (
 	"context"
-	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	"sort"
 	"testing"
 
@@ -10,7 +9,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_context "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/context"
+	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
@@ -60,7 +61,9 @@ func testNewService(ctrl *gomock.Controller, data ...bson.M) eventfilter.Service
 	})
 
 	adapter.EXPECT().List(gomock.Any()).Return(rules, nil)
-	return eventfilter.NewService(adapter, log.NewTestLogger())
+	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
+	mockTimezoneConfigProvider.EXPECT().Get()
+	return eventfilter.NewService(adapter, mockTimezoneConfigProvider, log.NewTestLogger())
 }
 
 func TestProcessEvent(t *testing.T) {
