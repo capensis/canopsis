@@ -268,6 +268,12 @@ export default {
       november: 'Novembre',
       december: 'Décembre',
     },
+    stateTypes: {
+      [ENTITIES_STATES.ok]: 'Ok',
+      [ENTITIES_STATES.minor]: 'Mineur',
+      [ENTITIES_STATES.major]: 'Majeur',
+      [ENTITIES_STATES.critical]: 'Critique',
+    },
   },
   variableTypes: {
     string: 'String',
@@ -2288,22 +2294,17 @@ export default {
   },
 
   entity: {
+    manageInfos: 'Gérer les informations',
+    form: 'Formulaire',
+    impact: 'Impacts',
+    depends: 'Dépendances',
+    addInformation: 'Ajouter une information',
+    emptyInfos: 'Aucune information',
+    availabilityState: 'État de haute disponibilité',
     types: {
       connector: 'type de connecteur',
       component: 'composant',
       resource: 'ressource',
-    },
-    fields: {
-      type: 'Type',
-      manageInfos: 'Gérer les informations',
-      form: 'Formulaire',
-      impact: 'Impacts',
-      depends: 'Dépendances',
-    },
-    manageInfos: {
-      title: 'Informations',
-      createTitle: 'Ajouter une information',
-      emptyInfos: 'Aucune information',
     },
   },
 

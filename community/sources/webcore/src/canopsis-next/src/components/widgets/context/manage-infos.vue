@@ -2,17 +2,17 @@
   div
     v-layout(justify-end)
       c-action-btn(
-        :tooltip="$t('entity.manageInfos.createTitle')",
+        :tooltip="$t('entity.addInformation')",
         icon="add",
         @click="showAddInfoModal"
       )
     v-data-table(
       :items="infos",
       :headers="tableHeaders",
-      :no-data-text="$t('entity.manageInfos.emptyInfos')",
+      :no-data-text="$t('entity.emptyInfos')",
       item-key="name"
     )
-      template(slot="items", slot-scope="props")
+      template(#items="props")
         td {{ props.item.name }}
         td {{ props.item.description }}
         td {{ props.item.value }}
