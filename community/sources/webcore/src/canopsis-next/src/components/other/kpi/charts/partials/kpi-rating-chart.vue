@@ -13,7 +13,7 @@ import {
 
 import { colorToRgba } from '@/helpers/color';
 import {
-  convertDurationFormToMaxUnitDurationForm,
+  convertDurationToMaxUnitDuration,
   convertDurationToString,
   fromSeconds,
 } from '@/helpers/date/duration';
@@ -47,7 +47,7 @@ export default {
     },
 
     maxDuration() {
-      return convertDurationFormToMaxUnitDurationForm({
+      return convertDurationToMaxUnitDuration({
         value: this.maxValue,
         unit: TIME_UNITS.second,
       });

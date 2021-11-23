@@ -1,12 +1,8 @@
 <template lang="pug">
-  div
-    v-layout.ml-4.mb-4(align-center)
-      c-quick-date-interval-field(
-        :interval="pagination.interval",
-        @input="updateInterval"
-      )
-    div
-      kpi-rating-chart(:metrics="ratingMetrics", :metric="pagination.metric", responsive)
+  div.position-relative
+    c-progress-overlay(:pending="pending")
+    kpi-rating-filters(v-model="pagination")
+    kpi-rating-chart(:metrics="ratingMetrics", :metric="pagination.metric", responsive)
 </template>
 
 <script>
@@ -21,14 +17,17 @@ import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
+import KpiRatingFilters from './partials/kpi-rating-filters.vue';
+
 const KpiRatingChart = () => import(/* webpackChunkName: "Charts" */ './partials/kpi-rating-chart.vue');
 
 export default {
-  components: { KpiRatingChart },
+  components: { KpiRatingFilters, KpiRatingChart },
   mixins: [entitiesMetricsMixin, localQueryMixin],
   data() {
     return {
       ratingMetrics: [],
+      pending: false,
       query: {
         criteria: KPI_RATING_CRITERIA.user,
         metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
@@ -43,10 +42,6 @@ export default {
     this.fetchList();
   },
   methods: {
-    updateInterval(interval) {
-      this.updateQueryField('interval', interval);
-    },
-
     getQuery() {
       return {
         from: convertStartDateIntervalToTimestamp(this.pagination.interval.from),
@@ -58,9 +53,13 @@ export default {
     },
 
     async fetchList() {
+      this.pending = true;
+
       this.ratingMetrics = await this.fetchRatingMetricsWithoutStore({
         params: this.getQuery(),
       });
+
+      this.pending = false;
     },
   },
 };
