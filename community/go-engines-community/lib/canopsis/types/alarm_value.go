@@ -360,6 +360,7 @@ type AlarmTicket struct {
 	Type      string  `bson:"_t" json:"_t"`
 	Timestamp CpsTime `bson:"t" json:"t"`
 	Author    string  `bson:"a" json:"a"`
+	UserID    string  `bson:"user_id" json:"user_id"`
 	Message   string  `bson:"m" json:"m"`
 	Role      string  `bson:"role,omitempty" json:"role,omitempty"`
 	Value     string  `bson:"val" json:"val"`
@@ -374,6 +375,7 @@ func (s AlarmStep) NewTicket(value string, data map[string]string) AlarmTicket {
 		Message:   value,
 		Timestamp: s.Timestamp,
 		Type:      s.Type,
+		UserID:    s.UserID,
 		Value:     value,
 		Data:      data,
 		Role:      s.Role,
