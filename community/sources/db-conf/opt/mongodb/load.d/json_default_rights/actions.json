@@ -531,7 +531,8 @@
         "loader_id": "models_kpiFilters",
         "crecord_name": "models_kpiFilters",
         "crecord_type": "action",
-        "desc": "KPI Filters"
+        "desc": "KPI Filters",
+        "type": "CRUD"
     },
     {
         "_id": "models_notification_instructionStats",
