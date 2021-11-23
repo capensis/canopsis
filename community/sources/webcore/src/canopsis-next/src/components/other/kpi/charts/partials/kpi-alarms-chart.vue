@@ -1,5 +1,7 @@
 <template lang="pug">
   bar-chart(:datasets="datasets", :options="alarmsChartOptions", :width="width", :height="height")
+    template(#actions="{ chart }")
+      kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
 </template>
 
 <script>
@@ -20,6 +22,8 @@ import { getMetricColor } from '@/helpers/color';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
 
+import KpiChartExportActions from './kpi-chart-export-actions.vue';
+
 const Y_AXES_IDS = {
   default: 'y',
   percent: 'yPercent',
@@ -27,7 +31,7 @@ const Y_AXES_IDS = {
 };
 
 export default {
-  components: { BarChart },
+  components: { KpiChartExportActions, BarChart },
   props: {
     metrics: {
       type: Array,
@@ -38,6 +42,10 @@ export default {
       default: SAMPLINGS.day,
     },
     responsive: {
+      type: Boolean,
+      default: false,
+    },
+    downloading: {
       type: Boolean,
       default: false,
     },
@@ -136,6 +144,9 @@ export default {
           mode: 'x',
         },
         plugins: {
+          background: {
+            color: 'white',
+          },
           legend: {
             position: 'right',
             align: 'start',

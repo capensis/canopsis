@@ -210,6 +210,7 @@ export default {
     toTheTop: 'To the top',
     time: 'Time',
     lastModifiedOn: 'Last modified on',
+    exportAsCsv: 'Export as csv',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

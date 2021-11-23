@@ -1,5 +1,7 @@
 <template lang="pug">
   bar-chart(:datasets="datasets", :options="sliChartOptions")
+    template(#actions="{ chart }")
+      kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
 </template>
 
 <script>
@@ -13,14 +15,15 @@ import {
 } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
-
 import { convertDurationToString, fromSeconds } from '@/helpers/date/duration';
 import { getDateLabelBySampling } from '@/helpers/metrics';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
 
+import KpiChartExportActions from './kpi-chart-export-actions.vue';
+
 export default {
-  components: { BarChart },
+  components: { KpiChartExportActions, BarChart },
   props: {
     metrics: {
       type: Array,
@@ -35,6 +38,10 @@ export default {
       default: SAMPLINGS.day,
     },
     responsive: {
+      type: Boolean,
+      default: false,
+    },
+    downloading: {
       type: Boolean,
       default: false,
     },
@@ -143,6 +150,9 @@ export default {
           mode: 'index',
         },
         plugins: {
+          background: {
+            color: 'white',
+          },
           legend: {
             position: 'top',
             align: 'end',
