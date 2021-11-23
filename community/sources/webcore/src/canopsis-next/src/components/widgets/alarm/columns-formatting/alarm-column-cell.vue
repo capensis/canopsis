@@ -29,6 +29,8 @@ import sanitizeHTML from 'sanitize-html';
 
 import { ALARM_ENTITY_FIELDS, COLOR_INDICATOR_TYPES } from '@/constants';
 
+import { formToColumnValue } from '@/helpers/forms/widgets/alarm';
+
 import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
@@ -111,7 +113,10 @@ export default {
     popupData() {
       const popups = get(this.widget.parameters, 'infoPopups', []);
 
-      return popups.find(popup => popup.column === this.column.value);
+      /**
+       * TODO: improve on view refactoring
+       */
+      return popups.find(popup => formToColumnValue(popup.column) === this.column.value);
     },
 
     columnFilter() {
