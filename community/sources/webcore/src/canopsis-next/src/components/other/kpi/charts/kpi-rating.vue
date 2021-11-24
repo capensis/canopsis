@@ -13,12 +13,13 @@
 </template>
 
 <script>
+import { isUndefined, isEqual } from 'lodash';
+
 import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
 
 import {
   QUICK_RANGES,
   ALARM_METRIC_PARAMETERS,
-  KPI_RATING_CRITERIA,
   DATETIME_FORMATS,
 } from '@/constants';
 
@@ -51,7 +52,7 @@ export default {
       pending: false,
       downloading: false,
       query: {
-        criteria: KPI_RATING_CRITERIA.user,
+        criteria: undefined,
         metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
         interval: {
           from: QUICK_RANGES.last30Days.start,
@@ -61,7 +62,9 @@ export default {
     };
   },
   mounted() {
-    this.fetchList();
+    if (!isUndefined(this.query.criteria)) {
+      this.fetchList();
+    }
   },
   methods: {
     getFileName() {
@@ -85,13 +88,17 @@ export default {
       }
     },
 
+    customQueryCondition(query, oldQuery) {
+      return !isUndefined(query.criteria) && !isEqual(query, oldQuery);
+    },
+
     getQuery() {
       return {
-        from: convertStartDateIntervalToTimestamp(this.pagination.interval.from),
-        to: convertStopDateIntervalToTimestamp(this.pagination.interval.to),
-        criteria: this.pagination.criteria,
-        metric: this.pagination.metric,
-        limit: this.pagination.rowsPerPage,
+        from: convertStartDateIntervalToTimestamp(this.query.interval.from),
+        to: convertStopDateIntervalToTimestamp(this.query.interval.to),
+        criteria: this.query.criteria.id,
+        metric: this.query.metric,
+        limit: this.query.rowsPerPage,
       };
     },
 

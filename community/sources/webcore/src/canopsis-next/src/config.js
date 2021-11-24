@@ -152,9 +152,9 @@ export const API_ROUTES = {
     checkPriority: '/api/v4/scenarios/check-priority',
   },
   entityCategories: '/api/v4/entity-categories',
-  stateSetting: '/api/v4/state-settings/',
+  stateSetting: '/api/v4/state-settings',
   dataStorage: '/api/v4/data-storage',
-  notification: '/api/v4/notification/',
+  notification: '/api/v4/notification',
   idleRules: '/api/v4/idle-rules',
   idleRulesCount: '/api/v4/idle-rules/count',
   flappingRules: '/api/v4/flapping-rules',
@@ -165,6 +165,7 @@ export const API_ROUTES = {
    * Cat routes
    */
   filters: '/api/v4/cat/filters',
+  ratingSettings: '/api/v4/cat/rating-settings',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
   remediation: {

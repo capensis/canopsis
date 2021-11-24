@@ -16,11 +16,10 @@ exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with query 1`] = `
     />
     <kpi-rating-criteria-field-stub
       class="mr-4 kpi-rating-toolbar__criteria"
-      value="1"
+      mandatory="true"
     />
     <kpi-rating-metric-field-stub
       class="mr-4 kpi-rating-toolbar__metric"
-      criteria="1"
       value="ticket_alarms"
     />
     <c-records-per-page-field-stub

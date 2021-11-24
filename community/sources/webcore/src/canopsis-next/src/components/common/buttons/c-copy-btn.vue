@@ -9,6 +9,7 @@
     )
       v-icon(:color="color") {{ icon }}
 </template>
+
 <script>
 
 export default {

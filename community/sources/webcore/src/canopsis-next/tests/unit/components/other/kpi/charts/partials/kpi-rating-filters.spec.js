@@ -37,7 +37,7 @@ describe('kpi-rating-filters', () => {
   const nowTimestamp = 1386435600000;
   const initialQuery = {
     filter: null,
-    criteria: KPI_RATING_CRITERIA.user,
+    criteria: undefined,
     metric: ALARM_METRIC_PARAMETERS.ackAlarms,
     rowsPerPage: 5,
     interval: {
@@ -111,6 +111,10 @@ describe('kpi-rating-filters', () => {
   });
 
   it('Query changed after trigger a criteria field', async () => {
+    const ratingSetting = {
+      id: 1,
+      label: KPI_RATING_CRITERIA.role,
+    };
     const wrapper = factory({
       propsData: {
         query: initialQuery,
@@ -119,7 +123,7 @@ describe('kpi-rating-filters', () => {
 
     const criteriaField = wrapper.find('kpi-rating-criteria-field-stub');
 
-    criteriaField.vm.$emit('input', KPI_RATING_CRITERIA.role);
+    criteriaField.vm.$emit('input', ratingSetting);
 
     await flushPromises();
 
@@ -129,10 +133,10 @@ describe('kpi-rating-filters', () => {
 
     const [eventData] = inputEvents[0];
 
-    expect(eventData.criteria).toEqual(KPI_RATING_CRITERIA.role);
+    expect(eventData.criteria).toEqual(ratingSetting);
     expect(eventData).toEqual({
       ...initialQuery,
-      criteria: KPI_RATING_CRITERIA.role,
+      criteria: ratingSetting,
     });
   });
 
@@ -194,7 +198,7 @@ describe('kpi-rating-filters', () => {
       propsData: {
         query: {
           filter: null,
-          criteria: KPI_RATING_CRITERIA.user,
+          criteria: undefined,
           metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
           rowsPerPage: 5,
           interval: {
