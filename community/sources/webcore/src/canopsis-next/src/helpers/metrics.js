@@ -15,10 +15,6 @@ import { addUnitToDate, convertDateToString } from '@/helpers/date/date';
  */
 
 /**
- * @typedef { 1 | 2 | 3 | 4 } Criteria
- */
-
-/**
  * Check metric is time
  *
  * @param {string} metric
@@ -75,7 +71,7 @@ export const getDateLabelBySampling = (value, sampling) => {
 /**
  * Check is user criteria
  *
- * @param {Criteria} criteria
+ * @param {string} criteria
  * @returns {boolean}
  */
 const isUserCriteria = criteria => KPI_RATING_USER_CRITERIA.includes(criteria);
@@ -83,7 +79,7 @@ const isUserCriteria = criteria => KPI_RATING_USER_CRITERIA.includes(criteria);
 /**
  * Get all metrics by criteria
  *
- * @param {Criteria} criteria
+ * @param {string} criteria
  * @returns {string[]}
  */
 export const getAvailableMetricsByCriteria = criteria => (
@@ -96,7 +92,7 @@ export const getAvailableMetricsByCriteria = criteria => (
  * Check metric is available for criteria
  *
  * @param {string} metric
- * @param {Criteria} criteria
+ * @param {string} criteria
  * @returns {boolean}
  */
 export const isAvailableMetricByCriteria = (metric, criteria) => (
@@ -108,11 +104,11 @@ export const isAvailableMetricByCriteria = (metric, criteria) => (
  * If metric available for criteria return metric, else return first available metric
  *
  * @param {string} metric
- * @param {Criteria} criteria
+ * @param {string} [criteria]
  * @returns {string}
  */
 export const getAvailableMetricByCriteria = (metric, criteria) => {
-  if (isAvailableMetricByCriteria(metric, criteria)) {
+  if (criteria && isAvailableMetricByCriteria(metric, criteria)) {
     return metric;
   }
 

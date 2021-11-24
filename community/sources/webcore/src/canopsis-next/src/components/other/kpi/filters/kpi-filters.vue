@@ -14,6 +14,7 @@
       @remove="showDeleteFilterModal"
     )
 </template>
+
 <script>
 import { omit } from 'lodash';
 

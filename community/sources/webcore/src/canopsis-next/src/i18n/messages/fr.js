@@ -26,7 +26,6 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
-  KPI_RATING_CRITERIA,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -211,6 +210,8 @@ export default {
     time: 'Temps',
     lastModifiedOn: 'Dernière modification le',
     exportAsCsv: 'Export as csv',
+    criteria: 'Critères',
+    ratingSettings: 'Paramètres d\'évaluation',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -2652,14 +2653,7 @@ export default {
   },
 
   kpiMetrics: {
-    criteria: 'Critères',
     parameter: 'Paramètre à comparer',
-    criteriaTypes: {
-      [KPI_RATING_CRITERIA.user]: 'Utilisateur',
-      [KPI_RATING_CRITERIA.role]: 'Rôle',
-      [KPI_RATING_CRITERIA.category]: 'Catégorie',
-      [KPI_RATING_CRITERIA.impactLevel]: 'Niveau d\'impact',
-    },
     tooltip: {
       [USER_METRIC_PARAMETERS.totalUserActivity]: '{value} temps total d\'activité',
 
@@ -2684,6 +2678,10 @@ export default {
 
   kpiFilters: {
     helpInformation: 'Ici, les modèles de filtre pour des tranches de données supplémentaires pour les compteurs et les évaluations peuvent être ajoutés.',
+  },
+
+  kpiRatingSettings: {
+    helpInformation: 'La liste des paramètres à utiliser pour la notation.',
   },
 
   ...featureService.get('i18n.fr'),

@@ -11,15 +11,13 @@ export const KPI_SLI_GRAPH_DATA_TYPE = {
 };
 
 export const KPI_RATING_CRITERIA = {
-  user: 1,
-  role: 2,
-  category: 3,
-  impactLevel: 4,
+  user: 'username',
+  role: 'role',
+  category: 'category',
+  impactLevel: 'impact_level',
 };
 
 export const KPI_RATING_USER_CRITERIA = [KPI_RATING_CRITERIA.user, KPI_RATING_CRITERIA.role];
-
-export const KPI_RATING_ENTITY_CRITERIA = [KPI_RATING_CRITERIA.category, KPI_RATING_CRITERIA.impactLevel];
 
 export const KPI_RATING_USER_METRICS = [
   ALARM_METRIC_PARAMETERS.ticketAlarms,
@@ -48,4 +46,5 @@ export const KPI_RATING_ENTITY_METRICS = [
 export const KPI_TABS = {
   graphs: 'graphs',
   filters: 'filters',
+  ratingSettings: 'ratingSettings',
 };

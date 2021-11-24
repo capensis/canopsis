@@ -152,6 +152,8 @@ export const resolveRulesSchema = new schema.Entity(ENTITIES_TYPES.resolveRules,
 
 export const filterSchema = new schema.Entity(ENTITIES_TYPES.filter, {}, { idAttribute: '_id' });
 
+export const ratingSettingsSchema = new schema.Entity(ENTITIES_TYPES.ratingSettings, {}, { idAttribute: 'id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -187,4 +189,5 @@ export default {
   [ENTITIES_TYPES.flappingRules]: flappingRulesSchema,
   [ENTITIES_TYPES.resolveRules]: resolveRulesSchema,
   [ENTITIES_TYPES.filter]: filterSchema,
+  [ENTITIES_TYPES.ratingSettings]: ratingSettingsSchema,
 };

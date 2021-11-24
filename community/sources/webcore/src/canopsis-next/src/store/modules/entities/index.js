@@ -44,6 +44,7 @@ import messageRateStatsModule from './message-rate-stats';
 import viewStatsModule from './view-stats';
 import metricsModule from './metrics';
 import filterModule from './filter';
+import ratingSettingsModule from './rating-settings';
 
 export default {
   alarm: alarmModule,
@@ -92,4 +93,5 @@ export default {
   viewStats: viewStatsModule,
   metrics: metricsModule,
   filter: filterModule,
+  ratingSettings: ratingSettingsModule,
 };
