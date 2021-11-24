@@ -367,7 +367,7 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 			)
 
 			err := alarm.PartialUpdatePbhEnter(event.Timestamp, event.PbehaviorInfo,
-				event.Author, output, event.Role, event.Initiator)
+				event.Author, output, event.UserID, event.Role, event.Initiator)
 			if err != nil {
 				return changeType, err
 			}
