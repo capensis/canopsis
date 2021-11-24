@@ -6,7 +6,7 @@ export const permissionsWidgetsServiceWeatherFilters = {
   mixins: [authMixin],
   computed: {
     hasAccessToListFilters() {
-      return this.checkAccess(USERS_PERMISSIONS.business.context.actions.listFilters);
+      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.listFilters);
     },
 
     hasAccessToUserFilter() {
