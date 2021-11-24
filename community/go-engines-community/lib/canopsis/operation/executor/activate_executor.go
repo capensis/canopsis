@@ -19,7 +19,7 @@ func (e *activateExecutor) Exec(
 	alarm *types.Alarm,
 	_ *types.Entity,
 	time types.CpsTime,
-	_, _ string,
+	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	if alarm.IsActivated() {
 		return "", nil

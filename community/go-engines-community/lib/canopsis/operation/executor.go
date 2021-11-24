@@ -19,6 +19,6 @@ type Executor interface {
 		alarm *types.Alarm,
 		entity *types.Entity,
 		timestamp types.CpsTime,
-		role, initiator string,
+		userID, role, initiator string,
 	) (types.AlarmChangeType, error)
 }
