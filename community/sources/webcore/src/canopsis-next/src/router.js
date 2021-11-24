@@ -12,7 +12,6 @@ import store from '@/store';
 import {
   checkAppInfoAccessForRoute,
   checkUserAccessForRoute,
-  getViewStatsPathByRoute,
 } from '@/helpers/router';
 
 import Login from '@/views/login.vue';
@@ -381,19 +380,8 @@ router.beforeResolve(async (to, from, next) => {
 });
 
 router.afterEach((to, from) => {
-  const isLoggedIn = store.getters['auth/isLoggedIn'];
-
   if (to.path !== from.path) {
     store.dispatch('entities/sweep');
-  }
-
-  if (isLoggedIn) {
-    store.dispatch('viewStats/update', {
-      data: {
-        visible: !(document.visibilityState === 'hidden'),
-        path: getViewStatsPathByRoute(to),
-      },
-    });
   }
 });
 
