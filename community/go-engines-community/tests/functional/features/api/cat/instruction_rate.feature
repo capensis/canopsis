@@ -25,7 +25,7 @@ Feature: rate an instruction
       "data": [
         {
           "_id": "test-instruction-to-rate-1",
-          "rating": 0.0,
+          "rating": 0,
           "ratable": true,
           "rate_notify": false
         }
@@ -93,7 +93,7 @@ Feature: rate an instruction
       "data": [
         {
           "_id": "test-instruction-to-rate-2",
-          "rating": 0.0,
+          "rating": 0,
           "ratable": true,
           "rate_notify": true
         }
