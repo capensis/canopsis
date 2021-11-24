@@ -155,8 +155,8 @@ func (a *ApiClient) TheResponseBodyShouldBe(doc string) error {
 		return fmt.Errorf("cannot decode expected response body: %w", err)
 	}
 
-	if !reflect.DeepEqual(a.responseBody, expectedBody) {
-		return createDiffResponseError(a.responseBody, expectedBody)
+	if err := checkResponse(a.responseBody, expectedBody); err != nil {
+		return err
 	}
 
 	return nil
@@ -216,8 +216,8 @@ func (a *ApiClient) TheResponseBodyShouldContain(doc string) error {
 
 	partialBody := getPartialResponse(a.responseBody, expectedBody)
 
-	if !reflect.DeepEqual(partialBody, expectedBody) {
-		return createDiffResponseError(partialBody, expectedBody)
+	if err := checkResponse(partialBody, expectedBody); err != nil {
+		return err
 	}
 
 	return nil
@@ -580,6 +580,8 @@ func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc st
 		return fmt.Errorf("cannot decode expected response body: %w", err)
 	}
 
+	var resDiffErr error
+
 	for i := 0; i < repeatRequestCount; i++ {
 		if i != 0 {
 			time.Sleep(repeatRequestInterval)
@@ -590,8 +592,11 @@ func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc st
 			return err
 		}
 
-		if code == a.response.StatusCode && reflect.DeepEqual(a.responseBody, expectedBody) {
-			return nil
+		if code == a.response.StatusCode {
+			resDiffErr = checkResponse(a.responseBody, expectedBody)
+			if resDiffErr == nil {
+				return nil
+			}
 		}
 	}
 
@@ -603,7 +608,7 @@ func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc st
 		)
 	}
 
-	return fmt.Errorf("max retries exceeded: %w", createDiffResponseError(a.responseBody, expectedBody))
+	return fmt.Errorf("max retries exceeded: %w", resDiffErr)
 }
 
 /**
@@ -636,7 +641,7 @@ func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int
 		return fmt.Errorf("cannot decode expected response body: %w", err)
 	}
 
-	var partialBody interface{}
+	var resDiffErr error
 
 	for i := 0; i < repeatRequestCount; i++ {
 		if i != 0 {
@@ -649,9 +654,10 @@ func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int
 		}
 
 		if code == a.response.StatusCode {
-			partialBody = getPartialResponse(a.responseBody, expectedBody)
+			partialBody := getPartialResponse(a.responseBody, expectedBody)
+			resDiffErr = checkResponse(partialBody, expectedBody)
 
-			if reflect.DeepEqual(partialBody, expectedBody) {
+			if resDiffErr == nil {
 				return nil
 			}
 		}
@@ -665,7 +671,7 @@ func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int
 		)
 	}
 
-	return fmt.Errorf("max retries exceeded: %w", createDiffResponseError(partialBody, expectedBody))
+	return fmt.Errorf("max retries exceeded: %w", resDiffErr)
 }
 
 /**
@@ -904,9 +910,13 @@ func getPartialResponse(received, expected interface{}) interface{} {
 	}
 }
 
-// createDiffResponseError returns error which contains differences between received and expected.
-func createDiffResponseError(received, expected interface{}) error {
-	return fmt.Errorf("response doesn't match expected response body:\n%s\n", pretty.Compare(received, expected))
+// checkResponse returns error which contains differences between received and expected.
+func checkResponse(received, expected interface{}) error {
+	if diff := pretty.Compare(received, expected); diff != "" {
+		return fmt.Errorf("response doesn't match expected response body:\n%s\n", diff)
+	}
+
+	return nil
 }
 
 // unmarshalJson decodes JSON to structure where all numbers are decoded to int64 or float64.
