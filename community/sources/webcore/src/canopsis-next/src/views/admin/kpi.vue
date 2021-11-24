@@ -6,7 +6,7 @@
         v-tab(:href="`#${$constants.KPI_TABS.graphs}`") {{ $tc('common.graph', 2) }}
         v-tab(v-if="hasReadAnyKpiFiltersAccess", :href="`#${$constants.KPI_TABS.filters}`") {{ $t('common.filters') }}
         v-tab(
-          v-if="!hasReadAnyKpiRatingSettingsAccess",
+          v-if="hasReadAnyKpiRatingSettingsAccess",
           :href="`#${$constants.KPI_TABS.ratingSettings}`"
         ) {{ $t('common.ratingSettings') }}
 
