@@ -214,5 +214,15 @@ func (r *row) Scan(dest ...interface{}) error {
 		return r.err
 	}
 
+	defer r.rows.Close()
+
+	if r.rows.Err() != nil {
+		return r.rows.Err()
+	}
+
+	if !r.rows.Next() {
+		return pgx.ErrNoRows
+	}
+
 	return r.rows.Scan(dest...)
 }
