@@ -1,6 +1,6 @@
 # Activation de HTTPS dans Canopsis
 
-À partir de Canopsis 4.4.0, une configuration HTTPS est proposée avec [Nginx](../administration-avancee/configuration-services/reverse-proxy-nginx.md), mais elle n'est cependant pas encore activée par défaut. Ce guide décrit sa configuration et son activation.
+À partir de Canopsis 4.4.0, une configuration HTTPS est proposée avec [Nginx](reverse-proxy-nginx.md), mais elle n'est cependant pas encore activée par défaut. Ce guide décrit sa configuration et son activation.
 
 ## Apports de la configuration HTTPS
 
@@ -14,7 +14,7 @@ La configuration HTTPS proposée dans Nginx vous permet :
     Les prérequis pour ces fonctionnalités sont les suivants :
 
     * assigner un [FQDN](https://fr.wikipedia.org/wiki/Fully_qualified_domain_name) à votre service web Canopsis (ex : `canopsis.mon-si.fr`) ;
-    * avoir un navigateur [officiellement pris en charge](../../guide-utilisation/limitations/index.md#compatibilite-des-anciens-navigateurs) et raisonnablement récent ;
+    * avoir un navigateur [officiellement pris en charge](../../../guide-utilisation/limitations/index.md#compatibilite-des-anciens-navigateurs) et raisonnablement récent ;
     * disposer d'au moins HTTP/1.1 et des Websockets dans ce navigateur ;
     * disposer de TLSv1.2 ou de TLSv1.3 sur vos clients HTTPS (note : TLSv1.3 n'est pas disponible dans les paquets CentOS 7) ;
     * disposer d'OpenSSL sur votre serveur, avec ses dernières mises à jour de sécurité ;
@@ -51,7 +51,7 @@ La configuration Nginx proposée par défaut s'attend à ce que votre certificat
 
 En premier lieu, rapprochez-vous de votre autorité de certification afin de connaître la procédure à suivre pour la génération de votre clé privée et pour l'obtention d'un certificat signé.
 
-Vous devez ensuite placer ces fichiers au bon endroit sur votre serveur Canopsis, en fonction de la [méthode d'installation](../installation/index.md#methodes-dinstallation-de-canopsis) que vous avez choisie.
+Vous devez ensuite placer ces fichiers au bon endroit sur votre serveur Canopsis, en fonction de la [méthode d'installation](../../installation/index.md#methodes-dinstallation-de-canopsis) que vous avez choisie.
 
 === "Paquets CentOS 7"
 
