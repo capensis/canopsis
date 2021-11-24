@@ -13,7 +13,49 @@ import (
 	"time"
 )
 
-func TestErrBatchResults_Exec_GivenConnectionError_ShouldRetryMaxTries(t *testing.T) {
+func TestPool_Exec_GivenContextDone_ShouldAbortRetries(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	sql := "test sql"
+	retryCount := 1
+	minRetryTimeout := 2 * time.Second
+
+	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
+	mockPgxPool.EXPECT().Exec(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgconn.CommandTag, error) {
+		return nil, &net.OpError{Err: errors.New("test error")}
+	}).AnyTimes()
+
+	pool := poolWithRetries{
+		pgxPool:         mockPgxPool,
+		retryCount:      retryCount,
+		minRetryTimeout: minRetryTimeout,
+	}
+
+	go func() {
+		time.Sleep(time.Millisecond * 100)
+		cancel()
+	}()
+
+	start := time.Now()
+	commandTag, err := pool.Exec(ctx, sql)
+
+	if time.Since(start) > time.Second {
+		t.Errorf("expected abort retry but method worked too long %s", time.Since(start))
+	}
+
+	if err == nil {
+		t.Errorf("expected error but got nothing")
+	}
+
+	if commandTag != nil {
+		t.Errorf("expected nil result but got %+v", commandTag)
+	}
+}
+
+func TestPool_Exec_GivenConnectionError_ShouldRetryMaxTries(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -44,7 +86,7 @@ func TestErrBatchResults_Exec_GivenConnectionError_ShouldRetryMaxTries(t *testin
 	}
 }
 
-func TestErrBatchResults_Exec_GivenNotConnectionError_ShouldReturnError(t *testing.T) {
+func TestPool_Exec_GivenNotConnectionError_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -82,7 +124,7 @@ func TestErrBatchResults_Exec_GivenNotConnectionError_ShouldReturnError(t *testi
 	}
 }
 
-func TestErrBatchResults_Exec_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
+func TestPool_Exec_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -124,7 +166,7 @@ func TestErrBatchResults_Exec_GivenConnectionError_ShouldRetryUntilSuccess(t *te
 	}
 }
 
-func TestErrBatchResults_Query_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
+func TestPool_Query_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -155,7 +197,7 @@ func TestErrBatchResults_Query_GivenNotConnectionError_ShouldRetryMaxTries(t *te
 	}
 }
 
-func TestErrBatchResults_Query_GivenConnectionError_ShouldReturnError(t *testing.T) {
+func TestPool_Query_GivenConnectionError_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -193,7 +235,7 @@ func TestErrBatchResults_Query_GivenConnectionError_ShouldReturnError(t *testing
 	}
 }
 
-func TestErrBatchResults_Query_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
+func TestPool_Query_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -235,7 +277,7 @@ func TestErrBatchResults_Query_GivenConnectionError_ShouldRetryUntilSuccess(t *t
 	}
 }
 
-func TestErrBatchResults_QueryRow_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
+func TestPool_QueryRow_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -263,7 +305,7 @@ func TestErrBatchResults_QueryRow_GivenNotConnectionError_ShouldRetryMaxTries(t 
 	}
 }
 
-func TestErrBatchResults_QueryRow_GivenConnectionError_ShouldReturnError(t *testing.T) {
+func TestPool_QueryRow_GivenConnectionError_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -298,7 +340,7 @@ func TestErrBatchResults_QueryRow_GivenConnectionError_ShouldReturnError(t *test
 	}
 }
 
-func TestErrBatchResults_QueryRow_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
+func TestPool_QueryRow_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -339,7 +381,7 @@ func TestErrBatchResults_QueryRow_GivenConnectionError_ShouldRetryUntilSuccess(t
 	}
 }
 
-func TestErrBatchResults_SendBatch_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
+func TestPool_SendBatch_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -381,7 +423,7 @@ func TestErrBatchResults_SendBatch_GivenNotConnectionError_ShouldRetryMaxTries(t
 	}
 }
 
-func TestErrBatchResults_SendBatch_GivenConnectionError_ShouldReturnError(t *testing.T) {
+func TestPool_SendBatch_GivenConnectionError_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -416,7 +458,7 @@ func TestErrBatchResults_SendBatch_GivenConnectionError_ShouldReturnError(t *tes
 	}
 }
 
-func TestErrBatchResults_SendBatch_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
+func TestPool_SendBatch_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())

@@ -141,7 +141,7 @@ func (c *dbCollection) Aggregate(ctx context.Context, pipeline interface{},
 	var mongoCursor *mongo.Cursor
 	var err error
 
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		mongoCursor, err = c.mongoCollection.Aggregate(ctx, pipeline, opts...)
 		return err
 	})
@@ -157,7 +157,7 @@ func (c *dbCollection) BulkWrite(ctx context.Context, models []mongo.WriteModel,
 	opts ...*options.BulkWriteOptions) (*mongo.BulkWriteResult, error) {
 	var res *mongo.BulkWriteResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.BulkWrite(ctx, models, opts...)
 		return err
 	})
@@ -169,7 +169,7 @@ func (c *dbCollection) CountDocuments(ctx context.Context, filter interface{},
 	opts ...*options.CountOptions) (int64, error) {
 	var res int64
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.CountDocuments(ctx, filter, opts...)
 		return err
 	})
@@ -181,7 +181,7 @@ func (c *dbCollection) DeleteMany(ctx context.Context, filter interface{},
 	opts ...*options.DeleteOptions) (int64, error) {
 	var res *mongo.DeleteResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.DeleteMany(ctx, filter, opts...)
 		return err
 	})
@@ -196,7 +196,7 @@ func (c *dbCollection) Distinct(ctx context.Context, fieldName string, filter in
 	opts ...*options.DistinctOptions) ([]interface{}, error) {
 	var res []interface{}
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.Distinct(ctx, fieldName, filter, opts...)
 		return err
 	})
@@ -206,7 +206,7 @@ func (c *dbCollection) Distinct(ctx context.Context, fieldName string, filter in
 
 func (c *dbCollection) Drop(ctx context.Context) error {
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		err = c.mongoCollection.Drop(ctx)
 		return err
 	})
@@ -219,7 +219,7 @@ func (c *dbCollection) Find(ctx context.Context, filter interface{},
 	var mongoCursor *mongo.Cursor
 	var err error
 
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		mongoCursor, err = c.mongoCollection.Find(ctx, filter, opts...)
 		return err
 	})
@@ -234,7 +234,7 @@ func (c *dbCollection) Find(ctx context.Context, filter interface{},
 func (c *dbCollection) FindOne(ctx context.Context, filter interface{},
 	opts ...*options.FindOneOptions) SingleResultHelper {
 	var res *mongo.SingleResult
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOne(ctx, filter, opts...)
 		return res.Err()
 	})
@@ -245,7 +245,7 @@ func (c *dbCollection) FindOne(ctx context.Context, filter interface{},
 func (c *dbCollection) FindOneAndDelete(ctx context.Context, filter interface{},
 	opts ...*options.FindOneAndDeleteOptions) SingleResultHelper {
 	var res *mongo.SingleResult
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOneAndDelete(ctx, filter, opts...)
 		return res.Err()
 	})
@@ -256,7 +256,7 @@ func (c *dbCollection) FindOneAndDelete(ctx context.Context, filter interface{},
 func (c *dbCollection) FindOneAndReplace(ctx context.Context, filter, replacement interface{},
 	opts ...*options.FindOneAndReplaceOptions) SingleResultHelper {
 	var res *mongo.SingleResult
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOneAndReplace(ctx, filter, replacement, opts...)
 		return res.Err()
 	})
@@ -267,7 +267,7 @@ func (c *dbCollection) FindOneAndReplace(ctx context.Context, filter, replacemen
 func (c *dbCollection) FindOneAndUpdate(ctx context.Context, filter, update interface{},
 	opts ...*options.FindOneAndUpdateOptions) SingleResultHelper {
 	var res *mongo.SingleResult
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOneAndUpdate(ctx, filter, update, opts...)
 		return res.Err()
 	})
@@ -279,7 +279,7 @@ func (c *dbCollection) DeleteOne(ctx context.Context, filter interface{},
 	opts ...*options.DeleteOptions) (int64, error) {
 	var res *mongo.DeleteResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.DeleteOne(ctx, filter, opts...)
 		return err
 	})
@@ -298,7 +298,7 @@ func (c *dbCollection) InsertOne(ctx context.Context, document interface{},
 	opts ...*options.InsertOneOptions) (interface{}, error) {
 	var res *mongo.InsertOneResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.InsertOne(ctx, document, opts...)
 		return err
 	})
@@ -314,7 +314,7 @@ func (c *dbCollection) InsertMany(ctx context.Context, documents []interface{},
 	opts ...*options.InsertManyOptions) ([]interface{}, error) {
 	var res *mongo.InsertManyResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.InsertMany(ctx, documents, opts...)
 		return err
 	})
@@ -329,7 +329,7 @@ func (c *dbCollection) ReplaceOne(ctx context.Context, filter, replacement inter
 	opts ...*options.ReplaceOptions) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.ReplaceOne(ctx, filter, replacement, opts...)
 		return err
 	})
@@ -344,7 +344,7 @@ func (c *dbCollection) UpdateMany(ctx context.Context, filter interface{}, updat
 	opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.UpdateMany(ctx, filter, update, opts...)
 		return err
 	})
@@ -359,7 +359,7 @@ func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update
 	opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.UpdateOne(ctx, filter, update, opts...)
 		return err
 	})
@@ -370,11 +370,14 @@ func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update
 	return res, nil
 }
 
-func (c *dbCollection) retry(f func() error) {
+func (c *dbCollection) retry(ctx context.Context, f func(context.Context) error) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	timeout := c.minRetryTimeout
 
 	for i := 0; i <= c.retryCount; i++ {
-		err := f()
+		err := f(ctx)
 		if err == nil {
 			return
 		}
@@ -387,8 +390,12 @@ func (c *dbCollection) retry(f func() error) {
 			return
 		}
 
-		time.Sleep(timeout)
-		timeout *= 2
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(timeout):
+			timeout *= 2
+		}
 	}
 }
 

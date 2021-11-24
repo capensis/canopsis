@@ -23,6 +23,7 @@ const (
 	Entities        = "entities"
 )
 
+// See error codes table for "Class 57 - Operator Intervention" https://www.postgresql.org/docs/9.6/errcodes-appendix.html#ERRCODES-TABLE
 const pgErrOperatorInterventionPrefix = "57"
 
 func IsConnectionError(err error) bool {
@@ -96,7 +97,7 @@ func (p *poolWithRetries) SetRetry(count int, timeout time.Duration) {
 func (p *poolWithRetries) Exec(ctx context.Context, sql string, args ...interface{}) (pgconn.CommandTag, error) {
 	var commandTag pgconn.CommandTag
 	var err error
-	p.retry(func() error {
+	p.retry(ctx, func(ctx context.Context) error {
 		commandTag, err = p.pgxPool.Exec(ctx, sql, args...)
 		return err
 	})
@@ -107,7 +108,7 @@ func (p *poolWithRetries) Exec(ctx context.Context, sql string, args ...interfac
 func (p *poolWithRetries) Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error) {
 	var rows pgx.Rows
 	var err error
-	p.retry(func() error {
+	p.retry(ctx, func(ctx context.Context) error {
 		rows, err = p.pgxPool.Query(ctx, sql, args...)
 		return err
 	})
@@ -149,7 +150,7 @@ func (p *poolWithRetries) Close() {
 
 func (p *poolWithRetries) WithTransaction(ctx context.Context, f func(context.Context, pgx.Tx) error) error {
 	var err error
-	p.retry(func() error {
+	p.retry(ctx, func(ctx context.Context) error {
 		var tx pgx.Tx
 		tx, err = p.pgxPool.Begin(ctx)
 		if err != nil {
@@ -174,11 +175,14 @@ func (p *poolWithRetries) WithTransaction(ctx context.Context, f func(context.Co
 	return err
 }
 
-func (p *poolWithRetries) retry(f func() error) {
+func (p *poolWithRetries) retry(ctx context.Context, f func(context.Context) error) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	timeout := p.minRetryTimeout
 
 	for i := 0; i <= p.retryCount; i++ {
-		err := f()
+		err := f(ctx)
 		if err == nil {
 			return
 		}
@@ -191,8 +195,12 @@ func (p *poolWithRetries) retry(f func() error) {
 			return
 		}
 
-		time.Sleep(timeout)
-		timeout *= 2
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(timeout):
+			timeout *= 2
+		}
 	}
 }
 
