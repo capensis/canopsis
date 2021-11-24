@@ -23,7 +23,7 @@ Feature: get instruction comments
         {
           "_id": "test-rating-to-comments-get-2",
           "comment": "test-rating-to-comments-get-2-comment",
-          "rating": 2,
+          "rating": 2.0,
           "created": 1596550518,
           "user": {
             "_id": "test-user-author-1-id",

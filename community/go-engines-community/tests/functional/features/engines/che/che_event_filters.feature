@@ -91,7 +91,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-2"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-2
     Then the response code should be 200
@@ -301,7 +301,7 @@ Feature: modify event on event filter
       "manager": "test-manager-che-event-filters-3"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-3
     Then the response code should be 200
@@ -466,7 +466,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-4"
     }
     """
-    When I save response createComponentTimestamp={{ now.UTC.Unix }}
+    When I save response createComponentTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
     """
@@ -481,7 +481,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-4"
     }
     """
-    When I save response createResourceTimestamp={{ now.UTC.Unix }}
+    When I save response createResourceTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-4
     Then the response code should be 200
@@ -644,7 +644,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-5"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
     """
@@ -762,7 +762,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-6"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do PUT /api/v4/entitybasics?_id=test-resource-che-event-filters-6/test-component-che-event-filters-6:
     """
@@ -997,7 +997,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-7"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-7
     Then the response code should be 200
@@ -1205,7 +1205,7 @@ Feature: modify event on event filter
       "testdate": 1592215337
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-8
     Then the response code should be 200
