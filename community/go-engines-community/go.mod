@@ -45,7 +45,6 @@ require (
 	github.com/rs/zerolog v1.23.0
 	github.com/russellhaering/gosaml2 v0.6.0
 	github.com/russellhaering/goxmldsig v1.1.0
-	github.com/sergi/go-diff v1.2.0
 	github.com/smartystreets/goconvey v1.6.4
 	github.com/streadway/amqp v1.0.0
 	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2
@@ -62,6 +61,8 @@ require (
 	golang.org/x/tools v0.1.5 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
+
+require github.com/kylelemons/godebug v1.1.0
 
 require (
 	github.com/Azure/go-ntlmssp v0.0.0-20200615164410-66371956d46c // indirect

@@ -32,10 +32,10 @@ Feature: get test suites list for widget
           "timestamp": 1614782420,
           "created": 1614782420,
           "mini_chart": [
-            0,
-            0,
-            0,
-            0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.5
           ]
         },
@@ -52,8 +52,8 @@ Feature: get test suites list for widget
           "timestamp": 1614782435,
           "created": 1614782435,
           "mini_chart": [
-            0,
-            0,
+            0.0,
+            0.0,
             0.49,
             0.19,
             0.99

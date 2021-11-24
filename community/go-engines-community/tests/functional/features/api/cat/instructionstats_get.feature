@@ -60,7 +60,7 @@ Feature: get instruction statistics
           "last_modified": 1617555600,
           "created": 1617555600,
           "name": "test-instruction-to-stats-get-2-name",
-          "rating": 0,
+          "rating": 0.0,
           "type": 1,
           "has_executions": true
         },
@@ -87,7 +87,7 @@ Feature: get instruction statistics
           "last_modified": 1617555600,
           "created": 1617555600,
           "name": "test-instruction-to-stats-get-3-name",
-          "rating": 0,
+          "rating": 0.0,
           "type": 1,
           "has_executions": false
         }
@@ -156,7 +156,7 @@ Feature: get instruction statistics
           "last_modified": 1617555600,
           "created": 1617555600,
           "name": "test-instruction-to-stats-get-2-name",
-          "rating": 0,
+          "rating": 0.0,
           "type": 1,
           "has_executions": true
         },
@@ -183,7 +183,7 @@ Feature: get instruction statistics
           "last_modified": 1617555600,
           "created": 1617555600,
           "name": "test-instruction-to-stats-get-3-name",
-          "rating": 0,
+          "rating": 0.0,
           "type": 1,
           "has_executions": false
         }

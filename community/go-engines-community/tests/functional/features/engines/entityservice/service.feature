@@ -2239,7 +2239,7 @@ Feature: update service on event
       "entity_patterns": [{"name": "test-resource-service-17"}]
     }
     """
-    When I save response disableTimestamp={{ now.Unix }}
+    When I save response disableTimestamp={{ now }}
     Then the response code should be 200
     When I wait the end of event processing
     When I send an event:

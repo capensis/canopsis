@@ -35,7 +35,7 @@ Feature: update meta alarm on action
       "output": "test-output-action-correlation-1",
       "long_output": "test-long-output-action-correlation-1",
       "author": "test-author-action-correlation-1",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I wait the end of 2 events processing
@@ -98,7 +98,7 @@ Feature: update meta alarm on action
       "output": "test-output-action-correlation-1",
       "long_output": "test-long-output-action-correlation-1",
       "author": "test-author-action-correlation-1",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I wait the end of event processing
@@ -236,7 +236,7 @@ Feature: update meta alarm on action
       "output": "test-output-action-correlation-2",
       "long_output": "test-long-output-action-correlation-2",
       "author": "test-author-action-correlation-2",
-      "timestamp": {{ (now.Add (parseDuration "-20s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-20s" }}
     }
     """
     When I wait the end of 2 events processing
@@ -300,7 +300,7 @@ Feature: update meta alarm on action
       "output": "test-output-action-correlation-2",
       "long_output": "test-long-output-action-correlation-2",
       "author": "test-author-action-correlation-2",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I wait the end of event processing

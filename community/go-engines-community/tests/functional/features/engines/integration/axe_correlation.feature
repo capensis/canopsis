@@ -35,11 +35,11 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-1",
       "long_output": "test-long-output-axe-correlation-1",
       "author": "test-author-axe-correlation-1",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
     Then the response code should be 200
@@ -206,7 +206,7 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-2",
       "long_output": "test-long-output-axe-correlation-2",
       "author": "test-author-axe-correlation-2",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -230,7 +230,7 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-2",
       "long_output": "test-long-output-axe-correlation-2",
       "author": "test-author-axe-correlation-2",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response ackEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -409,7 +409,7 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-3",
       "long_output": "test-long-output-axe-correlation-3",
       "author": "test-author-axe-correlation-3",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -427,7 +427,7 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-3",
       "long_output": "test-long-output-axe-correlation-3",
       "author": "test-author-axe-correlation-3",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response changeStateEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -545,7 +545,7 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-4",
       "long_output": "test-long-output-axe-correlation-4",
       "author": "test-author-axe-correlation-4",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -570,7 +570,7 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-4",
       "long_output": "test-long-output-axe-correlation-4",
       "author": "test-author-axe-correlation-4",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response changeStateEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -744,7 +744,7 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-5",
       "long_output": "test-long-output-axe-correlation-5",
       "author": "test-author-axe-correlation-5",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -761,7 +761,7 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-5",
       "long_output": "test-long-output-axe-correlation-5",
       "author": "test-author-axe-correlation-5",
-      "timestamp": {{ (now.Add (parseDuration "-7s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-7s" }}
     }
     """
     When I wait the end of event processing
@@ -777,10 +777,10 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-5",
       "long_output": "test-long-output-axe-correlation-5",
       "author": "test-author-axe-correlation-5",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
-    When I save response resolveTimestamp={{ now.UTC.Unix }}
+    When I save response resolveTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
     Then the response code should be 200
@@ -865,7 +865,7 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-6",
       "long_output": "test-long-output-axe-correlation-6",
       "author": "test-author-axe-correlation-6",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I wait the end of 2 events processing
@@ -882,7 +882,7 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-6",
       "long_output": "test-long-output-axe-correlation-6",
       "author": "test-author-axe-correlation-6",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I wait the end of event processing
@@ -1002,7 +1002,7 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-7",
       "long_output": "test-long-output-axe-correlation-7",
       "author": "test-author-axe-correlation-7",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I wait the end of 2 events processing
@@ -1019,7 +1019,7 @@ Feature: create and update meta alarm
       "output": "test-output-axe-correlation-7",
       "long_output": "test-long-output-axe-correlation-7",
       "author": "test-author-axe-correlation-7",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I wait the end of event processing

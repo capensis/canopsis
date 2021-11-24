@@ -12,51 +12,51 @@ Feature: get test suite's gantt intervals for entity
       "data": [
         {
           "avg_status": 0,
-          "avg_to": 0,
-          "avg_time": 0,
-          "from": 0,
+          "avg_to": 0.0,
+          "avg_time": 0.0,
+          "from": 0.0,
           "_id": "test-case-to-get-entity-gantt-1-1",
           "message": "test-case-to-get-entity-gantt-1-1-msg",
           "name": "test-case-to-get-entity-gantt-1-1-name",
           "status": 0,
-          "time": 1,
-          "to": 1
+          "time": 1.0,
+          "to": 1.0
         },
         {
           "avg_status": 0,
-          "avg_to": 0,
-          "avg_time": 0,
-          "from": 1,
+          "avg_to": 0.0,
+          "avg_time": 0.0,
+          "from": 1.0,
           "_id": "test-case-to-get-entity-gantt-1-2",
           "message": "test-case-to-get-entity-gantt-1-2-msg",
           "name": "test-case-to-get-entity-gantt-1-2-name",
           "status": 1,
-          "time": 2,
-          "to": 3
+          "time": 2.0,
+          "to": 3.0
         },
         {
           "avg_status": 0,
-          "avg_to": 0,
-          "avg_time": 0,
-          "from": 3,
+          "avg_to": 0.0,
+          "avg_time": 0.0,
+          "from": 3.0,
           "_id": "test-case-to-get-entity-gantt-1-3",
           "message": "test-case-to-get-entity-gantt-1-3-msg",
           "name": "test-case-to-get-entity-gantt-1-3-name",
           "status": 2,
-          "time": 3,
-          "to": 6
+          "time": 3.0,
+          "to": 6.0
         },
         {
           "avg_status": 0,
-          "avg_to": 0,
-          "avg_time": 0,
-          "from": 6,
+          "avg_to": 0.0,
+          "avg_time": 0.0,
+          "from": 6.0,
           "_id": "test-case-to-get-entity-gantt-1-4",
           "message": "test-case-to-get-entity-gantt-1-4-msg",
           "name": "test-case-to-get-entity-gantt-1-4-name",
           "status": 3,
-          "time": 4,
-          "to": 10
+          "time": 4.0,
+          "to": 10.0
         }
       ],
       "meta": {
@@ -78,51 +78,51 @@ Feature: get test suite's gantt intervals for entity
       "data": [
         {
           "avg_status": 0,
-          "avg_to": 0,
-          "avg_time": 0,
-          "from": 0,
+          "avg_to": 0.0,
+          "avg_time": 0.0,
+          "from": 0.0,
           "_id": "test-case-to-get-entity-gantt-1-1",
           "message": "test-case-to-get-entity-gantt-1-1-msg",
           "name": "test-case-to-get-entity-gantt-1-1-name",
           "status": 0,
-          "time": 1,
-          "to": 1
+          "time": 1.0,
+          "to": 1.0
         },
         {
           "avg_status": 0,
-          "avg_to": 0,
-          "avg_time": 0,
-          "from": 1,
+          "avg_to": 0.0,
+          "avg_time": 0.0,
+          "from": 1.0,
           "_id": "test-case-to-get-entity-gantt-1-2",
           "message": "test-case-to-get-entity-gantt-1-2-msg",
           "name": "test-case-to-get-entity-gantt-1-2-name",
           "status": 1,
-          "time": 2,
-          "to": 3
+          "time": 2.0,
+          "to": 3.0
         },
         {
           "avg_status": 0,
-          "avg_to": 0,
-          "avg_time": 0,
-          "from": 3,
+          "avg_to": 0.0,
+          "avg_time": 0.0,
+          "from": 3.0,
           "_id": "test-case-to-get-entity-gantt-1-3",
           "message": "test-case-to-get-entity-gantt-1-3-msg",
           "name": "test-case-to-get-entity-gantt-1-3-name",
           "status": 2,
-          "time": 3,
-          "to": 6
+          "time": 3.0,
+          "to": 6.0
         },
         {
           "avg_status": 0,
-          "avg_to": 0,
-          "avg_time": 0,
-          "from": 6,
+          "avg_to": 0.0,
+          "avg_time": 0.0,
+          "from": 6.0,
           "_id": "test-case-to-get-entity-gantt-1-4",
           "message": "test-case-to-get-entity-gantt-1-4-msg",
           "name": "test-case-to-get-entity-gantt-1-4-name",
           "status": 3,
-          "time": 4,
-          "to": 10
+          "time": 4.0,
+          "to": 10.0
         }
       ],
       "meta": {
