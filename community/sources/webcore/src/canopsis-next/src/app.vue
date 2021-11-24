@@ -26,7 +26,6 @@ import localStorageService from '@/services/local-storage';
 import { authMixin } from '@/mixins/auth';
 import { systemMixin } from '@/mixins/system';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
-import { entitiesViewStatsMixin } from '@/mixins/entities/view-stats';
 import { entitiesUserMixin } from '@/mixins/entities/user';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
@@ -47,7 +46,6 @@ export default {
     authMixin,
     systemMixin,
     entitiesInfoMixin,
-    entitiesViewStatsMixin,
     entitiesUserMixin,
   ],
   data() {
@@ -78,9 +76,6 @@ export default {
     this.socketConnectWithErrorHandling();
     this.fetchCurrentUserWithErrorHandling();
   },
-  beforeDestroy() {
-    this.stopViewStats();
-  },
   methods: {
     ...mapActions({
       fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
@@ -101,7 +96,6 @@ export default {
           });
 
           this.setTitle();
-          this.startViewStats();
           this.showPausedExecutionsPopup();
 
           unwatch();
