@@ -95,7 +95,7 @@ La [*météo des services* est un widget](../interface/widgets/meteo-des-service
 
 Un *moteur* Canopsis consomme les [évènements](#evenement) entrants pour les traiter, puis les acheminer vers les moteurs suivants. Ils effectuent également une tâche périodique au [battement](#battement) et consomment leurs enregistrements en base de données lorsqu'ils sont disponibles.
 
-Vous pouvez consulter [plus d'informations sur les moteurs](../../guide-administration/moteurs/index.md) dans le Guide d'administration].
+Vous pouvez consulter [plus d'informations sur les moteurs](../../guide-administration/moteurs/index.md) dans le Guide d'administration.
 
 ## Nom de connecteur
 
