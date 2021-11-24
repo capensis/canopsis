@@ -66,7 +66,7 @@ func (e *instructionExecutor) Exec(
 	alarm *types.Alarm,
 	_ *types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationInstructionParameters
 	var ok bool
@@ -90,6 +90,7 @@ func (e *instructionExecutor) Exec(
 		params.Execution,
 		params.Author,
 		params.Output,
+		userID,
 		role,
 		initiator,
 	)
