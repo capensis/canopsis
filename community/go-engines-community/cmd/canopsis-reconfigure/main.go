@@ -214,9 +214,9 @@ func main() {
 }
 
 func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
-	connStr := os.Getenv(postgres.EnvURL)
-	if connStr == "" {
-		return fmt.Errorf("environment variable %s empty", postgres.EnvURL)
+	connStr, err := postgres.GetConnStr()
+	if err != nil {
+		return err
 	}
 
 	p := &pgx.Postgres{}

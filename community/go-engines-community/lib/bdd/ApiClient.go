@@ -19,6 +19,7 @@ import (
 	"text/template"
 	"time"
 
+	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/cucumber/godog"
@@ -779,15 +780,31 @@ func (a *ApiClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
 	t, err := template.New("tpl").
 		Funcs(template.FuncMap{
 			"now": func() int64 {
-				return time.Now().UTC().Unix()
+				return time.Now().Unix()
 			},
 			"nowAdd": func(s string) (int64, error) {
-				d, err := time.ParseDuration(s)
+				d, err := libtypes.ParseDurationWithUnit(s)
 				if err != nil {
 					return 0, err
 				}
 
-				return time.Now().UTC().Add(d).Unix(), nil
+				return d.AddTo(libtypes.NewCpsTime()).Unix(), nil
+			},
+			"nowDate": func() int64 {
+				y, m, d := time.Now().UTC().Date()
+
+				return time.Date(y, m, d, 0, 0, 0, 0, time.UTC).Unix()
+			},
+			"nowDateAdd": func(s string) (int64, error) {
+				d, err := libtypes.ParseDurationWithUnit(s)
+				if err != nil {
+					return 0, err
+				}
+
+				year, month, day := time.Now().UTC().Date()
+				now := libtypes.CpsTime{Time: time.Date(year, month, day, 0, 0, 0, 0, time.UTC)}
+
+				return d.AddTo(now).Unix(), nil
 			},
 			"parseTime": func(s string) (int64, error) {
 				t, err := time.ParseInLocation("02-01-2006 15:04", s, time.UTC)
