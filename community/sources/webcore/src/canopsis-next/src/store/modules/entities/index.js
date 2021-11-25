@@ -41,7 +41,6 @@ import resolveRulesModule from './resolve-rules';
 import healthcheckModule from './healthcheck';
 import healthcheckParametersModule from './healthcheck-parameters';
 import messageRateStatsModule from './message-rate-stats';
-import viewStatsModule from './view-stats';
 import metricsModule from './metrics';
 import filterModule from './filter';
 
@@ -89,7 +88,6 @@ export default {
   healthcheck: healthcheckModule,
   healthcheckParameters: healthcheckParametersModule,
   messageRateStats: messageRateStatsModule,
-  viewStats: viewStatsModule,
   metrics: metricsModule,
   filter: filterModule,
 };
