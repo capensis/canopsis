@@ -22,8 +22,8 @@ Feature: update alarm on pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-1",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -113,8 +113,8 @@ Feature: update alarm on pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-2",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -190,8 +190,8 @@ Feature: update alarm on pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-3",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -237,8 +237,8 @@ Feature: update alarm on pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-4",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "2s")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "2s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
