@@ -16,5 +16,9 @@ export default createEntityModule({
     fetchListWithoutStore(context, { params }) {
       return request.get(API_ROUTES.ratingSettings, { params });
     },
+
+    bulkUpdate({ data }) {
+      return request.put(API_ROUTES.bulkRatingSettings, data);
+    },
   },
 });

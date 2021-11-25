@@ -166,6 +166,7 @@ export const API_ROUTES = {
    */
   filters: '/api/v4/cat/filters',
   ratingSettings: '/api/v4/cat/rating-settings',
+  bulkRatingSettings: '/api/v4/cat/bulk/rating-settings',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
   remediation: {

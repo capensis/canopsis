@@ -81,6 +81,45 @@ describe('kpi-rating-settings-list', () => {
     },
   ];
 
+  it('Rating settings changed after enable rows', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        ratingSettings: ratingSettingsItems,
+        pagination: {
+          page: 1,
+          rowsPerPage: 10,
+          search: '',
+          sortBy: '',
+          descending: false,
+        },
+        totalItems: 50,
+        updatable: true,
+      },
+    });
+
+    const rows = wrapper.findAll('tr > td');
+
+    const enableButton = rows.at(0).find('input');
+
+    await enableButton.trigger('click');
+
+    const submitButton = wrapper.findAll('.v-btn').at(1);
+
+    submitButton.trigger('click');
+
+    const changeSelectedEvents = wrapper.emitted('change-selected');
+
+    expect(changeSelectedEvents).toHaveLength(1);
+
+    const [eventData] = changeSelectedEvents[0];
+
+    const [firstRatingSetting] = ratingSettingsItems;
+    expect(eventData).toEqual([{
+      ...firstRatingSetting,
+      enabled: !firstRatingSetting.enabled,
+    }]);
+  });
+
   it('Renders `kpi-rating-settings-list` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {

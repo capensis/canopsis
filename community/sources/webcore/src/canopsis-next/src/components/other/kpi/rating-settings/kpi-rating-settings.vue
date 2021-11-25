@@ -7,7 +7,7 @@
       :pending="ratingSettingsPending",
       :total-items="ratingSettingsMeta.total_count",
       :updatable="hasUpdateAnyKpiRatingSettingsAccess",
-      @enable-selected="enableSelectedRatingSettings"
+      @change-selected="changeSelectedRatingSettings"
     )
 </template>
 
@@ -33,7 +33,16 @@ export default {
       this.fetchRatingSettingsList({ params: this.getQuery() });
     },
 
-    enableSelectedRatingSettings() {},
+    async changeSelectedRatingSettings(changedRatingSettings) {
+      await this.bulkUpdateRatingSettings({
+        data: changedRatingSettings.map(ratingSetting => ({
+          id: ratingSetting.id,
+          enabled: ratingSetting.enabled,
+        })),
+      });
+
+      this.fetchList();
+    },
   },
 };
 </script>
