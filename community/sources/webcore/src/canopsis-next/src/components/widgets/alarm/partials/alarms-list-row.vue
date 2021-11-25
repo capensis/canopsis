@@ -27,7 +27,8 @@
         :alarm="alarm",
         :widget="widget",
         :column="column",
-        :columns-filters="columnsFilters"
+        :columns-filters="columnsFilters",
+        @activate="$emit('activate', $event)"
       )
     td
       actions-panel(
@@ -101,6 +102,10 @@ export default {
       type: Object,
       default: null,
     },
+    active: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     ...featuresService.get('components.alarmListRow.computed', {}),
@@ -156,7 +161,7 @@ export default {
     },
 
     classes() {
-      const classes = { 'not-filtered': this.isNotFiltered };
+      const classes = { 'not-filtered': this.isNotFiltered, 'grey lighten-3': this.active };
 
       if (featuresService.has('components.alarmListRow.computed.classes')) {
         return featuresService.call('components.alarmListRow.computed.classes', this, classes);
