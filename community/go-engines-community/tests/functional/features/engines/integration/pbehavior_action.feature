@@ -485,8 +485,8 @@ Feature: no execute action when entity is inactive
           "entity_patterns": [{"name": "test-resource-pbehavior-action-6"}],
           "parameters": {
             "name": "pbehavior-action-6",
-            "tstart": {{ now.Unix }},
-            "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+            "tstart": {{ now }},
+            "tstop": {{ nowAdd "10m" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
