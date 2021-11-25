@@ -28,7 +28,7 @@
         :widget="widget",
         :column="column",
         :columns-filters="columnsFilters",
-        @activate="$emit('activate', $event)"
+        @activate="activateRow"
       )
     td
       actions-panel(
@@ -102,10 +102,11 @@ export default {
       type: Object,
       default: null,
     },
-    active: {
-      type: Boolean,
-      default: false,
-    },
+  },
+  data() {
+    return {
+      active: false,
+    };
   },
   computed: {
     ...featuresService.get('components.alarmListRow.computed', {}),
@@ -171,6 +172,10 @@ export default {
     },
   },
   methods: {
+    activateRow(value) {
+      this.active = value;
+    },
+
     async showExpandPanel() {
       if (!this.row.expanded) {
         await this.fetchAlarmItemWithGroupsAndSteps(this.alarm);
