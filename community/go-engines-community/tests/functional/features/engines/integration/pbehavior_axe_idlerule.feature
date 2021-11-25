@@ -173,8 +173,8 @@ Feature: update alarm on idle rule
     {
       "name": "test-pbehavior-pbehavior-axe-idlerule-2-name",
       "enabled": true,
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "7s")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "7s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -331,8 +331,8 @@ Feature: update alarm on idle rule
     {
       "name": "test-pbehavior-pbehavior-axe-idlerule-3-name",
       "enabled": true,
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "7s")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "7s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -443,8 +443,8 @@ Feature: update alarm on idle rule
     {
       "name": "test-pbehavior-pbehavior-axe-idlerule-4-name",
       "enabled": true,
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "7s")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "7s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{

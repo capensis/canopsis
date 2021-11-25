@@ -1,0 +1,9 @@
+- time: RAW=CURRENT_DATE
+  entity_id: 3
+  value: 1000
+- time: RAW=CURRENT_DATE + INTERVAL '2 hour'
+  entity_id: 4
+  value: 200
+- time: RAW=CURRENT_DATE
+  entity_id: 5
+  value: 300
