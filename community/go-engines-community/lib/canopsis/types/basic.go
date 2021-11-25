@@ -270,19 +270,23 @@ func ParseDurationWithUnit(str string) (DurationWithUnit, error) {
 		return d, fmt.Errorf("invalid duration %q", str)
 	}
 
-	r := regexp.MustCompile(`(?P<val>\d+)(?P<t>[hms])`)
+	r := regexp.MustCompile(`^(-?)(?P<val>\d+)(?P<t>[smhdwMy])$`)
 	res := r.FindStringSubmatch(str)
 	if len(res) == 0 {
 		return d, fmt.Errorf("invalid duration %q", str)
 	}
 
-	val, err := strconv.Atoi(res[1])
+	val, err := strconv.Atoi(res[2])
 	if err != nil {
 		return d, fmt.Errorf("invalid duration %q: %w", str, err)
 	}
 
 	d.Value = int64(val)
-	d.Unit = res[2]
+	d.Unit = res[3]
+
+	if res[1] == "-" {
+		d.Value = -d.Value
+	}
 
 	return d, nil
 }
