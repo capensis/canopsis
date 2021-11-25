@@ -3189,6 +3189,8 @@ definitions:
       t:
         $ref: '#/definitions/types.CpsTime'
         type: object
+      user_id:
+        type: string
       val:
         type: string
     type: object

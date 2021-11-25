@@ -12510,6 +12510,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "val": {
                     "type": "string"
                 }
