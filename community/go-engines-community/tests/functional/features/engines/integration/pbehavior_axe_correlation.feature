@@ -35,7 +35,7 @@ Feature: update meta alarm on pbehavior
       "output": "test-output-pbehavior-axe-correlation-1",
       "long_output": "test-long-output-pbehavior-axe-correlation-1",
       "author": "test-author-pbehavior-axe-correlation-1",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I wait the end of 2 events processing
@@ -47,8 +47,8 @@ Feature: update meta alarm on pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-axe-correlation-1",
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
