@@ -42,7 +42,9 @@
             :columns-filters="columnsFilters",
             :hide-groups="hideGroups",
             :parent-alarm="parentAlarm",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)"
+            :active="isActiveAlarm(props.item)",
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
+            @activate="activateAlarm(props.item, $event)"
           )
         template(slot="expand", slot-scope="props")
           alarms-expand-panel(
@@ -149,6 +151,7 @@ export default {
 
     return {
       selected: [],
+      activeAlarmsIds: [],
       columnsFilters: [],
       columnsFiltersPending: false,
 
@@ -238,6 +241,18 @@ export default {
 
   methods: {
     ...featuresService.get('components.alarmListTable.methods', {}),
+
+    isActiveAlarm(alarm) {
+      return this.activeAlarmsIds.includes(alarm._id);
+    },
+
+    activateAlarm(alarm, value) {
+      if (value) {
+        this.activeAlarmsIds.push(alarm._id);
+      } else {
+        this.activeAlarmsIds = this.activeAlarmsIds.filter(id => alarm._id !== id);
+      }
+    },
 
     checkIsTourEnabledForAlarmByIndex(index) {
       return this.isTourEnabled && index === 0;
