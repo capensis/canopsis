@@ -722,7 +722,7 @@ type rpcClient struct {
 }
 ```
 
-Of cource we need another message processor for that, let's create one in `engine-axe` directory, the difference from precious message processors is that it should implement `RPCMessageProcessor` interface:
+Of course we need another message processor for that, let's create one in `engine-axe` directory, the difference from previous message processors is that it should implement `RPCMessageProcessor` interface:
 ```go
 // RPCMessageProcessor interface is used to implement AMQP RPC response processor of consumer.
 // If Process returns error engine will be stopped.
