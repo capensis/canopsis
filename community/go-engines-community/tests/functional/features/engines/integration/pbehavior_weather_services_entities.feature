@@ -453,8 +453,8 @@ Feature: get service entities
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-entity-6",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
