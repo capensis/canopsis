@@ -44,10 +44,19 @@ func IsConnectionError(err error) bool {
 	return false
 }
 
-func NewPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (Pool, error) {
+func GetConnStr() (string, error) {
 	connStr := os.Getenv(EnvURL)
 	if connStr == "" {
-		return nil, fmt.Errorf("environment variable %s empty", EnvURL)
+		return "", fmt.Errorf("environment variable %s empty", EnvURL)
+	}
+
+	return connStr, nil
+}
+
+func NewPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (Pool, error) {
+	connStr, err := GetConnStr()
+	if err != nil {
+		return nil, err
 	}
 
 	pgxPool, err := pgxpool.Connect(ctx, connStr)

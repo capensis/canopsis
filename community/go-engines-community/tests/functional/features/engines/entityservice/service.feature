@@ -2265,7 +2265,7 @@ Feature: update service on event
       "sli_avail_state": 0
     }
     """
-    When I save response disableTimestamp={{ now.Unix }}
+    When I save response disableTimestamp={{ now }}
     Then the response code should be 200
     When I wait the end of event processing
     When I send an event:

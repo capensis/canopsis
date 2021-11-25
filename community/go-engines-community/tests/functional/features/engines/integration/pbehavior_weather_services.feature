@@ -36,8 +36,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-1",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -123,8 +123,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-2",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -215,8 +215,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-3-1",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -288,8 +288,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-4",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -368,8 +368,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-5",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -463,8 +463,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-6-1",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "20m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "20m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -483,8 +483,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-6-2",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "20m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "20m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -592,8 +592,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-7-1",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "20m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "20m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -612,8 +612,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-7-2",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "20m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "20m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -690,8 +690,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-11",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -775,8 +775,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-12-1",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -906,8 +906,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-14-1",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -1023,8 +1023,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-16",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -1106,8 +1106,8 @@ Feature: get service weather
     {
       "enabled": true,
       "name": "test-pbehavior-weather-service-17",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{

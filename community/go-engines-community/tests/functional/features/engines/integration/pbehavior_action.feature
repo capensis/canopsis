@@ -42,8 +42,8 @@ Feature: no execute action when entity is inactive
     {
       "enabled": true,
       "name": "test-pbehavior-action-1",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "20m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "20m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -131,8 +131,8 @@ Feature: no execute action when entity is inactive
     {
       "enabled": true,
       "name": "test-pbehavior-action-2",
-      "tstart": {{ (now.Add (parseDuration "5s")).Unix }},
-      "tstop": {{ (now.Add (parseDuration "10s")).Unix }},
+      "tstart": {{ nowAdd "5s" }},
+      "tstop": {{ nowAdd "10s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -241,8 +241,8 @@ Feature: no execute action when entity is inactive
           "entity_patterns": [{"name": "test-resource-pbehavior-action-3"}],
           "parameters": {
             "name": "pbehavior-action-3",
-            "tstart": {{ now.Unix }},
-            "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+            "tstart": {{ now }},
+            "tstop": {{ nowAdd "10m" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -394,8 +394,8 @@ Feature: no execute action when entity is inactive
           "entity_patterns": [{"name": "test-resource-pbehavior-action-5"}],
           "parameters": {
             "name": "pbehavior-action-5",
-            "tstart": {{ now.Unix }},
-            "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+            "tstart": {{ now }},
+            "tstop": {{ nowAdd "10m" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -485,8 +485,8 @@ Feature: no execute action when entity is inactive
           "entity_patterns": [{"name": "test-resource-pbehavior-action-6"}],
           "parameters": {
             "name": "pbehavior-action-6",
-            "tstart": {{ now.Unix }},
-            "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+            "tstart": {{ now }},
+            "tstop": {{ nowAdd "10m" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },

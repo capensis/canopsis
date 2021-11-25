@@ -1,0 +1,40 @@
+- time: RAW='2021-07-01'
+  entity_id: 7
+  type: 0
+  value: 60
+- time: RAW='2021-09-19'
+  entity_id: 7
+  type: 0
+  value: 60
+- time: RAW='2021-09-27'
+  entity_id: 7
+  type: 0
+  value: 60
+- time: RAW='2021-09-28'
+  entity_id: 7
+  type: 0
+  value: 60
+- time: RAW=CURRENT_DATE + INTERVAL '- 2 day'
+  entity_id: 7
+  type: 0
+  value: 60
+- time: RAW=CURRENT_DATE
+  entity_id: 7
+  type: 0
+  value: 60
+- time: RAW=CURRENT_DATE + INTERVAL '1 hour'
+  entity_id: 7
+  type: 0
+  value: 60
+- time: RAW=CURRENT_DATE + INTERVAL '2 hour'
+  entity_id: 7
+  type: 0
+  value: 60
+- time: RAW=CURRENT_DATE + INTERVAL '1 hour'
+  entity_id: 8
+  type: 0
+  value: 60
+- time: RAW=CURRENT_DATE + INTERVAL '2 hour'
+  entity_id: 8
+  type: 1
+  value: 60

@@ -1,0 +1,9 @@
+- time: RAW=CURRENT_DATE
+  user_id: test-user-to-metrics-rating-get-1
+  value: 100
+- time: RAW=CURRENT_DATE
+  user_id: test-user-to-metrics-rating-get-2
+  value: 100
+- time: RAW=CURRENT_DATE + INTERVAL '1 hour'
+  user_id: test-user-to-metrics-rating-get-2
+  value: 200
