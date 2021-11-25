@@ -22,7 +22,6 @@
           )
         v-flex(v-if="hasAccessToCategory")
           c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
-
         v-flex
           filter-selector(
             :label="$t('settings.selectAFilter')",
@@ -64,7 +63,6 @@
               type="top",
               @input="updateQueryPage"
             )
-
       template(v-for="column in columns", :slot="column.value", slot-scope="props")
         entity-column-cell(
           :entity="props.item",
@@ -73,7 +71,6 @@
         )
       template(slot="actions", slot-scope="props")
         actions-panel(:item="props.item", :is-editing-mode="isEditingMode")
-
       template(slot="expand", slot-scope="props")
         entities-list-expand-panel(
           :item="props.item",
@@ -81,7 +78,6 @@
           :tab-id="tabId",
           :columns-filters="columnsFilters"
         )
-
       template(slot="mass-actions", slot-scope="props")
         mass-actions-panel.ml-3(:items="props.selected")
 
