@@ -303,6 +303,9 @@ export default {
       common: 'Add a new entity',
       addService: 'Add a new service entity',
     },
+    popups: {
+      massDeleteWarning: 'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
+    },
   },
   search: {
     alarmAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
