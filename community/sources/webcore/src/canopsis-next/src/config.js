@@ -81,7 +81,6 @@ export const API_ROUTES = {
   login: '/api/v4/login',
   logout: '/api/v4/logout',
   loggedUserCount: '/api/v4/logged-user-count',
-  viewStats: '/api/v4/view-stats',
   currentUser: '/api/v4/account/me',
   alarmList: '/api/v4/alarms',
   entity: '/api/v4/entities',
