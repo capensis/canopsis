@@ -303,6 +303,9 @@ export default {
       common: 'Ajouter une nouvelle entité',
       addService: 'Ajouter une nouvelle entité de service',
     },
+    popups: {
+      massDeleteWarning: 'La suppression en masse ne peut pas être appliquée pour certains des éléments sélectionnés, ils ne seront donc pas supprimés.',
+    },
   },
   search: {
     alarmAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +

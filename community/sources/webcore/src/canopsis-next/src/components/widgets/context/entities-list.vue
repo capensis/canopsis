@@ -22,6 +22,7 @@
           )
         v-flex(v-if="hasAccessToCategory")
           c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
+
         v-flex
           filter-selector(
             :label="$t('settings.selectAFilter')",
@@ -32,7 +33,7 @@
             :has-access-to-edit-filter="hasAccessToEditFilter",
             :has-access-to-user-filter="hasAccessToUserFilter",
             :has-access-to-list-filters="hasAccessToListFilters",
-            :entitiesType="$constants.ENTITIES_TYPES.entity",
+            :entities-type="$constants.ENTITIES_TYPES.entity",
             @input="updateSelectedFilter",
             @update:condition="updateSelectedCondition",
             @update:filters="updateFilters"
@@ -83,6 +84,7 @@
 
       template(slot="mass-actions", slot-scope="props")
         mass-actions-panel.ml-3(:items="props.selected")
+
     c-table-pagination(
       :total-items="contextEntitiesMeta.total_count",
       :rows-per-page="query.limit",
