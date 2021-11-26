@@ -353,6 +353,9 @@ func TestPool_QueryRow_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
 	mockRows := mock_v4.NewMockRows(ctrl)
 	mockRows.EXPECT().Scan().Return(nil)
+	mockRows.EXPECT().Err().Return(nil)
+	mockRows.EXPECT().Next().Return(true)
+	mockRows.EXPECT().Close()
 	execCount := -1
 	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgx.Rows, error) {
 		execCount++
