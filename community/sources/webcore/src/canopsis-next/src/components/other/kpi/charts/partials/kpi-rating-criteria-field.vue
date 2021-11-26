@@ -57,18 +57,20 @@ export default {
       this.items = items;
 
       if (this.mandatory) {
-        if (isUndefined(this.value)) {
-          if (this.items.length) {
-            const [firstRatingSetting] = this.items;
-
-            this.updateModel(firstRatingSetting);
-          }
-        } else if (!this.items.some(({ id }) => id === this.value)) {
-          this.updateModel(undefined);
-        }
+        this.setAvailableValue();
       }
 
       this.pending = true;
+    },
+
+    setAvailableValue() {
+      const [firstRatingSetting] = this.items;
+
+      if (!this.items.length) {
+        this.updateModel(undefined);
+      } else if (isUndefined(this.value) || !this.items.some(({ id }) => id === this.value.id)) {
+        this.updateModel(firstRatingSetting);
+      }
     },
   },
 };

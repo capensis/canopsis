@@ -127,9 +127,10 @@ describe('kpi-rating-criteria-field', () => {
     expect(inputEvents).toBeFalsy();
   });
 
-  it('First rating not set after fetch without value, if value doesn\'t exist', async () => {
+  it('First rating settled after fetch, if items doesn\'t includes value', async () => {
+    const ratingSetting = { id: 321 };
     const fetchRatingSettings = jest.fn(() => ({
-      data: [{ id: 321 }],
+      data: [ratingSetting],
     }));
     const wrapper = factory({
       propsData: {
@@ -156,7 +157,62 @@ describe('kpi-rating-criteria-field', () => {
 
     const [eventData] = inputEvents[0];
 
-    expect(eventData).toBe(undefined);
+    expect(eventData).toBe(ratingSetting);
+  });
+
+  it('First rating not settled after fetch, if items includes value', async () => {
+    const fetchRatingSettings = jest.fn(() => ({
+      data: ratingSettings,
+    }));
+    const wrapper = factory({
+      propsData: {
+        value: ratingSettings[0],
+        mandatory: true,
+      },
+      store: createMockedStoreModules([{
+        name: 'ratingSettings',
+        actions: {
+          fetchListWithoutStore: fetchRatingSettings,
+        },
+      }]),
+    });
+
+    await flushPromises();
+
+    expect(fetchRatingSettings).toBeCalledTimes(1);
+
+    const inputEvents = wrapper.emitted('input');
+
+    expect(inputEvents).toBeFalsy();
+  });
+
+  it('First rating settled after fetch, if value is undefined', async () => {
+    const fetchRatingSettings = jest.fn(() => ({
+      data: ratingSettings,
+    }));
+    const wrapper = factory({
+      propsData: {
+        mandatory: true,
+      },
+      store: createMockedStoreModules([{
+        name: 'ratingSettings',
+        actions: {
+          fetchListWithoutStore: fetchRatingSettings,
+        },
+      }]),
+    });
+
+    await flushPromises();
+
+    expect(fetchRatingSettings).toBeCalledTimes(1);
+
+    const inputEvents = wrapper.emitted('input');
+
+    expect(inputEvents).toHaveLength(1);
+
+    const [eventData] = inputEvents[0];
+
+    expect(eventData).toBe(ratingSettings[0]);
   });
 
   it('Criteria changed after trigger select field', () => {
