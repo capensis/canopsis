@@ -33,3 +33,18 @@
   name: test-rating-settings-to-update
   label: test-rating-settings-to-update
   enabled: false
+- id: 8
+  type: 0
+  name: test-rating-settings-to-bulk-update-1
+  label: test-rating-settings-to-bulk-update-1
+  enabled: false
+- id: 9
+  type: 0
+  name: test-rating-settings-to-bulk-update-2
+  label: test-rating-settings-to-bulk-update-2
+  enabled: true
+- id: 10
+  type: 0
+  name: test-rating-settings-to-bulk-update-3
+  label: test-rating-settings-to-bulk-update-3
+  enabled: false
