@@ -384,7 +384,9 @@ Feature: Get metrics rating
     Then the response body should be:
     """json
     {
-      "error": "metric \"not-exist\" is not supported"
+      "errors": {
+        "metric": "metric \"not-exist\" is not supported"
+      }
     }
     """
     When I do GET /api/v4/cat/metrics/rating?criteria=1000000&metric=total_alarms&from={{ now }}&to={{ now }}
@@ -392,7 +394,9 @@ Feature: Get metrics rating
     Then the response body should be:
     """json
     {
-      "error": "criteria 1000000 not found"
+      "errors": {
+        "criteria": "criteria 1000000 not found"
+      }
     }
     """
     When I do GET /api/v4/cat/metrics/rating?filter=not-exist&from={{ now }}&to={{ now }}&metric=total_alarms&criteria=1
@@ -400,7 +404,9 @@ Feature: Get metrics rating
     Then the response body should be:
     """json
     {
-      "error": "filter \"not-exist\" not found"
+      "errors": {
+        "filter": "filter \"not-exist\" not found"
+      }
     }
     """
     When I do GET /api/v4/cat/metrics/rating?metric=total_alarms&criteria=3&from={{ now }}&to={{ now }}
@@ -408,7 +414,9 @@ Feature: Get metrics rating
     Then the response body should be:
     """json
     {
-      "error": "criteria \"username\" is not supported by metric \"total_alarms\""
+      "errors": {
+        "criteria": "criteria \"username\" is not supported by metric \"total_alarms\""
+      }
     }
     """
     When I do GET /api/v4/cat/metrics/rating?metric=total_user_activity&criteria=1&from={{ now }}&to={{ now }}
@@ -416,7 +424,9 @@ Feature: Get metrics rating
     Then the response body should be:
     """json
     {
-      "error": "criteria \"name\" is not supported by metric \"total_user_activity\""
+      "errors": {
+        "criteria": "criteria \"name\" is not supported by metric \"total_user_activity\""
+      }
     }
     """
     When I do GET /api/v4/cat/metrics/rating?metric=total_user_activity&filter=test-filter-to-metrics-rating-get&criteria=3&from={{ now }}&to={{ now }}
@@ -424,7 +434,9 @@ Feature: Get metrics rating
     Then the response body should be:
     """json
     {
-      "error": "metric \"total_user_activity\" doesn't support filter"
+      "errors": {
+        "metric": "metric \"total_user_activity\" doesn't support filter"
+      }
     }
     """
 

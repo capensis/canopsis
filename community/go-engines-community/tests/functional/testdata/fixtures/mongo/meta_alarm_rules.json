@@ -76,5 +76,43 @@
     "name": "Test alarm get",
     "patterns": null,
     "type": "complex"
+  },
+  {
+    "_id": "test-metaalarm-metrics-axe-4",
+    "name": "test-metaalarm-metrics-axe-4-name",
+    "type": "attribute",
+    "author": "test-author-metrics-axe-4-name",
+    "auto_resolve": false,
+    "config": {
+      "alarm_patterns": [
+        {
+          "v": {
+            "component": "test-component-metrics-axe-4"
+          }
+        }
+      ]
+    },
+    "output_template": "",
+    "created": 1637907655,
+    "updated": 1637907655
+  },
+  {
+    "_id": "test-metaalarm-metrics-axe-5",
+    "name": "test-metaalarm-metrics-axe-5-name",
+    "type": "attribute",
+    "author": "test-author-metrics-axe-5-name",
+    "auto_resolve": false,
+    "config": {
+      "alarm_patterns": [
+        {
+          "v": {
+            "component": "test-component-metrics-axe-5"
+          }
+        }
+      ]
+    },
+    "output_template": "",
+    "created": 1637907655,
+    "updated": 1637907655
   }
 ]

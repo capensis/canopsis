@@ -617,7 +617,9 @@ Feature: Get SLI metrics
     Then the response body should be:
     """json
     {
-      "error": "filter \"not-exist\" not found"
+      "errors": {
+        "filter": "filter \"not-exist\" not found"
+      }
     }
     """
 
