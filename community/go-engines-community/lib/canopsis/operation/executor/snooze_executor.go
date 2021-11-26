@@ -33,6 +33,10 @@ func (e *snoozeExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	if alarm.Value.Snooze != nil {
 		return "", nil
 	}

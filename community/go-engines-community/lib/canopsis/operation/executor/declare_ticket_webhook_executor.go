@@ -34,6 +34,10 @@ func (e *declareTicketWebhookExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	err := alarm.PartialUpdateDeclareTicket(
 		time,
 		params.Author,

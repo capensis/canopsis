@@ -31,6 +31,10 @@ func (e *doneExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	if alarm.Value.Done != nil {
 		return "", nil
 	}

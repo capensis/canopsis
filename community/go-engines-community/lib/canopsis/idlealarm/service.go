@@ -247,18 +247,21 @@ func (s *baseService) applyAlarmRule(
 			event.EventType = types.EventTypeAck
 			event.Output = params.Output
 			event.Author = params.Author
+			event.UserID = params.User
 		}
 	case types.ActionTypeAckRemove:
 		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
 			event.EventType = types.EventTypeAckremove
 			event.Output = params.Output
 			event.Author = params.Author
+			event.UserID = params.User
 		}
 	case types.ActionTypeCancel:
 		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
 			event.EventType = types.EventTypeCancel
 			event.Output = params.Output
 			event.Author = params.Author
+			event.UserID = params.User
 		}
 	case types.ActionTypeAssocTicket:
 		if params, ok := rule.Operation.Parameters.(types.OperationAssocTicketParameters); ok {
@@ -266,6 +269,7 @@ func (s *baseService) applyAlarmRule(
 			event.Ticket = params.Ticket
 			event.Output = params.Output
 			event.Author = params.Author
+			event.UserID = params.User
 		}
 	case types.ActionTypeChangeState:
 		if params, ok := rule.Operation.Parameters.(types.OperationChangeStateParameters); ok {
@@ -273,6 +277,7 @@ func (s *baseService) applyAlarmRule(
 			event.State = params.State
 			event.Output = params.Output
 			event.Author = params.Author
+			event.UserID = params.User
 		}
 	case types.ActionTypePbehavior:
 		if params, ok := rule.Operation.Parameters.(types.ActionPBehaviorParameters); ok {
@@ -283,6 +288,7 @@ func (s *baseService) applyAlarmRule(
 			}
 			event.PbhParameters = string(encodedParams)
 			event.Author = params.Author
+			event.UserID = params.UserID
 		}
 	case types.ActionTypeSnooze:
 		if params, ok := rule.Operation.Parameters.(types.OperationSnoozeParameters); ok {
@@ -291,6 +297,7 @@ func (s *baseService) applyAlarmRule(
 			event.Duration = &d
 			event.Output = params.Output
 			event.Author = params.Author
+			event.UserID = params.User
 		}
 	default:
 		return nil, fmt.Errorf("unknown idle rule operation %v", rule.Operation)
