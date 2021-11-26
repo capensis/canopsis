@@ -1,6 +1,6 @@
 Feature: Get metrics rating
   I need to be able to get metrics rating
-  Only admin should be able to metrics rating
+  Only admin should be able to get metrics rating
 
   Scenario: given get total_alarms by name request should return metrics
     When I am admin
