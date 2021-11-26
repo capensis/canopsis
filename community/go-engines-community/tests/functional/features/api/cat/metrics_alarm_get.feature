@@ -1,6 +1,6 @@
 Feature: Get alarm metrics
   I need to be able to get alarm metrics
-  Only admin should be able to alarm metrics
+  Only admin should be able to get alarm metrics
 
   Scenario: given get total_alarms hour request should return metrics
     When I am admin
