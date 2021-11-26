@@ -89,18 +89,6 @@ export const getAvailableMetricsByCriteria = criteria => (
 );
 
 /**
- * Check metric is available for criteria
- *
- * @param {string} metric
- * @param {string} criteria
- * @returns {boolean}
- */
-export const isAvailableMetricByCriteria = (metric, criteria) => (
-  getAvailableMetricsByCriteria(criteria)
-    .includes(metric)
-);
-
-/**
  * If metric available for criteria return metric, else return first available metric
  *
  * @param {string} metric
@@ -108,11 +96,13 @@ export const isAvailableMetricByCriteria = (metric, criteria) => (
  * @returns {string}
  */
 export const getAvailableMetricByCriteria = (metric, criteria) => {
-  if (criteria && isAvailableMetricByCriteria(metric, criteria)) {
+  const metrics = getAvailableMetricsByCriteria(criteria);
+
+  if (criteria && metrics.includes(metric)) {
     return metric;
   }
 
-  const [firstMetric] = getAvailableMetricsByCriteria(criteria);
+  const [firstMetric] = metrics;
 
   return firstMetric;
 };

@@ -5,8 +5,8 @@
       c-filters-field.mr-4.kpi-rating-toolbar__filters(v-field="query.filter")
       kpi-rating-criteria-field.mr-4.kpi-rating-toolbar__criteria(
         :value="query.criteria",
-        @input="updateCriteria",
-        mandatory
+        mandatory,
+        @input="updateCriteria"
       )
       kpi-rating-metric-field.mr-4.kpi-rating-toolbar__metric(v-field="query.metric", :criteria="query.criteria")
       c-records-per-page-field(v-field="query.rowsPerPage")

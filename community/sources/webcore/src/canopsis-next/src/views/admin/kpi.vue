@@ -24,7 +24,7 @@
         v-if="hasFabButton",
         @create="create",
         @refresh="refresh",
-        :has-access="hasAccess"
+        :has-access="hasAccessToCreate"
       )
         span {{ $t('modals.filter.create.title') }}
 </template>
@@ -59,7 +59,7 @@ export default {
       return [KPI_TABS.filters, KPI_TABS.ratingSettings].includes(this.activeTab);
     },
 
-    hasAccess() {
+    hasAccessToCreate() {
       return this.activeTab === KPI_TABS.filters && this.hasCreateAnyKpiFiltersAccess;
     },
   },
