@@ -1,6 +1,6 @@
 Feature: Get SLI metrics
   I need to be able to get SLI metrics
-  Only admin should be able to SLI metrics
+  Only admin should be able to get SLI metrics
 
   Scenario: given get hour request should return metrics
     When I am admin

@@ -10,6 +10,7 @@ import (
 	"math"
 	"os"
 	"reflect"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -184,6 +185,8 @@ func ExportCsvByCursor(
 			for field := range item {
 				fields = append(fields, field)
 			}
+
+			sort.Strings(fields)
 
 			err = w.WriteAll([][]string{fields})
 			if err != nil {
