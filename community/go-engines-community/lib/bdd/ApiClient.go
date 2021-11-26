@@ -37,8 +37,8 @@ const (
 	basicPrefix         = "Basic"
 	bearerPrefix        = "Bearer"
 
-	repeatRequestCount    = 20
-	repeatRequestInterval = time.Millisecond * 100
+	repeatRequestCount    = 10
+	repeatRequestInterval = time.Millisecond * 10
 )
 
 // ApiClient represents utility struct which implements API steps to feature context.
@@ -452,6 +452,10 @@ Step example:
 	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}}
 */
 func (a *ApiClient) IDoRequest(method, uri string) error {
+	if strings.Contains(uri, "until") {
+		return fmt.Errorf("step is wrongly matched to IDoRequest")
+	}
+
 	uri, err := a.getRequestURL(uri)
 	if err != nil {
 		return err
@@ -488,6 +492,10 @@ Step example:
 	"""
 */
 func (a *ApiClient) IDoRequestWithBody(method, uri string, doc string) error {
+	if strings.Contains(uri, "until") {
+		return fmt.Errorf("step is wrongly matched to IDoRequestWithBody")
+	}
+
 	uri, err := a.getRequestURL(uri)
 	if err != nil {
 		return err
@@ -529,9 +537,11 @@ func (a *ApiClient) IDoRequestUntilResponseCode(method, uri string, code int) er
 		return fmt.Errorf("cannot create request: %w", err)
 	}
 
+	timeout := repeatRequestInterval
 	for i := 0; i < repeatRequestCount; i++ {
 		if i != 0 {
-			time.Sleep(repeatRequestInterval)
+			time.Sleep(timeout)
+			timeout *= 2
 		}
 
 		err := a.doRequest(req)
@@ -582,10 +592,11 @@ func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc st
 	}
 
 	var resDiffErr error
-
+	timeout := repeatRequestInterval
 	for i := 0; i < repeatRequestCount; i++ {
 		if i != 0 {
-			time.Sleep(repeatRequestInterval)
+			time.Sleep(timeout)
+			timeout *= 2
 		}
 
 		err := a.doRequest(req)
@@ -643,10 +654,11 @@ func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int
 	}
 
 	var resDiffErr error
-
+	timeout := repeatRequestInterval
 	for i := 0; i < repeatRequestCount; i++ {
 		if i != 0 {
-			time.Sleep(repeatRequestInterval)
+			time.Sleep(timeout)
+			timeout *= 2
 		}
 
 		err := a.doRequest(req)

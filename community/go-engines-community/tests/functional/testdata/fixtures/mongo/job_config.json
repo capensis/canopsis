@@ -97,5 +97,14 @@
     "host": "http://localhost:3000",
     "auth_token": "test-job-config-to-run-manual-job-token",
     "created": 1596550518
+  },
+  {
+    "_id": "test-job-config-metrics-axe-2",
+    "name": "test-job-config-metrics-axe-2-name",
+    "type": "rundeck",
+    "author": "test-author-metrics-axe-2",
+    "host": "http://localhost:3000",
+    "auth_token": "test-job-config-metrics-axe-2-token",
+    "created": 1596550518
   }
 ]
