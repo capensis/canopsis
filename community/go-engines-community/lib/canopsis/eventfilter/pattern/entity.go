@@ -18,6 +18,7 @@ type EntityRegexMatches struct {
 	ID             RegexMatches
 	Name           RegexMatches
 	Component      RegexMatches
+	Category       RegexMatches
 	Infos          map[string]InfoRegexMatches
 	ComponentInfos map[string]InfoRegexMatches
 	Type           RegexMatches
@@ -42,6 +43,7 @@ type EntityFields struct {
 	ComponentInfos map[string]InfoPattern `bson:"component_infos"`
 	Type           StringPattern          `bson:"type"`
 	Component      StringPattern          `bson:"component"`
+	Category       StringPattern          `bson:"category"`
 
 	// When unmarshalling a BSON document, the fields of this document that are
 	// not defined in this struct are added to UnexpectedFields.
@@ -80,6 +82,9 @@ func (e EntityFields) AsMongoDriverQuery() bson.M {
 	if !e.Component.Empty() {
 		query["component"] = e.Component.AsMongoDriverQuery()
 	}
+	if !e.Category.Empty() {
+		query["category"] = e.Category.AsMongoDriverQuery()
+	}
 	return query
 }
 
@@ -105,6 +110,9 @@ func (e EntityFields) AsSqlQuery(table ...string) (string, error) {
 	}
 	if !e.Component.Empty() {
 		conds = append(conds, fmt.Sprintf("%scomponent %s", prefix, e.Component.AsSqlQuery()))
+	}
+	if !e.Category.Empty() {
+		conds = append(conds, fmt.Sprintf("%scategory %s", prefix, e.Category.AsSqlQuery()))
 	}
 	if !e.Enabled.Empty() {
 		conds = append(conds, fmt.Sprintf("%senabled %s", prefix, e.Enabled.AsSqlQuery()))
@@ -162,6 +170,7 @@ func (e EntityPattern) IsSet() bool {
 		e.EntityFields.Name.IsSet() ||
 		e.EntityFields.ID.IsSet() ||
 		e.EntityFields.Component.IsSet() ||
+		e.EntityFields.Category.IsSet() ||
 		len(e.EntityFields.Infos) > 0 ||
 		len(e.EntityFields.ComponentInfos) > 0
 }
@@ -196,6 +205,7 @@ func (e EntityPattern) Matches(entity *types.Entity, matches *EntityRegexMatches
 
 	match := !e.ShouldBeNil &&
 		e.Component.Matches(entity.Component, &matches.Component) &&
+		e.Category.Matches(entity.Category, &matches.Category) &&
 		e.ID.Matches(entity.ID, &matches.ID) &&
 		e.Name.Matches(entity.Name, &matches.Name) &&
 		e.Enabled.Matches(entity.Enabled) &&
@@ -288,6 +298,15 @@ func (e EntityPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		}
 
 		resultBson[bsonFieldName] = e.Component
+	}
+
+	if e.Category.IsSet() {
+		bsonFieldName, err := GetFieldBsonName(e, "Category", "category")
+		if err != nil {
+			return bsontype.Undefined, nil, err
+		}
+
+		resultBson[bsonFieldName] = e.Category
 	}
 
 	if e.Type.IsSet() {
