@@ -160,5 +160,13 @@
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
     "created": 1596712203
+  },
+  {
+    "_id": "test-job-metrics-axe-2",
+    "name": "test-job-metrics-axe-2-name",
+    "author": "test-author-metrics-axe-2",
+    "config": "test-job-config-metrics-axe-2",
+    "external_id": "test-job-long-succeeded",
+    "created": 1596712203
   }
 ]

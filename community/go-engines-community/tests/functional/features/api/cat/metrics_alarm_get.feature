@@ -301,7 +301,9 @@ Feature: Get alarm metrics
     Then the response body should be:
     """json
     {
-      "error": "filter \"not-exist\" not found"
+      "errors": {
+        "filter": "filter \"not-exist\" not found"
+      }
     }
     """
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=not-exist&from={{ now }}&to={{ now }}&sampling=day
@@ -309,7 +311,9 @@ Feature: Get alarm metrics
     Then the response body should be:
     """json
     {
-      "error": "parameter \"not-exist\" is not supported"
+      "errors": {
+        "parameter.0": "parameter \"not-exist\" is not supported"
+      }
     }
     """
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=total_user_activity&from={{ now }}&to={{ now }}&sampling=day
@@ -317,7 +321,9 @@ Feature: Get alarm metrics
     Then the response body should be:
     """json
     {
-      "error": "parameter \"total_user_activity\" is not supported"
+      "errors": {
+        "parameter.0": "parameter \"total_user_activity\" is not supported"
+      }
     }
     """
     When I do GET /api/v4/cat/metrics/alarm?sampling=not-exist&from={{ now }}&to={{ now }}&parameters[]=total_alarms
