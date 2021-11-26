@@ -2087,7 +2087,7 @@
       "value": 2,
       "unit": "s"
     },
-    "priority": 1000,
+    "priority": 12,
     "author": "test-user-author-1-id",
     "enabled": true,
     "last_modified": 1596712203,
@@ -2199,7 +2199,7 @@
       "value": 2,
       "unit": "s"
     },
-    "priority": 12,
+    "priority": 13,
     "last_executed_on": 1618394399,
     "avg_complete_time": 316,
     "last_modified": 1617555600,
@@ -2230,7 +2230,7 @@
       "value": 2,
       "unit": "s"
     },
-    "priority": 12,
+    "priority": 14,
     "last_modified": 1617555600,
     "created": 1617555600
   },
@@ -2339,7 +2339,7 @@
       "value": 2,
       "unit": "s"
     },
-    "priority": 12,
+    "priority": 15,
     "last_executed_on": 1618280210,
     "avg_complete_time": 316,
     "last_modified": 1596712303,
@@ -2370,7 +2370,7 @@
       "value": 2,
       "unit": "s"
     },
-    "priority": 13,
+    "priority": 16,
     "last_modified": 1596712203,
     "created": 1596712203
   },
@@ -2478,7 +2478,7 @@
       "value": 2,
       "unit": "s"
     },
-    "priority": 12,
+    "priority": 17,
     "last_executed_on": 1618280210,
     "last_modified": 1596712203,
     "created": 1596712203
@@ -2508,7 +2508,7 @@
       "value": 2,
       "unit": "s"
     },
-    "priority": 13,
+    "priority": 18,
     "last_modified": 1596712203,
     "created": 1596712203
   },
@@ -2691,7 +2691,7 @@
       "value": 2,
       "unit": "s"
     },
-    "priority": 2,
+    "priority": 19,
     "author": "test-user-author-1-id",
     "enabled": true,
     "last_modified": 1596712203,
@@ -3515,5 +3515,32 @@
     "last_modified": 1596712203,
     "created": 1596712203,
     "users": ["test-user-to-stats-instruction-get"]
+  },
+  {
+    "_id": "test-instruction-metrics-axe-2",
+    "name": "test-instruction-metrics-axe-2-name",
+    "description": "test-instruction-metrics-axe-2-description",
+    "priority": 20,
+    "status": 0,
+    "type": 1,
+    "enabled": true,
+    "entity_patterns": [
+      {
+        "name": "test-resource-metrics-axe-2"
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 1,
+      "unit": "s"
+    },
+    "jobs": [
+      {
+        "job": "test-job-metrics-axe-2",
+        "stop_on_fail": false
+      }
+    ],
+    "author": "test-author-metrics-axe-2",
+    "created": 1637904803,
+    "last_modified": 1637904803
   }
 ]

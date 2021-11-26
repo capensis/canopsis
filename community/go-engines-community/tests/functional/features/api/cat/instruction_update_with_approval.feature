@@ -2319,7 +2319,7 @@ Feature: instruction approval update
           "value": 2,
           "unit": "s"
         },
-        "priority": 1000,
+        "priority": 12,
         "jobs": [
           {
             "job": {
