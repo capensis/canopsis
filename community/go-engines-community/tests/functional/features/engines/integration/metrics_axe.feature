@@ -671,3 +671,106 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
+
+  Scenario: given new alarm with auto instruction, meta alarm and pbehavior should add non_displayed_alarms metrics only once
+    Given I am admin
+    When I do POST /api/v4/cat/filters:
+    """json
+    {
+      "name": "test-filter-metrics-axe-10-name",
+      "entity_patterns": [
+        {
+          "name": "test-resource-metrics-axe-10"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-10",
+      "connector_name" : "test-connector-name-metrics-axe-10",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-metrics-axe-10",
+      "resource" : "test-resource-metrics-axe-10",
+      "state" : 0
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-metrics-axe-10",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "filter":{
+        "$and":[
+          {
+            "name": "test-resource-metrics-axe-10"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-10",
+      "connector_name" : "test-connector-name-metrics-axe-10",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-metrics-axe-10",
+      "resource" : "test-resource-metrics-axe-10",
+      "state" : 1
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=correlation_alarms&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    """json
+    [
+      {
+        "title": "instruction_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 1
+          }
+        ]
+      },
+      {
+        "title": "correlation_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 1
+          }
+        ]
+      },
+      {
+        "title": "pbehavior_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 1
+          }
+        ]
+      },
+      {
+        "title": "non_displayed_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 1
+          }
+        ]
+      }
+    ]
+    """

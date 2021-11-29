@@ -283,6 +283,38 @@ func (a *ApiClient) TheResponseKeyShouldNotExist(path string) error {
 	return nil
 }
 
+/**
+Step example:
+	Then the response key "data.0.duration" should be greater or equal than 3
+*/
+func (a *ApiClient) TheResponseKeyShouldBeGreaterOrEqualThan(path string, value float64) error {
+	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+		var fieldVal float64
+		switch v := nestedVal.(type) {
+		case int:
+			fieldVal = float64(v)
+		case int32:
+			fieldVal = float64(v)
+		case int64:
+			fieldVal = float64(v)
+		case float32:
+			fieldVal = float64(v)
+		case float64:
+			fieldVal = v
+		default:
+			return fmt.Errorf("%v is not number", nestedVal)
+		}
+
+		if fieldVal >= value {
+			return nil
+		}
+
+		return fmt.Errorf("%v is lesser then %v", fieldVal, value)
+	}
+
+	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+}
+
 // getNestedJsonVal returns val by path.
 func getNestedJsonVal(v interface{}, path []string) (interface{}, bool) {
 	field := path[0]
@@ -669,6 +701,55 @@ func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int
 		if code == a.response.StatusCode {
 			partialBody := getPartialResponse(a.responseBody, expectedBody)
 			resDiffErr = checkResponse(partialBody, expectedBody)
+
+			if resDiffErr == nil {
+				return nil
+			}
+		}
+	}
+
+	if code != a.response.StatusCode {
+		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+			code,
+			a.response.StatusCode,
+			a.responseBodyOutput,
+		)
+	}
+
+	return fmt.Errorf("max retries exceeded: %w", resDiffErr)
+}
+
+/**
+Step example:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and response key "data.0.duration" is greater or equal than 3
+    """
+*/
+func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(method, uri string, code int, path string, value float64) error {
+	uri, err := a.getRequestURL(uri)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return fmt.Errorf("cannot create request: %w", err)
+	}
+
+	var resDiffErr error
+	timeout := repeatRequestInterval
+	for i := 0; i < repeatRequestCount; i++ {
+		if i != 0 {
+			time.Sleep(timeout)
+			timeout *= 2
+		}
+
+		err := a.doRequest(req)
+		if err != nil {
+			return err
+		}
+
+		if code == a.response.StatusCode {
+			resDiffErr = a.TheResponseKeyShouldBeGreaterOrEqualThan(path, value)
 
 			if resDiffErr == nil {
 				return nil
