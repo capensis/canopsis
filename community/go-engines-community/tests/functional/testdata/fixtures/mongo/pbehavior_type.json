@@ -230,5 +230,13 @@
     "type": "pause",
     "priority": 29,
     "icon_name": "test-pause-type-to-patch-pbehavior-icon"
+  },
+  {
+    "_id": "test-pause-type-to-engine",
+    "name": "Engine pause",
+    "description": "Engine pause",
+    "type": "pause",
+    "priority": 30,
+    "icon_name": "test-pause-to-engine-icon"
   }
 ]
