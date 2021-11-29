@@ -310,7 +310,8 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	}
 
 	childrenIds := make([]string, 0)
-	for i := range result.Data {
+	parentIds := make([]string, len(result.Data))
+	for i, al := range result.Data {
 		if result.Data[i].ChildrenIDs != nil {
 			if len(result.Data[i].ChildrenIDs.Data) == 0 {
 				result.Data[i].Children = &Children{
@@ -321,6 +322,8 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 				childrenIds = append(childrenIds, result.Data[i].ChildrenIDs.Data...)
 			}
 		}
+
+		parentIds[i] = al.Entity.ID
 	}
 
 	if len(childrenIds) == 0 {
@@ -329,7 +332,10 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 
 	pipeline := make([]bson.M, 0)
 	pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": []bson.M{
-		{"d": bson.M{"$in": childrenIds}},
+		{
+			"d": bson.M{"$in": childrenIds},
+			"v.parents": bson.M{"$in": parentIds},
+		},
 	}}})
 	s.addNestedObjects(r.FilterRequest, &pipeline)
 
@@ -352,29 +358,22 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 		return err
 	}
 
-	childrenByEntityID := make(map[string][]Alarm)
+	childrenByParents := make(map[string][]Alarm)
 	for _, ch := range children {
-		if _, ok := childrenByEntityID[ch.Entity.ID]; !ok {
-			childrenByEntityID[ch.Entity.ID] = make([]Alarm, 0)
-		}
+		for _, parent := range ch.Value.Parents {
+			if _, ok := childrenByParents[parent]; !ok {
+				childrenByParents[parent] = make([]Alarm, 0)
+			}
 
-		childrenByEntityID[ch.Entity.ID] = append(childrenByEntityID[ch.Entity.ID], ch)
+			childrenByParents[parent] = append(childrenByParents[parent], ch)
+		}
 	}
 
-	for i := range result.Data {
-		if result.Data[i].ChildrenIDs == nil {
-			continue
-		}
-		for _, chID := range result.Data[i].ChildrenIDs.Data {
-			if children, ok := childrenByEntityID[chID]; ok {
-				if result.Data[i].Children == nil {
-					result.Data[i].Children = &Children{
-						Data:  make([]Alarm, 0),
-						Total: result.Data[i].ChildrenIDs.Total,
-					}
-				}
-
-				result.Data[i].Children.Data = append(result.Data[i].Children.Data, children...)
+	for i, al := range result.Data {
+		if children, ok := childrenByParents[al.Entity.ID]; ok {
+			result.Data[i].Children = &Children{
+				Data:  children,
+				Total: len(children),
 			}
 		}
 	}
