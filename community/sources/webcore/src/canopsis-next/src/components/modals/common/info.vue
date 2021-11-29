@@ -1,8 +1,8 @@
 <template lang="pug">
-  modal-wrapper(data-test="colorPickerModal", close)
-    template(slot="title")
+  modal-wrapper(close)
+    template(#title)
       span {{ config.title }}
-    template(slot="text")
+    template(#text)
       div(v-html="config.text")
 </template>
 
