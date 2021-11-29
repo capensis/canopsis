@@ -1566,6 +1566,20 @@ export default {
         },
       },
     },
+    webSocketError: {
+      title: 'WebSocket connection error',
+      text: '<p>Websockets are unavailable, so the following functionalities are restricted:</p>'
+        + '<p>'
+        + '<ul>'
+        + '<li>Healthcheck header</li>'
+        + '<li>Healthcheck network graph</li>'
+        + '<li>Active broadcast messages</li>'
+        + '<li>Active users sessions</li>'
+        + '<li>Remediation execution</li>'
+        + '</ul>'
+        + '</p>'
+        + '<p>Please check your server configuration.</p>',
+    },
   },
   tables: {
     noData: 'No data',
