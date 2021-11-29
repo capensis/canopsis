@@ -959,13 +959,13 @@ Feature: Get alarms
           "consequences": {
               "data": [
                 {
-                  "_id": "test-alarm-get-2"
+                  "_id": "test-alarm-get-4"
                 },
                 {
                   "_id": "test-alarm-get-3"
                 },
                 {
-                  "_id": "test-alarm-get-4"
+                  "_id": "test-alarm-get-2"
                 }
               ],
               "total": 3
@@ -1935,6 +1935,54 @@ Feature: Get alarms
         "page_count": 1,
         "per_page": 10,
         "total_count": 3
+      }
+    }
+    """
+
+  Scenario: given get correlation alarms with the same children, but different alarms shouldn't have alarms of each other
+    When I am admin
+    When I do GET /api/v4/alarms?sort_key=t&sort_dir=desc&correlation=true&with_steps=true&with_consequences=true&search=test-api-correlation
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-api-correlation-metaalarm-1",
+          "metaalarm": true,
+          "consequences": {
+            "data": [
+              {
+                "_id": "test-api-correlation-get-1"
+              },
+              {
+                "_id": "test-api-correlation-get-2"
+              }
+            ],
+            "total": 2
+          }
+        },
+        {
+          "_id": "test-alarm-api-correlation-metaalarm-2",
+          "metaalarm": true,
+          "consequences": {
+            "data": [
+              {
+                "_id": "test-api-correlation-get-3"
+              },
+              {
+                "_id": "test-api-correlation-get-4"
+              }
+            ],
+            "total": 2
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
       }
     }
     """
