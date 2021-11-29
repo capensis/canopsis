@@ -247,7 +247,7 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	if user == "" {
-		value.Set("author", fastjson.MustParse(fmt.Sprintf("%q", contextUser)))
+		value.Set("user_id", fastjson.MustParse(fmt.Sprintf("%q", contextUser)))
 	}
 
 	var eid string
