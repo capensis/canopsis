@@ -3535,11 +3535,38 @@
     },
     "jobs": [
       {
-        "job": "test-job-metrics-axe-2",
+        "job": "test-job-metrics-axe",
         "stop_on_fail": false
       }
     ],
     "author": "test-author-metrics-axe-2",
+    "created": 1637904803,
+    "last_modified": 1637904803
+  },
+  {
+    "_id": "test-instruction-metrics-axe-10",
+    "name": "test-instruction-metrics-axe-10-name",
+    "description": "test-instruction-metrics-axe-10-description",
+    "priority": 21,
+    "status": 0,
+    "type": 1,
+    "enabled": true,
+    "entity_patterns": [
+      {
+        "name": "test-resource-metrics-axe-10"
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 1,
+      "unit": "s"
+    },
+    "jobs": [
+      {
+        "job": "test-job-metrics-axe",
+        "stop_on_fail": false
+      }
+    ],
+    "author": "test-author-metrics-axe-10",
     "created": 1637904803,
     "last_modified": 1637904803
   }
