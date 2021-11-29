@@ -67,6 +67,7 @@ func main() {
 		flags.ConfigDir,
 		flags.SecureSession,
 		flags.Test,
+		flags.EnableSameServiceNames,
 		enforcer,
 		nil,
 		logger,
