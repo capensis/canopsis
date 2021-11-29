@@ -1566,6 +1566,20 @@ export default {
         },
       },
     },
+    webSocketError: {
+      title: 'Erreur de connexion WebSocket',
+      text: '<p>Les Websockets ne sont pas disponibles, les fonctionnalités suivantes sont donc restreintes:</p>'
+        + '<p>'
+        + '<ul>'
+        + '<li>En-tête Healthcheck</li>'
+        + '<li>Graphique du réseau Healthcheck</li>'
+        + '<li>Messages diffusés actifs</li>'
+        + '<li>Sessions d\'utilisateurs actifs</li>'
+        + '<li>Exécution de la remédiation</li>'
+        + '</ul>'
+        + '</p>'
+        + '<p>Veuillez vérifier la configuration de votre serveur.</p>',
+    },
   },
   tables: {
     noData: 'Aucune donnée',

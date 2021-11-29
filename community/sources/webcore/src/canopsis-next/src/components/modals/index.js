@@ -125,6 +125,10 @@ export const ImagesViewer = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/images-viewer.vue'),
   loading: ModalLoaderOverlay,
 });
+export const Info = () => ({
+  component: import(/* webpackChunkName: "Common" */ './common/info.vue'),
+  loading: ModalLoaderOverlay,
+});
 export const CreateWidget = () => ({
   component: import(/* webpackChunkName: "Widget" */ './view/create-widget.vue'),
   loading: ModalLoaderOverlay,
