@@ -3,8 +3,16 @@
     span {{ title }}
     div.badge-wrapper(v-if="showBadge")
       v-tooltip(right)
-        v-btn.badge-button(slot="activator", color="red", icon, small, @click="showInfoModal")
-          v-icon(color="white", size="12px") priority_high
+        template(#activator="{ on, attrs }")
+          v-btn.badge-button(
+            v-on="on",
+            v-bind="attrs",
+            color="red",
+            icon,
+            small,
+            @click="showInfoModal"
+          )
+            v-icon(color="white", size="12px") priority_high
         span {{ $t('modals.webSocketError.title') }}
 </template>
 
