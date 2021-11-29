@@ -76,7 +76,7 @@ func (r *AggregationResult) GetTotal() int64 {
 
 type Entity struct {
 	ID                               string                           `json:"_id" bson:"_id"`
-	AlarmID                          string                           `json:"-" bson:"alarm_id"`
+	AlarmID                          string                           `json:"alarm_id" bson:"alarm_id"`
 	AssignedInstructions             []alarmapi.InstructionWithAlarms `bson:"-" json:"assigned_instructions,omitempty"`
 	IsAutoInstructionRunning         *bool                            `bson:"-" json:"is_auto_instruction_running,omitempty"`
 	IsAllAutoInstructionsCompleted   *bool                            `bson:"-" json:"is_all_auto_instructions_completed,omitempty"`
