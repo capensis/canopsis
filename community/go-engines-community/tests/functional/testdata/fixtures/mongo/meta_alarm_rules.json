@@ -114,5 +114,24 @@
     "output_template": "",
     "created": 1637907655,
     "updated": 1637907655
+  },
+  {
+    "_id": "test-metaalarm-metrics-axe-10",
+    "name": "test-metaalarm-metrics-axe-10-name",
+    "type": "attribute",
+    "author": "test-author-metrics-axe-10-name",
+    "auto_resolve": false,
+    "config": {
+      "alarm_patterns": [
+        {
+          "v": {
+            "component": "test-component-metrics-axe-10"
+          }
+        }
+      ]
+    },
+    "output_template": "",
+    "created": 1637907655,
+    "updated": 1637907655
   }
 ]
