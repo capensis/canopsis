@@ -19,7 +19,7 @@ func (e *updateStatusExecutor) Exec(
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
-	_, _ string,
+	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationParameters
 	var ok bool

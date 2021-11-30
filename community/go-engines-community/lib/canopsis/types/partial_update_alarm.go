@@ -9,12 +9,12 @@ import (
 )
 
 // PartialUpdateAck add ack step to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, userID, role, initiator string) error {
 	if a.Value.ACK != nil {
 		return nil
 	}
 
-	newStep := NewAlarmStep(AlarmStepAck, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepAck, timestamp, author, output, userID, role, initiator)
 	a.Value.ACK = &newStep
 
 	err := a.Value.Steps.Add(newStep)
@@ -29,12 +29,12 @@ func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, role, initia
 }
 
 // PartialUpdateUnack deletes ack step from alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateUnack(timestamp CpsTime, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdateUnack(timestamp CpsTime, author, output, userID, role, initiator string) error {
 	if a.Value.ACK == nil {
 		return nil
 	}
 
-	newStep := NewAlarmStep(AlarmStepAckRemove, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepAckRemove, timestamp, author, output, userID, role, initiator)
 	a.Value.ACK = nil
 
 	err := a.Value.Steps.Add(newStep)
@@ -49,13 +49,13 @@ func (a *Alarm) PartialUpdateUnack(timestamp CpsTime, author, output, role, init
 }
 
 // PartialUpdateCancel add canceled and status change steps to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateCancel(timestamp CpsTime, author, output, role,
+func (a *Alarm) PartialUpdateCancel(timestamp CpsTime, author, output, userID, role,
 	initiator string, alarmConfig config.AlarmConfig) error {
 	if a.Value.Canceled != nil {
 		return nil
 	}
 
-	newStepCancel := NewAlarmStep(AlarmStepCancel, timestamp, author, output, role, initiator)
+	newStepCancel := NewAlarmStep(AlarmStepCancel, timestamp, author, output, userID, role, initiator)
 	a.Value.Canceled = &newStepCancel
 
 	if err := a.Value.Steps.Add(newStepCancel); err != nil {
@@ -71,7 +71,7 @@ func (a *Alarm) PartialUpdateCancel(timestamp CpsTime, author, output, role,
 		return nil
 	}
 
-	newStepStatus := NewAlarmStep(AlarmStepStatusIncrease, timestamp, a.Value.Connector+"."+a.Value.ConnectorName, output, role, initiator)
+	newStepStatus := NewAlarmStep(AlarmStepStatusIncrease, timestamp, a.Value.Connector+"."+a.Value.ConnectorName, output, userID, role, initiator)
 	newStepStatus.Value = newStatus
 	if a.Value.Status != nil && newStepStatus.Value < a.Value.Status.Value {
 		newStepStatus.Type = AlarmStepStatusDecrease
@@ -95,13 +95,13 @@ func (a *Alarm) PartialUpdateCancel(timestamp CpsTime, author, output, role,
 	return nil
 }
 
-func (a *Alarm) PartialUpdateUncancel(timestamp CpsTime, author, output, role,
+func (a *Alarm) PartialUpdateUncancel(timestamp CpsTime, author, output, userID, role,
 	initiator string, alarmConfig config.AlarmConfig) error {
 	if a.Value.Canceled == nil {
 		return nil
 	}
 
-	newStep := NewAlarmStep(AlarmStepUncancel, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepUncancel, timestamp, author, output, userID, role, initiator)
 	a.Value.Canceled = nil
 
 	if err := a.Value.Steps.Add(newStep); err != nil {
@@ -120,7 +120,7 @@ func (a *Alarm) PartialUpdateUncancel(timestamp CpsTime, author, output, role,
 		return nil
 	}
 
-	newStepStatus := NewAlarmStep(AlarmStepStatusIncrease, timestamp, a.Value.Connector+"."+a.Value.ConnectorName, output, role, initiator)
+	newStepStatus := NewAlarmStep(AlarmStepStatusIncrease, timestamp, a.Value.Connector+"."+a.Value.ConnectorName, output, userID, role, initiator)
 	newStepStatus.Value = newStatus
 	if a.Value.Status != nil && newStepStatus.Value < a.Value.Status.Value {
 		newStepStatus.Type = AlarmStepStatusDecrease
@@ -146,12 +146,12 @@ func (a *Alarm) PartialUpdateUncancel(timestamp CpsTime, author, output, role,
 
 // PartialUpdateChangeState add state change step to alarm. It saves mongo updates.
 func (a *Alarm) PartialUpdateChangeState(state CpsNumber, timestamp CpsTime,
-	author, output, role, initiator string, alarmConfig config.AlarmConfig) error {
+	author, output, userID, role, initiator string, alarmConfig config.AlarmConfig) error {
 	if a.Value.State != nil && a.Value.State.Value == state {
 		return nil
 	}
 
-	newStep := NewAlarmStep(AlarmStepChangeState, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepChangeState, timestamp, author, output, userID, role, initiator)
 	newStep.Value = state
 	a.Value.State = &newStep
 
@@ -169,7 +169,7 @@ func (a *Alarm) PartialUpdateChangeState(state CpsNumber, timestamp CpsTime,
 		return nil
 	}
 
-	newStepStatus := NewAlarmStep(AlarmStepStatusIncrease, timestamp, author, output, role, initiator)
+	newStepStatus := NewAlarmStep(AlarmStepStatusIncrease, timestamp, author, output, userID, role, initiator)
 	newStepStatus.Value = newStatus
 	if a.Value.Status != nil && newStepStatus.Value < a.Value.Status.Value {
 		newStepStatus.Type = AlarmStepStatusDecrease
@@ -194,13 +194,13 @@ func (a *Alarm) PartialUpdateChangeState(state CpsNumber, timestamp CpsTime,
 }
 
 // PartialUpdateNoEvents add state step to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateNoEvents(state CpsNumber, timestamp CpsTime, author, output, role, initiator string,
+func (a *Alarm) PartialUpdateNoEvents(state CpsNumber, timestamp CpsTime, author, output, userID, role, initiator string,
 	alarmConfig config.AlarmConfig) error {
 	currentState := a.CurrentState()
 	stateUpdated := false
 	if currentState != state {
 		// Create new Step to keep track of the alarm history
-		newStep := NewAlarmStep(AlarmStepStateIncrease, timestamp, author, output, role, initiator)
+		newStep := NewAlarmStep(AlarmStepStateIncrease, timestamp, author, output, userID, role, initiator)
 		newStep.Value = state
 
 		if state < currentState {
@@ -231,7 +231,7 @@ func (a *Alarm) PartialUpdateNoEvents(state CpsNumber, timestamp CpsTime, author
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStepStatus := NewAlarmStep(AlarmStepStatusIncrease, timestamp, author, output, role, initiator)
+	newStepStatus := NewAlarmStep(AlarmStepStatusIncrease, timestamp, author, output, userID, role, initiator)
 	newStepStatus.Value = newStatus
 
 	if newStatus < currentStatus {
@@ -265,8 +265,8 @@ func (a *Alarm) PartialUpdateNoEvents(state CpsNumber, timestamp CpsTime, author
 }
 
 // PartialUpdateAssocTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, author, ticketNumber, role, initiator string) error {
-	newStep := NewAlarmStep(AlarmStepAssocTicket, timestamp, author, ticketNumber, role, initiator)
+func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, author, ticketNumber, userID, role, initiator string) error {
+	newStep := NewAlarmStep(AlarmStepAssocTicket, timestamp, author, ticketNumber, userID, role, initiator)
 	ticketStep := newStep.NewTicket(ticketNumber, nil)
 	a.Value.Ticket = &ticketStep
 
@@ -282,12 +282,12 @@ func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, author, ticketNumber
 }
 
 // PartialUpdateSnooze add snooze step to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateSnooze(timestamp CpsTime, duration CpsNumber, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdateSnooze(timestamp CpsTime, duration CpsNumber, author, output, userID, role, initiator string) error {
 	if a.Value.Snooze != nil {
 		return nil
 	}
 
-	newStep := NewAlarmStep(AlarmStepSnooze, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepSnooze, timestamp, author, output, userID, role, initiator)
 	if duration == 0 {
 		return errt.NewUnknownError(errors.New("no duration for snoozing"))
 	}
@@ -316,12 +316,12 @@ func (a *Alarm) PartialUpdateUnsnooze() error {
 	return nil
 }
 
-func (a *Alarm) PartialUpdatePbhEnter(timestamp CpsTime, pbehaviorInfo PbehaviorInfo, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdatePbhEnter(timestamp CpsTime, pbehaviorInfo PbehaviorInfo, author, output, userID, role, initiator string) error {
 	if a.Value.PbehaviorInfo == pbehaviorInfo {
 		return nil
 	}
 
-	newStep := NewAlarmStep(AlarmStepPbhEnter, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepPbhEnter, timestamp, author, output, userID, role, initiator)
 	newStep.PbehaviorCanonicalType = pbehaviorInfo.CanonicalType
 	a.Value.PbehaviorInfo = pbehaviorInfo
 
@@ -336,13 +336,13 @@ func (a *Alarm) PartialUpdatePbhEnter(timestamp CpsTime, pbehaviorInfo Pbehavior
 	return nil
 }
 
-func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, userID, role, initiator string) error {
 	if a.Value.Snooze != nil {
 		ResolveSnoozeAfterPbhLeave(timestamp, a)
 		a.addUpdate("$set", bson.M{"v.snooze": a.Value.Snooze})
 	}
 
-	newStep := NewAlarmStep(AlarmStepPbhLeave, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepPbhLeave, timestamp, author, output, userID, role, initiator)
 	newStep.PbehaviorCanonicalType = a.Value.PbehaviorInfo.CanonicalType
 	a.Value.PbehaviorInfo = PbehaviorInfo{}
 
@@ -357,7 +357,7 @@ func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, role, i
 	return nil
 }
 
-func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo PbehaviorInfo, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo PbehaviorInfo, author, output, userID, role, initiator string) error {
 	if a.Value.PbehaviorInfo == pbehaviorInfo {
 		return nil
 	}
@@ -374,7 +374,7 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 		a.Value.PbehaviorInfo.Reason,
 	)
 
-	leaveStep := NewAlarmStep(AlarmStepPbhLeave, timestamp, author, leaveOutput, role, initiator)
+	leaveStep := NewAlarmStep(AlarmStepPbhLeave, timestamp, author, leaveOutput, userID, role, initiator)
 	leaveStep.PbehaviorCanonicalType = a.Value.PbehaviorInfo.CanonicalType
 
 	err := a.Value.Steps.Add(leaveStep)
@@ -382,7 +382,7 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 		return err
 	}
 
-	enterStep := NewAlarmStep(AlarmStepPbhEnter, timestamp, author, output, role, initiator)
+	enterStep := NewAlarmStep(AlarmStepPbhEnter, timestamp, author, output, userID, role, initiator)
 	enterStep.PbehaviorCanonicalType = pbehaviorInfo.CanonicalType
 
 	a.Value.PbehaviorInfo = pbehaviorInfo
@@ -398,8 +398,8 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 }
 
 // PartialUpdateDeclareTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, output, ticketNumber string, data map[string]string, role, initiator string) error {
-	newStep := NewAlarmStep(AlarmStepDeclareTicket, timestamp, author, output, role, initiator)
+func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, output, ticketNumber string, data map[string]string, userID, role, initiator string) error {
+	newStep := NewAlarmStep(AlarmStepDeclareTicket, timestamp, author, output, userID, role, initiator)
 	ticketStep := newStep.NewTicket(ticketNumber, data)
 	a.Value.Ticket = &ticketStep
 
@@ -425,7 +425,7 @@ func (a *Alarm) PartialUpdateState(timestamp CpsTime, state CpsNumber, output st
 		}
 
 		// Create new Step to keep track of the alarm history
-		newStep := NewAlarmStep(AlarmStepStateIncrease, timestamp, a.Value.Connector+"."+a.Value.ConnectorName, output, "", "")
+		newStep := NewAlarmStep(AlarmStepStateIncrease, timestamp, a.Value.Connector+"."+a.Value.ConnectorName, output, "", "", "")
 		newStep.Value = state
 
 		if state < currentState {
@@ -464,7 +464,7 @@ func (a *Alarm) PartialUpdateState(timestamp CpsTime, state CpsNumber, output st
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStepStatus := NewAlarmStep(AlarmStepStatusIncrease, timestamp, a.Value.Connector+"."+a.Value.ConnectorName, output, "", "")
+	newStepStatus := NewAlarmStep(AlarmStepStatusIncrease, timestamp, a.Value.Connector+"."+a.Value.ConnectorName, output, "", "", "")
 	newStepStatus.Value = newStatus
 
 	if newStatus < currentStatus {
@@ -508,7 +508,7 @@ func (a *Alarm) PartialUpdateStatus(timestamp CpsTime, output string, alarmConfi
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStep := NewAlarmStep(AlarmStepStatusIncrease, timestamp, a.Value.Connector+"."+a.Value.ConnectorName, output, "", "")
+	newStep := NewAlarmStep(AlarmStepStatusIncrease, timestamp, a.Value.Connector+"."+a.Value.ConnectorName, output, "", "", "")
 	newStep.Value = newStatus
 
 	if newStatus < currentStatus {
@@ -566,12 +566,12 @@ func (a *Alarm) PartialUpdateResolve(timestamp CpsTime) error {
 	return nil
 }
 
-func (a *Alarm) PartialUpdateDone(timestamp CpsTime, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdateDone(timestamp CpsTime, author, output, userID, role, initiator string) error {
 	if a.Value.Done != nil {
 		return nil
 	}
 
-	newStep := NewAlarmStep(AlarmStepDone, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepDone, timestamp, author, output, userID, role, initiator)
 	a.Value.Done = &newStep
 
 	err := a.Value.Steps.Add(newStep)
@@ -585,8 +585,8 @@ func (a *Alarm) PartialUpdateDone(timestamp CpsTime, author, output, role, initi
 	return nil
 }
 
-func (a *Alarm) PartialUpdateComment(timestamp CpsTime, author, output, role, initiator string) error {
-	newStep := NewAlarmStep(AlarmStepComment, timestamp, author, output, role, initiator)
+func (a *Alarm) PartialUpdateComment(timestamp CpsTime, author, output, userID, role, initiator string) error {
+	newStep := NewAlarmStep(AlarmStepComment, timestamp, author, output, userID, role, initiator)
 	err := a.Value.Steps.Add(newStep)
 	if err != nil {
 		return err
@@ -603,8 +603,8 @@ func (a *Alarm) PartialUpdateCropSteps() {
 	}
 }
 
-func (a *Alarm) PartialUpdateAddStep(stepType string, timestamp CpsTime, author, msg, role, initiator string) error {
-	newStep := NewAlarmStep(stepType, timestamp, author, msg, role, initiator)
+func (a *Alarm) PartialUpdateAddStep(stepType string, timestamp CpsTime, author, msg, userID, role, initiator string) error {
+	newStep := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator)
 	err := a.Value.Steps.Add(newStep)
 	if err != nil {
 		return err

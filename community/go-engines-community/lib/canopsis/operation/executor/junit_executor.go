@@ -28,7 +28,7 @@ func (e *junitExecutor) Exec(
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationParameters
 	var ok bool
@@ -51,6 +51,7 @@ func (e *junitExecutor) Exec(
 		time,
 		params.Author,
 		params.Output,
+		userID,
 		role,
 		initiator,
 	)
