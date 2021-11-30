@@ -212,6 +212,7 @@ export default {
       [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
       [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
+      [EVENT_ENTITY_TYPES.executeInstruction]: 'Exécuter l\'instruction',
     },
     times: {
       second: 'seconde | secondes',
