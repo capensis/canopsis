@@ -38,6 +38,7 @@ func Default(
 	configDir string,
 	secureSession bool,
 	test bool,
+	enableSameServiceNames bool,
 	enforcer libsecurity.Enforcer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	logger zerolog.Logger,
@@ -106,6 +107,9 @@ func Default(
 		logger.Err(err).Msg("cannot load access config")
 		return nil, err
 	}
+	if enableSameServiceNames {
+		logger.Info().Msg("Non-unique names for services ENABLED")
+	}
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
 	pbhEntityMatcher := libpbehavior.NewComputedEntityMatcher(dbClient, pbhRedisSession, json.NewEncoder(), json.NewDecoder())
@@ -149,7 +153,7 @@ func Default(
 			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
 		}
 
-		RegisterValidators(dbClient)
+		RegisterValidators(dbClient, enableSameServiceNames)
 		RegisterRoutes(
 			ctx,
 			cfg,
