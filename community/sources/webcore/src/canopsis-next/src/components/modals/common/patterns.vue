@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title)
         span {{ title }}
-      template(slot="text")
+      template(#text)
         patterns-form(
           v-model="form",
           :name="config.name",
@@ -12,7 +12,7 @@
           :event="config.event",
           :total-entity="config.totalEntity"
         )
-      template(slot="actions")
+      template(#actions)
         v-btn(
           :disabled="submitting",
           depressed,

@@ -8,7 +8,6 @@
     the-side-bars
     the-modals
     the-popups
-    portal-target(name="app")
 </template>
 
 <script>

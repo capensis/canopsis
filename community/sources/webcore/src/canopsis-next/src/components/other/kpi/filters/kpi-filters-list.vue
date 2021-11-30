@@ -11,27 +11,27 @@
     expand,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(#created="props") {{ props.item.created | date }}
-    template(#updated="props") {{ props.item.updated | date }}
-    template(#actions="props")
+    template(#created="{ item }") {{ item.created | date }}
+    template(#updated="{ item }") {{ item.updated | date }}
+    template(#actions="{ item }")
       v-layout(row)
         c-action-btn(
           v-if="updatable",
           type="edit",
-          @click="$emit('edit', props.item)"
+          @click="$emit('edit', item)"
         )
         c-action-btn(
           v-if="duplicable",
           type="duplicate",
-          @click="$emit('duplicate', props.item)"
+          @click="$emit('duplicate', item)"
         )
         c-action-btn(
           v-if="removable",
           type="delete",
-          @click="$emit('remove', props.item._id)"
+          @click="$emit('remove', item._id)"
         )
-    template(#expand="props")
-      kpi-filters-expand-item(:filter="props.item")
+    template(#expand="{ item }")
+      kpi-filters-expand-item(:filter="item")
 </template>
 
 <script>

@@ -7,27 +7,23 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
   <!---->
   <div>
     <div
-      class="v-menu v-menu--inline"
+      class="v-menu"
     >
-      <div
-        class="v-menu__activator"
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
       >
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
+        <div
+          class="v-btn__content"
         >
-          <div
-            class="v-btn__content"
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              more_vert
-            </i>
-          </div>
-        </button>
-      </div>
+            more_vert
+          </i>
+        </div>
+      </button>
       <transition-stub
         name="v-menu-transition"
       />
@@ -108,27 +104,23 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
   <!---->
   <div>
     <div
-      class="v-menu v-menu--inline"
+      class="v-menu"
     >
-      <div
-        class="v-menu__activator"
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
       >
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
+        <div
+          class="v-btn__content"
         >
-          <div
-            class="v-btn__content"
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              more_vert
-            </i>
-          </div>
-        </button>
-      </div>
+            more_vert
+          </i>
+        </div>
+      </button>
       <transition-stub
         name="v-menu-transition"
       />

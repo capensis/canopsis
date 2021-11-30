@@ -5,7 +5,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { stubDateNow } from '@unit/utils/stub-hooks';
 
-import { ALARM_METRIC_PARAMETERS, KPI_RATING_CRITERIA, QUICK_RANGES } from '@/constants';
+import { ALARM_METRIC_PARAMETERS, KPI_RATING_CRITERIA, QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
 
 import KpiRatingFilters from '@/components/other/kpi/charts/partials/kpi-rating-filters';
 
@@ -200,6 +200,27 @@ describe('kpi-rating-filters', () => {
           filter: null,
           criteria: undefined,
           metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
+          rowsPerPage: 5,
+          interval: {
+            from: QUICK_RANGES.last30Days.start,
+            to: QUICK_RANGES.last30Days.stop,
+          },
+        },
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `kpi-rating-filters` with total user active metric', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        query: {
+          filter: null,
+          criteria: undefined,
+          metric: USER_METRIC_PARAMETERS.totalUserActivity,
           rowsPerPage: 5,
           interval: {
             from: QUICK_RANGES.last30Days.start,

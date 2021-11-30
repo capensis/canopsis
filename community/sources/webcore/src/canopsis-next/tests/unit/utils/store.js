@@ -4,6 +4,7 @@ import Vuex from 'vuex';
  * @typedef {Object} Module
  * @property {string} name
  * @property {Object.<string, Function | Mock>} [actions]
+ * @property {Object} [state]
  * @property {Object.<string, any>} [getters]
  */
 
@@ -35,9 +36,10 @@ const convertMockedGettersToStore = (getters = {}) => Object
  * @returns {Store}
  */
 export const createMockedStoreModules = modules => new Vuex.Store({
-  modules: modules.reduce((acc, { name, actions = {}, getters }) => {
+  modules: modules.reduce((acc, { name, actions = {}, getters, state }) => {
     acc[name] = {
       namespaced: true,
+      state,
       actions,
       getters: convertMockedGettersToStore(getters),
     };

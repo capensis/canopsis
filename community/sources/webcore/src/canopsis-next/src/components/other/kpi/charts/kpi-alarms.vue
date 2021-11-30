@@ -74,7 +74,7 @@ export default {
         DATETIME_FORMATS.short,
       );
 
-      return `${KPI_ALARM_METRICS_FILENAME_PREFIX}${fromTime}-${toTime}-${this.query.sampling}`;
+      return [KPI_ALARM_METRICS_FILENAME_PREFIX, fromTime, toTime, this.query.sampling].join('-');
     },
 
     async exportAlarmMetricsAsPng(blob) {

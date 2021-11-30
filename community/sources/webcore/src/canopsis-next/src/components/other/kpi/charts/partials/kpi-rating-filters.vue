@@ -2,23 +2,27 @@
   div.kpi-rating-toolbar
     v-layout.ml-4.my-4(wrap)
       c-quick-date-interval-field.mr-4(v-field="query.interval")
-      c-filters-field.mr-4.kpi-rating-toolbar__filters(v-field="query.filter")
+      c-filters-field.mr-4.kpi-rating-toolbar__filters(v-field="query.filter", :disabled="isUserMetric")
       kpi-rating-criteria-field.mr-4.kpi-rating-toolbar__criteria(
         :value="query.criteria",
         mandatory,
         @input="updateCriteria"
       )
-      kpi-rating-metric-field.mr-4.kpi-rating-toolbar__metric(v-field="query.metric", :criteria="query.criteria")
+      kpi-rating-metric-field.mr-4.kpi-rating-toolbar__metric(
+        v-field="query.metric",
+        :criteria="query.criteria"
+      )
       c-records-per-page-field(v-field="query.rowsPerPage")
 </template>
 
 <script>
-import KpiRatingCriteriaField from './kpi-rating-criteria-field.vue';
-import KpiRatingMetricField from './kpi-rating-metric-field.vue';
-
 import { getAvailableMetricByCriteria } from '@/helpers/metrics';
 
 import { formMixin } from '@/mixins/form';
+
+import KpiRatingCriteriaField from './kpi-rating-criteria-field.vue';
+import KpiRatingMetricField from './kpi-rating-metric-field.vue';
+import { USER_METRIC_PARAMETERS } from '@/constants';
 
 export default {
   components: { KpiRatingMetricField, KpiRatingCriteriaField },
@@ -31,6 +35,11 @@ export default {
     query: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    isUserMetric() {
+      return this.query.metric === USER_METRIC_PARAMETERS.totalUserActivity;
     },
   },
   methods: {

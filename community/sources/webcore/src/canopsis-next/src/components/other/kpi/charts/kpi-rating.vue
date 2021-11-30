@@ -20,7 +20,7 @@ import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
 import {
   QUICK_RANGES,
   ALARM_METRIC_PARAMETERS,
-  DATETIME_FORMATS,
+  DATETIME_FORMATS, USER_METRIC_PARAMETERS,
 } from '@/constants';
 
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
@@ -53,6 +53,7 @@ export default {
       downloading: false,
       query: {
         criteria: undefined,
+        filter: undefined,
         metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
         interval: {
           from: QUICK_RANGES.last30Days.start,
@@ -77,7 +78,13 @@ export default {
         DATETIME_FORMATS.short,
       );
 
-      return `${KPI_RATING_METRICS_FILENAME_PREFIX}${fromTime}-${toTime}-${this.metric}-${this.criteria}`;
+      return [
+        KPI_RATING_METRICS_FILENAME_PREFIX,
+        fromTime,
+        toTime,
+        this.query.metric,
+        this.query.criteria?.id,
+      ].join('-');
     },
 
     async exportRatingMetricsAsPng(blob) {
@@ -97,6 +104,7 @@ export default {
         from: convertStartDateIntervalToTimestamp(this.query.interval.from),
         to: convertStopDateIntervalToTimestamp(this.query.interval.to),
         criteria: this.query.criteria.id,
+        filter: this.query.metric !== USER_METRIC_PARAMETERS.totalUserActivity ? this.query.filter : undefined,
         metric: this.query.metric,
         limit: this.query.rowsPerPage,
       };

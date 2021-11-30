@@ -23,6 +23,7 @@ const factory = (options = {}) => shallowMount(KpiRatingCriteriaField, {
     getters: {
       pending: false,
       items: [],
+      updatedAt: null,
     },
     actions: {
       fetchListWithoutStore: jest.fn(),
@@ -58,6 +59,9 @@ describe('kpi-rating-criteria-field', () => {
       },
       store: createMockedStoreModules([{
         name: 'ratingSettings',
+        getters: {
+          updatedAt: null,
+        },
         actions: {
           fetchListWithoutStore: fetchRatingSettings,
         },
@@ -86,6 +90,9 @@ describe('kpi-rating-criteria-field', () => {
       },
       store: createMockedStoreModules([{
         name: 'ratingSettings',
+        getters: {
+          updatedAt: null,
+        },
         actions: {
           fetchListWithoutStore: fetchRatingSettings,
         },
@@ -112,6 +119,9 @@ describe('kpi-rating-criteria-field', () => {
     const wrapper = factory({
       store: createMockedStoreModules([{
         name: 'ratingSettings',
+        getters: {
+          updatedAt: null,
+        },
         actions: {
           fetchListWithoutStore: fetchRatingSettings,
         },
@@ -141,6 +151,9 @@ describe('kpi-rating-criteria-field', () => {
       },
       store: createMockedStoreModules([{
         name: 'ratingSettings',
+        getters: {
+          updatedAt: null,
+        },
         actions: {
           fetchListWithoutStore: fetchRatingSettings,
         },
@@ -171,6 +184,9 @@ describe('kpi-rating-criteria-field', () => {
       },
       store: createMockedStoreModules([{
         name: 'ratingSettings',
+        getters: {
+          updatedAt: null,
+        },
         actions: {
           fetchListWithoutStore: fetchRatingSettings,
         },
@@ -196,6 +212,9 @@ describe('kpi-rating-criteria-field', () => {
       },
       store: createMockedStoreModules([{
         name: 'ratingSettings',
+        getters: {
+          updatedAt: null,
+        },
         actions: {
           fetchListWithoutStore: fetchRatingSettings,
         },
@@ -222,6 +241,9 @@ describe('kpi-rating-criteria-field', () => {
     const wrapper = factory({
       store: createMockedStoreModules([{
         name: 'ratingSettings',
+        getters: {
+          updatedAt: null,
+        },
         actions: {
           fetchListWithoutStore: fetchRatingSettings,
         },
@@ -247,6 +269,9 @@ describe('kpi-rating-criteria-field', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([{
         name: 'ratingSettings',
+        getters: {
+          updatedAt: null,
+        },
         actions: {
           fetchListWithoutStore: fetchRatingSettings,
         },
@@ -273,6 +298,9 @@ describe('kpi-rating-criteria-field', () => {
       },
       store: createMockedStoreModules([{
         name: 'ratingSettings',
+        getters: {
+          updatedAt: null,
+        },
         actions: {
           fetchListWithoutStore: fetchRatingSettings,
         },
