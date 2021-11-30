@@ -3,9 +3,9 @@
     v-field="value",
     :items="items",
     :label="$t('common.criteria')",
-    hide-details,
     item-text="label",
     item-value="id",
+    hide-details,
     return-object
   )
 </template>
