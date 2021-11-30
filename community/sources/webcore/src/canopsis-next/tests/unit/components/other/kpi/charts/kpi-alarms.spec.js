@@ -40,8 +40,8 @@ describe('kpi-alarms', () => {
   it('Metrics fetched after mount', async () => {
     const fetchAlarmsMetrics = jest.fn(() => []);
     const expectedDefaultParams = {
-      /* now - 30d  */
-      from: 1383843600,
+      /* now - 7d  */
+      from: 1385830800,
       parameters: [ALARM_METRIC_PARAMETERS.totalAlarms],
       sampling: SAMPLINGS.day,
       filter: null,
@@ -68,8 +68,8 @@ describe('kpi-alarms', () => {
   it('Metrics refreshed after change interval', async () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
-      /* now - 30d  */
-      from: 1386262800,
+      /* now - 7d  */
+      from: 1385830800,
       parameters: [ALARM_METRIC_PARAMETERS.totalAlarms],
       sampling: SAMPLINGS.day,
       filter: null,
