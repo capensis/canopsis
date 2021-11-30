@@ -461,83 +461,82 @@ Feature: Get SLI metrics
     ]
     """
 
-#  TODO month sampling not working
-#  Scenario: given get month request should return metrics
-#    When I am admin
-#    When I do GET /api/v4/cat/metrics/sli?sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
-#    Then the response code should be 200
-#    Then the response body should be:
-#    """json
-#    [
-#      {
-#        "timestamp": {{ parseTime "01-06-2021 00:00" }},
-#        "downtime": 0,
-#        "maintenance": 0,
-#        "uptime": 2592000
-#      },
-#      {
-#        "timestamp": {{ parseTime "01-07-2021 00:00" }},
-#        "downtime": 30,
-#        "maintenance": 0,
-#        "uptime": 2591970
-#      },
-#      {
-#        "timestamp": {{ parseTime "01-08-2021 00:00" }},
-#        "downtime": 0,
-#        "maintenance": 0,
-#        "uptime": 2592000
-#      },
-#      {
-#        "timestamp": {{ parseTime "01-09-2021 00:00" }},
-#        "downtime": 90,
-#        "maintenance": 0,
-#        "uptime": 2591910
-#      },
-#      {
-#        "timestamp": {{ parseTime "01-10-2021 00:00" }},
-#        "downtime": 0,
-#        "maintenance": 0,
-#        "uptime": 2592000
-#      }
-#    ]
-#    """
-#    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
-#    Then the response code should be 200
-#    Then the response body should be:
-#    """json
-#    [
-#      {
-#        "timestamp": {{ parseTime "01-06-2021 00:00" }},
-#        "downtime": 0,
-#        "maintenance": 0,
-#        "uptime": 100
-#      },
-#      {
-#        "timestamp": {{ parseTime "01-07-2021 00:00" }},
-#        "downtime": 0,
-#        "maintenance": 0,
-#        "uptime": 100
-#      },
-#      {
-#        "timestamp": {{ parseTime "01-08-2021 00:00" }},
-#        "downtime": 0,
-#        "maintenance": 0,
-#        "uptime": 100
-#      },
-#      {
-#        "timestamp": {{ parseTime "01-09-2021 00:00" }},
-#        "downtime": 0,
-#        "maintenance": 0,
-#        "uptime": 100
-#      },
-#      {
-#        "timestamp": {{ parseTime "01-10-2021 00:00" }},
-#        "downtime": 0,
-#        "maintenance": 0,
-#        "uptime": 100
-#      }
-#    ]
-#    """
+  Scenario: given get month request should return metrics
+    When I am admin
+    When I do GET /api/v4/cat/metrics/sli?sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "timestamp": {{ parseTime "01-06-2021 00:00" }},
+        "downtime": 0,
+        "maintenance": 0,
+        "uptime": 2592000
+      },
+      {
+        "timestamp": {{ parseTime "01-07-2021 00:00" }},
+        "downtime": 30,
+        "maintenance": 0,
+        "uptime": 2678370
+      },
+      {
+        "timestamp": {{ parseTime "01-08-2021 00:00" }},
+        "downtime": 0,
+        "maintenance": 0,
+        "uptime": 2678400
+      },
+      {
+        "timestamp": {{ parseTime "01-09-2021 00:00" }},
+        "downtime": 90,
+        "maintenance": 0,
+        "uptime": 2591910
+      },
+      {
+        "timestamp": {{ parseTime "01-10-2021 00:00" }},
+        "downtime": 0,
+        "maintenance": 0,
+        "uptime": 2678400
+      }
+    ]
+    """
+    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "timestamp": {{ parseTime "01-06-2021 00:00" }},
+        "downtime": 0,
+        "maintenance": 0,
+        "uptime": 100
+      },
+      {
+        "timestamp": {{ parseTime "01-07-2021 00:00" }},
+        "downtime": 0,
+        "maintenance": 0,
+        "uptime": 100
+      },
+      {
+        "timestamp": {{ parseTime "01-08-2021 00:00" }},
+        "downtime": 0,
+        "maintenance": 0,
+        "uptime": 100
+      },
+      {
+        "timestamp": {{ parseTime "01-09-2021 00:00" }},
+        "downtime": 0,
+        "maintenance": 0,
+        "uptime": 100
+      },
+      {
+        "timestamp": {{ parseTime "01-10-2021 00:00" }},
+        "downtime": 0,
+        "maintenance": 0,
+        "uptime": 100
+      }
+    ]
+    """
 
   Scenario: given get total_alarms request with empty interval should return metrics with zeros
     When I am admin

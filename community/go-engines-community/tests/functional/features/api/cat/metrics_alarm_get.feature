@@ -183,41 +183,40 @@ Feature: Get alarm metrics
     ]
     """
 
-#  TODO month sampling not working
-#  Scenario: given get total_alarms month request should return metrics
-#    When I am admin
-#    When I do GET /api/v4/cat/metrics/alarm?parameters[]=total_alarms&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-filter-to-total-alarm-metrics-get
-#    Then the response code should be 200
-#    Then the response body should be:
-#    """json
-#    [
-#      {
-#        "title": "total_alarms",
-#        "data": [
-#          {
-#            "timestamp": {{ parseTime "01-06-2021 00:00" }},
-#            "value": 0
-#          },
-#          {
-#            "timestamp": {{ parseTime "01-07-2021 00:00" }},
-#            "value": 1
-#          },
-#          {
-#            "timestamp": {{ parseTime "01-08-2021 00:00" }},
-#            "value": 0
-#          },
-#          {
-#            "timestamp": {{ parseTime "01-09-2021 00:00" }},
-#            "value": 3
-#          },
-#          {
-#            "timestamp": {{ parseTime "01-10-2021 00:00" }},
-#            "value": 0
-#          }
-#        ]
-#      }
-#    ]
-#    """
+  Scenario: given get total_alarms month request should return metrics
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=total_alarms&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-filter-to-total-alarm-metrics-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "title": "total_alarms",
+        "data": [
+          {
+            "timestamp": {{ parseTime "01-06-2021 00:00" }},
+            "value": 0
+          },
+          {
+            "timestamp": {{ parseTime "01-07-2021 00:00" }},
+            "value": 1
+          },
+          {
+            "timestamp": {{ parseTime "01-08-2021 00:00" }},
+            "value": 0
+          },
+          {
+            "timestamp": {{ parseTime "01-09-2021 00:00" }},
+            "value": 3
+          },
+          {
+            "timestamp": {{ parseTime "01-10-2021 00:00" }},
+            "value": 0
+          }
+        ]
+      }
+    ]
+    """
 
   Scenario: given get total_alarms request with empty interval should return metrics with zeros
     When I am admin
