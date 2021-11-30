@@ -33,12 +33,6 @@ export default {
       default: 'filter',
     },
   },
-  data() {
-    return {
-      pending: false,
-      items: [],
-    };
-  },
   mounted() {
     this.fetchList();
   },

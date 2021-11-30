@@ -535,6 +535,14 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_kpiRatingSettings",
+        "loader_id": "models_kpiRatingSettings",
+        "crecord_name": "models_kpiRatingSettings",
+        "crecord_type": "action",
+        "desc": "KPI Rating settings",
+        "type": "CRUD"
+    },
+    {
         "_id": "models_notification_instructionStats",
         "loader_id": "models_notification_instructionStats",
         "crecord_name": "models_notification_instructionStats",

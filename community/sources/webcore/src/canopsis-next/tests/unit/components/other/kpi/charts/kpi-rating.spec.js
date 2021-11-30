@@ -5,7 +5,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { stubDateNow } from '@unit/utils/stub-hooks';
 
 import { createMockedStoreModules } from '@unit/utils/store';
-import { ALARM_METRIC_PARAMETERS, KPI_RATING_CRITERIA, QUICK_RANGES } from '@/constants';
+import { ALARM_METRIC_PARAMETERS, QUICK_RANGES } from '@/constants';
 
 import KpiRating from '@/components/other/kpi/charts/kpi-rating';
 
@@ -37,16 +37,8 @@ describe('kpi-rating', () => {
 
   stubDateNow(nowTimestamp);
 
-  it('Metrics fetched after mount', async () => {
+  it('Metrics doesn\'t fetched after mount without criteria', async () => {
     const fetchRatingMetrics = jest.fn(() => []);
-    const expectedDefaultParams = {
-      /* now - 30d  */
-      from: 1383843600,
-      criteria: KPI_RATING_CRITERIA.user,
-      metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
-      limit: 10,
-      to: nowUnix,
-    };
 
     factory({
       store: createMockedStoreModules([{
@@ -56,6 +48,47 @@ describe('kpi-rating', () => {
         },
       }]),
     });
+
+    await flushPromises();
+
+    expect(fetchRatingMetrics).toBeCalledTimes(0);
+  });
+
+  it('Metrics fetched after after set criteria', async () => {
+    const fetchRatingMetrics = jest.fn(() => []);
+    const expectedDefaultParams = {
+      /* now - 30d  */
+      from: 1383843600,
+      criteria: 1,
+      metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
+      limit: 10,
+      to: nowUnix,
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([{
+        name: 'metrics',
+        actions: {
+          fetchRatingMetricsWithoutStore: fetchRatingMetrics,
+        },
+      }]),
+    });
+
+    const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
+
+    kpiRatingFiltersElement.vm.$emit('input', {
+      criteria: {
+        id: expectedDefaultParams.criteria,
+      },
+      metric: expectedDefaultParams.metric,
+      limit: expectedDefaultParams.limit,
+      interval: {
+        from: expectedDefaultParams.from,
+        to: expectedDefaultParams.to,
+      },
+    });
+
+    await flushPromises();
 
     expect(fetchRatingMetrics).toBeCalledTimes(1);
     expect(fetchRatingMetrics).toBeCalledWith(
@@ -70,7 +103,7 @@ describe('kpi-rating', () => {
     const expectedParamsAfterUpdate = {
       /* now - 30d  */
       from: 1386262800,
-      criteria: KPI_RATING_CRITERIA.user,
+      criteria: 1,
       metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
       limit: 10,
       to: nowUnix,
@@ -89,10 +122,11 @@ describe('kpi-rating', () => {
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
     kpiRatingFiltersElement.vm.$emit('input', {
-      filter: null,
-      criteria: KPI_RATING_CRITERIA.user,
-      metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
-      limit: 10,
+      criteria: {
+        id: expectedParamsAfterUpdate.criteria,
+      },
+      metric: expectedParamsAfterUpdate.metric,
+      limit: expectedParamsAfterUpdate.limit,
       interval: {
         from: start,
         to: stop,
@@ -101,7 +135,7 @@ describe('kpi-rating', () => {
 
     await flushPromises();
 
-    expect(fetchRatingMetrics).toBeCalledTimes(2);
+    expect(fetchRatingMetrics).toBeCalledTimes(1);
     expect(fetchRatingMetrics).toBeCalledWith(
       expect.any(Object),
       { params: expectedParamsAfterUpdate },

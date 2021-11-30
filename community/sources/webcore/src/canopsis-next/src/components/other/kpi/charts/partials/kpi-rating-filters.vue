@@ -3,7 +3,11 @@
     v-layout.ml-4.my-4(wrap)
       c-quick-date-interval-field.mr-4(v-field="query.interval")
       c-filters-field.mr-4.kpi-rating-toolbar__filters(v-field="query.filter")
-      kpi-rating-criteria-field.mr-4.kpi-rating-toolbar__criteria(:value="query.criteria", @input="updateCriteria")
+      kpi-rating-criteria-field.mr-4.kpi-rating-toolbar__criteria(
+        :value="query.criteria",
+        mandatory,
+        @input="updateCriteria"
+      )
       kpi-rating-metric-field.mr-4.kpi-rating-toolbar__metric(v-field="query.metric", :criteria="query.criteria")
       c-records-per-page-field(v-field="query.rowsPerPage")
 </template>
@@ -33,7 +37,7 @@ export default {
     updateCriteria(criteria) {
       this.updateModel({
         ...this.query,
-        metric: getAvailableMetricByCriteria(this.query.metric, criteria),
+        metric: getAvailableMetricByCriteria(this.query.metric, criteria?.label),
         criteria,
       });
     },

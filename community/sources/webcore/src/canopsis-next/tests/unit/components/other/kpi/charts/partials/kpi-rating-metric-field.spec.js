@@ -29,7 +29,10 @@ describe('kpi-rating-metric-field', () => {
     const wrapper = factory({
       propsData: {
         value: ALARM_METRIC_PARAMETERS.ackAlarms,
-        criteria: KPI_RATING_CRITERIA.category,
+        criteria: {
+          id: 1,
+          label: KPI_RATING_CRITERIA.category,
+        },
       },
     });
 
@@ -49,7 +52,10 @@ describe('kpi-rating-metric-field', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: ALARM_METRIC_PARAMETERS.ackAlarms,
-        criteria: KPI_RATING_CRITERIA.user,
+        criteria: {
+          id: 1,
+          label: KPI_RATING_CRITERIA.user,
+        },
       },
       mocks: {
         $te: path => path.includes('users'),
