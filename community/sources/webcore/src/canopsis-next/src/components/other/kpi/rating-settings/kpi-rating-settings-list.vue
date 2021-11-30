@@ -14,7 +14,7 @@
     template(#toolbar="")
       v-flex(xs12)
         v-expand-transition
-          v-layout.ml-3(v-if="isEnabledRatingSettingsChanged")
+          v-layout.ml-3(v-if="changedIds.length")
             v-btn(
               outline,
               color="primary",
@@ -22,7 +22,7 @@
             ) {{ $t('common.cancel') }}
             v-btn(
               color="primary",
-              @click="$emit('enable-selected', enabled)"
+              @click="submit"
             ) {{ $t('common.submit') }}
 
     template(#enabled="props")
@@ -61,20 +61,12 @@ export default {
   },
   data() {
     return {
-      enabled: this.getEnabledRatingSettingsIds(),
+      changed: [],
     };
   },
   computed: {
-    enabledIds() {
-      return this.enabled.map(({ id }) => id);
-    },
-
-    isEnabledRatingSettingsChanged() {
-      const submittedRatingSettingsIds = this.getEnabledRatingSettingsIds()
-        .map(({ id }) => id);
-
-      return this.enabledIds.length !== submittedRatingSettingsIds.length
-        || !this.enabledIds.every(id => submittedRatingSettingsIds.includes(id));
+    changedIds() {
+      return this.changed.map(({ id }) => id);
     },
 
     headers() {
@@ -88,24 +80,31 @@ export default {
     ratingSettings: 'resetEnabledRatingSettings',
   },
   methods: {
-    resetEnabledRatingSettings() {
-      this.enabled = this.getEnabledRatingSettingsIds();
+    submit() {
+      this.$emit('change-selected', this.changed.map(ratingSetting => ({
+        ...ratingSetting,
+        enabled: !ratingSetting.enabled,
+      })));
     },
 
-    enableRatingSetting(ratingSetting, checked) {
-      if (checked) {
-        this.enabled.push(ratingSetting);
+    isRatingSettingChanged(ratingSetting) {
+      return this.changedIds.includes(ratingSetting.id);
+    },
+
+    resetEnabledRatingSettings() {
+      this.changed = [];
+    },
+
+    enableRatingSetting(ratingSetting) {
+      if (!this.isRatingSettingChanged(ratingSetting)) {
+        this.changed.push(ratingSetting);
       } else {
-        this.enabled = this.enabled.filter(item => item.id !== ratingSetting.id);
+        this.changed = this.changed.filter(item => item.id !== ratingSetting.id);
       }
     },
 
-    getEnabledRatingSettingsIds() {
-      return this.ratingSettings.filter(item => item.enabled);
-    },
-
     isEnabledRatingSetting(ratingSetting) {
-      return this.enabledIds.includes(ratingSetting.id);
+      return this.isRatingSettingChanged(ratingSetting) ? !ratingSetting.enabled : ratingSetting.enabled;
     },
   },
 };
