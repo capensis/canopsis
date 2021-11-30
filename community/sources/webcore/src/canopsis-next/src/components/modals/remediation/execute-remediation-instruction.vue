@@ -111,7 +111,7 @@ export default {
 
       const instructionExecution = await this.createRemediationInstructionExecution({
         data: {
-          alarm: this.config.alarm._id,
+          alarm: this.config.alarmId,
           instruction: instructionId,
         },
       });

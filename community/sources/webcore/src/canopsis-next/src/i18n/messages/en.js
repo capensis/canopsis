@@ -212,6 +212,7 @@ export default {
       [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
       [EVENT_ENTITY_TYPES.comment]: 'Comment',
+      [EVENT_ENTITY_TYPES.executeInstruction]: 'Execute instruction',
     },
     times: {
       second: 'second | seconds',

@@ -6,7 +6,8 @@
         :entity="serviceEntity",
         :entity-name-field="entityNameField",
         :widget-parameters="widgetParameters",
-        @add:event="$listeners['add:event']"
+        @add:event="$listeners['add:event']",
+        @refresh="$listeners.refresh"
       )
 </template>
 

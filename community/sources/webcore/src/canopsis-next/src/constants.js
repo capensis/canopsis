@@ -500,6 +500,9 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: {
     icon: 'keyboard_arrow_up',
   },
+  [EVENT_ENTITY_TYPES.executeInstruction]: {
+    icon: 'assignment',
+  },
 };
 
 export const UNKNOWN_VALUE_STYLE = {
@@ -957,6 +960,7 @@ export const USERS_PERMISSIONS = {
         entityPlay: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityPlay`,
         entityCancel: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityCancel`,
         entityManagePbehaviors: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityManagePbehaviors`,
+        executeInstruction: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_executeInstruction`,
 
         entityLinks: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityLinks`,
 
@@ -1104,6 +1108,8 @@ export const WIDGETS_ACTIONS_TYPES = {
     alarmsList: 'alarmsList',
     pbehaviorList: 'pbehaviorList',
     variablesHelp: 'variablesHelp',
+
+    executeInstruction: 'executeInstruction',
   },
   counter: {
     alarmsList: 'alarmsList',
@@ -1183,6 +1189,8 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.weather.entityCancel]: USERS_PERMISSIONS.business.serviceWeather.actions.entityCancel,
     [WIDGETS_ACTIONS_TYPES.weather.entityManagePbehaviors]:
       USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors,
+    [WIDGETS_ACTIONS_TYPES.weather.executeInstruction]:
+      USERS_PERMISSIONS.business.serviceWeather.actions.executeInstruction,
 
     [WIDGETS_ACTIONS_TYPES.weather.entityLinks]: USERS_PERMISSIONS.business.serviceWeather.actions.entityLinks,
 
