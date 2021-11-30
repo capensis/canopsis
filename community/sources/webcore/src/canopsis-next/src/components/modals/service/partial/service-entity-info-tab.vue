@@ -117,7 +117,6 @@ export default {
           type: weatherActionsTypes.executeInstruction,
           eventType: EVENT_ENTITY_TYPES.executeInstruction,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.executeInstruction].icon,
-          action: this.executeAlarmInstruction,
         },
         validate: {
           type: weatherActionsTypes.entityValidate,
