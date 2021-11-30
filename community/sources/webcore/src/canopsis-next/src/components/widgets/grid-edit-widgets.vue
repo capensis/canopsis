@@ -149,7 +149,7 @@ export default {
         return acc;
       }, {});
 
-      this.$emit('update:widgetsFields', widgetsFields);
+      this.$emit('update:widgets-fields', widgetsFields);
     },
   },
 };
