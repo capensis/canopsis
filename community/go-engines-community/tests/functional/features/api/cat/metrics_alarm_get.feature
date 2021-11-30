@@ -2,110 +2,110 @@ Feature: Get alarm metrics
   I need to be able to get alarm metrics
   Only admin should be able to get alarm metrics
 
-  Scenario: given get total_alarms hour request should return metrics
+  Scenario: given get created_alarms hour request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/alarm?parameters[]=total_alarms&sampling=hour&from={{ nowDate }}&to={{ nowDate }}&filter=test-filter-to-total-alarm-metrics-get
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "1h" }},
+            "timestamp": {{ parseTime "23-11-2021 01:00" }},
             "value": 2
           },
           {
-            "timestamp": {{ nowDateAdd "2h" }},
+            "timestamp": {{ parseTime "23-11-2021 02:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "3h" }},
+            "timestamp": {{ parseTime "23-11-2021 03:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "4h" }},
+            "timestamp": {{ parseTime "23-11-2021 04:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "5h" }},
+            "timestamp": {{ parseTime "23-11-2021 05:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "6h" }},
+            "timestamp": {{ parseTime "23-11-2021 06:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "7h" }},
+            "timestamp": {{ parseTime "23-11-2021 07:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "8h" }},
+            "timestamp": {{ parseTime "23-11-2021 08:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "9h" }},
+            "timestamp": {{ parseTime "23-11-2021 09:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "10h" }},
+            "timestamp": {{ parseTime "23-11-2021 10:00" }},
             "value": 1
           },
           {
-            "timestamp": {{ nowDateAdd "11h" }},
+            "timestamp": {{ parseTime "23-11-2021 11:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "12h" }},
+            "timestamp": {{ parseTime "23-11-2021 12:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "13h" }},
+            "timestamp": {{ parseTime "23-11-2021 13:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "14h" }},
+            "timestamp": {{ parseTime "23-11-2021 14:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "15h" }},
+            "timestamp": {{ parseTime "23-11-2021 15:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "16h" }},
+            "timestamp": {{ parseTime "23-11-2021 16:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "17h" }},
+            "timestamp": {{ parseTime "23-11-2021 17:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "18h" }},
+            "timestamp": {{ parseTime "23-11-2021 18:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "19h" }},
+            "timestamp": {{ parseTime "23-11-2021 19:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "20h" }},
+            "timestamp": {{ parseTime "23-11-2021 20:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "21h" }},
+            "timestamp": {{ parseTime "23-11-2021 21:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "22h" }},
+            "timestamp": {{ parseTime "23-11-2021 22:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "23h" }},
+            "timestamp": {{ parseTime "23-11-2021 23:00" }},
             "value": 0
           }
         ]
@@ -113,34 +113,34 @@ Feature: Get alarm metrics
     ]
     """
 
-  Scenario: given get total_alarms day request should return metrics
+  Scenario: given get created_alarms day request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/alarm?parameters[]=total_alarms&sampling=day&from={{ nowDateAdd "-3d" }}&to={{ nowDateAdd "1d" }}&filter=test-filter-to-total-alarm-metrics-get
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-72h" }},
+            "timestamp": {{ parseTime "20-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "-48h" }},
+            "timestamp": {{ parseTime "21-11-2021 00:00" }},
             "value": 1
           },
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 3
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -148,15 +148,15 @@ Feature: Get alarm metrics
     ]
     """
 
-  Scenario: given get total_alarms week request should return metrics
+  Scenario: given get created_alarms week request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/alarm?parameters[]=total_alarms&sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&filter=test-filter-to-total-alarm-metrics-get
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ parseTime "06-09-2021 00:00" }},
@@ -183,15 +183,15 @@ Feature: Get alarm metrics
     ]
     """
 
-  Scenario: given get total_alarms month request should return metrics
+  Scenario: given get created_alarms month request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/alarm?parameters[]=total_alarms&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-filter-to-total-alarm-metrics-get
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ parseTime "01-06-2021 00:00" }},
@@ -218,15 +218,15 @@ Feature: Get alarm metrics
     ]
     """
 
-  Scenario: given get total_alarms request with empty interval should return metrics with zeros
+  Scenario: given get created_alarms request with empty interval should return metrics with zeros
     When I am admin
-    When I do GET /api/v4/cat/metrics/alarm?parameters[]=total_alarms&sampling=day&from={{ parseTime "06-09-2020 00:00" }}&to={{ parseTime "08-09-2020 00:00" }}&filter=test-filter-to-total-alarm-metrics-get
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=day&from={{ parseTime "06-09-2020 00:00" }}&to={{ parseTime "08-09-2020 00:00" }}&filter=test-filter-to-alarm-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ parseTime "06-09-2020 00:00" }},
@@ -245,35 +245,467 @@ Feature: Get alarm metrics
     ]
     """
 
-  Scenario: given get total_alarms request with filter by entity infos should return metrics
+  Scenario: given get created_alarms request with filter by entity infos should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/alarm?parameters[]=total_alarms&sampling=day&from={{ nowDateAdd "-3d" }}&to={{ nowDateAdd "1d" }}&filter=test-filter-to-total-alarm-metrics-get-by-entity-infos
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get-by-entity-infos
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-72h" }},
+            "timestamp": {{ parseTime "20-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "-48h" }},
+            "timestamp": {{ parseTime "21-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 2
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
+          }
+        ]
+      }
+    ]
+    """
+
+  Scenario: given get active_alarms hour request should return metrics
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=active_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "title": "active_alarms",
+        "data": [
+          {
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
+            "value": 4
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 01:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 02:00" }},
+            "value": 5
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 03:00" }},
+            "value": 5
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 04:00" }},
+            "value": 5
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 05:00" }},
+            "value": 5
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 06:00" }},
+            "value": 5
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 07:00" }},
+            "value": 5
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 08:00" }},
+            "value": 5
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 09:00" }},
+            "value": 5
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 10:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 11:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 12:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 13:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 14:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 15:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 16:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 17:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 18:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 19:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 20:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 21:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 22:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 23:00" }},
+            "value": 6
+          }
+        ]
+      }
+    ]
+    """
+
+  Scenario: given get active_alarms day request should return metrics
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=active_alarms&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "title": "active_alarms",
+        "data": [
+          {
+            "timestamp": {{ parseTime "20-11-2021 00:00" }},
+            "value": 4
+          },
+          {
+            "timestamp": {{ parseTime "21-11-2021 00:00" }},
+            "value": 5
+          },
+          {
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
+            "value": 4
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
+            "value": 6
+          },
+          {
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
+            "value": 6
+          }
+        ]
+      }
+    ]
+    """
+
+  Scenario: given get active_alarms week request should return metrics
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=active_alarms&sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "title": "active_alarms",
+        "data": [
+          {
+            "timestamp": {{ parseTime "06-09-2021 00:00" }},
+            "value": 1
+          },
+          {
+            "timestamp": {{ parseTime "13-09-2021 00:00" }},
+            "value": 2
+          },
+          {
+            "timestamp": {{ parseTime "20-09-2021 00:00" }},
+            "value": 2
+          },
+          {
+            "timestamp": {{ parseTime "27-09-2021 00:00" }},
+            "value": 4
+          },
+          {
+            "timestamp": {{ parseTime "04-10-2021 00:00" }},
+            "value": 4
+          }
+        ]
+      }
+    ]
+    """
+
+  Scenario: given get active_alarms month request should return metrics
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=active_alarms&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "title": "active_alarms",
+        "data": [
+          {
+            "timestamp": {{ parseTime "01-06-2021 00:00" }},
+            "value": 0
+          },
+          {
+            "timestamp": {{ parseTime "01-07-2021 00:00" }},
+            "value": 1
+          },
+          {
+            "timestamp": {{ parseTime "01-08-2021 00:00" }},
+            "value": 1
+          },
+          {
+            "timestamp": {{ parseTime "01-09-2021 00:00" }},
+            "value": 4
+          },
+          {
+            "timestamp": {{ parseTime "01-10-2021 00:00" }},
+            "value": 4
+          }
+        ]
+      }
+    ]
+    """
+
+  Scenario: given get ratio_tickets hour request should return metrics
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=ratio_tickets&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "title": "ratio_tickets",
+        "data": [
+          {
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
+            "value": 25
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 01:00" }},
+            "value": 33.33
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 02:00" }},
+            "value": 20
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 03:00" }},
+            "value": 20
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 04:00" }},
+            "value": 20
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 05:00" }},
+            "value": 20
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 06:00" }},
+            "value": 20
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 07:00" }},
+            "value": 20
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 08:00" }},
+            "value": 20
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 09:00" }},
+            "value": 20
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 10:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 11:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 12:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 13:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 14:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 15:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 16:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 17:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 18:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 19:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 20:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 21:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 22:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 23:00" }},
+            "value": 16.66
+          }
+        ]
+      }
+    ]
+    """
+
+  Scenario: given get ratio_tickets day request should return metrics
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=ratio_tickets&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "title": "ratio_tickets",
+        "data": [
+          {
+            "timestamp": {{ parseTime "20-11-2021 00:00" }},
+            "value": 25
+          },
+          {
+            "timestamp": {{ parseTime "21-11-2021 00:00" }},
+            "value": 40
+          },
+          {
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
+            "value": 25
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
+            "value": 16.66
+          },
+          {
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
+            "value": 16.66
+          }
+        ]
+      }
+    ]
+    """
+
+  Scenario: given get ratio_tickets week request should return metrics
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=ratio_tickets&sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "title": "ratio_tickets",
+        "data": [
+          {
+            "timestamp": {{ parseTime "06-09-2021 00:00" }},
+            "value": 0
+          },
+          {
+            "timestamp": {{ parseTime "13-09-2021 00:00" }},
+            "value": 0
+          },
+          {
+            "timestamp": {{ parseTime "20-09-2021 00:00" }},
+            "value": 0
+          },
+          {
+            "timestamp": {{ parseTime "27-09-2021 00:00" }},
+            "value": 25
+          },
+          {
+            "timestamp": {{ parseTime "04-10-2021 00:00" }},
+            "value": 25
+          }
+        ]
+      }
+    ]
+    """
+
+  Scenario: given get ratio_tickets month request should return metrics
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=ratio_tickets&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-filter-to-alarm-metrics-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "title": "ratio_tickets",
+        "data": [
+          {
+            "timestamp": {{ parseTime "01-06-2021 00:00" }},
+            "value": 0
+          },
+          {
+            "timestamp": {{ parseTime "01-07-2021 00:00" }},
+            "value": 0
+          },
+          {
+            "timestamp": {{ parseTime "01-08-2021 00:00" }},
+            "value": 0
+          },
+          {
+            "timestamp": {{ parseTime "01-09-2021 00:00" }},
+            "value": 25
+          },
+          {
+            "timestamp": {{ parseTime "01-10-2021 00:00" }},
+            "value": 25
           }
         ]
       }
@@ -295,7 +727,7 @@ Feature: Get alarm metrics
       }
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter=not-exist&from={{ now }}&to={{ now }}&sampling=day&parameters[]=total_alarms
+    When I do GET /api/v4/cat/metrics/alarm?filter=not-exist&from={{ now }}&to={{ now }}&sampling=day&parameters[]=created_alarms
     Then the response code should be 400
     Then the response body should be:
     """json
@@ -325,7 +757,7 @@ Feature: Get alarm metrics
       }
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?sampling=not-exist&from={{ now }}&to={{ now }}&parameters[]=total_alarms
+    When I do GET /api/v4/cat/metrics/alarm?sampling=not-exist&from={{ now }}&to={{ now }}&parameters[]=created_alarms
     Then the response code should be 400
     Then the response body should be:
     """json
@@ -347,25 +779,42 @@ Feature: Get alarm metrics
 
   Scenario: given get request with all parameters should return all metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/alarm?parameters[]=total_alarms&parameters[]=non_displayed_alarms&parameters[]=instruction_alarms&parameters[]=pbehavior_alarms&parameters[]=correlation_alarms&parameters[]=ack_alarms&parameters[]=cancel_ack_alarms&parameters[]=ack_without_cancel_alarms&parameters[]=ticket_alarms&parameters[]=without_ticket_alarms&parameters[]=ratio_correlation&parameters[]=ratio_instructions&parameters[]=ratio_tickets&parameters[]=ratio_non_displayed&parameters[]=average_ack&parameters[]=average_resolve&sampling=day&from={{ nowDateAdd "-1d" }}&to={{ nowDateAdd "1d" }}&filter=test-filter-to-all-alarm-metrics-get
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=non_displayed_alarms&parameters[]=instruction_alarms&parameters[]=pbehavior_alarms&parameters[]=correlation_alarms&parameters[]=ack_alarms&parameters[]=cancel_ack_alarms&parameters[]=ack_without_cancel_alarms&parameters[]=ticket_alarms&parameters[]=without_ticket_alarms&parameters[]=ratio_correlation&parameters[]=ratio_instructions&parameters[]=ratio_tickets&parameters[]=ratio_non_displayed&parameters[]=average_ack&parameters[]=average_resolve&sampling=day&from={{ parseTime "22-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-all-alarm-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 3
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
+          }
+        ]
+      },
+      {
+        "title": "active_alarms",
+        "data": [
+          {
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
+            "value": 0
+          },
+          {
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
+            "value": 3
+          },
+          {
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
+            "value": 3
           }
         ]
       },
@@ -373,15 +822,15 @@ Feature: Get alarm metrics
         "title": "non_displayed_alarms",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 1
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -390,15 +839,15 @@ Feature: Get alarm metrics
         "title": "instruction_alarms",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 1
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -407,15 +856,15 @@ Feature: Get alarm metrics
         "title": "pbehavior_alarms",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 1
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -424,15 +873,15 @@ Feature: Get alarm metrics
         "title": "correlation_alarms",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 1
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -441,15 +890,15 @@ Feature: Get alarm metrics
         "title": "ack_alarms",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 2
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -458,15 +907,15 @@ Feature: Get alarm metrics
         "title": "cancel_ack_alarms",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 1
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -475,15 +924,15 @@ Feature: Get alarm metrics
         "title": "ack_without_cancel_alarms",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 1
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -492,15 +941,15 @@ Feature: Get alarm metrics
         "title": "ticket_alarms",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 1
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -509,15 +958,15 @@ Feature: Get alarm metrics
         "title": "without_ticket_alarms",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 2
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -526,16 +975,16 @@ Feature: Get alarm metrics
         "title": "ratio_correlation",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 33.33
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
-            "value": 0
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
+            "value": 33.33
           }
         ]
       },
@@ -543,16 +992,16 @@ Feature: Get alarm metrics
         "title": "ratio_instructions",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 33.33
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
-            "value": 0
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
+            "value": 33.33
           }
         ]
       },
@@ -560,16 +1009,16 @@ Feature: Get alarm metrics
         "title": "ratio_tickets",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 33.33
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
-            "value": 0
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
+            "value": 33.33
           }
         ]
       },
@@ -577,16 +1026,16 @@ Feature: Get alarm metrics
         "title": "ratio_non_displayed",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 33.33
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
-            "value": 0
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
+            "value": 33.33
           }
         ]
       },
@@ -594,15 +1043,15 @@ Feature: Get alarm metrics
         "title": "average_ack",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 500
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -611,15 +1060,15 @@ Feature: Get alarm metrics
         "title": "average_resolve",
         "data": [
           {
-            "timestamp": {{ nowDateAdd "-24h" }},
+            "timestamp": {{ parseTime "22-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ nowDate }},
+            "timestamp": {{ parseTime "23-11-2021 00:00" }},
             "value": 1000
           },
           {
-            "timestamp": {{ nowDateAdd "24h" }},
+            "timestamp": {{ parseTime "24-11-2021 00:00" }},
             "value": 0
           }
         ]

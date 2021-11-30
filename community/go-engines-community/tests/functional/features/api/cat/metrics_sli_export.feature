@@ -4,7 +4,7 @@ Feature: Export SLI metrics
 
   Scenario: given export request should return metrics
     When I am admin
-    When I do POST /api/v4/cat/metrics-export/sli?sampling=day&from={{ nowDateAdd "-3d" }}&to={{ nowDateAdd "1d" }}&filter=test-filter-to-sli-metrics-get
+    When I do POST /api/v4/cat/metrics-export/sli?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
     Then the response code should be 200
     When I save response exportID={{ .lastResponse._id }}
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
@@ -18,14 +18,14 @@ Feature: Export SLI metrics
     Then the response raw body should be:
     """csv
     downtime,maintenance,timestamp,uptime
-    0,0,{{ nowDateAdd "-72h" }},86400
-    30,0,{{ nowDateAdd "-48h" }},86370
-    0,0,{{ nowDateAdd "-24h" }},86400
-    120,30,{{ nowDate }},86250
-    0,0,{{ nowDateAdd "24h" }},86400
+    0,0,{{ parseTime "20-11-2021 00:00" }},86400
+    30,0,{{ parseTime "21-11-2021 00:00" }},86370
+    0,0,{{ parseTime "22-11-2021 00:00" }},86400
+    120,30,{{ parseTime "23-11-2021 00:00" }},86250
+    0,0,{{ parseTime "24-11-2021 00:00" }},86400
 
     """
-    When I do POST /api/v4/cat/metrics-export/sli?in_percents=true&sampling=day&from={{ nowDateAdd "-3d" }}&to={{ nowDateAdd "1d" }}&filter=test-filter-to-sli-metrics-get
+    When I do POST /api/v4/cat/metrics-export/sli?in_percents=true&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
     Then the response code should be 200
     When I save response exportID={{ .lastResponse._id }}
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
@@ -39,11 +39,11 @@ Feature: Export SLI metrics
     Then the response raw body should be:
     """csv
     downtime,maintenance,timestamp,uptime
-    0,0,{{ nowDateAdd "-72h" }},100
-    0.03,0,{{ nowDateAdd "-48h" }},99.97
-    0,0,{{ nowDateAdd "-24h" }},100
-    0.13,0.03,{{ nowDate }},99.84
-    0,0,{{ nowDateAdd "24h" }},100
+    0,0,{{ parseTime "20-11-2021 00:00" }},100
+    0.03,0,{{ parseTime "21-11-2021 00:00" }},99.97
+    0,0,{{ parseTime "22-11-2021 00:00" }},100
+    0.13,0.03,{{ parseTime "23-11-2021 00:00" }},99.84
+    0,0,{{ parseTime "24-11-2021 00:00" }},100
 
     """
 
@@ -67,7 +67,7 @@ Feature: Export SLI metrics
 
   Scenario: given export request with filter by entity infos should return metrics
     When I am admin
-    When I do POST /api/v4/cat/metrics-export/sli?sampling=day&from={{ nowDateAdd "-3d" }}&to={{ nowDateAdd "1d" }}&filter=test-filter-to-sli-metrics-get-by-entity-infos
+    When I do POST /api/v4/cat/metrics-export/sli?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get-by-entity-infos
     Then the response code should be 200
     When I save response exportID={{ .lastResponse._id }}
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
@@ -81,11 +81,11 @@ Feature: Export SLI metrics
     Then the response raw body should be:
     """csv
     downtime,maintenance,timestamp,uptime
-    0,0,{{ nowDateAdd "-72h" }},86400
-    0,0,{{ nowDateAdd "-48h" }},86400
-    0,0,{{ nowDateAdd "-24h" }},86400
-    60,60,{{ nowDate }},86280
-    0,0,{{ nowDateAdd "24h" }},86400
+    0,0,{{ parseTime "20-11-2021 00:00" }},86400
+    0,0,{{ parseTime "21-11-2021 00:00" }},86400
+    0,0,{{ parseTime "22-11-2021 00:00" }},86400
+    60,60,{{ parseTime "23-11-2021 00:00" }},86280
+    0,0,{{ parseTime "24-11-2021 00:00" }},86400
 
     """
 

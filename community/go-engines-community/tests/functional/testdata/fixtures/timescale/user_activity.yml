@@ -1,9 +1,9 @@
-- time: RAW=CURRENT_DATE
+- time: '2021-11-23'
   user_id: test-user-to-metrics-rating-get-1
   value: 100
-- time: RAW=CURRENT_DATE
+- time: '2021-11-23'
   user_id: test-user-to-metrics-rating-get-2
   value: 100
-- time: RAW=CURRENT_DATE + INTERVAL '1 hour'
+- time: '2021-11-23 01:00:00'
   user_id: test-user-to-metrics-rating-get-2
   value: 200

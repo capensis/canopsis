@@ -1,20 +1,20 @@
-- time: RAW=CURRENT_DATE
+- time: '2021-11-23'
   entity_id: 3
   user_id: test-user-to-alarm-metrics-get
   value: 1
-- time: RAW=CURRENT_DATE + INTERVAL '1 hour'
+- time: '2021-11-23 01:00:00'
   entity_id: 3
   user_id: test-user-to-alarm-metrics-get
   value: 1
-- time: RAW=CURRENT_DATE
+- time: '2021-11-23'
   entity_id: 4
   user_id: test-user-to-metrics-rating-get-1
   value: 1
-- time: RAW=CURRENT_DATE + INTERVAL '2 hour'
+- time: '2021-11-23 02:00:00'
   entity_id: 4
   user_id: test-user-to-metrics-rating-get-1
   value: 1
-- time: RAW=CURRENT_DATE
+- time: '2021-11-23'
   entity_id: 5
   user_id: test-user-to-metrics-rating-get-1
   value: 1
