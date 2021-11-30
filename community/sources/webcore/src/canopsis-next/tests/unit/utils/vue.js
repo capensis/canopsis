@@ -38,6 +38,12 @@ const i18n = {
   mergeLocaleMessage: jest.fn(),
 };
 
+jest.mock('@/i18n', () => ({
+  t: mocks.$t,
+  tc: mocks.$tc,
+  te: mocks.$te,
+}));
+
 Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
