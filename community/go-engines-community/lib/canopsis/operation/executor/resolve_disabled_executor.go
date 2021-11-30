@@ -17,7 +17,7 @@ func (e *resolveDisabledExecutor) Exec(
 	_ types.Operation,
 	alarm *types.Alarm,
 	_ types.CpsTime,
-	_, _ string,
+	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	err := alarm.PartialUpdateResolve(types.CpsTime{Time: time.Now()})
 	if err != nil {

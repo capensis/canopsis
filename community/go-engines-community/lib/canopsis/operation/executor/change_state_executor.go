@@ -22,7 +22,7 @@ func (e *changeStateExecutor) Exec(
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationChangeStateParameters
 	var ok bool
@@ -44,6 +44,7 @@ func (e *changeStateExecutor) Exec(
 		time,
 		params.Author,
 		utils.TruncateString(params.Output, conf.OutputLength),
+		userID,
 		role,
 		initiator,
 		conf,

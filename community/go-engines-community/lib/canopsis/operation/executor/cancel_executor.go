@@ -22,7 +22,7 @@ func (e *cancelExecutor) Exec(
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationParameters
 	var ok bool
@@ -35,6 +35,7 @@ func (e *cancelExecutor) Exec(
 		time,
 		params.Author,
 		utils.TruncateString(params.Output, alarmConfig.OutputLength),
+		userID,
 		role,
 		initiator,
 		alarmConfig,

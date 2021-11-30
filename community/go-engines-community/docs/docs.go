@@ -7558,6 +7558,9 @@ var doc = `{
                 "t": {
                     "type": "integer"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "val": {
                     "type": "integer"
                 }
@@ -7583,6 +7586,9 @@ var doc = `{
                 },
                 "t": {
                     "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
                 },
                 "val": {
                     "type": "string"

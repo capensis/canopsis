@@ -23,7 +23,7 @@ func (e *declareTicketWebhookExecutor) Exec(
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationDeclareTicketParameters
 	var ok bool
@@ -37,6 +37,7 @@ func (e *declareTicketWebhookExecutor) Exec(
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
 		params.Ticket,
 		params.Data,
+		userID,
 		role,
 		initiator,
 	)

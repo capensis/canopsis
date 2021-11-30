@@ -7542,6 +7542,9 @@
                 "t": {
                     "type": "integer"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "val": {
                     "type": "integer"
                 }
@@ -7567,6 +7570,9 @@
                 },
                 "t": {
                     "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
                 },
                 "val": {
                     "type": "string"

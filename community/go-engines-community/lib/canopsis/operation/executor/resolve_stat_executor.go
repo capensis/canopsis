@@ -30,9 +30,9 @@ func (e *resolveStatExecutor) Exec(
 	operation types.Operation,
 	alarm *types.Alarm,
 	timestamp types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	changeType, err := e.executor.Exec(operation, alarm, timestamp, role, initiator)
+	changeType, err := e.executor.Exec(operation, alarm, timestamp, userID, role, initiator)
 	if err != nil {
 		return "", err
 	}

@@ -19,12 +19,12 @@ func (e *combinedExecutor) Exec(
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	executor, ok := e.container.Get(operation.Type)
 	if !ok {
 		return "", nil
 	}
 
-	return executor.Exec(operation, alarm, time, role, initiator)
+	return executor.Exec(operation, alarm, time, userID, role, initiator)
 }

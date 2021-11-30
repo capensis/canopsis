@@ -109,7 +109,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	operation := s.createOperationFromEvent(event)
-	changeType, err := s.executor.Exec(operation, event.Alarm, event.Timestamp, event.Role, event.Initiator)
+	changeType, err := s.executor.Exec(operation, event.Alarm, event.Timestamp, event.UserID, event.Role, event.Initiator)
 	if err != nil {
 		return alarmChange, err
 	}
@@ -215,7 +215,7 @@ func (s *eventProcessor) createAlarm(event *types.Event) (types.AlarmChangeType,
 		)
 
 		err := alarm.PartialUpdatePbhEnter(event.Timestamp, event.PbehaviorInfo,
-			event.Author, output, event.Role, event.Initiator)
+			event.Author, output, event.UserID, event.Role, event.Initiator)
 		if err != nil {
 			return changeType, err
 		}
@@ -310,7 +310,7 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 	if event.Alarm == nil {
 		alarm := newAlarm(*event, alarmConfig)
 		err := alarm.PartialUpdateNoEvents(event.State, event.Timestamp, event.Author,
-			event.Output, event.Role, event.Initiator, alarmConfig)
+			event.Output, event.UserID, event.Role, event.Initiator, alarmConfig)
 		if err != nil {
 			return changeType, err
 		}
@@ -327,7 +327,7 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 		previousState := alarm.CurrentState()
 		previousStatus := alarm.CurrentStatus(alarmConfig)
 		err := alarm.PartialUpdateNoEvents(event.State, event.Timestamp, event.Author,
-			event.Output, event.Role, event.Initiator, alarmConfig)
+			event.Output, event.UserID, event.Role, event.Initiator, alarmConfig)
 		if err != nil {
 			return changeType, err
 		}
@@ -418,7 +418,7 @@ func (s *eventProcessor) processAckResources(event *types.Event, operation types
 	}
 
 	for _, alarm := range alarms {
-		_, err := s.executor.Exec(operation, &alarm, event.Timestamp, event.Role, event.Initiator)
+		_, err := s.executor.Exec(operation, &alarm, event.Timestamp, event.UserID, event.Role, event.Initiator)
 		if err != nil {
 			return err
 		}
@@ -538,7 +538,7 @@ func (s *eventProcessor) processMetaAlarmChildren(event *types.Event, changeType
 		return err
 	}
 	for _, alarm := range alarms {
-		_, err := s.executor.Exec(operation, &alarm, event.Timestamp, event.Role, event.Initiator)
+		_, err := s.executor.Exec(operation, &alarm, event.Timestamp, event.UserID, event.Role, event.Initiator)
 		if err != nil {
 			s.logger.Error().Err(err).Msg("error updating meta-alarm child alarm")
 			return err
@@ -682,7 +682,7 @@ func (s *eventProcessor) resolveAlarmForDisabledEntity(event *types.Event) (type
 			Author: event.Author,
 		},
 	}
-	changeType, err := s.executor.Exec(operation, event.Alarm, event.Timestamp, event.Role, event.Initiator)
+	changeType, err := s.executor.Exec(operation, event.Alarm, event.Timestamp, event.UserID, event.Role, event.Initiator)
 	if err != nil {
 		return alarmChange, err
 	}
