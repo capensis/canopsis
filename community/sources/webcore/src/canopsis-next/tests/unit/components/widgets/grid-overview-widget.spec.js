@@ -35,9 +35,13 @@ describe('grid-overview-widget', () => {
           widgets: [{ _id: 'id1' }, { _id: 'id2' }],
         },
       },
-      slots: {
-        default: {
-          template: '<div class="default-slot" />',
+      scopedSlots: {
+        default(props) {
+          return this.$createElement(
+            'div',
+            { attrs: { class: 'default-slot' } },
+            JSON.stringify(props),
+          );
         },
       },
     });

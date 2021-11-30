@@ -17,14 +17,18 @@ exports[`grid-overview-widget Renders \`grid-overview-widget\` with widgets 1`] 
   >
     <div
       class="default-slot"
-    />
+    >
+      {"widget":{"_id":"id1"}}
+    </div>
   </grid-overview-item-stub>
   <grid-overview-item-stub
     widget="[object Object]"
   >
     <div
       class="default-slot"
-    />
+    >
+      {"widget":{"_id":"id2"}}
+    </div>
   </grid-overview-item-stub>
 </div>
 `;
