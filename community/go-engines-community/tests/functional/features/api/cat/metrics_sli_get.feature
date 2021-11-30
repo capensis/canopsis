@@ -4,302 +4,302 @@ Feature: Get SLI metrics
 
   Scenario: given get hour request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/sli?sampling=hour&from={{ nowDate }}&to={{ nowDate }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "timestamp": {{ nowDate }},
+        "timestamp": {{ parseTime "23-11-2021 00:00" }},
         "downtime": 30,
         "maintenance": 0,
         "uptime": 3570
       },
       {
-        "timestamp": {{ nowDateAdd "1h" }},
+        "timestamp": {{ parseTime "23-11-2021 01:00" }},
         "downtime": 60,
         "maintenance": 0,
         "uptime": 3540
       },
       {
-        "timestamp": {{ nowDateAdd "2h" }},
+        "timestamp": {{ parseTime "23-11-2021 02:00" }},
         "downtime": 30,
         "maintenance": 30,
         "uptime": 3540
       },
       {
-        "timestamp": {{ nowDateAdd "3h" }},
+        "timestamp": {{ parseTime "23-11-2021 03:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "4h" }},
+        "timestamp": {{ parseTime "23-11-2021 04:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "5h" }},
+        "timestamp": {{ parseTime "23-11-2021 05:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "6h" }},
+        "timestamp": {{ parseTime "23-11-2021 06:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "7h" }},
+        "timestamp": {{ parseTime "23-11-2021 07:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "8h" }},
+        "timestamp": {{ parseTime "23-11-2021 08:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "9h" }},
+        "timestamp": {{ parseTime "23-11-2021 09:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "10h" }},
+        "timestamp": {{ parseTime "23-11-2021 10:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "11h" }},
+        "timestamp": {{ parseTime "23-11-2021 11:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "12h" }},
+        "timestamp": {{ parseTime "23-11-2021 12:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "13h" }},
+        "timestamp": {{ parseTime "23-11-2021 13:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "14h" }},
+        "timestamp": {{ parseTime "23-11-2021 14:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "15h" }},
+        "timestamp": {{ parseTime "23-11-2021 15:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "16h" }},
+        "timestamp": {{ parseTime "23-11-2021 16:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "17h" }},
+        "timestamp": {{ parseTime "23-11-2021 17:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "18h" }},
+        "timestamp": {{ parseTime "23-11-2021 18:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "19h" }},
+        "timestamp": {{ parseTime "23-11-2021 19:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "20h" }},
+        "timestamp": {{ parseTime "23-11-2021 20:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "21h" }},
+        "timestamp": {{ parseTime "23-11-2021 21:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "22h" }},
+        "timestamp": {{ parseTime "23-11-2021 22:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       },
       {
-        "timestamp": {{ nowDateAdd "23h" }},
+        "timestamp": {{ parseTime "23-11-2021 23:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 3600
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=hour&from={{ nowDate }}&to={{ nowDate }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "timestamp": {{ nowDate }},
+        "timestamp": {{ parseTime "23-11-2021 00:00" }},
         "downtime": 0.83,
         "maintenance": 0,
         "uptime": 99.17
       },
       {
-        "timestamp": {{ nowDateAdd "1h" }},
+        "timestamp": {{ parseTime "23-11-2021 01:00" }},
         "downtime": 1.66,
         "maintenance": 0,
         "uptime": 98.34
       },
       {
-        "timestamp": {{ nowDateAdd "2h" }},
+        "timestamp": {{ parseTime "23-11-2021 02:00" }},
         "downtime": 0.83,
         "maintenance": 0.83,
         "uptime": 98.34
       },
       {
-        "timestamp": {{ nowDateAdd "3h" }},
+        "timestamp": {{ parseTime "23-11-2021 03:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "4h" }},
+        "timestamp": {{ parseTime "23-11-2021 04:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "5h" }},
+        "timestamp": {{ parseTime "23-11-2021 05:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "6h" }},
+        "timestamp": {{ parseTime "23-11-2021 06:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "7h" }},
+        "timestamp": {{ parseTime "23-11-2021 07:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "8h" }},
+        "timestamp": {{ parseTime "23-11-2021 08:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "9h" }},
+        "timestamp": {{ parseTime "23-11-2021 09:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "10h" }},
+        "timestamp": {{ parseTime "23-11-2021 10:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "11h" }},
+        "timestamp": {{ parseTime "23-11-2021 11:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "12h" }},
+        "timestamp": {{ parseTime "23-11-2021 12:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "13h" }},
+        "timestamp": {{ parseTime "23-11-2021 13:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "14h" }},
+        "timestamp": {{ parseTime "23-11-2021 14:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "15h" }},
+        "timestamp": {{ parseTime "23-11-2021 15:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "16h" }},
+        "timestamp": {{ parseTime "23-11-2021 16:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "17h" }},
+        "timestamp": {{ parseTime "23-11-2021 17:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "18h" }},
+        "timestamp": {{ parseTime "23-11-2021 18:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "19h" }},
+        "timestamp": {{ parseTime "23-11-2021 19:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "20h" }},
+        "timestamp": {{ parseTime "23-11-2021 20:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "21h" }},
+        "timestamp": {{ parseTime "23-11-2021 21:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "22h" }},
+        "timestamp": {{ parseTime "23-11-2021 22:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "23h" }},
+        "timestamp": {{ parseTime "23-11-2021 23:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
@@ -309,74 +309,74 @@ Feature: Get SLI metrics
 
   Scenario: given get day request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/sli?sampling=day&from={{ nowDateAdd "-3d" }}&to={{ nowDateAdd "1d" }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "timestamp": {{ nowDateAdd "-72h" }},
+        "timestamp": {{ parseTime "20-11-2021 00:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 86400
       },
       {
-        "timestamp": {{ nowDateAdd "-48h" }},
+        "timestamp": {{ parseTime "21-11-2021 00:00" }},
         "downtime": 30,
         "maintenance": 0,
         "uptime": 86370
       },
       {
-        "timestamp": {{ nowDateAdd "-24h" }},
+        "timestamp": {{ parseTime "22-11-2021 00:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 86400
       },
       {
-        "timestamp": {{ nowDate }},
+        "timestamp": {{ parseTime "23-11-2021 00:00" }},
         "downtime": 120,
         "maintenance": 30,
         "uptime": 86250
       },
       {
-        "timestamp": {{ nowDateAdd "24h" }},
+        "timestamp": {{ parseTime "24-11-2021 00:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 86400
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=day&from={{ nowDateAdd "-3d" }}&to={{ nowDateAdd "1d" }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "timestamp": {{ nowDateAdd "-72h" }},
+        "timestamp": {{ parseTime "20-11-2021 00:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDateAdd "-48h" }},
+        "timestamp": {{ parseTime "21-11-2021 00:00" }},
         "downtime": 0.03,
         "maintenance": 0,
         "uptime": 99.97
       },
       {
-        "timestamp": {{ nowDateAdd "-24h" }},
+        "timestamp": {{ parseTime "22-11-2021 00:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
       },
       {
-        "timestamp": {{ nowDate }},
+        "timestamp": {{ parseTime "23-11-2021 00:00" }},
         "downtime": 0.13,
         "maintenance": 0.03,
         "uptime": 99.84
       },
       {
-        "timestamp": {{ nowDateAdd "24h" }},
+        "timestamp": {{ parseTime "24-11-2021 00:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 100
@@ -538,7 +538,7 @@ Feature: Get SLI metrics
     ]
     """
 
-  Scenario: given get total_alarms request with empty interval should return metrics with zeros
+  Scenario: given get request with empty interval should return metrics with zeros
     When I am admin
     When I do GET /api/v4/cat/metrics/sli?sampling=day&from={{ parseTime "06-09-2020 00:00" }}&to={{ parseTime "08-09-2020 00:00" }}&filter=test-filter-to-sli-metrics-get
     Then the response code should be 200
@@ -549,37 +549,37 @@ Feature: Get SLI metrics
 
   Scenario: given get request with filter by entity infos should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/sli?sampling=day&from={{ nowDateAdd "-3d" }}&to={{ nowDateAdd "1d" }}&filter=test-filter-to-sli-metrics-get-by-entity-infos
+    When I do GET /api/v4/cat/metrics/sli?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get-by-entity-infos
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "timestamp": {{ nowDateAdd "-72h" }},
+        "timestamp": {{ parseTime "20-11-2021 00:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 86400
       },
       {
-        "timestamp": {{ nowDateAdd "-48h" }},
+        "timestamp": {{ parseTime "21-11-2021 00:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 86400
       },
       {
-        "timestamp": {{ nowDateAdd "-24h" }},
+        "timestamp": {{ parseTime "22-11-2021 00:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 86400
       },
       {
-        "timestamp": {{ nowDate }},
+        "timestamp": {{ parseTime "23-11-2021 00:00" }},
         "downtime": 60,
         "maintenance": 60,
         "uptime": 86280
       },
       {
-        "timestamp": {{ nowDateAdd "24h" }},
+        "timestamp": {{ parseTime "24-11-2021 00:00" }},
         "downtime": 0,
         "maintenance": 0,
         "uptime": 86400

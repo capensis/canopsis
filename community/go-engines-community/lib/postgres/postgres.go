@@ -106,7 +106,7 @@ func (p *poolWithRetries) SetRetry(count int, timeout time.Duration) {
 func (p *poolWithRetries) Exec(ctx context.Context, sql string, args ...interface{}) (pgconn.CommandTag, error) {
 	var commandTag pgconn.CommandTag
 	var err error
-	p.retry(ctx, func(ctx context.Context) error {
+	p.retry(ctx, func() error {
 		commandTag, err = p.pgxPool.Exec(ctx, sql, args...)
 		return err
 	})
@@ -117,7 +117,7 @@ func (p *poolWithRetries) Exec(ctx context.Context, sql string, args ...interfac
 func (p *poolWithRetries) Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error) {
 	var rows pgx.Rows
 	var err error
-	p.retry(ctx, func(ctx context.Context) error {
+	p.retry(ctx, func() error {
 		rows, err = p.pgxPool.Query(ctx, sql, args...)
 		return err
 	})
@@ -159,7 +159,7 @@ func (p *poolWithRetries) Close() {
 
 func (p *poolWithRetries) WithTransaction(ctx context.Context, f func(context.Context, pgx.Tx) error) error {
 	var err error
-	p.retry(ctx, func(ctx context.Context) error {
+	p.retry(ctx, func() error {
 		var tx pgx.Tx
 		tx, err = p.pgxPool.Begin(ctx)
 		if err != nil {
@@ -184,14 +184,11 @@ func (p *poolWithRetries) WithTransaction(ctx context.Context, f func(context.Co
 	return err
 }
 
-func (p *poolWithRetries) retry(ctx context.Context, f func(context.Context) error) {
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
+func (p *poolWithRetries) retry(ctx context.Context, f func() error) {
 	timeout := p.minRetryTimeout
 
 	for i := 0; i <= p.retryCount; i++ {
-		err := f(ctx)
+		err := f()
 		if err == nil {
 			return
 		}

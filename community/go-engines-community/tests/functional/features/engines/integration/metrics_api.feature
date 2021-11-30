@@ -51,11 +51,11 @@ Feature: Entities and users should be synchronized in metrics db
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=total_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -81,13 +81,13 @@ Feature: Entities and users should be synchronized in metrics db
     """
     Then the response code should be 200
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=total_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -97,13 +97,13 @@ Feature: Entities and users should be synchronized in metrics db
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=total_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -313,11 +313,11 @@ Feature: Entities and users should be synchronized in metrics db
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=total_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -385,11 +385,11 @@ Feature: Entities and users should be synchronized in metrics db
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=total_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -414,13 +414,13 @@ Feature: Entities and users should be synchronized in metrics db
     """
     Then the response code should be 200
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=total_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -430,13 +430,13 @@ Feature: Entities and users should be synchronized in metrics db
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=total_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -491,11 +491,11 @@ Feature: Entities and users should be synchronized in metrics db
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=total_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -508,13 +508,13 @@ Feature: Entities and users should be synchronized in metrics db
     When I do DELETE /api/v4/entityservices/{{ .serviceID }}
     Then the response code should be 204
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=total_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
