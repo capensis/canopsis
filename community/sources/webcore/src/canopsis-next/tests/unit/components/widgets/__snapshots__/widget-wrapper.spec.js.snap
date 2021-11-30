@@ -1,21 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with default props  1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <alarms-list-widget-stub
-      tabid="tab-id"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
 exports[`widget-wrapper Renders \`widget-wrapper\` with default props 1`] = `
 <div
   style="min-height: 40px;"
