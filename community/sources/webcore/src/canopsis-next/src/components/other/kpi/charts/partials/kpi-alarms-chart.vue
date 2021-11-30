@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { debounce } from 'lodash';
 import {
   DATETIME_FORMATS,
   KPI_ALARMS_GRAPH_BAR_PERCENTAGE,
@@ -100,6 +101,7 @@ export default {
           x: {
             type: 'time',
             ticks: {
+              max: Date.now(),
               source: 'data',
               callback: this.getChartTimeTickLabel,
               font: {
@@ -166,11 +168,55 @@ export default {
               label: this.getChartTooltipLabel,
             },
           },
+          zoom: {
+            limits: {
+              x: {
+                max: Date.now(),
+              },
+            },
+            pan: {
+              enabled: true,
+              mode: 'x',
+              threshold: 3,
+              onPanComplete: this.updateChartInterval,
+            },
+            zoom: {
+              mode: 'x',
+              wheel: {
+                enabled: true,
+                speed: 0.1,
+              },
+              pinch: {
+                enabled: true,
+              },
+              drag: {
+                enabled: true,
+                modifierKey: 'ctrl',
+              },
+              onZoom: this.updateChartInterval,
+            },
+          },
         },
       };
     },
   },
+  created() {
+    this.debouncedUpdateInterval = debounce(this.updateInterval, 300);
+  },
   methods: {
+    updateChartInterval({ chart }) {
+      const { min, max } = chart.scales.x;
+
+      this.debouncedUpdateInterval({
+        from: Math.floor(min / 1000),
+        to: Math.ceil(max / 1000),
+      });
+    },
+
+    updateInterval(interval) {
+      this.$emit('zoom', interval);
+    },
+
     getChartTooltipLabel({ raw, dataset }) {
       const value = isTimeMetric(dataset.metric)
         ? convertDurationToString(

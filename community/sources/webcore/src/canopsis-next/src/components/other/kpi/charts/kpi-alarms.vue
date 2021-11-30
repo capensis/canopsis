@@ -8,7 +8,8 @@
       :downloading="downloading",
       responsive,
       @export:csv="exportAlarmMetricsAsCsv",
-      @export:png="exportAlarmMetricsAsPng"
+      @export:png="exportAlarmMetricsAsPng",
+      @zoom="updateQueryField('interval', $event)"
     )
 </template>
 

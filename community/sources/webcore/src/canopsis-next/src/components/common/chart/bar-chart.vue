@@ -2,12 +2,13 @@
 import { merge } from 'lodash';
 
 import { chartBackgroundMixin } from '@/mixins/chart/background';
+import { chartZoomMixin } from '@/mixins/chart/zoom';
 
 import { Bar } from '@/externals/vue-chart/components';
 
 export default {
   extends: Bar,
-  mixins: [chartBackgroundMixin],
+  mixins: [chartBackgroundMixin, chartZoomMixin],
   props: {
     ...Bar.props,
 
@@ -32,7 +33,28 @@ export default {
       };
     },
     mergedOptions() {
-      return merge({ responsive: true, maintainAspectRatio: false }, this.options);
+      return merge({
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: {
+          zoom: {
+            pan: {
+              enabled: false,
+            },
+            zoom: {
+              wheel: {
+                enabled: false,
+              },
+              pinch: {
+                enabled: false,
+              },
+              drag: {
+                enabled: false,
+              },
+            },
+          },
+        } }, this.options);
     },
   },
   watch: {
