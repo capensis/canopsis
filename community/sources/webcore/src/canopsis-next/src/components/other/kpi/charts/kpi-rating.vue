@@ -56,8 +56,8 @@ export default {
         filter: undefined,
         metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
         interval: {
-          from: QUICK_RANGES.last30Days.start,
-          to: QUICK_RANGES.last30Days.stop,
+          from: QUICK_RANGES.last7Days.start,
+          to: QUICK_RANGES.last7Days.stop,
         },
       },
     };

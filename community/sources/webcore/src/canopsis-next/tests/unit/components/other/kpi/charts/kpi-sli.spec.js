@@ -40,8 +40,8 @@ describe('kpi-sli', () => {
   it('Metrics fetched after mount', async () => {
     const fetchSliMetrics = jest.fn(() => []);
     const expectedDefaultParams = {
-      /* now - 30d  */
-      from: 1383843600,
+      /* now - 7d  */
+      from: 1385830800,
       in_percents: true,
       sampling: SAMPLINGS.day,
       to: nowUnix,
@@ -68,8 +68,8 @@ describe('kpi-sli', () => {
   it('Metrics refreshed after change interval', async () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
-      /* now - 30d  */
-      from: 1386262800,
+      /* now - 7d  */
+      from: 1385830800,
       in_percents: true,
       sampling: SAMPLINGS.day,
       to: nowUnix,

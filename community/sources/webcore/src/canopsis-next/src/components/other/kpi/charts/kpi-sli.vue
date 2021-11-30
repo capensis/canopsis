@@ -55,8 +55,8 @@ export default {
         type: KPI_SLI_GRAPH_DATA_TYPE.percent,
         filter: null,
         interval: {
-          from: QUICK_RANGES.last30Days.start,
-          to: QUICK_RANGES.last30Days.stop,
+          from: QUICK_RANGES.last7Days.start,
+          to: QUICK_RANGES.last7Days.stop,
         },
       },
     };

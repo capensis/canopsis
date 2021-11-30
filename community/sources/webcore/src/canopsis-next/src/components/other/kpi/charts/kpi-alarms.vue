@@ -54,8 +54,8 @@ export default {
         parameters: [ALARM_METRIC_PARAMETERS.totalAlarms],
         filter: null,
         interval: {
-          from: QUICK_RANGES.last30Days.start,
-          to: QUICK_RANGES.last30Days.stop,
+          from: QUICK_RANGES.last7Days.start,
+          to: QUICK_RANGES.last7Days.stop,
         },
       },
     };
