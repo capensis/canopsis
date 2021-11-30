@@ -5,6 +5,7 @@
     junit-gantt-chart(
       :items="ganttIntervals",
       :historical="historical",
+      :total-time="meta.time",
       :total-items="meta.total_count",
       :query.sync="query",
       :width="840"
@@ -15,6 +16,7 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import { PAGINATION_LIMIT } from '@/config';
+import { TEST_SUITE_STATUSES } from '@/constants';
 
 import JunitGanttChart from '@/components/common/chart/junit-gantt-chart.vue';
 
@@ -64,12 +66,23 @@ export default {
         this.pending = true;
 
         const { page, rowsPerPage: limit, months } = this.query;
-        const { data, meta } = await this.fetchTestSuiteItemGanttIntervalsWithoutStore({
+        const { data = [], meta } = await this.fetchTestSuiteItemGanttIntervalsWithoutStore({
           id: this.testSuite._id,
           params: { page, limit, months },
         });
 
-        this.ganttIntervals = data;
+        const totalTimeInterval = {
+          name: this.$t(`testSuite.statuses.${TEST_SUITE_STATUSES.total}`),
+          status: TEST_SUITE_STATUSES.total,
+          avg_status: TEST_SUITE_STATUSES.total,
+          from: 0,
+          to: meta.time,
+          time: meta.time,
+          avg_time: meta.avg_time,
+          avg_to: meta.avg_time,
+        };
+
+        this.ganttIntervals = [...data, totalTimeInterval];
         this.meta = meta;
         this.historical = Boolean(months);
       } catch (err) {
