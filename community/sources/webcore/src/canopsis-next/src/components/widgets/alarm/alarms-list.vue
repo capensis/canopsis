@@ -290,6 +290,7 @@ export default {
 
         if ((isPeriodicRefresh || isQueryNonceUpdate) && !isEmpty(this.$refs.alarmsTable.expanded)) {
           query.with_steps = true;
+          query.with_consequences = true;
         }
 
         await this.fetchAlarmsList({
