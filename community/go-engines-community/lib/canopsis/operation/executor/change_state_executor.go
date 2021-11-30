@@ -30,6 +30,10 @@ func (e *changeStateExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	if alarm.Value.State == nil || alarm.Value.State.Value == types.AlarmStateOK {
 		return "", fmt.Errorf("cannot change ok state")
 	}
