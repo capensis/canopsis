@@ -22,9 +22,9 @@
     v-slide-x-reverse-transition
       c-fab-btn(
         v-if="hasFabButton",
+        :has-access="hasAccessToCreate",
         @create="create",
-        @refresh="refresh",
-        :has-access="hasAccessToCreate"
+        @refresh="refresh"
       )
         span {{ $t('modals.filter.create.title') }}
 </template>
