@@ -23,13 +23,13 @@ export default {
       required: true,
     },
     criteria: {
-      type: Number,
-      required: true,
+      type: Object,
+      required: false,
     },
   },
   computed: {
     availableMetrics() {
-      return getAvailableMetricsByCriteria(this.criteria)
+      return getAvailableMetricsByCriteria(this.criteria?.label)
         .map((value) => {
           const alarmKey = `alarmList.metrics.${value}`;
 

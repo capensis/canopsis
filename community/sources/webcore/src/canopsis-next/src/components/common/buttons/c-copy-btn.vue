@@ -9,8 +9,8 @@
     )
       v-icon(:color="color") {{ icon }}
 </template>
-<script>
 
+<script>
 export default {
   props: {
     icon: {

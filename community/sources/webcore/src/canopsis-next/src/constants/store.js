@@ -36,4 +36,5 @@ export const ENTITIES_TYPES = {
   flappingRules: 'flappingRules',
   resolveRules: 'resolveRules',
   filter: 'filter',
+  ratingSettings: 'ratingSettings',
 };

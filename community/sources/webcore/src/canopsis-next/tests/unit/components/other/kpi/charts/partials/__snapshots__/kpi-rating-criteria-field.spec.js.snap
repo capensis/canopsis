@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with mocked $te 1`] = `
+exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with custom props 1`] = `
 <div
   class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
   role="combobox"
@@ -19,7 +19,7 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with mo
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
-          kpiMetrics.criteria
+          common.criteria
         </label>
         <div
           class="v-select__selections"
@@ -27,10 +27,10 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with mo
           <div
             class="v-select__selection v-select__selection--comma"
           >
-            kpiMetrics.criteriaTypes.1
+            Rating setting 2
           </div>
           <input
-            aria-label="kpiMetrics.criteria"
+            aria-label="common.criteria"
             aria-readonly="false"
             autocomplete="on"
             readonly="readonly"
@@ -60,7 +60,7 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with mo
 </div>
 `;
 
-exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with mocked $te 2`] = `
+exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with custom props 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -72,6 +72,23 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with mo
       class="v-list theme--light"
       role="list"
     >
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Rating setting 1
+            </div>
+          </div>
+        </a>
+      </div>
       <div
         class="primary--text"
         role="listitem"
@@ -85,7 +102,7 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with mo
             <div
               class="v-list__tile__title"
             >
-              kpiMetrics.criteriaTypes.1
+              Rating setting 2
             </div>
           </div>
         </a>
@@ -102,7 +119,7 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with mo
             <div
               class="v-list__tile__title"
             >
-              kpiMetrics.criteriaTypes.2
+              Rating setting 3
             </div>
           </div>
         </a>
@@ -119,7 +136,7 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with mo
             <div
               class="v-list__tile__title"
             >
-              kpiMetrics.criteriaTypes.3
+              Rating setting 4
             </div>
           </div>
         </a>
@@ -136,7 +153,7 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with mo
             <div
               class="v-list__tile__title"
             >
-              kpiMetrics.criteriaTypes.4
+              Rating setting 5
             </div>
           </div>
         </a>
@@ -148,7 +165,7 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with mo
 
 exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` without props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input v-text-field v-select v-input--hide-details theme--light"
   role="combobox"
 >
   <div
@@ -162,21 +179,16 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` without
       >
         <label
           aria-hidden="true"
-          class="v-label v-label--active theme--light"
+          class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
-          kpiMetrics.criteria
+          common.criteria
         </label>
         <div
           class="v-select__selections"
         >
-          <div
-            class="v-select__selection v-select__selection--comma"
-          >
-            kpiMetrics.criteriaTypes.1
-          </div>
           <input
-            aria-label="kpiMetrics.criteria"
+            aria-label="common.criteria"
             aria-readonly="false"
             autocomplete="on"
             readonly="readonly"
@@ -219,11 +231,10 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` without
       role="list"
     >
       <div
-        class="primary--text"
         role="listitem"
       >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        <div
+          class="v-list__tile theme--light"
         >
           <div
             class="v-list__tile__content"
@@ -231,61 +242,10 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` without
             <div
               class="v-list__tile__title"
             >
-              kpiMetrics.criteriaTypes.1
+              No data available
             </div>
           </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              kpiMetrics.criteriaTypes.2
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              kpiMetrics.criteriaTypes.3
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              kpiMetrics.criteriaTypes.4
-            </div>
-          </div>
-        </a>
+        </div>
       </div>
     </div>
   </div>
