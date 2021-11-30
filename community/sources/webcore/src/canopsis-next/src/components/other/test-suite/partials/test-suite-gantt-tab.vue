@@ -5,7 +5,6 @@
     junit-gantt-chart(
       :items="ganttIntervals",
       :historical="historical",
-      :total-time="meta.time",
       :total-items="meta.total_count",
       :query.sync="query",
       :width="840"
