@@ -15,7 +15,8 @@ export const entitiesRatingSettingsMixin = {
       fetchRatingSettingsListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchRatingSettingsListWithoutStore: 'fetchListWithoutStore',
       fetchRatingSettingsList: 'fetchList',
-      updateFilter: 'update',
+      updateRatingSetting: 'update',
+      bulkUpdateRatingSettings: 'bulkUpdate',
     }),
   },
 };
