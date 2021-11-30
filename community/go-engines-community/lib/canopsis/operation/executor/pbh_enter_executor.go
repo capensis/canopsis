@@ -29,6 +29,10 @@ func (e *pbhEnterExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	if alarm.Value.PbehaviorInfo == params.PbehaviorInfo {
 		return "", nil
 	}

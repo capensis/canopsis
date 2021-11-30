@@ -52,6 +52,10 @@ func (e *instructionExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	alarmStepType, ok := e.alarmStepTypeMap[operation.Type]
 	if !ok {
 		return "", nil

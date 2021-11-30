@@ -28,6 +28,10 @@ func (e *commentExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	err := alarm.PartialUpdateComment(
 		time,
 		params.Author,

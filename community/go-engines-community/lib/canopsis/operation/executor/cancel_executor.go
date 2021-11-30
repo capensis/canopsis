@@ -30,6 +30,10 @@ func (e *cancelExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	alarmConfig := e.configProvider.Get()
 	err := alarm.PartialUpdateCancel(
 		time,
