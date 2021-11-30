@@ -1,4 +1,4 @@
-import { get, isNil, isNumber } from 'lodash';
+import { isNil, isNumber } from 'lodash';
 import moment from 'moment';
 
 import 'moment-duration-format';
@@ -188,6 +188,6 @@ export const convertDurationToString = (duration, format = DEFAULT_DURATION_FORM
     : duration?.value;
 
   return moment
-    .duration(preparedDuration, get(duration, 'unit', unit))
+    .duration(preparedDuration, duration?.unit ?? unit)
     .format(resultFormat, { trim: 'both final' }) || '0s';
 };

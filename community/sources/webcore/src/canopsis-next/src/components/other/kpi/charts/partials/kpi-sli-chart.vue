@@ -199,7 +199,11 @@ export default {
         return `${raw.y}${this.unit} ${label}`;
       }
 
-      const duration = convertDurationToString(raw.y, DATETIME_FORMATS.refreshFieldFormat, this.samplingUnit);
+      const duration = convertDurationToString(
+        raw.y,
+        DATETIME_FORMATS.refreshFieldFormat,
+        this.samplingUnit,
+      );
 
       return `${duration} ${label}`;
     },

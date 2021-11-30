@@ -8,6 +8,7 @@ export const entitiesRatingSettingsMixin = {
       ratingSettings: 'items',
       ratingSettingsPending: 'pending',
       ratingSettingsMeta: 'meta',
+      ratingSettingsUpdatedAt: 'updatedAt',
     }),
   },
   methods: {

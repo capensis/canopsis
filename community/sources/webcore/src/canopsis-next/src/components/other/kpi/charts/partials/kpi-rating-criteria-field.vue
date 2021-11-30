@@ -40,6 +40,9 @@ export default {
       items: [],
     };
   },
+  watch: {
+    ratingSettingsUpdatedAt: 'fetchList',
+  },
   mounted() {
     this.fetchList();
   },

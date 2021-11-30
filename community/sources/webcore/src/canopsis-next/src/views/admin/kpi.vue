@@ -4,7 +4,10 @@
     v-card.ma-4.mt-0
       v-tabs(v-model="activeTab", slider-color="primary", centered)
         v-tab(:href="`#${$constants.KPI_TABS.graphs}`") {{ $tc('common.graph', 2) }}
-        v-tab(v-if="hasReadAnyKpiFiltersAccess", :href="`#${$constants.KPI_TABS.filters}`") {{ $t('common.filters') }}
+        v-tab(
+          v-if="hasReadAnyKpiFiltersAccess",
+          :href="`#${$constants.KPI_TABS.filters}`"
+        ) {{ $t('common.filters') }}
         v-tab(
           v-if="hasReadAnyKpiRatingSettingsAccess",
           :href="`#${$constants.KPI_TABS.ratingSettings}`"

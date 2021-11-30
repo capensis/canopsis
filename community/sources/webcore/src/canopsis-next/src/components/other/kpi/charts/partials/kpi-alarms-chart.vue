@@ -173,7 +173,11 @@ export default {
   methods: {
     getChartTooltipLabel({ raw, dataset }) {
       const value = isTimeMetric(dataset.metric)
-        ? convertDurationToString(raw.y, DATETIME_FORMATS.refreshFieldFormat, this.maxTimeDuration.unit)
+        ? convertDurationToString(
+          raw.y,
+          DATETIME_FORMATS.refreshFieldFormat,
+          this.maxTimeDuration.unit,
+        )
         : raw.y;
 
       return this.$t(`kpiMetrics.tooltip.${dataset.metric}`, { value });

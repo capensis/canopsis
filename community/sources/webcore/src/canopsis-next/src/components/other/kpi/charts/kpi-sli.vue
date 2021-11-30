@@ -75,7 +75,7 @@ export default {
         DATETIME_FORMATS.short,
       );
 
-      return `${KPI_SLI_METRICS_FILENAME_PREFIX}${fromTime}-${toTime}-${this.query.sampling}`;
+      return [KPI_SLI_METRICS_FILENAME_PREFIX, fromTime, toTime, this.query.sampling].join('-');
     },
 
     async exportSliMetricsAsPng(blob) {

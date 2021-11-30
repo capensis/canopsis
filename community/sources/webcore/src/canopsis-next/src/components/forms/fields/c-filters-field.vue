@@ -4,6 +4,7 @@
     :items="filters",
     :label="label || $t('common.filters')",
     :loading="filtersPending",
+    :disabled="disabled",
     :name="name",
     item-text="name",
     item-value="_id",
@@ -31,6 +32,10 @@ export default {
     name: {
       type: String,
       default: 'filter',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   mounted() {

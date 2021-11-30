@@ -25,13 +25,13 @@
               @click="submit"
             ) {{ $t('common.submit') }}
 
-    template(#enabled="props")
+    template(#enabled="{ item }")
       v-layout(row, align-center)
         v-checkbox-functional(
-          :input-value="isEnabledRatingSetting(props.item)",
+          :input-value="isEnabledRatingSetting(item)",
           :disabled="!updatable",
           hide-details,
-          @change="enableRatingSetting(props.item, $event)"
+          @change="enableRatingSetting(item, $event)"
         )
 </template>
 
@@ -104,7 +104,9 @@ export default {
     },
 
     isEnabledRatingSetting(ratingSetting) {
-      return this.isRatingSettingChanged(ratingSetting) ? !ratingSetting.enabled : ratingSetting.enabled;
+      return this.isRatingSettingChanged(ratingSetting)
+        ? !ratingSetting.enabled
+        : ratingSetting.enabled;
     },
   },
 };

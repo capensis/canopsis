@@ -165,7 +165,7 @@ export const API_ROUTES = {
    */
   filters: '/api/v4/cat/filters',
   ratingSettings: '/api/v4/cat/rating-settings',
-  bulkRatingSettings: '/api/v4/cat/bulk/rating-settings',
+  bulkRatingSettings: '/api/v4/cat/rating-settings/bulk',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
   remediation: {
@@ -317,7 +317,7 @@ export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
 
 export const HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX = 'healthcheck_last_hour-';
 
-export const KPI_ALARM_METRICS_FILENAME_PREFIX = 'kpi_alarm_metrics-';
+export const KPI_ALARM_METRICS_FILENAME_PREFIX = 'kpi_alarm_metrics';
 
 export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics';
 

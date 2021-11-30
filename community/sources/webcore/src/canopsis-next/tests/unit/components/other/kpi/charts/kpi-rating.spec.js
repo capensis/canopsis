@@ -1,3 +1,4 @@
+import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
@@ -5,7 +6,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { stubDateNow } from '@unit/utils/stub-hooks';
 
 import { createMockedStoreModules } from '@unit/utils/store';
-import { ALARM_METRIC_PARAMETERS, QUICK_RANGES } from '@/constants';
+import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
 
 import KpiRating from '@/components/other/kpi/charts/kpi-rating';
 
@@ -104,7 +105,54 @@ describe('kpi-rating', () => {
       /* now - 30d  */
       from: 1386262800,
       criteria: 1,
+      filter: Faker.datatype.string(),
       metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
+      limit: 10,
+      to: nowUnix,
+    };
+    const fetchRatingMetrics = jest.fn(() => []);
+
+    const wrapper = factory({
+      store: createMockedStoreModules([{
+        name: 'metrics',
+        actions: {
+          fetchRatingMetricsWithoutStore: fetchRatingMetrics,
+        },
+      }]),
+    });
+
+    const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
+
+    kpiRatingFiltersElement.vm.$emit('input', {
+      criteria: {
+        id: expectedParamsAfterUpdate.criteria,
+      },
+      filter: expectedParamsAfterUpdate.filter,
+      metric: expectedParamsAfterUpdate.metric,
+      limit: expectedParamsAfterUpdate.limit,
+      interval: {
+        from: start,
+        to: stop,
+      },
+    });
+
+    await flushPromises();
+
+    expect(fetchRatingMetrics).toBeCalledTimes(1);
+    expect(fetchRatingMetrics).toBeCalledWith(
+      expect.any(Object),
+      { params: expectedParamsAfterUpdate },
+      undefined,
+    );
+  });
+
+  it('Metrics refreshed without filter with total active time metric', async () => {
+    const { start, stop } = QUICK_RANGES.last2Days;
+    const expectedParamsAfterUpdate = {
+      /* now - 30d  */
+      from: 1386262800,
+      criteria: 1,
+      metric: USER_METRIC_PARAMETERS.totalUserActivity,
       limit: 10,
       to: nowUnix,
     };
@@ -127,6 +175,7 @@ describe('kpi-rating', () => {
       },
       metric: expectedParamsAfterUpdate.metric,
       limit: expectedParamsAfterUpdate.limit,
+      filter: Faker.datatype.string(),
       interval: {
         from: start,
         to: stop,

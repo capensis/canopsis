@@ -60,7 +60,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 /**
  * @typedef {Object} ActionWebhookParameters
  * @property {ActionWebhookRequestParameter} request
- * @property {Object | null} [declare_ticket]
+ * @property {?Object} [declare_ticket]
  * @property {boolean} declare_ticket.empty_response
  * @property {boolean} declare_ticket.is_regexp
  * @property {number} retry_count
