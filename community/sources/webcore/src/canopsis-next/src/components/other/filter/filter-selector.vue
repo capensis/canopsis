@@ -176,7 +176,9 @@ export default {
 
       if (preparedFilters.length && preparedLockedFilters.length) {
         return preparedFilters.concat({ divider: true }, preparedLockedFilters);
-      } else if (preparedFilters.length) {
+      }
+
+      if (preparedFilters.length) {
         return preparedFilters;
       }
 
