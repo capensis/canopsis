@@ -123,7 +123,6 @@ describe('view-tab-widgets', () => {
 
     const gridEditWidgetsElement = wrapper.find('.grid-edit-widgets');
 
-    // eslint-disable-next-line no-underscore-dangle
     gridEditWidgetsElement.vm.updateTabMethod(widget);
 
     expect(updateTabMethod).toHaveBeenCalledTimes(1);
@@ -151,7 +150,6 @@ describe('view-tab-widgets', () => {
 
     const gridEditWidgetsElement = wrapper.find('.grid-edit-widgets');
 
-    // eslint-disable-next-line no-underscore-dangle
     gridEditWidgetsElement.vm.updateTabMethod(widget);
   });
 
