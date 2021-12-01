@@ -1,6 +1,5 @@
 <template lang="pug">
   v-navigation-drawer(
-    data-test="sideBarWrapper",
     v-model="isOpen",
     :ignore-click-outside="hasMaximizedModal",
     :custom-close-conditional="closeCondition",
@@ -11,7 +10,7 @@
         v-list
           v-list-tile
             v-list-tile-title.white--text {{ title }}
-        v-btn(data-test="closeWidget", @click.stop="closeHandler", icon)
+        v-btn(@click.stop="closeHandler", icon)
           v-icon(color="white") close
       v-divider
       // @slot use this slot default

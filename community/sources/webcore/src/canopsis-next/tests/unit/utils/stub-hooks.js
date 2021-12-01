@@ -14,3 +14,19 @@ export const stubDateNow = (nowTimestamp) => {
     dateNowSpy.mockRestore();
   });
 };
+
+/**
+ * Stub for requestAnimationFrame. Clear yourself after all tests.
+ */
+export const stubRequestAnimationFrame = () => {
+  let requestAnimationFrameSpy = null;
+
+  beforeEach(() => {
+    requestAnimationFrameSpy = jest.spyOn(window, 'requestAnimationFrame')
+      .mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    requestAnimationFrameSpy.mockRestore();
+  });
+};
