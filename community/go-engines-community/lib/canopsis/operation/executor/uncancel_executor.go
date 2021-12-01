@@ -35,6 +35,10 @@ func (e *uncancelExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	if alarm.Value.Canceled == nil {
 		return "", nil
 	}
