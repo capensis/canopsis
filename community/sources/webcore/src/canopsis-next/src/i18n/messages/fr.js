@@ -1954,6 +1954,12 @@ export default {
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Droits pour le widget Compteur',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Droits pour le widget Météo des testing',
     },
+    api: {
+      general: 'Général',
+      rules: 'Règles',
+      remediation: 'Remédiation',
+      pbehavior: 'PBehavior',
+    },
   },
 
   pbehavior: {
