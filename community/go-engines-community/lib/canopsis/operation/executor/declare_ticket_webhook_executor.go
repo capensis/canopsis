@@ -5,18 +5,20 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 // NewDeclareTicketWebhookExecutor creates new executor.
-func NewDeclareTicketWebhookExecutor(configProvider config.AlarmConfigProvider) operationlib.Executor {
-	return &declareTicketWebhookExecutor{configProvider: configProvider}
+func NewDeclareTicketWebhookExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
+	return &declareTicketWebhookExecutor{configProvider: configProvider, metricsSender: metricsSender}
 }
 
 type declareTicketWebhookExecutor struct {
 	configProvider config.AlarmConfigProvider
+	metricsSender  metrics.Sender
 }
 
 // Exec creates new declare ticket step for alarm.
@@ -51,6 +53,14 @@ func (e *declareTicketWebhookExecutor) Exec(
 	if err != nil {
 		return "", err
 	}
+
+	go func() {
+		if initiator == types.InitiatorUser {
+			e.metricsSender.SendTicket(context.Background(), *alarm, userID, time.Time)
+		} else {
+			e.metricsSender.SendTicket(context.Background(), *alarm, "", time.Time)
+		}
+	}()
 
 	return types.AlarmChangeTypeDeclareTicketWebhook, nil
 }

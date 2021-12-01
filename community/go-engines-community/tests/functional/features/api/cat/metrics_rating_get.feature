@@ -60,6 +60,28 @@ Feature: Get metrics rating
     ]
     """
 
+  Scenario: given get active_alarms by name request should return metrics
+    When I am admin
+    When I do GET /api/v4/cat/metrics/rating?metric=active_alarms&criteria=1&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "25-11-2021 00:00" }}&filter=test-filter-to-metrics-rating-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "label": "test-entity-to-metrics-rating-get-1",
+        "value": 4
+      },
+      {
+        "label": "test-entity-to-metrics-rating-get-2",
+        "value": 1
+      },
+      {
+        "label": "test-entity-to-metrics-rating-get-3",
+        "value": 1
+      }
+    ]
+    """
+
   Scenario: given get non_displayed_alarms by infos request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/rating?metric=non_displayed_alarms&criteria=2&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-metrics-rating-get
@@ -164,9 +186,9 @@ Feature: Get metrics rating
     ]
     """
 
-  Scenario: given get ack_without_cancel_alarms by infos request should return metrics
+  Scenario: given get ack_active_alarms by infos request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/rating?metric=ack_without_cancel_alarms&criteria=2&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-metrics-rating-get
+    When I do GET /api/v4/cat/metrics/rating?metric=ack_active_alarms&criteria=2&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-metrics-rating-get
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -182,9 +204,9 @@ Feature: Get metrics rating
     ]
     """
 
-  Scenario: given get ticket_alarms by infos request should return metrics
+  Scenario: given get ticket_active_alarms by infos request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/rating?metric=ticket_alarms&criteria=2&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-metrics-rating-get
+    When I do GET /api/v4/cat/metrics/rating?metric=ticket_active_alarms&criteria=2&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-metrics-rating-get
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -200,16 +222,16 @@ Feature: Get metrics rating
     ]
     """
 
-  Scenario: given get without_ticket_alarms by infos request should return metrics
+  Scenario: given get without_ticket_active_alarms by infos request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/rating?metric=without_ticket_alarms&criteria=2&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-metrics-rating-get
+    When I do GET /api/v4/cat/metrics/rating?metric=without_ticket_active_alarms&criteria=2&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-metrics-rating-get
     Then the response code should be 200
     Then the response body should be:
     """json
     [
       {
         "label": "test-entity-to-metrics-rating-get-1",
-        "value": 2
+        "value": 3
       },
       {
         "label": "test-entity-to-metrics-rating-get-2",
@@ -231,7 +253,7 @@ Feature: Get metrics rating
     [
       {
         "label": "test-entity-to-metrics-rating-get-1",
-        "value": 33.33
+        "value": 25
       },
       {
         "label": "test-entity-to-metrics-rating-get-2",
@@ -253,7 +275,7 @@ Feature: Get metrics rating
     [
       {
         "label": "test-entity-to-metrics-rating-get-1",
-        "value": 33.33
+        "value": 25
       },
       {
         "label": "test-entity-to-metrics-rating-get-2",
@@ -275,7 +297,7 @@ Feature: Get metrics rating
     [
       {
         "label": "test-entity-to-metrics-rating-get-1",
-        "value": 33.33
+        "value": 25
       },
       {
         "label": "test-entity-to-metrics-rating-get-2",
@@ -297,7 +319,7 @@ Feature: Get metrics rating
     [
       {
         "label": "test-entity-to-metrics-rating-get-1",
-        "value": 33.33
+        "value": 25
       },
       {
         "label": "test-entity-to-metrics-rating-get-2",

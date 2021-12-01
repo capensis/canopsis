@@ -163,7 +163,8 @@ Feature: Entities and users should be synchronized in metrics db
       "event_type": "ack",
       "component": "test-component-metrics-api-2",
       "resource": "test-resource-metrics-api-2",
-      "author": "{{ .userID }}"
+      "initiator": "user",
+      "user_id": "{{ .userID }}"
     }
     """
     When I wait the end of event processing
@@ -247,7 +248,8 @@ Feature: Entities and users should be synchronized in metrics db
       "event_type": "ack",
       "component": "test-component-metrics-api-3",
       "resource": "test-resource-metrics-api-3",
-      "author": "{{ .userID }}"
+      "initiator": "user",
+      "user_id": "{{ .userID }}"
     }
     """
     When I wait the end of event processing

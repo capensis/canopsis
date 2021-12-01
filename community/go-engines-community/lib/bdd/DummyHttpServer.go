@@ -218,5 +218,11 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Method: http.MethodGet,
 			Body:   "test-job-execution-params-succeeded-output",
 		},
+		// Webhook
+		"/webhook/ticket": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+			Body:   "{\"ticket_id\":\"testticket\"}",
+		},
 	}
 }
