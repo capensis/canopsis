@@ -136,6 +136,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-1-ticket"
               }
             ]
@@ -185,6 +186,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-1-ticket"
             },
             "steps": [
@@ -199,11 +201,13 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-1-ticket"
               },
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-1-ticket"
               }
             ]
@@ -344,6 +348,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-2-ticket"
             },
             "steps": [
@@ -362,6 +367,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
             ]
@@ -412,6 +418,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-2-ticket"
             },
             "steps": [
@@ -430,6 +437,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
             ]
@@ -479,6 +487,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-2-ticket"
             },
             "steps": [
@@ -497,6 +506,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               },
               {
@@ -506,6 +516,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
             ]
@@ -1076,6 +1087,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-6-2-ticket"
             },
             "steps": [
@@ -1090,6 +1102,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-6-2-ticket"
               }
             ]
@@ -1638,6 +1651,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-9-1-ticket"
             },
             "steps": [
@@ -1652,6 +1666,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-9-1-ticket"
               }
             ]

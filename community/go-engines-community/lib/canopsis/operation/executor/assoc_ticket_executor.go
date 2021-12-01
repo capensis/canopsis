@@ -32,6 +32,10 @@ func (e *assocTicketExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	err := alarm.PartialUpdateAssocTicket(
 		time,
 		nil,

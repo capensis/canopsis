@@ -55,6 +55,7 @@ Feature: Update a scenario
           "type": "snooze",
           "parameters": {
             "author": "root",
+            "user": "root",
             "output": "test snooze updated",
             "duration": {
               "value": 3,
