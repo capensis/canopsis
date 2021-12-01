@@ -1951,6 +1951,12 @@ export default {
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
     },
+    api: {
+      general: 'General',
+      rules: 'Rules',
+      remediation: 'Remediation',
+      pbehavior: 'PBehavior',
+    },
   },
 
   pbehavior: {
