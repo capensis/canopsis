@@ -37,12 +37,21 @@
 - time: '2021-11-23'
   entity_id: 3
   value: 1
+- time: '2021-11-18'
+  entity_id: 4
+  value: 1
+- time: '2021-11-19'
+  entity_id: 4
+  value: 1
 - time: '2021-11-23'
   entity_id: 4
   value: 1
 - time: '2021-11-23 01:00:00'
   entity_id: 4
   value: 1
+- time: '2021-11-23 01:00:00'
+  entity_id: 4
+  value: -1
 - time: '2021-11-23 02:00:00'
   entity_id: 4
   value: 1

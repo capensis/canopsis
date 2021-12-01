@@ -139,7 +139,7 @@ Feature: Export alarm metrics
 
   Scenario: given export request with all parameters should return all metrics
     When I am admin
-    When I do POST /api/v4/cat/metrics-export/alarm?parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=non_displayed_alarms&parameters[]=instruction_alarms&parameters[]=pbehavior_alarms&parameters[]=correlation_alarms&parameters[]=ack_alarms&parameters[]=cancel_ack_alarms&parameters[]=ack_without_cancel_alarms&parameters[]=ticket_alarms&parameters[]=without_ticket_alarms&parameters[]=ratio_correlation&parameters[]=ratio_instructions&parameters[]=ratio_tickets&parameters[]=ratio_non_displayed&parameters[]=average_ack&parameters[]=average_resolve&sampling=day&from={{ parseTime "22-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-all-alarm-metrics-get
+    When I do POST /api/v4/cat/metrics-export/alarm?parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=non_displayed_alarms&parameters[]=instruction_alarms&parameters[]=pbehavior_alarms&parameters[]=correlation_alarms&parameters[]=ack_alarms&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&parameters[]=ticket_active_alarms&parameters[]=without_ticket_active_alarms&parameters[]=ratio_correlation&parameters[]=ratio_instructions&parameters[]=ratio_tickets&parameters[]=ratio_non_displayed&parameters[]=average_ack&parameters[]=average_resolve&sampling=day&from={{ parseTime "22-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-all-alarm-metrics-get
     Then the response code should be 200
     When I save response exportID={{ .lastResponse._id }}
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
@@ -177,15 +177,15 @@ Feature: Export alarm metrics
     cancel_ack_alarms,{{ parseTime "22-11-2021 00:00" }},0
     cancel_ack_alarms,{{ parseTime "23-11-2021 00:00" }},1
     cancel_ack_alarms,{{ parseTime "24-11-2021 00:00" }},0
-    ack_without_cancel_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    ack_without_cancel_alarms,{{ parseTime "23-11-2021 00:00" }},1
-    ack_without_cancel_alarms,{{ parseTime "24-11-2021 00:00" }},0
-    ticket_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    ticket_alarms,{{ parseTime "23-11-2021 00:00" }},1
-    ticket_alarms,{{ parseTime "24-11-2021 00:00" }},0
-    without_ticket_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    without_ticket_alarms,{{ parseTime "23-11-2021 00:00" }},2
-    without_ticket_alarms,{{ parseTime "24-11-2021 00:00" }},0
+    ack_active_alarms,{{ parseTime "22-11-2021 00:00" }},0
+    ack_active_alarms,{{ parseTime "23-11-2021 00:00" }},1
+    ack_active_alarms,{{ parseTime "24-11-2021 00:00" }},1
+    ticket_active_alarms,{{ parseTime "22-11-2021 00:00" }},0
+    ticket_active_alarms,{{ parseTime "23-11-2021 00:00" }},1
+    ticket_active_alarms,{{ parseTime "24-11-2021 00:00" }},1
+    without_ticket_active_alarms,{{ parseTime "22-11-2021 00:00" }},0
+    without_ticket_active_alarms,{{ parseTime "23-11-2021 00:00" }},2
+    without_ticket_active_alarms,{{ parseTime "24-11-2021 00:00" }},2
     ratio_correlation,{{ parseTime "22-11-2021 00:00" }},0
     ratio_correlation,{{ parseTime "23-11-2021 00:00" }},33.33
     ratio_correlation,{{ parseTime "24-11-2021 00:00" }},33.33

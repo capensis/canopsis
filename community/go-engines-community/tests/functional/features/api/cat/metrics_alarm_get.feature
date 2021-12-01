@@ -779,7 +779,7 @@ Feature: Get alarm metrics
 
   Scenario: given get request with all parameters should return all metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=non_displayed_alarms&parameters[]=instruction_alarms&parameters[]=pbehavior_alarms&parameters[]=correlation_alarms&parameters[]=ack_alarms&parameters[]=cancel_ack_alarms&parameters[]=ack_without_cancel_alarms&parameters[]=ticket_alarms&parameters[]=without_ticket_alarms&parameters[]=ratio_correlation&parameters[]=ratio_instructions&parameters[]=ratio_tickets&parameters[]=ratio_non_displayed&parameters[]=average_ack&parameters[]=average_resolve&sampling=day&from={{ parseTime "22-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-all-alarm-metrics-get
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=non_displayed_alarms&parameters[]=instruction_alarms&parameters[]=pbehavior_alarms&parameters[]=correlation_alarms&parameters[]=ack_alarms&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&parameters[]=ticket_active_alarms&parameters[]=without_ticket_active_alarms&parameters[]=ratio_correlation&parameters[]=ratio_instructions&parameters[]=ratio_tickets&parameters[]=ratio_non_displayed&parameters[]=average_ack&parameters[]=average_resolve&sampling=day&from={{ parseTime "22-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-all-alarm-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -921,7 +921,7 @@ Feature: Get alarm metrics
         ]
       },
       {
-        "title": "ack_without_cancel_alarms",
+        "title": "ack_active_alarms",
         "data": [
           {
             "timestamp": {{ parseTime "22-11-2021 00:00" }},
@@ -933,12 +933,12 @@ Feature: Get alarm metrics
           },
           {
             "timestamp": {{ parseTime "24-11-2021 00:00" }},
-            "value": 0
+            "value": 1
           }
         ]
       },
       {
-        "title": "ticket_alarms",
+        "title": "ticket_active_alarms",
         "data": [
           {
             "timestamp": {{ parseTime "22-11-2021 00:00" }},
@@ -950,12 +950,12 @@ Feature: Get alarm metrics
           },
           {
             "timestamp": {{ parseTime "24-11-2021 00:00" }},
-            "value": 0
+            "value": 1
           }
         ]
       },
       {
-        "title": "without_ticket_alarms",
+        "title": "without_ticket_active_alarms",
         "data": [
           {
             "timestamp": {{ parseTime "22-11-2021 00:00" }},
@@ -967,7 +967,7 @@ Feature: Get alarm metrics
           },
           {
             "timestamp": {{ parseTime "24-11-2021 00:00" }},
-            "value": 0
+            "value": 2
           }
         ]
       },

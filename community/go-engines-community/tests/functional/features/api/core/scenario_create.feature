@@ -9,7 +9,7 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-1-name",
       "enabled": true,
-      "priority": 10,
+      "priority": 20,
       "triggers": ["create"],
       "actions": [
         {
@@ -108,7 +108,7 @@ Feature: Create a scenario
       "name": "test-scenario-to-create-1-name",
       "author": "root",
       "enabled": true,
-      "priority": 10,
+      "priority": 20,
       "triggers": ["create"],
       "actions": [
         {
@@ -225,7 +225,7 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-2-name",
       "enabled": true,
-      "priority": 11,
+      "priority": 21,
       "triggers": ["create"],
       "actions": [
         {
@@ -327,7 +327,7 @@ Feature: Create a scenario
       "name": "test-scenario-to-create-2-name",
       "author": "root",
       "enabled": true,
-      "priority": 11,
+      "priority": 21,
       "triggers": ["create"],
       "actions": [
         {
@@ -744,7 +744,7 @@ Feature: Create a scenario
     }
     """
     Then the response code should be 400
-    Then the response body should be:
+    Then the response body should contain:
     """
     {
       "errors": {
