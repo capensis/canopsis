@@ -64,6 +64,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(msg engine.RPCMessage) erro
 			event.Alarm,
 			event.PbhEvent.Timestamp,
 			"",
+			"",
 			types.InitiatorSystem,
 		)
 		if err != nil {

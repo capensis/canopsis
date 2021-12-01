@@ -27,9 +27,9 @@ func (e *mongoUpdateExecutor) Exec(
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	changeType, err := e.executor.Exec(operation, alarm, time, role, initiator)
+	changeType, err := e.executor.Exec(operation, alarm, time, userID, role, initiator)
 	if err != nil {
 		return "", err
 	}

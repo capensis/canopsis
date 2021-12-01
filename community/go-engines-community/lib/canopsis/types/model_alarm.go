@@ -204,7 +204,7 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
 		steps = append(steps, *a.Value.ACK)
 	}
 	if ticket = a.Value.Ticket; ticket != nil {
-		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, ticket.Role, ""))
+		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, ticket.UserID, ticket.Role, ""))
 	}
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)
@@ -498,8 +498,8 @@ func (a *Alarm) Done(event Event) AlarmStep {
 }
 
 // Ticket add a ticket on an alarm
-func (a *Alarm) Ticket(stepType string, timestamp CpsTime, author string, ticketNumber string, role string, data map[string]string, initiator string) AlarmStep {
-	newStep := NewAlarmStep(stepType, timestamp, author, ticketNumber, role, initiator)
+func (a *Alarm) Ticket(stepType string, timestamp CpsTime, author, ticketNumber, userID, role string, data map[string]string, initiator string) AlarmStep {
+	newStep := NewAlarmStep(stepType, timestamp, author, ticketNumber, userID, role, initiator)
 	ticketStep := newStep.NewTicket(ticketNumber, data)
 	a.Value.Ticket = &ticketStep
 
@@ -509,7 +509,7 @@ func (a *Alarm) Ticket(stepType string, timestamp CpsTime, author string, ticket
 // AssocTicket associate a ticket number to an alarm
 func (a *Alarm) AssocTicket(event Event) AlarmStep {
 	data := make(map[string]string)
-	return a.Ticket(AlarmStepAssocTicket, event.Timestamp, event.Author, event.Ticket, event.Role, data, event.Initiator)
+	return a.Ticket(AlarmStepAssocTicket, event.Timestamp, event.Author, event.Ticket, event.UserID, event.Role, data, event.Initiator)
 }
 
 // DeclareTicket ask for a creation
@@ -519,7 +519,7 @@ func (a *Alarm) DeclareTicket(event Event) AlarmStep {
 	// ! BUT ! On "ack and report" action from frontend, it send a declareticket
 	// event with the corresponding ticket number...
 	data := make(map[string]string)
-	return a.Ticket(AlarmStepDeclareTicket, event.Timestamp, event.Author, event.Ticket, event.Role, data, event.Initiator)
+	return a.Ticket(AlarmStepDeclareTicket, event.Timestamp, event.Author, event.Ticket, event.UserID, event.Role, data, event.Initiator)
 }
 
 // Resolve mark as resolved an Alarm with a timestamp [sic]
@@ -535,8 +535,8 @@ func (a *Alarm) ResolveCancel(timestamp *CpsTime) {
 }
 
 // Snooze apply a snooze step to an Alarm
-func (a *Alarm) Snooze(timestamp CpsTime, duration CpsNumber, author, output, role, initiator string) (AlarmStep, error) {
-	newStep := NewAlarmStep(AlarmStepSnooze, timestamp, author, output, role, initiator)
+func (a *Alarm) Snooze(timestamp CpsTime, duration CpsNumber, author, output, userID, role, initiator string) (AlarmStep, error) {
+	newStep := NewAlarmStep(AlarmStepSnooze, timestamp, author, output, userID, role, initiator)
 	if duration == 0 {
 		return newStep, errt.NewUnknownError(errors.New("no duration for snoozing"))
 	}
@@ -552,7 +552,7 @@ func (a *Alarm) SnoozeFromEvent(event Event) (AlarmStep, error) {
 	if event.Duration != nil {
 		duration = *event.Duration
 	}
-	return a.Snooze(event.Timestamp, duration, event.Author, event.Output, event.Role, event.Initiator)
+	return a.Snooze(event.Timestamp, duration, event.Author, event.Output, event.UserID, event.Role, event.Initiator)
 }
 
 // UnSnooze cancel a snooze
