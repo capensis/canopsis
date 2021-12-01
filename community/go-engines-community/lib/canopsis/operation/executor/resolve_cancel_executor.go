@@ -17,7 +17,7 @@ func (e *resolveCancelExecutor) Exec(
 	_ types.Operation,
 	alarm *types.Alarm,
 	_ types.CpsTime,
-	_, _ string,
+	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	if alarm.Value.Resolved != nil || alarm.Value.Canceled == nil {
 		return "", nil

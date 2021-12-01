@@ -19,12 +19,16 @@ func (e *updateStatusExecutor) Exec(
 	operation types.Operation,
 	alarm *types.Alarm,
 	time types.CpsTime,
-	_, _ string,
+	userID, _, _ string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationParameters
 	var ok bool
 	if params, ok = operation.Parameters.(types.OperationParameters); !ok {
 		return "", fmt.Errorf("invalid parameters")
+	}
+
+	if userID == "" {
+		userID = params.User
 	}
 
 	oldStatus := alarm.Value.Status

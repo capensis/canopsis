@@ -89,7 +89,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		PreviousPbehaviorCannonicalType: alarm.Value.PbehaviorInfo.CanonicalType,
 	}
 	alarmChangeType, err := p.Executor.Exec(op, alarm,
-		types.CpsTime{Time: time.Now()}, "", types.InitiatorSystem)
+		types.CpsTime{Time: time.Now()}, "", "", types.InitiatorSystem)
 	if err != nil {
 		if engine.IsConnectionError(err) {
 			return nil, err
@@ -106,7 +106,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 			p.logError(err, "RPC Message Processor: error getting meta-alarm children", msg)
 		} else {
 			for _, childAlarm := range childrenAlarms {
-				_, err = p.Executor.Exec(op, &childAlarm, types.CpsTime{Time: time.Now()}, "", types.InitiatorSystem)
+				_, err = p.Executor.Exec(op, &childAlarm, types.CpsTime{Time: time.Now()}, "", "", types.InitiatorSystem)
 				if err != nil {
 					p.logError(err, "RPC Message Processor: cannot update child alarm", msg)
 				}

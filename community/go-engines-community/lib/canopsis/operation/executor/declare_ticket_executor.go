@@ -17,7 +17,7 @@ func (e *declareTicketExecutor) Exec(
 	_ types.Operation,
 	_ *types.Alarm,
 	_ types.CpsTime,
-	_, _ string,
+	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	return types.AlarmChangeTypeDeclareTicket, nil
 }
