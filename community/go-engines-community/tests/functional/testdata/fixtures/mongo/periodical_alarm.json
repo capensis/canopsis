@@ -4550,7 +4550,7 @@
       "resource": "test-alarm-meta-children-with-instructions-resource-1",
       "tags": [],
       "parents": [
-        "test-alarm-meta-children-with-instructions-1"
+        "test-alarm-meta-children-with-instructions-1/metaalarm"
       ],
       "children": [],
       "total_state_changes": 1,
@@ -4581,7 +4581,7 @@
       "resource": "test-alarm-meta-children-with-instructions-resource-1",
       "tags": [],
       "parents": [
-        "test-alarm-meta-children-with-instructions-2"
+        "test-alarm-meta-children-with-instructions-2/metaalarm"
       ],
       "children": [],
       "total_state_changes": 1,
@@ -4612,7 +4612,7 @@
       "resource": "test-alarm-meta-children-with-instructions-resource-2",
       "tags": [],
       "parents": [
-        "test-alarm-meta-children-with-instructions-3"
+        "test-alarm-meta-children-with-instructions-3/metaalarm"
       ],
       "children": [],
       "total_state_changes": 1,
@@ -4643,7 +4643,7 @@
       "resource": "test-alarm-meta-children-with-instructions-resource-2",
       "tags": [],
       "parents": [
-        "test-alarm-meta-children-with-instructions-3"
+        "test-alarm-meta-children-with-instructions-3/metaalarm"
       ],
       "children": [],
       "total_state_changes": 1,
@@ -4994,6 +4994,377 @@
       "resource": "test-alarm-multi-sort-get-resource-4",
       "tags": [],
       "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-api-correlation-metaalarm-1",
+    "d": "test-api-correlation-1/metaalarm",
+    "t": 1597030219,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        },
+        {
+          "_t": "statusinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        }
+      ],
+      "component": "metaalarm",
+      "connector": "engine",
+      "connector_name": "correlation",
+      "creation_date": 1597030219,
+      "display_name": "IK-JK-QB",
+      "initial_output": "test-alarm-get alarm",
+      "output": "test-alarm-get alarm",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1597030219,
+      "last_event_date": 1597030219,
+      "resource": "test-api-correlation-1",
+      "tags": [],
+      "meta": "test-api-correlation-metaalarm-rule-1",
+      "parents": [],
+      "resolved": 1597034023,
+      "children": [
+        "test-api-correlation-resource-1/test-api-correlation-component",
+        "test-api-correlation-resource-2/test-api-correlation-component"
+      ],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-api-correlation-metaalarm-2",
+    "d": "test-api-correlation-2/metaalarm",
+    "t": 1597030219,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1597030219,
+        "a": "engine.correlation",
+        "m": "test-alarm-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        },
+        {
+          "_t": "statusinc",
+          "t": 1597030219,
+          "a": "engine.correlation",
+          "m": "test-alarm-get alarm",
+          "val": 1
+        }
+      ],
+      "component": "metaalarm",
+      "connector": "engine",
+      "connector_name": "correlation",
+      "creation_date": 1597030219,
+      "display_name": "IK-JK-QB",
+      "initial_output": "test-alarm-get alarm",
+      "output": "test-alarm-get alarm",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1597030219,
+      "last_event_date": 1597030219,
+      "resource": "test-api-correlation-2",
+      "tags": [],
+      "meta": "test-api-correlation-metaalarm-rule-1",
+      "parents": [],
+      "children": [
+        "test-api-correlation-resource-1/test-api-correlation-component",
+        "test-api-correlation-resource-2/test-api-correlation-component"
+      ],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-api-correlation-get-1",
+    "d": "test-api-correlation-resource-1/test-api-correlation-component",
+    "t": 1000000002,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+        "m": "test-api-correlation-get alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+        "m": "test-api-correlation-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+          "m": "test-api-correlation-get alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+          "m": "test-api-correlation-get alarm",
+          "val": 1
+        }
+      ],
+      "component": "test-api-correlation-get-component",
+      "connector": "test-api-correlation-get-connector",
+      "connector_name": "test-api-correlation-get-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-api-correlation-resource-1",
+      "output": "test-api-correlation-resource-1",
+      "initial_long_output": "",
+      "long_output": "test-api-correlation-resource-1",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1000000004,
+      "resource": "test-api-correlation-resource-1",
+      "tags": [],
+      "parents": ["test-api-correlation-1/metaalarm"],
+      "resolved": 1597034023,
+      "children": [],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-api-correlation-get-2",
+    "d": "test-api-correlation-resource-2/test-api-correlation-component",
+    "t": 1000000002,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+        "m": "test-api-correlation-get alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+        "m": "test-api-correlation-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+          "m": "test-api-correlation-get alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+          "m": "test-api-correlation-get alarm",
+          "val": 1
+        }
+      ],
+      "component": "test-api-correlation-get-component",
+      "connector": "test-api-correlation-get-connector",
+      "connector_name": "test-api-correlation-get-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-api-correlation-resource-2",
+      "output": "test-api-correlation-resource-2",
+      "initial_long_output": "",
+      "long_output": "test-api-correlation-resource-2",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1000000004,
+      "resource": "test-api-correlation-resource-2",
+      "tags": [],
+      "parents": ["test-api-correlation-1/metaalarm"],
+      "resolved": 1597034023,
+      "children": [],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-api-correlation-get-3",
+    "d": "test-api-correlation-resource-1/test-api-correlation-component",
+    "t": 1000000002,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+        "m": "test-api-correlation-get alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+        "m": "test-api-correlation-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+          "m": "test-api-correlation-get alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+          "m": "test-api-correlation-get alarm",
+          "val": 1
+        }
+      ],
+      "component": "test-api-correlation-get-component",
+      "connector": "test-api-correlation-get-connector",
+      "connector_name": "test-api-correlation-get-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-api-correlation-resource-1",
+      "output": "test-api-correlation-resource-1",
+      "initial_long_output": "",
+      "long_output": "test-api-correlation-resource-1",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1000000004,
+      "resource": "test-api-correlation-resource-1",
+      "tags": [],
+      "parents": ["test-api-correlation-2/metaalarm"],
+      "children": [],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-api-correlation-get-4",
+    "d": "test-api-correlation-resource-2/test-api-correlation-component",
+    "t": 1000000002,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+        "m": "test-api-correlation-get alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+        "m": "test-api-correlation-get alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+          "m": "test-api-correlation-get alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+          "m": "test-api-correlation-get alarm",
+          "val": 1
+        }
+      ],
+      "component": "test-api-correlation-get-component",
+      "connector": "test-api-correlation-get-connector",
+      "connector_name": "test-api-correlation-get-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-api-correlation-resource-2",
+      "output": "test-api-correlation-resource-2",
+      "initial_long_output": "",
+      "long_output": "test-api-correlation-resource-2",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1000000004,
+      "resource": "test-api-correlation-resource-2",
+      "tags": [],
+      "parents": ["test-api-correlation-2/metaalarm"],
       "children": [],
       "total_state_changes": 1,
       "infos": {

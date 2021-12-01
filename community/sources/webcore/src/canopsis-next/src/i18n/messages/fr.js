@@ -303,6 +303,9 @@ export default {
       common: 'Ajouter une nouvelle entité',
       addService: 'Ajouter une nouvelle entité de service',
     },
+    popups: {
+      massDeleteWarning: 'La suppression en masse ne peut pas être appliquée pour certains des éléments sélectionnés, ils ne seront donc pas supprimés.',
+    },
   },
   search: {
     alarmAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
@@ -1950,6 +1953,12 @@ export default {
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: 'Droits pour le widget Météo des services',
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Droits pour le widget Compteur',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Droits pour le widget Météo des testing',
+    },
+    api: {
+      general: 'Général',
+      rules: 'Règles',
+      remediation: 'Remédiation',
+      pbehavior: 'PBehavior',
     },
   },
 
