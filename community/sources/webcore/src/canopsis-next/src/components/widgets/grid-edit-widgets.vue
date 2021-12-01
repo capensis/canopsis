@@ -181,7 +181,7 @@ export default {
       }
 
       & > .vue-resizable-handle {
-        z-index: 2;
+        z-index: 3;
       }
     }
   }
