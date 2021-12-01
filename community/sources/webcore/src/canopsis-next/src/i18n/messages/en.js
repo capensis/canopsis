@@ -303,6 +303,9 @@ export default {
       common: 'Add a new entity',
       addService: 'Add a new service entity',
     },
+    popups: {
+      massDeleteWarning: 'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
+    },
   },
   search: {
     alarmAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
@@ -1950,6 +1953,12 @@ export default {
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: 'Rights for Service Weather',
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
+    },
+    api: {
+      general: 'General',
+      rules: 'Rules',
+      remediation: 'Remediation',
+      pbehavior: 'PBehavior',
     },
   },
 
