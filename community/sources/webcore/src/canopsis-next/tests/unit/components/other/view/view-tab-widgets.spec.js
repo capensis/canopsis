@@ -124,7 +124,7 @@ describe('view-tab-widgets', () => {
     const gridEditWidgetsElement = wrapper.find('.grid-edit-widgets');
 
     // eslint-disable-next-line no-underscore-dangle
-    gridEditWidgetsElement.vm.$parent.updateTabMethod(widget);
+    gridEditWidgetsElement.vm.updateTabMethod(widget);
 
     expect(updateTabMethod).toHaveBeenCalledTimes(1);
     expect(updateTabMethod).toHaveBeenCalledWith(widget);
@@ -152,7 +152,7 @@ describe('view-tab-widgets', () => {
     const gridEditWidgetsElement = wrapper.find('.grid-edit-widgets');
 
     // eslint-disable-next-line no-underscore-dangle
-    gridEditWidgetsElement.vm.$parent.updateTabMethod(widget);
+    gridEditWidgetsElement.vm.updateTabMethod(widget);
   });
 
   it('Renders `view-tab-widgets` with default and required props', () => {

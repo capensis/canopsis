@@ -22,8 +22,8 @@
         :w="layoutItem.w",
         :h="layoutItem.h",
         :i="layoutItem.i",
-        :autoHeight="layoutItem.autoHeight",
-        dragAllowFrom=".drag-handler"
+        :auto-height="layoutItem.autoHeight",
+        drag-allow-from=".drag-handler"
       )
         div.wrapper
           div.drag-handler
@@ -44,7 +44,7 @@
               widget-wrapper-menu(
                 :widget="layoutItem.widget",
                 :tab="tab",
-                :updateTabMethod="updateTabMethod"
+                :update-tab-method="updateTabMethod"
               )
           slot(:widget="layoutItem.widget")
 </template>
