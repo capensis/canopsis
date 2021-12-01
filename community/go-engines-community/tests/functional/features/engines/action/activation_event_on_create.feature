@@ -481,7 +481,7 @@ Feature: send activation event on create
           "parameters":{
             "name": "pbehavior-action-activation-event-8",
             "tstart": {{ nowAdd "-24h" }},
-            "tstop": {{ nowAdd "-23h50m" }},
+            "tstop": {{ nowAdd "-23h" }},
             "rrule": "FREQ=DAILY",
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
