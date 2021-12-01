@@ -158,7 +158,6 @@ describe('grid-edit-widgets', () => {
       .at(0)
       .find('widget-wrapper-menu-stub');
 
-    // eslint-disable-next-line no-underscore-dangle
     widgetWrapperMenu.vm.updateTabMethod(widget);
 
     expect(updateTabMethod).toHaveBeenCalledTimes(1);
