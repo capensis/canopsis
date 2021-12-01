@@ -11,9 +11,9 @@ import (
 )
 
 type api struct {
-	store                Store
-	actionLogger         logger.ActionLogger
-	priorityIntervals    action.PriorityIntervals
+	store             Store
+	actionLogger      logger.ActionLogger
+	priorityIntervals action.PriorityIntervals
 }
 
 type API interface {
@@ -121,7 +121,8 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	userId := c.MustGet(auth.UserKey)
-	setActionParameterAuthor(&request.EditRequest, userId.(string))
+	author := c.MustGet(auth.Username)
+	setActionParameterAuthorAndUserID(&request.EditRequest, author.(string), userId.(string))
 
 	scenario, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
@@ -177,7 +178,8 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	userId := c.MustGet(auth.UserKey)
-	setActionParameterAuthor(&request.EditRequest, userId.(string))
+	author := c.MustGet(auth.Username)
+	setActionParameterAuthorAndUserID(&request.EditRequest, author.(string), userId.(string))
 
 	newScenario, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
@@ -303,23 +305,28 @@ func (a *api) CheckPriority(c *gin.Context) {
 	})
 }
 
-func setActionParameterAuthor(request *EditRequest, value string) {
+func setActionParameterAuthorAndUserID(request *EditRequest, author, userID string) {
 	for i, action := range request.Actions {
 		switch v := action.Parameters.(type) {
 		case SnoozeParametersRequest:
-			v.Author = value
+			v.Author = author
+			v.User = userID
 			request.Actions[i].Parameters = v
 		case ChangeStateParametersRequest:
-			v.Author = value
+			v.Author = author
+			v.User = userID
 			request.Actions[i].Parameters = v
 		case AssocTicketParametersRequest:
-			v.Author = value
+			v.Author = author
+			v.User = userID
 			request.Actions[i].Parameters = v
 		case PbehaviorParametersRequest:
-			v.Author = value
+			v.Author = author
+			v.User = userID
 			request.Actions[i].Parameters = v
 		case ParametersRequest:
-			v.Author = value
+			v.Author = author
+			v.User = userID
 			request.Actions[i].Parameters = v
 		}
 	}

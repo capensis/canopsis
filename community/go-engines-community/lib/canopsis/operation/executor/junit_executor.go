@@ -39,6 +39,10 @@ func (e *junitExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	alarmStepType, ok := e.alarmStepTypeMap[operation.Type]
 	if !ok {
 		return "", nil

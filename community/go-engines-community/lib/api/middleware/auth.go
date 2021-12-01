@@ -26,6 +26,7 @@ func Auth(providers []security.HttpProvider) gin.HandlerFunc {
 
 				// The user credentials was found, set user's id to key UserKey in this context,
 				// the user's id can be read later using c.MustGet(auth.UserKey).
+				c.Set(auth.Username, user.Name)
 				c.Set(auth.UserKey, user.ID)
 				c.Set(auth.RoleKey, user.Role)
 				c.Set(auth.ApiKey, user.AuthApiKey)

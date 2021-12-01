@@ -227,7 +227,7 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
 		steps = append(steps, *a.Value.ACK)
 	}
 	if ticket = a.Value.Ticket; ticket != nil {
-		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, "", ticket.Role, ""))
+		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, ticket.UserID, ticket.Role, ""))
 	}
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)
