@@ -301,6 +301,7 @@ export const COLORS = {
     ratioTickets: '#2195f1',
     ratioNonDisplayed: '#f9bf2d',
     averageAck: '#f5c6ab',
+    averageResolve: '#1afd01',
     totalUserActivity: '#1fbbd1',
   },
 };
