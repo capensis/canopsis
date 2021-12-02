@@ -334,50 +334,6 @@ func (a *Alarm) UpdateLongOutput(newOutput string) {
 	}
 }
 
-// updateState If Event is a check event and if the associated alarm is not
-// locked, increases or decreases the State of the alarm.
-func (a *Alarm) updateState(e Event) bool {
-	if e.EventType != EventTypeCheck && e.EventType != EventTypeMetaAlarm {
-		return false
-	}
-
-	currentAlarmState := a.CurrentState()
-	if e.State == currentAlarmState {
-		// State hasn't changed. Stop here
-		return false
-	}
-	if a.IsStateLocked() {
-		// Event is an OK, so the alarm should be resolved anyway
-		if e.State == AlarmStateOK {
-			a.Value.State.Type = ""
-		} else {
-			// Stop here: state should be preserved.
-			return false
-		}
-	}
-
-	// Create new Step to keep track of the alarm history
-	newStep := AlarmStep{
-		Type:      AlarmStepStateIncrease,
-		Timestamp: e.Timestamp,
-		Author:    e.Connector + "." + e.ConnectorName,
-		Message:   e.Output,
-		Value:     e.State,
-	}
-	if e.State < currentAlarmState {
-		newStep.Type = AlarmStepStateDecrease
-	}
-
-	a.Value.State = &newStep
-	a.Value.Steps.Add(newStep)
-
-	a.Value.StateChangesSinceStatusUpdate++
-	a.Value.TotalStateChanges++
-	a.Value.LastUpdateDate = e.Timestamp
-
-	return true
-}
-
 // Resolve mark as resolved an Alarm with a timestamp [sic]
 func (a *Alarm) Resolve(timestamp *CpsTime) {
 	a.Value.Resolved = timestamp

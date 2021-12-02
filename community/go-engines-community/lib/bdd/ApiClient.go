@@ -384,6 +384,9 @@ func (a *ApiClient) IAm(ctx context.Context, role string) error {
 		"username": line.Name,
 		"password": userPass,
 	})
+	if err != nil {
+		return err
+	}
 	request, err := http.NewRequest(http.MethodPost, uri, bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("cannot create login request: %w", err)
