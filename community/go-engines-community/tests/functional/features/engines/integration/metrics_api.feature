@@ -51,19 +51,21 @@ Feature: Entities and users should be synchronized in metrics db
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "created_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
     When I do PUT /api/v4/entitybasics?_id=test-resource-metrics-api-1/test-component-metrics-api-1:
     """json
@@ -83,35 +85,39 @@ Feature: Entities and users should be synchronized in metrics db
     When I wait the end of event processing
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    [
-      {
-        "title": "created_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    [
-      {
-        "title": "created_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 0
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given updated user should get metrics by updated user
@@ -168,14 +174,16 @@ Feature: Entities and users should be synchronized in metrics db
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/rating?filter={{ .filterID }}&metric=ack_alarms&criteria=3&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/rating?filter={{ .filterID }}&metric=ack_alarms&criteria=3&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "label": "test-user-metrics-api-2-name",
-        "value": 1
-      }
-    ]
+    {
+      "data": [
+        {
+          "label": "test-user-metrics-api-2-name",
+          "value": 1
+        }
+      ]
+    }
     """
     When I do PUT /api/v4/users/{{ .userID }}:
     """json
@@ -189,14 +197,16 @@ Feature: Entities and users should be synchronized in metrics db
     Then the response code should be 200
     When I do GET /api/v4/cat/metrics/rating?filter={{ .filterID }}&metric=ack_alarms&criteria=3&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    [
-      {
-        "label": "test-user-metrics-api-2-name-updated",
-        "value": 1
-      }
-    ]
+    {
+      "data": [
+        {
+          "label": "test-user-metrics-api-2-name-updated",
+          "value": 1
+        }
+      ]
+    }
     """
 
   Scenario: given deleted user should not get metrics by deleted user
@@ -253,22 +263,26 @@ Feature: Entities and users should be synchronized in metrics db
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/rating?filter={{ .filterID }}&metric=ack_alarms&criteria=3&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/rating?filter={{ .filterID }}&metric=ack_alarms&criteria=3&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "label": "test-user-metrics-api-3-name",
-        "value": 1
-      }
-    ]
+    {
+      "data": [
+        {
+          "label": "test-user-metrics-api-3-name",
+          "value": 1
+        }
+      ]
+    }
     """
     When I do DELETE /api/v4/users/{{ .userID }}
     Then the response code should be 204
     When I do GET /api/v4/cat/metrics/rating?filter={{ .filterID }}&metric=ack_alarms&criteria=3&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    []
+    {
+      "data": []
+    }
     """
 
   Scenario: given created service should get metrics by created entity
@@ -315,19 +329,21 @@ Feature: Entities and users should be synchronized in metrics db
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "created_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given updated service should get metrics by updated entity
@@ -387,19 +403,21 @@ Feature: Entities and users should be synchronized in metrics db
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "created_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
     When I do PUT /api/v4/entityservices/{{ .serviceID }}:
     """json
@@ -418,35 +436,39 @@ Feature: Entities and users should be synchronized in metrics db
     When I wait the end of event processing
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    [
-      {
-        "title": "created_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    [
-      {
-        "title": "created_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 0
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given deleted service should get metrics by deleted entity
@@ -493,36 +515,40 @@ Feature: Entities and users should be synchronized in metrics db
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "created_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
     When I do DELETE /api/v4/entityservices/{{ .serviceID }}
     Then the response code should be 204
     When I wait the end of event processing
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    [
-      {
-        "title": "created_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 0
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        }
+      ]
+    }
     """
