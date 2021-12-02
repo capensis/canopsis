@@ -147,7 +147,7 @@ describe('side-bar-wrapper', () => {
     await flushPromises();
 
     expect(clickOutsideCondition).toHaveBeenCalledTimes(1);
-    expect(hideSideBar).toHaveBeenCalledTimes(0);
+    expect(hideSideBar).not.toHaveBeenCalled();
   });
 
   it.each(Object.values(SIDE_BARS))('Renders `side-bar-wrapper` with type: %s', async (type) => {

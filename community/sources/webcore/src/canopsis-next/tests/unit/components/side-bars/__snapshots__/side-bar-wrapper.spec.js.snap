@@ -2,8 +2,8 @@
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with default slot 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -65,6 +65,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with default slot 1`] = `
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with navigation drawer props 1`] = `
 <aside
   class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  navigationdrawerprops="[object Object]"
   style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
@@ -123,8 +124,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with navigation drawer pr
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type custom title 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -182,8 +183,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type custom title 1`
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: alarm-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -241,8 +242,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: alarm-settings
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: context-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -300,8 +301,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: context-settin
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: counter-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -359,8 +360,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: counter-settin
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: service-weather-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -418,8 +419,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: service-weathe
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-calendar-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -477,8 +478,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-calendar
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-curves-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -536,8 +537,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-curves-s
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-histogram-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -595,8 +596,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-histogra
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-number-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -654,8 +655,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-number-s
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-pareto-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -713,8 +714,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-pareto-s
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-table-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -772,8 +773,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-table-se
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: testing-weather-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
@@ -831,8 +832,8 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: testing-weathe
 
 exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: text-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 300px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
 >
   <div>
     <nav
