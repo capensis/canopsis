@@ -10,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statsng"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
@@ -18,9 +17,7 @@ import (
 
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
-	FeatureStatEvents        bool
 	EventProcessor           alarm.EventProcessor
-	StatsService             statsng.Service
 	RemediationRpcClient     engine.RPCClient
 	TimezoneConfigProvider   config.TimezoneConfigProvider
 	Encoder                  encoding.Encoder
@@ -71,7 +68,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	p.updatePbhLastAlarmDate(ctx, event)
-	p.handleStats(ctx, event, msg)
 
 	// Encode and publish the event to the next engine
 	var bevent []byte
@@ -98,38 +94,6 @@ func (p *messageProcessor) updatePbhLastAlarmDate(ctx context.Context, event typ
 		err := p.PbehaviorAdapter.UpdateLastAlarmDate(ctx, event.PbehaviorInfo.ID, types.CpsTime{Time: time.Now()})
 		if err != nil {
 			p.Logger.Err(err).Msg("")
-		}
-	}()
-}
-
-func (p *messageProcessor) handleStats(ctx context.Context, event types.Event, msg []byte) {
-	if !p.FeatureStatEvents {
-		return
-	}
-
-	if event.Alarm == nil {
-		p.Logger.Warn().Msg("event.Alarm should not be nil")
-		return
-	}
-
-	if event.Entity == nil {
-		p.Logger.Warn().Msg("event.Entity should not be nil")
-		return
-	}
-
-	go func() {
-		err := p.StatsService.ProcessAlarmChange(
-			ctx,
-			*event.AlarmChange,
-			event.Timestamp,
-			*event.Alarm,
-			*event.Entity,
-			event.Author,
-			event.EventType,
-			p.TimezoneConfigProvider.Get().Location,
-		)
-		if err != nil {
-			p.logError(err, "cannot update stats", msg)
 		}
 	}()
 }
