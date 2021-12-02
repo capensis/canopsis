@@ -2022,6 +2022,10 @@ export default {
     systemStatusChipError: 'Le système n\'est pas opérationnel',
     systemStatusServerError: 'La configuration du système n\'est pas valide, veuillez contacter l\'administrateur',
     systemsOperational: 'Tous les systèmes sont opérationnels',
+    validation: {
+      max_value: 'Le champ doit être égal ou inférieur au nombre optimal d\'instances',
+      min_value: 'Le champ doit être égal ou supérieur au nombre minimal d\'instances',
+    },
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
