@@ -9,7 +9,7 @@ exports[`kpi-rating Renders \`kpi-rating\` without metrics 1`] = `
     query="[object Object]"
   />
   <kpi-rating-chart-stub
-    metric="ticket_alarms"
+    metric="ticket_active_alarms"
     metrics=""
     responsive="responsive"
   />

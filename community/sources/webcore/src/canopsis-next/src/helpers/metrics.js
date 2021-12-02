@@ -9,6 +9,7 @@ import {
   USER_METRIC_PARAMETERS,
 } from '@/constants';
 import { addUnitToDate, convertDateToString } from '@/helpers/date/date';
+import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
 
 /**
  * @typedef { 'hour' | 'day' | 'week' | 'month' } Sampling
@@ -23,7 +24,6 @@ import { addUnitToDate, convertDateToString } from '@/helpers/date/date';
 export const isTimeMetric = metric => [
   USER_METRIC_PARAMETERS.totalUserActivity,
   ALARM_METRIC_PARAMETERS.averageAck,
-  ALARM_METRIC_PARAMETERS.averageResolve,
 ].includes(metric);
 
 /**
@@ -105,4 +105,21 @@ export const getAvailableMetricByCriteria = (metric, criteria) => {
   const [firstMetric] = metrics;
 
   return firstMetric;
+};
+
+/**
+ * Check query is changed with interval
+ *
+ * @param {Object} query
+ * @param {Object} oldQuery
+ * @param {number} minDate
+ * @returns {boolean}
+ */
+export const isMetricsQueryChanged = (query, oldQuery, minDate) => {
+  const isFromChanged = query.interval.from !== oldQuery.interval.from;
+  const isFromEqualDeletedBefore = query.interval.from === minDate;
+  const isToChanged = query.interval.to !== oldQuery.interval.to;
+  const isQueryWithoutIntervalChanged = !isOmitEqual(query, oldQuery, ['interval']);
+
+  return isQueryWithoutIntervalChanged || (isFromChanged && !isFromEqualDeletedBefore) || isToChanged;
 };

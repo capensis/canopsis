@@ -477,7 +477,7 @@ export default {
       awaitingInstructionComplete: 'En attente de l\'instruction pour terminer',
     },
     metrics: {
-      [ALARM_METRIC_PARAMETERS.totalAlarms]: 'Nombre total d\'alarmes',
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Nombre total d\'alarmes',
       [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Nombre d\'alarmes non affichées',
       [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre d\'alarmes en cours de correction automatique',
       [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Nombre d\'alarmes avec PBehavior',
@@ -485,7 +485,7 @@ export default {
       [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Nombre d\'alarmes avec acquittement',
       [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Nombre d\'accusés de réception annulés',
       [ALARM_METRIC_PARAMETERS.ackWithoutCancelAlarms]: 'Nombre d\'alarmes avec ack (hors ack annulés)',
-      [ALARM_METRIC_PARAMETERS.ticketAlarms]: 'Nombre d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Nombre d\'alarmes avec tickets créés',
       [ALARM_METRIC_PARAMETERS.withoutTicketAlarms]: 'Nombre d\'alarmes sans tickets créés',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% d\'alarmes corrélées',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec correction automatique',
@@ -2658,7 +2658,7 @@ export default {
     tooltip: {
       [USER_METRIC_PARAMETERS.totalUserActivity]: '{value} temps total d\'activité',
 
-      [ALARM_METRIC_PARAMETERS.totalAlarms]: '{value} total d\'alarmes',
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: '{value} total d\'alarmes',
       [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: '{value} alarmes non affichées',
       [ALARM_METRIC_PARAMETERS.instructionAlarms]: '{value} alarmes en cours de correction automatique',
       [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: '{value} alarmes sous PBehavior',
@@ -2666,7 +2666,7 @@ export default {
       [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} alarmes avec ack',
       [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} alarmes avec acquittement annulé',
       [ALARM_METRIC_PARAMETERS.ackWithoutCancelAlarms]: '{value} alarmes avec ack (hors ack annulés)',
-      [ALARM_METRIC_PARAMETERS.ticketAlarms]: '{value} alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} alarmes avec tickets créés',
       [ALARM_METRIC_PARAMETERS.withoutTicketAlarms]: '{value} alarmes sans tickets créés',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% d\'alarmes avec correction automatique',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% d\'alarmes avec instructions',

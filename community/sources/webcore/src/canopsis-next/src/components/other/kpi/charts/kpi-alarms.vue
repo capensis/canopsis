@@ -1,11 +1,12 @@
 <template lang="pug">
   div.position-relative
     c-progress-overlay(:pending="pending")
-    kpi-alarms-filters(v-model="pagination")
+    kpi-alarms-filters(v-model="pagination", :min-date="minDate")
     kpi-alarms-chart(
       :metrics="alarmsMetrics",
       :sampling="pagination.sampling",
       :downloading="downloading",
+      :min-date="minDate",
       responsive,
       @export:csv="exportAlarmMetricsAsCsv",
       @export:png="exportAlarmMetricsAsPng",
@@ -23,8 +24,9 @@ import {
 } from '@/constants';
 
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDateToStartOfDayTimestamp, convertDateToString } from '@/helpers/date/date';
 import { saveFile } from '@/helpers/file/files';
+import { isMetricsQueryChanged } from '@/helpers/metrics';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
@@ -50,9 +52,10 @@ export default {
       alarmsMetrics: [],
       downloading: false,
       pending: false,
+      minDate: null,
       query: {
         sampling: SAMPLINGS.day,
-        parameters: [ALARM_METRIC_PARAMETERS.totalAlarms],
+        parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
         filter: null,
         interval: {
           from: QUICK_RANGES.last7Days.start,
@@ -65,6 +68,10 @@ export default {
     this.fetchList();
   },
   methods: {
+    customQueryCondition(query, oldQuery) {
+      return isMetricsQueryChanged(query, oldQuery, this.minDate);
+    },
+
     getFileName() {
       const fromTime = convertDateToString(
         convertStartDateIntervalToTimestamp(this.query.interval.from),
@@ -98,10 +105,19 @@ export default {
 
     async fetchList() {
       this.pending = true;
+      const params = this.getQuery();
 
-      this.alarmsMetrics = await this.fetchAlarmsMetricsWithoutStore({
-        params: this.getQuery(),
-      });
+      const {
+        data: alarmsMetrics,
+        meta: { min_date: minDate },
+      } = await this.fetchAlarmsMetricsWithoutStore({ params });
+
+      this.alarmsMetrics = alarmsMetrics;
+      this.minDate = convertDateToStartOfDayTimestamp(minDate);
+
+      if (params.from < this.minDate) {
+        this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
+      }
 
       this.pending = false;
     },

@@ -6,10 +6,12 @@ exports[`kpi-alarms Renders \`kpi-alarms\` without metrics 1`] = `
 >
   <c-progress-overlay-stub />
   <kpi-alarms-filters-stub
+    mindate="1385830800"
     query="[object Object]"
   />
   <kpi-alarms-chart-stub
     metrics=""
+    min-date="1385830800"
     responsive="responsive"
     sampling="day"
   />

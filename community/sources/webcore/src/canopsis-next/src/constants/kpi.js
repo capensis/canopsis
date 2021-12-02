@@ -20,27 +20,26 @@ export const KPI_RATING_CRITERIA = {
 export const KPI_RATING_USER_CRITERIA = [KPI_RATING_CRITERIA.user, KPI_RATING_CRITERIA.role];
 
 export const KPI_RATING_USER_METRICS = [
-  ALARM_METRIC_PARAMETERS.ticketAlarms,
+  ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
   ALARM_METRIC_PARAMETERS.ackAlarms,
   ALARM_METRIC_PARAMETERS.cancelAckAlarms,
-  ALARM_METRIC_PARAMETERS.ackWithoutCancelAlarms,
+  ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms,
   ALARM_METRIC_PARAMETERS.averageAck,
   USER_METRIC_PARAMETERS.totalUserActivity,
 ];
 
 export const KPI_RATING_ENTITY_METRICS = [
-  ALARM_METRIC_PARAMETERS.totalAlarms,
+  ALARM_METRIC_PARAMETERS.createdAlarms,
   ALARM_METRIC_PARAMETERS.instructionAlarms,
   ALARM_METRIC_PARAMETERS.pbehaviorAlarms,
-  ALARM_METRIC_PARAMETERS.ticketAlarms,
-  ALARM_METRIC_PARAMETERS.withoutTicketAlarms,
+  ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
+  ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms,
   ALARM_METRIC_PARAMETERS.nonDisplayedAlarms,
   ALARM_METRIC_PARAMETERS.ratioCorrelation,
   ALARM_METRIC_PARAMETERS.ratioInstructions,
   ALARM_METRIC_PARAMETERS.ratioTickets,
   ALARM_METRIC_PARAMETERS.ratioNonDisplayed,
   ALARM_METRIC_PARAMETERS.averageAck,
-  ALARM_METRIC_PARAMETERS.averageResolve,
 ];
 
 export const KPI_TABS = {
