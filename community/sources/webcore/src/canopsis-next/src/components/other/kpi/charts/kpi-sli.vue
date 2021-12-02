@@ -1,12 +1,13 @@
 <template lang="pug">
   div.position-relative
     c-progress-overlay(:pending="pending")
-    kpi-sli-filters(v-model="pagination")
+    kpi-sli-filters(v-model="pagination", :min-date="minDate")
     kpi-sli-chart(
       :metrics="sliMetrics",
       :data-type="pagination.type",
       :sampling="pagination.sampling",
       :downloading="downloading",
+      :min-date="minDate",
       responsive,
       @export:csv="exportSliMetricsAsCsv",
       @export:png="exportSliMetricsAsPng"
@@ -23,7 +24,7 @@ import {
 } from '@/constants';
 
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDateToStartOfDayTimestamp, convertDateToString } from '@/helpers/date/date';
 import { saveFile } from '@/helpers/file/files';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
@@ -31,6 +32,7 @@ import { localQueryMixin } from '@/mixins/query-local/query';
 import { exportCsvMixinCreator } from '@/mixins/widget/export';
 
 import KpiSliFilters from './partials/kpi-sli-filters.vue';
+import { isMetricsQueryChanged } from '@/helpers/metrics';
 
 const KpiSliChart = () => import(/* webpackChunkName: "Charts" */ './partials/kpi-sli-chart.vue');
 
@@ -50,6 +52,7 @@ export default {
       sliMetrics: [],
       pending: false,
       downloading: false,
+      minDate: null,
       query: {
         sampling: SAMPLINGS.day,
         type: KPI_SLI_GRAPH_DATA_TYPE.percent,
@@ -65,6 +68,10 @@ export default {
     this.fetchList();
   },
   methods: {
+    customQueryCondition(query, oldQuery) {
+      return isMetricsQueryChanged(query, oldQuery, this.minDate);
+    },
+
     getFileName() {
       const fromTime = convertDateToString(
         convertStartDateIntervalToTimestamp(this.query.interval.from),
@@ -98,10 +105,19 @@ export default {
 
     async fetchList() {
       this.pending = true;
+      const params = this.getQuery();
 
-      this.sliMetrics = await this.fetchSliMetricsWithoutStore({
-        params: this.getQuery(),
-      });
+      const {
+        data: sliMetrics,
+        meta: { min_date: minDate },
+      } = await this.fetchSliMetricsWithoutStore({ params });
+
+      this.sliMetrics = sliMetrics;
+      this.minDate = convertDateToStartOfDayTimestamp(minDate);
+
+      if (params.from < this.minDate) {
+        this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
+      }
 
       this.pending = false;
     },

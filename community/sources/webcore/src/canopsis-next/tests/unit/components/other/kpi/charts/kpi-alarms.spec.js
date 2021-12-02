@@ -38,15 +38,18 @@ describe('kpi-alarms', () => {
   stubDateNow(nowTimestamp);
 
   it('Metrics fetched after mount', async () => {
-    const fetchAlarmsMetrics = jest.fn(() => []);
     const expectedDefaultParams = {
       /* now - 7d  */
       from: 1385830800,
-      parameters: [ALARM_METRIC_PARAMETERS.totalAlarms],
+      parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
       sampling: SAMPLINGS.day,
       filter: null,
       to: nowUnix,
     };
+    const fetchAlarmsMetrics = jest.fn(() => ({
+      data: [],
+      meta: { min_date: expectedDefaultParams.from },
+    }));
 
     factory({
       store: createMockedStoreModules([{
@@ -68,14 +71,17 @@ describe('kpi-alarms', () => {
   it('Metrics refreshed after change interval', async () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
-      /* now - 7d  */
+      /* now - 2d  */
       from: 1385830800,
-      parameters: [ALARM_METRIC_PARAMETERS.totalAlarms],
+      parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
       sampling: SAMPLINGS.day,
       filter: null,
       to: nowUnix,
     };
-    const fetchAlarmsMetrics = jest.fn(() => []);
+    const fetchAlarmsMetrics = jest.fn(() => ({
+      data: [],
+      meta: { min_date: expectedParamsAfterUpdate.from },
+    }));
 
     const wrapper = factory({
       store: createMockedStoreModules([{
@@ -89,7 +95,7 @@ describe('kpi-alarms', () => {
     const kpiSliFiltersElement = wrapper.find('kpi-alarms-filters-stub');
 
     kpiSliFiltersElement.vm.$emit('input', {
-      parameters: [ALARM_METRIC_PARAMETERS.totalAlarms],
+      parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
       sampling: SAMPLINGS.day,
       filter: null,
       interval: {
@@ -108,12 +114,39 @@ describe('kpi-alarms', () => {
     );
   });
 
+  it('Metrics doesn\'t refreshed if min date less than from', async () => {
+    const fetchAlarmsMetrics = jest.fn(() => ({
+      data: [],
+      meta: {
+        min_date: 1385930800,
+      },
+    }));
+
+    factory({
+      store: createMockedStoreModules([{
+        name: 'metrics',
+        actions: {
+          fetchAlarmsMetricsWithoutStore: fetchAlarmsMetrics,
+        },
+      }]),
+    });
+
+    fetchAlarmsMetrics.mockReset();
+
+    await flushPromises();
+
+    expect(fetchAlarmsMetrics).not.toHaveBeenCalled();
+  });
+
   it('Renders `kpi-alarms` without metrics', async () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([{
         name: 'metrics',
         actions: {
-          fetchAlarmsMetricsWithoutStore: jest.fn(() => []),
+          fetchAlarmsMetricsWithoutStore: jest.fn(() => ({
+            data: [],
+            meta: { min_date: 1385830800 },
+          })),
         },
       }]),
     });

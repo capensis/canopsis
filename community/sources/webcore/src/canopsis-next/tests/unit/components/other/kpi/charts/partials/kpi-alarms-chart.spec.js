@@ -323,7 +323,7 @@ describe('kpi-alarms-chart', () => {
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
-          title: ALARM_METRIC_PARAMETERS.averageResolve,
+          title: ALARM_METRIC_PARAMETERS.averageAck,
           data: metricsInTimeByDay,
         }],
         sampling: SAMPLINGS.day,
@@ -359,7 +359,7 @@ describe('kpi-alarms-chart', () => {
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
-          title: ALARM_METRIC_PARAMETERS.averageResolve,
+          title: ALARM_METRIC_PARAMETERS.averageAck,
           data: metricsInTimeByMonth,
         }],
         sampling: SAMPLINGS.month,
@@ -377,7 +377,7 @@ describe('kpi-alarms-chart', () => {
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
-          title: ALARM_METRIC_PARAMETERS.totalAlarms,
+          title: ALARM_METRIC_PARAMETERS.createdAlarms,
           data: metricsInCountByHour,
         }],
         sampling: SAMPLINGS.hour,
@@ -395,7 +395,7 @@ describe('kpi-alarms-chart', () => {
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
-          title: ALARM_METRIC_PARAMETERS.ticketAlarms,
+          title: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
           data: metricsInCountByDay,
         }],
         sampling: SAMPLINGS.day,
@@ -455,7 +455,7 @@ describe('kpi-alarms-chart', () => {
           title: ALARM_METRIC_PARAMETERS.averageAck,
           data: metricsInTimeByHour,
         }, {
-          title: ALARM_METRIC_PARAMETERS.totalAlarms,
+          title: ALARM_METRIC_PARAMETERS.createdAlarms,
           data: metricsInCountByHour,
         }],
         sampling: SAMPLINGS.hour,
@@ -476,7 +476,7 @@ describe('kpi-alarms-chart', () => {
           title: ALARM_METRIC_PARAMETERS.ratioNonDisplayed,
           data: metricsInPercentByDay,
         }, {
-          title: ALARM_METRIC_PARAMETERS.averageResolve,
+          title: ALARM_METRIC_PARAMETERS.averageAck,
           data: metricsInTimeByDay,
         }, {
           title: ALARM_METRIC_PARAMETERS.cancelAckAlarms,
@@ -527,7 +527,7 @@ describe('kpi-alarms-chart', () => {
           title: ALARM_METRIC_PARAMETERS.averageResolve,
           data: metricsInTimeByMonth,
         }, {
-          title: ALARM_METRIC_PARAMETERS.ticketAlarms,
+          title: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
           data: metricsInCountByMonth,
         }],
         sampling: SAMPLINGS.month,
