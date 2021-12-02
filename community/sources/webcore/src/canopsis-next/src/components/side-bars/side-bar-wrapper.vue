@@ -3,7 +3,10 @@
     v-model="isOpen",
     :ignore-click-outside="hasMaximizedModal",
     :custom-close-conditional="closeCondition",
-    v-bind="navigationDrawerProps"
+    :width="400",
+    right,
+    fixed,
+    temporary
   )
     div(v-if="title")
       v-toolbar(color="secondary")
@@ -34,12 +37,6 @@ export default {
     };
   },
   mixins: [sideBarInnerMixin],
-  props: {
-    navigationDrawerProps: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
   data() {
     return {
       ready: false,

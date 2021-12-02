@@ -7,7 +7,7 @@ export const stubDateNow = (nowTimestamp) => {
   let dateNowSpy;
 
   beforeAll(() => {
-    dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => nowTimestamp);
+    dateNowSpy = jest.spyOn(Date, 'now').mockReturnValue(nowTimestamp);
   });
 
   afterAll(() => {
@@ -28,5 +28,24 @@ export const stubRequestAnimationFrame = () => {
 
   afterEach(() => {
     requestAnimationFrameSpy.mockRestore();
+  });
+};
+
+/**
+ * Stub for date. Clear yourself after all tests.
+ *
+ * @param {number | Date} nowTimestamp
+ */
+export const stubDateGetTime = (nowTimestamp) => {
+  let dateSpy;
+
+  beforeAll(() => {
+    dateSpy = jest
+      .spyOn(Date.prototype, 'getTime')
+      .mockReturnValue(nowTimestamp);
+  });
+
+  afterAll(() => {
+    dateSpy.mockRestore();
   });
 };

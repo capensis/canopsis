@@ -12,6 +12,7 @@ import GridPlugin from '@/plugins/grid';
 import * as constants from '@/constants';
 import * as config from '@/config';
 import { convertDateToString } from '@/helpers/date/date';
+import SetSeveralPlugin from '@/plugins/set-several';
 
 /**
  * @typedef {Wrapper<Vue>} CustomWrapper
@@ -51,6 +52,7 @@ Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin, { i18n });
 Vue.use(VuetifyReplacerPlugin);
 Vue.use(GridPlugin);
+Vue.use(SetSeveralPlugin);
 
 Vue.filter('get', get);
 Vue.filter('date', convertDateToString);
