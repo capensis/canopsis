@@ -8258,6 +8258,9 @@ var doc = `{
                 "t": {
                     "type": "integer"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "val": {
                     "type": "string"
                 }
@@ -10639,6 +10642,10 @@ var doc = `{
         "pattern.EntityPattern": {
             "type": "object",
             "properties": {
+                "category": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
                 "component": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"

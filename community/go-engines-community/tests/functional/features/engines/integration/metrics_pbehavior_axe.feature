@@ -49,15 +49,17 @@ Feature: SLI metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "0.maintenance" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.maintenance" is greater or equal than 2
     Then the response body should contain:
     """json
-    [
-      {
-        "timestamp": {{ nowDate }},
-        "downtime": 0
-      }
-    ]
+    {
+      "data": [
+        {
+          "timestamp": {{ nowDate }},
+          "downtime": 0
+        }
+      ]
+    }
     """
 
   Scenario: given entity in pause pbehavior should add SLI downtime metrics
@@ -108,15 +110,17 @@ Feature: SLI metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "0.downtime" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.downtime" is greater or equal than 2
     Then the response body should contain:
     """json
-    [
-      {
-        "timestamp": {{ nowDate }},
-        "maintenance": 0
-      }
-    ]
+    {
+      "data": [
+        {
+          "timestamp": {{ nowDate }},
+          "maintenance": 0
+        }
+      ]
+    }
     """
 
   Scenario: given entity in inactive pbehavior should add SLI maintenance metrics
@@ -167,15 +171,17 @@ Feature: SLI metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "0.maintenance" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.maintenance" is greater or equal than 2
     Then the response body should contain:
     """json
-    [
-      {
-        "timestamp": {{ nowDate }},
-        "downtime": 0
-      }
-    ]
+    {
+      "data": [
+        {
+          "timestamp": {{ nowDate }},
+          "downtime": 0
+        }
+      ]
+    }
     """
 
   Scenario: given entity in active pbehavior should add SLI maintenance metrics for outer intervals
@@ -226,15 +232,17 @@ Feature: SLI metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "0.maintenance" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.maintenance" is greater or equal than 2
     Then the response body should contain:
     """json
-    [
-      {
-        "timestamp": {{ nowDate }},
-        "downtime": 0
-      }
-    ]
+    {
+      "data": [
+        {
+          "timestamp": {{ nowDate }},
+          "downtime": 0
+        }
+      ]
+    }
     """
 
   Scenario: given entity in active pbehavior should not add SLI any metrics
@@ -288,9 +296,11 @@ Feature: SLI metrics should be added on alarm changes
     When I wait 1s
     When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    []
+    {
+      "data": []
+    }
     """
 
   Scenario: given alarm should add downtime metrics
@@ -335,15 +345,17 @@ Feature: SLI metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "0.downtime" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.downtime" is greater or equal than 2
     Then the response body should contain:
     """json
-    [
-      {
-        "timestamp": {{ nowDate }},
-        "maintenance": 0
-      }
-    ]
+    {
+      "data": [
+        {
+          "timestamp": {{ nowDate }},
+          "maintenance": 0
+        }
+      ]
+    }
     """
 
   Scenario: given minor alarm with SLI minor state should not add downtime metrics for minor state
@@ -410,17 +422,19 @@ Feature: SLI metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "0.downtime" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.downtime" is greater or equal than 2
     Then the response body should contain:
     """json
-    [
-      {
-        "timestamp": {{ nowDate }},
-        "maintenance": 0
-      }
-    ]
+    {
+      "data": [
+        {
+          "timestamp": {{ nowDate }},
+          "maintenance": 0
+        }
+      ]
+    }
     """
-    When I save response downtime={{ (index .lastResponse 0).downtime }}
+    When I save response downtime={{ (index .lastResponse.data 0).downtime }}
     When I wait 2s
     When I send an event:
     """json
@@ -440,13 +454,15 @@ Feature: SLI metrics should be added on alarm changes
     Then the response code should be 200
     Then the response body should contain:
     """json
-    [
-      {
-        "timestamp": {{ nowDate }},
-        "downtime": {{ .downtime }},
-        "maintenance": 0
-      }
-    ]
+    {
+      "data": [
+        {
+          "timestamp": {{ nowDate }},
+          "downtime": {{ .downtime }},
+          "maintenance": 0
+        }
+      ]
+    }
     """
 
   Scenario: given minor alarm with SLI critical state should not add downtime metrics
@@ -544,7 +560,9 @@ Feature: SLI metrics should be added on alarm changes
     When I wait 1s
     When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    []
+    {
+      "data": []
+    }
     """
