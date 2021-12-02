@@ -26,12 +26,6 @@ func main() {
 		logger.Info().Msg("ignoreDefaultTomlConfig option is deprecated")
 	}
 
-	if opts.FeatureStatEvents {
-		logger.Info().Msg("Statistic Events ENABLED")
-	} else {
-		logger.Info().Msg("Statistic Events DISABLED")
-	}
-
 	trace := debug.Start(logger)
 	// Graceful shutdown.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)

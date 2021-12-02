@@ -3,7 +3,6 @@ package axe
 import (
 	"context"
 	"flag"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -21,7 +20,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation/executor"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statsng"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -34,7 +32,6 @@ import (
 type Options struct {
 	FeatureHideResources     bool
 	FeaturePrintEventOnError bool
-	FeatureStatEvents        bool
 	ModeDebug                bool
 	PublishToQueue           string
 	PostProcessorsDirectory  string
@@ -49,7 +46,6 @@ func ParseOptions() Options {
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.BoolVar(&opts.FeatureHideResources, "featureHideResources", false, "Enable Hide Resources Management - deprecated")
-	flag.BoolVar(&opts.FeatureStatEvents, "featureStatEvents", false, "Send statistic events")
 	flag.StringVar(&opts.PublishToQueue, "publishQueue", canopsis.ServiceQueueName, "Publish event to this queue")
 	flag.StringVar(&opts.PostProcessorsDirectory, "postProcessorsDirectory", ".", "The path of the directory containing the post-processing plugins.")
 	flag.BoolVar(&opts.IgnoreDefaultTomlConfig, "ignoreDefaultTomlConfig", false, "load toml file values into database. - deprecated")
@@ -99,15 +95,6 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider)
 
-	statsService := statsng.NewService(
-		m.DepAMQPChannelPub(amqpConnection),
-		canopsis.StatsngExchangeName,
-		canopsis.StatsngQueueName,
-		json.NewEncoder(),
-		serviceweather.NewStatsStore(dbClient),
-		logger,
-	)
-
 	pbhRpcClient := libengine.NewRPCClient(
 		canopsis.AxeRPCConsumerName,
 		canopsis.PBehaviorRPCQueueServerName,
@@ -118,7 +105,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			PublishCh:                amqpChannel,
 			ServiceRpc:               serviceRpcClient,
-			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, statsService, metricsSender),
+			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 			EntityAdapter:            entity.NewAdapter(dbClient),
 			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
 			Decoder:                  json.NewDecoder(),
@@ -197,19 +184,17 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			FeatureStatEvents:        options.FeatureStatEvents,
 			EventProcessor: alarm.NewEventProcessor(
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
 				correlation.NewRuleAdapter(dbClient),
 				alarmConfigProvider,
-				m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, statsService, metricsSender),
+				m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 				alarmStatusService,
 				redis.NewLockClient(corrRedisClient),
 				metricsSender,
 				logger,
 			),
-			StatsService:           statsService,
 			RemediationRpcClient:   remediationRpcClient,
 			TimezoneConfigProvider: timezoneConfigProvider,
 			Encoder:                json.NewEncoder(),
@@ -231,7 +216,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			PbhRpc:                   pbhRpcClient,
 			RemediationRpc:           remediationRpcClient,
 			AlarmAdapter:             alarm.NewAdapter(dbClient),
-			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, statsService, metricsSender),
+			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Logger:                   logger,
@@ -306,7 +291,6 @@ func (m DependencyMaker) depOperationExecutor(
 	dbClient mongo.DbClient,
 	configProvider config.AlarmConfigProvider,
 	alarmStatusService alarmstatus.Service,
-	statsService statsng.Service,
 	metricsSender metrics.Sender,
 ) operation.Executor {
 	entityAdapter := entity.NewAdapter(dbClient)
@@ -325,10 +309,10 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypePbhEnter, executor.NewPbhEnterExecutor(configProvider, metricsSender))
 	container.Set(types.EventTypePbhLeave, executor.NewPbhLeaveExecutor(configProvider, metricsSender))
 	container.Set(types.EventTypePbhLeaveAndEnter, executor.NewPbhLeaveAndEnterExecutor(configProvider, metricsSender))
-	container.Set(types.EventTypeResolveDone, executor.NewResolveStatExecutor(executor.NewResolveDoneExecutor(), entityAdapter, statsService, metricsSender))
-	container.Set(types.EventTypeResolveCancel, executor.NewResolveStatExecutor(executor.NewResolveCancelExecutor(), entityAdapter, statsService, metricsSender))
-	container.Set(types.EventTypeResolveClose, executor.NewResolveStatExecutor(executor.NewResolveCloseExecutor(), entityAdapter, statsService, metricsSender))
-	container.Set(types.EventTypeEntityToggled, executor.NewResolveStatExecutor(executor.NewResolveDisabledExecutor(), entityAdapter, statsService, metricsSender))
+	container.Set(types.EventTypeResolveDone, executor.NewResolveStatExecutor(executor.NewResolveDoneExecutor(), entityAdapter, metricsSender))
+	container.Set(types.EventTypeResolveCancel, executor.NewResolveStatExecutor(executor.NewResolveCancelExecutor(), entityAdapter, metricsSender))
+	container.Set(types.EventTypeResolveClose, executor.NewResolveStatExecutor(executor.NewResolveCloseExecutor(), entityAdapter, metricsSender))
+	container.Set(types.EventTypeEntityToggled, executor.NewResolveStatExecutor(executor.NewResolveDisabledExecutor(), entityAdapter, metricsSender))
 	container.Set(types.EventTypeSnooze, executor.NewSnoozeExecutor(configProvider))
 	container.Set(types.EventTypeUncancel, executor.NewUncancelExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeUnsnooze, executor.NewUnsnoozeExecutor())
