@@ -120,6 +120,8 @@ const (
 	ConnectorJunit         = "junit"
 )
 
+const MaxEventLateTime = 24 * time.Hour
+
 //PerfData represents a perf data array
 type PerfData struct {
 	Metric string  `bson:"metric" json:"metric"`
@@ -230,7 +232,8 @@ func NewEventFromAlarm(alarm Alarm) Event {
 //  "event_type" is fill with EventTypeCheck
 //  if "entity" is not null, "impacts" and "depends" are ensured to be initialized
 func (e *Event) Format() {
-	if e.Timestamp.IsZero() {
+	//events from the future has wrong timestamp by default, other events can be late no more than MaxEventLateTime
+	if e.Timestamp.IsZero() || e.Timestamp.Before(time.Now().Add(-MaxEventLateTime)) || e.Timestamp.After(time.Now()) {
 		e.Timestamp = CpsTime{time.Now()}
 	}
 	if e.EventType == "" {
