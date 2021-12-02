@@ -460,9 +460,9 @@ func interfaceToString(
 			str = string(b)
 		}
 	case reflect.Float32:
-		str = fmt.Sprintf("%s", strconv.FormatFloat(float64(v.(float32)), 'f', -1, 64))
+		str = strconv.FormatFloat(float64(v.(float32)), 'f', -1, 64)
 	case reflect.Float64:
-		str = fmt.Sprintf("%s", strconv.FormatFloat(v.(float64), 'f', -1, 64))
+		str = strconv.FormatFloat(v.(float64), 'f', -1, 64)
 	default:
 		str = fmt.Sprintf("%v", v)
 	}
