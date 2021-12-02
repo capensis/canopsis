@@ -2259,6 +2259,7 @@ export default {
       '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>' +
       '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>' +
       '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
+    output: 'Format d\'action de sortie',
     outputHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
       '<i>Quelques exemples:</i>' +
       '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',
