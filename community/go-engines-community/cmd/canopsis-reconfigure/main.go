@@ -5,7 +5,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/pgx"
@@ -251,43 +250,11 @@ func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
 		return errors.New("postgres migration mode should be up or down")
 	}
 
-	if err == migrate.ErrNoChange {
-		err = nil
+	if err != migrate.ErrNoChange {
+		return err
 	}
 
 	return nil
-}
-
-type CriteriaConfig struct {
-	ID    int
-	Type  int
-	Name  string
-	Label string
-}
-
-func defaultCriteria() []CriteriaConfig {
-	return []CriteriaConfig{
-		{
-			Type:  metrics.UserCriteriaType,
-			Name:  "username",
-			Label: "username",
-		},
-		{
-			Type:  metrics.UserCriteriaType,
-			Name:  "role",
-			Label: "role",
-		},
-		{
-			Type:  metrics.EntityCriteriaType,
-			Name:  "category",
-			Label: "category",
-		},
-		{
-			Type:  metrics.EntityCriteriaType,
-			Name:  "impact_level",
-			Label: "impact_level",
-		},
-	}
 }
 
 func createMongoIndexes(ctx context.Context, client mongo.DbClient, mongoConfPath string, logger zerolog.Logger) error {

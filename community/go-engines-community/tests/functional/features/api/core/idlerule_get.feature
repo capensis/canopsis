@@ -38,6 +38,7 @@ Feature: Get a idle rule
           "operation": {
             "parameters": {
               "author": "test-idle-rule-to-get-1-operation-author",
+              "user": "test-idle-rule-to-get-1-operation-user",
               "duration": {
                 "value": 3,
                 "unit": "s"
@@ -149,6 +150,7 @@ Feature: Get a idle rule
       "operation": {
         "parameters": {
           "author": "test-idle-rule-to-get-1-operation-author",
+          "user": "test-idle-rule-to-get-1-operation-user",
           "duration": {
             "value": 3,
             "unit": "s"
