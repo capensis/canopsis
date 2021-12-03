@@ -50,11 +50,11 @@ func (e *assocTicketExecutor) Exec(
 	}
 
 	go func() {
+		metricsUserID := ""
 		if initiator == types.InitiatorUser {
-			e.metricsSender.SendTicket(context.Background(), *alarm, userID, time.Time)
-		} else {
-			e.metricsSender.SendTicket(context.Background(), *alarm, "", time.Time)
+			metricsUserID = userID
 		}
+		e.metricsSender.SendTicket(context.Background(), *alarm, metricsUserID, time.Time)
 	}()
 
 	return types.AlarmChangeTypeAssocTicket, nil
