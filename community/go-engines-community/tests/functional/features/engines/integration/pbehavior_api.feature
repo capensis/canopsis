@@ -50,7 +50,7 @@ Feature: get pbehavior
       "enabled": true,
       "name": "test-pbehavior-api-2",
       "tstart": {{ nowAdd "-24h" }},
-      "tstop": {{ nowAdd "-23h50m50s" }},
+      "tstop": {{ nowAdd "-23h" }},
       "rrule": "FREQ=DAILY",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",

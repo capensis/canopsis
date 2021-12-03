@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"runtime/debug"
-	"sync"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
@@ -49,7 +48,6 @@ type api struct {
 	logger    zerolog.Logger
 	routers   []Router
 	workers   map[string]Worker
-	waitGroup sync.WaitGroup
 
 	noRouteHandlers  []gin.HandlerFunc
 	noMethodHandlers []gin.HandlerFunc

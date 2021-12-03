@@ -769,6 +769,7 @@ Feature: modify event on event filter
     {
       "enabled": false,
       "impact_level": 1,
+      "sli_avail_state": 0,
       "infos": [],
       "impact": [
         "test-component-che-event-filters-6"
