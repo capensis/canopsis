@@ -32,7 +32,7 @@ Ces alarmes restent ainsi disponibles pour les administrateurs en cas de besoin.
 La suppression des alarmes résolues est quant à elle définitive et a lieu après le délai défini.
 
 Par ailleurs, les alarmes `ouvertes` et les alarmes `résolues` ne sont désormais plus stockées dans le même espace pour garantir la performance d'accès aux alarmes en cours.  
-Le paramètre `TimeToKeepResolvedAlarms` permet de définir le délai à partir duquel une alarme résolue passera de la collection `alarmes` à la collection `résolues`
+Le paramètre `TimeToKeepResolvedAlarms` permet de définir le délai à partir duquel une alarme résolue passera de la collection `ouvertes` à la collection `résolues`
 
 Ce paramètre se situe dans le fichier de configuration `canopsis.toml`.
 
@@ -60,7 +60,7 @@ Les entités désactivées peuvent être :
 
 ## Les statistiques liées aux remédiations
 
-Les statistiques d'exécutions des remédiations peuvent être agrégées par semaine après le délai déini. Seul le nombre d'exécutions par semaine sera conservé.  
+Les statistiques d'exécutions des remédiations peuvent être agrégées par semaine après le délai défini. Seul le nombre d'exécutions par semaine sera conservé.  
 
 Ces statistiques sont totalement supprimées avec le délai défini.
 
