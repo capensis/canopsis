@@ -1,11 +1,12 @@
 <template lang="pug">
   div.position-relative
     c-progress-overlay(:pending="pending")
-    kpi-rating-filters(v-model="pagination")
+    kpi-rating-filters(v-model="pagination", :min-date="minDate")
     kpi-rating-chart(
       :metrics="ratingMetrics",
       :metric="pagination.metric",
       :downloading="downloading",
+      :min-date="minDate",
       responsive,
       @export:csv="exportRatingMetricsAsCsv",
       @export:png="exportRatingMetricsAsPng"
@@ -13,7 +14,7 @@
 </template>
 
 <script>
-import { isUndefined, isEqual } from 'lodash';
+import { isUndefined } from 'lodash';
 
 import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
 
@@ -24,8 +25,9 @@ import {
 } from '@/constants';
 
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDateToStartOfDayTimestamp, convertDateToString } from '@/helpers/date/date';
 import { saveFile } from '@/helpers/file/files';
+import { isMetricsQueryChanged } from '@/helpers/metrics';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
@@ -51,21 +53,17 @@ export default {
       ratingMetrics: [],
       pending: false,
       downloading: false,
+      minDate: null,
       query: {
         criteria: undefined,
         filter: undefined,
-        metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
+        metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
         interval: {
           from: QUICK_RANGES.last7Days.start,
           to: QUICK_RANGES.last7Days.stop,
         },
       },
     };
-  },
-  mounted() {
-    if (!isUndefined(this.query.criteria)) {
-      this.fetchList();
-    }
   },
   methods: {
     getFileName() {
@@ -96,7 +94,7 @@ export default {
     },
 
     customQueryCondition(query, oldQuery) {
-      return !isUndefined(query.criteria) && !isEqual(query, oldQuery);
+      return !isUndefined(query.criteria) && isMetricsQueryChanged(query, oldQuery, this.minDate);
     },
 
     getQuery() {
@@ -112,10 +110,19 @@ export default {
 
     async fetchList() {
       this.pending = true;
+      const params = this.getQuery();
 
-      this.ratingMetrics = await this.fetchRatingMetricsWithoutStore({
-        params: this.getQuery(),
-      });
+      const {
+        data: ratingMetrics,
+        meta: { min_date: minDate },
+      } = await this.fetchRatingMetricsWithoutStore({ params });
+
+      this.ratingMetrics = ratingMetrics;
+      this.minDate = convertDateToStartOfDayTimestamp(minDate);
+
+      if (params.from < this.minDate) {
+        this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
+      }
 
       this.pending = false;
     },

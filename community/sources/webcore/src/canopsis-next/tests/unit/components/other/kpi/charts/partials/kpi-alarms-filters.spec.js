@@ -107,7 +107,7 @@ describe('kpi-alarms-filters', () => {
   });
 
   it('Query changed after trigger a parameters field', async () => {
-    const newParameters = [ALARM_METRIC_PARAMETERS.ticketAlarms, ALARM_METRIC_PARAMETERS.ackAlarms];
+    const newParameters = [ALARM_METRIC_PARAMETERS.ticketActiveAlarms, ALARM_METRIC_PARAMETERS.ackAlarms];
     const wrapper = factory({
       propsData: {
         query: initialQuery,
@@ -166,7 +166,7 @@ describe('kpi-alarms-filters', () => {
         query: {
           sampling: SAMPLINGS.day,
           filter: null,
-          parameters: [ALARM_METRIC_PARAMETERS.ticketAlarms, ALARM_METRIC_PARAMETERS.ackAlarms],
+          parameters: [ALARM_METRIC_PARAMETERS.ticketActiveAlarms, ALARM_METRIC_PARAMETERS.ackAlarms],
           interval: {
             from: QUICK_RANGES.last30Days.start,
             to: QUICK_RANGES.last30Days.stop,

@@ -45,6 +45,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    minDate: {
+      type: Number,
+      required: false,
+    },
   },
   computed: {
     maxValueBySampling() {
@@ -126,6 +130,8 @@ export default {
             type: 'time',
             stacked: true,
             ticks: {
+              min: this.minDate * 1000,
+              max: Date.now(),
               source: 'data',
               font: {
                 size: 11,

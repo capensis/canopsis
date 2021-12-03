@@ -38,7 +38,6 @@ describe('kpi-sli', () => {
   stubDateNow(nowTimestamp);
 
   it('Metrics fetched after mount', async () => {
-    const fetchSliMetrics = jest.fn(() => []);
     const expectedDefaultParams = {
       /* now - 7d  */
       from: 1385830800,
@@ -47,6 +46,10 @@ describe('kpi-sli', () => {
       to: nowUnix,
       filter: null,
     };
+    const fetchSliMetrics = jest.fn(() => ({
+      data: [],
+      meta: { min_date: expectedDefaultParams.from },
+    }));
 
     factory({
       store: createMockedStoreModules([{
@@ -75,7 +78,10 @@ describe('kpi-sli', () => {
       to: nowUnix,
       filter: null,
     };
-    const fetchSliMetrics = jest.fn(() => []);
+    const fetchSliMetrics = jest.fn(() => ({
+      data: [],
+      meta: { min_date: expectedParamsAfterUpdate.from },
+    }));
 
     const wrapper = factory({
       store: createMockedStoreModules([{
@@ -108,12 +114,37 @@ describe('kpi-sli', () => {
     );
   });
 
+  it('Metrics doesn\'t refreshed if min date less than from', async () => {
+    const fetchSliMetrics = jest.fn(() => ({
+      data: [],
+      meta: { min_date: 1385930800 },
+    }));
+
+    factory({
+      store: createMockedStoreModules([{
+        name: 'metrics',
+        actions: {
+          fetchSliMetricsWithoutStore: fetchSliMetrics,
+        },
+      }]),
+    });
+
+    fetchSliMetrics.mockReset();
+
+    await flushPromises();
+
+    expect(fetchSliMetrics).not.toHaveBeenCalled();
+  });
+
   it('Renders `kpi-sli` without metrics', async () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([{
         name: 'metrics',
         actions: {
-          fetchSliMetricsWithoutStore: jest.fn(() => []),
+          fetchSliMetricsWithoutStore: jest.fn(() => ({
+            data: [],
+            meta: { min_date: 1385830800 },
+          })),
         },
       }]),
     });
