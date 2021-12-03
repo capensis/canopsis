@@ -49,7 +49,7 @@ func (e *resolveStatExecutor) Exec(
 			return "", err
 		}
 
-		go e.metricsSender.SendResolve(ctx, *alarm, *entity, timestamp.Time)
+		go e.metricsSender.SendResolve(context.Background(), *alarm, *entity, timestamp.Time)
 	}
 
 	return changeType, nil

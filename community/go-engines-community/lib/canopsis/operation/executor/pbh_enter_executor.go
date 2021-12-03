@@ -58,7 +58,7 @@ func (e *pbhEnterExecutor) Exec(
 
 	entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
 
-	go e.metricsSender.SendPbhEnter(ctx, alarm, *entity)
+	go e.metricsSender.SendPbhEnter(context.Background(), alarm, *entity)
 
 	return types.AlarmChangeTypePbhEnter, nil
 }

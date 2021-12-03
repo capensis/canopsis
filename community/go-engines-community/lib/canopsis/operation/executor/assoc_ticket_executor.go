@@ -49,7 +49,13 @@ func (e *assocTicketExecutor) Exec(
 		return "", err
 	}
 
-	go e.metricsSender.SendAssocTicket(ctx, *alarm, params.Author, time.Time)
+	go func() {
+		metricsUserID := ""
+		if initiator == types.InitiatorUser {
+			metricsUserID = userID
+		}
+		e.metricsSender.SendTicket(context.Background(), *alarm, metricsUserID, time.Time)
+	}()
 
 	return types.AlarmChangeTypeAssocTicket, nil
 }

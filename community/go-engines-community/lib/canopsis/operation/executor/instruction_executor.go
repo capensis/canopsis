@@ -61,7 +61,7 @@ func NewInstructionExecutor(metricsSender metrics.Sender) operation.Executor {
 }
 
 func (e *instructionExecutor) Exec(
-	ctx context.Context,
+	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	_ *types.Entity,
@@ -102,8 +102,9 @@ func (e *instructionExecutor) Exec(
 		return "", err
 	}
 
-	if alarmChangeType == types.AlarmStepAutoInstructionStart {
-		go e.metricsSender.SendAutoInstructionStart(ctx, *alarm, time.Time)
+	switch alarmChangeType {
+	case types.AlarmStepAutoInstructionStart, types.AlarmStepAutoInstructionAlreadyRunning:
+		go e.metricsSender.SendAutoInstructionStart(context.Background(), *alarm, time.Time)
 	}
 
 	return alarmChangeType, nil

@@ -487,7 +487,7 @@ Step example:
 	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}}
 */
 func (a *ApiClient) IDoRequest(method, uri string) error {
-	if strings.Contains(uri, "until") {
+	if strings.Contains(uri, "until response") {
 		return fmt.Errorf("step is wrongly matched to IDoRequest")
 	}
 
@@ -527,7 +527,10 @@ Step example:
 	"""
 */
 func (a *ApiClient) IDoRequestWithBody(method, uri string, doc string) error {
-	if strings.Contains(uri, "until") {
+	if doc == "" {
+		return fmt.Errorf("body is empty")
+	}
+	if strings.Contains(uri, "until response") {
 		return fmt.Errorf("step is wrongly matched to IDoRequestWithBody")
 	}
 
@@ -606,6 +609,9 @@ Step example:
     """
 */
 func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc string) error {
+	if doc == "" {
+		return fmt.Errorf("body is empty")
+	}
 	uri, err := a.getRequestURL(uri)
 	if err != nil {
 		return err
@@ -668,6 +674,9 @@ Step example:
     """
 */
 func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int, doc string) error {
+	if doc == "" {
+		return fmt.Errorf("body is empty")
+	}
 	uri, err := a.getRequestURL(uri)
 	if err != nil {
 		return err
