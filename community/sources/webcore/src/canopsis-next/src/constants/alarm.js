@@ -178,16 +178,17 @@ export const ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP = {
 };
 
 export const ALARM_METRIC_PARAMETERS = {
-  totalAlarms: 'total_alarms',
+  activeAlarms: 'active_alarms',
+  createdAlarms: 'created_alarms',
   nonDisplayedAlarms: 'non_displayed_alarms',
   instructionAlarms: 'instruction_alarms',
   pbehaviorAlarms: 'pbehavior_alarms',
   correlationAlarms: 'correlation_alarms',
   ackAlarms: 'ack_alarms',
   cancelAckAlarms: 'cancel_ack_alarms',
-  ackWithoutCancelAlarms: 'ack_without_cancel_alarms',
-  ticketAlarms: 'ticket_alarms',
-  withoutTicketAlarms: 'without_ticket_alarms',
+  ackActiveAlarms: 'ack_active_alarms',
+  ticketActiveAlarms: 'ticket_active_alarms',
+  withoutTicketActiveAlarms: 'without_ticket_active_alarms',
   ratioCorrelation: 'ratio_correlation',
   ratioInstructions: 'ratio_instructions',
   ratioTickets: 'ratio_tickets',

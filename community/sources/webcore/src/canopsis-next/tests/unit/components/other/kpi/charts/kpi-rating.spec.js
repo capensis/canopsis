@@ -56,15 +56,20 @@ describe('kpi-rating', () => {
   });
 
   it('Metrics fetched after after set criteria', async () => {
-    const fetchRatingMetrics = jest.fn(() => []);
     const expectedDefaultParams = {
       /* now - 30d  */
       from: 1383843600,
       criteria: 1,
-      metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
+      metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
       limit: 10,
       to: nowUnix,
     };
+    const fetchRatingMetrics = jest.fn(() => ({
+      data: [],
+      meta: {
+        min_date: expectedDefaultParams.from,
+      },
+    }));
 
     const wrapper = factory({
       store: createMockedStoreModules([{
@@ -99,6 +104,56 @@ describe('kpi-rating', () => {
     );
   });
 
+  it('Metrics doesn\'t refreshed if min date less than from', async () => {
+    const expectedDefaultParams = {
+      /* now - 30d  */
+      from: 1383843600,
+      criteria: 1,
+      metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
+      limit: 10,
+      to: nowUnix,
+    };
+    const fetchRatingMetrics = jest.fn(() => ({
+      data: [],
+      meta: {
+        min_date: 1383943600,
+      },
+    }));
+
+    const wrapper = factory({
+      store: createMockedStoreModules([{
+        name: 'metrics',
+        actions: {
+          fetchRatingMetricsWithoutStore: fetchRatingMetrics,
+        },
+      }]),
+    });
+
+    const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
+
+    kpiRatingFiltersElement.vm.$emit('input', {
+      criteria: {
+        id: expectedDefaultParams.criteria,
+      },
+      metric: expectedDefaultParams.metric,
+      limit: expectedDefaultParams.limit,
+      interval: {
+        from: expectedDefaultParams.from,
+        to: expectedDefaultParams.to,
+      },
+    });
+
+    await flushPromises();
+
+    expect(fetchRatingMetrics).toHaveBeenCalled();
+
+    fetchRatingMetrics.mockReset();
+
+    await flushPromises();
+
+    expect(fetchRatingMetrics).not.toHaveBeenCalled();
+  });
+
   it('Metrics refreshed after change interval', async () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
@@ -106,11 +161,16 @@ describe('kpi-rating', () => {
       from: 1386262800,
       criteria: 1,
       filter: Faker.datatype.string(),
-      metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
+      metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
       limit: 10,
       to: nowUnix,
     };
-    const fetchRatingMetrics = jest.fn(() => []);
+    const fetchRatingMetrics = jest.fn(() => ({
+      data: [],
+      meta: {
+        min_date: expectedParamsAfterUpdate.from,
+      },
+    }));
 
     const wrapper = factory({
       store: createMockedStoreModules([{
@@ -156,7 +216,12 @@ describe('kpi-rating', () => {
       limit: 10,
       to: nowUnix,
     };
-    const fetchRatingMetrics = jest.fn(() => []);
+    const fetchRatingMetrics = jest.fn(() => ({
+      data: [],
+      meta: {
+        min_date: expectedParamsAfterUpdate.from,
+      },
+    }));
 
     const wrapper = factory({
       store: createMockedStoreModules([{
@@ -197,7 +262,10 @@ describe('kpi-rating', () => {
       store: createMockedStoreModules([{
         name: 'metrics',
         actions: {
-          fetchRatingMetricsWithoutStore: jest.fn(() => []),
+          fetchRatingMetricsWithoutStore: jest.fn(() => ({
+            data: [],
+            meta: {},
+          })),
         },
       }]),
     });

@@ -6,9 +6,9 @@ exports[`kpi-alarms-chart Renders \`kpi-alarms-chart\` with all types by month 2
     class=""
   >
     <canvas
-      height="400"
+      height="440"
       id="bar-chart"
-      style="display: block; box-sizing: border-box; user-select: none; webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 400px; width: 600px;"
+      style="display: block; box-sizing: border-box; user-select: none; webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 440px; width: 600px;"
       width="600"
     />
   </div>
@@ -25,9 +25,9 @@ exports[`kpi-alarms-chart Renders \`kpi-alarms-chart\` with downloading true 1`]
     class=""
   >
     <canvas
-      height="400"
+      height="440"
       id="bar-chart"
-      style="display: block; box-sizing: border-box; user-select: none; webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 400px; width: 600px;"
+      style="display: block; box-sizing: border-box; user-select: none; webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 440px; width: 600px;"
       width="600"
     />
   </div>
