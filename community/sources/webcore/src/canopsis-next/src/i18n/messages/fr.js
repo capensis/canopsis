@@ -2404,20 +2404,20 @@ export default {
   storageSetting: {
     alarm: {
       title: 'Stockage des données d\'alarme',
-      titleHelp: 'Une fois allumé, les données d\'alarmes résolues seront archivées et/ou supprimées après la période de temps définie.',
+      titleHelp: 'Lorsque ces options sont activées, les données d\'alarmes résolues sont archivées et/ou supprimées après la période de temps définie.',
       archiveAfter: 'Archiver les données d\'alarmes résolues après',
       deleteAfter: 'Supprimer les données d\'alarmes résolues après',
     },
     junit: {
       title: 'Stockage de données JUnit',
       deleteAfter: 'Supprimer les données des suites de tests après',
-      deleteAfterHelpText: 'Lorsqu\'elles sont activées, les données des suites de tests JUnit (XML, captures d\'écran et vidéos) seront supprimées après la période définie.',
+      deleteAfterHelpText: 'Lorsque cette option est activée, les données des suites de tests JUnit (XML, captures d\'écran et vidéos) sont supprimées après la période définie.',
     },
     remediation: {
       title: 'Instructions de stockage des données',
       accumulateAfter: 'Accumuler les statistiques des instructions après',
       deleteAfter: 'Supprimer les données des instructions après',
-      deleteAfterHelpText: 'Lorsqu\'il est activé, les données statistiques des instructions seront supprimées après la période de temps définie.',
+      deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des instructions sont supprimées après la période de temps définie.',
     },
     entity: {
       title: 'Stockage des données des entités',
@@ -2426,7 +2426,7 @@ export default {
       deleteEntity: 'Supprimer définitivement les entités désactivées de l\'archive',
       archiveDependencies: 'Supprimer également les entités impactantes et dépendantes',
       archiveDependenciesHelp: 'Pour les connecteurs, tous les composants et ressources impactants et dépendants seront archivés ou supprimés pour toujours. Pour les composants, toutes les ressources dépendantes seront également archivées ou supprimées pour toujours.',
-      cleanStorage: 'Rangement propre',
+      cleanStorage: 'Archiver ou Supprimer les entités désactivées',
       confirmation: {
         title: 'Supprimer les entités désactivées ?',
         archive: 'Voulez-vous vraiment archiver toutes les entités désactivées ? Cette action ne peut pas être annulée.',
@@ -2434,9 +2434,9 @@ export default {
       },
     },
     pbehavior: {
-      title: 'Stockage des données de comportement',
-      deleteAfter: 'Supprimer les données PBehavior après',
-      deleteAfterHelpText: 'Lorsqu\'il est activé, les PBehaviors inactifs seront supprimés après la période de temps définie à partir du dernier événement.',
+      title: 'Stockage des données de comportements périodiques',
+      deleteAfter: 'Supprimer les données de comportements périodiques après',
+      deleteAfterHelpText: 'Lorsque cette option est activée, les comportements périodiques inactifs sont supprimés après la période de temps définie à partir du dernier événement.',
     },
     healthCheck: {
       title: 'Stockage des données du bilan de santé',
