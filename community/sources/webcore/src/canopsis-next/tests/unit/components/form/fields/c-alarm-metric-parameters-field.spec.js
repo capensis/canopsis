@@ -44,7 +44,7 @@ describe('c-alarm-metric-parameters-field', () => {
   it('Renders `c-alarm-metric-parameters-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: [ALARM_METRIC_PARAMETERS.totalAlarms],
+        value: [ALARM_METRIC_PARAMETERS.createdAlarms],
       },
     });
 
@@ -57,7 +57,7 @@ describe('c-alarm-metric-parameters-field', () => {
   it('Renders `c-alarm-metric-parameters-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: [ALARM_METRIC_PARAMETERS.totalAlarms, ALARM_METRIC_PARAMETERS.ratioInstructions],
+        value: [ALARM_METRIC_PARAMETERS.createdAlarms, ALARM_METRIC_PARAMETERS.ratioInstructions],
         min: 2,
         name: 'customName',
       },

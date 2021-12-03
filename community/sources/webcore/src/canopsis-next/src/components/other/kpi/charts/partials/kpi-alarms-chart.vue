@@ -55,8 +55,12 @@ export default {
       type: Number,
     },
     height: {
-      default: 400,
+      default: 440,
       type: Number,
+    },
+    minDate: {
+      type: Number,
+      required: false,
     },
   },
   computed: {
@@ -101,6 +105,7 @@ export default {
           x: {
             type: 'time',
             ticks: {
+              min: this.minDate * 1000,
               max: Date.now(),
               source: 'data',
               callback: this.getChartTimeTickLabel,
@@ -171,6 +176,7 @@ export default {
           zoom: {
             limits: {
               x: {
+                min: this.minDate * 1000,
                 max: Date.now(),
               },
             },
