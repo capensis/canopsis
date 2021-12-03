@@ -245,8 +245,70 @@
     ],
     "triggers": ["create"],
     "enabled": true,
-    "priority": 1,
+    "priority": 9,
     "created": 1605263992,
     "updated": 1605263992
+  },
+  {
+    "_id": "test-scenario-metrics-axe-12-1",
+    "name": "test-scenario-metrics-axe-12-1-name",
+    "author": "test-author-metrics-axe-12",
+    "enabled": true,
+    "triggers": [
+      "create"
+    ],
+    "priority": 10,
+    "actions": [
+      {
+        "type": "assocticket",
+        "parameters": {
+          "ticket": "test-scenario-metrics-axe-12-ticket",
+          "output": "test-scenario-metrics-axe-12-output",
+          "author": "test-author-metrics-axe-12"
+        },
+        "entity_patterns": [
+          {
+            "name": "test-resource-metrics-axe-12-2"
+          }
+        ],
+        "drop_scenario_if_not_matched": false,
+        "emit_trigger": false
+      }
+    ],
+    "created": 1638346696,
+    "updated": 1638346696
+  },
+  {
+    "_id": "test-scenario-metrics-axe-12-2",
+    "name": "test-scenario-metrics-axe-12-2-name",
+    "author": "test-author-metrics-axe-12",
+    "enabled": true,
+    "triggers": [
+      "create"
+    ],
+    "priority": 11,
+    "actions": [
+      {
+        "type": "webhook",
+        "parameters": {
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3000/webhook/ticket"
+          },
+          "declare_ticket": {
+            "ticket_id": "ticket_id"
+          }
+        },
+        "entity_patterns": [
+          {
+            "name": "test-resource-metrics-axe-12-3"
+          }
+        ],
+        "drop_scenario_if_not_matched": false,
+        "emit_trigger": false
+      }
+    ],
+    "created": 1638346696,
+    "updated": 1638346696
   }
 ]

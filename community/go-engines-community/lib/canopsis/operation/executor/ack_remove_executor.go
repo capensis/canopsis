@@ -58,7 +58,7 @@ func (e *ackRemoveExecutor) Exec(
 		return "", err
 	}
 
-	go e.metricsSender.SendCancelAck(ctx, *alarm, time.Time)
+	go e.metricsSender.SendCancelAck(context.Background(), *alarm, time.Time)
 
 	return types.AlarmChangeTypeAckremove, nil
 }

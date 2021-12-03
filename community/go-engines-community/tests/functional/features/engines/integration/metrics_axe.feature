@@ -1,7 +1,7 @@
 Feature: Metrics should be added on alarm changes
   I need to be able to see metrics.
 
-  Scenario: given new alarm should add total_alarms metric
+  Scenario: given new alarm should add created_alarms metric
     Given I am admin
     When I do POST /api/v4/cat/filters:
     """json
@@ -29,11 +29,11 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=total_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
     """json
     [
       {
-        "title": "total_alarms",
+        "title": "created_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -52,7 +52,10 @@ Feature: Metrics should be added on alarm changes
       "name": "test-filter-metrics-axe-2-name",
       "entity_patterns": [
         {
-          "name": "test-resource-metrics-axe-2"
+          "name": "test-resource-metrics-axe-2-1"
+        },
+        {
+          "name": "test-resource-metrics-axe-2-2"
         }
       ]
     }
@@ -61,18 +64,50 @@ Feature: Metrics should be added on alarm changes
     When I save response filterID={{ .lastResponse._id }}
     When I send an event:
     """json
+    [
+      {
+        "connector" : "test-connector-metrics-axe-2",
+        "connector_name" : "test-connector-name-metrics-axe-2",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" : "test-component-metrics-axe-2",
+        "resource" : "test-resource-metrics-axe-2-1",
+        "state" : 1
+      },
+      {
+        "connector" : "test-connector-metrics-axe-2",
+        "connector_name" : "test-connector-name-metrics-axe-2",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" : "test-component-metrics-axe-2",
+        "resource" : "test-resource-metrics-axe-2-2",
+        "state" : 1
+      }
+    ]
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-metrics-axe-2-1"}]}&with_steps=true until response code is 200 and body contains:
+    """json
     {
-      "connector" : "test-connector-metrics-axe-2",
-      "connector_name" : "test-connector-name-metrics-axe-2",
-      "source_type" : "resource",
-      "event_type" : "check",
-      "component" : "test-component-metrics-axe-2",
-      "resource" : "test-resource-metrics-axe-2",
-      "state" : 1
+      "data": [
+        {
+          "v": {
+            "steps": [
+              {},
+              {},
+              {"_t": "autoinstructionstart"},
+              {"_t": "instructionjobstart"},
+              {"_t": "instructionjobcomplete"},
+              {"_t": "autoinstructioncomplete"}
+            ]
+          }
+        }
+      ]
     }
     """
-    When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
+    Then the response code should be 200
+    Then the response body should be:
     """json
     [
       {
@@ -80,7 +115,7 @@ Feature: Metrics should be added on alarm changes
         "data": [
           {
             "timestamp": {{ nowDate }},
-            "value": 1
+            "value": 2
           }
         ]
       },
@@ -89,7 +124,7 @@ Feature: Metrics should be added on alarm changes
         "data": [
           {
             "timestamp": {{ nowDate }},
-            "value": 1
+            "value": 2
           }
         ]
       }
@@ -208,8 +243,11 @@ Feature: Metrics should be added on alarm changes
       "state" : 1
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I wait the end of 3 events processing
+    When I wait 1s
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
+    Then the response code should be 200
+    Then the response body should be:
     """json
     [
       {
@@ -414,7 +452,7 @@ Feature: Metrics should be added on alarm changes
     ]
     """
 
-  Scenario: given unacked alarm should add cancel_ack_alarms and ack_without_cancel_alarms metrics
+  Scenario: given unacked alarm should add cancel_ack_alarms and ack_active_alarms metrics
     Given I am admin
     When I do POST /api/v4/cat/filters:
     """json
@@ -466,7 +504,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_without_cancel_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
     """json
     [
       {
@@ -479,7 +517,7 @@ Feature: Metrics should be added on alarm changes
         ]
       },
       {
-        "title": "ack_without_cancel_alarms",
+        "title": "ack_active_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -501,7 +539,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_without_cancel_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
     """json
     [
       {
@@ -514,7 +552,7 @@ Feature: Metrics should be added on alarm changes
         ]
       },
       {
-        "title": "ack_without_cancel_alarms",
+        "title": "ack_active_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -525,7 +563,7 @@ Feature: Metrics should be added on alarm changes
     ]
     """
 
-  Scenario: given alarm with ticket should add ticket_alarms and without_ticket_alarms metrics
+  Scenario: given alarm with ticket should add ticket_active_alarms and without_ticket_active_alarms metrics
     Given I am admin
     When I do POST /api/v4/cat/filters:
     """json
@@ -580,11 +618,27 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_alarms&parameters[]=without_ticket_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-8",
+      "connector_name" : "test-connector-name-metrics-axe-8",
+      "source_type" : "resource",
+      "event_type" : "assocticket2",
+      "component" : "test-component-metrics-axe-8",
+      "resource" : "test-resource-metrics-axe-8-1",
+      "ticket": "testticket"
+    }
+    """
+    When I wait the end of event processing
+    When I wait 1s
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_active_alarms&parameters[]=without_ticket_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
+    Then the response code should be 200
+    Then the response body should be:
     """json
     [
       {
-        "title": "ticket_alarms",
+        "title": "ticket_active_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -593,7 +647,7 @@ Feature: Metrics should be added on alarm changes
         ]
       },
       {
-        "title": "without_ticket_alarms",
+        "title": "without_ticket_active_alarms",
         "data": [
           {
             "timestamp": {{ nowDate }},
@@ -604,7 +658,7 @@ Feature: Metrics should be added on alarm changes
     ]
     """
 
-  Scenario: given resolved alarm with ticket should add average_resolve metrics
+  Scenario: given resolved alarm should add average_resolve metrics
     Given I am admin
     When I do POST /api/v4/cat/filters:
     """json
@@ -771,6 +825,447 @@ Feature: Metrics should be added on alarm changes
             "value": 1
           }
         ]
+      }
+    ]
+    """
+
+  Scenario: given resolved alarm should decrease active_alarms, ratio_correlation, ratio_instructions, ratio_tickets, ratio_non_displayed, ack_active_alarms metrics
+    Given I am admin
+    When I do POST /api/v4/cat/filters:
+    """json
+    {
+      "name": "test-filter-metrics-axe-11-name",
+      "entity_patterns": [
+        {
+          "name": "test-resource-metrics-axe-11-1"
+        },
+        {
+          "name": "test-resource-metrics-axe-11-2"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I send an event:
+    """json
+    [
+      {
+        "connector" : "test-connector-metrics-axe-11",
+        "connector_name" : "test-connector-name-metrics-axe-11",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" : "test-component-metrics-axe-11",
+        "resource" : "test-resource-metrics-axe-11-1",
+        "state" : 1
+      },
+      {
+        "connector" : "test-connector-metrics-axe-11",
+        "connector_name" : "test-connector-name-metrics-axe-11",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" : "test-component-metrics-axe-11",
+        "resource" : "test-resource-metrics-axe-11-2",
+        "state" : 1
+      }
+    ]
+    """
+    When I wait the end of 4 events processing
+    When I send an event:
+    """json
+    [
+      {
+        "connector" : "test-connector-metrics-axe-11",
+        "connector_name" : "test-connector-name-metrics-axe-11",
+        "source_type" : "resource",
+        "event_type" : "assocticket",
+        "component" : "test-component-metrics-axe-11",
+        "resource" : "test-resource-metrics-axe-11-1",
+        "ticket": "testticket"
+      },
+      {
+        "connector" : "test-connector-metrics-axe-11",
+        "connector_name" : "test-connector-name-metrics-axe-11",
+        "source_type" : "resource",
+        "event_type" : "assocticket",
+        "component" : "test-component-metrics-axe-11",
+        "resource" : "test-resource-metrics-axe-11-2",
+        "ticket": "testticket"
+      },
+      {
+        "connector" : "test-connector-metrics-axe-11",
+        "connector_name" : "test-connector-name-metrics-axe-11",
+        "source_type" : "resource",
+        "event_type" : "ack",
+        "component" : "test-component-metrics-axe-11",
+        "resource" : "test-resource-metrics-axe-11-1"
+      },
+      {
+        "connector" : "test-connector-metrics-axe-11",
+        "connector_name" : "test-connector-name-metrics-axe-11",
+        "source_type" : "resource",
+        "event_type" : "ack",
+        "component" : "test-component-metrics-axe-11",
+        "resource" : "test-resource-metrics-axe-11-2"
+      }
+    ]
+    """
+    When I wait the end of 4 events processing
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=instruction_alarms&parameters[]=ratio_instructions&parameters[]=correlation_alarms&parameters[]=ratio_correlation&parameters[]=non_displayed_alarms&parameters[]=ratio_non_displayed&parameters[]=ticket_active_alarms&parameters[]=ratio_tickets&parameters[]=ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    """json
+    [
+      {
+        "title": "created_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 2
+          }
+        ]
+      },
+      {
+        "title": "active_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 2
+          }
+        ]
+      },
+      {
+        "title": "instruction_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 1
+          }
+        ]
+      },
+      {
+        "title": "ratio_instructions",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 50
+          }
+        ]
+      },
+      {
+        "title": "correlation_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 2
+          }
+        ]
+      },
+      {
+        "title": "ratio_correlation",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 100
+          }
+        ]
+      },
+      {
+        "title": "non_displayed_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 2
+          }
+        ]
+      },
+      {
+        "title": "ratio_non_displayed",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 100
+          }
+        ]
+      },
+      {
+        "title": "ticket_active_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 2
+          }
+        ]
+      },
+      {
+        "title": "ratio_tickets",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 100
+          }
+        ]
+      },
+      {
+        "title": "ack_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 2
+          }
+        ]
+      },
+      {
+        "title": "ack_active_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 2
+          }
+        ]
+      }
+    ]
+    """
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-11",
+      "connector_name" : "test-connector-name-metrics-axe-11",
+      "source_type" : "resource",
+      "event_type" : "cancel",
+      "component" : "test-component-metrics-axe-11",
+      "resource" : "test-resource-metrics-axe-11-1"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-11",
+      "connector_name" : "test-connector-name-metrics-axe-11",
+      "source_type" : "resource",
+      "event_type" : "resolve_cancel",
+      "component" : "test-component-metrics-axe-11",
+      "resource" : "test-resource-metrics-axe-11-1"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=instruction_alarms&parameters[]=ratio_instructions&parameters[]=correlation_alarms&parameters[]=ratio_correlation&parameters[]=non_displayed_alarms&parameters[]=ratio_non_displayed&parameters[]=ticket_active_alarms&parameters[]=ratio_tickets&parameters[]=ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    """json
+    [
+      {
+        "title": "created_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 2
+          }
+        ]
+      },
+      {
+        "title": "active_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 1
+          }
+        ]
+      },
+      {
+        "title": "instruction_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 1
+          }
+        ]
+      },
+      {
+        "title": "ratio_instructions",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 0
+          }
+        ]
+      },
+      {
+        "title": "correlation_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 2
+          }
+        ]
+      },
+      {
+        "title": "ratio_correlation",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 100
+          }
+        ]
+      },
+      {
+        "title": "non_displayed_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 2
+          }
+        ]
+      },
+      {
+        "title": "ratio_non_displayed",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 100
+          }
+        ]
+      },
+      {
+        "title": "ticket_active_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 1
+          }
+        ]
+      },
+      {
+        "title": "ratio_tickets",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 100
+          }
+        ]
+      },
+      {
+        "title": "ack_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 2
+          }
+        ]
+      },
+      {
+        "title": "ack_active_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 1
+          }
+        ]
+      }
+    ]
+    """
+
+  Scenario: given alarm with ticket should add ticket_active_alarms and without_ticket_active_alarms metrics for user
+    Given I am admin
+    When I do POST /api/v4/cat/filters:
+    """json
+    {
+      "name": "test-filter-metrics-axe-12-name",
+      "entity_patterns": [
+        {
+          "name": "test-resource-metrics-axe-12-1"
+        },
+        {
+          "name": "test-resource-metrics-axe-12-2"
+        },
+        {
+          "name": "test-resource-metrics-axe-12-3"
+        },
+        {
+          "name": "test-resource-metrics-axe-12-4"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I send an event:
+    """json
+    [
+      {
+        "connector" : "test-connector-metrics-axe-12",
+        "connector_name" : "test-connector-name-metrics-axe-12",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" : "test-component-metrics-axe-12",
+        "resource" : "test-resource-metrics-axe-12-1",
+        "state" : 1
+      },
+      {
+        "connector" : "test-connector-metrics-axe-12",
+        "connector_name" : "test-connector-name-metrics-axe-12",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" : "test-component-metrics-axe-12",
+        "resource" : "test-resource-metrics-axe-12-2",
+        "state" : 1
+      },
+      {
+        "connector" : "test-connector-metrics-axe-12",
+        "connector_name" : "test-connector-name-metrics-axe-12",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" : "test-component-metrics-axe-12",
+        "resource" : "test-resource-metrics-axe-12-3",
+        "state" : 1
+      },
+      {
+        "connector" : "test-connector-metrics-axe-12",
+        "connector_name" : "test-connector-name-metrics-axe-12",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" : "test-component-metrics-axe-12",
+        "resource" : "test-resource-metrics-axe-12-4",
+        "state" : 1
+      }
+    ]
+    """
+    When I wait the end of 5 events processing
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-12",
+      "connector_name" : "test-connector-name-metrics-axe-12",
+      "source_type" : "resource",
+      "event_type" : "assocticket",
+      "component" : "test-component-metrics-axe-12",
+      "resource" : "test-resource-metrics-axe-12-1",
+      "ticket": "testticket",
+      "user_id": "test-user-metrics-axe-12",
+      "author": "test-user-metrics-axe-12",
+      "initiator": "user"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    """json
+    [
+      {
+        "title": "ticket_active_alarms",
+        "data": [
+          {
+            "timestamp": {{ nowDate }},
+            "value": 4
+          }
+        ]
+      }
+    ]
+    """
+    When I do GET /api/v4/cat/metrics/rating?filter={{ .filterID }}&metric=ticket_active_alarms&criteria=3&from={{ nowDate }}&to={{ nowDate }}
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    [
+      {
+        "label": "test-user-metrics-axe-12",
+        "value": 1
       }
     ]
     """

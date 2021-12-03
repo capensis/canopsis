@@ -47,18 +47,6 @@ func (mr *MockSenderMockRecorder) SendAck(arg0, arg1, arg2, arg3 interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAck", reflect.TypeOf((*MockSender)(nil).SendAck), arg0, arg1, arg2, arg3)
 }
 
-// SendAssocTicket mocks base method
-func (m *MockSender) SendAssocTicket(arg0 context.Context, arg1 types.Alarm, arg2 string, arg3 time.Time) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendAssocTicket", arg0, arg1, arg2, arg3)
-}
-
-// SendAssocTicket indicates an expected call of SendAssocTicket
-func (mr *MockSenderMockRecorder) SendAssocTicket(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAssocTicket", reflect.TypeOf((*MockSender)(nil).SendAssocTicket), arg0, arg1, arg2, arg3)
-}
-
 // SendAutoInstructionStart mocks base method
 func (m *MockSender) SendAutoInstructionStart(arg0 context.Context, arg1 types.Alarm, arg2 time.Time) {
 	m.ctrl.T.Helper()
@@ -165,6 +153,18 @@ func (m *MockSender) SendResolve(arg0 context.Context, arg1 types.Alarm, arg2 ty
 func (mr *MockSenderMockRecorder) SendResolve(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendResolve", reflect.TypeOf((*MockSender)(nil).SendResolve), arg0, arg1, arg2, arg3)
+}
+
+// SendTicket mocks base method
+func (m *MockSender) SendTicket(arg0 context.Context, arg1 types.Alarm, arg2 string, arg3 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendTicket", arg0, arg1, arg2, arg3)
+}
+
+// SendTicket indicates an expected call of SendTicket
+func (mr *MockSenderMockRecorder) SendTicket(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendTicket", reflect.TypeOf((*MockSender)(nil).SendTicket), arg0, arg1, arg2, arg3)
 }
 
 // SendUpdateState mocks base method
