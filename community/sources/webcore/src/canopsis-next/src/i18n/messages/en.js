@@ -303,6 +303,9 @@ export default {
       common: 'Add a new entity',
       addService: 'Add a new service entity',
     },
+    popups: {
+      massDeleteWarning: 'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
+    },
   },
   search: {
     alarmAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
@@ -1951,6 +1954,12 @@ export default {
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
     },
+    api: {
+      general: 'General',
+      rules: 'Rules',
+      remediation: 'Remediation',
+      pbehavior: 'PBehavior',
+    },
   },
 
   pbehavior: {
@@ -2013,6 +2022,10 @@ export default {
     systemStatusChipError: 'The system is not operational',
     systemStatusServerError: 'System configuration is invalid, please contact the administrator',
     systemsOperational: 'All systems are operational',
+    validation: {
+      max_value: 'The field must be equal or less than the optimal instance count',
+      min_value: 'The field must be equal or more than the minimal instance count',
+    },
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
