@@ -29,19 +29,21 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "created_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given new alarm with auto instruction should add instruction_alarms and non_displayed_alarms metrics
@@ -107,28 +109,30 @@ Feature: Metrics should be added on alarm changes
     """
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    [
-      {
-        "title": "instruction_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "non_displayed_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "instruction_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "non_displayed_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given new alarm under pbehavior should add pbehavior_alarms and non_displayed_alarms metrics
@@ -192,28 +196,30 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "pbehavior_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "non_displayed_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "pbehavior_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "non_displayed_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given new alarm and new meta alarm should add correlation_alarms and non_displayed_alarms metrics
@@ -247,28 +253,30 @@ Feature: Metrics should be added on alarm changes
     When I wait 1s
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    [
-      {
-        "title": "correlation_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "non_displayed_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "correlation_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "non_displayed_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given new alarm and existed meta alarm should add correlation_alarms and non_displayed_alarms metrics
@@ -315,28 +323,30 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "correlation_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "non_displayed_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "correlation_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "non_displayed_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given acked alarm should add ack_alarms and average_ack metrics
@@ -380,28 +390,30 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "ack_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "average_ack",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "ack_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "average_ack",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
     When I send an event:
     """json
@@ -428,28 +440,30 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "ack_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "average_ack",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "ack_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "average_ack",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given unacked alarm should add cancel_ack_alarms and ack_active_alarms metrics
@@ -504,28 +518,30 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "cancel_ack_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "ack_active_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 0
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "cancel_ack_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "ack_active_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        }
+      ]
+    }
     """
     When I send an event:
     """json
@@ -539,28 +555,30 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "cancel_ack_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "ack_active_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "cancel_ack_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "ack_active_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given alarm with ticket should add ticket_active_alarms and without_ticket_active_alarms metrics
@@ -634,28 +652,30 @@ Feature: Metrics should be added on alarm changes
     When I wait 1s
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_active_alarms&parameters[]=without_ticket_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    [
-      {
-        "title": "ticket_active_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "without_ticket_active_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "ticket_active_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "without_ticket_active_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given resolved alarm should add average_resolve metrics
@@ -711,19 +731,21 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=average_resolve&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=average_resolve&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "average_resolve",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "average_resolve",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given new alarm with auto instruction, meta alarm and pbehavior should add non_displayed_alarms metrics only once
@@ -787,46 +809,48 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=correlation_alarms&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=correlation_alarms&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "instruction_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "correlation_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "pbehavior_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "non_displayed_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "instruction_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "correlation_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "pbehavior_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "non_displayed_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given resolved alarm should decrease active_alarms, ratio_correlation, ratio_instructions, ratio_tickets, ratio_non_displayed, ack_active_alarms metrics
@@ -911,118 +935,120 @@ Feature: Metrics should be added on alarm changes
     ]
     """
     When I wait the end of 4 events processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=instruction_alarms&parameters[]=ratio_instructions&parameters[]=correlation_alarms&parameters[]=ratio_correlation&parameters[]=non_displayed_alarms&parameters[]=ratio_non_displayed&parameters[]=ticket_active_alarms&parameters[]=ratio_tickets&parameters[]=ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=instruction_alarms&parameters[]=ratio_instructions&parameters[]=correlation_alarms&parameters[]=ratio_correlation&parameters[]=non_displayed_alarms&parameters[]=ratio_non_displayed&parameters[]=ticket_active_alarms&parameters[]=ratio_tickets&parameters[]=ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "created_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "active_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "instruction_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "ratio_instructions",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 50
-          }
-        ]
-      },
-      {
-        "title": "correlation_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "ratio_correlation",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 100
-          }
-        ]
-      },
-      {
-        "title": "non_displayed_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "ratio_non_displayed",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 100
-          }
-        ]
-      },
-      {
-        "title": "ticket_active_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "ratio_tickets",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 100
-          }
-        ]
-      },
-      {
-        "title": "ack_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "ack_active_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "active_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "instruction_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "ratio_instructions",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 50
+            }
+          ]
+        },
+        {
+          "title": "correlation_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "ratio_correlation",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 100
+            }
+          ]
+        },
+        {
+          "title": "non_displayed_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "ratio_non_displayed",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 100
+            }
+          ]
+        },
+        {
+          "title": "ticket_active_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "ratio_tickets",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 100
+            }
+          ]
+        },
+        {
+          "title": "ack_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "ack_active_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        }
+      ]
+    }
     """
     When I send an event:
     """json
@@ -1048,118 +1074,120 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=instruction_alarms&parameters[]=ratio_instructions&parameters[]=correlation_alarms&parameters[]=ratio_correlation&parameters[]=non_displayed_alarms&parameters[]=ratio_non_displayed&parameters[]=ticket_active_alarms&parameters[]=ratio_tickets&parameters[]=ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=instruction_alarms&parameters[]=ratio_instructions&parameters[]=correlation_alarms&parameters[]=ratio_correlation&parameters[]=non_displayed_alarms&parameters[]=ratio_non_displayed&parameters[]=ticket_active_alarms&parameters[]=ratio_tickets&parameters[]=ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "created_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "active_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "instruction_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "ratio_instructions",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 0
-          }
-        ]
-      },
-      {
-        "title": "correlation_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "ratio_correlation",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 100
-          }
-        ]
-      },
-      {
-        "title": "non_displayed_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "ratio_non_displayed",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 100
-          }
-        ]
-      },
-      {
-        "title": "ticket_active_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      },
-      {
-        "title": "ratio_tickets",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 100
-          }
-        ]
-      },
-      {
-        "title": "ack_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 2
-          }
-        ]
-      },
-      {
-        "title": "ack_active_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 1
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "active_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "instruction_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "ratio_instructions",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        },
+        {
+          "title": "correlation_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "ratio_correlation",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 100
+            }
+          ]
+        },
+        {
+          "title": "non_displayed_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "ratio_non_displayed",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 100
+            }
+          ]
+        },
+        {
+          "title": "ticket_active_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "ratio_tickets",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 100
+            }
+          ]
+        },
+        {
+          "title": "ack_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        },
+        {
+          "title": "ack_active_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
     """
 
   Scenario: given alarm with ticket should add ticket_active_alarms and without_ticket_active_alarms metrics for user
@@ -1244,28 +1272,32 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body is:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
-    [
-      {
-        "title": "ticket_active_alarms",
-        "data": [
-          {
-            "timestamp": {{ nowDate }},
-            "value": 4
-          }
-        ]
-      }
-    ]
+    {
+      "data": [
+        {
+          "title": "ticket_active_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 4
+            }
+          ]
+        }
+      ]
+    }
     """
     When I do GET /api/v4/cat/metrics/rating?filter={{ .filterID }}&metric=ticket_active_alarms&criteria=3&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
-    [
-      {
-        "label": "test-user-metrics-axe-12",
-        "value": 1
-      }
-    ]
+    {
+      "data": [
+        {
+          "label": "test-user-metrics-axe-12",
+          "value": 1
+        }
+      ]
+    }
     """
