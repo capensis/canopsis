@@ -2068,6 +2068,87 @@
     "created": 1596712203
   },
   {
+    "_id": "test-instruction-to-run-auto-instruction-6-1",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-6-1-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-6-1"
+      },
+      {
+        "name": "test-resource-to-run-auto-instruction-6-2"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-6-1-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-6",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 8,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-6-2",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-6-2-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-6-1"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-6-2-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-2",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 9,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-6-3",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-6-3-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-6-2"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-6-3-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-2",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 10,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
     "_id": "test-instruction-to-run-auto-instruction-to-approve-update",
     "type": 1,
     "name": "est-instruction-to-run-auto-instruction-to-approve-update-name",
