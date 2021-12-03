@@ -13,7 +13,7 @@
         v-list
           v-list-tile
             v-list-tile-title.white--text {{ title }}
-        v-btn(@click.stop="closeHandler", icon)
+        v-btn(icon, @click.stop="closeHandler")
           v-icon(color="white") close
       v-divider
       // @slot use this slot default
