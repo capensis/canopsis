@@ -84,7 +84,7 @@ exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without pro
             <div
               class="v-list__tile__title"
             >
-              users.metrics.ticket_alarms
+              users.metrics.ticket_active_alarms
             </div>
           </div>
         </a>
@@ -136,7 +136,7 @@ exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without pro
             <div
               class="v-list__tile__title"
             >
-              users.metrics.ack_without_cancel_alarms
+              users.metrics.without_ticket_active_alarms
             </div>
           </div>
         </a>

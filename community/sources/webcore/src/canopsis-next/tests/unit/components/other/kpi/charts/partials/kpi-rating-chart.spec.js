@@ -155,7 +155,7 @@ describe('kpi-rating-chart', () => {
     const wrapper = snapshotFactory({
       propsData: {
         metrics: metricsInCount,
-        metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
+        metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
       },
     });
 
@@ -171,7 +171,7 @@ describe('kpi-rating-chart', () => {
     const wrapper = snapshotFactory({
       propsData: {
         metrics: metricsInCount,
-        metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
+        metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
         downloading: true,
       },
     });

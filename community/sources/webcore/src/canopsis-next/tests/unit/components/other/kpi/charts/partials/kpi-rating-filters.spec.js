@@ -162,7 +162,7 @@ describe('kpi-rating-filters', () => {
     expect(eventData.criteria).toEqual(KPI_RATING_CRITERIA.impactLevel);
     expect(eventData).toEqual({
       ...initialQuery,
-      metric: ALARM_METRIC_PARAMETERS.totalAlarms,
+      metric: ALARM_METRIC_PARAMETERS.createdAlarms,
       criteria: KPI_RATING_CRITERIA.impactLevel,
     });
   });
@@ -199,7 +199,7 @@ describe('kpi-rating-filters', () => {
         query: {
           filter: null,
           criteria: undefined,
-          metric: ALARM_METRIC_PARAMETERS.ticketAlarms,
+          metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
           rowsPerPage: 5,
           interval: {
             from: QUICK_RANGES.last30Days.start,
