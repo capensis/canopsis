@@ -1,9 +1,9 @@
-- time: RAW=CURRENT_DATE
+- time: '2021-11-23'
   entity_id: 3
   value: 1000
-- time: RAW=CURRENT_DATE + INTERVAL '2 hour'
+- time: '2021-11-23 02:00:00'
   entity_id: 4
   value: 200
-- time: RAW=CURRENT_DATE
+- time: '2021-11-23'
   entity_id: 5
   value: 300

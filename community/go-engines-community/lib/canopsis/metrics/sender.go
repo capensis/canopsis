@@ -9,9 +9,9 @@ import (
 )
 
 type Sender interface {
-	SendAck(ctx context.Context, alarm types.Alarm, author string, timestamp time.Time)
+	SendAck(ctx context.Context, alarm types.Alarm, userID string, timestamp time.Time)
 	SendCancelAck(ctx context.Context, alarm types.Alarm, timestamp time.Time)
-	SendAssocTicket(ctx context.Context, alarm types.Alarm, author string, timestamp time.Time)
+	SendTicket(ctx context.Context, alarm types.Alarm, userID string, timestamp time.Time)
 	SendResolve(ctx context.Context, alarm types.Alarm, entity types.Entity, timestamp time.Time)
 	SendAutoInstructionStart(ctx context.Context, alarm types.Alarm, timestamp time.Time)
 	SendCreate(ctx context.Context, alarm types.Alarm, timestamp time.Time)
@@ -36,7 +36,7 @@ func (s *nullSender) SendAck(_ context.Context, _ types.Alarm, _ string, _ time.
 func (s *nullSender) SendCancelAck(_ context.Context, _ types.Alarm, _ time.Time) {
 }
 
-func (s *nullSender) SendAssocTicket(_ context.Context, _ types.Alarm, _ string, _ time.Time) {
+func (s *nullSender) SendTicket(_ context.Context, _ types.Alarm, _ string, _ time.Time) {
 }
 
 func (s *nullSender) SendResolve(_ context.Context, _ types.Alarm, _ types.Entity, _ time.Time) {
