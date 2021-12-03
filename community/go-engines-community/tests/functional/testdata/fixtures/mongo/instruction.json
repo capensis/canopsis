@@ -2068,6 +2068,87 @@
     "created": 1596712203
   },
   {
+    "_id": "test-instruction-to-run-auto-instruction-6-1",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-6-1-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-6-1"
+      },
+      {
+        "name": "test-resource-to-run-auto-instruction-6-2"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-6-1-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-6",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 8,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-6-2",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-6-2-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-6-1"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-6-2-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-2",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 9,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-6-3",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-6-3-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-6-2"
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-6-3-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-2",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "seconds": 2,
+      "unit": "s"
+    },
+    "priority": 10,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
     "_id": "test-instruction-to-run-auto-instruction-to-approve-update",
     "type": 1,
     "name": "est-instruction-to-run-auto-instruction-to-approve-update-name",
@@ -3517,16 +3598,49 @@
     "users": ["test-user-to-stats-instruction-get"]
   },
   {
-    "_id": "test-instruction-metrics-axe-2",
-    "name": "test-instruction-metrics-axe-2-name",
-    "description": "test-instruction-metrics-axe-2-description",
+    "_id": "test-instruction-metrics-axe-2-1",
+    "name": "test-instruction-metrics-axe-2-1-name",
+    "description": "test-instruction-metrics-axe-2-1-description",
     "priority": 20,
     "status": 0,
     "type": 1,
     "enabled": true,
     "entity_patterns": [
       {
-        "name": "test-resource-metrics-axe-2"
+        "name": "test-resource-metrics-axe-2-1"
+      },
+      {
+        "name": "test-resource-metrics-axe-2-2"
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 1,
+      "unit": "s"
+    },
+    "jobs": [
+      {
+        "job": "test-job-metrics-axe",
+        "stop_on_fail": false
+      }
+    ],
+    "author": "test-author-metrics-axe-2",
+    "created": 1637904803,
+    "last_modified": 1637904803
+  },
+  {
+    "_id": "test-instruction-metrics-axe-2-2",
+    "name": "test-instruction-metrics-axe-2-2-name",
+    "description": "test-instruction-metrics-axe-2-2-description",
+    "priority": 21,
+    "status": 0,
+    "type": 1,
+    "enabled": true,
+    "entity_patterns": [
+      {
+        "name": "test-resource-metrics-axe-2-1"
+      },
+      {
+        "name": "test-resource-metrics-axe-2-2"
       }
     ],
     "timeout_after_execution": {
@@ -3547,7 +3661,7 @@
     "_id": "test-instruction-metrics-axe-10",
     "name": "test-instruction-metrics-axe-10-name",
     "description": "test-instruction-metrics-axe-10-description",
-    "priority": 21,
+    "priority": 22,
     "status": 0,
     "type": 1,
     "enabled": true,
@@ -3567,6 +3681,33 @@
       }
     ],
     "author": "test-author-metrics-axe-10",
+    "created": 1637904803,
+    "last_modified": 1637904803
+  },
+  {
+    "_id": "test-instruction-metrics-axe-11",
+    "name": "test-instruction-metrics-axe-11-name",
+    "description": "test-instruction-metrics-axe-11-description",
+    "priority": 23,
+    "status": 0,
+    "type": 1,
+    "enabled": true,
+    "entity_patterns": [
+      {
+        "name": "test-resource-metrics-axe-11-1"
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 1,
+      "unit": "s"
+    },
+    "jobs": [
+      {
+        "job": "test-job-metrics-axe",
+        "stop_on_fail": false
+      }
+    ],
+    "author": "test-author-metrics-axe-11",
     "created": 1637904803,
     "last_modified": 1637904803
   }

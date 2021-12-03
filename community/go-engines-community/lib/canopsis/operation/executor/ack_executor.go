@@ -62,7 +62,13 @@ func (e *ackExecutor) Exec(
 		return "", err
 	}
 
-	go e.metricsSender.SendAck(ctx, *alarm, params.Author, time.Time)
+	go func() {
+		metricsUserID := ""
+		if initiator == types.InitiatorUser {
+			metricsUserID = userID
+		}
+		e.metricsSender.SendAck(context.Background(), *alarm, metricsUserID, time.Time)
+	}()
 
 	return types.AlarmChangeTypeAck, nil
 }

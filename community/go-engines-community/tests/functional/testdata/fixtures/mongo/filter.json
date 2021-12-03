@@ -60,29 +60,29 @@
     "updated": 1619083733
   },
   {
-    "_id": "test-filter-to-total-alarm-metrics-get",
+    "_id": "test-filter-to-alarm-metrics-get",
     "author": "root",
-    "name": "test-filter-to-total-alarm-metrics-get-name",
+    "name": "test-filter-to-alarm-metrics-get-name",
     "entity_patterns": [
       {
-        "_id": "test-entity-to-total-alarm-metrics-get-1"
+        "_id": "test-entity-to-alarm-metrics-get-1"
       },
       {
-        "_id": "test-entity-to-total-alarm-metrics-get-2"
+        "_id": "test-entity-to-alarm-metrics-get-2"
       }
     ],
     "created": 1619083733,
     "updated": 1619083733
   },
   {
-    "_id": "test-filter-to-total-alarm-metrics-get-by-entity-infos",
+    "_id": "test-filter-to-alarm-metrics-get-by-entity-infos",
     "author": "root",
-    "name": "test-filter-to-total-alarm-metrics-get-by-entity-infos-name",
+    "name": "test-filter-to-alarm-metrics-get-by-entity-infos-name",
     "entity_patterns": [
       {
         "infos": {
-          "test-entity-to-total-alarm-metrics-get-2-infos-name": {
-            "value": "test-entity-to-total-alarm-metrics-get-2-infos-val"
+          "test-entity-to-alarm-metrics-get-2-infos-name": {
+            "value": "test-entity-to-alarm-metrics-get-2-infos-val"
           }
         }
       }

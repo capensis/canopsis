@@ -168,5 +168,42 @@
     "type": "alarm",
     "alarm_condition": "last_event",
     "updated": 1616567033
+  },
+  {
+    "_id": "test-idle-rule-axe-12",
+    "name": "test-idle-rule-axe-12-name",
+    "description": "test-idle-rule-axe-12-description",
+    "enabled": true,
+    "entity_patterns": [
+      {
+        "name": "test-resource-metrics-axe-12-4"
+      }
+    ],
+    "alarm_patterns": [
+      {
+        "v": {
+          "ticket": null
+        }
+      }
+    ],
+    "author": "test-author-metrics-axe-12",
+    "duration": {
+      "value": 1,
+      "unit": "s"
+    },
+    "priority": 5,
+    "type": "alarm",
+    "alarm_condition": "last_event",
+    "operation": {
+      "type": "assocticket",
+      "parameters": {
+        "ticket": "test-scenario-metrics-axe-12-ticket",
+        "output": "test-scenario-metrics-axe-12-output",
+        "author": "test-author-metrics-axe-12",
+        "user": "test-user-metrics-axe-12"
+      }
+    },
+    "created": 1638346696,
+    "updated": 1638346696
   }
 ]

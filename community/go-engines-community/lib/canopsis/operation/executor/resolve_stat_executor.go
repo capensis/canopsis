@@ -40,7 +40,7 @@ func (e *resolveStatExecutor) Exec(
 	}
 
 	if changeType != "" {
-		go e.metricsSender.SendResolve(ctx, *alarm, *entity, timestamp.Time)
+		go e.metricsSender.SendResolve(context.Background(), *alarm, *entity, timestamp.Time)
 	}
 
 	return changeType, nil

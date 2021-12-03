@@ -78,8 +78,27 @@
     "type": "complex"
   },
   {
-    "_id": "test-metaalarm-metrics-axe-4",
-    "name": "test-metaalarm-metrics-axe-4-name",
+    "_id": "test-metaalarm-metrics-axe-4-1",
+    "name": "test-metaalarm-metrics-axe-4-1-name",
+    "type": "attribute",
+    "author": "test-author-metrics-axe-4-name",
+    "auto_resolve": false,
+    "config": {
+      "alarm_patterns": [
+        {
+          "v": {
+            "component": "test-component-metrics-axe-4"
+          }
+        }
+      ]
+    },
+    "output_template": "",
+    "created": 1637907655,
+    "updated": 1637907655
+  },
+  {
+    "_id": "test-metaalarm-metrics-axe-4-2",
+    "name": "test-metaalarm-metrics-axe-4-2-name",
     "type": "attribute",
     "author": "test-author-metrics-axe-4-name",
     "auto_resolve": false,
@@ -126,6 +145,25 @@
         {
           "v": {
             "component": "test-component-metrics-axe-10"
+          }
+        }
+      ]
+    },
+    "output_template": "",
+    "created": 1637907655,
+    "updated": 1637907655
+  },
+  {
+    "_id": "test-metaalarm-metrics-axe-11",
+    "name": "test-metaalarm-metrics-axe-11-name",
+    "type": "attribute",
+    "author": "test-author-metrics-axe-11-name",
+    "auto_resolve": false,
+    "config": {
+      "alarm_patterns": [
+        {
+          "v": {
+            "component": "test-component-metrics-axe-11"
           }
         }
       ]

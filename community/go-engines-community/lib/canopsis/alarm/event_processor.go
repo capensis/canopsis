@@ -255,7 +255,7 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 	}
 
 	if changeType == types.AlarmChangeTypeCreate {
-		go s.metricsSender.SendCreate(ctx, alarm, alarm.Value.CreationDate.Time)
+		go s.metricsSender.SendCreate(context.Background(), alarm, alarm.Value.CreationDate.Time)
 	}
 
 	if changeType == types.AlarmChangeTypeCreateAndPbhEnter {
@@ -265,7 +265,7 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 			s.logger.Err(err).Msg("cannot update entity")
 		}
 
-		go s.metricsSender.SendCreateAndPbhEnter(ctx, alarm, alarm.Value.CreationDate.Time)
+		go s.metricsSender.SendCreateAndPbhEnter(context.Background(), alarm, alarm.Value.CreationDate.Time)
 	}
 
 	event.Alarm = &alarm
@@ -336,7 +336,7 @@ func (s *eventProcessor) updateAlarm(ctx context.Context, event *types.Event) (t
 		}
 	}
 
-	go s.metricsSender.SendUpdateState(ctx, *event.Alarm, *event.Entity, previousState)
+	go s.metricsSender.SendUpdateState(context.Background(), *event.Alarm, *event.Entity, previousState)
 
 	return changeType, nil
 }
@@ -381,7 +381,7 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 		}
 
 		event.Alarm = &alarm
-		go s.metricsSender.SendCreate(ctx, alarm, alarm.Value.CreationDate.Time)
+		go s.metricsSender.SendCreate(context.Background(), alarm, alarm.Value.CreationDate.Time)
 	} else {
 		alarm := event.Alarm
 		previousState := alarm.Value.State.Value
@@ -400,10 +400,10 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 		newStatus := alarm.Value.Status.Value
 		if newState > previousState {
 			changeType = types.AlarmChangeTypeStateIncrease
-			go s.metricsSender.SendUpdateState(ctx, *alarm, *event.Entity, previousState)
+			go s.metricsSender.SendUpdateState(context.Background(), *alarm, *event.Entity, previousState)
 		} else if newState < previousState {
 			changeType = types.AlarmChangeTypeStateDecrease
-			go s.metricsSender.SendUpdateState(ctx, *alarm, *event.Entity, previousState)
+			go s.metricsSender.SendUpdateState(context.Background(), *alarm, *event.Entity, previousState)
 		} else if newStatus != previousStatus {
 			changeType = types.AlarmChangeTypeUpdateStatus
 		}
@@ -430,7 +430,7 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 			s.logger.Err(err).Msg("cannot update entity")
 		}
 
-		go s.metricsSender.SendCreateAndPbhEnter(ctx, *event.Alarm, event.Alarm.Value.CreationDate.Time)
+		go s.metricsSender.SendCreateAndPbhEnter(context.Background(), *event.Alarm, event.Alarm.Value.CreationDate.Time)
 	}
 
 	return changeType, nil
@@ -604,7 +604,7 @@ func (s *eventProcessor) processMetaAlarmCreateEvent(ctx context.Context, event 
 		}
 
 		for _, child := range childAlarms {
-			s.metricsSender.SendCorrelation(ctx, timestamp, child)
+			s.metricsSender.SendCorrelation(context.Background(), timestamp, child)
 		}
 	}()
 
@@ -969,13 +969,13 @@ func (s *eventProcessor) processPbhEventsForEntity(ctx context.Context, event *t
 
 			if alarmChange.PreviousPbehaviorTypeID == "" {
 				alarmChange.Type = types.AlarmChangeTypePbhEnter
-				go s.metricsSender.SendPbhEnter(ctx, nil, *event.Entity)
+				go s.metricsSender.SendPbhEnter(context.Background(), nil, *event.Entity)
 			} else if event.PbehaviorInfo.TypeID == "" {
 				alarmChange.Type = types.AlarmChangeTypePbhLeave
-				go s.metricsSender.SendPbhLeave(ctx, *event.Entity, event.Timestamp.Time, curPbehaviorInfo.CanonicalType, curPbehaviorInfo.Timestamp.Time)
+				go s.metricsSender.SendPbhLeave(context.Background(), *event.Entity, event.Timestamp.Time, curPbehaviorInfo.CanonicalType, curPbehaviorInfo.Timestamp.Time)
 			} else {
 				alarmChange.Type = types.AlarmChangeTypePbhLeaveAndEnter
-				go s.metricsSender.SendPbhLeaveAndEnter(ctx, nil, *event.Entity, curPbehaviorInfo.CanonicalType, curPbehaviorInfo.Timestamp.Time)
+				go s.metricsSender.SendPbhLeaveAndEnter(context.Background(), nil, *event.Entity, curPbehaviorInfo.CanonicalType, curPbehaviorInfo.Timestamp.Time)
 			}
 		}
 	}

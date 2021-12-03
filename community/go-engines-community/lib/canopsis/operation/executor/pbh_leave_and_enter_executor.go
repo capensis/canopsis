@@ -60,7 +60,7 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 
 	entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
 
-	go e.metricsSender.SendPbhLeaveAndEnter(ctx, alarm, *entity, currPbehaviorInfo.CanonicalType, currPbehaviorInfo.Timestamp.Time)
+	go e.metricsSender.SendPbhLeaveAndEnter(context.Background(), alarm, *entity, currPbehaviorInfo.CanonicalType, currPbehaviorInfo.Timestamp.Time)
 
 	return types.AlarmChangeTypePbhLeaveAndEnter, nil
 }
