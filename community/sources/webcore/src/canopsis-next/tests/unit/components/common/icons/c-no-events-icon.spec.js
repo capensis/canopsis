@@ -1,5 +1,5 @@
 import { mount, createVueInstance } from '@unit/utils/vue';
-import { stubDateNow } from '@unit/utils/stub-hooks';
+import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import CNoEventsIcon from '@/components/common/icons/c-no-events-icon.vue';
 
@@ -11,7 +11,7 @@ const mockData = {
 };
 
 describe('c-no-events-icon', () => {
-  stubDateNow(mockData.secondTimestamp);
+  mockDateNow(mockData.secondTimestamp);
 
   it('Renders `c-no-events-icon` with default props correctly', () => {
     const wrapper = mount(CNoEventsIcon, { localVue });

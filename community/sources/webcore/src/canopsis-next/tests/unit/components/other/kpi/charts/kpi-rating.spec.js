@@ -3,7 +3,7 @@ import flushPromises from 'flush-promises';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import { stubDateNow } from '@unit/utils/stub-hooks';
+import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import { createMockedStoreModules } from '@unit/utils/store';
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
@@ -36,7 +36,7 @@ describe('kpi-rating', () => {
   const nowTimestamp = 1386435600000;
   const nowUnix = nowTimestamp / 1000;
 
-  stubDateNow(nowTimestamp);
+  mockDateNow(nowTimestamp);
 
   it('Metrics doesn\'t fetched after mount without criteria', async () => {
     const fetchRatingMetrics = jest.fn(() => []);
