@@ -7,7 +7,7 @@
         :isEditingMode="isEditingMode",
         :hasUpdateAccess="hasUpdateAccess",
         :updateViewMethod="updateViewMethod",
-        @update:widgetsFields="updateWidgetsFieldsForUpdateById"
+        @update:widgets-fields="updateWidgetsFieldsForUpdateById"
       )
     div.fab
       v-layout(data-test="controlViewLayout", row)
