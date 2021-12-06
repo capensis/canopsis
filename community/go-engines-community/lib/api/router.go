@@ -979,6 +979,27 @@ func RegisterRoutes(
 					viewGroupAPI.BulkDelete,
 				)
 			}
+
+			pbehaviorRouter := bulkRouter.Group("/pbehaviors")
+			{
+				pbehaviorRouter.POST(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
+					middleware.SetAuthorToBulk(),
+					pbehaviorApi.BulkCreate,
+				)
+				pbehaviorRouter.PUT(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
+					middleware.SetAuthorToBulk(),
+					pbehaviorApi.BulkUpdate,
+				)
+				pbehaviorRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
+					pbehaviorApi.BulkDelete,
+				)
+			}
 		}
 
 		dateStorageRouter := protected.Group("data-storage")

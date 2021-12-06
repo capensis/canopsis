@@ -13,7 +13,9 @@ import (
 
 type ModelTransformer interface {
 	TransformCreateRequestToModel(ctx context.Context, request CreateRequest) (*Response, error)
+	TransformBulkCreateRequestToModels(ctx context.Context, requests []CreateRequest) ([]*Response, error)
 	TransformUpdateRequestToModel(ctx context.Context, request UpdateRequest) (*Response, error)
+	TransformBulkUpdateRequestToModels(ctx context.Context, requests []BulkUpdateRequestItem) ([]*Response, error)
 	Patch(ctx context.Context, req PatchRequest, model *Response) error
 }
 
@@ -80,6 +82,32 @@ func (t *modelTransformer) TransformCreateRequestToModel(ctx context.Context, re
 
 func (t *modelTransformer) TransformUpdateRequestToModel(ctx context.Context, request UpdateRequest) (*Response, error) {
 	return t.TransformCreateRequestToModel(ctx, CreateRequest(request))
+}
+
+func (t *modelTransformer) TransformBulkCreateRequestToModels(ctx context.Context, requests []CreateRequest) ([]*Response, error) {
+	models := make([]*Response, len(requests))
+	var err error
+	for i, request := range requests {
+		models[i], err = t.TransformCreateRequestToModel(ctx, request)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return models, nil
+}
+
+func (t *modelTransformer) TransformBulkUpdateRequestToModels(ctx context.Context, requests []BulkUpdateRequestItem) ([]*Response, error) {
+	models := make([]*Response, len(requests))
+	var err error
+	for i, request := range requests {
+		models[i], err = t.TransformCreateRequestToModel(ctx, CreateRequest(request))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return models, nil
 }
 
 func (t *modelTransformer) transformReasonToModel(ctx context.Context, id string) (*apireason.Reason, error) {
