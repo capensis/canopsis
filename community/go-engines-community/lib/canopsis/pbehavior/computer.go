@@ -20,16 +20,7 @@ import (
 	"time"
 )
 
-const (
-	OperationCreate = iota
-	OperationUpdate
-	OperationDelete
-)
-
-const (
-	CalculateAll  = ""
-	CalculateNone = "none"
-)
+const calculateAll = "all"
 
 // Computer is used to implement pbehavior intervals recompute on singnal from channel.
 type Computer interface {
@@ -39,11 +30,9 @@ type Computer interface {
 }
 
 type ComputeTask struct {
-	// PbehaviorID defines for which pbehavior intervals should be recomputed.
+	// PbehaviorIds defines for which pbehavior intervals should be recomputed.
 	// If empty all intervals are recomputed.
-	PbehaviorID string
-	// UpdateAlarms prescribes to update alarms by pbehavior. PbehaviorID shouldn't be empty.
-	OperationType int
+	PbehaviorIds []string
 }
 
 // cancelableComputer recomputes pbehaviors.
@@ -58,6 +47,9 @@ type cancelableComputer struct {
 	encoder             encoding.Encoder
 	publisher           libamqp.Publisher
 	queue               string
+
+	mxIds          sync.Mutex
+	idsToRecompute []string
 }
 
 // NewCancelableComputer creates new computer.
@@ -84,88 +76,93 @@ func NewCancelableComputer(
 	}
 }
 
-func (c *cancelableComputer) Compute(parentCtx context.Context, ch <-chan ComputeTask) {
-	var ctx context.Context
-	var cancel context.CancelFunc
-	c.logger.Debug().Msg("compute started")
-	defer func() {
-		if cancel != nil {
-			cancel()
+func (c *cancelableComputer) Compute(ctx context.Context, ch <-chan ComputeTask) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	startComputeCh := make(chan bool, 1)
+	defer close(startComputeCh)
+
+	done := make(chan bool)
+
+	go func() {
+		defer close(done)
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case _, ok := <-startComputeCh:
+				if !ok {
+					return
+				}
+
+				c.mxIds.Lock()
+				idsToRecompute := c.idsToRecompute
+				c.idsToRecompute = c.idsToRecompute[:0]
+				c.mxIds.Unlock()
+
+				if len(idsToRecompute) == 0 {
+					continue
+				}
+
+				c.computePbehavior(ctx, idsToRecompute)
+
+				select {
+				case startComputeCh <- true:
+				default:
+				}
+			}
 		}
-		c.logger.Debug().Msg("compute ended")
 	}()
 
-	ongoingID := CalculateNone
-	ongoingMx := sync.Mutex{}
-
-	wg := sync.WaitGroup{}
-
+loop:
 	for {
 		select {
-		case <-parentCtx.Done():
-			return
+		case <-ctx.Done():
+			break loop
 		case task, ok := <-ch:
 			if !ok {
-				return
+				break loop
 			}
 
-			pbehaviorID := task.PbehaviorID
-
-			ongoingMx.Lock()
-			currentOngoing := ongoingID
-			ongoingMx.Unlock()
-
-			// Cancel ongoing calculation if
-			// - ongoing calculated pbehavior is the same as in the signal
-			// - ongoing calculation calculates all pbehavior
-			// - new calculation calculates all pbehavior
-			if currentOngoing != CalculateNone && (pbehaviorID == CalculateAll || currentOngoing == CalculateAll || currentOngoing == pbehaviorID) {
-				c.logger.Info().Str("pbehaviorID", pbehaviorID).Str("ongoingID", currentOngoing).Msg("Test cancel log")
-				c.logger.Debug().Msg("API pbehavior recompute: STOP SIGNAL!!!")
-
-				cancel()
-				wg.Wait()
-				// If canceled calculation calculates all pbehavior keep it
-				if currentOngoing != CalculateAll {
-					ongoingID = pbehaviorID
-				} else {
-					ongoingID = CalculateAll
-				}
+			c.mxIds.Lock()
+			if len(task.PbehaviorIds) == 0 {
+				c.idsToRecompute = append(c.idsToRecompute, calculateAll)
 			} else {
-				// Wait ongoing calculation to avoid conflicts
-				wg.Wait()
-				ongoingID = pbehaviorID
+				c.idsToRecompute = append(c.idsToRecompute, task.PbehaviorIds...)
 			}
+			c.mxIds.Unlock()
 
-			ctx, cancel = context.WithCancel(parentCtx)
-			wg.Add(1)
-
-			go func(ctx context.Context, pbhId string, opType int) {
-				defer func() {
-					ongoingMx.Lock()
-					ongoingID = CalculateNone
-					ongoingMx.Unlock()
-
-					wg.Done()
-				}()
-
-				c.computePbehavior(ctx, pbhId, opType)
-			}(ctx, ongoingID, task.OperationType)
+			select {
+			case startComputeCh <- true:
+			default:
+			}
 		}
 	}
+
+	cancel()
+	<-done
 }
 
 // computePbehavior obtains lock and calls computer.
 func (c *cancelableComputer) computePbehavior(
 	ctx context.Context,
-	pbehaviorID string,
-	operationType int,
+	pbehaviorIds []string,
 ) {
+	all := false
+	for _, id := range pbehaviorIds {
+		if id == calculateAll {
+			all = true
+			break
+		}
+	}
+
 	var err error
-	if pbehaviorID == "" {
+	if all {
 		err = c.service.Recompute(ctx)
 	} else {
-		err = c.service.RecomputeByID(ctx, pbehaviorID)
+		err = c.service.RecomputeByIds(ctx, pbehaviorIds)
 	}
 
 	if err != nil {
@@ -173,13 +170,15 @@ func (c *cancelableComputer) computePbehavior(
 		return
 	}
 
-	c.logger.Info().Str("pbehavior", pbehaviorID).Msg("API pbehavior recompute: pbehavior recomputed")
+	for _, pbehaviorID := range pbehaviorIds {
+		if pbehaviorID != calculateAll {
+			c.logger.Info().Str("pbehavior", pbehaviorID).Msg("API pbehavior recompute: pbehavior recomputed")
 
-	if pbehaviorID != "" {
-		err := c.updateAlarms(ctx, pbehaviorID, operationType)
-		if err != nil {
-			c.logger.Err(err).Msgf("API pbehavior update alarms failed")
-			return
+			err := c.updateAlarms(ctx, pbehaviorID)
+			if err != nil {
+				c.logger.Err(err).Msgf("API pbehavior update alarms failed")
+				return
+			}
 		}
 	}
 }
@@ -187,57 +186,39 @@ func (c *cancelableComputer) computePbehavior(
 func (c *cancelableComputer) updateAlarms(
 	ctx context.Context,
 	pbehaviorID string,
-	operationType int,
 ) error {
 	eventGenerator := libevent.NewGenerator(entity.NewAdapter(c.dbClient))
 
-	switch operationType {
-	case OperationCreate:
-		cursor, err := c.findEntitiesMatchPbhFilter(ctx, pbehaviorID)
-		if err != nil {
-			return fmt.Errorf("cannot find alarms: %w", err)
-		}
+	cursor, err := c.findEntitiesMatchPbhFilter(ctx, pbehaviorID)
+	if err != nil {
+		return err
+	}
 
-		err = c.sendAlarmEvents(ctx, cursor, pbehaviorID, eventGenerator)
-		if err != nil {
-			return err
-		}
-	case OperationUpdate:
-		cursor, err := c.findEntitiesMatchPbhFilter(ctx, pbehaviorID)
-		if err != nil {
-			return err
-		}
+	err = c.sendAlarmEvents(ctx, cursor, pbehaviorID, eventGenerator)
+	if err != nil {
+		return err
+	}
 
-		err = c.sendAlarmEvents(ctx, cursor, pbehaviorID, eventGenerator)
-		if err != nil {
-			return err
-		}
+	cursor, err = c.findEntitiesMatchPbhID(ctx, pbehaviorID)
+	if err != nil {
+		return err
+	}
 
-		cursor, err = c.findEntitiesMatchPbhID(ctx, pbehaviorID)
-		if err != nil {
-			return err
-		}
-
-		err = c.sendAlarmEvents(ctx, cursor, pbehaviorID, eventGenerator)
-		if err != nil {
-			return err
-		}
-	case OperationDelete:
-		cursor, err := c.findEntitiesMatchPbhID(ctx, pbehaviorID)
-		if err != nil {
-			return fmt.Errorf("cannot find alarms: %w", err)
-		}
-
-		err = c.sendAlarmEvents(ctx, cursor, pbehaviorID, eventGenerator)
-		if err != nil {
-			return err
-		}
+	err = c.sendAlarmEvents(ctx, cursor, pbehaviorID, eventGenerator)
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
 
 func (c *cancelableComputer) sendAlarmEvents(ctx context.Context, cursor mongo.Cursor, pbehaviorID string, eventGenerator libevent.Generator) error {
+	if cursor == nil {
+		return nil
+	}
+
+	defer cursor.Close(ctx)
+
 	now := time.Now()
 	for cursor.Next(ctx) {
 		entity := types.Entity{}
@@ -262,7 +243,9 @@ func (c *cancelableComputer) sendAlarmEvents(ctx context.Context, cursor mongo.C
 			return fmt.Errorf("cannot find alarm: %w", err)
 		}
 
-		event := types.Event{}
+		event := types.Event{
+			Initiator: types.InitiatorSystem,
+		}
 		if alarm == nil {
 			event, err = eventGenerator.Generate(ctx, entity)
 			if err != nil {
@@ -319,7 +302,7 @@ func (c *cancelableComputer) findEntitiesMatchPbhFilter(
 
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
-			return nil, fmt.Errorf("cannot find pbehavior id=%s", pbehaviorID)
+			return nil, nil
 		} else {
 			return nil, err
 		}

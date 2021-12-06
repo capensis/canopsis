@@ -30,6 +30,7 @@ func (r eventManager) GetEvent(resolveResult ResolveResult, alarm types.Alarm, n
 		EventType:     eventType,
 		Output:        output,
 		PbehaviorInfo: NewPBehaviorInfo(types.CpsTime{Time: now}, resolveResult),
+		Initiator:     types.InitiatorSystem,
 	}
 
 	event.SourceType = event.DetectSourceType()

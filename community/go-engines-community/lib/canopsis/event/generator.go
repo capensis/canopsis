@@ -36,7 +36,9 @@ func (g *generator) Generate(
 	ctx context.Context,
 	entity types.Entity,
 ) (types.Event, error) {
-	event := types.Event{}
+	event := types.Event{
+		Initiator: types.InitiatorSystem,
+	}
 
 	switch entity.Type {
 	case types.EntityTypeConnector:
