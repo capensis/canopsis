@@ -1,9 +1,9 @@
 /**
- * Stub for date now. Clear yourself after all tests.
+ * Mock for date now. Clear yourself after all tests.
  *
  * @param {number} nowTimestamp
  */
-export const stubDateNow = (nowTimestamp) => {
+export const mockDateNow = (nowTimestamp) => {
   let dateNowSpy;
 
   beforeAll(() => {
@@ -16,9 +16,9 @@ export const stubDateNow = (nowTimestamp) => {
 };
 
 /**
- * Stub for requestAnimationFrame. Clear yourself after all tests.
+ * Mock for requestAnimationFrame. Clear yourself after all tests.
  */
-export const stubRequestAnimationFrame = () => {
+export const mockRequestAnimationFrame = () => {
   let requestAnimationFrameSpy = null;
 
   beforeEach(() => {
@@ -32,11 +32,11 @@ export const stubRequestAnimationFrame = () => {
 };
 
 /**
- * Stub for date. Clear yourself after all tests.
+ * Mock for date. Clear yourself after all tests.
  *
  * @param {number | Date} nowTimestamp
  */
-export const stubDateGetTime = (nowTimestamp) => {
+export const mockDateGetTime = (nowTimestamp) => {
   let dateSpy;
 
   beforeAll(() => {

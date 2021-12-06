@@ -3,7 +3,7 @@ import flushPromises from 'flush-promises';
 import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
-import { stubRequestAnimationFrame } from '@unit/utils/stub-hooks';
+import { mockRequestAnimationFrame } from '@unit/utils/mock-hooks';
 import { SIDE_BARS } from '@/constants';
 
 import SideBarWrapper from '@/components/side-bars/side-bar-wrapper.vue';
@@ -45,7 +45,7 @@ const snapshotFactory = (options = {}) => mount(SideBarWrapper, {
 });
 
 describe('side-bar-wrapper', () => {
-  stubRequestAnimationFrame();
+  mockRequestAnimationFrame();
 
   it('Modal hidden trigger drawer', async () => {
     const hideSideBar = jest.fn();

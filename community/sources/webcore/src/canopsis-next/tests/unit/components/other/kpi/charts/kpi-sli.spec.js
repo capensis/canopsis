@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import { stubDateNow } from '@unit/utils/stub-hooks';
+import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import { createMockedStoreModules } from '@unit/utils/store';
 import { QUICK_RANGES, SAMPLINGS } from '@/constants';
@@ -35,7 +35,7 @@ describe('kpi-sli', () => {
   const nowTimestamp = 1386435600000;
   const nowUnix = nowTimestamp / 1000;
 
-  stubDateNow(nowTimestamp);
+  mockDateNow(nowTimestamp);
 
   it('Metrics fetched after mount', async () => {
     const expectedDefaultParams = {

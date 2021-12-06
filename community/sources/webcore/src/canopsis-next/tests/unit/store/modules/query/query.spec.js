@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash';
 import Faker from 'faker';
 
 import { fakeTimestamp } from '@unit/data/date';
-import { stubDateGetTime } from '@unit/utils/stub-hooks';
+import { mockDateGetTime } from '@unit/utils/mock-hooks';
 import SetSeveralPlugin from '@/plugins/set-several';
 import queryModule, { types } from '@/store/modules/query';
 
@@ -15,7 +15,7 @@ describe('Query module', () => {
   const nonceTimestamp = 1326335600000;
   const nowTimestamp = 1386435600000;
 
-  stubDateGetTime(nowTimestamp);
+  mockDateGetTime(nowTimestamp);
 
   it('Mutate state after commit UPDATE', () => {
     const update = mutations[types.UPDATE];
