@@ -15,7 +15,7 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled || !phrasesEqual",
-          @click.prevent="submit"
+          type="submit"
         ) {{ $t('common.yes') }}
 </template>
 
