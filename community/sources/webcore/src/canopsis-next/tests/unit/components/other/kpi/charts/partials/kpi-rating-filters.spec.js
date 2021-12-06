@@ -3,7 +3,7 @@ import flushPromises from 'flush-promises';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import { stubDateNow } from '@unit/utils/stub-hooks';
+import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import { ALARM_METRIC_PARAMETERS, KPI_RATING_CRITERIA, QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
 
@@ -46,7 +46,7 @@ describe('kpi-rating-filters', () => {
     },
   };
 
-  stubDateNow(nowTimestamp);
+  mockDateNow(nowTimestamp);
 
   it('Query changed after trigger a quick interval field', async () => {
     const wrapper = factory({
