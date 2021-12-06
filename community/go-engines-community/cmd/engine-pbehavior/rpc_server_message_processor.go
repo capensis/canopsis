@@ -59,6 +59,7 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 
 	return p.getRpcEvent(types.RPCPBehaviorResultEvent{
 		Alarm:    event.Alarm,
+		Entity:   event.Entity,
 		PbhEvent: *pbhEvent,
 		Error:    nil,
 	})
@@ -163,7 +164,7 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 
 	pbehavior := libpbehavior.PBehavior{
 		ID:      utils.NewID(),
-		Author:  params.Author,
+		Author:  params.UserID,                       // since author now contains username, we should use user_id in author
 		Enabled: true,
 		Filter:  fmt.Sprintf(`{"_id": "%s"}`, entity.ID),
 		Name:    params.Name,

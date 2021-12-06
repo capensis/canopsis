@@ -25,6 +25,7 @@ export http_proxy=${http_proxy:=""}
 export https_proxy=${https_proxy:=""}
 
 export FORCE_COLOR=0
+export CLICOLOR=0
 export NO_COLOR=1
 export DOCKER_SCAN_SUGGEST=false
 export NPM_CONFIG_PROGRESS=false

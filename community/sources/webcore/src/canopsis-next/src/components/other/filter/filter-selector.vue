@@ -176,7 +176,9 @@ export default {
 
       if (preparedFilters.length && preparedLockedFilters.length) {
         return preparedFilters.concat({ divider: true }, preparedLockedFilters);
-      } else if (preparedFilters.length) {
+      }
+
+      if (preparedFilters.length) {
         return preparedFilters;
       }
 
@@ -225,7 +227,7 @@ export default {
 
       const newValue = this.isMultiple ? selectedFilters : selectedFilters[0];
 
-      return this.$emit('update:filters', filters.map(removeSelectedProperty), newValue);
+      this.$emit('update:filters', filters.map(removeSelectedProperty), newValue);
     },
 
     isFilterEqual(firstFilter, secondFilter) {

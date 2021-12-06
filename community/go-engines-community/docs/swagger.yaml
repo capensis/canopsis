@@ -104,6 +104,8 @@ definitions:
         type: string
       t:
         type: integer
+      user_id:
+        type: string
       val:
         type: integer
     type: object
@@ -131,6 +133,8 @@ definitions:
         type: object
       activation_date:
         type: integer
+      active_duration:
+        type: integer
       canceled:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
@@ -157,9 +161,6 @@ definitions:
         type: integer
       events_count:
         type: integer
-      extra:
-        additionalProperties: true
-        type: object
       infos:
         additionalProperties:
           additionalProperties: true
@@ -197,6 +198,8 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      pbh_inactive_duration:
+        type: integer
       resolved:
         type: integer
       resource:
@@ -204,6 +207,8 @@ definitions:
       snooze:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
+      snooze_duration:
+        type: integer
       state:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
@@ -678,12 +683,24 @@ definitions:
       total_count:
         type: integer
     type: object
+  common.User:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
   common.ValidationErrorResponse:
     properties:
       errors:
         additionalProperties:
           type: string
         type: object
+    type: object
+  config.TimezoneConfig:
+    properties:
+      location:
+        type: string
     type: object
   contextgraph.ImportJob:
     properties:
@@ -1209,6 +1226,87 @@ definitions:
       mediatype:
         type: string
     type: object
+  flappingrule.CreateRequest:
+    properties:
+      _id:
+        type: string
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      description:
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      freq_limit:
+        type: integer
+      name:
+        type: string
+      priority:
+        type: integer
+    required:
+    - duration
+    - freq_limit
+    - name
+    - priority
+    type: object
+  flappingrule.Response:
+    properties:
+      _id:
+        type: string
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      author:
+        $ref: '#/definitions/common.User'
+        type: object
+      created:
+        type: integer
+      description:
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      freq_limit:
+        type: integer
+      name:
+        type: string
+      priority:
+        type: integer
+      updated:
+        type: integer
+    type: object
+  flappingrule.UpdateRequest:
+    properties:
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      description:
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      freq_limit:
+        type: integer
+      name:
+        type: string
+      priority:
+        type: integer
+    required:
+    - duration
+    - freq_limit
+    - name
+    - priority
+    type: object
   http.Response:
     properties:
       body:
@@ -1626,10 +1724,6 @@ definitions:
         type: object
       done:
         $ref: '#/definitions/pattern.AlarmStepRefPattern'
-        type: object
-      extra:
-        additionalProperties:
-          $ref: '#/definitions/pattern.InterfacePattern'
         type: object
       hardLimit:
         $ref: '#/definitions/pattern.IntegerRefPattern'
@@ -2558,6 +2652,79 @@ definitions:
       updated:
         type: integer
     type: object
+  resolverule.CreateRequest:
+    properties:
+      _id:
+        type: string
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      description:
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      name:
+        type: string
+      priority:
+        type: integer
+    required:
+    - duration
+    - name
+    - priority
+    type: object
+  resolverule.Response:
+    properties:
+      _id:
+        type: string
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      author:
+        $ref: '#/definitions/common.User'
+        type: object
+      created:
+        type: integer
+      description:
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      name:
+        type: string
+      priority:
+        type: integer
+      updated:
+        type: integer
+    type: object
+  resolverule.UpdateRequest:
+    properties:
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      description:
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      name:
+        type: string
+      priority:
+        type: integer
+    required:
+    - duration
+    - name
+    - priority
+    type: object
   role.CreateRequest:
     properties:
       defaultview:
@@ -2662,6 +2829,20 @@ definitions:
     - emit_trigger
     - type
     type: object
+  scenario.CheckPriorityRequest:
+    properties:
+      priority:
+        type: integer
+    required:
+    - priority
+    type: object
+  scenario.CheckPriorityResponse:
+    properties:
+      recommended_priority:
+        type: integer
+      valid:
+        type: boolean
+    type: object
   scenario.EditRequest:
     properties:
       actions:
@@ -2694,6 +2875,11 @@ definitions:
     - name
     - priority
     - triggers
+    type: object
+  scenario.GetMinimalPriorityResponse:
+    properties:
+      priority:
+        type: integer
     type: object
   scenario.Scenario:
     properties:
@@ -3025,6 +3211,8 @@ definitions:
       t:
         $ref: '#/definitions/types.CpsTime'
         type: object
+      user_id:
+        type: string
       val:
         type: integer
     type: object
@@ -3084,9 +3272,6 @@ definitions:
       events_count:
         description: EventsCount accumulates count of check events.
         type: integer
-      extra:
-        additionalProperties: true
-        type: object
       hard_limit:
         type: integer
       infos:
@@ -3123,6 +3308,8 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      pbh_inactive_duration:
+        type: integer
       related_parents:
         items:
           type: string
@@ -3140,6 +3327,8 @@ definitions:
       snooze:
         $ref: '#/definitions/types.AlarmStep'
         type: object
+      snooze_duration:
+        type: integer
       state:
         $ref: '#/definitions/types.AlarmStep'
         type: object
@@ -3360,6 +3549,25 @@ definitions:
       _id:
         type: string
       title:
+        type: string
+    type: object
+  userpreferences.EditRequest:
+    properties:
+      content:
+        additionalProperties: true
+        type: object
+      widget:
+        type: string
+    required:
+    - content
+    - widget
+    type: object
+  userpreferences.Response:
+    properties:
+      content:
+        additionalProperties: true
+        type: object
+      widget:
         type: string
     type: object
   utils.RegexExpression:
@@ -5486,6 +5694,167 @@ paths:
       summary: Get file by ID
       tags:
       - files
+  /flapping-rules:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of flapping rule
+      operationId: flappingrules-find-all
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: search query
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/flappingrule.Response'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Find all flapping rule
+      tags:
+      - flappingrules
+    post:
+      consumes:
+      - application/json
+      description: Create flapping rule
+      operationId: flappingrules-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/flappingrule.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/flappingrule.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Create flapping rule
+      tags:
+      - flappingrules
+  /flapping-rules/{id}:
+    delete:
+      description: Delete flapping rule by id
+      operationId: flappingrules-delete-by-id
+      parameters:
+      - description: flapping rule id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ""
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth`: []
+      summary: Delete flapping rule by id
+      tags:
+      - flappingrules
+    get:
+      description: Get flapping rule by id
+      operationId: flappingrules-get-by-id
+      parameters:
+      - description: flapping rule id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/flappingrule.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get flapping rule by id
+      tags:
+      - flappingrules
+    put:
+      consumes:
+      - application/json
+      description: Update flapping rule by id
+      operationId: flappingrules-update-by-id
+      parameters:
+      - description: flapping rule id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/flappingrule.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/flappingrule.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update flapping rule by id
+      tags:
+      - flappingrules
   /idle-rules:
     get:
       consumes:
@@ -7092,6 +7461,167 @@ paths:
       summary: Update playlist by id
       tags:
       - playlists
+  /resolve-rules:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of resolve rule
+      operationId: resolverules-find-all
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: search query
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/resolverule.Response'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Find all resolve rule
+      tags:
+      - resolverules
+    post:
+      consumes:
+      - application/json
+      description: Create resolve rule
+      operationId: resolverules-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/resolverule.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/resolverule.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Create resolve rule
+      tags:
+      - resolverules
+  /resolve-rules/{id}:
+    delete:
+      description: Delete resolve rule by id
+      operationId: resolverules-delete-by-id
+      parameters:
+      - description: resolve rule id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ""
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth`: []
+      summary: Delete resolve rule by id
+      tags:
+      - resolverules
+    get:
+      description: Get resolve rule by id
+      operationId: resolverules-get-by-id
+      parameters:
+      - description: resolve rule id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resolverule.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get resolve rule by id
+      tags:
+      - resolverules
+    put:
+      consumes:
+      - application/json
+      description: Update resolve rule by id
+      operationId: resolverules-update-by-id
+      parameters:
+      - description: resolve rule id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/resolverule.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resolverule.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update resolve rule by id
+      tags:
+      - resolverules
   /roles:
     get:
       consumes:
@@ -7430,6 +7960,53 @@ paths:
       summary: Update scenario by id
       tags:
       - scenarios
+  /scenarios/check-priority:
+    post:
+      consumes:
+      - application/json
+      description: Check priority
+      operationId: scenarios-check-priority
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/scenario.CheckPriorityRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/scenario.CheckPriorityResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Check priority
+      tags:
+      - scenarios
+  /scenarios/minimal-priority:
+    get:
+      description: Get minimal priority
+      operationId: scenarios-get-minimal-priority
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/scenario.GetMinimalPriorityResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get minimal priority
+      tags:
+      - scenarios
   /sessions-count:
     get:
       consumes:
@@ -7529,6 +8106,67 @@ paths:
       summary: Update state setting type by id
       tags:
       - state-settings
+  /user-preferences:
+    put:
+      consumes:
+      - application/json
+      description: Update user preferences by widget id
+      operationId: userpreference-update-by-widget-id
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/userpreferences.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userpreferences.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update user preferences by widget id
+      tags:
+      - userpreference
+  /user-preferences/{id}:
+    get:
+      description: Get user preferences by widget id
+      operationId: userpreference-get-by-id
+      parameters:
+      - description: widget id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userpreferences.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get user preferences by widget id
+      tags:
+      - userpreference
   /users:
     get:
       consumes:

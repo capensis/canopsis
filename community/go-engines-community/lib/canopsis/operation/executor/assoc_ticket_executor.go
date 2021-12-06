@@ -20,8 +20,9 @@ func (e *assocTicketExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
+	_ types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationAssocTicketParameters
 	var ok bool
@@ -29,11 +30,16 @@ func (e *assocTicketExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	err := alarm.PartialUpdateAssocTicket(
 		time,
 		nil,
 		params.Author,
 		params.Ticket,
+		userID,
 		role,
 		initiator,
 	)

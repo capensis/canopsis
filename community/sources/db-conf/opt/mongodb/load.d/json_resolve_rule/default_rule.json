@@ -1,0 +1,15 @@
+[
+  {
+    "_id": "default_rule",
+    "loader_id": "default_rule",
+    "author": "root",
+    "name": "Default rule",
+    "duration": {
+      "seconds": 60,
+      "unit": "m"
+    },
+    "priority": 1,
+    "created": 1635403887,
+    "updated": 1635403887
+  }
+]

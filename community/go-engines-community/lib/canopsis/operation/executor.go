@@ -17,7 +17,8 @@ type Executor interface {
 		ctx context.Context,
 		operation types.Operation,
 		alarm *types.Alarm,
+		entity types.Entity,
 		timestamp types.CpsTime,
-		role, initiator string,
+		userID, role, initiator string,
 	) (types.AlarmChangeType, error)
 }
