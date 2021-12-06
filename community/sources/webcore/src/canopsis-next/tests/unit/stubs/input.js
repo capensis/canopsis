@@ -1,9 +1,5 @@
 export const createInputStub = className => ({
   props: ['value'],
-  model: {
-    event: 'input',
-    prop: 'value',
-  },
   template: `
     <input
       :value="value"
