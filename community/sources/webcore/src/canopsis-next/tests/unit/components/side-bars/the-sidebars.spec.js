@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 
 import { mount, createVueInstance } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
-import { stubRequestAnimationFrame } from '@unit/utils/stub-hooks';
+import { mockRequestAnimationFrame } from '@unit/utils/mock-hooks';
 import { SIDE_BARS } from '@/constants';
 
 import TheSidebars from '@/components/side-bars/the-sidebars.vue';
@@ -32,7 +32,7 @@ const snapshotFactory = (options = {}) => mount(TheSidebars, {
 });
 
 describe('the-sidebars', () => {
-  stubRequestAnimationFrame();
+  mockRequestAnimationFrame();
 
   it.each(Object.values(SIDE_BARS))('Renders `the-sidebars` with type: %s', async (type) => {
     const wrapper = snapshotFactory({
