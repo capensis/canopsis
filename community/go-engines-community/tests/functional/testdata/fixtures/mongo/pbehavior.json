@@ -632,5 +632,70 @@
     "type_": "test-default-pause-type",
     "created": 1592215337,
     "updated": 1592215337
+  },
+  {
+    "_id": "test-pbehavior-to-bulk-delete-1",
+    "author": "root",
+    "enabled": true,
+    "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
+    "name": "test-pbehavior-to-bulk-delete-1-name",
+    "reason": "test-reason-1",
+    "tstart": 1591172881,
+    "tstop": 1591536400,
+    "type_": "test-type-to-pbh-edit-1",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-pbehavior-to-bulk-delete-2",
+    "author": "root",
+    "enabled": true,
+    "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
+    "name": "test-pbehavior-to-bulk-delete-2-name",
+    "reason": "test-reason-1",
+    "tstart": 1591172881,
+    "tstop": 1591536400,
+    "type_": "test-type-to-pbh-edit-1",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-pbehavior-to-bulk-update-1",
+    "author": "root",
+    "enabled": true,
+    "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
+    "name": "test-pbehavior-to-bulk-update-1-name",
+    "reason": "test-reason-1",
+    "tstart": 1591172881,
+    "tstop": 1591536400,
+    "type_": "test-type-to-pbh-edit-1",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-pbehavior-to-bulk-update-2",
+    "author": "root",
+    "enabled": true,
+    "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
+    "name": "test-pbehavior-to-bulk-update-2-name",
+    "reason": "test-reason-1",
+    "tstart": 1591172881,
+    "tstop": 1591536400,
+    "type_": "test-type-to-pbh-edit-1",
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-pbehavior-to-check-unique",
+    "author": "root",
+    "enabled": true,
+    "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
+    "name": "test-pbehavior-to-check-unique-name",
+    "reason": "test-reason-1",
+    "tstart": 1591172881,
+    "tstop": 1591536400,
+    "type_": "test-type-to-pbh-edit-1",
+    "created": 1592215337,
+    "updated": 1592215337
   }
 ]
