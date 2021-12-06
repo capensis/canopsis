@@ -150,7 +150,9 @@ func (w *periodicalWorker) processEntities(ctx context.Context, now time.Time, c
 			continue
 		}
 
-		event := types.Event{}
+		event := types.Event{
+			Initiator: types.InitiatorSystem,
+		}
 		lastAlarm, err := w.AlarmAdapter.GetLastAlarmByEntityID(ctx, entity.ID)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot fetch last alarm")

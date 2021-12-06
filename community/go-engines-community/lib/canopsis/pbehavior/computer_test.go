@@ -1,6 +1,7 @@
 package pbehavior_test
 
 import (
+	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -11,7 +12,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
-	"golang.org/x/net/context"
 	"testing"
 	"time"
 )
@@ -28,7 +28,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 	mockPublisher := mock_amqp.NewMockPublisher(ctrl)
 	pbehaviorID := "test-pbehavior-id"
 
-	mockService.EXPECT().RecomputeByID(gomock.Any(), gomock.Eq(pbehaviorID))
+	mockService.EXPECT().RecomputeByIds(gomock.Any(), gomock.Eq([]string{pbehaviorID}))
 
 	mockPbhDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEntityDbCollection := mock_mongo.NewMockDbCollection(ctrl)
@@ -52,8 +52,9 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 	mockSingleResultHelper.EXPECT().Decode(gomock.Any()).Do(func(pbh *pbehavior.PBehavior) {
 		pbh.Filter = "{\"name\":\"test-name\"}"
 	}).Return(nil)
-	mockEntityDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockCursor, nil)
-	mockCursor.EXPECT().Next(gomock.Any()).Return(false)
+	mockEntityDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockCursor, nil).Times(2)
+	mockCursor.EXPECT().Next(gomock.Any()).Return(false).Times(2)
+	mockCursor.EXPECT().Close(gomock.Any()).Times(2)
 
 	computer := pbehavior.NewCancelableComputer(mockService,
 		mockDbClient, mockPublisher, mockEventManager, mockEncoder, "test-queue",
@@ -61,8 +62,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{
-		PbehaviorID:   pbehaviorID,
-		OperationType: pbehavior.OperationCreate,
+		PbehaviorIds: []string{pbehaviorID},
 	}
 	defer close(ch)
 
@@ -118,7 +118,7 @@ func TestCancelableComputer_Compute_GivenEmptyPbehaviorID_ShouldRecomputeAllPbeh
 	computer.Compute(ctx, ch)
 }
 
-func TestCancelableComputer_Compute_GivenPbehaviorIDAndOperationType_ShouldSendPbehaviorEvent(t *testing.T) {
+func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	ctrl := gomock.NewController(t)
@@ -150,7 +150,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorIDAndOperationType_ShouldSendP
 	event := types.Event{EventType: types.EventTypePbhEnter}
 	body := []byte("test-body")
 
-	mockService.EXPECT().RecomputeByID(gomock.Any(), gomock.Any())
+	mockService.EXPECT().RecomputeByIds(gomock.Any(), gomock.Any())
 	mockService.EXPECT().Resolve(gomock.Any(), gomock.Any(), gomock.Any()).Return(resolveResult, nil)
 
 	mockDbClient.EXPECT().Collection(gomock.Any()).DoAndReturn(func(collectionName string) mongo.DbCollection {
@@ -180,6 +180,11 @@ func TestCancelableComputer_Compute_GivenPbehaviorIDAndOperationType_ShouldSendP
 	mockEntityCursor.EXPECT().Decode(gomock.Any()).Do(func(e *types.Entity) {
 		*e = entity
 	}).Return(nil)
+	mockEntityCursor.EXPECT().Close(gomock.Any())
+	mockEntityCursor2 := mock_mongo.NewMockCursor(ctrl)
+	mockEntityDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockEntityCursor2, nil)
+	mockEntityCursor2.EXPECT().Next(gomock.Any()).Return(false)
+	mockEntityCursor2.EXPECT().Close(gomock.Any())
 	mockAlarmSingleResult := mock_mongo.NewMockSingleResultHelper(ctrl)
 	mockAlarmDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockAlarmSingleResult)
 	mockAlarmSingleResult.EXPECT().Decode(gomock.Any()).Do(func(a *types.Alarm) {
@@ -203,7 +208,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorIDAndOperationType_ShouldSendP
 		zerolog.Logger{})
 
 	ch := make(chan pbehavior.ComputeTask, 1)
-	ch <- pbehavior.ComputeTask{PbehaviorID: pbehaviorID, OperationType: pbehavior.OperationCreate}
+	ch <- pbehavior.ComputeTask{PbehaviorIds: []string{pbehaviorID}}
 	defer close(ch)
 
 	go func() {

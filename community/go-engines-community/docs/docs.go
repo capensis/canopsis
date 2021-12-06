@@ -959,6 +959,161 @@ var doc = `{
                 }
             }
         },
+        "/bulk/pbehaviors": {
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk create pbehaviors",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Bulk create pbehaviors",
+                "operationId": "pbehaviors-bulk-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pbehavior.CreateRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pbehavior.Response"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/bulk/pbehaviors/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk update pbehaviors by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Bulk update pbehaviors by id",
+                "operationId": "pbehaviors-bulk-update-by-id",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pbehavior.BulkUpdateRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pbehavior.Response"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk delete pbehaviors by id",
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Bulk delete pbehaviors by id",
+                "operationId": "pbehaviors-bulk-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "ids",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/bulk/view-groups": {
             "put": {
                 "security": [
@@ -1598,7 +1753,7 @@ var doc = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -5056,7 +5211,7 @@ var doc = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -5141,7 +5296,7 @@ var doc = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -5166,7 +5321,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.EditRequest"
+                            "$ref": "#/definitions/pbehavior.CreateRequest"
                         }
                     }
                 ],
@@ -5190,7 +5345,7 @@ var doc = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -5207,7 +5362,7 @@ var doc = `{
                     "pbehaviors"
                 ],
                 "summary": "Count entities matching filter",
-                "operationId": "pbehavior-countfilter",
+                "operationId": "pbehaviors-countfilter",
                 "parameters": [
                     {
                         "description": "body",
@@ -5245,7 +5400,7 @@ var doc = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -5287,7 +5442,7 @@ var doc = `{
             "put": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -5319,7 +5474,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.EditRequest"
+                            "$ref": "#/definitions/pbehavior.UpdateRequest"
                         }
                     }
                 ],
@@ -5347,7 +5502,7 @@ var doc = `{
             "delete": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -5358,7 +5513,7 @@ var doc = `{
                     "pbehaviors"
                 ],
                 "summary": "Delete pbehavior by id",
-                "operationId": "pbehavior-delete-by-id",
+                "operationId": "pbehaviors-delete-by-id",
                 "parameters": [
                     {
                         "type": "string",
@@ -5383,7 +5538,7 @@ var doc = `{
             "patch": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -5445,7 +5600,7 @@ var doc = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -11130,6 +11285,73 @@ var doc = `{
                 }
             }
         },
+        "pbehavior.BulkDeleteRequest": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pbehavior.BulkUpdateRequestItem": {
+            "type": "object",
+            "required": [
+                "_id",
+                "enabled",
+                "filter",
+                "name",
+                "reason",
+                "tstart",
+                "type"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.ExdateRequest"
+                    }
+                },
+                "filter": {
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "pbehavior.Comment": {
             "type": "object",
             "properties": {
@@ -11165,7 +11387,7 @@ var doc = `{
                 }
             }
         },
-        "pbehavior.EditRequest": {
+        "pbehavior.CreateRequest": {
             "type": "object",
             "required": [
                 "enabled",
@@ -11176,6 +11398,9 @@ var doc = `{
                 "type"
             ],
             "properties": {
+                "_id": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -11355,6 +11580,55 @@ var doc = `{
                     "type": "string"
                 },
                 "priority": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehavior.UpdateRequest": {
+            "type": "object",
+            "required": [
+                "enabled",
+                "filter",
+                "name",
+                "reason",
+                "tstart",
+                "type"
+            ],
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.ExdateRequest"
+                    }
+                },
+                "filter": {
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
                     "type": "integer"
                 },
                 "type": {
