@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
@@ -60,11 +61,12 @@ func (p EnrichmentRule) getExternalData(ctx context.Context, parameters DataSour
 }
 
 // applyActions applies the actions of an enrichment rule to an event.
-func (p EnrichmentRule) applyActions(event types.Event, parameters ActionParameters, report *Report) (types.Event, error) {
+func (p EnrichmentRule) applyActions(event types.Event, parameters ActionParameters, report *Report, timezoneConfig *config.TimezoneConfig) (types.Event, error) {
 	var err error
 
 	for _, action := range p.Actions {
 		parameters.Event = event
+		action.SetTimezoneConfig(timezoneConfig)
 		event, err = action.Apply(event, parameters, report)
 		if err != nil {
 			return event, err
@@ -75,7 +77,8 @@ func (p EnrichmentRule) applyActions(event types.Event, parameters ActionParamet
 }
 
 // Apply applies the enrichment rule to an event.
-func (p EnrichmentRule) Apply(ctx context.Context, event types.Event, regexMatches pattern.EventRegexMatches, report *Report, logger zerolog.Logger, ruleId string) (types.Event, Outcome) {
+func (p EnrichmentRule) Apply(ctx context.Context, event types.Event, regexMatches pattern.EventRegexMatches, report *Report,
+	timezoneConfig *config.TimezoneConfig, logger zerolog.Logger, ruleId string) (types.Event, Outcome) {
 	parameters := DataSourceGetterParameters{
 		Event:      event,
 		RegexMatch: regexMatches,
@@ -91,7 +94,7 @@ func (p EnrichmentRule) Apply(ctx context.Context, event types.Event, regexMatch
 		RegexMatch:   regexMatches,
 		ExternalData: externalData,
 	}
-	event, err = p.applyActions(event, actionParameters, report)
+	event, err = p.applyActions(event, actionParameters, report, timezoneConfig)
 	if err != nil {
 		marshalledEvent, mErr := json.Marshal(event)
 		if mErr != nil {

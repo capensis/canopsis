@@ -36,8 +36,8 @@ const (
 	basicPrefix         = "Basic"
 	bearerPrefix        = "Bearer"
 
-	repeatRequestCount    = 20
-	repeatRequestInterval = time.Millisecond * 100
+	repeatRequestCount    = 10
+	repeatRequestInterval = time.Millisecond * 10
 
 	ansiReset = "\x1b[0m"
 )
@@ -531,9 +531,11 @@ func (a *ApiClient) IDoRequestUntilResponseCode(method, uri string, code int) er
 		return fmt.Errorf("cannot create request: %w", err)
 	}
 
+	timeout := repeatRequestInterval
 	for i := 0; i < repeatRequestCount; i++ {
 		if i != 0 {
-			time.Sleep(repeatRequestInterval)
+			time.Sleep(timeout)
+			timeout *= 2
 		}
 
 		err := a.doRequest(req)
@@ -584,9 +586,11 @@ func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc st
 		return fmt.Errorf("cannot decode expected response body: %w", err)
 	}
 
+	timeout := repeatRequestInterval
 	for i := 0; i < repeatRequestCount; i++ {
 		if i != 0 {
-			time.Sleep(repeatRequestInterval)
+			time.Sleep(timeout)
+			timeout *= 2
 		}
 
 		err := a.doRequest(req)
@@ -642,9 +646,11 @@ func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int
 		return fmt.Errorf("cannot decode expected response body: %w", err)
 	}
 
+	timeout := repeatRequestInterval
 	for i := 0; i < repeatRequestCount; i++ {
 		if i != 0 {
-			time.Sleep(repeatRequestInterval)
+			time.Sleep(timeout)
+			timeout *= 2
 		}
 
 		err := a.doRequest(req)

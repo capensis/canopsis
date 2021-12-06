@@ -9,6 +9,7 @@ import (
 	"text/template"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -54,12 +55,13 @@ type WorkerPool interface {
 }
 
 type pool struct {
-	size             int
-	axeRpcClient     engine.RPCClient
-	webhookRpcClient engine.RPCClient
-	alarmAdapter     alarm.Adapter
-	encoder          encoding.Encoder
-	logger           zerolog.Logger
+	size                   int
+	axeRpcClient           engine.RPCClient
+	webhookRpcClient       engine.RPCClient
+	alarmAdapter           alarm.Adapter
+	encoder                encoding.Encoder
+	logger                 zerolog.Logger
+	timezoneConfigProvider *config.BaseTimezoneConfigProvider
 }
 
 func NewWorkerPool(
@@ -69,14 +71,16 @@ func NewWorkerPool(
 	alarmAdapter alarm.Adapter,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
+	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 ) WorkerPool {
 	return &pool{
-		size:             size,
-		axeRpcClient:     axeRpcClient,
-		webhookRpcClient: webhookRpcClient,
-		alarmAdapter:     alarmAdapter,
-		encoder:          encoder,
-		logger:           logger,
+		size:                   size,
+		axeRpcClient:           axeRpcClient,
+		webhookRpcClient:       webhookRpcClient,
+		alarmAdapter:           alarmAdapter,
+		encoder:                encoder,
+		logger:                 logger,
+		timezoneConfigProvider: timezoneConfigProvider,
 	}
 }
 
@@ -213,7 +217,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*types.RPCAxeEvent, error) {
 		case "author", "output":
 			if str, ok := v.(string); ok {
 				var err error
-				params[k], err = renderTemplate(str, tplData, types.GetTemplateFunc())
+				params[k], err = s.renderTemplate(str, tplData)
 				if err != nil {
 					return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
 				}
@@ -262,7 +266,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 					case "url", "payload":
 						if str, ok := requestVal.(string); ok {
 							var err error
-							newRequest[requestKey], err = renderTemplate(str, tplData, types.GetTemplateFunc())
+							newRequest[requestKey], err = s.renderTemplate(str, tplData)
 							if err != nil {
 								return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
 							}
@@ -276,7 +280,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 
 								if str, ok := headerVal.(string); ok {
 									var err error
-									newHeaders[headerKey], err = renderTemplate(str, tplData, types.GetTemplateFunc())
+									newHeaders[headerKey], err = s.renderTemplate(str, tplData)
 									if err != nil {
 										return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
 									}
@@ -302,6 +306,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 	return &types.RPCWebhookEvent{
 		Parameters:   webhookParams,
 		Alarm:        &task.Alarm,
+		Entity:       &task.Entity,
 		AckResources: task.AckResources,
 		Header:       task.Header,
 		Response:     task.Response,
@@ -309,7 +314,15 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 	}, nil
 }
 
-func renderTemplate(templateStr string, data interface{}, f template.FuncMap) (string, error) {
+func (s *pool) renderTemplate(templateStr string, data interface{}) (string, error) {
+	var f template.FuncMap
+	if s.timezoneConfigProvider != nil {
+		timezone := s.timezoneConfigProvider.Get()
+		f = types.GetTemplateFunc(&timezone)
+	} else {
+		f = types.GetTemplateFunc(nil)
+	}
+
 	t, err := template.New("template").Funcs(f).Parse(templateStr)
 	if err != nil {
 		return "", err

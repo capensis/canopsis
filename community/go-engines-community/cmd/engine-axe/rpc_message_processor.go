@@ -96,8 +96,8 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		PreviousPbehaviorTypeID:         alarm.Value.PbehaviorInfo.TypeID,
 		PreviousPbehaviorCannonicalType: alarm.Value.PbehaviorInfo.CanonicalType,
 	}
-	alarmChangeType, err := p.Executor.Exec(ctx, op, alarm,
-		types.CpsTime{Time: time.Now()}, "", types.InitiatorSystem)
+	alarmChangeType, err := p.Executor.Exec(ctx, op, alarm, *event.Entity,
+		types.CpsTime{Time: time.Now()}, "", "", types.InitiatorSystem)
 	if err != nil {
 		if engine.IsConnectionError(err) {
 			return nil, err
@@ -108,13 +108,13 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 	alarmChange.Type = alarmChangeType
 	if alarm.IsMetaAlarm() {
-		var childrenAlarms []types.Alarm
-		err := p.AlarmAdapter.GetOpenedAlarmsByIDs(ctx, event.Alarm.Value.Children, &childrenAlarms)
+		var childrenAlarms []types.AlarmWithEntity
+		err := p.AlarmAdapter.GetOpenedAlarmsWithEntityByIDs(ctx, event.Alarm.Value.Children, &childrenAlarms)
 		if err != nil {
 			p.logError(err, "RPC Message Processor: error getting meta-alarm children", msg)
 		} else {
 			for _, childAlarm := range childrenAlarms {
-				_, err = p.Executor.Exec(ctx, op, &childAlarm, types.CpsTime{Time: time.Now()}, "", types.InitiatorSystem)
+				_, err = p.Executor.Exec(ctx, op, &childAlarm.Alarm, childAlarm.Entity, types.CpsTime{Time: time.Now()}, "", "", types.InitiatorSystem)
 				if err != nil {
 					p.logError(err, "RPC Message Processor: cannot update child alarm", msg)
 				}

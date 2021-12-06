@@ -3,6 +3,7 @@ package idlerule
 import (
 	"context"
 	"errors"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -120,7 +121,9 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	setOperationParameterAuthor(&request, request.Author)
+	userId := c.MustGet(auth.UserKey)
+	author := c.MustGet(auth.Username)
+	setOperationParameterAuthorAndUserID(&request, author.(string), userId.(string))
 	rule, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
@@ -163,7 +166,9 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	setOperationParameterAuthor(&request, request.Author)
+	userId := c.MustGet(auth.UserKey)
+	author := c.MustGet(auth.Username)
+	setOperationParameterAuthorAndUserID(&request, author.(string), userId.(string))
 	rule, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
@@ -259,26 +264,31 @@ func (a *api) CountPatterns(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 
-func setOperationParameterAuthor(request *EditRequest, value string) {
+func setOperationParameterAuthorAndUserID(request *EditRequest, author, userID string) {
 	if request.Operation == nil {
 		return
 	}
 
 	switch v := request.Operation.Parameters.(type) {
 	case scenario.SnoozeParametersRequest:
-		v.Author = value
+		v.Author = author
+		v.User = userID
 		request.Operation.Parameters = v
 	case scenario.ChangeStateParametersRequest:
-		v.Author = value
+		v.Author = author
+		v.User = userID
 		request.Operation.Parameters = v
 	case scenario.AssocTicketParametersRequest:
-		v.Author = value
+		v.Author = author
+		v.User = userID
 		request.Operation.Parameters = v
 	case scenario.PbehaviorParametersRequest:
-		v.Author = value
+		v.Author = author
+		v.User = userID
 		request.Operation.Parameters = v
 	case scenario.ParametersRequest:
-		v.Author = value
+		v.Author = author
+		v.User = userID
 		request.Operation.Parameters = v
 	}
 }

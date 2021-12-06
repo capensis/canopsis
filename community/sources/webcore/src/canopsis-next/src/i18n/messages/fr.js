@@ -148,7 +148,7 @@ export default {
     previous: 'Précédent',
     next: 'Suivant',
     eventPatterns: 'Modèles des événements',
-    alarmPatterns: 'Modèles des alarmes', 
+    alarmPatterns: 'Modèles des alarmes',
     entityPatterns: 'Modèles des entités',
     totalEntityPatterns: 'Total des modèles d\'entité',
     addFilter: 'Ajouter un filtre',
@@ -302,6 +302,9 @@ export default {
     fab: {
       common: 'Ajouter une nouvelle entité',
       addService: 'Ajouter une nouvelle entité de service',
+    },
+    popups: {
+      massDeleteWarning: 'La suppression en masse ne peut pas être appliquée pour certains des éléments sélectionnés, ils ne seront donc pas supprimés.',
     },
   },
   search: {
@@ -478,6 +481,25 @@ export default {
     created: 'Date de création',
     updated: 'Date de dernière modification',
     lastAlarmDate: 'Date de la dernière alarme',
+    searchHelp: '<span>Aide sur la recherche avancée :</span>\n' +
+      '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
+      '<p>Le "-" avant la recherche est obligatoire</p>\n' +
+      '<p>Opérateurs : <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
+      '<p>Pour effectuer une recherche dans les "patterns", utilisez le mot-clé "pattern" comme &lt;NomColonne&gt;</p>\n' +
+      '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+      '<dl>' +
+      '  <dt>Examples :</dt>' +
+      '  <dt>- name = "name_1"</dt>\n' +
+      '  <dd>Le nom du comportement périodique est "name_1"</dd>\n' +
+      '  <dt>- rrule = "rrule_1"</dt>\n' +
+      '  <dd>La règle de comportement périodique est "rrule_1"</dd>\n' +
+      '  <dt>- filter = "filter_1"</dt>\n' +
+      '  <dd>Le filtre de comportement périodique est "filter_1"</dd>\n' +
+      '  <dt>- type.name = "type_name_1"</dt>\n' +
+      '  <dd>Le nom du type de comportement périodique est "type_name_1"</dd>\n' +
+      '  <dt>- reason.name = "reason_name_1"</dt>\n' +
+      '  <dd>Le nom de la raison du comportement périodique est "reason_name_1"</dd>' +
+      '</dl>',
     tabs: {
       filter: 'Filtre',
       comments: 'Commentaires',
@@ -1545,6 +1567,30 @@ export default {
         title: 'Règle d\'entité en double',
       },
     },
+    createAlarmStatusRule: {
+      flapping: {
+        create: {
+          title: 'Créer une règle de bagot',
+        },
+        edit: {
+          title: 'Modifier la règle de bagot',
+        },
+        duplicate: {
+          title: 'Dupliquer la règle de bagot',
+        },
+      },
+      resolve: {
+        create: {
+          title: 'Créer une règle de résolution',
+        },
+        edit: {
+          title: 'Modifier la règle de résolution',
+        },
+        duplicate: {
+          title: 'Dupliquer la règle de résolution',
+        },
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1927,6 +1973,12 @@ export default {
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Droits pour le widget : Compteur',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Droits pour le widget : Scénario des tests',
     },
+    api: {
+      general: 'Général',
+      rules: 'Règles',
+      remediation: 'Remédiation',
+      pbehavior: 'PBehavior',
+    },
   },
 
   pbehavior: {
@@ -1989,6 +2041,10 @@ export default {
     systemStatusChipError: 'Le système n\'est pas opérationnel',
     systemStatusServerError: 'La configuration du système n\'est pas valide, veuillez contacter l\'administrateur',
     systemsOperational: 'Tous les systèmes sont opérationnels',
+    validation: {
+      max_value: 'Le champ doit être égal ou inférieur au nombre optimal d\'instances',
+      min_value: 'Le champ doit être égal ou supérieur au nombre minimal d\'instances',
+    },
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
@@ -2205,6 +2261,15 @@ export default {
   },
 
   scenario: {
+    triggers: 'Déclencheurs',
+    emitTrigger: 'Émettre un déclencheur',
+    withAuth: 'Avez-vous besoin de champs d\'authentification ?',
+    emptyResponse: 'Réponse vide',
+    isRegexp: 'La valeur peut être une expression régulière',
+    headerKey: 'Clé d\'en-tête',
+    headerValue: 'Valeur d\'en-tête',
+    key: 'Clé',
+    skipVerify: 'Ne pas vérifier les certificats HTTPS',
     headers: 'En-têtes',
     declareTicket: 'Déclarer un ticket',
     workflow: 'Comportement si cette action ne correspond pas :',
@@ -2238,22 +2303,12 @@ export default {
       [ACTION_TYPES.cancel]: 'Annuler',
       [ACTION_TYPES.webhook]: 'Webhook',
     },
-    fields: {
-      triggers: 'Déclencheurs',
-      emitTrigger: 'Émettre un déclencheur',
-      withAuth: 'Avez-vous besoin de champs d\'authentification ?',
-      emptyResponse: 'Réponse vide',
-      isRegexp: 'La valeur peut être une expression régulière',
-      headerKey: "Clé d'en-tête",
-      headerValue: "Valeur d'en-tête",
-      key: 'Clé',
-      skipVerify: 'Ne pas vérifier les certificats HTTPS',
-    },
     tabs: {
       pattern: 'Modèle',
     },
     errors: {
       actionRequired: 'Veuillez ajouter au moins une action',
+      priorityExist: 'La priorité du scénario actuel est déjà utilisée. Voulez-vous changer la priorité actuelle du scénario en {priority} ?',
     },
   },
 
@@ -2371,20 +2426,20 @@ export default {
   storageSetting: {
     alarm: {
       title: 'Stockage des données d\'alarme',
-      titleHelp: 'Une fois activé, les données d\'alarmes résolues seront archivées et/ou supprimées après la période de temps définie.',
+      titleHelp: 'Lorsque ces options sont activées, les données d\'alarmes résolues sont archivées et/ou supprimées après la période de temps définie.',
       archiveAfter: 'Archiver les données d\'alarmes résolues après',
       deleteAfter: 'Supprimer les données d\'alarmes résolues après',
     },
     junit: {
       title: 'Stockage de données JUnit',
       deleteAfter: 'Supprimer les données des suites de tests après',
-      deleteAfterHelpText: 'Lorsqu\'elles sont activées, les données des suites de tests JUnit (XML, captures d\'écran et vidéos) seront supprimées après la période définie.',
+      deleteAfterHelpText: 'Lorsque cette option est activée, les données des suites de tests JUnit (XML, captures d\'écran et vidéos) sont supprimées après la période définie.',
     },
     remediation: {
       title: 'Instructions de stockage des données',
       accumulateAfter: 'Accumuler les statistiques des instructions après',
       deleteAfter: 'Supprimer les données des instructions après',
-      deleteAfterHelpText: 'Lorsqu\'il est activé, les données statistiques des instructions seront supprimées après la période de temps définie.',
+      deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des instructions sont supprimées après la période de temps définie.',
     },
     entity: {
       title: 'Stockage des données des entités',
@@ -2393,7 +2448,7 @@ export default {
       deleteEntity: 'Supprimer définitivement les entités désactivées de l\'archive',
       archiveDependencies: 'Supprimer également les entités impactantes et dépendantes',
       archiveDependenciesHelp: 'Pour les connecteurs, tous les composants et toutes les ressources impactants et dépendants seront archivés ou supprimés pour toujours. Pour les composants, toutes les ressources dépendantes seront également archivées ou supprimées pour toujours.',
-      cleanStorage: 'Nettoyer le stockage',
+      cleanStorage: 'Archiver ou Supprimer les entités désactivées',
       confirmation: {
         title: 'Supprimer les entités désactivées ?',
         archive: 'Voulez-vous vraiment archiver toutes les entités désactivées ? Cette action ne peut pas être annulée.',
@@ -2401,9 +2456,9 @@ export default {
       },
     },
     pbehavior: {
-      title: 'Stockage des données de comportement',
-      deleteAfter: 'Supprimer les données de comportement après',
-      deleteAfterHelpText: 'Lorsqu\'il est activé, les comportements inactifs seront supprimés après la période de temps définie à partir du dernier événement.',
+      title: 'Stockage des données de comportements périodiques',
+      deleteAfter: 'Supprimer les données de comportements périodiques après',
+      deleteAfterHelpText: 'Lorsque cette option est activée, les comportements périodiques inactifs sont supprimés après la période de temps définie à partir du dernier événement.',
     },
     healthCheck: {
       title: 'Stockage des données du bilan de santé',
@@ -2469,6 +2524,10 @@ export default {
     },
   },
 
+  alarmStatusRules: {
+    frequencyLimit: 'Nombre d\'oscillations',
+  },
+
   icons: {
     noEvents: 'Aucun événement reçu pendant {duration} par certaines dépendances',
   },
@@ -2498,6 +2557,16 @@ export default {
     [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
       title: 'Règles d\'inactivité',
       message: 'Les règles d\'inactivité des entités ou des alarmes peuvent être utilisées pour surveiller les événements et les états d\'alarme afin de savoir si des événements ne sont pas reçus ou si l\'état d\'alarme n\'est pas modifié pendant une longue période en raison d\'erreurs ou d\'une configuration non valide.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
+      title: 'Règles de bagot',
+      // message: '', // TODO: need to put description
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
+      title: 'Règles de résolution',
+      // message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
@@ -2533,7 +2602,7 @@ export default {
      */
     [USERS_PERMISSIONS.technical.broadcastMessage]: {
       title: 'Diffusion de messages',
-      message: 'La diffusion de messages peut être utilisée pour afficher les bannières et les messages d\'information qui apparaîtront dans l\'interface de Canopsis.'
+      message: 'La diffusion de messages peut être utilisée pour afficher les bannières et les messages d\'information qui apparaîtront dans l\'interface de Canopsis.',
     },
     [USERS_PERMISSIONS.technical.playlist]: {
       title: 'Listes de lecture',
