@@ -8,6 +8,7 @@ import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ValidatorPlugin from '@/plugins/validator';
 import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
+import GridPlugin from '@/plugins/grid';
 import * as constants from '@/constants';
 import * as config from '@/config';
 import { convertDateToString } from '@/helpers/date/date';
@@ -38,11 +39,18 @@ const i18n = {
   mergeLocaleMessage: jest.fn(),
 };
 
+jest.mock('@/i18n', () => ({
+  t: mocks.$t,
+  tc: mocks.$tc,
+  te: mocks.$te,
+}));
+
 Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin, { i18n });
 Vue.use(VuetifyReplacerPlugin);
+Vue.use(GridPlugin);
 
 Vue.filter('get', get);
 Vue.filter('date', convertDateToString);
