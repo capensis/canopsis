@@ -1576,7 +1576,7 @@ export default {
         text: 'Vous êtes sur le point d\'enregistrer une politique d\'archivage et/ou de suppression de données.\n' +
           '<strong>Les opérations qui en découleront, notamment la suppression de données, seront irreversibles.</strong>',
         phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
-        phrase: 'Modifier la politique de stockage',
+        phrase: 'modifier la politique de stockage',
       },
       cleanStorage: {
         title: 'Archivage/Suppression des entités désactivées. Êtes vous sur ?',
