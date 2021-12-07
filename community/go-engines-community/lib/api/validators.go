@@ -190,7 +190,8 @@ func RegisterValidators(client mongo.DbClient) {
 	v.RegisterStructValidationCtx(roleValidator.ValidateEditRequest, role.EditRequest{})
 
 	userValidator := user.NewValidator(client)
-	v.RegisterStructValidationCtx(userValidator.ValidateEditRequest, user.EditRequest{})
+	v.RegisterStructValidationCtx(userValidator.ValidateRequest, user.Request{})
+	v.RegisterStructValidationCtx(userValidator.ValidateBulkUpdateRequestItem, user.BulkUpdateRequestItem{})
 
 	viewValidator := view.NewValidator(client)
 	viewBulkUniqueIDValidator := common.NewUniqueBulkFieldValidator("ID")
