@@ -1591,6 +1591,23 @@ export default {
         },
       },
     },
+    confirmationPhrase: {
+      phrase: 'Phrase',
+      updateStorageSettings: {
+        title: 'Updating storage policy. Are you sure ?',
+        text: 'You are about to change the storage policy.\n' +
+          '<strong>Associated operations, deleting data, won\'t be cancellable.</strong>',
+        phraseText: 'Please, type the following to confirm:',
+        phrase: 'update the storage policy',
+      },
+      cleanStorage: {
+        title: 'Archive/delete disabled entities. Are you sure ?',
+        text: 'You are about to archive and/or delete data.\n' +
+          '<strong>Deletion operation won\'t be cancellable.</strong>',
+        phraseText: 'Please, type the following to confirm:',
+        phrase: 'archive or delete',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -2423,7 +2440,7 @@ export default {
     },
   },
 
-  storageSetting: {
+  storageSettings: {
     alarm: {
       title: 'Alarm data storage',
       titleHelp: 'When switched on, the resolved alarms data will be archived and/or deleted after the defined time period.',
@@ -2449,11 +2466,6 @@ export default {
       archiveDependencies: 'Remove the impacting and dependent entities as well',
       archiveDependenciesHelp: 'For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well.',
       cleanStorage: 'Clean storage',
-      confirmation: {
-        title: 'Delete disabled entities?',
-        archive: 'Are you sure you want to archive all disabled entities? This action cannot be canceled.',
-        delete: 'Are you sure you want to delete all disabled entities from the archive forever? This action cannot be canceled.',
-      },
     },
     pbehavior: {
       title: 'PBehavior data storage',
