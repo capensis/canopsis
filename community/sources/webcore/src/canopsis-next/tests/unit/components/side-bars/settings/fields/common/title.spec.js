@@ -22,6 +22,10 @@ const snapshotFactory = (options = {}) => mount(Title, {
   localVue,
   parentComponent: {
     provide: {
+      list: {
+        register: jest.fn(),
+        unregister: jest.fn(),
+      },
       listClick: jest.fn(),
     },
   },
