@@ -1,6 +1,6 @@
 <template lang="pug">
   v-list-group
-    template(#activator)
+    template(#activator="")
       v-list-tile
         div(:class="validationHeaderClass") {{ title }}
           span.font-italic.caption.ml-1(v-if="optional") ({{ $t('common.optional') }})

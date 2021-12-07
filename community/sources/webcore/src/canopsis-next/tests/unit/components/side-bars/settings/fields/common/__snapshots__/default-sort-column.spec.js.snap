@@ -267,7 +267,7 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 3
 </div>
 `;
 
-exports[`default-sort-column Renders \`default-sort-column\` with default 1`] = `
+exports[`default-sort-column Renders \`default-sort-column\` with default props 1`] = `
 <div
   class="v-list__group"
 >
@@ -434,7 +434,7 @@ exports[`default-sort-column Renders \`default-sort-column\` with default 1`] = 
 </div>
 `;
 
-exports[`default-sort-column Renders \`default-sort-column\` with default 2`] = `
+exports[`default-sort-column Renders \`default-sort-column\` with default props 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -468,7 +468,7 @@ exports[`default-sort-column Renders \`default-sort-column\` with default 2`] = 
 </div>
 `;
 
-exports[`default-sort-column Renders \`default-sort-column\` with default 3`] = `
+exports[`default-sort-column Renders \`default-sort-column\` with default props 3`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
