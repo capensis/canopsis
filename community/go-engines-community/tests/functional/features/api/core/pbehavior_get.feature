@@ -281,10 +281,96 @@ Feature: get a PBehavior
       }
     }
     """
+    When I do GET /api/v4/pbehaviors?search=type.name="test-type-to-get-pbehavior-name"
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-pbehavior-to-get-by-type",
+          "author": "root",
+          "comments": [],
+          "created": 1592215337,
+          "enabled": true,
+          "exceptions": [],
+          "exdates": [],
+          "filter": {"$and": [{"name": "ccccc"}]},
+          "name": "test-pbehavior-to-get-by-type-name",
+          "reason": {
+            "_id": "test-reason-1",
+            "description": "test-reason-1-description",
+            "name": "test-reason-1-name"
+          },
+          "rrule": "",
+          "tstart": 1591172881,
+          "tstop": 1591536400,
+          "type": {
+            "_id": "test-type-to-get-pbehavior",
+            "description": "test-type-to-get-pbehavior-description",
+            "icon_name": "test-type-to-get-pbehavior-icon",
+            "name": "test-type-to-get-pbehavior-name",
+            "priority": 25,
+            "type": "active"
+          },
+          "updated": 1592215337
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
 
   Scenario: given search request by reason should return pbehaviors
     When I am admin
     When I do GET /api/v4/pbehaviors?search=test-reason-to-pbehavior-get-name
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-pbehavior-to-get-by-reason",
+          "author": "root",
+          "comments": [],
+          "created": 1592215337,
+          "enabled": true,
+          "exceptions": [],
+          "exdates": [],
+          "filter": {"$and": [{"name": "ccccc"}]},
+          "name": "test-pbehavior-to-get-by-reason-name",
+          "reason": {
+            "_id": "test-reason-to-pbehavior-get",
+            "description": "test-reason-to-pbehavior-get-description",
+            "name": "test-reason-to-pbehavior-get-name"
+          },
+          "rrule": "",
+          "tstart": 1591172881,
+          "tstop": 1591536400,
+          "type": {
+            "_id": "test-type-to-pbh-edit-1",
+            "description": "Pbh edit 1 State type",
+            "icon_name": "test-to-pbh-edit-1-icon",
+            "name": "Pbh edit 1 State",
+            "priority": 10,
+            "type": "active"
+          },
+          "updated": 1592215337
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/pbehaviors?search=reason.name="test-reason-to-pbehavior-get-name"
     Then the response code should be 200
     Then the response body should contain:
     """json
