@@ -23,6 +23,10 @@ const snapshotFactory = (options = {}) => mount(Columns, {
 
   parentComponent: {
     provide: {
+      list: {
+        register: jest.fn(),
+        unregister: jest.fn(),
+      },
       listClick: jest.fn(),
     },
   },
