@@ -9,11 +9,11 @@
       v-text-field(
         v-field.number="value.limit",
         v-validate="'required|numeric|min_value:1'",
-        :error-messages="errors.collect('enabledLimitValue')",
+        :error-messages="errors.collect(name)",
         :label="label",
         :disabled="!value.enabled",
         :min="1",
-        name="enabledLimitValue",
+        :name="name",
         type="number",
         hide-details
       )
@@ -37,6 +37,10 @@ export default {
     label: {
       type: String,
       required: false,
+    },
+    name: {
+      type: String,
+      default: 'enabledLimitValue',
     },
   },
 };
