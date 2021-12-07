@@ -1,7 +1,12 @@
 package user
 
 import (
+	"encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ListRequest struct {
@@ -10,8 +15,12 @@ type ListRequest struct {
 	Permission string `form:"permission"`
 }
 
+type Request struct {
+	ID string `json:"-"`
+	EditRequest
+}
+
 type EditRequest struct {
-	ID                     string          `json:"-"`
 	Password               string          `json:"password"`
 	Name                   string          `json:"name" binding:"required,max=255"`
 	Firstname              string          `json:"firstname" binding:"max=255"`
@@ -23,6 +32,46 @@ type EditRequest struct {
 	IsEnabled              *bool           `json:"enable" binding:"required"`
 	DefaultView            string          `json:"defaultview"`
 	UITours                map[string]bool `json:"ui_tours"`
+}
+
+func (r EditRequest) getInsertBson(passwordEncoder password.Encoder) bson.M {
+	bsonModel := bson.M{
+		"_id":                  r.Name,
+		"crecord_name":         r.Name,
+		"crecord_type":         securitymodel.LineTypeSubject,
+		"lastname":             r.Lastname,
+		"firstname":            r.Firstname,
+		"mail":                 r.Email,
+		"role":                 r.Role,
+		"shadowpasswd":         string(passwordEncoder.EncodePassword([]byte(r.Password))),
+		"ui_language":          r.UILanguage,
+		"groupsNavigationType": r.UIGroupsNavigationType,
+		"enable":               r.IsEnabled,
+		"defaultview":          r.DefaultView,
+		"authkey":              utils.NewID(),
+	}
+
+	return bsonModel
+}
+
+func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) bson.M {
+	bsonModel := bson.M{
+		"crecord_name":         r.Name,
+		"lastname":             r.Lastname,
+		"firstname":            r.Firstname,
+		"mail":                 r.Email,
+		"role":                 r.Role,
+		"ui_language":          r.UILanguage,
+		"groupsNavigationType": r.UIGroupsNavigationType,
+		"enable":               r.IsEnabled,
+		"defaultview":          r.DefaultView,
+		"tours":                r.UITours,
+	}
+	if r.Password != "" {
+		bsonModel["shadowpasswd"] = string(passwordEncoder.EncodePassword([]byte(r.Password)))
+	}
+
+	return bsonModel
 }
 
 type User struct {
@@ -51,6 +100,39 @@ type Role struct {
 type View struct {
 	ID    string `bson:"_id" json:"_id"`
 	Title string `bson:"title" json:"title"`
+}
+
+type BulkCreateRequest struct {
+	Items []Request `binding:"required,notblank,dive"`
+}
+
+func (r BulkCreateRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r.Items)
+}
+
+func (r *BulkCreateRequest) UnmarshalJSON(b []byte) error {
+	return json.Unmarshal(b, &r.Items)
+}
+
+type BulkUpdateRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+	EditRequest
+}
+
+type BulkUpdateRequest struct {
+	Items []BulkUpdateRequestItem `binding:"required,notblank,dive"`
+}
+
+func (r BulkUpdateRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r.Items)
+}
+
+func (r *BulkUpdateRequest) UnmarshalJSON(b []byte) error {
+	return json.Unmarshal(b, &r.Items)
+}
+
+type BulkDeleteRequest struct {
+	IDs []string `form:"ids[]" json:"ids" binding:"required,unique,notblank"`
 }
 
 type AggregationResult struct {

@@ -20,7 +20,7 @@ func NewApi(
 	store Store,
 	actionLogger logger.ActionLogger,
 	metricMetaUpdater metrics.MetaUpdater,
-) common.CrudAPI {
+) common.BulkCrudAPI {
 	return &api{
 		store:        store,
 		actionLogger: actionLogger,
@@ -109,7 +109,7 @@ func (a *api) Get(c *gin.Context) {
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /users [post]
 func (a *api) Create(c *gin.Context) {
-	var request EditRequest
+	var request Request
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -150,7 +150,7 @@ func (a *api) Create(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /users/{id} [put]
 func (a *api) Update(c *gin.Context) {
-	request := EditRequest{
+	request := Request{
 		ID: c.Param("id"),
 	}
 
@@ -217,6 +217,90 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	a.metricMetaUpdater.DeleteById(c.Request.Context(), id)
+
+	c.Status(http.StatusNoContent)
+}
+
+func (a *api) BulkCreate(c *gin.Context) {
+	var request BulkCreateRequest
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	ctx := c.Request.Context()
+
+	err := a.store.BulkInsert(ctx, request.Items)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, item := range request.Items {
+		err = a.actionLogger.Action(c, logger.LogEntry{
+			Action:    logger.ActionCreate,
+			ValueType: logger.ValueTypeUser,
+			ValueID:   item.Name,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func (a *api) BulkUpdate(c *gin.Context) {
+	var request BulkUpdateRequest
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	ctx := c.Request.Context()
+
+	err := a.store.BulkUpdate(ctx, request.Items)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, v := range request.Items {
+		err = a.actionLogger.Action(c, logger.LogEntry{
+			Action:    logger.ActionUpdate,
+			ValueType: logger.ValueTypeUser,
+			ValueID:   v.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func (a *api) BulkDelete(c *gin.Context) {
+	request := BulkDeleteRequest{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	err := a.store.BulkDelete(c.Request.Context(), request.IDs)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, id := range request.IDs {
+		err = a.actionLogger.Action(c, logger.LogEntry{
+			Action:    logger.ActionDelete,
+			ValueType: logger.ValueTypeUser,
+			ValueID:   id,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
 
 	c.Status(http.StatusNoContent)
 }

@@ -191,9 +191,17 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
+		viewStatsRouter := protected.Group("/view-stats")
+		{
+			viewStatsApi := viewstats.NewApi(stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
+			viewStatsRouter.GET("", middleware.OnlyAuth(), viewStatsApi.List)
+			viewStatsRouter.POST("", middleware.OnlyAuth(), viewStatsApi.Create)
+			viewStatsRouter.PUT("/:id", middleware.OnlyAuth(), viewStatsApi.Update)
+		}
+
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
-			userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, metricsUserMetaUpdater)
 			userRouter.POST("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
 				userApi.Create,
@@ -934,6 +942,25 @@ func RegisterRoutes(
 
 		bulkRouter := protected.Group("/bulk")
 		{
+			userRouter := bulkRouter.Group("/users")
+			{
+				userRouter.POST(
+					"",
+					middleware.Authorize(authObjView, permCreate, enforcer),
+					userApi.BulkCreate,
+				)
+				userRouter.PUT(
+					"",
+					middleware.Authorize(authObjView, permUpdate, enforcer),
+					userApi.BulkUpdate,
+				)
+				userRouter.DELETE(
+					"",
+					middleware.Authorize(authObjView, permDelete, enforcer),
+					userApi.BulkDelete,
+				)
+			}
+
 			viewRouter := bulkRouter.Group("/views")
 			{
 				viewRouter.POST(
