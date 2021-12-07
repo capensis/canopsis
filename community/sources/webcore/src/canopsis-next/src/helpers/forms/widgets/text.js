@@ -1,3 +1,5 @@
+import { cloneDeep } from 'lodash';
+
 import { QUICK_RANGES, TIME_UNITS, WIDGET_TYPES } from '@/constants';
 
 import { widgetToForm } from '@/helpers/forms/widgets/common';
@@ -51,14 +53,16 @@ import { widgetToForm } from '@/helpers/forms/widgets/common';
  * @return {TextWidgetParametersForm}
  */
 const textWidgetParametersToForm = (parameters = {}) => ({
-  dateInterval: parameters.dateInterval ?? {
-    periodValue: 1,
-    periodUnit: TIME_UNITS.day,
-    tstart: QUICK_RANGES.thisMonthSoFar.start,
-    tstop: QUICK_RANGES.thisMonthSoFar.stop,
-  },
-  mfilter: parameters.mfilter ?? {},
-  stats: parameters.stats ?? {},
+  dateInterval: parameters.dateInterval
+    ? cloneDeep(parameters.dateInterval)
+    : {
+      periodValue: 1,
+      periodUnit: TIME_UNITS.day,
+      tstart: QUICK_RANGES.thisMonthSoFar.start,
+      tstop: QUICK_RANGES.thisMonthSoFar.stop,
+    },
+  mfilter: parameters.mfilter ? cloneDeep(parameters.mfilter) : {},
+  stats: parameters.stats ? cloneDeep(parameters.stats) : {},
   template: parameters.template ?? '',
 });
 
