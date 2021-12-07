@@ -1569,6 +1569,23 @@ export default {
         },
       },
     },
+    confirmationPhrase: {
+      phrase: 'Phrase',
+      updateStorageSettings: {
+        title: 'Changement de politique de stockage. Êtes vous sur ?',
+        text: 'Vous êtes sur le point d\'enregistrer une politique d\'archivage et/ou de suppression de données.\n' +
+          '<strong>Les opérations qui en découleront, notamment la suppression de données, seront irreversibles.</strong>',
+        phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
+        phrase: 'modifier la politique de stockage',
+      },
+      cleanStorage: {
+        title: 'Archivage/Suppression des entités désactivées. Êtes vous sur ?',
+        text: 'Vous êtes sur le point d\'archiver et/ou de supprimer des données.\n' +
+          '<strong>Les opérations de suppression sont irreversibles.</strong>',
+        phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
+        phrase: 'archiver ou supprimer',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -2401,7 +2418,7 @@ export default {
     },
   },
 
-  storageSetting: {
+  storageSettings: {
     alarm: {
       title: 'Stockage des données d\'alarme',
       titleHelp: 'Lorsque ces options sont activées, les données d\'alarmes résolues sont archivées et/ou supprimées après la période de temps définie.',
@@ -2427,11 +2444,6 @@ export default {
       archiveDependencies: 'Supprimer également les entités impactantes et dépendantes',
       archiveDependenciesHelp: 'Pour les connecteurs, tous les composants et toutes les ressources impactants et dépendants seront archivés ou supprimés pour toujours. Pour les composants, toutes les ressources dépendantes seront également archivées ou supprimées pour toujours.',
       cleanStorage: 'Archiver ou Supprimer les entités désactivées',
-      confirmation: {
-        title: 'Supprimer les entités désactivées ?',
-        archive: 'Voulez-vous vraiment archiver toutes les entités désactivées ? Cette action ne peut pas être annulée.',
-        delete: 'Êtes-vous sûr de vouloir supprimer définitivement toutes les entités désactivées de l\'archive ? Cette action ne peut pas être annulée.',
-      },
     },
     pbehavior: {
       title: 'Stockage des données de comportements périodiques',
