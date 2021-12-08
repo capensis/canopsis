@@ -123,6 +123,8 @@ definitions:
         type: string
       t:
         type: integer
+      user_id:
+        type: string
       val:
         type: string
     type: object
@@ -658,6 +660,9 @@ definitions:
     - end
     - message
     - start
+    type: object
+  bson.M:
+    additionalProperties: true
     type: object
   common.ErrorResponse:
     properties:
@@ -3237,6 +3242,8 @@ definitions:
       t:
         $ref: '#/definitions/types.CpsTime'
         type: object
+      user_id:
+        type: string
       val:
         type: string
     type: object

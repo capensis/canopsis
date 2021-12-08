@@ -8463,6 +8463,9 @@ var doc = `{
                 "t": {
                     "type": "integer"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "val": {
                     "type": "string"
                 }
@@ -9263,6 +9266,10 @@ var doc = `{
                     "type": "integer"
                 }
             }
+        },
+        "bson.M": {
+            "type": "object",
+            "additionalProperties": true
         },
         "common.ErrorResponse": {
             "type": "object",
@@ -12785,6 +12792,9 @@ var doc = `{
                 "t": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                },
+                "user_id": {
+                    "type": "string"
                 },
                 "val": {
                     "type": "string"
