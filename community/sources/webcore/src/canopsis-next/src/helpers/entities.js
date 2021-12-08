@@ -256,19 +256,6 @@ export function generateWidgetByType(type) {
       };
       break;
 
-    case WIDGET_TYPES.text:
-      specialParameters = {
-        dateInterval: {
-          periodValue: 1,
-          periodUnit: TIME_UNITS.day,
-          tstart: QUICK_RANGES.thisMonthSoFar.start,
-          tstop: QUICK_RANGES.thisMonthSoFar.stop,
-        },
-        mfilter: {},
-        stats: {},
-        template: '',
-      };
-      break;
     case WIDGET_TYPES.counter:
       specialParameters = {
         viewFilters: [],
