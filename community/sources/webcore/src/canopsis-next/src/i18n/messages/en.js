@@ -1246,6 +1246,7 @@ export default {
       title: 'Select tab',
     },
     createDynamicInfo: {
+      alarmUpdate: 'The rule will update existing alarms!',
       create: {
         title: 'Create dynamic information',
         success: 'Dynamic information successfully created!',
