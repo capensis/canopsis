@@ -9,7 +9,7 @@
           :editable="editable",
           :closable="editable"
         )
-      v-layout(v-if="closable", row, wrap)
+      v-layout(v-if="addable", row, wrap)
         v-btn.ml-1(
           color="primary",
           @click="showCreateInstructionsFilterModal"
@@ -38,7 +38,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    closable: {
+    addable: {
       type: Boolean,
       default: true,
     },
