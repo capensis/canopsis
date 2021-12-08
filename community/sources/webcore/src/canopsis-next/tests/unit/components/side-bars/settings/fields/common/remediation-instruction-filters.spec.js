@@ -132,7 +132,7 @@ describe('remediation-instructions-filters', () => {
       propsData: {
         filters,
         editable: true,
-        closable: true,
+        addable: true,
       },
     });
 
