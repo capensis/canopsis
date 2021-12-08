@@ -52,8 +52,8 @@
           template(v-if="hasAccessToListRemediationInstructionsFilters")
             field-remediation-instructions-filters(
               v-model="settings.widget.parameters.remediationInstructionsFilters",
-              :has-access-to-add-filter="hasAccessToAddRemediationInstructionsFilter",
-              :has-access-to-edit-filter="hasAccessToEditRemediationInstructionsFilter"
+              :closable="hasAccessToAddRemediationInstructionsFilter",
+              :editable="hasAccessToEditRemediationInstructionsFilter"
             )
             v-divider
           field-live-reporting(v-model="settings.widget.parameters.liveReporting")
