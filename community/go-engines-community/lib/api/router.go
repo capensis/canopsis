@@ -191,14 +191,6 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		viewStatsRouter := protected.Group("/view-stats")
-		{
-			viewStatsApi := viewstats.NewApi(stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
-			viewStatsRouter.GET("", middleware.OnlyAuth(), viewStatsApi.List)
-			viewStatsRouter.POST("", middleware.OnlyAuth(), viewStatsApi.Create)
-			viewStatsRouter.PUT("/:id", middleware.OnlyAuth(), viewStatsApi.Update)
-		}
-
 		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
