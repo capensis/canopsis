@@ -24,6 +24,7 @@ import { getMetricColor } from '@/helpers/color';
 import BarChart from '@/components/common/chart/bar-chart.vue';
 
 import KpiChartExportActions from './kpi-chart-export-actions.vue';
+import { getNowTimestamp } from '@/helpers/date/date';
 
 const Y_AXES_IDS = {
   default: 'y',
@@ -42,7 +43,7 @@ export default {
       type: Object,
       default: () => ({
         from: 0,
-        to: Date.now(),
+        to: getNowTimestamp(),
       }),
     },
     sampling: {
