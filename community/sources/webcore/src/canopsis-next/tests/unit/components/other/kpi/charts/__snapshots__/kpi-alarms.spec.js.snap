@@ -10,6 +10,7 @@ exports[`kpi-alarms Renders \`kpi-alarms\` without metrics 1`] = `
     query="[object Object]"
   />
   <kpi-alarms-chart-stub
+    interval="[object Object]"
     metrics=""
     min-date="1385830800"
     responsive="responsive"
