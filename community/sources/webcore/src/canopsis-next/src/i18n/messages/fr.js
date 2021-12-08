@@ -1243,6 +1243,7 @@ export default {
       title: 'Sélectionnez l\'onglet',
     },
     createDynamicInfo: {
+      alarmUpdate: 'La règle mettra à jour les alarmes existantes !',
       create: {
         title: 'Créer une information dynamique',
         success: 'Information dynamique créé avec succès !',
