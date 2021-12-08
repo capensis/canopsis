@@ -815,9 +815,9 @@ func RegisterRoutes(
 			)
 		}
 
+		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, scenarioPriorityIntervals)
 		scenarioRouter := protected.Group("/scenarios")
 		{
-			scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, scenarioPriorityIntervals)
 			scenarioRouter.POST(
 				"",
 				middleware.Authorize(authObjAction, permCreate, enforcer),
@@ -942,6 +942,28 @@ func RegisterRoutes(
 
 		bulkRouter := protected.Group("/bulk")
 		{
+			scenarioRouter := bulkRouter.Group("/scenarios")
+			{
+				scenarioRouter.POST(
+					"",
+					middleware.Authorize(authObjView, permCreate, enforcer),
+					middleware.SetAuthorToBulk(),
+					scenarioAPI.BulkCreate,
+				)
+				scenarioRouter.PUT(
+					"",
+					middleware.Authorize(authObjView, permUpdate, enforcer),
+					middleware.SetAuthorToBulk(),
+					scenarioAPI.BulkUpdate,
+				)
+				scenarioRouter.DELETE(
+					"",
+					middleware.Authorize(authObjView, permDelete, enforcer),
+					middleware.SetAuthorToBulk(),
+					scenarioAPI.BulkDelete,
+				)
+			}
+
 			userRouter := bulkRouter.Group("/users")
 			{
 				userRouter.POST(

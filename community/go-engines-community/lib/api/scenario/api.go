@@ -19,7 +19,7 @@ type api struct {
 type API interface {
 	GetMinimalPriority(c *gin.Context)
 	CheckPriority(c *gin.Context)
-	common.CrudAPI
+	common.BulkCrudAPI
 }
 
 func NewApi(
@@ -303,6 +303,100 @@ func (a *api) CheckPriority(c *gin.Context) {
 		Valid:               valid,
 		RecommendedPriority: recommendedPriority,
 	})
+}
+
+func (a *api) BulkCreate(c *gin.Context) {
+	var request BulkCreateRequest
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	userId := c.MustGet(auth.UserKey)
+	author := c.MustGet(auth.Username)
+
+	for _, r := range request.Items {
+		setActionParameterAuthorAndUserID(&r.EditRequest, author.(string), userId.(string))
+	}
+
+	err := a.store.BulkInsert(c.Request.Context(), request.Items)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, item := range request.Items {
+		err = a.actionLogger.Action(c, logger.LogEntry{
+			Action:    logger.ActionCreate,
+			ValueType: logger.ValueTypeScenario,
+			ValueID:   item.Name,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func (a *api) BulkUpdate(c *gin.Context) {
+	var request BulkUpdateRequest
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	userId := c.MustGet(auth.UserKey)
+	author := c.MustGet(auth.Username)
+
+	for _, r := range request.Items {
+		setActionParameterAuthorAndUserID(&r.EditRequest, author.(string), userId.(string))
+	}
+
+	err := a.store.BulkUpdate(c.Request.Context(), request.Items)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, v := range request.Items {
+		err = a.actionLogger.Action(c, logger.LogEntry{
+			Action:    logger.ActionUpdate,
+			ValueType: logger.ValueTypeScenario,
+			ValueID:   v.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func (a *api) BulkDelete(c *gin.Context) {
+	request := BulkDeleteRequest{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	err := a.store.BulkDelete(c.Request.Context(), request.IDs)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, id := range request.IDs {
+		err = a.actionLogger.Action(c, logger.LogEntry{
+			Action:    logger.ActionDelete,
+			ValueType: logger.ValueTypeScenario,
+			ValueID:   id,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	c.Status(http.StatusNoContent)
 }
 
 func setActionParameterAuthorAndUserID(request *EditRequest, author, userID string) {
