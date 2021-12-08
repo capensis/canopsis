@@ -3,8 +3,12 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"io"
 	"io/ioutil"
+	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"github.com/gin-gonic/gin"
@@ -39,8 +43,8 @@ func SetAuthor() func(c *gin.Context) {
 	}
 }
 
-// SetAuthorToBulk middleware sets authorized user id to author field to bulk request body. Use it for create and update model endpoints.
-func SetAuthorToBulk() func(c *gin.Context) {
+// PreProcessBulk middleware checks if bulk has valid size and sets authorized user id to author field to bulk request body. Use it for create and update model endpoints.
+func PreProcessBulk(cfg config.CanopsisConf) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var body []map[string]interface{}
 
@@ -52,6 +56,11 @@ func SetAuthorToBulk() func(c *gin.Context) {
 				return
 			}
 			panic(err)
+		}
+
+		if len(body) > cfg.API.BulkMaxSize {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("number of elements shouldn't be greater than %d", cfg.API.BulkMaxSize)))
+			return
 		}
 
 		userId := c.MustGet(auth.UserKey)

@@ -939,19 +939,19 @@ func RegisterRoutes(
 				scenarioRouter.POST(
 					"",
 					middleware.Authorize(authObjView, permCreate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf),
 					scenarioAPI.BulkCreate,
 				)
 				scenarioRouter.PUT(
 					"",
 					middleware.Authorize(authObjView, permUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf),
 					scenarioAPI.BulkUpdate,
 				)
 				scenarioRouter.DELETE(
 					"",
 					middleware.Authorize(authObjView, permDelete, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf),
 					scenarioAPI.BulkDelete,
 				)
 			}
@@ -980,7 +980,7 @@ func RegisterRoutes(
 				viewRouter.POST(
 					"",
 					middleware.Authorize(authObjView, permCreate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf),
 					viewAPI.BulkCreate,
 					middleware.ReloadEnforcerPolicyOnChange(enforcer),
 				)
@@ -988,7 +988,7 @@ func RegisterRoutes(
 					"",
 					middleware.Authorize(authObjView, permUpdate, enforcer),
 					middleware.ProvideAuthorizedIds(permUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf),
 					viewAPI.BulkUpdate,
 				)
 				viewRouter.DELETE(
@@ -1005,13 +1005,13 @@ func RegisterRoutes(
 				viewGroupRouter.POST(
 					"",
 					middleware.Authorize(authObjViewGroup, permCreate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf),
 					viewGroupAPI.BulkCreate,
 				)
 				viewGroupRouter.PUT(
 					"",
 					middleware.Authorize(authObjViewGroup, permUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf),
 					viewGroupAPI.BulkUpdate,
 				)
 				viewGroupRouter.DELETE(
@@ -1026,13 +1026,13 @@ func RegisterRoutes(
 				pbehaviorRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf),
 					pbehaviorApi.BulkCreate,
 				)
 				pbehaviorRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf),
 					pbehaviorApi.BulkUpdate,
 				)
 				pbehaviorRouter.DELETE(
