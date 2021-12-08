@@ -49,3 +49,18 @@ export const mockDateGetTime = (nowTimestamp) => {
     dateSpy.mockRestore();
   });
 };
+
+/**
+ * Mock for the modals. Clear yourself after all tests.
+ */
+export const mockModals = () => {
+  const modals = {
+    show: jest.fn(),
+  };
+
+  afterEach(() => {
+    modals.show.mockReset();
+  });
+
+  return modals;
+};
