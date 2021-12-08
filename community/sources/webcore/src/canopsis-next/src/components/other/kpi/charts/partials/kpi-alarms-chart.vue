@@ -38,6 +38,13 @@ export default {
       type: Array,
       default: () => [],
     },
+    interval: {
+      type: Object,
+      default: () => ({
+        from: 0,
+        to: Date.now(),
+      }),
+    },
     sampling: {
       type: String,
       default: SAMPLINGS.day,
@@ -104,6 +111,8 @@ export default {
         scales: {
           x: {
             type: 'time',
+            min: this.interval.from * 1000,
+            max: this.interval.to * 1000,
             ticks: {
               min: this.minDate * 1000,
               max: Date.now(),
