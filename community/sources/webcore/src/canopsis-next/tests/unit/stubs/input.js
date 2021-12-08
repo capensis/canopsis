@@ -1,3 +1,5 @@
+import { isObject } from 'lodash';
+
 export const createInputStub = className => ({
   props: ['value'],
   template: `
@@ -22,9 +24,14 @@ export const createNumberInputStub = className => ({
 
 export const createSelectInputStub = className => ({
   props: ['value', 'items'],
+  computed: {
+    availableItems() {
+      return this.items.map(item => (isObject(item) ? item : ({ value: item })));
+    },
+  },
   template: `
     <select class="${className}" :value="value" @change="$listeners.input($event.target.value)">
-      <option v-for="item in items" :value="item.value" :key="item.value">
+      <option v-for="item in availableItems" :value="item.value" :key="item.value">
         {{ item.value }}
       </option>
     </select>
