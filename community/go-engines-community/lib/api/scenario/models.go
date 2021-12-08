@@ -16,7 +16,6 @@ type FilteredQuery struct {
 }
 
 type EditRequest struct {
-	ID                   string                  `json:"-"`
 	Name                 string                  `json:"name" binding:"required,max=255"`
 	Author               string                  `json:"author" binding:"required,max=255"`
 	Enabled              *bool                   `json:"enabled" binding:"required"`
@@ -35,6 +34,39 @@ type CreateRequest struct {
 type UpdateRequest struct {
 	EditRequest
 	ID string `json:"-"`
+}
+
+type BulkCreateRequest struct {
+	Items []CreateRequest `binding:"required,notblank,dive"`
+}
+
+func (r BulkCreateRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r.Items)
+}
+
+func (r *BulkCreateRequest) UnmarshalJSON(b []byte) error {
+	return json.Unmarshal(b, &r.Items)
+}
+
+type BulkUpdateRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+	EditRequest
+}
+
+type BulkUpdateRequest struct {
+	Items []BulkUpdateRequestItem `binding:"required,notblank,dive"`
+}
+
+func (r BulkUpdateRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r.Items)
+}
+
+func (r *BulkUpdateRequest) UnmarshalJSON(b []byte) error {
+	return json.Unmarshal(b, &r.Items)
+}
+
+type BulkDeleteRequest struct {
+	IDs []string `form:"ids[]" json:"ids" binding:"required,unique,notblank"`
 }
 
 type GetMinimalPriorityResponse struct {

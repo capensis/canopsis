@@ -229,9 +229,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
-
-	err := a.store.BulkInsert(ctx, request.Items)
+	err := a.store.BulkInsert(c.Request.Context(), request.Items)
 	if err != nil {
 		panic(err)
 	}
@@ -258,9 +256,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
-
-	err := a.store.BulkUpdate(ctx, request.Items)
+	err := a.store.BulkUpdate(c.Request.Context(), request.Items)
 	if err != nil {
 		panic(err)
 	}
