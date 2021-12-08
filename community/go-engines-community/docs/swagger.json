@@ -8447,6 +8447,9 @@
                 "t": {
                     "type": "integer"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "val": {
                     "type": "string"
                 }
@@ -9247,6 +9250,10 @@
                     "type": "integer"
                 }
             }
+        },
+        "bson.M": {
+            "type": "object",
+            "additionalProperties": true
         },
         "common.ErrorResponse": {
             "type": "object",
@@ -12769,6 +12776,9 @@
                 "t": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                },
+                "user_id": {
+                    "type": "string"
                 },
                 "val": {
                     "type": "string"

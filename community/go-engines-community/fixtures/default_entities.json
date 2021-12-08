@@ -4515,5 +4515,46 @@
     "type": "metaalarm",
     "component": "metaalarm",
     "impact_level": 1
+  },
+  {
+    "_id": "dynamic-info-update-connector/dynamic-info-update-connectorname",
+    "depends": ["dynamic-info-update-component"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["dynamic-info-update-resource-1/dynamic-info-update-component"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "dynamic-info-update-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "dynamic-info-update-component",
+    "depends": ["dynamic-info-update-resource-1/dynamic-info-update-component"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["dynamic-info-update-connector/dynamic-info-update-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "dynamic-info-update-component",
+    "type": "component",
+    "component": "dynamic-info-update-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "dynamic-info-update-resource-1/dynamic-info-update-component",
+    "depends": ["dynamic-info-update-connector/dynamic-info-update-connectorname"],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": ["dynamic-info-update-component"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "dynamic-info-update-resource-1",
+    "type": "resource",
+    "component": "dynamic-info-update-component",
+    "impact_level": 1
   }
 ]
