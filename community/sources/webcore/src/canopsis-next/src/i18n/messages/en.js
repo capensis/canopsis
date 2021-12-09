@@ -995,6 +995,9 @@ export default {
       edit: {
         title: 'Edit filter',
       },
+      duplicate: {
+        title: 'Duplicate filter',
+      },
       fields: {
         title: 'Title',
       },

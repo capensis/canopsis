@@ -995,6 +995,9 @@ export default {
       edit: {
         title: 'Éditer un filtre',
       },
+      duplicate: {
+        title: 'Dupliquer un filtre',
+      },
       fields: {
         title: 'Nom',
       },
