@@ -77,6 +77,7 @@ describe('remediation-instructions-filters', () => {
     const wrapper = factory({
       propsData: {
         filters,
+        addable: true,
       },
       mocks: {
         $modals,

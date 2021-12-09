@@ -52,7 +52,7 @@
           template(v-if="hasAccessToListRemediationInstructionsFilters")
             field-remediation-instructions-filters(
               v-model="settings.widget.parameters.remediationInstructionsFilters",
-              :closable="hasAccessToAddRemediationInstructionsFilter",
+              :addable="hasAccessToAddRemediationInstructionsFilter",
               :editable="hasAccessToEditRemediationInstructionsFilter"
             )
             v-divider

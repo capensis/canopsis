@@ -40,11 +40,11 @@ export default {
     },
     addable: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     editable: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   methods: {
