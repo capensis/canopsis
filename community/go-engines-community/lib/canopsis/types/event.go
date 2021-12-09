@@ -150,10 +150,10 @@ type Event struct {
 	Alarm         *Alarm     `bson:"current_alarm" json:"current_alarm"`
 	Entity        *Entity    `bson:"current_entity" json:"current_entity"`
 
-	Author        string     `bson:"author" json:"author"`
-	UserID        string     `bson:"user_id" json:"user_id"`
+	Author string `bson:"author" json:"author"`
+	UserID string `bson:"user_id" json:"user_id"`
 
-	RK            string     `bson:"routing_key" json:"routing_key"`
+	RK string `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.
 	// It also adds declare ticket to all resource alarms on ack webhook.
 	// It's still used by some old users but meta alarms must be used instead.
@@ -241,9 +241,9 @@ func NewEventFromAlarm(alarm Alarm) Event {
 //  if "entity" is not null, "impacts" and "depends" are ensured to be initialized
 func (e *Event) Format() {
 	//events can't be later or earlier than MaxEventTimestampVariation
-	now := time.Now()
-	if e.Timestamp.IsZero() || e.Timestamp.Before(now.Add(-MaxEventTimestampVariation)) || e.Timestamp.After(now.Add(MaxEventTimestampVariation)) {
-		e.Timestamp = CpsTime{now}
+	now := NewCpsTime()
+	if e.Timestamp.IsZero() || e.Timestamp.Time.Before(now.Add(-MaxEventTimestampVariation)) || e.Timestamp.Time.After(now.Add(MaxEventTimestampVariation)) {
+		e.Timestamp = now
 	}
 	if e.EventType == "" {
 		e.EventType = EventTypeCheck
