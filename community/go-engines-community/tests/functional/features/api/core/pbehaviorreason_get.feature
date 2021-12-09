@@ -17,13 +17,18 @@ Feature: get a reason
           "_id": "test-reason-to-get-2",
           "description": "test-reason-to-get-2-description",
           "name": "test-reason-to-get-2-name"
+        },
+        {
+          "_id": "test-reason-to-get-3",
+          "description": "test-reason-to-get-3-description",
+          "name": "test-reason-to-get-3-name"
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
@@ -43,13 +48,17 @@ Feature: get a reason
         {
           "_id": "test-reason-to-get-2",
           "deletable": false
+        },
+        {
+          "_id": "test-reason-to-get-3",
+          "deletable": false
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
