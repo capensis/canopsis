@@ -212,6 +212,7 @@ func getDeletablePipeline() []bson.M {
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$$id", "$reason"}}}},
 				{"$project": bson.M{"_id": 1}},
+				{"$limit": 1},
 			},
 			"as": "pbhs",
 		}},
@@ -221,6 +222,7 @@ func getDeletablePipeline() []bson.M {
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$in": bson.A{"$$id", "$actions.parameters.reason"}}}},
 				{"$project": bson.M{"_id": 1}},
+				{"$limit": 1},
 			},
 			"as": "actions",
 		}},
