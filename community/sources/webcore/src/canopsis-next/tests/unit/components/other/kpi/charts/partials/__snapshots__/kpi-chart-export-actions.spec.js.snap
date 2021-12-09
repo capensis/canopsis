@@ -14,6 +14,7 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with cust
       <i
         aria-hidden="true"
         class="v-icon v-icon--left material-icons theme--light"
+        style="font-size: 16px;"
       >
         file_download
       </i>
@@ -63,6 +64,7 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with cust
       <i
         aria-hidden="true"
         class="v-icon v-icon--left material-icons theme--light"
+        style="font-size: 16px;"
       >
         file_download
       </i>
@@ -90,6 +92,7 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` without p
       <i
         aria-hidden="true"
         class="v-icon v-icon--left material-icons theme--light"
+        style="font-size: 16px;"
       >
         file_download
       </i>
@@ -108,6 +111,7 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` without p
       <i
         aria-hidden="true"
         class="v-icon v-icon--left material-icons theme--light"
+        style="font-size: 16px;"
       >
         file_download
       </i>

@@ -20,11 +20,11 @@ import {
 } from '@/helpers/date/duration';
 import { getDateLabelBySampling, isRatioMetric, isTimeMetric } from '@/helpers/metrics';
 import { getMetricColor } from '@/helpers/color';
+import { convertDateToStartOfUnitTimestamp, getNowTimestamp } from '@/helpers/date/date';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
 
 import KpiChartExportActions from './kpi-chart-export-actions.vue';
-import { getNowTimestamp } from '@/helpers/date/date';
 
 const Y_AXES_IDS = {
   default: 'y',
@@ -187,7 +187,7 @@ export default {
             limits: {
               x: {
                 min: this.minDate * 1000,
-                max: Date.now(),
+                max: convertDateToStartOfUnitTimestamp(getNowTimestamp(), TIME_UNITS.hour) * 1000,
               },
             },
             pan: {
