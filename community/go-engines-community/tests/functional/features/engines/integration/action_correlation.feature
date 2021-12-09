@@ -4,7 +4,7 @@ Feature: update meta alarm on action
   Scenario: given meta alarm and scenario should update meta alarm and update children
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "name": "test-metaalarmrule-action-correlation-1",
       "type": "attribute",
@@ -23,7 +23,7 @@ Feature: update meta alarm on action
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-action-correlation-1",
       "connector_name": "test-connector-name-action-correlation-1",
@@ -32,10 +32,7 @@ Feature: update meta alarm on action
       "component":  "test-component-action-correlation-1",
       "resource": "test-resource-action-correlation-1",
       "state": 2,
-      "output": "test-output-action-correlation-1",
-      "long_output": "test-long-output-action-correlation-1",
-      "author": "test-author-action-correlation-1",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "output": "test-output-action-correlation-1"
     }
     """
     When I wait the end of 2 events processing
@@ -47,7 +44,7 @@ Feature: update meta alarm on action
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-correlation-1-name",
       "enabled": true,
@@ -87,7 +84,7 @@ Feature: update meta alarm on action
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "{{ .metaAlarmConnector }}",
       "connector_name": "{{ .metaAlarmConnectorName }}",
@@ -95,17 +92,14 @@ Feature: update meta alarm on action
       "event_type": "comment",
       "component":  "{{ .metaAlarmComponent }}",
       "resource": "{{ .metaAlarmResource }}",
-      "output": "test-output-action-correlation-1",
-      "long_output": "test-long-output-action-correlation-1",
-      "author": "test-author-action-correlation-1",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "output": "test-output-action-correlation-1"
     }
     """
     When I wait the end of event processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -205,7 +199,7 @@ Feature: update meta alarm on action
   Scenario: given meta alarm and scenario with webhook action should update meta alarm and update children
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "name": "test-metaalarmrule-action-correlation-2",
       "type": "attribute",
@@ -224,31 +218,43 @@ Feature: update meta alarm on action
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-action-correlation-2",
       "connector_name": "test-connector-name-action-correlation-2",
       "source_type": "resource",
       "event_type": "check",
       "component":  "test-component-action-correlation-2",
-      "resource": "test-resource-action-correlation-2",
+      "resource": "test-resource-action-correlation-2-1",
       "state": 2,
-      "output": "test-output-action-correlation-2",
-      "long_output": "test-long-output-action-correlation-2",
-      "author": "test-author-action-correlation-2",
-      "timestamp": {{ (now.Add (parseDuration "-20s")).UTC.Unix }}
+      "output": "test-output-action-correlation-2"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-action-correlation-2",
+      "connector_name": "test-connector-name-action-correlation-2",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-action-correlation-2",
+      "resource": "test-resource-action-correlation-2-2",
+      "state": 1,
+      "output": "test-output-action-correlation-2"
     }
     """
     When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
     Then the response code should be 200
     When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
+    When I save response metalarmDisplayName={{ (index .lastResponse.data 0).v.display_name }}
     When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
     When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-correlation-2-name",
       "enabled": true,
@@ -271,7 +277,7 @@ Feature: update meta alarm on action
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"priority\":83,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-correlation-1-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"{{ `Alarm: {{ .Alarm.Value.DisplayName }}; Entity: {{ .Entity.ID }}; Children: {{ range $children := .Children }}{{ $children.EntityID }}, {{ end }}` }}\",\"enabled\":true,\"priority\":83,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-correlation-1-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -289,7 +295,7 @@ Feature: update meta alarm on action
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "{{ .metaAlarmConnector }}",
       "connector_name": "{{ .metaAlarmConnectorName }}",
@@ -297,17 +303,14 @@ Feature: update meta alarm on action
       "event_type": "comment",
       "component":  "{{ .metaAlarmComponent }}",
       "resource": "{{ .metaAlarmResource }}",
-      "output": "test-output-action-correlation-2",
-      "long_output": "test-long-output-action-correlation-2",
-      "author": "test-author-action-correlation-2",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "output": "test-output-action-correlation-2"
     }
     """
     When I wait the end of event processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -318,17 +321,47 @@ Feature: update meta alarm on action
                   "component": "test-component-action-correlation-2",
                   "connector": "test-connector-action-correlation-2",
                   "connector_name": "test-connector-name-action-correlation-2",
-                  "resource": "test-resource-action-correlation-2",
                   "ticket": {
                     "_t": "declareticket",
                     "data": {
-                      "scenario_name": "{{ .metaAlarmResource }}/metaalarm"
+                      "scenario_name": "Alarm: {{ .metalarmDisplayName }}; Entity: {{ .metaAlarmResource }}/metaalarm; Children: test-resource-action-correlation-2-1/test-component-action-correlation-2, test-resource-action-correlation-2-2/test-component-action-correlation-2, "
                     }
                   },
                   "steps": [
                     {
-                      "_t": "stateinc",
-                      "val": 2
+                      "_t": "stateinc"
+                    },
+                    {
+                      "_t": "statusinc",
+                      "val": 1
+                    },
+                    {
+                      "_t": "metaalarmattach",
+                      "val": 0
+                    },
+                    {
+                      "_t": "comment"
+                    },
+                    {
+                      "_t": "declareticket"
+                    }
+                  ]
+                }
+              },
+              {
+                "v": {
+                  "component": "test-component-action-correlation-2",
+                  "connector": "test-connector-action-correlation-2",
+                  "connector_name": "test-connector-name-action-correlation-2",
+                  "ticket": {
+                    "_t": "declareticket",
+                    "data": {
+                      "scenario_name": "Alarm: {{ .metalarmDisplayName }}; Entity: {{ .metaAlarmResource }}/metaalarm; Children: test-resource-action-correlation-2-1/test-component-action-correlation-2, test-resource-action-correlation-2-2/test-component-action-correlation-2, "
+                    }
+                  },
+                  "steps": [
+                    {
+                      "_t": "stateinc"
                     },
                     {
                       "_t": "statusinc",
@@ -348,7 +381,7 @@ Feature: update meta alarm on action
                 }
               }
             ],
-            "total": 1
+            "total": 2
           },
           "metaalarm": true,
           "rule": {
@@ -356,7 +389,8 @@ Feature: update meta alarm on action
           },
           "v": {
             "children": [
-              "test-resource-action-correlation-2/test-component-action-correlation-2"
+              "test-resource-action-correlation-2-1/test-component-action-correlation-2",
+              "test-resource-action-correlation-2-2/test-component-action-correlation-2"
             ],
             "component": "metaalarm",
             "connector": "engine",
@@ -365,7 +399,7 @@ Feature: update meta alarm on action
             "ticket": {
               "_t": "declareticket",
               "data": {
-                "scenario_name": "{{ .metaAlarmResource }}/metaalarm"
+                "scenario_name": "Alarm: {{ .metalarmDisplayName }}; Entity: {{ .metaAlarmResource }}/metaalarm; Children: test-resource-action-correlation-2-1/test-component-action-correlation-2, test-resource-action-correlation-2-2/test-component-action-correlation-2, "
               }
             },
             "state": {
