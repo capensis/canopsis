@@ -19,6 +19,8 @@ export const SOCKET_URL = removeTrailingSlashes(`${SOCKET_HOST}${SOCKET_ROUTE}`)
 
 export const ROUTER_MODE = 'history';
 
+export const ROUTER_ACCESS_TOKEN_KEY = 'access_token';
+
 export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY || 'accessToken';
 
 export const PAGINATION_LIMIT = parseInt(VUE_APP_PAGINATION_LIMIT, 10);
