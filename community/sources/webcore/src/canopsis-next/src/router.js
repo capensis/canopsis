@@ -324,10 +324,20 @@ const router = new Router({
 /**
  * If requiresLogin is undefined then we can visit this page with auth and without auth
  */
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const isRequiresAuth = to.matched.some(v => v.meta.requiresLogin);
   const isDontRequiresAuth = to.matched.some(v => v.meta.requiresLogin === false);
   const isLoggedIn = store.getters['auth/isLoggedIn'];
+
+  const { query: { access_token: accessToken, ...restQuery } = {} } = to;
+
+  if (accessToken) {
+    await store.dispatch('auth/applyAccessToken', accessToken);
+
+    return router.replace({
+      query: restQuery,
+    });
+  }
 
   if (!isLoggedIn && isRequiresAuth) {
     return next({
