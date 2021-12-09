@@ -27,7 +27,7 @@ Si la version affichée est inférieure à 4.4, vous devez soit utiliser une di
 
 ## Installation de Docker et Docker Compose
 
-Vous devez tout d'abord [installer Docker](https://docs.docker.com/get-docker/), version 19.03.5 minimum (versions 20.10 et supérieures recommandées). Veuillez utiliser les dépôts officiels de Docker, et non pas ceux proposés par votre distribution.
+Vous devez tout d'abord [installer Docker](https://docs.docker.com/get-docker/), version 20.10 minimum. Veuillez utiliser les dépôts officiels de Docker, et non pas ceux proposés par votre distribution.
 
 Une fois Docker installé, vous devez ensuite [installer Docker Compose](https://docs.docker.com/compose/install/#install-compose).
 
