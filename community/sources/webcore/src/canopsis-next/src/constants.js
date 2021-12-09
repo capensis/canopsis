@@ -2096,5 +2096,3 @@ export const SOCKET_ROOMS = {
 };
 
 export const EXCLUDED_SERVER_ERROR_STATUSES = [401, 403];
-
-export const ROUTER_ACCESS_TOKEN_KEY = 'access_token';
