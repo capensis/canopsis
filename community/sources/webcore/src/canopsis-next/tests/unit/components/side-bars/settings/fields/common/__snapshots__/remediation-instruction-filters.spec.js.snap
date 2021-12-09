@@ -109,25 +109,10 @@ exports[`remediation-instructions-filters Renders \`remediation-instructions-fil
           class="layout row wrap"
         >
           <remediation-instructions-filters-list-stub
-            closable="true"
-            editable="true"
             filters=""
           />
         </div>
-        <div
-          class="layout row wrap"
-        >
-          <button
-            class="ml-1 v-btn theme--light primary"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
-            >
-              common.add
-            </div>
-          </button>
-        </div>
+        <!---->
       </div>
     </div>
   </transition-stub>
