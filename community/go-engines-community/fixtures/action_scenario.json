@@ -248,5 +248,35 @@
     "priority": 1,
     "created": 1605263992,
     "updated": 1605263992
+  },
+  {
+    "_id": "test-scenario-to-test-get-pbh-reasons",
+    "name": "test-scenario-to-test-get-pbh-reasons",
+    "author": "test-scenario-to-test-get-pbh-reasons",
+    "actions": [
+      {
+        "type": "pbehavior",
+        "parameters": {
+          "name": "test",
+          "author": "root",
+          "reason": "test-reason-to-get-3",
+          "tstart": 1591172881,
+          "tstop": 1591536400,
+          "type": "test-type-to-delete-linked-to-action"
+        },
+        "alarm_patterns": [
+          {
+            "_id": "test-scenario-to-test-get-pbh-reasons-1-alarm"
+          }
+        ],
+        "drop_scenario_if_not_matched": false,
+        "emit_trigger": false
+      }
+    ],
+    "triggers": ["create"],
+    "enabled": true,
+    "priority": 1605263992,
+    "created": 1605263992,
+    "updated": 1605263992
   }
 ]
