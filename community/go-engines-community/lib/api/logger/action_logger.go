@@ -26,8 +26,6 @@ const ApprovalDecisionDismiss = "dismiss"
 const (
 	ValueTypeUser               = "user"
 	ValueTypeRole               = "role"
-	ValueTypeView               = "view"
-	ValueTypeViewGroup          = "viewgroup"
 	ValueTypePlayList           = "playlist"
 	ValueTypeEventFilter        = "eventfilter"
 	ValueTypeScenario           = "scenario"
@@ -47,6 +45,11 @@ const (
 	ValueTypeBroadcastMessage   = "broadcastmessage"
 	ValueAssociativeTable       = "associativetable"
 	ValueTypeIdleRule           = "idlerule"
+
+	ValueTypeView      = "view"
+	ValueTypeViewTab   = "viewtab"
+	ValueTypeWidget    = "widget"
+	ValueTypeViewGroup = "viewgroup"
 
 	ValueTypeResolveRule  = "resolverule"
 	ValueTypeFlappingRule = "flappingrule"

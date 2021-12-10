@@ -10,16 +10,15 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest, authorizedViewIds []string) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*ViewGroup, error)
-	Insert(ctx context.Context, r []EditRequest) ([]ViewGroup, error)
-	Update(ctx context.Context, r []BulkUpdateRequestItem) ([]ViewGroup, error)
-	Delete(ctx context.Context, ids []string) (bool, error)
+	Insert(ctx context.Context, r EditRequest) (*ViewGroup, error)
+	Update(ctx context.Context, r EditRequest) (*ViewGroup, error)
+	Delete(ctx context.Context, id string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
@@ -155,101 +154,61 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*ViewGroup, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r []EditRequest) ([]ViewGroup, error) {
+func (s *store) Insert(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 	count, err := s.dbCollection.CountDocuments(ctx, bson.M{})
 	if err != nil {
 		return nil, err
 	}
 
 	now := types.CpsTime{Time: time.Now()}
-	models := make([]interface{}, len(r))
-	groups := make([]ViewGroup, len(r))
-
-	for i, item := range r {
-		groups[i] = ViewGroup{
-			ID:      utils.NewID(),
-			Title:   item.Title,
-			Author:  item.Author,
-			Created: now,
-			Updated: now,
-		}
-		models[i] = view.Group{
-			ID:       groups[i].ID,
-			Title:    groups[i].Title,
-			Author:   groups[i].Author,
-			Position: count + int64(i),
-			Created:  groups[i].Created,
-			Updated:  groups[i].Updated,
-		}
+	group := ViewGroup{
+		ID:      utils.NewID(),
+		Title:   r.Title,
+		Author:  r.Author,
+		Created: now,
+		Updated: now,
 	}
 
-	_, err = s.dbCollection.InsertMany(ctx, models)
+	_, err = s.dbCollection.InsertOne(ctx, view.Group{
+		ID:       group.ID,
+		Title:    group.Title,
+		Author:   group.Author,
+		Position: count,
+		Created:  group.Created,
+		Updated:  group.Updated,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	return groups, nil
+	return &group, nil
 }
 
-func (s *store) Update(ctx context.Context, r []BulkUpdateRequestItem) ([]ViewGroup, error) {
-	ids := make([]string, len(r))
-	rByID := make(map[string]BulkUpdateRequestItem, len(r))
-	for i, item := range r {
-		ids[i] = item.ID
-		rByID[item.ID] = item
-	}
-
-	groups, err := s.findByIDs(ctx, ids)
-	if err != nil || len(groups) < len(ids) {
+func (s *store) Update(ctx context.Context, r EditRequest) (*ViewGroup, error) {
+	group, err := s.GetOneBy(ctx, r.ID)
+	if err != nil || group == nil {
 		return nil, err
 	}
 
-	models := make([]mongodriver.WriteModel, len(groups))
 	now := types.CpsTime{Time: time.Now()}
+	group.Title = r.Title
+	group.Author = r.Author
+	group.Updated = now
 
-	for i := range groups {
-		groups[i].Title = rByID[groups[i].ID].Title
-		groups[i].Author = rByID[groups[i].ID].Author
-		groups[i].Updated = now
-
-		models[i] = mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": groups[i].ID}).
-			SetUpdate(bson.M{"$set": bson.M{
-				"title":   groups[i].Title,
-				"author":  groups[i].Author,
-				"updated": groups[i].Updated,
-			}})
-	}
-
-	_, err = s.dbCollection.BulkWrite(ctx, models)
+	_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": group.ID}, bson.M{"$set": bson.M{
+		"title":   group.Title,
+		"author":  group.Author,
+		"updated": group.Updated,
+	}})
 	if err != nil {
 		return nil, err
 	}
 
-	return groups, nil
+	return group, nil
 }
 
-func (s *store) findByIDs(ctx context.Context, ids []string) ([]ViewGroup, error) {
-	cursor, err := s.dbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}},
-		options.Find().SetSort(bson.D{
-			{Key: "position", Value: 1},
-			{Key: "_id", Value: 1},
-		}))
-	if err != nil {
-		return nil, err
-	}
-
-	groups := make([]ViewGroup, 0)
-	err = cursor.All(ctx, &groups)
-	if err != nil {
-		return nil, err
-	}
-
-	return groups, nil
-}
-
-func (s *store) Delete(ctx context.Context, ids []string) (bool, error) {
-	res := s.dbViewCollection.FindOne(ctx, bson.M{"group_id": bson.M{"$in": ids}})
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	res := s.dbViewCollection.FindOne(ctx, bson.M{"group_id": id})
 	if err := res.Err(); err != nil {
 		if err != mongodriver.ErrNoDocuments {
 			return false, err
@@ -258,18 +217,7 @@ func (s *store) Delete(ctx context.Context, ids []string) (bool, error) {
 		return false, ErrLinkedToView
 	}
 
-	if len(ids) > 0 {
-		count, err := s.dbCollection.CountDocuments(ctx, bson.M{"_id": bson.M{"$in": ids}})
-		if err != nil {
-			return false, err
-		}
-
-		if count < int64(len(ids)) {
-			return false, nil
-		}
-	}
-
-	delCount, err := s.dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+	delCount, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err
 	}

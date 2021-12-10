@@ -11,7 +11,7 @@ import (
 )
 
 type API interface {
-	common.BulkCrudAPI
+	common.CrudAPI
 	UpdatePositions(c *gin.Context)
 }
 
@@ -37,7 +37,7 @@ func NewApi(
 // @ID views-find-all
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param page query integer true "current page"
 // @Param limit query integer true "items per page"
@@ -87,7 +87,7 @@ func (a *api) List(c *gin.Context) {
 // @Tags views
 // @ID views-get-by-id
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "view id"
 // @Success 200 {object} viewgroup.View
@@ -113,7 +113,7 @@ func (a *api) Get(c *gin.Context) {
 // @ID views-create
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param body body EditRequest true "body"
 // @Success 201 {object} viewgroup.View
@@ -132,7 +132,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	views, err := a.store.Insert(c.Request.Context(), userID.(string), []EditRequest{request})
+	view, err := a.store.Insert(c.Request.Context(), userID.(string), request)
 	if err != nil {
 		panic(err)
 	}
@@ -140,13 +140,13 @@ func (a *api) Create(c *gin.Context) {
 	err = a.actionLogger.Action(c, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeView,
-		ValueID:   views[0].ID,
+		ValueID:   view.ID,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	c.JSON(http.StatusCreated, views[0])
+	c.JSON(http.StatusCreated, view)
 }
 
 // Update view by id
@@ -156,7 +156,7 @@ func (a *api) Create(c *gin.Context) {
 // @ID views-update-by-id
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "view id"
 // @Param body body EditRequest true "body"
@@ -174,15 +174,12 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	views, err := a.store.Update(c.Request.Context(), []BulkUpdateRequestItem{{
-		ID:              request.ID,
-		BaseEditRequest: request.BaseEditRequest,
-	}})
+	view, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
 
-	if len(views) == 0 {
+	if view == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
@@ -190,13 +187,13 @@ func (a *api) Update(c *gin.Context) {
 	err = a.actionLogger.Action(c, logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeView,
-		ValueID:   views[0].ID,
+		ValueID:   view.ID,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	c.JSON(http.StatusOK, views[0])
+	c.JSON(http.StatusOK, view)
 }
 
 // Delete view by id
@@ -204,7 +201,7 @@ func (a *api) Update(c *gin.Context) {
 // @Description Delete view by id
 // @Tags views
 // @ID views-delete-by-id
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "view id"
 // @Success 204
@@ -212,7 +209,7 @@ func (a *api) Update(c *gin.Context) {
 // @Router /views/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c.Request.Context(), []string{id})
+	ok, err := a.store.Delete(c.Request.Context(), id)
 
 	if err != nil {
 		panic(err)
@@ -242,7 +239,7 @@ func (a *api) Delete(c *gin.Context) {
 // @ID views-update-positions
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param body body []EditPositionItemRequest true "body"
 // @Success 204
@@ -284,174 +281,6 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	c.Status(http.StatusNoContent)
-}
-
-// Bulk create views
-// @Summary Bulk create views
-// @Description Bulk create views
-// @Tags views
-// @ID views-bulk-create
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param body body []EditRequest true "body"
-// @Success 201 {array} viewgroup.View
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /bulk/views [post]
-func (a *api) BulkCreate(c *gin.Context) {
-	var request BulkCreateRequest
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-		return
-	}
-
-	userID, ok := c.Get(auth.UserKey)
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-		return
-	}
-
-	views, err := a.store.Insert(c.Request.Context(), userID.(string), request.Items)
-	if err != nil {
-		panic(err)
-	}
-
-	for _, view := range views {
-		err = a.actionLogger.Action(c, logger.LogEntry{
-			Action:    logger.ActionCreate,
-			ValueType: logger.ValueTypeView,
-			ValueID:   view.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
-		}
-	}
-
-	c.JSON(http.StatusCreated, views)
-}
-
-// Bulk update views by id
-// @Summary Bulk update views by id
-// @Description Bulk update views by id
-// @Tags views
-// @ID views-bulk-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param body body []BulkUpdateRequestItem true "body"
-// @Success 200 {array} viewgroup.View
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /bulk/views [put]
-func (a *api) BulkUpdate(c *gin.Context) {
-	request := BulkUpdateRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-		return
-	}
-
-	v, ok := c.Get(middleware.AuthorizedIds)
-	var authorizedIds []string
-	if ok {
-		authorizedIds = v.([]string)
-	}
-
-	canUpdate := make(map[string]bool, len(authorizedIds))
-	for _, id := range authorizedIds {
-		canUpdate[id] = true
-	}
-
-	for _, item := range request.Items {
-		if !canUpdate[item.ID] {
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-			return
-		}
-	}
-
-	views, err := a.store.Update(c.Request.Context(), request.Items)
-	if err != nil {
-		panic(err)
-	}
-
-	if len(views) == 0 {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
-	for _, view := range views {
-		err = a.actionLogger.Action(c, logger.LogEntry{
-			Action:    logger.ActionUpdate,
-			ValueType: logger.ValueTypeView,
-			ValueID:   view.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
-		}
-	}
-
-	c.JSON(http.StatusOK, views)
-}
-
-// Bulk delete views by id
-// @Summary Bulk delete views by id
-// @Description Bulk delete views by id
-// @Tags views
-// @ID views-bulk-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param request query BulkDeleteRequest true "request"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /bulk/views [delete]
-func (a *api) BulkDelete(c *gin.Context) {
-	request := BulkDeleteRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-		return
-	}
-
-	v, ok := c.Get(middleware.AuthorizedIds)
-	var authorizedIds []string
-	if ok {
-		authorizedIds = v.([]string)
-	}
-
-	canUpdate := make(map[string]bool, len(authorizedIds))
-	for _, id := range authorizedIds {
-		canUpdate[id] = true
-	}
-
-	for _, id := range request.IDs {
-		if !canUpdate[id] {
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-			return
-		}
-	}
-
-	ok, err := a.store.Delete(c.Request.Context(), request.IDs)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
-	for _, id := range request.IDs {
-		err = a.actionLogger.Action(c, logger.LogEntry{
-			Action:    logger.ActionDelete,
-			ValueType: logger.ValueTypeView,
-			ValueID:   id,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
-		}
 	}
 
 	c.Status(http.StatusNoContent)
