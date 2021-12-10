@@ -1030,7 +1030,7 @@ export default {
           title: 'Counter',
         },
         [WIDGET_TYPES.testingWeather]: {
-          title: 'Testing weather',
+          title: 'Junit scenarios',
         },
       },
     },
