@@ -163,6 +163,7 @@ type AlarmStep struct {
 	Type      string          `bson:"_t" json:"_t"`
 	Timestamp *types.CpsTime  `bson:"t" json:"t" swaggertype:"integer"`
 	Author    string          `bson:"a" json:"a"`
+	UserID    string          `bson:"user_id,omitempty" json:"user_id,omitempty"`
 	Message   string          `bson:"m" json:"m"`
 	Value     types.CpsNumber `bson:"val" json:"val"`
 	Initiator string          `bson:"initiator" json:"initiator"`
@@ -173,6 +174,7 @@ type AlarmTicket struct {
 	Type      string            `bson:"_t" json:"_t"`
 	Timestamp types.CpsTime     `bson:"t" json:"t" swaggertype:"integer"`
 	Author    string            `bson:"a" json:"a"`
+	UserID    string            `bson:"user_id,omitempty" json:"user_id,omitempty"`
 	Message   string            `bson:"m" json:"m"`
 	Value     string            `bson:"val" json:"val"`
 	Data      map[string]string `bson:"data" json:"data"`
