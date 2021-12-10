@@ -121,6 +121,7 @@ type DbClient interface {
 	Disconnect(ctx context.Context) error
 	SetRetry(count int, timeout time.Duration)
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
+	WithTransaction(ctx context.Context, f func(context.Context) error) error
 }
 
 type dbClient struct {
@@ -488,6 +489,21 @@ func (c *dbClient) Ping(ctx context.Context, rp *readpref.ReadPref) error {
 func (c *dbClient) SetRetry(count int, timeout time.Duration) {
 	c.RetryCount = count
 	c.MinRetryTimeout = timeout
+}
+
+func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) error) error {
+	session, err := c.Client.StartSession()
+	if err != nil {
+		return err
+	}
+
+	defer session.EndSession(ctx)
+
+	_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
+		return nil, f(sessCtx)
+	})
+
+	return err
 }
 
 // getURL parses URL value in EnvURL environment variable
