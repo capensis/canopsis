@@ -72,8 +72,6 @@ Feature: create and update meta alarm
             "component": "metaalarm",
             "connector": "engine",
             "connector_name": "correlation",
-            "creation_date": {{ .createTimestamp }},
-            "last_event_date": {{ .createTimestamp }},
             "last_update_date": {{ .checkEventTimestamp }},
             "meta": "{{ .metaAlarmRuleID }}",
             "state": {
@@ -117,7 +115,11 @@ Feature: create and update meta alarm
       }
     }
     """
+    When I save response metaalarmLastEventDate={{ (index .lastResponse.data 0).v.last_event_date }}
+    When I save response metaalarmCreationDate={{ (index .lastResponse.data 0).v.creation_date }}
     When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
+    Then the difference between metaalarmLastEventDate createTimestamp is in range -2,2
+    Then the difference between metaalarmCreationDate createTimestamp is in range -2,2
     When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-axe-correlation-1"}]}&with_steps=true&with_consequences=true
     Then the response code should be 200
     Then the response body should contain:

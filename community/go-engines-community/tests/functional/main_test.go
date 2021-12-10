@@ -240,6 +240,7 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 		ctx.Step(`^the response raw body should be:$`, apiClient.TheResponseRawBodyShouldBe)
 		ctx.Step(`^the response key \"([\w\.]+)\" should not exist$`, apiClient.TheResponseKeyShouldNotExist)
 		ctx.Step(`^the response key \"([\w\.]+)\" should not be \"([^\"]+)\"$`, apiClient.TheResponseKeyShouldNotBe)
+		ctx.Step(`^the difference between ([\w\.]+) ([\w\.]+) is in range (-?\d+\.?\d*),(-?\d+\.?\d*)$`, apiClient.TheDifferenceBetweenValues)
 		ctx.Step(`^I save response ([\w]+)=(.+)$`, apiClient.ISaveResponse)
 		ctx.Step(`^an alarm (.+) should be in the db$`, mongoClient.AlarmShouldBeInTheDb)
 		ctx.Step(`^an entity (.+) should be in the db$`, mongoClient.EntityShouldBeInTheDb)
