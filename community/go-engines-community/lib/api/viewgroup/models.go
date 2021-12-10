@@ -1,11 +1,10 @@
 package viewgroup
 
 import (
-	"encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	libview "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 )
 
 type ListRequest struct {
@@ -41,12 +40,21 @@ type View struct {
 	Title           string                     `bson:"title" json:"title"`
 	Description     string                     `bson:"description" json:"description"`
 	Group           ViewGroup                  `bson:"group" json:"group"`
-	Tabs            []libview.Tab              `bson:"tabs" json:"tabs"`
+	Tabs            []Tab                      `bson:"tabs" json:"tabs,omitempty"`
 	Tags            []string                   `bson:"tags" json:"tags"`
 	PeriodicRefresh *types.DurationWithEnabled `bson:"periodic_refresh" json:"periodic_refresh"`
 	Author          string                     `bson:"author" json:"author"`
 	Created         *types.CpsTime             `bson:"created" json:"created" swaggertype:"integer"`
 	Updated         *types.CpsTime             `bson:"updated" json:"updated" swaggertype:"integer"`
+}
+
+type Tab struct {
+	ID      string        `bson:"_id" json:"_id"`
+	Title   string        `bson:"title" json:"title"`
+	Widgets []view.Widget `bson:"widgets" json:"widgets,omitempty"`
+	Author  string        `bson:"author" json:"author"`
+	Created types.CpsTime `bson:"created" json:"created"`
+	Updated types.CpsTime `bson:"updated" json:"updated"`
 }
 
 type AggregationResult struct {
@@ -60,37 +68,4 @@ func (r *AggregationResult) GetData() interface{} {
 
 func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
-}
-
-type BulkCreateRequest struct {
-	Items []EditRequest `binding:"required,notblank,dive"`
-}
-
-func (r BulkCreateRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(r.Items)
-}
-
-func (r *BulkCreateRequest) UnmarshalJSON(b []byte) error {
-	return json.Unmarshal(b, &r.Items)
-}
-
-type BulkUpdateRequest struct {
-	Items []BulkUpdateRequestItem `binding:"required,notblank,dive"`
-}
-
-type BulkUpdateRequestItem struct {
-	BaseEditRequest
-	ID string `json:"_id" binding:"required"`
-}
-
-func (r BulkUpdateRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(r.Items)
-}
-
-func (r *BulkUpdateRequest) UnmarshalJSON(b []byte) error {
-	return json.Unmarshal(b, &r.Items)
-}
-
-type BulkDeleteRequest struct {
-	IDs []string `form:"ids[]" json:"ids" binding:"required,unique,notblank"`
 }

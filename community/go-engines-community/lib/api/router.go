@@ -47,7 +47,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/userpreferences"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -77,7 +79,6 @@ const (
 	authObjEntityCategory = apisecurity.ObjEntityCategory
 	authObjContextGraph   = apisecurity.ObjContextGraph
 
-	authObjView      = apisecurity.ObjView
 	authObjViewGroup = apisecurity.ObjViewGroup
 	authObjPlaylist  = apisecurity.ObjPlaylist
 
@@ -186,7 +187,7 @@ func RegisterRoutes(
 		userPreferencesRouter := protected.Group("/user-preferences")
 		{
 			userPreferencesRouter.Use(middleware.OnlyAuth())
-			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient), actionLogger)
+			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient), widget.NewStore(dbClient), enforcer, actionLogger)
 			userPreferencesRouter.GET("/:id", userPreferencesApi.Get)
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
@@ -676,36 +677,90 @@ func RegisterRoutes(
 		{
 			viewRouter.POST(
 				"",
-				middleware.Authorize(authObjView, permCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionCreate, enforcer),
 				middleware.SetAuthor(),
 				viewAPI.Create,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
 			viewRouter.GET(
 				"",
-				middleware.Authorize(authObjView, permRead, enforcer),
-				middleware.ProvideAuthorizedIds(permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer),
 				viewAPI.List,
 			)
 			viewRouter.GET(
 				"/:id",
-				middleware.Authorize(authObjView, permRead, enforcer),
-				middleware.AuthorizeByID(permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				middleware.AuthorizeByID(model.PermissionRead, enforcer),
 				viewAPI.Get,
 			)
 			viewRouter.PUT(
 				"/:id",
-				middleware.Authorize(authObjView, permUpdate, enforcer),
-				middleware.AuthorizeByID(permUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.AuthorizeByID(model.PermissionUpdate, enforcer),
 				middleware.SetAuthor(),
 				viewAPI.Update,
 			)
 			viewRouter.DELETE(
 				"/:id",
-				middleware.Authorize(authObjView, permDelete, enforcer),
-				middleware.AuthorizeByID(permDelete, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionDelete, enforcer),
+				middleware.AuthorizeByID(model.PermissionDelete, enforcer),
 				viewAPI.Delete,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+			)
+		}
+
+		viewTabAPI := viewtab.NewApi(viewtab.NewStore(dbClient), enforcer, actionLogger)
+		viewTabRouter := protected.Group("/view-tabs")
+		{
+			viewTabRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				viewTabAPI.Create,
+			)
+			viewTabRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				viewTabAPI.Get,
+			)
+			viewTabRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				viewTabAPI.Update,
+			)
+			viewTabRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				viewTabAPI.Delete,
+			)
+		}
+
+		widgetAPI := widget.NewApi(widget.NewStore(dbClient), viewtab.NewStore(dbClient), enforcer, actionLogger)
+		widgetRouter := protected.Group("/widgets")
+		{
+			widgetRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				widgetAPI.Create,
+			)
+			widgetRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				widgetAPI.Get,
+			)
+			widgetRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				widgetAPI.Update,
+			)
+			widgetRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				widgetAPI.Delete,
 			)
 		}
 
@@ -744,10 +799,22 @@ func RegisterRoutes(
 
 		protected.PUT(
 			"/view-positions",
-			middleware.Authorize(authObjView, permUpdate, enforcer),
-			middleware.Authorize(authObjViewGroup, permUpdate, enforcer),
-			middleware.ProvideAuthorizedIds(permUpdate, enforcer),
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			middleware.Authorize(authObjViewGroup, model.PermissionUpdate, enforcer),
+			middleware.ProvideAuthorizedIds(model.PermissionUpdate, enforcer),
 			viewAPI.UpdatePositions,
+		)
+
+		protected.PUT(
+			"/view-tab-positions",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			viewTabAPI.UpdatePositions,
+		)
+
+		protected.PUT(
+			"/widget-positions",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			widgetAPI.UpdatePositions,
 		)
 
 		// broadcast message API
@@ -896,7 +963,7 @@ func RegisterRoutes(
 
 		playlistRouter := protected.Group("/playlists")
 		{
-			playlistApi := playlist.NewApi(playlist.NewStore(dbClient), actionLogger)
+			playlistApi := playlist.NewApi(playlist.NewStore(dbClient), viewtab.NewStore(dbClient), enforcer, actionLogger)
 			playlistRouter.POST(
 				"",
 				middleware.Authorize(authObjPlaylist, permCreate, enforcer),
@@ -934,52 +1001,6 @@ func RegisterRoutes(
 
 		bulkRouter := protected.Group("/bulk")
 		{
-			viewRouter := bulkRouter.Group("/views")
-			{
-				viewRouter.POST(
-					"",
-					middleware.Authorize(authObjView, permCreate, enforcer),
-					middleware.SetAuthorToBulk(),
-					viewAPI.BulkCreate,
-					middleware.ReloadEnforcerPolicyOnChange(enforcer),
-				)
-				viewRouter.PUT(
-					"",
-					middleware.Authorize(authObjView, permUpdate, enforcer),
-					middleware.ProvideAuthorizedIds(permUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
-					viewAPI.BulkUpdate,
-				)
-				viewRouter.DELETE(
-					"",
-					middleware.Authorize(authObjView, permDelete, enforcer),
-					middleware.ProvideAuthorizedIds(permDelete, enforcer),
-					viewAPI.BulkDelete,
-					middleware.ReloadEnforcerPolicyOnChange(enforcer),
-				)
-			}
-
-			viewGroupRouter := bulkRouter.Group("/view-groups")
-			{
-				viewGroupRouter.POST(
-					"",
-					middleware.Authorize(authObjViewGroup, permCreate, enforcer),
-					middleware.SetAuthorToBulk(),
-					viewGroupAPI.BulkCreate,
-				)
-				viewGroupRouter.PUT(
-					"",
-					middleware.Authorize(authObjViewGroup, permUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
-					viewGroupAPI.BulkUpdate,
-				)
-				viewGroupRouter.DELETE(
-					"",
-					middleware.Authorize(authObjViewGroup, permDelete, enforcer),
-					viewGroupAPI.BulkDelete,
-				)
-			}
-
 			pbehaviorRouter := bulkRouter.Group("/pbehaviors")
 			{
 				pbehaviorRouter.POST(

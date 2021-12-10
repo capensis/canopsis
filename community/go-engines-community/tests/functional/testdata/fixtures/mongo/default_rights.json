@@ -396,7 +396,11 @@
         "checksum": 4,
         "crecord_type": "right"
       },
-      "test-view-to-delete": {
+      "test-view-to-delete-1": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "test-view-to-delete-2": {
         "checksum": 1,
         "crecord_type": "right"
       },
@@ -404,7 +408,7 @@
         "checksum": 2,
         "crecord_type": "right"
       },
-      "test-view-to-edit-junit-dir-param": {
+      "test-view-to-junit-edit-dir-param": {
         "checksum": 7,
         "crecord_type": "right"
       },
@@ -420,24 +424,12 @@
         "checksum": 0,
         "crecord_type": "right"
       },
-      "test-view-to-bulk-delete-1": {
-        "checksum": 1,
+      "test-view-to-tab-edit": {
+        "checksum": 6,
         "crecord_type": "right"
       },
-      "test-view-to-bulk-delete-2": {
-        "checksum": 1,
-        "crecord_type": "right"
-      },
-      "test-view-to-bulk-delete-3": {
-        "checksum": 1,
-        "crecord_type": "right"
-      },
-      "test-view-to-bulk-update-1": {
-        "checksum": 2,
-        "crecord_type": "right"
-      },
-      "test-view-to-bulk-update-2": {
-        "checksum": 2,
+      "test-view-to-widget-edit": {
+        "checksum": 6,
         "crecord_type": "right"
       },
       "test-playlist-to-get-1": {
@@ -454,6 +446,10 @@
       },
       "test-playlist-to-delete": {
         "checksum": 1,
+        "crecord_type": "right"
+      },
+      "test-view-to-playlist-edit": {
+        "checksum": 4,
         "crecord_type": "right"
       },
       "api_associative_table": {
@@ -908,10 +904,17 @@
     "type": "RW"
   },
   {
-    "_id": "test-view-to-delete",
+    "_id": "test-view-to-delete-1",
     "crecord_type": "action",
-    "crecord_name": "test-view-to-delete",
-    "desc": "view test-view-to-delete",
+    "crecord_name": "test-view-to-delete-1",
+    "desc": "view test-view-to-delete-1",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-delete-2",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-delete-2",
+    "desc": "view test-view-to-delete-2",
     "type": "RW"
   },
   {
@@ -929,10 +932,10 @@
     "type": "RW"
   },
   {
-    "_id": "test-view-to-edit-junit-dir-param",
+    "_id": "test-view-to-junit-edit-dir-param",
     "crecord_type": "action",
-    "crecord_name": "test-view-to-edit-junit-dir-param",
-    "desc": "test-view-to-edit-junit-dir-param-name",
+    "crecord_name": "test-view-to-junit-edit-dir-param",
+    "desc": "view test-view-to-junit-edit-dir-param",
     "type": "RW"
   },
   {
@@ -954,41 +957,6 @@
     "crecord_type": "action",
     "crecord_name": "test-view-to-viewgroup-get-3",
     "desc": "test-view-to-viewgroup-get-3-name",
-    "type": "RW"
-  },
-  {
-    "_id": "test-view-to-bulk-delete-1",
-    "crecord_type": "action",
-    "crecord_name": "test-view-to-bulk-delete-1",
-    "desc": "view test-view-to-bulk-delete-1",
-    "type": "RW"
-  },
-  {
-    "_id": "test-view-to-bulk-delete-2",
-    "crecord_type": "action",
-    "crecord_name": "test-view-to-bulk-delete-2",
-    "desc": "view test-view-to-bulk-delete-2",
-    "type": "RW"
-  },
-  {
-    "_id": "test-view-to-bulk-delete-3",
-    "crecord_type": "action",
-    "crecord_name": "test-view-to-bulk-delete-3",
-    "desc": "view test-view-to-bulk-delete-3",
-    "type": "RW"
-  },
-  {
-    "_id": "test-view-to-bulk-update-1",
-    "crecord_type": "action",
-    "crecord_name": "test-view-to-bulk-update-1",
-    "desc": "view test-view-to-bulk-update-1",
-    "type": "RW"
-  },
-  {
-    "_id": "test-view-to-bulk-update-2",
-    "crecord_type": "action",
-    "crecord_name": "test-view-to-bulk-update-2",
-    "desc": "view test-view-to-bulk-update-2",
     "type": "RW"
   },
   {
@@ -1024,6 +992,13 @@
     "crecord_type": "action",
     "crecord_name": "test-playlist-to-delete",
     "desc": "playlist test-playlist-to-delete",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-playlist-edit",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-playlist-edit",
+    "desc": "view test-view-to-playlist-edit",
     "type": "RW"
   },
   {
@@ -1131,7 +1106,12 @@
     "_id": "test-role-to-user-preferences-update",
     "crecord_type": "role",
     "crecord_name": "test-role-to-user-preferences-update",
-    "rights": {}
+    "rights": {
+      "test-view-to-user-preferences-update-1": {
+        "checksum": 4,
+        "crecord_type": "right"
+      }
+    }
   },
   {
     "_id": "test-user-to-user-preferences-update",
@@ -1183,6 +1163,166 @@
     "mail": "test-user-to-user-preferences-delete-2@canopsis.net",
     "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f5204",
+    "enable": true
+  },
+  {
+    "_id": "test-role-to-user-preferences-delete-3",
+    "crecord_type": "role",
+    "crecord_name": "test-role-to-user-preferences-delete-3",
+    "rights": {
+      "api_view": {
+        "checksum": 15,
+        "crecord_type": "right"
+      }
+    }
+  },
+  {
+    "_id": "test-user-to-user-preferences-delete-3",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-user-preferences-delete-3",
+    "role": "test-role-to-user-preferences-delete-3",
+    "mail": "test-user-to-user-preferences-delete-3@canopsis.net",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f5314",
+    "enable": true
+  },
+  {
+    "_id": "test-view-to-tab-edit",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-tab-edit",
+    "desc": "view test-view-to-tab-edit",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-tab-check-access",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-tab-check-access",
+    "desc": "view test-view-to-tab-check-access",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-widget-edit",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-widget-edit",
+    "desc": "view test-view-to-widget-edit",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-widget-check-access",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-widget-check-access",
+    "desc": "view test-view-to-widget-check-access",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-user-preferences-update-1",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-user-preferences-update-1",
+    "desc": "view test-view-to-user-preferences-update-1",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-user-preferences-update-2",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-user-preferences-update-2",
+    "desc": "view test-view-to-user-preferences-update-2",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-tab-update-position-1",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-tab-update-position-1",
+    "desc": "view test-view-to-tab-update-position-1",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-tab-update-position-2",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-tab-update-position-2",
+    "desc": "view test-view-to-tab-update-position-2",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-tab-update-position-3",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-tab-update-position-3",
+    "desc": "view test-view-to-tab-update-position-3",
+    "type": "RW"
+  },
+  {
+    "_id": "test-role-to-tab-update-position",
+    "crecord_type": "role",
+    "crecord_name": "test-role-to-tab-update-position",
+    "rights": {
+      "api_view": {
+        "checksum": 6,
+        "crecord_type": "right"
+      },
+      "test-view-to-tab-update-position-1": {
+        "checksum": 6,
+        "crecord_type": "right"
+      },
+      "test-view-to-tab-update-position-2": {
+        "checksum": 6,
+        "crecord_type": "right"
+      },
+      "test-view-to-tab-update-position-3": {
+        "checksum": 6,
+        "crecord_type": "right"
+      }
+    }
+  },
+  {
+    "_id": "test-user-to-tab-update-position",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-tab-update-position",
+    "role": "test-role-to-tab-update-position",
+    "mail": "test-user-to-tab-update-position@canopsis.net",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "2be1d0ee-7fs6-0mdn-9d80-e857e50f5202",
+    "enable": true
+  },
+  {
+    "_id": "test-view-to-widget-update-position-1",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-widget-update-position-1",
+    "desc": "view test-view-to-widget-update-position-1",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-widget-update-position-2",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-widget-update-position-2",
+    "desc": "view test-view-to-widget-update-position-2",
+    "type": "RW"
+  },
+  {
+    "_id": "test-role-to-widget-update-position",
+    "crecord_type": "role",
+    "crecord_name": "test-role-to-widget-update-position",
+    "rights": {
+      "api_view": {
+        "checksum": 6,
+        "crecord_type": "right"
+      },
+      "test-view-to-widget-update-position-1": {
+        "checksum": 6,
+        "crecord_type": "right"
+      },
+      "test-view-to-widget-update-position-2": {
+        "checksum": 6,
+        "crecord_type": "right"
+      }
+    }
+  },
+  {
+    "_id": "test-user-to-widget-update-position",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-widget-update-position",
+    "role": "test-role-to-widget-update-position",
+    "mail": "test-user-to-widget-update-position@canopsis.net",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "2be1d0ee-0qs6-0mdn-9d80-e857e50f5202",
     "enable": true
   }
 ]

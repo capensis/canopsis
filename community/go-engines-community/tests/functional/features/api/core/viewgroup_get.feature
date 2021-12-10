@@ -7,7 +7,7 @@ Feature: Get a view group
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -39,7 +39,7 @@ Feature: Get a view group
     When I do GET /api/v4/view-groups/test-viewgroup-to-get-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-viewgroup-to-get-1",
       "title": "test-viewgroup-to-get-1-title",
@@ -54,7 +54,7 @@ Feature: Get a view group
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-get&with_views=true
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -81,25 +81,6 @@ Feature: Get a view group
                 "value": 1,
                 "unit": "s"
               },
-              "tabs": [
-                {
-                  "_id": "test-view-to-viewgroup-get-2-tab-1",
-                  "title": "test-view-to-viewgroup-get-2-tab-1-title",
-                  "widgets": [
-                    {
-                      "_id": "test-view-to-viewgroup-get-2-tab-1-widget-1",
-                      "grid_parameters": {
-                        "test-view-to-viewgroup-get-2-tab-1-widget-1-gridparameter": "test-view-to-viewgroup-get-2-tab-1-widget-1-gridparameter-value"
-                      },
-                      "parameters": {
-                        "test-view-to-viewgroup-get-2-tab-1-widget-1-parameter": "test-view-to-viewgroup-get-2-tab-1-widget-1-parameter-value"
-                      },
-                      "title": "test-view-to-viewgroup-get-2-tab-1-widget-1-title",
-                      "type": "test-view-to-viewgroup-get-2-tab-1-widget-1-type"
-                    }
-                  ]
-                }
-              ],
               "tags": [
                 "test-view-to-viewgroup-get-2-tag"
               ],
@@ -124,32 +105,6 @@ Feature: Get a view group
                 "value": 1,
                 "unit": "s"
               },
-              "tabs": [
-                {
-                  "_id": "test-view-to-viewgroup-get-1-tab-1",
-                  "title": "test-view-to-viewgroup-get-1-tab-1-title",
-                  "widgets": [
-                    {
-                      "_id": "test-view-to-viewgroup-get-1-tab-1-widget-1",
-                      "grid_parameters": {
-                        "test-view-to-viewgroup-get-1-tab-1-widget-1-gridparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-gridparameter-value"
-                      },
-                      "parameters": {
-                        "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1": {
-                          "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1-subparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1-subvalue"
-                        },
-                        "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2": [
-                          {
-                            "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2-subparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2-subvalue"
-                          }
-                        ]
-                      },
-                      "title": "test-view-to-viewgroup-get-1-tab-1-widget-1-title",
-                      "type": "test-view-to-viewgroup-get-1-tab-1-widget-1-type"
-                    }
-                  ]
-                }
-              ],
               "tags": [
                 "test-view-to-viewgroup-get-1-tag"
               ],
@@ -182,7 +137,7 @@ Feature: Get a view group
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-get&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -205,7 +160,7 @@ Feature: Get a view group
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-get&with_views=true&with_flags=true
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -233,25 +188,6 @@ Feature: Get a view group
                 "value": 1,
                 "unit": "s"
               },
-              "tabs": [
-                {
-                  "_id": "test-view-to-viewgroup-get-2-tab-1",
-                  "title": "test-view-to-viewgroup-get-2-tab-1-title",
-                  "widgets": [
-                    {
-                      "_id": "test-view-to-viewgroup-get-2-tab-1-widget-1",
-                      "grid_parameters": {
-                        "test-view-to-viewgroup-get-2-tab-1-widget-1-gridparameter": "test-view-to-viewgroup-get-2-tab-1-widget-1-gridparameter-value"
-                      },
-                      "parameters": {
-                        "test-view-to-viewgroup-get-2-tab-1-widget-1-parameter": "test-view-to-viewgroup-get-2-tab-1-widget-1-parameter-value"
-                      },
-                      "title": "test-view-to-viewgroup-get-2-tab-1-widget-1-title",
-                      "type": "test-view-to-viewgroup-get-2-tab-1-widget-1-type"
-                    }
-                  ]
-                }
-              ],
               "tags": [
                 "test-view-to-viewgroup-get-2-tag"
               ],
@@ -276,32 +212,6 @@ Feature: Get a view group
                 "value": 1,
                 "unit": "s"
               },
-              "tabs": [
-                {
-                  "_id": "test-view-to-viewgroup-get-1-tab-1",
-                  "title": "test-view-to-viewgroup-get-1-tab-1-title",
-                  "widgets": [
-                    {
-                      "_id": "test-view-to-viewgroup-get-1-tab-1-widget-1",
-                      "grid_parameters": {
-                        "test-view-to-viewgroup-get-1-tab-1-widget-1-gridparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-gridparameter-value"
-                      },
-                      "parameters": {
-                        "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1": {
-                          "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1-subparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1-subvalue"
-                        },
-                        "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2": [
-                          {
-                            "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2-subparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2-subvalue"
-                          }
-                        ]
-                      },
-                      "title": "test-view-to-viewgroup-get-1-tab-1-widget-1-title",
-                      "type": "test-view-to-viewgroup-get-1-tab-1-widget-1-type"
-                    }
-                  ]
-                }
-              ],
               "tags": [
                 "test-view-to-viewgroup-get-1-tag"
               ],
@@ -353,7 +263,7 @@ Feature: Get a view group
     When I do GET /api/v4/view-groups/test-viewgroup-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

@@ -1114,312 +1114,6 @@ var doc = `{
                 }
             }
         },
-        "/bulk/view-groups": {
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk update view groups by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "viewgroups"
-                ],
-                "summary": "Bulk update view groups by id",
-                "operationId": "viewgroups-bulk-update-by-id",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/viewgroup.BulkUpdateRequestItem"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/viewgroup.ViewGroup"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk create view groups",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "viewgroups"
-                ],
-                "summary": "Bulk create view groups",
-                "operationId": "viewgroups-bulk-create",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/viewgroup.EditRequest"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/viewgroup.EditRequest"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk delete view groups by id",
-                "tags": [
-                    "viewgroups"
-                ],
-                "summary": "Bulk delete view groups by id",
-                "operationId": "viewgroups-bulk-delete-by-id",
-                "parameters": [
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "ids",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": ""
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/bulk/views": {
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk update views by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "views"
-                ],
-                "summary": "Bulk update views by id",
-                "operationId": "views-bulk-update-by-id",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/view.BulkUpdateRequestItem"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/viewgroup.View"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk create views",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "views"
-                ],
-                "summary": "Bulk create views",
-                "operationId": "views-bulk-create",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/view.EditRequest"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/viewgroup.View"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk delete views by id",
-                "tags": [
-                    "views"
-                ],
-                "summary": "Bulk delete views by id",
-                "operationId": "views-bulk-delete-by-id",
-                "parameters": [
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "ids",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": ""
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/contextgraph/import": {
             "put": {
                 "security": [
@@ -7730,7 +7424,7 @@ var doc = `{
             "put": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -7775,11 +7469,249 @@ var doc = `{
                 }
             }
         },
+        "/view-tab-positions": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update view tabs positions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "viewtabs"
+                ],
+                "summary": "Update view tabs positions",
+                "operationId": "viewtabs-update-positions",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/view-tabs": {
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create view tab",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "viewtabs"
+                ],
+                "summary": "Create view tab",
+                "operationId": "viewtabs-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/viewtab.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/view.Tab"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/view-tabs/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get view tab by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "viewtabs"
+                ],
+                "summary": "Get view tab by id",
+                "operationId": "viewtabs-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tab id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/view.Tab"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update view tab by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "viewtabs"
+                ],
+                "summary": "Update view tab by id",
+                "operationId": "viewtabs-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tab id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/viewtab.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/view.Tab"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete view tab by id",
+                "tags": [
+                    "viewtabs"
+                ],
+                "summary": "Delete view tab by id",
+                "operationId": "viewtabs-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tab id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/views": {
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -7864,7 +7796,7 @@ var doc = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -7913,7 +7845,7 @@ var doc = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -7955,7 +7887,7 @@ var doc = `{
             "put": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -8015,7 +7947,7 @@ var doc = `{
             "delete": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -8225,6 +8157,244 @@ var doc = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/widget-positions": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update widgets positions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "widgets"
+                ],
+                "summary": "Update widgets positions",
+                "operationId": "widgets-update-positions",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/widgets": {
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create widget",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "widgets"
+                ],
+                "summary": "Create widget",
+                "operationId": "widgets-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/widget.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/view.Widget"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/widgets/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get widget by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "widgets"
+                ],
+                "summary": "Get widget by id",
+                "operationId": "widgets-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "widget id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/view.Widget"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update widget by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "widgets"
+                ],
+                "summary": "Update widget by id",
+                "operationId": "widgets-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "widget id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/widget.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/view.Widget"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete widget by id",
+                "tags": [
+                    "widgets"
+                ],
+                "summary": "Delete widget by id",
+                "operationId": "widgets-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "widget id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
                         }
                     }
                 }
@@ -13276,62 +13446,6 @@ var doc = `{
         "utils.RegexExpression": {
             "type": "object"
         },
-        "view.BulkDeleteRequest": {
-            "type": "object",
-            "required": [
-                "ids"
-            ],
-            "properties": {
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "view.BulkUpdateRequestItem": {
-            "type": "object",
-            "required": [
-                "_id",
-                "enabled",
-                "group",
-                "title"
-            ],
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "enabled": {
-                    "type": "boolean"
-                },
-                "group": {
-                    "type": "string"
-                },
-                "periodic_refresh": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.DurationWithEnabled"
-                },
-                "tabs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/view.TabRequest"
-                    }
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "view.EditPositionItemRequest": {
             "type": "object",
             "required": [
@@ -13371,12 +13485,6 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.DurationWithEnabled"
                 },
-                "tabs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/view.TabRequest"
-                    }
-                },
                 "tags": {
                     "type": "array",
                     "items": {
@@ -13388,41 +13496,56 @@ var doc = `{
                 }
             }
         },
+        "view.Parameters": {
+            "type": "object",
+            "properties": {
+                "directory": {
+                    "type": "string"
+                },
+                "is_api": {
+                    "description": "Junit",
+                    "type": "boolean"
+                },
+                "report_fileregexp": {
+                    "type": "string"
+                },
+                "screenshot_directories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "screenshot_filemask": {
+                    "type": "string"
+                },
+                "video_directories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "video_filemask": {
+                    "type": "string"
+                }
+            }
+        },
         "view.Tab": {
             "type": "object",
             "properties": {
                 "_id": {
                     "type": "string"
                 },
-                "title": {
+                "author": {
                     "type": "string"
                 },
-                "widgets": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/view.Widget"
-                    }
-                }
-            }
-        },
-        "view.TabRequest": {
-            "type": "object",
-            "required": [
-                "_id",
-                "title"
-            ],
-            "properties": {
-                "_id": {
-                    "type": "string"
+                "created": {
+                    "type": "integer"
                 },
                 "title": {
                     "type": "string"
                 },
-                "widgets": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/view.WidgetRequest"
-                    }
+                "updated": {
+                    "type": "integer"
                 }
             }
         },
@@ -13432,73 +13555,28 @@ var doc = `{
                 "_id": {
                     "type": "string"
                 },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
                 "grid_parameters": {
                     "type": "object",
                     "additionalProperties": true
                 },
                 "parameters": {
                     "type": "object",
-                    "additionalProperties": true
+                    "$ref": "#/definitions/view.Parameters"
                 },
                 "title": {
                     "type": "string"
                 },
                 "type": {
                     "type": "string"
-                }
-            }
-        },
-        "view.WidgetRequest": {
-            "type": "object",
-            "required": [
-                "_id",
-                "type"
-            ],
-            "properties": {
-                "_id": {
-                    "type": "string"
                 },
-                "grid_parameters": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "parameters": {
-                    "type": "object"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "viewgroup.BulkDeleteRequest": {
-            "type": "object",
-            "required": [
-                "ids"
-            ],
-            "properties": {
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "viewgroup.BulkUpdateRequestItem": {
-            "type": "object",
-            "required": [
-                "_id",
-                "title"
-            ],
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
+                "updated": {
+                    "type": "integer"
                 }
             }
         },
@@ -13510,6 +13588,34 @@ var doc = `{
             "properties": {
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "viewgroup.Tab": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "widgets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/view.Widget"
+                    }
                 }
             }
         },
@@ -13542,7 +13648,7 @@ var doc = `{
                 "tabs": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/view.Tab"
+                        "$ref": "#/definitions/viewgroup.Tab"
                     }
                 },
                 "tags": {
@@ -13585,6 +13691,48 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/viewgroup.View"
                     }
+                }
+            }
+        },
+        "viewtab.EditRequest": {
+            "type": "object",
+            "required": [
+                "title",
+                "view"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "view": {
+                    "type": "string"
+                }
+            }
+        },
+        "widget.EditRequest": {
+            "type": "object",
+            "required": [
+                "tab",
+                "title",
+                "type"
+            ],
+            "properties": {
+                "grid_parameters": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "parameters": {
+                    "type": "object",
+                    "$ref": "#/definitions/view.Parameters"
+                },
+                "tab": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
                 }
             }
         }
