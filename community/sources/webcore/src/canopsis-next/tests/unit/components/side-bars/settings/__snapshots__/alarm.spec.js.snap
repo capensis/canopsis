@@ -109,8 +109,6 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
               editable="true"
               entitiestype="alarm"
               filters=""
-              has-access-to-add-filter="true"
-              has-access-to-edit-filter="true"
             />
             <hr
               class="v-divider theme--light"
