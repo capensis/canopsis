@@ -64,10 +64,11 @@ export BUILDKIT_PROGRESS:=plain
 DOCKER_NO_CACHE = 
 DOCKER_TAG = $(VERSION)
 # Alpine version used in final containers (https://hub.docker.com/_/alpine?tab=tags)
-DOCKER_ALPINE_VERSION = 3.12.8
+DOCKER_ALPINE_VERSION = 3.14.3
 # Version of the Go compiler (https://hub.docker.com/_/golang?tab=tags)
 DOCKER_GOLANG_VERSION = 1.17.5
 # Alpine version used in the Golang build container (https://hub.docker.com/_/golang?tab=tags&page=1&name=alpine)
+# note: the golang image only supports the latest two main release branches of Alpine!
 DOCKER_ALPINE_BUILD_VERSION = 3.14
 DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
 #DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
