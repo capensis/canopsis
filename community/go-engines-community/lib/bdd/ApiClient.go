@@ -254,11 +254,11 @@ func (a *ApiClient) TheResponseKeyShouldNotBe(path, value string) error {
 				return nil
 			}
 		case float32:
-			if f, err := strconv.ParseFloat(value, 0); err != nil || v != float32(f) {
+			if f, err := strconv.ParseFloat(value, 32); err != nil || v != float32(f) {
 				return nil
 			}
 		case float64:
-			if f, err := strconv.ParseFloat(value, 0); err != nil || v != f {
+			if f, err := strconv.ParseFloat(value, 64); err != nil || v != f {
 				return nil
 			}
 		case bool:
@@ -283,6 +283,35 @@ func (a *ApiClient) TheResponseKeyShouldNotExist(path string) error {
 	}
 
 	return nil
+}
+
+/*
+Step example:
+	Then the difference between metaalarmLastEventDate createTimestamp is in range -2,2
+*/
+func (a *ApiClient) TheDifferenceBetweenValues(var1, var2 string, left, right float64) error {
+	val1, err := a.getFloatVar(var1)
+	if err != nil {
+		return fmt.Errorf("first variable %s", err)
+	}
+	val2, err := a.getFloatVar(var2)
+	if err != nil {
+		return fmt.Errorf("second variable %s", err)
+	}
+	d := val1 - val2
+	if d < left || right < d {
+		return fmt.Errorf("difference is %f and out of range %f, %f", d, left, right)
+	}
+
+	return nil
+}
+
+func (a *ApiClient) getFloatVar(name string) (float64, error) {
+	val, ok := a.vars[name]
+	if !ok {
+		return 0, fmt.Errorf("doesn't exist")
+	}
+	return strconv.ParseFloat(val, 64)
 }
 
 // getNestedJsonVal returns val by path.
@@ -350,7 +379,7 @@ func (a *ApiClient) IAm(ctx context.Context, role string) error {
 	}
 
 	uri := fmt.Sprintf("%s/api/v4/login", a.url)
-	body, err := json.Marshal(map[string]string{
+	body, _ := json.Marshal(map[string]string{
 		"username": line.Name,
 		"password": userPass,
 	})
