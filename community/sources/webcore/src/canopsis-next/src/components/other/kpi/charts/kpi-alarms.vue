@@ -118,9 +118,9 @@ export default {
       this.alarmsMetrics = alarmsMetrics;
       this.minDate = convertDateToStartOfDayTimestamp(minDate);
 
-      // if (params.from < this.minDate) {
-      //   this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
-      // }
+      if (params.from < this.minDate) {
+        this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
+      }
 
       this.pending = false;
     },
