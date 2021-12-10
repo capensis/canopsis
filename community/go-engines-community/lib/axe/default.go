@@ -185,6 +185,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			EventProcessor: alarm.NewEventProcessor(
+				dbClient,
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
 				correlation.NewRuleAdapter(dbClient),
