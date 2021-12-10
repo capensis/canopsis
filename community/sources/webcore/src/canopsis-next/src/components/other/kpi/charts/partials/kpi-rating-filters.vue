@@ -16,13 +16,14 @@
 </template>
 
 <script>
+import { USER_METRIC_PARAMETERS } from '@/constants';
+
 import { getAvailableMetricByCriteria } from '@/helpers/metrics';
 
 import { formMixin } from '@/mixins/form';
 
 import KpiRatingCriteriaField from './kpi-rating-criteria-field.vue';
 import KpiRatingMetricField from './kpi-rating-metric-field.vue';
-import { USER_METRIC_PARAMETERS } from '@/constants';
 
 export default {
   components: { KpiRatingMetricField, KpiRatingCriteriaField },

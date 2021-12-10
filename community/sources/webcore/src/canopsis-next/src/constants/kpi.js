@@ -47,3 +47,5 @@ export const KPI_TABS = {
   filters: 'filters',
   ratingSettings: 'ratingSettings',
 };
+
+export const KPI_METRICS_MAX_ALARM_YEAR_INTERVAL_DIFF_IN_YEARS = 1;
