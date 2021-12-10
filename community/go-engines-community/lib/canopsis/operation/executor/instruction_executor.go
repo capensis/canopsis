@@ -63,12 +63,16 @@ func (e *instructionExecutor) Exec(
 	alarm *types.Alarm,
 	_ types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationInstructionParameters
 	var ok bool
 	if params, ok = operation.Parameters.(types.OperationInstructionParameters); !ok {
 		return "", fmt.Errorf("invalid parameters")
+	}
+
+	if userID == "" {
+		userID = params.User
 	}
 
 	alarmStepType, ok := e.alarmStepTypeMap[operation.Type]
@@ -87,6 +91,7 @@ func (e *instructionExecutor) Exec(
 		params.Execution,
 		params.Author,
 		params.Output,
+		userID,
 		role,
 		initiator,
 	)

@@ -26,12 +26,16 @@ func (e *declareTicketWebhookExecutor) Exec(
 	alarm *types.Alarm,
 	_ types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationDeclareTicketParameters
 	var ok bool
 	if params, ok = operation.Parameters.(types.OperationDeclareTicketParameters); !ok {
 		return "", fmt.Errorf("invalid parameters")
+	}
+
+	if userID == "" {
+		userID = params.User
 	}
 
 	err := alarm.PartialUpdateDeclareTicket(
@@ -40,6 +44,7 @@ func (e *declareTicketWebhookExecutor) Exec(
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
 		params.Ticket,
 		params.Data,
+		userID,
 		role,
 		initiator,
 	)

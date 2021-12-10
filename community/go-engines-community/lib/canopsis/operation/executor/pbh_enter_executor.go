@@ -24,12 +24,16 @@ func (e *pbhEnterExecutor) Exec(
 	alarm *types.Alarm,
 	_ types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationPbhParameters
 	var ok bool
 	if params, ok = operation.Parameters.(types.OperationPbhParameters); !ok {
 		return "", fmt.Errorf("invalid parameters")
+	}
+
+	if userID == "" {
+		userID = params.User
 	}
 
 	if alarm.Value.PbehaviorInfo == params.PbehaviorInfo {
@@ -41,6 +45,7 @@ func (e *pbhEnterExecutor) Exec(
 		params.PbehaviorInfo,
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
+		userID,
 		role,
 		initiator,
 	)
