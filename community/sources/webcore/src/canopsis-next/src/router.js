@@ -309,6 +309,8 @@ router.beforeResolve(async (to, from, next) => {
 
     next();
   } catch (err) {
+    console.error(err);
+
     next({
       name: 'home',
     });
