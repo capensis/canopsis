@@ -57,19 +57,26 @@ export default {
         const formIsValid = await this.$validator.validateAll();
 
         if (formIsValid) {
+          const { redirect } = this.$route.query;
+          const { defaultview: userDefaultView } = this.currentUser;
+
           await this.login(this.form);
           await this.fetchAppInfos();
 
-          if (this.$route.query.redirect && this.$route.query.redirect !== '/') {
-            this.$router.push(this.$route.query.redirect);
-          } else if (this.currentUser.defaultview) {
+          if (redirect && redirect !== '/') {
+            this.$router.push(redirect);
+            return;
+          }
+
+          if (userDefaultView) {
             this.$router.push({
               name: 'view',
-              params: { id: this.currentUser.defaultview },
+              params: { id: userDefaultView._id },
             });
-          } else {
-            this.$router.push({ name: 'home' });
+            return;
           }
+
+          this.$router.push({ name: 'home' });
         }
       } catch (err) {
         this.hasServerError = true;
