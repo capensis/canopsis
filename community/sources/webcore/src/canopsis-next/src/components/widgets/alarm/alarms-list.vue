@@ -35,8 +35,8 @@
         alarms-list-remediation-instructions-filters(
           :filters.sync="remediationInstructionsFilters",
           :locked-filters.sync="widgetRemediationInstructionsFilters",
-          :has-access-to-edit-filter="hasAccessToEditRemediationInstructionsFilter",
-          :has-access-to-user-filter="hasAccessToUserRemediationInstructionsFilter",
+          :editable="hasAccessToEditRemediationInstructionsFilter",
+          :addable="hasAccessToUserRemediationInstructionsFilter",
           :has-access-to-list-filters="hasAccessToListRemediationInstructionsFilters"
         )
       v-flex

@@ -11,6 +11,9 @@ module.exports = {
     '^.+\\.vue$': '<rootDir>/tests/unit/jest.vue',
     '^.+\\.jsx?$': '<rootDir>/tests/unit/jest.transform',
   },
+  transformIgnorePatterns: [
+    '<rootDir>/node_modules/(?!vue-tour/.*)',
+  ],
   moduleNameMapper: {
     '^.+\\.styl(us)?$': '<rootDir>/tests/unit/mocks/styleMock.js',
     '^@unit/(.*)$': '<rootDir>/tests/unit/$1',
