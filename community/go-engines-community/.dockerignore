@@ -8,3 +8,5 @@
 !Makefile
 !docs/
 !config/
+!tests/
+!fixtures/
