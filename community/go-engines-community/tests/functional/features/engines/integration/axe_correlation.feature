@@ -122,6 +122,8 @@ Feature: create and update meta alarm
     Then the difference between metaalarmCreationDate createTimestamp is in range -2,2
     When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-axe-correlation-1"}]}&with_steps=true&with_consequences=true
     Then the response code should be 200
+    When I save response metaalarmattachDate={{ ( index (index .lastResponse.data 0).v.steps 2).t }}
+    Then the difference between metaalarmattachDate createTimestamp is in range -1,1
     Then the response body should contain:
     """
     {
@@ -158,7 +160,6 @@ Feature: create and update meta alarm
               {
                 "_t": "metaalarmattach",
                 "a": "engine.correlation",
-                "t": {{ .createTimestamp }},
                 "val": 0
               }
             ]
