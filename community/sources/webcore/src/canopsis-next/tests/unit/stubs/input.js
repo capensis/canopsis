@@ -23,15 +23,28 @@ export const createNumberInputStub = className => ({
 });
 
 export const createSelectInputStub = className => ({
-  props: ['value', 'items'],
+  props: {
+    value: [Object, Array, String, Number],
+    items: Array,
+    itemValue: {
+      type: String,
+      default: 'value',
+    },
+  },
   computed: {
     availableItems() {
       return this.items.map(item => (isObject(item) ? item : ({ value: item })));
     },
   },
+  methods: {
+    getValue({ [this.itemValue]: value }) {
+      return value;
+    },
+  },
   template: `
     <select class="${className}" :value="value" @change="$listeners.input($event.target.value)">
-      <option v-for="item in availableItems" :value="item.value" :key="item.value">
+      <option v-for="item in availableItems" :value="getValue(item)" :key="getValue(item)">
+        <slot name="prepend-item" />
         {{ item.value }}
       </option>
     </select>
