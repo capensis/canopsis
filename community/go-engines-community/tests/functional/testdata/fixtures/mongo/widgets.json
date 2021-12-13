@@ -189,5 +189,28 @@
     "author": "test-author-to-widget-update-position",
     "created": 1611229670,
     "updated": 1611229670
+  },
+  {
+    "_id": "test-widget-to-export-1",
+    "title": "test-widget-to-export-1-title",
+    "type": "test-widget-to-export-1-type",
+    "tab": "test-tab-to-export-1",
+    "position": 0,
+    "grid_parameters": {
+      "test-widget-to-view-export-1-gridparameter": "test-widget-to-view-export-1-gridparameter-value"
+    },
+    "parameters": {
+      "test-widget-to-view-export-1-parameter-1": {
+        "test-widget-to-view-export-1-parameter-1-subparameter": "test-widget-to-view-export-1-parameter-1-subvalue"
+      },
+      "test-widget-to-view-export-1-parameter-2": [
+        {
+          "test-widget-to-view-export-1-parameter-2-subparameter": "test-widget-to-view-export-1-parameter-2-subvalue"
+        }
+      ]
+    },
+    "author": "test-author-to-view-export",
+    "created": 1611229670,
+    "updated": 1611229670
   }
 ]

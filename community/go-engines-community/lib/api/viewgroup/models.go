@@ -25,36 +25,36 @@ type BaseEditRequest struct {
 }
 
 type ViewGroup struct {
-	ID        string        `bson:"_id" json:"_id"`
-	Title     string        `bson:"title" json:"title"`
-	Author    string        `bson:"author" json:"author"`
-	Views     *[]View       `bson:"views,omitempty" json:"views,omitempty"`
-	Created   types.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
-	Updated   types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
-	Deletable *bool         `bson:"deletable,omitempty" json:"deletable,omitempty"`
+	ID        string         `bson:"_id" json:"_id,omitempty"`
+	Title     string         `bson:"title" json:"title"`
+	Author    string         `bson:"author" json:"author,omitempty"`
+	Views     *[]View        `bson:"views,omitempty" json:"views,omitempty"`
+	Created   *types.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated   *types.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+	Deletable *bool          `bson:"deletable,omitempty" json:"deletable,omitempty"`
 }
 
 type View struct {
-	ID              string                     `bson:"_id" json:"_id"`
+	ID              string                     `bson:"_id" json:"_id,omitempty"`
 	Enabled         bool                       `bson:"enabled" json:"enabled"`
 	Title           string                     `bson:"title" json:"title"`
 	Description     string                     `bson:"description" json:"description"`
-	Group           ViewGroup                  `bson:"group" json:"group"`
+	Group           *ViewGroup                 `bson:"group" json:"group,omitempty"`
 	Tabs            []Tab                      `bson:"tabs" json:"tabs,omitempty"`
 	Tags            []string                   `bson:"tags" json:"tags"`
 	PeriodicRefresh *types.DurationWithEnabled `bson:"periodic_refresh" json:"periodic_refresh"`
-	Author          string                     `bson:"author" json:"author"`
-	Created         *types.CpsTime             `bson:"created" json:"created" swaggertype:"integer"`
-	Updated         *types.CpsTime             `bson:"updated" json:"updated" swaggertype:"integer"`
+	Author          string                     `bson:"author" json:"author,omitempty"`
+	Created         *types.CpsTime             `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated         *types.CpsTime             `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type Tab struct {
-	ID      string        `bson:"_id" json:"_id"`
-	Title   string        `bson:"title" json:"title"`
-	Widgets []view.Widget `bson:"widgets" json:"widgets,omitempty"`
-	Author  string        `bson:"author" json:"author"`
-	Created types.CpsTime `bson:"created" json:"created"`
-	Updated types.CpsTime `bson:"updated" json:"updated"`
+	ID      string         `bson:"_id" json:"_id,omitempty"`
+	Title   string         `bson:"title" json:"title"`
+	Widgets []view.Widget  `bson:"widgets" json:"widgets,omitempty"`
+	Author  string         `bson:"author" json:"author,omitempty"`
+	Created *types.CpsTime `bson:"created" json:"created,omitempty"`
+	Updated *types.CpsTime `bson:"updated" json:"updated,omitempty"`
 }
 
 type AggregationResult struct {

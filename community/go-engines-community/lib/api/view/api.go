@@ -1,31 +1,41 @@
 package view
 
 import (
+	"errors"
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 type API interface {
 	common.CrudAPI
 	UpdatePositions(c *gin.Context)
+	Import(c *gin.Context)
+	Export(c *gin.Context)
 }
 
 type api struct {
 	store        Store
+	enforcer     security.Enforcer
 	actionLogger logger.ActionLogger
 }
 
 func NewApi(
 	store Store,
+	enforcer security.Enforcer,
 	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
 		store:        store,
+		enforcer:     enforcer,
 		actionLogger: actionLogger,
 	}
 }
@@ -126,13 +136,8 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	userID, ok := c.Get(auth.UserKey)
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-		return
-	}
-
-	view, err := a.store.Insert(c.Request.Context(), userID.(string), request)
+	userID := c.MustGet(auth.UserKey).(string)
+	view, err := a.store.Insert(c.Request.Context(), userID, request)
 	if err != nil {
 		panic(err)
 	}
@@ -246,6 +251,7 @@ func (a *api) Delete(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /view-positions [put]
 func (a *api) UpdatePositions(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
 	request := EditPositionRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -253,20 +259,13 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		return
 	}
 
-	v, ok := c.Get(middleware.AuthorizedIds)
-	var authorizedIds []string
-	if ok {
-		authorizedIds = v.([]string)
-	}
-
-	canUpdate := make(map[string]bool, len(authorizedIds))
-	for _, id := range authorizedIds {
-		canUpdate[id] = true
-	}
-
 	for _, item := range request.Items {
 		for _, view := range item.Views {
-			if !canUpdate[view] {
+			ok, err := a.enforcer.Enforce(userId, view, model.PermissionUpdate)
+			if err != nil {
+				panic(err)
+			}
+			if !ok {
 				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
 				return
 			}
@@ -284,4 +283,124 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// Import views
+// @Summary Import views
+// @Description Import views
+// @Tags views
+// @ID views-import
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body ImportRequest true "body"
+// @Success 204
+// @Router /view-import [post]
+func (a *api) Import(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+	request := ImportRequest{}
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	for _, group := range request.Items {
+		if group.Views == nil {
+			continue
+		}
+		for _, view := range *group.Views {
+			if view.ID == "" {
+				continue
+			}
+			ok, err := a.enforcer.Enforce(userId, view.ID, model.PermissionUpdate)
+			if err != nil {
+				panic(err)
+			}
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+				return
+			}
+		}
+	}
+
+	err := a.store.Import(c.Request.Context(), request, userId)
+	if err != nil {
+		valError := ValidationError{}
+		if errors.As(err, &valError) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{
+				Errors: map[string]string{
+					valError.field: valError.Error(),
+				},
+			})
+			return
+		}
+		panic(err)
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+// Export views
+// @Summary Export views
+// @Description Export views
+// @Tags views
+// @ID views-export
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body ExportRequest true "body"
+// @Success 200 {object} ExportResponse
+// @Router /view-export [post]
+func (a *api) Export(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+	request := ExportRequest{}
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	for _, group := range request.Groups {
+		for _, view := range group.Views {
+			ok, err := a.enforcer.Enforce(userId, view, model.PermissionRead)
+			if err != nil {
+				panic(err)
+			}
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+				return
+			}
+		}
+	}
+	for _, view := range request.Views {
+		ok, err := a.enforcer.Enforce(userId, view, model.PermissionRead)
+		if err != nil {
+			panic(err)
+		}
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			return
+		}
+	}
+
+	response, err := a.store.Export(c.Request.Context(), request)
+	if err != nil {
+		valError := ValidationError{}
+		if errors.As(err, &valError) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{
+				Errors: map[string]string{
+					valError.field: valError.Error(),
+				},
+			})
+			return
+		}
+		panic(err)
+	}
+
+	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fmt.Sprintf("views-%s.json", time.Now().Format("2006-01-02T15-04-05"))))
+
+	c.JSON(http.StatusOK, response)
 }

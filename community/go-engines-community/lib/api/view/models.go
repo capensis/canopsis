@@ -57,3 +57,28 @@ func (r *AggregationResult) GetData() interface{} {
 func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
+
+type ImportRequest struct {
+	Items []viewgroup.ViewGroup `json:"items" binding:"required,notblank,dive"`
+}
+
+func (r ImportRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r.Items)
+}
+
+func (r *ImportRequest) UnmarshalJSON(b []byte) error {
+	return json.Unmarshal(b, &r.Items)
+}
+
+type ExportRequest struct {
+	Groups []struct {
+		ID    string   `json:"_id" binding:"required"`
+		Views []string `json:"views"`
+	} `json:"groups"`
+	Views []string `json:"views"`
+}
+
+type ExportResponse struct {
+	Groups []viewgroup.ViewGroup `json:"groups"`
+	Views  []viewgroup.View      `json:"views"`
+}

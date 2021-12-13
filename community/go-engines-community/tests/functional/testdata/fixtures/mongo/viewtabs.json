@@ -205,5 +205,23 @@
     "author": "test-author-to-widget-update-position",
     "created": 1611229670,
     "updated": 1611229670
+  },
+  {
+    "_id": "test-tab-to-export-1",
+    "title": "test-tab-to-export-1-title",
+    "view": "test-view-to-export-1",
+    "position": 0,
+    "author": "test-author-to-view-export",
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-tab-to-export-2",
+    "title": "test-tab-to-export-2-title",
+    "view": "test-view-to-export-1",
+    "position": 1,
+    "author": "test-author-to-view-export",
+    "created": 1611229670,
+    "updated": 1611229670
   }
 ]

@@ -79,8 +79,7 @@ const (
 	authObjEntityCategory = apisecurity.ObjEntityCategory
 	authObjContextGraph   = apisecurity.ObjContextGraph
 
-	authObjViewGroup = apisecurity.ObjViewGroup
-	authObjPlaylist  = apisecurity.ObjPlaylist
+	authObjPlaylist = apisecurity.ObjPlaylist
 
 	authPermAlarmRead = apisecurity.PermAlarmRead
 
@@ -672,7 +671,7 @@ func RegisterRoutes(
 			engineinfo.GetRunInfo(ctx, runInfoManager),
 		)
 
-		viewAPI := view.NewApi(view.NewStore(dbClient), actionLogger)
+		viewAPI := view.NewApi(view.NewStore(dbClient), enforcer, actionLogger)
 		viewRouter := protected.Group("/views")
 		{
 			viewRouter.POST(
@@ -769,30 +768,30 @@ func RegisterRoutes(
 		{
 			viewGroupRouter.POST(
 				"",
-				middleware.Authorize(authObjViewGroup, permCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjViewGroup, permCreate, enforcer),
 				middleware.SetAuthor(),
 				viewGroupAPI.Create,
 			)
 			viewGroupRouter.GET(
 				"",
 				middleware.ProvideAuthorizedIds(permRead, enforcer),
-				middleware.Authorize(authObjViewGroup, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjViewGroup, permRead, enforcer),
 				viewGroupAPI.List,
 			)
 			viewGroupRouter.GET(
 				"/:id",
-				middleware.Authorize(authObjViewGroup, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjViewGroup, permRead, enforcer),
 				viewGroupAPI.Get,
 			)
 			viewGroupRouter.PUT(
 				"/:id",
-				middleware.Authorize(authObjViewGroup, permUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjViewGroup, permUpdate, enforcer),
 				middleware.SetAuthor(),
 				viewGroupAPI.Update,
 			)
 			viewGroupRouter.DELETE(
 				"/:id",
-				middleware.Authorize(authObjViewGroup, permDelete, enforcer),
+				middleware.Authorize(apisecurity.ObjViewGroup, permDelete, enforcer),
 				viewGroupAPI.Delete,
 			)
 		}
@@ -800,9 +799,23 @@ func RegisterRoutes(
 		protected.PUT(
 			"/view-positions",
 			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
-			middleware.Authorize(authObjViewGroup, model.PermissionUpdate, enforcer),
-			middleware.ProvideAuthorizedIds(model.PermissionUpdate, enforcer),
+			middleware.Authorize(apisecurity.ObjViewGroup, model.PermissionUpdate, enforcer),
 			viewAPI.UpdatePositions,
+		)
+
+		protected.POST(
+			"/view-export",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.Authorize(apisecurity.ObjViewGroup, model.PermissionRead, enforcer),
+			viewAPI.Export,
+		)
+
+		protected.POST(
+			"/view-import",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			middleware.Authorize(apisecurity.ObjViewGroup, model.PermissionUpdate, enforcer),
+			viewAPI.Import,
+			middleware.ReloadEnforcerPolicyOnChange(enforcer),
 		)
 
 		protected.PUT(
