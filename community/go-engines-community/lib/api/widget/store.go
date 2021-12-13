@@ -94,8 +94,8 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*view.Widget, error)
 	widget := transformEditRequestToModel(r)
 	widget.ID = utils.NewID()
 	widget.Position = count
-	widget.Created = now
-	widget.Updated = now
+	widget.Created = &now
+	widget.Updated = &now
 
 	_, err = s.collection.InsertOne(ctx, widget)
 	if err != nil {
@@ -116,7 +116,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*view.Widget, error)
 	widget.ID = oldWidget.ID
 	widget.Position = oldWidget.Position
 	widget.Created = oldWidget.Created
-	widget.Updated = now
+	widget.Updated = &now
 	// Empty InternalParameters to remove from update query.
 	widget.InternalParameters = view.InternalParameters{}
 	update := bson.M{"$set": widget}

@@ -20,13 +20,15 @@ const permissionPrefix = "Rights on view :"
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
-	GetOneBy(ctx context.Context, r string) (*viewgroup.View, error)
+	GetOneBy(ctx context.Context, id string) (*viewgroup.View, error)
 	Insert(ctx context.Context, userID string, r EditRequest) (*viewgroup.View, error)
 	Update(ctx context.Context, r EditRequest) (*viewgroup.View, error)
 	// UpdatePositions receives some groups and views with updated positions and updates
 	// positions for all groups and views in db and moves views to another groups if necessary.
 	UpdatePositions(ctx context.Context, r EditPositionRequest) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
+	Export(ctx context.Context, r ExportRequest) (ExportResponse, error)
+	Import(ctx context.Context, r ImportRequest, userId string) error
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
@@ -65,7 +67,15 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	pipeline = append(pipeline, getNestedObjectsPipeline()...)
+	pipeline = append(pipeline, []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.ViewGroupMongoCollection,
+			"localField":   "group_id",
+			"foreignField": "_id",
+			"as":           "group",
+		}},
+		{"$unwind": bson.M{"path": "$group", "preserveNullAndEmptyArrays": true}},
+	}...)
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
@@ -92,48 +102,6 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*viewgroup.View, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
-	pipeline = append(pipeline, []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.ViewTabMongoCollection,
-			"localField":   "_id",
-			"foreignField": "view",
-			"as":           "tabs",
-		}},
-		{"$unwind": bson.M{"path": "$tabs", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
-			"from":         mongo.WidgetMongoCollection,
-			"localField":   "tabs._id",
-			"foreignField": "tab",
-			"as":           "widgets",
-		}},
-		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"widgets.position": 1}},
-		{"$group": bson.M{
-			"_id": bson.M{
-				"_id": "$_id",
-				"tab": "$tabs._id",
-			},
-			"data":    bson.M{"$first": "$$ROOT"},
-			"tabs":    bson.M{"$first": "$tabs"},
-			"widgets": bson.M{"$push": "$widgets"},
-		}},
-		{"$addFields": bson.M{
-			"tabs.widgets": "$widgets",
-		}},
-		{"$sort": bson.M{"tabs.position": 1}},
-		{"$group": bson.M{
-			"_id":  "$_id._id",
-			"data": bson.M{"$first": "$data"},
-			"tabs": bson.M{"$push": "$tabs"},
-		}},
-		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
-			"$data",
-			bson.M{"tabs": bson.M{"$filter": bson.M{
-				"input": "$tabs",
-				"cond":  "$$this._id",
-			}}},
-		}}}},
-	}...)
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -185,7 +153,7 @@ func (s *store) Insert(ctx context.Context, userID string, r EditRequest) (*view
 		return nil, err
 	}
 
-	err = s.createPermissions(ctx, userID, *newView)
+	err = s.createPermissions(ctx, userID, map[string]string{newView.ID: newView.Title})
 	if err != nil {
 		return nil, err
 	}
@@ -278,14 +246,418 @@ func (s *store) UpdatePositions(ctx context.Context, r EditPositionRequest) (boo
 	return true, nil
 }
 
-func (s *store) createPermissions(ctx context.Context, userID string, view viewgroup.View) error {
-	_, err := s.aclCollection.InsertOne(ctx, bson.M{
-		"_id":          view.ID,
-		"crecord_name": view.ID,
-		"crecord_type": securitymodel.LineTypeObject,
-		"desc":         fmt.Sprintf("%s %s", permissionPrefix, view.Title),
-		"type":         securitymodel.LineObjectTypeRW,
-	})
+func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, error) {
+	groups := make([]viewgroup.ViewGroup, 0)
+	views := make([]viewgroup.View, 0)
+
+	nestedObjectsPipeline := []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.ViewTabMongoCollection,
+			"localField":   "_id",
+			"foreignField": "view",
+			"as":           "tabs",
+		}},
+		{"$unwind": bson.M{"path": "$tabs", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.WidgetMongoCollection,
+			"localField":   "tabs._id",
+			"foreignField": "tab",
+			"as":           "widgets",
+		}},
+		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"widgets.position": 1}},
+		{"$project": bson.M{
+			"widgets._id":      0,
+			"widgets.author":   0,
+			"widgets.updated":  0,
+			"widgets.created":  0,
+			"widgets.position": 0,
+		}},
+		{"$group": bson.M{
+			"_id": bson.M{
+				"_id": "$_id",
+				"tab": "$tabs._id",
+			},
+			"data":    bson.M{"$first": "$$ROOT"},
+			"tabs":    bson.M{"$first": "$tabs"},
+			"widgets": bson.M{"$push": "$widgets"},
+		}},
+		{"$addFields": bson.M{
+			"tabs.widgets": "$widgets",
+		}},
+		{"$sort": bson.M{"tabs.position": 1}},
+		{"$project": bson.M{
+			"tabs._id":      0,
+			"tabs.author":   0,
+			"tabs.updated":  0,
+			"tabs.created":  0,
+			"tabs.position": 0,
+		}},
+		{"$group": bson.M{
+			"_id":  "$_id._id",
+			"data": bson.M{"$first": "$data"},
+			"tabs": bson.M{"$push": "$tabs"},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{"tabs": bson.M{"$filter": bson.M{
+				"input": "$tabs",
+				"cond":  "$$this.title",
+			}}},
+		}}}},
+	}
+
+	if len(r.Views) > 0 {
+		pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": r.Views}}}}
+		pipeline = append(pipeline, nestedObjectsPipeline...)
+		pipeline = append(pipeline, common.GetSortQuery("position", common.SortAsc))
+		pipeline = append(pipeline, bson.M{"$project": bson.M{
+			"_id":      0,
+			"author":   0,
+			"updated":  0,
+			"created":  0,
+			"position": 0,
+		}})
+		cursor, err := s.collection.Aggregate(ctx, pipeline)
+		if err != nil {
+			return ExportResponse{}, err
+		}
+
+		err = cursor.All(ctx, &views)
+		if err != nil {
+			return ExportResponse{}, err
+		}
+
+		if len(views) != len(r.Views) {
+			return ExportResponse{}, ValidationError{field: "views", error: fmt.Errorf("views not found")}
+		}
+	}
+	if len(r.Groups) > 0 {
+		groupIds := make([]string, len(r.Groups))
+		viewIds := make([]string, 0, len(r.Groups))
+		viewsByGroup := make(map[string]map[string]bool, len(r.Groups))
+		for i, group := range r.Groups {
+			groupIds[i] = group.ID
+			viewIds = append(viewIds, group.Views...)
+			viewsByGroup[group.ID] = make(map[string]bool, len(group.Views))
+			for _, v := range group.Views {
+				viewsByGroup[group.ID][v] = true
+			}
+		}
+
+		pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": groupIds}}}}
+		pipeline = append(pipeline, []bson.M{
+			{"$lookup": bson.M{
+				"from":         mongo.ViewMongoCollection,
+				"localField":   "_id",
+				"foreignField": "group_id",
+				"as":           "views",
+			}},
+			{"$unwind": bson.M{"path": "$views", "preserveNullAndEmptyArrays": true}},
+			{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+				"$views",
+				bson.M{"group_obj": "$$ROOT"},
+			}}}},
+		}...)
+		pipeline = append(pipeline, nestedObjectsPipeline...)
+		pipeline = append(pipeline, common.GetSortQuery("position", common.SortAsc))
+		pipeline = append(pipeline, []bson.M{
+			{"$project": bson.M{
+				"author":   0,
+				"updated":  0,
+				"created":  0,
+				"position": 0,
+			}},
+			{"$group": bson.M{
+				"_id":   "$group_obj._id",
+				"group": bson.M{"$first": "$group_obj"},
+				"views": bson.M{"$push": "$$ROOT"},
+			}},
+			{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+				"$group",
+				bson.M{"views": bson.M{"$filter": bson.M{
+					"input": "$views",
+					"cond":  "$$this.title",
+				}}},
+			}}}},
+			{"$project": bson.M{
+				"author":   0,
+				"updated":  0,
+				"created":  0,
+				"position": 0,
+			}},
+		}...)
+		pipeline = append(pipeline, common.GetSortQuery("position", common.SortAsc))
+		cursor, err := s.groupCollection.Aggregate(ctx, pipeline)
+		if err != nil {
+			return ExportResponse{}, err
+		}
+
+		err = cursor.All(ctx, &groups)
+		if err != nil {
+			return ExportResponse{}, err
+		}
+
+		if len(groups) != len(r.Groups) {
+			return ExportResponse{}, ValidationError{field: "groups", error: fmt.Errorf("groups not found")}
+		}
+
+		for i, group := range groups {
+			foundViews := make([]viewgroup.View, 0, len(viewsByGroup[group.ID]))
+			for _, v := range *group.Views {
+				if viewsByGroup[group.ID][v.ID] {
+					v.ID = ""
+					foundViews = append(foundViews, v)
+				}
+			}
+			*group.Views = foundViews
+			if len(*group.Views) != len(viewsByGroup[group.ID]) {
+				return ExportResponse{}, ValidationError{field: fmt.Sprintf("groups.%d", i), error: fmt.Errorf("views not found")}
+			}
+
+			groups[i].ID = ""
+		}
+	}
+
+	return ExportResponse{
+		Groups: groups,
+		Views:  views,
+	}, nil
+}
+
+func (s *store) Import(ctx context.Context, r ImportRequest, userId string) error {
+	maxViewPosition, err := s.collection.CountDocuments(ctx, bson.M{})
+	if err != nil {
+		return err
+	}
+	maxGroupPosition, err := s.groupCollection.CountDocuments(ctx, bson.M{})
+	if err != nil {
+		return err
+	}
+	groupIds := make([]string, 0, len(r.Items))
+	viewIds := make([]string, 0, len(r.Items))
+
+	for _, g := range r.Items {
+		if g.ID != "" {
+			groupIds = append(groupIds, g.ID)
+		}
+		if g.Views != nil {
+			for _, v := range *g.Views {
+				if v.ID != "" {
+					viewIds = append(viewIds, v.ID)
+				}
+			}
+		}
+	}
+
+	existedViewIds := make(map[string]bool)
+	existedGroupIds := make(map[string]bool)
+	if len(viewIds) > 0 {
+		cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": viewIds}})
+		if err != nil {
+			return err
+		}
+		defer cursor.Close(ctx)
+		for cursor.Next(ctx) {
+			model := struct {
+				ID string `bson:"_id"`
+			}{}
+			err := cursor.Decode(&model)
+			if err != nil {
+				return err
+			}
+			existedViewIds[model.ID] = true
+		}
+	}
+	if len(groupIds) > 0 {
+		cursor, err := s.groupCollection.Find(ctx, bson.M{"_id": bson.M{"$in": groupIds}})
+		if err != nil {
+			return err
+		}
+		defer cursor.Close(ctx)
+		for cursor.Next(ctx) {
+			model := struct {
+				ID string `bson:"_id"`
+			}{}
+			err := cursor.Decode(&model)
+			if err != nil {
+				return err
+			}
+			existedGroupIds[model.ID] = true
+		}
+	}
+
+	newGroups := make([]interface{}, 0, len(r.Items))
+	newViews := make([]interface{}, 0, len(r.Items))
+	newTabs := make([]interface{}, 0, len(r.Items))
+	newWidgets := make([]interface{}, 0, len(r.Items))
+	newViewTitles := make(map[string]string, len(r.Items))
+	positionItems := make([]EditPositionItemRequest, 0, len(r.Items))
+	now := types.NewCpsTime()
+	for gi, g := range r.Items {
+		groupId := g.ID
+
+		if g.ID == "" || !existedGroupIds[g.ID] {
+			groupId = utils.NewID()
+			if g.Title == "" {
+				return ValidationError{
+					field: fmt.Sprintf("%d.title", gi),
+					error: fmt.Errorf("value is missing"),
+				}
+			}
+			newGroups = append(newGroups, view.Group{
+				ID:       groupId,
+				Title:    g.Title,
+				Position: maxGroupPosition,
+				Author:   userId,
+				Created:  now,
+				Updated:  now,
+			})
+			maxGroupPosition++
+		}
+
+		groupViewIds := make([]string, 0)
+
+		if g.Views != nil {
+			for vi, v := range *g.Views {
+				if v.ID != "" && existedViewIds[v.ID] {
+					groupViewIds = append(groupViewIds, v.ID)
+					continue
+				}
+
+				if v.Title == "" {
+					return ValidationError{
+						field: fmt.Sprintf("%d.views.%d.title", gi, vi),
+						error: fmt.Errorf("value is missing"),
+					}
+				}
+
+				viewId := utils.NewID()
+				groupViewIds = append(groupViewIds, viewId)
+				newViews = append(newViews, view.View{
+					ID:              viewId,
+					Enabled:         v.Enabled,
+					Title:           v.Title,
+					Description:     v.Description,
+					Position:        maxViewPosition,
+					Group:           groupId,
+					Tags:            v.Tags,
+					PeriodicRefresh: v.PeriodicRefresh,
+					Author:          userId,
+					Created:         now,
+					Updated:         now,
+				})
+				maxViewPosition++
+				newViewTitles[viewId] = v.Title
+
+				for ti, tab := range v.Tabs {
+					if tab.Title == "" {
+						return ValidationError{
+							field: fmt.Sprintf("%d.views.%d.tabs.%d.title", gi, vi, ti),
+							error: fmt.Errorf("value is missing"),
+						}
+					}
+
+					tabId := utils.NewID()
+					newTabs = append(newTabs, view.Tab{
+						ID:       tabId,
+						Title:    tab.Title,
+						View:     viewId,
+						Author:   userId,
+						Position: int64(ti),
+						Created:  now,
+						Updated:  now,
+					})
+					for wi, widget := range tab.Widgets {
+						if widget.Title == "" {
+							return ValidationError{
+								field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.title", gi, vi, ti, wi),
+								error: fmt.Errorf("value is missing"),
+							}
+						}
+						if widget.Type == "" {
+							return ValidationError{
+								field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.type", gi, vi, ti, wi),
+								error: fmt.Errorf("value is missing"),
+							}
+						}
+
+						newWidgets = append(newWidgets, view.Widget{
+							ID:             utils.NewID(),
+							Tab:            tabId,
+							Title:          widget.Title,
+							Type:           widget.Type,
+							GridParameters: widget.GridParameters,
+							Parameters:     widget.Parameters,
+							Author:         userId,
+							Position:       int64(wi),
+							Created:        &now,
+							Updated:        &now,
+						})
+					}
+				}
+			}
+		}
+
+		positionItems = append(positionItems, EditPositionItemRequest{
+			ID:    groupId,
+			Views: groupViewIds,
+		})
+	}
+
+	if len(newGroups) > 0 {
+		_, err := s.groupCollection.InsertMany(ctx, newGroups)
+		if err != nil {
+			return err
+		}
+	}
+	if len(newViews) > 0 {
+		_, err := s.collection.InsertMany(ctx, newViews)
+		if err != nil {
+			return err
+		}
+	}
+	if len(newTabs) > 0 {
+		_, err = s.tabCollection.InsertMany(ctx, newTabs)
+		if err != nil {
+			return err
+		}
+	}
+	if len(newWidgets) > 0 {
+		_, err = s.widgetCollection.InsertMany(ctx, newWidgets)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = s.createPermissions(ctx, userId, newViewTitles)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.UpdatePositions(ctx, EditPositionRequest{Items: positionItems})
+
+	return err
+}
+
+func (s *store) createPermissions(ctx context.Context, userID string, views map[string]string) error {
+	newPermissions := make([]interface{}, 0, len(views))
+	setRole := bson.M{}
+	for viewId, viewTitle := range views {
+		newPermissions = append(newPermissions, bson.M{
+			"_id":          viewId,
+			"crecord_name": viewId,
+			"crecord_type": securitymodel.LineTypeObject,
+			"desc":         fmt.Sprintf("%s %s", permissionPrefix, viewTitle),
+			"type":         securitymodel.LineObjectTypeRW,
+		})
+		setRole["rights."+viewId] = bson.M{
+			"checksum": securitymodel.PermissionBitmaskRead |
+				securitymodel.PermissionBitmaskUpdate |
+				securitymodel.PermissionBitmaskDelete,
+		}
+	}
+	_, err := s.aclCollection.InsertMany(ctx, newPermissions)
 	if err != nil {
 		return err
 	}
@@ -311,13 +683,7 @@ func (s *store) createPermissions(ctx context.Context, userID string, view viewg
 			"_id":          user.Role,
 			"crecord_type": securitymodel.LineTypeRole,
 		},
-		bson.M{"$set": bson.M{
-			"rights." + view.ID: bson.M{
-				"checksum": securitymodel.PermissionBitmaskRead |
-					securitymodel.PermissionBitmaskUpdate |
-					securitymodel.PermissionBitmaskDelete,
-			},
-		}},
+		bson.M{"$set": setRole},
 	)
 	if err != nil {
 		return err
@@ -518,6 +884,46 @@ func (s *store) deleteTabs(ctx context.Context, id string) error {
 
 func getNestedObjectsPipeline() []bson.M {
 	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.ViewTabMongoCollection,
+			"localField":   "_id",
+			"foreignField": "view",
+			"as":           "tabs",
+		}},
+		{"$unwind": bson.M{"path": "$tabs", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.WidgetMongoCollection,
+			"localField":   "tabs._id",
+			"foreignField": "tab",
+			"as":           "widgets",
+		}},
+		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"widgets.position": 1}},
+		{"$group": bson.M{
+			"_id": bson.M{
+				"_id": "$_id",
+				"tab": "$tabs._id",
+			},
+			"data":    bson.M{"$first": "$$ROOT"},
+			"tabs":    bson.M{"$first": "$tabs"},
+			"widgets": bson.M{"$push": "$widgets"},
+		}},
+		{"$addFields": bson.M{
+			"tabs.widgets": "$widgets",
+		}},
+		{"$sort": bson.M{"tabs.position": 1}},
+		{"$group": bson.M{
+			"_id":  "$_id._id",
+			"data": bson.M{"$first": "$data"},
+			"tabs": bson.M{"$push": "$tabs"},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{"tabs": bson.M{"$filter": bson.M{
+				"input": "$tabs",
+				"cond":  "$$this._id",
+			}}},
+		}}}},
 		{"$lookup": bson.M{
 			"from":         mongo.ViewGroupMongoCollection,
 			"localField":   "group_id",

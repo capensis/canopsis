@@ -165,8 +165,8 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 		ID:      utils.NewID(),
 		Title:   r.Title,
 		Author:  r.Author,
-		Created: now,
-		Updated: now,
+		Created: &now,
+		Updated: &now,
 	}
 
 	_, err = s.dbCollection.InsertOne(ctx, view.Group{
@@ -174,8 +174,8 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 		Title:    group.Title,
 		Author:   group.Author,
 		Position: count,
-		Created:  group.Created,
-		Updated:  group.Updated,
+		Created:  *group.Created,
+		Updated:  *group.Updated,
 	})
 	if err != nil {
 		return nil, err
@@ -193,7 +193,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 	now := types.CpsTime{Time: time.Now()}
 	group.Title = r.Title
 	group.Author = r.Author
-	group.Updated = now
+	group.Updated = &now
 
 	_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": group.ID}, bson.M{"$set": bson.M{
 		"title":   group.Title,

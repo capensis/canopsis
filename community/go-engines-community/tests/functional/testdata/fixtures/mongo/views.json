@@ -364,5 +364,65 @@
     "position": 32,
     "created": 1611229670,
     "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-export-1",
+    "enabled": true,
+    "title": "test-view-to-export-1-title",
+    "description": "test-view-to-export-1-description",
+    "author": "test-author-to-view-export",
+    "group_id": "test-viewgroup-to-export-1",
+    "position": 33,
+    "tags": [
+      "test-view-to-export-1-tag"
+    ],
+    "periodic_refresh": {
+      "enabled": true,
+      "value": 1,
+      "unit": "s"
+    },
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-export-2",
+    "enabled": true,
+    "title": "test-view-to-export-2-title",
+    "description": "test-view-to-export-2-description",
+    "author": "test-author-to-view-export",
+    "group_id": "test-viewgroup-to-export-1",
+    "position": 34,
+    "tags": [
+      "test-view-to-export-2-tag"
+    ],
+    "periodic_refresh": {
+      "enabled": true,
+      "value": 1,
+      "unit": "s"
+    },
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-import-2-1",
+    "enabled": true,
+    "title": "test-view-to-import-2-1-title",
+    "description": "test-view-to-import-2-1-description",
+    "author": "test-author-to-view-import",
+    "group_id": "test-viewgroup-to-import-2-1",
+    "position": 35,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-import-2-2",
+    "enabled": true,
+    "title": "test-view-to-import-2-2-title",
+    "description": "test-view-to-import-2-2-description",
+    "author": "test-author-to-view-import",
+    "group_id": "test-viewgroup-to-import-2-1",
+    "position": 36,
+    "created": 1611229670,
+    "updated": 1611229670
   }
 ]

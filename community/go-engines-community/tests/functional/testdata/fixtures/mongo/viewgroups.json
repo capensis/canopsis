@@ -62,5 +62,29 @@
     "position": 12,
     "created": 1611229670,
     "updated": 1611229670
+  },
+  {
+    "_id": "test-viewgroup-to-export-1",
+    "title": "test-viewgroup-to-export-1-title",
+    "author": "test-author-to-export",
+    "position": 13,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-viewgroup-to-export-2",
+    "title": "test-viewgroup-to-export-2-title",
+    "author": "test-author-to-view-export",
+    "position": 14,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-viewgroup-to-import-2-1",
+    "title": "test-viewgroup-to-import-2-1-title",
+    "author": "test-author-to-view-import",
+    "position": 15,
+    "created": 1611229670,
+    "updated": 1611229670
   }
 ]

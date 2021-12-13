@@ -3653,6 +3653,46 @@ definitions:
     - group
     - title
     type: object
+  view.ExportRequest:
+    properties:
+      groups:
+        items:
+          properties:
+            _id:
+              required:
+              - _id
+              type: string
+            views:
+              items:
+                type: string
+              type: array
+          type: object
+        type: array
+      views:
+        items:
+          type: string
+        type: array
+    type: object
+  view.ExportResponse:
+    properties:
+      groups:
+        items:
+          $ref: '#/definitions/viewgroup.ViewGroup'
+        type: array
+      views:
+        items:
+          $ref: '#/definitions/viewgroup.View'
+        type: array
+    type: object
+  view.ImportRequest:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/viewgroup.ViewGroup'
+        type: array
+    required:
+    - items
+    type: object
   view.Parameters:
     properties:
       directory:
@@ -8203,6 +8243,32 @@ paths:
       summary: Update user by id
       tags:
       - users
+  /view-export:
+    post:
+      consumes:
+      - application/json
+      description: Export views
+      operationId: views-export
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/view.ExportRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/view.ExportResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Export views
+      tags:
+      - views
   /view-groups:
     get:
       consumes:
@@ -8376,6 +8442,30 @@ paths:
       summary: Update view group by id
       tags:
       - viewgroups
+  /view-import:
+    post:
+      consumes:
+      - application/json
+      description: Import views
+      operationId: views-import
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/view.ImportRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Import views
+      tags:
+      - views
   /view-positions:
     put:
       consumes:

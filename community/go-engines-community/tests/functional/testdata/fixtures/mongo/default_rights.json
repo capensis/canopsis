@@ -432,6 +432,22 @@
         "checksum": 6,
         "crecord_type": "right"
       },
+      "test-view-to-export-1": {
+        "checksum": 4,
+        "crecord_type": "right"
+      },
+      "test-view-to-export-2": {
+        "checksum": 4,
+        "crecord_type": "right"
+      },
+      "test-view-to-import-2-1": {
+        "checksum": 6,
+        "crecord_type": "right"
+      },
+      "test-view-to-import-2-2": {
+        "checksum": 6,
+        "crecord_type": "right"
+      },
       "test-playlist-to-get-1": {
         "checksum": 4,
         "crecord_type": "right"
@@ -1324,5 +1340,33 @@
     "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "authkey": "2be1d0ee-0qs6-0mdn-9d80-e857e50f5202",
     "enable": true
+  },
+  {
+    "_id": "test-view-to-export-1",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-export-1",
+    "desc": "view test-view-to-export-1",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-export-2",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-export-2",
+    "desc": "view test-view-to-export-2",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-import-2-1",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-import-2-1",
+    "desc": "view test-view-to-import-2-1",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-import-2-2",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-import-2-2",
+    "desc": "view test-view-to-import-2-2",
+    "type": "RW"
   }
 ]

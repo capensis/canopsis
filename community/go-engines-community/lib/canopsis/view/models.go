@@ -49,17 +49,17 @@ type Tab struct {
 }
 
 type Widget struct {
-	ID                 string                 `bson:"_id,omitempty" json:"_id"`
+	ID                 string                 `bson:"_id" json:"_id,omitempty"`
 	Tab                string                 `bson:"tab" json:"-"`
 	Title              string                 `bson:"title" json:"title"`
 	Type               string                 `bson:"type" json:"type"`
 	GridParameters     map[string]interface{} `bson:"grid_parameters" json:"grid_parameters"`
 	Parameters         Parameters             `bson:"parameters" json:"parameters"`
 	InternalParameters InternalParameters     `bson:"internal_parameters,omitempty" json:"-"`
-	Author             string                 `bson:"author" json:"author"`
+	Author             string                 `bson:"author" json:"author,omitempty"`
 	Position           int64                  `bson:"position" json:"-"`
-	Created            types.CpsTime          `bson:"created" json:"created" swaggertype:"integer"`
-	Updated            types.CpsTime          `bson:"updated" json:"updated" swaggertype:"integer"`
+	Created            *types.CpsTime         `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated            *types.CpsTime         `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type Parameters struct {
