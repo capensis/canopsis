@@ -154,7 +154,8 @@ Feature: Get a idle rule
             "seconds": 3,
             "unit": "s"
           },
-          "output": "test-idle-rule-to-get-1-operation-output"
+          "output": "test-idle-rule-to-get-1-operation-output",
+          "user": ""
         },
         "type": "snooze"
       },
