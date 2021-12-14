@@ -16,7 +16,7 @@ type Engine interface {
 	// AddConsumer adds AMQP consumer to engine.
 	AddConsumer(Consumer)
 	// AddPeriodicalWorker adds periodical worker to engine.
-	AddPeriodicalWorker(PeriodicalWorker)
+	AddPeriodicalWorker(name string, worker PeriodicalWorker)
 	// Run starts goroutines for all consumers and periodical workers.
 	// Engine stops if one of consumer or periodical worker return error.
 	Run(context.Context) error

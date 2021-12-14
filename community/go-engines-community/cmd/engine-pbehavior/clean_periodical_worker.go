@@ -62,6 +62,4 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) {
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot update config history")
 	}
-
-	return
 }
