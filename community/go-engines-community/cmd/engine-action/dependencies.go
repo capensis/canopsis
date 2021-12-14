@@ -38,10 +38,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
-	amqpChannel, err := amqpConnection.Channel()
-	if err != nil {
-		panic(err)
-	}
+	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	actionAdapter := action.NewAdapter(mongoClient)
 	alarmAdapter := alarm.NewAdapter(mongoClient)
 	actionRedisClient := m.DepRedisSession(ctx, redis.ActionScenarioStorage, logger, cfg)
@@ -97,7 +94,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	engineAction := engine.New(
 		func(ctx context.Context) error {
 			manager := action.NewTaskManager(
-				action.NewWorkerPool(options.WorkerPoolSize, axeRpcClient, webhookRpcClient, alarmAdapter, json.NewEncoder(), logger),
+				action.NewWorkerPool(options.WorkerPoolSize, axeRpcClient, webhookRpcClient, alarmAdapter, json.NewEncoder(), logger, config.NewTimezoneConfigProvider(cfg, logger)),
 				storage,
 				actionScenarioStorage,
 				logger,
@@ -185,16 +182,16 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		logger,
 	))
 	engineAction.AddConsumer(axeRpcClient)
+	rpcPublishQueues := make([]string, 0)
 	if webhookRpcClient != nil {
 		engineAction.AddConsumer(webhookRpcClient)
+		rpcPublishQueues = append(rpcPublishQueues, canopsis.WebhookRPCQueueServerName)
 	}
 	engineAction.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisClient),
-		engine.RunInfo{
-			Name:         canopsis.ActionEngineName,
-			ConsumeQueue: canopsis.ActionQueueName,
-		},
+		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueueName, "", nil, rpcPublishQueues),
+		amqpChannel,
 		logger,
 	))
 	engineAction.AddPeriodicalWorker(&reloadLocalCachePeriodicalWorker{

@@ -1270,12 +1270,19 @@ var doc = `{
                 "operationId": "contextgraph-import-create-import",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "source",
+                        "name": "source",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "description": "body",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/contextgraph.Request"
+                            "$ref": "#/definitions/contextgraph.ImportRequest"
                         }
                     }
                 ],
@@ -2830,6 +2837,502 @@ var doc = `{
                 }
             }
         },
+        "/file": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get list of file objects by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "List files by ID",
+                "operationId": "files-list",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/file.File"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Upload files",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Upload files",
+                "operationId": "file-upload",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "request",
+                        "name": "files",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "file visibility",
+                        "name": "public",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/file.File"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-access": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Get file access",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get file access",
+                "operationId": "auth-get-file-access",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/file/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get file content by ID or download with file name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Get file by ID",
+                "operationId": "files-get",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "file id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete file by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Delete file",
+                "operationId": "files-delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "file id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/flapping-rules": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of flapping rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flappingrules"
+                ],
+                "summary": "Find all flapping rule",
+                "operationId": "flappingrules-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/flappingrule.Response"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create flapping rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flappingrules"
+                ],
+                "summary": "Create flapping rule",
+                "operationId": "flappingrules-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/flappingrule.CreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/flappingrule.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/flapping-rules/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get flapping rule by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flappingrules"
+                ],
+                "summary": "Get flapping rule by id",
+                "operationId": "flappingrules-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "flapping rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/flappingrule.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update flapping rule by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flappingrules"
+                ],
+                "summary": "Update flapping rule by id",
+                "operationId": "flappingrules-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "flapping rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/flappingrule.UpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/flappingrule.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth` + "`" + `": []
+                    }
+                ],
+                "description": "Delete flapping rule by id",
+                "tags": [
+                    "flappingrules"
+                ],
+                "summary": "Delete flapping rule by id",
+                "operationId": "flappingrules-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "flapping rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/idle-rules": {
             "get": {
                 "security": [
@@ -3279,6 +3782,96 @@ var doc = `{
                 }
             }
         },
+        "/logged-user-count": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get logged user count",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get logged user count",
+                "operationId": "auth-logged-user-count",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Log in",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Log in",
+                "operationId": "auth-login",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.loginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.loginResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Log out",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Log out",
+                "operationId": "auth-logout",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/message-rate-stats": {
             "get": {
                 "security": [
@@ -3316,31 +3909,6 @@ var doc = `{
                     },
                     {
                         "type": "integer",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "paginate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort_by",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "to",
                         "in": "query",
                         "required": true
@@ -3350,22 +3918,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/common.PaginatedListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/messageratestats.StatsResponse"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/messageratestats.StatsListResponse"
                         }
                     },
                     "400": {
@@ -5377,6 +5930,268 @@ var doc = `{
                 }
             }
         },
+        "/resolve-rules": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of resolve rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Find all resolve rule",
+                "operationId": "resolverules-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/resolverule.Response"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create resolve rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Create resolve rule",
+                "operationId": "resolverules-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.CreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/resolve-rules/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get resolve rule by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Get resolve rule by id",
+                "operationId": "resolverules-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "resolve rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update resolve rule by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Update resolve rule by id",
+                "operationId": "resolverules-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "resolve rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.UpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth` + "`" + `": []
+                    }
+                ],
+                "description": "Delete resolve rule by id",
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Delete resolve rule by id",
+                "operationId": "resolverules-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "resolve rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/roles": {
             "get": {
                 "security": [
@@ -5785,6 +6600,84 @@ var doc = `{
                 }
             }
         },
+        "/scenarios/check-priority": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Check priority",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Check priority",
+                "operationId": "scenarios-check-priority",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/scenario.CheckPriorityRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/scenario.CheckPriorityResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/scenarios/minimal-priority": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get minimal priority",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Get minimal priority",
+                "operationId": "scenarios-get-minimal-priority",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/scenario.GetMinimalPriorityResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/scenarios/{id}": {
             "get": {
                 "security": [
@@ -5951,7 +6844,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.sessionsCountResponse"
+                            "$ref": "#/definitions/sessionauth.sessionsCountResponse"
                         }
                     },
                     "400": {
@@ -6077,6 +6970,105 @@ var doc = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-preferences": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update user preferences by widget id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userpreference"
+                ],
+                "summary": "Update user preferences by widget id",
+                "operationId": "userpreference-update-by-widget-id",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userpreferences.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userpreferences.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-preferences/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get user preferences by widget id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userpreference"
+                ],
+                "summary": "Get user preferences by widget id",
+                "operationId": "userpreference-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "widget id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userpreferences.Response"
                         }
                     },
                     "404": {
@@ -6697,6 +7689,152 @@ var doc = `{
                 }
             }
         },
+        "/view-stats": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get list of view stats",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "view-stats"
+                ],
+                "summary": "Find view stats",
+                "operationId": "view-stats-find-all",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "name": "isActive",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "usernames",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/viewstats.listResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create view stats",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "view-stats"
+                ],
+                "summary": "Create view stats",
+                "operationId": "view-stats-create",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/viewstats.pingResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/view-stats/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update view stats by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "view-stats"
+                ],
+                "summary": "Update view stats by id",
+                "operationId": "view-stats-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "view stats id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/viewstats.pingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/viewstats.pingResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/views": {
             "get": {
                 "security": [
@@ -7306,6 +8444,9 @@ var doc = `{
                 "t": {
                     "type": "integer"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "val": {
                     "type": "integer"
                 }
@@ -7347,6 +8488,9 @@ var doc = `{
                 "activation_date": {
                     "type": "integer"
                 },
+                "active_duration": {
+                    "type": "integer"
+                },
                 "canceled": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
@@ -7384,10 +8528,6 @@ var doc = `{
                 },
                 "events_count": {
                     "type": "integer"
-                },
-                "extra": {
-                    "type": "object",
-                    "additionalProperties": true
                 },
                 "infos": {
                     "type": "object",
@@ -7443,6 +8583,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "pbh_inactive_duration": {
+                    "type": "integer"
+                },
                 "resolved": {
                     "type": "integer"
                 },
@@ -7452,6 +8595,9 @@ var doc = `{
                 "snooze": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "snooze_duration": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "object",
@@ -7864,6 +9010,9 @@ var doc = `{
                 "edition": {
                     "type": "string"
                 },
+                "file_upload_max_size": {
+                    "type": "integer"
+                },
                 "footer": {
                     "type": "string"
                 },
@@ -8050,11 +9199,26 @@ var doc = `{
         "associativetable.Content": {
             "type": "object"
         },
-        "auth.sessionsCountResponse": {
+        "auth.loginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.loginResponse": {
             "type": "object",
             "properties": {
-                "count": {
-                    "type": "integer"
+                "access_token": {
+                    "type": "string"
                 }
             }
         },
@@ -8119,9 +9283,6 @@ var doc = `{
                 }
             }
         },
-        "bson.M": {
-            "$ref": "#/definitions/primitive.M"
-        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -8159,6 +9320,17 @@ var doc = `{
                 }
             }
         },
+        "common.User": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "common.ValidationErrorResponse": {
             "type": "object",
             "properties": {
@@ -8170,48 +9342,10 @@ var doc = `{
                 }
             }
         },
-        "contextgraph.ConfigurationItem": {
+        "config.TimezoneConfig": {
             "type": "object",
             "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "action": {
-                    "type": "string"
-                },
-                "action_properties": {
-                    "type": "object"
-                },
-                "category": {
-                    "type": "string"
-                },
-                "enabled": {
-                    "type": "boolean"
-                },
-                "entity_patterns": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.EntityPatternList"
-                },
-                "impact_level": {
-                    "type": "integer"
-                },
-                "infos": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "measurements": {
-                    "type": "array",
-                    "items": {
-                        "type": "object"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output_template": {
-                    "type": "string"
-                },
-                "type": {
+                "location": {
                     "type": "string"
                 }
             }
@@ -8219,74 +9353,31 @@ var doc = `{
         "contextgraph.ImportJob": {
             "type": "object",
             "properties": {
+                "_id": {
+                    "type": "string"
+                },
                 "creation": {
                     "type": "string"
                 },
-                "execTime": {
-                    "type": "string"
-                },
-                "id": {
+                "exec_time": {
                     "type": "string"
                 },
                 "info": {
                     "type": "string"
                 },
+                "source": {
+                    "type": "string"
+                },
                 "stats": {
                     "type": "object",
-                    "$ref": "#/definitions/contextgraph.JobStats"
+                    "$ref": "#/definitions/importcontextgraph.Stats"
                 },
                 "status": {
                     "type": "string"
                 }
             }
         },
-        "contextgraph.ImportResponse": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "contextgraph.JobStats": {
-            "type": "object",
-            "properties": {
-                "deleted": {
-                    "type": "integer"
-                },
-                "updated": {
-                    "type": "integer"
-                }
-            }
-        },
-        "contextgraph.Link": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "action": {
-                    "type": "string"
-                },
-                "action_properties": {
-                    "type": "object"
-                },
-                "from": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "infos": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "to": {
-                    "type": "string"
-                }
-            }
-        },
-        "contextgraph.Request": {
+        "contextgraph.ImportRequest": {
             "type": "object",
             "properties": {
                 "json": {
@@ -8295,16 +9386,24 @@ var doc = `{
                         "cis": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/contextgraph.ConfigurationItem"
+                                "$ref": "#/definitions/importcontextgraph.ConfigurationItem"
                             }
                         },
                         "links": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/contextgraph.Link"
+                                "$ref": "#/definitions/importcontextgraph.Link"
                             }
                         }
                     }
+                }
+            }
+        },
+        "contextgraph.ImportResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
                 }
             }
         },
@@ -8318,6 +9417,15 @@ var doc = `{
                             "type": "object",
                             "$ref": "#/definitions/types.DurationWithEnabled"
                         },
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
+                "health_check": {
+                    "type": "object",
+                    "properties": {
                         "delete_after": {
                             "type": "object",
                             "$ref": "#/definitions/types.DurationWithEnabled"
@@ -8380,6 +9488,9 @@ var doc = `{
                 "entity": {
                     "type": "object",
                     "$ref": "#/definitions/datastorage.HistoryWithCount"
+                },
+                "health_check": {
+                    "type": "integer"
                 },
                 "junit": {
                     "type": "integer"
@@ -9000,6 +10111,138 @@ var doc = `{
                 "$ref": "#/definitions/export.Field"
             }
         },
+        "file.File": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "filename": {
+                    "type": "string"
+                },
+                "mediatype": {
+                    "type": "string"
+                }
+            }
+        },
+        "flappingrule.CreateRequest": {
+            "type": "object",
+            "required": [
+                "duration",
+                "freq_limit",
+                "name",
+                "priority"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "freq_limit": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
+        "flappingrule.Response": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "author": {
+                    "type": "object",
+                    "$ref": "#/definitions/common.User"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "freq_limit": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "flappingrule.UpdateRequest": {
+            "type": "object",
+            "required": [
+                "duration",
+                "freq_limit",
+                "name",
+                "priority"
+            ],
+            "properties": {
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "freq_limit": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
         "http.Response": {
             "type": "object",
             "properties": {
@@ -9215,6 +10458,90 @@ var doc = `{
                 }
             }
         },
+        "importcontextgraph.ConfigurationItem": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "action": {
+                    "type": "string"
+                },
+                "action_properties": {
+                    "type": "object"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "impact_level": {
+                    "type": "integer"
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "measurements": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "output_template": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "importcontextgraph.Link": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "action": {
+                    "type": "string"
+                },
+                "action_properties": {
+                    "type": "object"
+                },
+                "from": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "importcontextgraph.Stats": {
+            "type": "object",
+            "properties": {
+                "deleted": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
         "messageratestats.ListRequest": {
             "type": "object",
             "required": [
@@ -9229,33 +10556,37 @@ var doc = `{
                 "interval": {
                     "type": "string"
                 },
-                "limit": {
-                    "type": "integer"
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "paginate": {
-                    "type": "boolean"
-                },
-                "sort": {
-                    "type": "string"
-                },
-                "sort_by": {
-                    "type": "string"
-                },
                 "to": {
                     "type": "integer"
+                }
+            }
+        },
+        "messageratestats.StatsListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/messageratestats.StatsResponse"
+                    }
+                },
+                "meta": {
+                    "type": "object",
+                    "properties": {
+                        "deleted_before": {
+                            "type": "integer"
+                        }
+                    }
                 }
             }
         },
         "messageratestats.StatsResponse": {
             "type": "object",
             "properties": {
-                "_id": {
+                "rate": {
                     "type": "integer"
                 },
-                "received": {
+                "time": {
                     "type": "integer"
                 }
             }
@@ -9463,12 +10794,6 @@ var doc = `{
                 "done": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "extra": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pattern.InterfacePattern"
-                    }
                 },
                 "hardLimit": {
                     "type": "object",
@@ -10621,9 +11946,109 @@ var doc = `{
                 }
             }
         },
-        "primitive.M": {
+        "resolverule.CreateRequest": {
             "type": "object",
-            "additionalProperties": true
+            "required": [
+                "duration",
+                "name",
+                "priority"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
+        "resolverule.Response": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "author": {
+                    "type": "object",
+                    "$ref": "#/definitions/common.User"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "resolverule.UpdateRequest": {
+            "type": "object",
+            "required": [
+                "duration",
+                "name",
+                "priority"
+            ],
+            "properties": {
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            }
         },
         "role.CreateRequest": {
             "type": "object",
@@ -10781,6 +12206,28 @@ var doc = `{
                 }
             }
         },
+        "scenario.CheckPriorityRequest": {
+            "type": "object",
+            "required": [
+                "priority"
+            ],
+            "properties": {
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
+        "scenario.CheckPriorityResponse": {
+            "type": "object",
+            "properties": {
+                "recommended_priority": {
+                    "type": "integer"
+                },
+                "valid": {
+                    "type": "boolean"
+                }
+            }
+        },
         "scenario.EditRequest": {
             "type": "object",
             "required": [
@@ -10825,6 +12272,14 @@ var doc = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "scenario.GetMinimalPriorityResponse": {
+            "type": "object",
+            "properties": {
+                "priority": {
+                    "type": "integer"
                 }
             }
         },
@@ -11125,6 +12580,14 @@ var doc = `{
                 }
             }
         },
+        "sessionauth.sessionsCountResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                }
+            }
+        },
         "statesettings.JUnitThresholds": {
             "type": "object",
             "required": [
@@ -11207,6 +12670,50 @@ var doc = `{
                 }
             }
         },
+        "stats.Stats": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "id_beaker_session": {
+                    "description": "Deprecated",
+                    "type": "string"
+                },
+                "last_ping": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "last_visible_path": {
+                    "type": "object"
+                },
+                "last_visible_ping": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "session_id": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "tab_duration": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "username": {
+                    "description": "Deprecated",
+                    "type": "string"
+                },
+                "visible_duration": {
+                    "type": "integer"
+                }
+            }
+        },
         "types.Alarm": {
             "type": "object",
             "properties": {
@@ -11258,6 +12765,9 @@ var doc = `{
                 "t": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                },
+                "user_id": {
+                    "type": "string"
                 },
                 "val": {
                     "type": "integer"
@@ -11345,10 +12855,6 @@ var doc = `{
                     "description": "EventsCount accumulates count of check events.",
                     "type": "integer"
                 },
-                "extra": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
                 "hard_limit": {
                     "type": "integer"
                 },
@@ -11401,6 +12907,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "pbh_inactive_duration": {
+                    "type": "integer"
+                },
                 "related_parents": {
                     "type": "array",
                     "items": {
@@ -11424,6 +12933,9 @@ var doc = `{
                 "snooze": {
                     "type": "object",
                     "$ref": "#/definitions/types.AlarmStep"
+                },
+                "snooze_duration": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "object",
@@ -11667,6 +13179,10 @@ var doc = `{
                 "_id": {
                     "type": "string"
                 },
+                "defaultview": {
+                    "type": "object",
+                    "$ref": "#/definitions/user.View"
+                },
                 "name": {
                     "type": "string"
                 }
@@ -11731,6 +13247,34 @@ var doc = `{
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "userpreferences.EditRequest": {
+            "type": "object",
+            "required": [
+                "content",
+                "widget"
+            ],
+            "properties": {
+                "content": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "widget": {
+                    "type": "string"
+                }
+            }
+        },
+        "userpreferences.Response": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "widget": {
                     "type": "string"
                 }
             }
@@ -12049,6 +13593,65 @@ var doc = `{
                     }
                 }
             }
+        },
+        "viewstats.listRequest": {
+            "type": "object",
+            "properties": {
+                "isActive": {
+                    "type": "boolean"
+                },
+                "startedAfter": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "stoppedBefore": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "usernames": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "viewstats.listResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/stats.Stats"
+                    }
+                }
+            }
+        },
+        "viewstats.pingRequest": {
+            "type": "object",
+            "required": [
+                "path",
+                "visible"
+            ],
+            "properties": {
+                "path": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "visible": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "viewstats.pingResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                }
+            }
         }
     },
     "securityDefinitions": {
@@ -12059,6 +13662,11 @@ var doc = `{
         },
         "BasicAuth": {
             "type": "basic"
+        },
+        "JWTAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

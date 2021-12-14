@@ -23,13 +23,18 @@ func (e *snoozeExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
+	_ types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationSnoozeParameters
 	var ok bool
 	if params, ok = operation.Parameters.(types.OperationSnoozeParameters); !ok {
 		return "", fmt.Errorf("invalid parameters")
+	}
+
+	if userID == "" {
+		userID = params.User
 	}
 
 	if alarm.Value.Snooze != nil {
@@ -41,6 +46,7 @@ func (e *snoozeExecutor) Exec(
 		types.CpsNumber(params.Duration.Seconds),
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
+		userID,
 		role,
 		initiator,
 	)

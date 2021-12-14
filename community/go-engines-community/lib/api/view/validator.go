@@ -2,7 +2,9 @@ package view
 
 import (
 	"context"
+	"regexp"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/filemask"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -72,6 +74,13 @@ func ValidateWidgetParametersJunitRequest(sl validator.StructLevel) {
 		_, err := filemask.NewFileMask(r.VideoFilemask)
 		if err != nil {
 			sl.ReportError(r.VideoFilemask, "VideoFilemask", "VideoFilemask", "filemask", "")
+		}
+	}
+
+	if r.ReportFileRegexp != "" {
+		re, err := regexp.Compile(r.ReportFileRegexp)
+		if err != nil || re.SubexpIndex(view.JunitReportFileRegexpSubexpName) < 0 {
+			sl.ReportError(r.ReportFileRegexp, "ReportFileRegexp", "ReportFileRegexp", "regexp", "")
 		}
 	}
 }

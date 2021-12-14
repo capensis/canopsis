@@ -14,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
 	"strings"
 	"time"
@@ -30,41 +29,38 @@ func NewService(
 	ruleAdapter idlerule.RuleAdapter,
 	alarmAdapter libalarm.Adapter,
 	entityAdapter libentity.Adapter,
-	store redis.Store,
-	pbhService libpbehavior.Service,
+	pbhTypeResolver libpbehavior.EntityTypeResolver,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Service {
 	return &baseService{
-		ruleAdapter:   ruleAdapter,
-		alarmAdapter:  alarmAdapter,
-		entityAdapter: entityAdapter,
-		store:         store,
-		pbhService:    pbhService,
-		connectors:    make(map[string]types.Entity),
-		components:    make(map[string]types.Entity),
-		encoder:       encoder,
-		logger:        logger,
+		ruleAdapter:     ruleAdapter,
+		alarmAdapter:    alarmAdapter,
+		entityAdapter:   entityAdapter,
+		pbhTypeResolver: pbhTypeResolver,
+		encoder:         encoder,
+		logger:          logger,
+
+		connectors: make(map[string]types.Entity),
+		components: make(map[string]types.Entity),
 	}
 }
 
 type baseService struct {
-	ruleAdapter   idlerule.RuleAdapter
-	alarmAdapter  libalarm.Adapter
-	entityAdapter libentity.Adapter
-	store         redis.Store
-	pbhService    libpbehavior.Service
-	pbhUpdated    bool
-	connectors    map[string]types.Entity
-	components    map[string]types.Entity
-	encoder       encoding.Encoder
-	logger        zerolog.Logger
+	ruleAdapter     idlerule.RuleAdapter
+	alarmAdapter    libalarm.Adapter
+	entityAdapter   libentity.Adapter
+	pbhTypeResolver libpbehavior.EntityTypeResolver
+	encoder         encoding.Encoder
+	logger          zerolog.Logger
+
+	connectors map[string]types.Entity
+	components map[string]types.Entity
 }
 
 func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr error) {
 	defer func() {
 		s.logger.Debug().Msg("process idle alarms")
-		s.pbhUpdated = false
 		s.connectors = make(map[string]types.Entity)
 		s.components = make(map[string]types.Entity)
 	}()
@@ -210,12 +206,7 @@ func (s *baseService) applyRules(
 						continue
 					}
 				} else {
-					// Check pbehavior period by computed pbehavior cache.
-					err := s.restorePbhService(ctx)
-					if err != nil {
-						return nil, err
-					}
-					pbhRes, err := s.pbhService.Resolve(ctx, &entity, now)
+					pbhRes, err := s.pbhTypeResolver.Resolve(ctx, entity.ID, now)
 					if err != nil {
 						return nil, err
 					}
@@ -256,18 +247,21 @@ func (s *baseService) applyAlarmRule(
 			event.EventType = types.EventTypeAck
 			event.Output = params.Output
 			event.Author = params.Author
+			event.UserID = params.User
 		}
 	case types.ActionTypeAckRemove:
 		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
 			event.EventType = types.EventTypeAckremove
 			event.Output = params.Output
 			event.Author = params.Author
+			event.UserID = params.User
 		}
 	case types.ActionTypeCancel:
 		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
 			event.EventType = types.EventTypeCancel
 			event.Output = params.Output
 			event.Author = params.Author
+			event.UserID = params.User
 		}
 	case types.ActionTypeAssocTicket:
 		if params, ok := rule.Operation.Parameters.(types.OperationAssocTicketParameters); ok {
@@ -275,6 +269,7 @@ func (s *baseService) applyAlarmRule(
 			event.Ticket = params.Ticket
 			event.Output = params.Output
 			event.Author = params.Author
+			event.UserID = params.User
 		}
 	case types.ActionTypeChangeState:
 		if params, ok := rule.Operation.Parameters.(types.OperationChangeStateParameters); ok {
@@ -282,6 +277,7 @@ func (s *baseService) applyAlarmRule(
 			event.State = params.State
 			event.Output = params.Output
 			event.Author = params.Author
+			event.UserID = params.User
 		}
 	case types.ActionTypePbehavior:
 		if params, ok := rule.Operation.Parameters.(types.ActionPBehaviorParameters); ok {
@@ -292,6 +288,7 @@ func (s *baseService) applyAlarmRule(
 			}
 			event.PbhParameters = string(encodedParams)
 			event.Author = params.Author
+			event.UserID = params.UserID
 		}
 	case types.ActionTypeSnooze:
 		if params, ok := rule.Operation.Parameters.(types.OperationSnoozeParameters); ok {
@@ -300,6 +297,7 @@ func (s *baseService) applyAlarmRule(
 			event.Duration = &d
 			event.Output = params.Output
 			event.Author = params.Author
+			event.UserID = params.User
 		}
 	default:
 		return nil, fmt.Errorf("unknown idle rule operation %v", rule.Operation)
@@ -411,23 +409,6 @@ func (s *baseService) closeConnectorAlarms(ctx context.Context) ([]types.Event, 
 	}
 
 	return events, nil
-}
-
-func (s *baseService) restorePbhService(ctx context.Context) error {
-	if s.pbhUpdated {
-		return nil
-	}
-
-	s.pbhUpdated = true
-	ok, err := s.store.Restore(ctx, s.pbhService)
-	if err != nil {
-		return fmt.Errorf("cannot retrieve pbehavior cache: %w", err)
-	}
-	if !ok {
-		return fmt.Errorf("pbehavior intervals are not computed, cache is empty")
-	}
-
-	return nil
 }
 
 func (s *baseService) findConnectorForComponent(ctx context.Context, entity types.Entity) (*types.Entity, error) {

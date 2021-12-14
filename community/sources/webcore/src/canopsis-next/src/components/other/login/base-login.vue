@@ -25,8 +25,10 @@
 </template>
 
 <script>
+import { ROUTES_NAMES, ROUTES } from '@/constants';
+
 import { authMixin } from '@/mixins/auth';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import LdapLoginInformation from '@/components/other/login/ldap-login-information.vue';
 import LoginForm from '@/components/other/login/form/login-form.vue';
@@ -57,19 +59,26 @@ export default {
         const formIsValid = await this.$validator.validateAll();
 
         if (formIsValid) {
+          const { redirect } = this.$route.query;
+          const { defaultview: userDefaultView } = this.currentUser;
+
           await this.login(this.form);
           await this.fetchAppInfos();
 
-          if (this.$route.query.redirect && this.$route.query.redirect !== '/') {
-            this.$router.push(this.$route.query.redirect);
-          } else if (this.currentUser.defaultview) {
-            this.$router.push({
-              name: 'view',
-              params: { id: this.currentUser.defaultview },
-            });
-          } else {
-            this.$router.push({ name: 'home' });
+          if (redirect && redirect !== ROUTES.home) {
+            this.$router.push(redirect);
+            return;
           }
+
+          if (userDefaultView) {
+            this.$router.push({
+              name: ROUTES_NAMES.view,
+              params: { id: userDefaultView._id },
+            });
+            return;
+          }
+
+          this.$router.push({ name: ROUTES_NAMES.home });
         }
       } catch (err) {
         this.hasServerError = true;

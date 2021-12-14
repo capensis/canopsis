@@ -26,13 +26,18 @@ func (e *ackExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
+	_ types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationParameters
 	var ok bool
 	if params, ok = operation.Parameters.(types.OperationParameters); !ok {
 		return "", fmt.Errorf("invalid parameters")
+	}
+
+	if userID == "" {
+		userID = params.User
 	}
 
 	if alarm.Value.ACK != nil {
@@ -43,6 +48,7 @@ func (e *ackExecutor) Exec(
 		time,
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
+		userID,
 		role,
 		initiator,
 	)

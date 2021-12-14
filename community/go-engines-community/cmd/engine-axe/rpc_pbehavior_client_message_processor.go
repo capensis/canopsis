@@ -37,7 +37,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 	var replyEvent []byte
 	var event types.RPCPBehaviorResultEvent
 	err := p.Decoder.Decode(msg.Body, &event)
-	if err != nil || event.Alarm == nil {
+	if err != nil || event.Alarm == nil || event.Entity == nil {
 		p.logError(err, "RPC PBehavior Client: invalid event", msg.Body)
 
 		return p.publishResult(routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("invalid event")))
@@ -64,7 +64,9 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 				},
 			},
 			event.Alarm,
+			*event.Entity,
 			event.PbhEvent.Timestamp,
+			"",
 			"",
 			types.InitiatorSystem,
 		)

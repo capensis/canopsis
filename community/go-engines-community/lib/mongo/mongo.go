@@ -13,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 const (
@@ -67,6 +68,13 @@ const (
 	ArchivedAlarmMongoCollection = "archived_alarms"
 	// Data storage entity collections
 	ArchivedEntitiesMongoCollection = "archived_entities"
+
+	TokenMongoCollection = "token"
+
+	ResolveRuleMongoCollection  = "resolve_rule"
+	FlappingRuleMongoCollection = "flapping_rule"
+
+	UserPreferencesMongoCollection = "userpreferences"
 )
 
 type SingleResultHelper interface {
@@ -111,6 +119,7 @@ type DbClient interface {
 	Collection(string) DbCollection
 	Disconnect(ctx context.Context) error
 	SetRetry(count int, timeout time.Duration)
+	Ping(ctx context.Context, rp *readpref.ReadPref) error
 }
 
 type dbClient struct {
@@ -414,6 +423,44 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 	}, nil
 }
 
+func NewClientWithOptions(
+	ctx context.Context,
+	retryCount int,
+	minRetryTimeout time.Duration,
+	serverSelectionTimeout time.Duration,
+	socketTimeout time.Duration,
+) (DbClient, error) {
+	mongoURL, dbName, err := getURL()
+	if err != nil {
+		return nil, err
+	}
+	if dbName == "*" {
+		dbName = DB
+	}
+
+	clientOptions := options.Client().ApplyURI(mongoURL)
+	clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
+	clientOptions.SetSocketTimeout(socketTimeout)
+	client, err := mongo.Connect(ctx, clientOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	db := client.Database(dbName)
+
+	return &dbClient{
+		Client:          client,
+		Database:        db,
+		RetryCount:      retryCount,
+		MinRetryTimeout: minRetryTimeout,
+	}, nil
+}
+
 func (c *dbClient) Collection(name string) DbCollection {
 	return &dbCollection{
 		mongoCollection: c.Database.Collection(name),
@@ -424,6 +471,10 @@ func (c *dbClient) Collection(name string) DbCollection {
 
 func (c *dbClient) Disconnect(ctx context.Context) error {
 	return c.Client.Disconnect(ctx)
+}
+
+func (c *dbClient) Ping(ctx context.Context, rp *readpref.ReadPref) error {
+	return c.Client.Ping(ctx, rp)
 }
 
 func (c *dbClient) SetRetry(count int, timeout time.Duration) {

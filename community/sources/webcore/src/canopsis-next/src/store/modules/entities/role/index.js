@@ -20,9 +20,5 @@ export default createEntityModule({
     fetchListWithoutStore(context, { params }) {
       return request.get(API_ROUTES.roles, { params });
     },
-
-    fetchItemWithoutStore(context, { id } = {}) {
-      return request.get(`${API_ROUTES.roles}/${id}`);
-    },
   },
 });

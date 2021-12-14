@@ -13,6 +13,7 @@ const (
 
 type ActionPBehaviorParameters struct {
 	Author         string `bson:"author" json:"author"`
+	UserID         string `bson:"user" json:"user"`
 	Name           string `bson:"name" json:"name"`
 	Reason         string `bson:"reason" json:"reason"`
 	Type           string `bson:"type" json:"type"`
@@ -24,14 +25,4 @@ type ActionPBehaviorParameters struct {
 		Seconds int64  `bson:"seconds" json:"seconds"`
 		Unit    string `bson:"unit" json:"unit"`
 	} `bson:"duration,omitempty" json:"duration,omitempty"`
-}
-
-func (p *ActionPBehaviorParameters) Template(data interface{}) error {
-	author, err := renderTemplate(p.Author, data, GetTemplateFunc())
-	if err != nil {
-		return err
-	}
-	p.Author = author
-
-	return nil
 }

@@ -102,17 +102,17 @@ export async function checkUserAccessForRoute(to = {}) {
     type: POPUP_TYPES.error,
   });
 
-  throw new Error('User don\'t have access to page');
+  throw new Error(`User doesn't have access to page '${to.path}' with permission id '${permissionId}'`);
 }
 
 /**
- * Get path array for keep alive requests by route
+ * Get path array for view stats requests by route
  *
  * @param {string} path
  * @param {Object} query
  * @returns {Array}
  */
-export function getKeepalivePathByRoute({ path, query } = {}) {
+export function getViewStatsPathByRoute({ path, query } = {}) {
   const { tabId } = query;
 
   if (tabId) {

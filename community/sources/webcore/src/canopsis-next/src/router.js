@@ -1,11 +1,14 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Cookies from 'js-cookie';
 
-import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
-import { CRUD_ACTIONS, USERS_PERMISSIONS } from '@/constants';
+import { ROUTER_MODE, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
+import { CRUD_ACTIONS, ROUTES_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
 import store from '@/store';
-import { checkAppInfoAccessForRoute, checkUserAccessForRoute, getKeepalivePathByRoute } from '@/helpers/router';
+import {
+  checkAppInfoAccessForRoute,
+  checkUserAccessForRoute,
+  getViewStatsPathByRoute,
+} from '@/helpers/router';
 
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
@@ -18,42 +21,43 @@ import AdminParameters from '@/views/admin/parameters.vue';
 import AdminBroadcastMessages from '@/views/admin/broadcast-messages.vue';
 import AdminPlaylists from '@/views/admin/playlists.vue';
 import AdminPlanning from '@/views/admin/planning.vue';
-import AdminEngines from '@/views/admin/engines.vue';
 import AdminRemediation from '@/views/admin/remediation.vue';
+import AdminHealthcheck from '@/views/admin/healthcheck.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
 import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
-import Playlist from '@/views/playlist.vue';
 import ExploitationMetaAlarmRules from '@/views/exploitation/meta-alarm-rules.vue';
 import ExploitationScenarios from '@/views/exploitation/scenarios.vue';
+import ExploitationIdleRules from '@/views/exploitation/idle-rules.vue';
+import ExploitationFlappingRules from '@/views/exploitation/flapping-rules.vue';
+import ExploitationResolveRules from '@/views/exploitation/resolve-rules.vue';
+import Playlist from '@/views/playlist.vue';
 import NotificationInstructionStats from '@/views/notification/instruction-stats.vue';
-import IdleRules from '@/views/exploitation/idle-rules.vue';
+import Error from '@/views/error.vue';
 
 Vue.use(Router);
 
-const requiresLoginMeta = {
-  requiresLogin: true,
-};
-
 const routes = [
   {
-    path: '/login',
-    name: 'login',
+    path: ROUTES.login,
+    name: ROUTES_NAMES.login,
     component: Login,
     meta: {
       requiresLogin: false,
     },
   },
   {
-    path: '/',
-    name: 'home',
+    path: ROUTES.home,
+    name: ROUTES_NAMES.home,
     component: Home,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+    },
   },
   {
-    path: '/view/:id',
-    name: 'view',
+    path: ROUTES.view,
+    name: ROUTES_NAMES.view,
     component: View,
     meta: {
       requiresLogin: true,
@@ -64,8 +68,8 @@ const routes = [
     props: route => ({ id: route.params.id }),
   },
   {
-    path: '/alarms/:id',
-    name: 'alarms',
+    path: ROUTES.alarms,
+    name: ROUTES_NAMES.alarms,
     component: Alarm,
     meta: {
       requiresLogin: true,
@@ -76,8 +80,8 @@ const routes = [
     props: route => ({ id: route.params.id }),
   },
   {
-    path: '/admin/rights',
-    name: 'admin-rights',
+    path: ROUTES.adminRights,
+    name: ROUTES_NAMES.adminRights,
     component: AdminPermissions,
     meta: {
       requiresLogin: true,
@@ -87,8 +91,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/users',
-    name: 'admin-users',
+    path: ROUTES.adminUsers,
+    name: ROUTES_NAMES.adminUsers,
     component: AdminUsers,
     meta: {
       requiresLogin: true,
@@ -98,8 +102,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/roles',
-    name: 'admin-roles',
+    path: ROUTES.adminRoles,
+    name: ROUTES_NAMES.adminRoles,
     component: AdminRoles,
     meta: {
       requiresLogin: true,
@@ -109,8 +113,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/parameters',
-    name: 'admin-parameters',
+    path: ROUTES.adminParameters,
+    name: ROUTES_NAMES.adminParameters,
     component: AdminParameters,
     meta: {
       requiresLogin: true,
@@ -120,8 +124,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/broadcast-messages',
-    name: 'admin-broadcast-messages',
+    path: ROUTES.adminBroadcastMessages,
+    name: ROUTES_NAMES.adminBroadcastMessages,
     component: AdminBroadcastMessages,
     meta: {
       requiresLogin: true,
@@ -131,8 +135,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/playlists',
-    name: 'admin-playlists',
+    path: ROUTES.adminPlaylists,
+    name: ROUTES_NAMES.adminPlaylists,
     component: AdminPlaylists,
     meta: {
       requiresLogin: true,
@@ -142,8 +146,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/planning',
-    name: 'admin-planning-administration',
+    path: ROUTES.adminPlanning,
+    name: ROUTES_NAMES.adminPlanning,
     component: AdminPlanning,
     meta: {
       requiresLogin: true,
@@ -153,20 +157,8 @@ const routes = [
     },
   },
   {
-    path: '/admin/engines',
-    name: 'admin-engines',
-    component: AdminEngines,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        action: CRUD_ACTIONS.can,
-        id: USERS_PERMISSIONS.technical.engine,
-      },
-    },
-  },
-  {
-    path: '/admin/remediation',
-    name: 'admin-remediation-administration',
+    path: ROUTES.adminRemediation,
+    name: ROUTES_NAMES.adminRemediation,
     component: AdminRemediation,
     meta: {
       requiresLogin: true,
@@ -176,8 +168,20 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/pbehaviors',
-    name: 'exploitation-pbehaviors',
+    path: ROUTES.adminHealthcheck,
+    name: ROUTES_NAMES.adminHealthcheck,
+    component: AdminHealthcheck,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        action: CRUD_ACTIONS.can,
+        id: USERS_PERMISSIONS.technical.healthcheck,
+      },
+    },
+  },
+  {
+    path: ROUTES.exploitationPbehaviors,
+    name: ROUTES_NAMES.exploitationPbehaviors,
     component: ExploitationPbehaviors,
     meta: {
       requiresLogin: true,
@@ -187,8 +191,8 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/event-filter',
-    name: 'exploitation-event-filter',
+    path: ROUTES.exploitationEventFilter,
+    name: ROUTES_NAMES.exploitationEventFilter,
     component: ExploitationEventFilter,
     meta: {
       requiresLogin: true,
@@ -198,8 +202,8 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/snmp-rules',
-    name: 'exploitation-snmp-rules',
+    path: ROUTES.exploitationSnmpRules,
+    name: ROUTES_NAMES.exploitationSnmpRules,
     component: ExploitationSnmpRules,
     meta: {
       requiresLogin: true,
@@ -209,8 +213,8 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/dynamic-infos',
-    name: 'exploitation-dynamic-infos',
+    path: ROUTES.exploitationDynamicInfos,
+    name: ROUTES_NAMES.exploitationDynamicInfos,
     component: ExploitationDynamicInfos,
     meta: {
       requiresLogin: true,
@@ -220,8 +224,8 @@ const routes = [
     },
   },
   {
-    path: '/playlist/:id',
-    name: 'playlist',
+    path: ROUTES.playlist,
+    name: ROUTES_NAMES.playlist,
     component: Playlist,
     meta: {
       requiresLogin: true,
@@ -233,8 +237,8 @@ const routes = [
     props: route => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
   },
   {
-    path: '/exploitation/meta-alarm-rule',
-    name: 'exploitation-meta-alarm-rules',
+    path: ROUTES.exploitationMetaAlarmRules,
+    name: ROUTES_NAMES.exploitationMetaAlarmRules,
     component: ExploitationMetaAlarmRules,
     meta: {
       requiresLogin: true,
@@ -244,8 +248,8 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/scenarios',
-    name: 'exploitation-scenarios',
+    path: ROUTES.exploitationScenarios,
+    name: ROUTES_NAMES.exploitationScenarios,
     component: ExploitationScenarios,
     meta: {
       requiresLogin: true,
@@ -255,9 +259,9 @@ const routes = [
     },
   },
   {
-    path: '/exploitation/idle-rules',
-    name: 'idle-rules',
-    component: IdleRules,
+    path: ROUTES.exploitationIdleRules,
+    name: ROUTES_NAMES.exploitationIdleRules,
+    component: ExploitationIdleRules,
     meta: {
       requiresLogin: true,
       requiresPermission: {
@@ -266,8 +270,30 @@ const routes = [
     },
   },
   {
-    path: '/notification/instruction-stats',
-    name: 'notification-instruction-stats',
+    path: ROUTES.exploitationFlappingRules,
+    name: ROUTES_NAMES.exploitationFlappingRules,
+    component: ExploitationFlappingRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.flappingRules,
+      },
+    },
+  },
+  {
+    path: ROUTES.exploitationResolveRules,
+    name: ROUTES_NAMES.exploitationResolveRules,
+    component: ExploitationResolveRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.resolveRules,
+      },
+    },
+  },
+  {
+    path: ROUTES.notificationInstructionStats,
+    name: ROUTES_NAMES.notificationInstructionStats,
     component: NotificationInstructionStats,
     meta: {
       requiresLogin: true,
@@ -277,9 +303,15 @@ const routes = [
     },
   },
   {
+    path: ROUTES.error,
+    name: ROUTES_NAMES.error,
+    component: Error,
+    props: route => ({ message: route.query.message, redirect: route.query.redirect }),
+  },
+  {
     path: '*',
     redirect: {
-      name: 'home',
+      name: ROUTES_NAMES.home,
     },
   },
 ];
@@ -292,22 +324,33 @@ const router = new Router({
 /**
  * If requiresLogin is undefined then we can visit this page with auth and without auth
  */
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const isRequiresAuth = to.matched.some(v => v.meta.requiresLogin);
   const isDontRequiresAuth = to.matched.some(v => v.meta.requiresLogin === false);
-  const isLoggedIn = !!Cookies.get(COOKIE_SESSION_KEY);
+  const isLoggedIn = store.getters['auth/isLoggedIn'];
+  const { query: { [ROUTER_ACCESS_TOKEN_KEY]: accessToken, ...restQuery } = {} } = to;
+
+  if (accessToken) {
+    await store.dispatch('auth/applyAccessToken', accessToken);
+
+    return router.replace({
+      query: restQuery,
+    });
+  }
 
   if (!isLoggedIn && isRequiresAuth) {
     return next({
-      name: 'login',
+      name: ROUTES_NAMES.login,
       query: {
         redirect: to.fullPath,
         errorMessage: to.query.errorMessage,
       },
     });
-  } else if (isLoggedIn && isDontRequiresAuth) {
+  }
+
+  if (isLoggedIn && isDontRequiresAuth) {
     return next({
-      name: 'home',
+      name: ROUTES_NAMES.home,
     });
   }
 
@@ -321,21 +364,28 @@ router.beforeResolve(async (to, from, next) => {
 
     next();
   } catch (err) {
+    console.error(err);
+
     next({
-      name: 'home',
+      name: ROUTES_NAMES.home,
     });
   }
 });
 
 router.afterEach((to, from) => {
-  const isLoggedIn = !!Cookies.get(COOKIE_SESSION_KEY);
+  const isLoggedIn = store.getters['auth/isLoggedIn'];
 
   if (to.path !== from.path) {
     store.dispatch('entities/sweep');
   }
 
   if (isLoggedIn) {
-    store.dispatch('keepalive/sessionTracePath', { path: getKeepalivePathByRoute(to) });
+    store.dispatch('viewStats/update', {
+      data: {
+        visible: !(document.visibilityState === 'hidden'),
+        path: getViewStatsPathByRoute(to),
+      },
+    });
   }
 });
 

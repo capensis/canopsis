@@ -7,7 +7,9 @@ Canopsis est disponible dans deux éditions :
 
 ## Prérequis
 
-*  [Prérequis réseau et de sécurité](pre-requis-parefeu-et-selinux.md)
+*  [Prérequis réseau et de sécurité](../administration-avancee/configuration-parefeu-et-selinux.md)
+*  [Prérequis des versions](prerequis-des-versions.md)
+*  [Dimensionnement](dimensionnement.md)
 
 ## Méthodes d'installation de Canopsis
 
