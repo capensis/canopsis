@@ -207,16 +207,24 @@ func transformModelToDoc(reason *Reason) *pbehavior.Reason {
 func getDeletablePipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         pbehavior.PBehaviorCollectionName,
-			"localField":   "_id",
-			"foreignField": "reason",
-			"as":           "pbhs",
+			"from": pbehavior.PBehaviorCollectionName,
+			"let":  bson.M{"id": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$$id", "$reason"}}}},
+				{"$project": bson.M{"_id": 1}},
+				{"$limit": 1},
+			},
+			"as": "pbhs",
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.ScenarioMongoCollection,
-			"localField":   "_id",
-			"foreignField": "actions.parameters.reason",
-			"as":           "actions",
+			"from": mongo.ScenarioMongoCollection,
+			"let":  bson.M{"id": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$expr": bson.M{"$in": bson.A{"$$id", "$actions.parameters.reason"}}}},
+				{"$project": bson.M{"_id": 1}},
+				{"$limit": 1},
+			},
+			"as": "actions",
 		}},
 		{"$addFields": bson.M{
 			"deletable": bson.M{"$and": []bson.M{

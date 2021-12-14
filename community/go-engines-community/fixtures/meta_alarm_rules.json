@@ -65,6 +65,17 @@
     "author": "test-metaalarm-to-get-2-author"
   },
   {
+    "_id": "test-metaalarm-to-get-3",
+    "auto_resolve": false,
+    "config": {
+      "time_interval": 10
+    },
+    "name": "Test alarm get",
+    "patterns": null,
+    "type": "manualgroup",
+    "author": "test-metaalarm-to-get-3-author"
+  },
+  {
     "_id": "test-metaalarm-to-delete",
     "auto_resolve": false,
     "name": "Test alarm get",

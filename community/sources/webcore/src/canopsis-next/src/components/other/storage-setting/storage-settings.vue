@@ -53,12 +53,12 @@ export default {
   methods: {
     cleanEntities() {
       this.$modals.show({
-        name: MODALS.confirmation,
+        name: MODALS.confirmationPhrase,
         config: {
-          title: this.$t('storageSetting.entity.confirmation.title'),
-          text: this.form.entity.archive
-            ? this.$t('storageSetting.entity.confirmation.archive')
-            : this.$t('storageSetting.entity.confirmation.delete'),
+          title: this.$t('modals.confirmationPhrase.cleanStorage.title'),
+          text: this.$t('modals.confirmationPhrase.cleanStorage.text'),
+          phraseText: this.$t('modals.confirmationPhrase.cleanStorage.phraseText'),
+          phrase: this.$t('modals.confirmationPhrase.cleanStorage.phrase'),
           action: async () => {
             await this.cleanEntitiesData({ data: this.form.entity });
 
@@ -76,9 +76,24 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.updateDataStorageSettings({ data: this.form });
+        this.$modals.show({
+          name: MODALS.confirmationPhrase,
+          config: {
+            title: this.$t('modals.confirmationPhrase.updateStorageSettings.title'),
+            text: this.$t('modals.confirmationPhrase.updateStorageSettings.text'),
+            phraseText: this.$t('modals.confirmationPhrase.updateStorageSettings.phraseText'),
+            phrase: this.$t('modals.confirmationPhrase.updateStorageSettings.phrase'),
+            action: async () => {
+              try {
+                await this.updateDataStorageSettings({ data: this.form });
 
-        this.$popups.success({ text: this.$t('success.default') });
+                this.$popups.success({ text: this.$t('success.default') });
+              } catch (err) {
+                this.setFormErrors(err);
+              }
+            },
+          },
+        });
       }
     },
   },
