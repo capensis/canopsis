@@ -31,7 +31,7 @@ Ces alarmes restent ainsi disponibles pour les administrateurs en cas de besoin.
 
 La suppression des alarmes résolues est quant à elle définitive et a lieu après le délai défini.
 
-Par ailleurs, les alarmes `ouvertes` et les alarmes `résolues` ne sont désormais plus stockées dans le même espace pour garantir la performance d'accès aux alarmes en cours.  
+Par ailleurs, les alarmes `ouvertes` (collection `periodical_alarm`) et les alarmes `résolues` (collection `resolved`) ne sont désormais plus stockées dans le même espace pour garantir la performance d'accès aux alarmes en cours.  
 Le paramètre `TimeToKeepResolvedAlarms` permet de définir le délai à partir duquel une alarme résolue passera de la collection `alarmes` à la collection `résolues`
 
 Ce paramètre se situe dans le fichier de configuration `canopsis.toml`.
