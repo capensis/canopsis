@@ -1836,34 +1836,6 @@ export default {
       storageSettings: 'Paramètres de stockage',
       notificationsSettings: 'Paramètres des notifications',
     },
-    interfaceLanguage: 'Langue de l\'interface',
-    groupsNavigationType: {
-      title: 'Type d\'affichage de la barre de vues',
-      items: {
-        sideBar: 'Barre latérale',
-        topBar: 'Barre d\'entête',
-      },
-    },
-    userInterfaceForm: {
-      title: 'Interface utilisateur',
-      fields: {
-        appTitle: 'Titre de l\'application',
-        language: 'Langue par défaut',
-        footer: 'Page d\'identification : pied de page',
-        description: 'Page d\'identification : description',
-        logo: 'Logo',
-        infoPopupTimeout: 'Délai d\'affichage pour les popups d\'informations',
-        errorPopupTimeout: 'Délai d\'affichage pour les popups d\'erreurs',
-        popupTimeoutUnit: 'Unité',
-        allowChangeSeverityToInfo: 'Autorise le changement de criticité en Info',
-        maxMatchedItems: 'Seuil d\'éléments avant avertissement',
-        checkCountRequestTimeout: 'Délai d\'expiration de la requête',
-      },
-      tooltips: {
-        maxMatchedItems: 'Avertit l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
-        checkCountRequestTimeout: 'Définit le délai d\'expiration (en secondes) de la demande d\'éléments correspondants',
-      },
-    },
   },
   view: {
     errors: {
@@ -2378,7 +2350,7 @@ export default {
     role: 'Rôle',
     enabled: 'Actif',
     password: 'Mot de passe',
-    language: 'Langue de l\'interface par défaut',
+    language: 'Langue par défaut',
     auth: 'Type d\'auth.',
     navigationType: 'Type d\'affichage de la barre de vues',
     navigationTypes: {
@@ -2674,14 +2646,14 @@ export default {
     footer: 'Page d\'identification : pied de page',
     description: 'Page d\'identification : description',
     logo: 'Logo',
-    infoPopupTimeout: 'Timeout pour les popup d\'informations',
-    errorPopupTimeout: 'Timeout pour les popup d\'erreurs',
-    allowChangeSeverityToInfo: 'Allow change severity to info',
-    maxMatchedItems: 'Articles correspondants au maximum',
-    checkCountRequestTimeout: 'Vérifier le délai d\'expiration maximal de la demande d\'éléments correspondants (secondes)',
+    infoPopupTimeout: 'Délai d\'affichage pour les popups d\'informations',
+    errorPopupTimeout: 'Délai d\'affichage pour les popups d\'erreurs',
+    allowChangeSeverityToInfo: 'Autorise le changement de criticité en Info',
+    maxMatchedItems: 'Seuil d\'éléments avant avertissement',
+    checkCountRequestTimeout: 'Délai d\'expiration de la requête',
     tooltips: {
-      maxMatchedItems: 'il doit avertir l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
-      checkCountRequestTimeout: 'il doit définir la valeur du délai d\'attente de la demande pour la vérification du nombre maximal d\'éléments correspondants',
+      maxMatchedItems: 'Avertit l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
+      checkCountRequestTimeout: 'Définit le délai d\'expiration (en secondes) de la demande d\'éléments correspondants',
     },
   },
 
