@@ -38,7 +38,7 @@ func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 		Times(timesToRun)
 
 	engine := libengine.New(nil, nil, zerolog.Nop())
-	engine.AddPeriodicalWorker(mockPeriodicalWorker)
+	engine.AddPeriodicalWorker("test", mockPeriodicalWorker)
 
 	var start time.Time
 	var err error
