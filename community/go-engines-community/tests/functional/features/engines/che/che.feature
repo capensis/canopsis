@@ -111,6 +111,10 @@ Feature: create entities on event
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-2
     Then the response code should be 200
+    When I save response enableHistory1={{ ( index (index .lastResponse.data 0).enable_history 0) }}
+    When I save response enableHistory2={{ ( index (index .lastResponse.data 1).enable_history 0) }}
+    Then the difference between enableHistory1 createTimestamp is in range -1,1
+    Then the difference between enableHistory2 createTimestamp is in range -1,1
     Then the response body should contain:
     """
     {
@@ -120,9 +124,6 @@ Feature: create entities on event
           "category": null,
           "component": "test-component-che-2",
           "depends": [],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
           "enabled": true,
           "impact": [
             "test-connector-che-2/test-connector-name-che-2"
@@ -138,9 +139,6 @@ Feature: create entities on event
           "category": null,
           "depends": [
             "test-component-che-2"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [],
