@@ -24,7 +24,7 @@ func init() {
 }
 
 type Updater interface {
-	Update(CanopsisConf) error
+	Update(CanopsisConf)
 }
 
 type AlarmConfigProvider interface {
@@ -137,7 +137,7 @@ type BaseAlarmConfigProvider struct {
 	logger zerolog.Logger
 }
 
-func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
+func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
@@ -190,8 +190,6 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
 	if ok {
 		p.conf.DisableActionSnoozeDelayOnPbh = b
 	}
-
-	return nil
 }
 
 func (p *BaseAlarmConfigProvider) Get() AlarmConfig {
@@ -216,7 +214,7 @@ type BaseTimezoneConfigProvider struct {
 	logger zerolog.Logger
 }
 
-func (p *BaseTimezoneConfigProvider) Update(cfg CanopsisConf) error {
+func (p *BaseTimezoneConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
@@ -224,8 +222,6 @@ func (p *BaseTimezoneConfigProvider) Update(cfg CanopsisConf) error {
 	if ok {
 		p.conf.Location = l
 	}
-
-	return nil
 }
 
 func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
@@ -254,7 +250,7 @@ type BaseApiConfigProvider struct {
 	logger zerolog.Logger
 }
 
-func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) error {
+func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
@@ -268,8 +264,6 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) error {
 	if ok {
 		p.conf.TokenSigningMethod = m
 	}
-
-	return nil
 }
 
 func (p *BaseApiConfigProvider) Get() ApiConfig {
@@ -311,7 +305,7 @@ type BaseRemediationConfigProvider struct {
 	logger zerolog.Logger
 }
 
-func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) error {
+func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
@@ -353,8 +347,6 @@ func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) error {
 
 		p.conf.ExternalAPI = cfg.ExternalAPI
 	}
-
-	return nil
 }
 
 func (p *BaseRemediationConfigProvider) Get() RemediationConfig {
@@ -412,7 +404,7 @@ func NewUserInterfaceConfigProvider(cfg UserInterfaceConf, logger zerolog.Logger
 	}
 }
 
-func (p *BaseUserInterfaceConfigProvider) Update(conf UserInterfaceConf) error {
+func (p *BaseUserInterfaceConfigProvider) Update(conf UserInterfaceConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
@@ -454,8 +446,6 @@ func (p *BaseUserInterfaceConfigProvider) Update(conf UserInterfaceConf) error {
 
 		p.conf.IsAllowChangeSeverityToInfo = conf.IsAllowChangeSeverityToInfo
 	}
-
-	return nil
 }
 
 func (p *BaseUserInterfaceConfigProvider) Get() UserInterfaceConf {
@@ -481,7 +471,7 @@ type BaseDataStorageConfigProvider struct {
 	logger zerolog.Logger
 }
 
-func (p *BaseDataStorageConfigProvider) Update(cfg CanopsisConf) error {
+func (p *BaseDataStorageConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
@@ -490,8 +480,6 @@ func (p *BaseDataStorageConfigProvider) Update(cfg CanopsisConf) error {
 	if ok {
 		p.conf.TimeToExecute = t
 	}
-
-	return nil
 }
 
 func (p *BaseDataStorageConfigProvider) Get() DataStorageConfig {

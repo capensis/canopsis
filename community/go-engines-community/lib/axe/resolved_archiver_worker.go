@@ -23,27 +23,27 @@ func (w *resolvedArchiverWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *resolvedArchiverWorker) Work(ctx context.Context) error {
+func (w *resolvedArchiverWorker) Work(ctx context.Context) {
 	schedule := w.DataStorageConfigProvider.Get().TimeToExecute
 	// Skip if schedule is not defined.
 	if schedule == nil {
-		return nil
+		return
 	}
 	// Check now = schedule.
 	location := w.TimezoneConfigProvider.Get().Location
 	now := types.NewCpsTime().In(location)
 	if now.Weekday() != schedule.Weekday || now.Hour() != schedule.Hour {
-		return nil
+		return
 	}
 
 	conf, err := w.LimitConfigAdapter.Get(ctx)
 	if err != nil {
 		w.Logger.Err(err).Msg("fail to retrieve data storage config")
-		return nil
+		return
 	}
 	//Skip if already executed today.
 	if conf.History.Alarm != nil && conf.History.Alarm.Time.EqualDay(now) {
-		return nil
+		return
 	}
 
 	var archived, deleted int64
@@ -55,7 +55,7 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) error {
 		archived, err = w.AlarmAdapter.ArchiveResolvedAlarms(ctx, archiveAfter.SubFrom(now))
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot archive resolved alarms")
-			return err
+			return
 		}
 
 		w.Logger.Info().Int64("alarm number", archived).Msg("resolved alarm archiving")
@@ -82,6 +82,4 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) error {
 			w.Logger.Err(err).Msg("cannot update config history")
 		}
 	}
-
-	return nil
 }
