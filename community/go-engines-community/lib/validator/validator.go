@@ -66,6 +66,12 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("gtfield", fe.StructField(), fe.Param())
 		return t
 	})
+	_ = v.RegisterTranslation("gtefield", trans, func(ut ut.Translator) error {
+		return ut.Add("gtefield", "{0} should be greater or equal than {1}.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("gtefield", fe.StructField(), fe.Param())
+		return t
+	})
 	_ = v.RegisterTranslation("gt", trans, func(ut ut.Translator) error {
 		return ut.Add("gt", "{0} should be greater than {1}.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -293,6 +299,12 @@ func RegisterTranslations(v *validator.Validate) {
 		return ut.Add("multi_sort_invalid", "Invalid multi_sort value.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("multi_sort_invalid", fe.StructField())
+		return t
+	})
+	_ = v.RegisterTranslation("regexp", trans, func(ut ut.Translator) error {
+		return ut.Add("regexp", "Invalid regexp.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("regexp", fe.StructField())
 		return t
 	})
 }

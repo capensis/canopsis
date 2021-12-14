@@ -9,7 +9,7 @@ import (
 
 func GetRunInfo(ctx context.Context, manager engine.RunInfoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		infos, err := manager.GetAll(ctx)
+		infos, err := manager.GetEngineQueues(ctx)
 		if err != nil {
 			panic(err)
 		}

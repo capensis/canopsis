@@ -35,28 +35,16 @@ canopsis_redis_host: localhost
 canopsis_redis_port: "6379"
 canopsis_redis_dbnum: 0
 
-# 'core' by default; use 'cat' if you have CAT engines
-canopsis_edition: core
+# 'community' or 'pro'
+canopsis_edition: community
 
-# Default Python Core engines which haven't been replaced by a Go engine, yet
-canopsis_core_python_engines:
-  -
-    module: scheduler
-    name: scheduler
-  -
-    module: task_importctx
-    name: task_importctx
-
-# Additional Python engines in CAT
-canopsis_cat_python_additional_engines: []
-
-# Same as above, but snmp engine has no module name…
-canopsis_cat_python_additional_engines_broken_names:
+# snmp engine has no module name…
+canopsis_pro_python_additional_engines_broken_names:
   -
     name: snmp
 
-# Default Go Core engines
-canopsis_core_go_engines:
+# Default Go engines for Community
+canopsis_community_go_engines:
   -
     name: engine-action
   -
@@ -66,29 +54,29 @@ canopsis_core_go_engines:
   -
     name: engine-fifo
   -
-    name: engine-heartbeat
-  -
     name: engine-pbehavior
   -
     name: engine-service
 
-# Additional Go engines in CAT
-canopsis_cat_go_additional_engines:
+# Additional Go engines for Canopsis Pro
+canopsis_pro_go_additional_engines:
+  -
+    name: engine-correlation
   -
     name: engine-dynamic-infos
   -
-    name: engine-webhook
+    name: engine-remediation
   -
-    name: engine-correlation
+    name: engine-webhook
 
 # Default other Core components
-canopsis_core_other_default_services:
+canopsis_community_other_default_services:
   -
     name: canopsis-api
   -
     name: canopsis-oldapi
 
-# Default other CAT components
-canopsis_cat_other_default_services:
+# Other default Pro components
+canopsis_pro_other_default_services:
   -
-    name: external-job-executor
+    name: connector-junit

@@ -9,8 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
 
-const DefaultCategory = "default"
-
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
@@ -21,7 +19,7 @@ type ListRequestWithPagination struct {
 type ListRequest struct {
 	BaseFilterRequest
 	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name type category impact_level category.name idle_since"`
+	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=_id name type category impact_level category.name idle_since infos.*"`
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
 }
 

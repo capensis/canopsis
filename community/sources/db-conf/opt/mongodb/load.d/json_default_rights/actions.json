@@ -348,13 +348,6 @@
         "type": "CRUD"
     },
     {
-        "_id": "models_engine",
-        "loader_id": "models_engine",
-        "crecord_name": "models_engine",
-        "crecord_type": "action",
-        "desc": "Engines"
-    },
-    {
         "_id": "models_serie",
         "loader_id": "models_serie",
         "crecord_name": "models_serie",
@@ -495,6 +488,36 @@
         "crecord_type": "action",
         "desc": "Exploitation: Idle rules",
         "type": "CRUD"
+    },
+    {
+        "_id": "models_exploitation_flappingRules",
+        "loader_id": "models_exploitation_flappingRules",
+        "crecord_name": "models_exploitation_flappingRules",
+        "crecord_type": "action",
+        "desc": "Exploitation: Flapping rules",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_exploitation_resolveRules",
+        "loader_id": "models_exploitation_resolveRules",
+        "crecord_name": "models_exploitation_resolveRules",
+        "crecord_type": "action",
+        "desc": "Exploitation: Resolve rules",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_healthcheck",
+        "loader_id": "models_healthcheck",
+        "crecord_name": "models_healthcheck",
+        "crecord_type": "action",
+        "desc": "Healthcheck"
+    },
+    {
+        "_id": "models_healthcheckStatus",
+        "loader_id": "models_healthcheckStatus",
+        "crecord_name": "models_healthcheckStatus",
+        "crecord_type": "action",
+        "desc": "Healthcheck status"
     },
     {
         "_id": "models_notification_instructionStats",
@@ -1261,11 +1284,18 @@
         "desc": "Event"
     },
     {
-        "_id": "api_engine",
-        "loader_id": "api_engine",
-        "crecord_name": "api_engine",
+        "_id": "api_healthcheck",
+        "loader_id": "api_healthcheck",
+        "crecord_name": "api_healthcheck",
         "crecord_type": "action",
-        "desc": "Engine Info"
+        "desc": "Healthcheck"
+    },
+    {
+        "_id": "api_message_rate_stats_read",
+        "crecord_name": "api_message_rate_stats_read",
+        "loader_id": "api_message_rate_stats_read",
+        "crecord_type": "action",
+        "desc": "Message rate statistics"
     },
     {
         "_id": "api_execution",
@@ -1327,7 +1357,8 @@
         "loader_id": "api_acl",
         "crecord_name": "api_acl",
         "crecord_type": "action",
-        "desc": "Roles, permissions, users"
+        "desc": "Roles, permissions, users",
+        "type": "CRUD"
     },
     {
         "_id": "api_state_settings",
@@ -1408,5 +1439,21 @@
         "crecord_name": "api_instruction_approve",
         "crecord_type": "action",
         "desc": "Instruction approve"
+    },
+    {
+        "_id": "api_resolve_rule",
+        "loader_id": "api_resolve_rule",
+        "crecord_name": "api_resolve_rule",
+        "crecord_type": "action",
+        "desc": "Resolve rule",
+        "type": "CRUD"
+    },
+    {
+        "_id": "api_flapping_rule",
+        "loader_id": "api_flapping_rule",
+        "crecord_name": "api_flapping_rule",
+        "crecord_type": "action",
+        "desc": "Flapping rule",
+        "type": "CRUD"
     }
 ]

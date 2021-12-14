@@ -23,7 +23,7 @@ export default {
     },
 
     viewFilters() {
-      return this.userPreference.widget_preferences.viewFilters || [];
+      return this.userPreference.content.viewFilters || [];
     },
 
     widgetViewFilters() {
@@ -41,8 +41,7 @@ export default {
       const hasAccessToUserFilter = this.hasAccessToUserFilter || !isBoolean(this.hasAccessToUserFilter);
 
       if (hasAccessToUserFilter) {
-        return this.updateWidgetPreferencesInUserPreference({
-          ...this.userPreference.widget_preferences,
+        return this.updateContentInUserPreference({
           ...fields,
         });
       }
@@ -50,18 +49,18 @@ export default {
       return Promise.resolve();
     },
 
-    updateFilters(viewFilters, mainFilter = this.mainFilter) {
-      this.updateFieldsInWidgetPreferences({ viewFilters, mainFilter });
+    async updateFilters(viewFilters, mainFilter = this.mainFilter) {
+      await this.updateFieldsInWidgetPreferences({ viewFilters, mainFilter });
       this.updateQueryBySelectedFilterAndCondition(mainFilter, this.mainFilterCondition);
     },
 
-    updateSelectedCondition(condition = FILTER_DEFAULT_VALUES.condition) {
-      this.updateFieldsInWidgetPreferences({ mainFilterCondition: condition });
+    async updateSelectedCondition(condition = FILTER_DEFAULT_VALUES.condition) {
+      await this.updateFieldsInWidgetPreferences({ mainFilterCondition: condition });
       this.updateQueryBySelectedFilterAndCondition(this.mainFilter, condition);
     },
 
-    updateSelectedFilter(filterObject) {
-      this.updateFieldsInWidgetPreferences({ mainFilter: filterObject || {}, mainFilterUpdatedAt: Date.now() });
+    async updateSelectedFilter(filterObject) {
+      await this.updateFieldsInWidgetPreferences({ mainFilter: filterObject || {}, mainFilterUpdatedAt: Date.now() });
       this.updateQueryBySelectedFilterAndCondition(filterObject || {}, this.mainFilterCondition);
     },
 

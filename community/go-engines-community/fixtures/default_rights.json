@@ -7,7 +7,8 @@
   {
     "_id": "api_acl",
     "crecord_type": "action",
-    "crecord_name": "api_acl"
+    "crecord_name": "api_acl",
+    "type": "CRUD"
   },
   {
     "_id": "api_alarm_read",
@@ -199,6 +200,20 @@
     "crecord_name": "api_message_rate_stats_read"
   },
   {
+    "_id": "api_resolve_rule",
+    "crecord_name": "api_resolve_rule",
+    "crecord_type": "action",
+    "desc": "Resolve rule",
+    "type": "CRUD"
+  },
+  {
+    "_id": "api_flapping_rule",
+    "crecord_name": "api_flapping_rule",
+    "crecord_type": "action",
+    "desc": "Flapping rule",
+    "type": "CRUD"
+  },
+  {
     "_id": "api_notification",
     "crecord_type": "action",
     "crecord_name": "api_notification"
@@ -209,6 +224,11 @@
     "crecord_name": "api_instruction_approve"
   },
   {
+    "_id": "api_healthcheck",
+    "crecord_type": "action",
+    "crecord_name": "api_healthcheck"
+  },
+  {
     "_id": "admin",
     "crecord_type": "role",
     "crecord_name": "admin",
@@ -217,12 +237,16 @@
         "checksum": 1,
         "crecord_type": "right"
       },
+      "api_healthcheck": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
       "api_instruction_approve": {
         "checksum": 1,
         "crecord_type": "right"
       },
       "api_acl": {
-        "checksum": 1,
+        "checksum": 15,
         "crecord_type": "right"
       },
       "api_alarm_read": {
@@ -424,6 +448,14 @@
       "api_user_interface_delete": {
         "checksum": 1,
         "crecord_type": "right"
+      },
+      "api_resolve_rule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_flapping_rule": {
+        "checksum": 15,
+        "crecord_type": "right"
       }
     }
   },
@@ -541,7 +573,7 @@
         "crecord_type": "right"
       },
       "api_acl": {
-        "checksum": 1,
+        "checksum": 15,
         "crecord_type": "right"
       },
       "api_app_info_read": {
@@ -747,6 +779,7 @@
     "crecord_type": "role",
     "crecord_name": "test-role-to-edit-user",
     "description": "test-role-to-edit-user-description",
+    "defaultview": "test-view-to-edit-user",
     "rights": {
       "test-permission-to-edit-user-1": {
         "checksum": 1
@@ -981,9 +1014,9 @@
   {
     "_id": "test-user-to-update-view-position",
     "crecord_type": "user",
-    "crecord_name": "test-to-update-view-position",
+    "crecord_name": "test-user-to-update-view-position",
     "role": "test-role-to-update-view-position",
-    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fwwww",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "authkey": "b1f67e3e-wwww-4140-a801-9a05cb683e2c",
     "enable": true
   },
@@ -1030,7 +1063,7 @@
     "crecord_name": "test-user-to-rate-instruction",
     "role": "test-role-to-rate-instruction",
     "mail": "test-user-to-rate-instruction@canopsis.net",
-    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982ucms3",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "authkey": "2be1d0ee-5e9e-8mdn-9d80-e857e50f4191",
     "enable": true
   },
@@ -1059,8 +1092,66 @@
     "crecord_name": "test-user-to-stats-instruction-get",
     "role": "test-role-to-stats-instruction-get",
     "mail": "test-user-to-stats-instruction-get@canopsis.net",
-    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982dime3",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f4191",
+    "enable": true
+  },
+  {
+    "_id": "test-role-to-user-preferences-update",
+    "crecord_type": "role",
+    "crecord_name": "test-role-to-user-preferences-update",
+    "rights": {}
+  },
+  {
+    "_id": "test-user-to-user-preferences-update",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-user-preferences-update",
+    "role": "test-role-to-user-preferences-update",
+    "mail": "test-user-to-user-preferences-update@canopsis.net",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f5202",
+    "enable": true
+  },
+  {
+    "_id": "test-role-to-user-preferences-delete-1",
+    "crecord_type": "role",
+    "crecord_name": "test-role-to-user-preferences-delete-1",
+    "rights": {
+      "api_view": {
+        "checksum": 15,
+        "crecord_type": "right"
+      }
+    }
+  },
+  {
+    "_id": "test-user-to-user-preferences-delete-1",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-user-preferences-delete-1",
+    "role": "test-role-to-user-preferences-delete-1",
+    "mail": "test-user-to-user-preferences-delete-1@canopsis.net",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f5203",
+    "enable": true
+  },
+  {
+    "_id": "test-role-to-user-preferences-delete-2",
+    "crecord_type": "role",
+    "crecord_name": "test-role-to-user-preferences-delete-2",
+    "rights": {
+      "api_view": {
+        "checksum": 15,
+        "crecord_type": "right"
+      }
+    }
+  },
+  {
+    "_id": "test-user-to-user-preferences-delete-2",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-user-preferences-delete-2",
+    "role": "test-role-to-user-preferences-delete-2",
+    "mail": "test-user-to-user-preferences-delete-2@canopsis.net",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f5204",
     "enable": true
   }
 ]

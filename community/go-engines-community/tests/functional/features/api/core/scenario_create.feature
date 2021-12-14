@@ -125,6 +125,7 @@ Feature: Create a scenario
           "type": "snooze",
           "parameters": {
             "author": "root",
+            "user": "root",
             "output": "test-scenario-to-create-1-action-1-output",
             "duration": {
               "seconds": 3,
@@ -186,6 +187,7 @@ Feature: Create a scenario
           "type": "pbehavior",
           "parameters": {
             "author": "root",
+            "user": "root",
             "duration": {
               "seconds": 3,
               "unit": "s"
@@ -342,6 +344,7 @@ Feature: Create a scenario
           "type": "snooze",
           "parameters": {
             "author": "root",
+            "user": "root",
             "output": "test-scenario-to-create-2-action-1-output",
             "duration": {
               "seconds": 3,
@@ -404,6 +407,7 @@ Feature: Create a scenario
           "type": "pbehavior",
           "parameters": {
             "author": "root",
+            "user": "root",
             "duration": {
               "seconds": 3,
               "unit": "s"
@@ -501,6 +505,7 @@ Feature: Create a scenario
           "type": "snooze",
           "parameters": {
             "author": "root",
+            "user": "root",
             "output": "test snooze",
             "duration": {
               "seconds": 3,

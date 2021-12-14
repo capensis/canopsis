@@ -18,6 +18,7 @@ import (
 // SessionAuth returns a Session Authorization middleware.
 // It checks session and retrieves user using provider.
 // It checks auth only if session exists.
+// Deprecated : don't use session.
 func SessionAuth(db mongo.DbClient, store sessions.Store) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, err := store.Get(c.Request, security.SessionKey)
@@ -48,6 +49,7 @@ func SessionAuth(db mongo.DbClient, store sessions.Store) gin.HandlerFunc {
 				// The user credentials was found, set user's id to key UserKey in this context,
 				// the user's id can be read later using c.MustGet(auth.UserKey).
 				c.Set(auth.UserKey, user.ID)
+				c.Set(auth.Username, user.Name)
 				c.Set(auth.RoleKey, user.Role)
 				c.Set(auth.ApiKey, user.AuthApiKey)
 			} else {

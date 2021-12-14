@@ -228,9 +228,11 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 
 		ctx.Step(`^I am ([\w-]+)$`, apiClient.IAm)
 		ctx.Step(`^I am authenticated with username "([^"]+)" and password "([^"]+)"$`, apiClient.IAmAuthenticatedByBasicAuth)
-		ctx.Step(`^I am authenticated with api key "([^"]+)"$`, apiClient.IAmAuthenticatedByApiKey)
 		ctx.Step(`^I send an event:$`, apiClient.ISendAnEvent)
+		ctx.Step(`^I do (\w+) ([^:]+) until response code is (\d+) and body is:$`, apiClient.IDoRequestUntilResponse)
+		ctx.Step(`^I do (\w+) ([^:]+) until response code is (\d+) and body contains:$`, apiClient.IDoRequestUntilResponseContains)
 		ctx.Step(`^I do (\w+) ([^:]+):$`, apiClient.IDoRequestWithBody)
+		ctx.Step(`^I do (\w+) (.+) until response code is (\d+)$`, apiClient.IDoRequestUntilResponseCode)
 		ctx.Step(`^I do (\w+) (.+)$`, apiClient.IDoRequest)
 		ctx.Step(`^the response code should be (\d+)$`, apiClient.TheResponseCodeShouldBe)
 		ctx.Step(`^the response body should be:$`, apiClient.TheResponseBodyShouldBe)
@@ -241,7 +243,7 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 		ctx.Step(`^I save response ([\w]+)=(.+)$`, apiClient.ISaveResponse)
 		ctx.Step(`^an alarm (.+) should be in the db$`, mongoClient.AlarmShouldBeInTheDb)
 		ctx.Step(`^an entity (.+) should be in the db$`, mongoClient.EntityShouldBeInTheDb)
-		ctx.Step(`^I set content-type=(.+)$`, apiClient.SetRequestContentType)
+		ctx.Step(`^I set header ([\w\.\-]+)=(.+)$`, apiClient.ISetRequestHeader)
 		ctx.Step(`^I wait (\w+)$`, func(str string) error {
 			duration, err := time.ParseDuration(str)
 			if err != nil {

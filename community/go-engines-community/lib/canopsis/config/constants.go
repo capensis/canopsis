@@ -1,16 +1,19 @@
 package config
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"html/template"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 // Default config values
 const (
-	AlarmBaggotTime           = 60 * time.Second
 	AlarmCancelAutosolveDelay = 60 * 60 * time.Second
 	AlarmDefaultNameScheme    = "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
+
+	ApiTokenExpiration    = 24 * time.Hour
+	ApiTokenSigningMethod = "HS256"
 
 	RemediationHttpTimeout                    = 30 * time.Second
 	RemediationLaunchJobRetriesAmount         = 3

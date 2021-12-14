@@ -9,7 +9,6 @@ import {
   BROADCAST_MESSAGES_STATUSES,
   USER_PERMISSIONS_PREFIXES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
-  ENGINES_NAMES,
   WIDGET_TYPES,
   ACTION_TYPES,
   ENTITY_TYPES,
@@ -22,6 +21,8 @@ import {
   IDLE_RULE_ALARM_CONDITIONS,
   USERS_PERMISSIONS,
   ALARMS_OPENED_VALUES,
+  HEALTHCHECK_SERVICES_NAMES,
+  HEALTHCHECK_ENGINES_NAMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -56,7 +57,7 @@ export default {
     no: 'No',
     default: 'Default',
     confirmation: 'Are you sure?',
-    parameters: 'Parameters',
+    parameter: 'Parameter | Parameters',
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
@@ -171,7 +172,7 @@ export default {
     percent: 'Percent | Percents',
     tests: 'Tests',
     total: 'Total',
-    errors: 'Errors',
+    error: 'Error | Errors',
     failures: 'Failures',
     skipped: 'Skipped',
     current: 'Current',
@@ -188,8 +189,14 @@ export default {
     dismiss: 'Dismiss',
     approve: 'Approve',
     summary: 'Summary',
+    recurrence: 'Recurrence',
     statistics: 'Statistics',
     action: 'Action',
+    minimal: 'Minimal',
+    optimal: 'Optimal',
+    graph: 'Graph | Graphs',
+    systemStatus: 'System status',
+    downloadAsPng: 'Download as PNG',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -214,6 +221,38 @@ export default {
       week: 'week | weeks',
       month: 'month | months',
       year: 'year | years',
+    },
+    timeFrequencies: {
+      secondly: 'Secondly',
+      minutely: 'Minutely',
+      hourly: 'Hourly',
+      daily: 'Daily',
+      weekly: 'Weekly',
+      monthly: 'Monthly',
+      yearly: 'Yearly',
+    },
+    weekDays: {
+      monday: 'Monday',
+      tuesday: 'Tuesday',
+      wednesday: 'Wednesday',
+      thursday: 'Thursday',
+      friday: 'Friday',
+      saturday: 'Saturday',
+      sunday: 'Sunday',
+    },
+    months: {
+      january: 'January',
+      february: 'February',
+      march: 'March',
+      april: 'April',
+      may: 'May',
+      june: 'June',
+      july: 'July',
+      august: 'August',
+      september: 'September',
+      october: 'October',
+      november: 'November',
+      december: 'December',
     },
   },
   variableTypes: {
@@ -263,6 +302,9 @@ export default {
     fab: {
       common: 'Add a new entity',
       addService: 'Add a new service entity',
+    },
+    popups: {
+      massDeleteWarning: 'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
     },
   },
   search: {
@@ -439,6 +481,25 @@ export default {
     created: 'Creation date',
     updated: 'Last update date',
     lastAlarmDate: 'Last alarm date',
+    searchHelp: '<span>Help on the advanced research :</span>\n' +
+      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
+      '<p>The "-" before the research is required</p>\n' +
+      '<p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
+      '<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>\n' +
+      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+      '<dl>' +
+      '  <dt>Examples :</dt>' +
+      '  <dt>- name = "name_1"</dt>\n' +
+      '  <dd>Pbehavior name are "name_1"</dd>\n' +
+      '  <dt>- rrule = "rrule_1"</dt>\n' +
+      '  <dd>Pbehavior rrule are "rrule_1"</dd>\n' +
+      '  <dt>- filter = "filter_1"</dt>\n' +
+      '  <dd>Pbehavior filter are "filter_1"</dd>\n' +
+      '  <dt>- type.name = "type_name_1"</dt>\n' +
+      '  <dd>Pbehavior type name are "type_name_1"</dd>\n' +
+      '  <dt>- reason.name = "reason_name_1"</dt>\n' +
+      '  <dd>Pbehavior reason name are "reason_name_1"</dd>' +
+      '</dl>',
     tabs: {
       filter: 'Filter',
       comments: 'Comments',
@@ -663,6 +724,14 @@ export default {
         '<dd>- time of execution (hh, mm, ss)</dd>' +
         '</dl>',
     },
+    reportFileRegexp: {
+      title: 'Report file mask',
+      helpText: '<dl>' +
+        '<dt>Define the filename regexp of which report:<dt>\n' +
+        '<dd>For example:</dd>\n' +
+        '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n' +
+        '</dl>',
+    },
   },
   modals: {
     common: {
@@ -829,9 +898,6 @@ export default {
           exdate: 'Exclusion dates',
           buttons: {
             addExdate: 'Add an exclusion date',
-          },
-          fields: {
-            rRuleQuestion: 'Add a recurrence rule to the pbehavior?',
           },
         },
         comments: {
@@ -1180,6 +1246,7 @@ export default {
       title: 'Select tab',
     },
     createDynamicInfo: {
+      alarmUpdate: 'The rule will update existing alarms!',
       create: {
         title: 'Create dynamic information',
         success: 'Dynamic information successfully created!',
@@ -1501,6 +1568,47 @@ export default {
         title: 'Duplicate entity rule',
       },
     },
+    createAlarmStatusRule: {
+      flapping: {
+        create: {
+          title: 'Create flapping rule',
+        },
+        edit: {
+          title: 'Edit flapping rule',
+        },
+        duplicate: {
+          title: 'Duplicate flapping rule',
+        },
+      },
+      resolve: {
+        create: {
+          title: 'Create resolve rule',
+        },
+        edit: {
+          title: 'Edit resolve rule',
+        },
+        duplicate: {
+          title: 'Duplicate resolve rule',
+        },
+      },
+    },
+    confirmationPhrase: {
+      phrase: 'Phrase',
+      updateStorageSettings: {
+        title: 'Updating storage policy. Are you sure ?',
+        text: 'You are about to change the storage policy.\n' +
+          '<strong>Associated operations, deleting data, won\'t be cancellable.</strong>',
+        phraseText: 'Please, type the following to confirm:',
+        phrase: 'update the storage policy',
+      },
+      cleanStorage: {
+        title: 'Archive/delete disabled entities. Are you sure ?',
+        text: 'You are about to archive and/or delete data.\n' +
+          '<strong>Deletion operation won\'t be cancellable.</strong>',
+        phraseText: 'Please, type the following to confirm:',
+        phrase: 'archive or delete',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1542,10 +1650,22 @@ export default {
       },
     },
   },
-  rRule: {
+  recurrenceRule: {
     advancedHint: 'Separate numbers with a comma',
-    textLabel: 'Summary',
-    stringLabel: 'Recurrence',
+    freq: 'Frequency',
+    until: 'Until',
+    byweekday: 'By week day',
+    count: 'Repeat',
+    interval: 'Interval',
+    wkst: 'Week start',
+    bymonth: 'By month',
+    bysetpos: 'By set position',
+    bymonthday: 'By month day',
+    byyearday: 'By year day',
+    byweekno: 'By week n°',
+    byhour: 'By hour',
+    byminute: 'By minute',
+    bysecond: 'By second',
     tabs: {
       simple: 'Simple',
       advanced: 'Advanced',
@@ -1560,42 +1680,14 @@ export default {
       [PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth]: 'This month',
       [PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth]: 'Next month',
     },
-    fields: {
-      freq: 'Frequency',
-      until: 'Until',
-      byweekday: 'By week day',
-      count: 'Repeat',
-      interval: 'Interval',
-      wkst: 'Week start',
-      bymonth: 'By month',
-      bysetpos: {
-        label: 'By set position',
-        tooltip: 'If given, it must be one or many integers, positive or negative. Each given integer will specify an occurrence number, corresponding to the nth occurrence of the rule inside the frequency period. For example, a \'bysetpos\' of -1 if combined with a monthly frequency, and a \'byweekday\' of (Monday, Tuesday, Wednesday, Thursday, Friday), will result in the last work day of every month.',
-      },
-      bymonthday: {
-        label: 'By month day',
-        tooltip: 'If given, it must be one or many integers, meaning the month days to apply the recurrence to.',
-      },
-      byyearday: {
-        label: 'By year day',
-        tooltip: 'If given, it must be one or many integers, meaning the year days to apply the recurrence to.',
-      },
-      byweekno: {
-        label: 'By week n°',
-        tooltip: 'If given, it must be on or many integers, meaning the week numbers to apply the recurrence to. Week numbers have the meaning described in ISO8601, that is, the first week of the year is that containing at least four days of the new year.',
-      },
-      byhour: {
-        label: 'By hour',
-        tooltip: 'If given, it must be one or many integers, meaning the hours to apply the recurrence to.',
-      },
-      byminute: {
-        label: 'By minute',
-        tooltip: 'If given, it must be one or many integers, meaning the minutes to apply the recurrence to.',
-      },
-      bysecond: {
-        label: 'By second',
-        tooltip: 'If given, it must be one or many integers, meaning the seconds to apply the recurrence to.',
-      },
+    tooltips: {
+      bysetpos: 'If given, it must be one or many integers, positive or negative. Each given integer will specify an occurrence number, corresponding to the nth occurrence of the rule inside the frequency period. For example, a \'bysetpos\' of -1 if combined with a monthly frequency, and a \'byweekday\' of (Monday, Tuesday, Wednesday, Thursday, Friday), will result in the last work day of every month.',
+      bymonthday: 'If given, it must be one or many integers, meaning the month days to apply the recurrence to.',
+      byyearday: 'If given, it must be one or many integers, meaning the year days to apply the recurrence to.',
+      byweekno: 'If given, it must be on or many integers, meaning the week numbers to apply the recurrence to. Week numbers have the meaning described in ISO8601, that is, the first week of the year is that containing at least four days of the new year.',
+      byhour: 'If given, it must be one or many integers, meaning the hours to apply the recurrence to.',
+      byminute: 'If given, it must be one or many integers, meaning the minutes to apply the recurrence to.',
+      bysecond: 'If given, it must be one or many integers, meaning the seconds to apply the recurrence to.',
     },
   },
   errors: {
@@ -1605,6 +1697,7 @@ export default {
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
+    socketConnectionProblem: 'Problem with connection to socket server',
   },
   calendar: {
     today: 'Today',
@@ -1727,7 +1820,7 @@ export default {
         create: 'Create view',
         settings: 'Settings',
       },
-      activeSessions: 'Active sessions',
+      loggedUsersCount: 'Active sessions',
       ordering: {
         popups: {
           success: 'The groups was reordered',
@@ -1898,6 +1991,12 @@ export default {
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
     },
+    api: {
+      general: 'General',
+      rules: 'Rules',
+      remediation: 'Remediation',
+      pbehavior: 'PBehavior',
+    },
   },
 
   pbehavior: {
@@ -1934,47 +2033,108 @@ export default {
     },
   },
 
-  engines: {
-    [ENGINES_NAMES.event]: {
-      title: 'Event',
-      description: 'Comes from resource',
+  healthcheck: {
+    notRunning: '{name} is unavailable',
+    queueOverflow: 'Queue overflow',
+    lackOfInstances: 'Lack of instances',
+    diffInstancesConfig: 'Invalid instances configuration',
+    queueLength: 'Queue length {queueLength}/{maxQueueLength}',
+    instancesCount: 'Instances {instances}/{minInstances}',
+    activeInstances: 'Only {instances} is active out of {minInstances}. The optimal number of instances is {optimalInstances}.',
+    queueOverflowed: 'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
+    engineDown: '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
+    engineDownOrSlow: '{name} is down or responds too slow, the system is not operational.\nPlease check the log or restart the instance.',
+    invalidEnginesOrder: 'Invalid engines configuration',
+    invalidInstancesConfiguration: 'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
+    chainConfigurationInvalid: 'Engines chain configuration is invalid.\nRefer below for the correct sequence of engines:',
+    queueLimit: 'Queue length limit',
+    defineQueueLimit: 'Define the engines queue length limit',
+    notifyUsersQueueLimit: 'Users can be notified when the queue length limit is exceeded',
+    numberOfInstances: 'Number of instances',
+    notifyUsersNumberOfInstances: 'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
+    messagesHistory: 'FIFO messages processing history',
+    messagesLastHour: 'FIFO messages processing for the last hour',
+    messagesPerHour: 'messages/hour',
+    unknown: 'This system state is unavailable',
+    systemStatusChipError: 'The system is not operational',
+    systemStatusServerError: 'System configuration is invalid, please contact the administrator',
+    systemsOperational: 'All systems are operational',
+    validation: {
+      max_value: 'The field must be equal or less than the optimal instance count',
+      min_value: 'The field must be equal or more than the minimal instance count',
     },
+    nodes: {
+      [HEALTHCHECK_SERVICES_NAMES.mongo]: {
+        name: 'MongoDB',
+        edgeLabel: 'Status check',
+      },
 
-    [ENGINES_NAMES.webhook]: {
-      title: 'Webhook',
-      description: 'Triggers the webhooks launch',
-    },
-    [ENGINES_NAMES.fifo]: {
-      title: 'FIFO',
-      description: 'Manages the queue of events and alarms',
-    },
-    [ENGINES_NAMES.axe]: {
-      title: 'AXE',
-      description: 'Creates alarms and performs actions with them',
-    },
-    [ENGINES_NAMES.che]: {
-      title: 'CHE',
-      description: 'Applies eventfilters and created entities',
-    },
-    [ENGINES_NAMES.pbehavior]: {
-      title: 'Pbehavior',
-      description: 'Checks if the alarm is under PBehvaior',
-    },
-    [ENGINES_NAMES.action]: {
-      title: 'Action',
-      description: 'Triggers the actions launch',
-    },
-    [ENGINES_NAMES.service]: {
-      title: 'Service',
-      description: 'Updates counters and generates service-events',
-    },
-    [ENGINES_NAMES.dynamicInfo]: {
-      title: 'Dynamic infos',
-      description: 'Adds dynamic infos to alarm',
-    },
-    [ENGINES_NAMES.correlation]: {
-      title: 'Correlation',
-      description: 'Adds dynamic infos to alarm',
+      [HEALTHCHECK_SERVICES_NAMES.rabbit]: {
+        name: 'RabbitMQ',
+        edgeLabel: 'Status check',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.redis]: {
+        name: 'Redis',
+        edgeLabel: 'FIFO data\nRedis check',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.events]: {
+        name: 'Events',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.api]: {
+        name: 'Canopsis API',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.enginesChain]: {
+        name: 'Engines chain',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.healthcheck]: {
+        name: 'Healthcheck',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.webhook]: {
+        name: 'Webhook',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.fifo]: {
+        name: 'FIFO',
+        edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.axe]: {
+        name: 'AXE',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.che]: {
+        name: 'CHE',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
+        name: 'Pbehavior',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.action]: {
+        name: 'Action',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.service]: {
+        name: 'Service',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
+        name: 'Dynamic infos',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.correlation]: {
+        name: 'Correlation',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.remediation]: {
+        name: 'Remediation',
+      },
     },
   },
 
@@ -2119,6 +2279,15 @@ export default {
   },
 
   scenario: {
+    triggers: 'Triggers',
+    emitTrigger: 'Emit trigger',
+    withAuth: 'Do you need auth fields?',
+    emptyResponse: 'Empty response',
+    isRegexp: 'The value can be a RegExp',
+    headerKey: 'Header key',
+    headerValue: 'Header value',
+    key: 'Key',
+    skipVerify: 'Ignore HTTPS certificate verification',
     headers: 'Headers',
     declareTicket: 'Declare ticket',
     workflow: 'Workflow if this action didn’t match:',
@@ -2152,22 +2321,12 @@ export default {
       [ACTION_TYPES.cancel]: 'Cancel',
       [ACTION_TYPES.webhook]: 'Webhook',
     },
-    fields: {
-      triggers: 'Triggers',
-      emitTrigger: 'Emit trigger',
-      withAuth: 'Do you need auth fields?',
-      emptyResponse: 'Empty response',
-      isRegexp: 'The value can be a RegExp',
-      headerKey: 'Header key',
-      headerValue: 'Header value',
-      key: 'Key',
-      skipVerify: 'Ignore HTTPS certificate verification',
-    },
     tabs: {
       pattern: 'Pattern',
     },
     errors: {
       actionRequired: 'Please add at least one action',
+      priorityExist: 'The priority of current scenario is already in use. Do you want to change the current scenario priority to {priority}?',
     },
   },
 
@@ -2282,7 +2441,7 @@ export default {
     },
   },
 
-  storageSetting: {
+  storageSettings: {
     alarm: {
       title: 'Alarm data storage',
       titleHelp: 'When switched on, the resolved alarms data will be archived and/or deleted after the defined time period.',
@@ -2308,16 +2467,15 @@ export default {
       archiveDependencies: 'Remove the impacting and dependent entities as well',
       archiveDependenciesHelp: 'For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well.',
       cleanStorage: 'Clean storage',
-      confirmation: {
-        title: 'Delete disabled entities?',
-        archive: 'Are you sure you want to archive all disabled entities? This action cannot be canceled.',
-        delete: 'Are you sure you want to delete all disabled entities from the archive forever? This action cannot be canceled.',
-      },
     },
     pbehavior: {
       title: 'PBehavior data storage',
       deleteAfter: 'Delete PBehavior data after',
       deleteAfterHelpText: 'When switched on, inactive PBehaviors will be deleted after the defined time period from the last event.',
+    },
+    healthCheck: {
+      title: 'Healthcheck data storage',
+      deleteAfter: 'Delete FIFO incoming flow data after',
     },
     history: {
       scriptLaunched: 'Script launched at {launchedAt}.',
@@ -2379,6 +2537,10 @@ export default {
     },
   },
 
+  alarmStatusRules: {
+    frequencyLimit: 'Frequency limit',
+  },
+
   icons: {
     noEvents: 'No events received for {duration} by some of dependencies',
   },
@@ -2408,6 +2570,16 @@ export default {
     [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
       title: 'Idle rules',
       message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
+      title: 'Flapping rules',
+      // message: '', // TODO: need to put description
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
+      title: 'Resolve rules',
+      // message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
@@ -2449,14 +2621,14 @@ export default {
       title: 'Playlists',
       message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
     },
+    [USERS_PERMISSIONS.technical.healthcheck]: {
+      title: 'Healthcheck',
+      message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
+    },
 
     /**
      * Admin general
      */
-    [USERS_PERMISSIONS.technical.engine]: {
-      title: 'Engines',
-      message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
-    },
     [USERS_PERMISSIONS.technical.parameters]: {
       title: 'Parameters',
     },

@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"math"
 	"time"
@@ -55,6 +56,7 @@ type Manager interface {
 	Ping(context.Context, SessionData, PathData) (*Stats, error)
 	// Find returns stats list.
 	Find(context.Context, Filter) ([]Stats, error)
+	Exists(ctx context.Context, sessionID string) (bool, error)
 }
 
 // manager saves stats to mongo db.
@@ -189,6 +191,18 @@ func (m *manager) Find(ctx context.Context, f Filter) ([]Stats, error) {
 	}
 
 	return r, nil
+}
+
+func (m *manager) Exists(ctx context.Context, sessionID string) (bool, error) {
+	err := m.dbCollection.FindOne(ctx, bson.M{"session_id": sessionID}).Err()
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
 }
 
 // getActiveStatsFilter creates filter to find active stats for session.

@@ -4,6 +4,7 @@ package config
 
 import (
 	"fmt"
+	"github.com/golang-jwt/jwt"
 	"html/template"
 	"reflect"
 	"strconv"
@@ -34,6 +35,10 @@ type TimezoneConfigProvider interface {
 	Get() TimezoneConfig
 }
 
+type ApiConfigProvider interface {
+	Get() ApiConfig
+}
+
 type RemediationConfigProvider interface {
 	Get() RemediationConfig
 }
@@ -47,10 +52,7 @@ type UserInterfaceConfigProvider interface {
 }
 
 type AlarmConfig struct {
-	FlappingFreqLimit     int
-	FlappingInterval      time.Duration
 	StealthyInterval      time.Duration
-	BaggotTime            time.Duration
 	EnableLastEventDate   bool
 	CancelAutosolveDelay  time.Duration
 	DisplayNameScheme     *template.Template
@@ -64,6 +66,11 @@ type AlarmConfig struct {
 
 type TimezoneConfig struct {
 	Location *time.Location
+}
+
+type ApiConfig struct {
+	TokenExpiration    time.Duration
+	TokenSigningMethod jwt.SigningMethod
 }
 
 type RemediationConfig struct {
@@ -92,10 +99,7 @@ func (t ScheduledTime) String() string {
 func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmConfigProvider {
 	sectionName := "alarm"
 	conf := AlarmConfig{
-		FlappingFreqLimit:             parseInt(cfg.Alarm.FlappingFreqLimit, 0, "FlappingFreqLimit", sectionName, logger),
-		FlappingInterval:              parseTimeDurationBySeconds(cfg.Alarm.FlappingInterval, 0, "FlappingInterval", sectionName, logger),
 		StealthyInterval:              parseTimeDurationBySeconds(cfg.Alarm.StealthyInterval, 0, "StealthyInterval", sectionName, logger),
-		BaggotTime:                    parseTimeDurationByStr(cfg.Alarm.BaggotTime, AlarmBaggotTime, "BaggotTime", sectionName, logger),
 		EnableLastEventDate:           parseBool(cfg.Alarm.EnableLastEventDate, "EnableLastEventDate", sectionName, logger),
 		CancelAutosolveDelay:          parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
 		DisableActionSnoozeDelayOnPbh: parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
@@ -138,12 +142,7 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
 	defer p.mx.Unlock()
 
 	sectionName := "alarm"
-	d, ok := parseUpdatedTimeDurationByStr(cfg.Alarm.BaggotTime, p.conf.BaggotTime, "BaggotTime", sectionName, p.logger)
-	if ok {
-		p.conf.BaggotTime = d
-	}
-
-	d, ok = parseUpdatedTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, p.conf.CancelAutosolveDelay, "CancelAutosolveDelay", sectionName, p.logger)
+	d, ok := parseUpdatedTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, p.conf.CancelAutosolveDelay, "CancelAutosolveDelay", sectionName, p.logger)
 	if ok {
 		p.conf.CancelAutosolveDelay = d
 	}
@@ -168,16 +167,6 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
 				Int("new", cfg.Alarm.OutputLength).
 				Msg("OutputLength of alarm config section is loaded")
 		}
-	}
-
-	i, ok := parseUpdatedInt(cfg.Alarm.FlappingFreqLimit, p.conf.FlappingFreqLimit, "FlappingFreqLimit", sectionName, p.logger)
-	if ok {
-		p.conf.FlappingFreqLimit = i
-	}
-
-	d, ok = parseUpdatedTimeDurationBySeconds(cfg.Alarm.FlappingInterval, p.conf.FlappingInterval, "FlappingInterval", sectionName, p.logger)
-	if ok {
-		p.conf.FlappingInterval = d
 	}
 
 	d, ok = parseUpdatedTimeDurationBySeconds(cfg.Alarm.StealthyInterval, p.conf.StealthyInterval, "StealthyInterval", sectionName, p.logger)
@@ -240,6 +229,50 @@ func (p *BaseTimezoneConfigProvider) Update(cfg CanopsisConf) error {
 }
 
 func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+
+	return p.conf
+}
+
+func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfigProvider {
+	sectionName := "api"
+	conf := ApiConfig{
+		TokenExpiration:    parseTimeDurationByStr(cfg.API.TokenExpiration, ApiTokenExpiration, "TokenExpiration", sectionName, logger),
+		TokenSigningMethod: parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
+	}
+
+	return &BaseApiConfigProvider{
+		conf:   conf,
+		logger: logger,
+	}
+}
+
+type BaseApiConfigProvider struct {
+	conf   ApiConfig
+	mx     sync.RWMutex
+	logger zerolog.Logger
+}
+
+func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) error {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	sectionName := "api"
+	d, ok := parseUpdatedTimeDurationByStr(cfg.API.TokenExpiration, p.conf.TokenExpiration, "TokenExpiration", sectionName, p.logger)
+	if ok {
+		p.conf.TokenExpiration = d
+	}
+
+	m, ok := parseUpdatedJwtSigningMethod(cfg.API.TokenSigningMethod, p.conf.TokenSigningMethod, "TokenSigningMethod", sectionName, p.logger)
+	if ok {
+		p.conf.TokenSigningMethod = m
+	}
+
+	return nil
+}
+
+func (p *BaseApiConfigProvider) Get() ApiConfig {
 	p.mx.RLock()
 	defer p.mx.RUnlock()
 
@@ -583,7 +616,7 @@ func parseTimeDurationByStr(
 }
 
 func parseUpdatedTimeDurationByStr(
-	v string, oldValal time.Duration,
+	v string, oldVal time.Duration,
 	name, sectionName string,
 	logger zerolog.Logger,
 ) (time.Duration, bool) {
@@ -602,12 +635,12 @@ func parseUpdatedTimeDurationByStr(
 		return 0, false
 	}
 
-	if d == oldValal {
+	if d == oldVal {
 		return 0, false
 	}
 
 	logger.Info().
-		Str("previous", oldValal.String()).
+		Str("previous", oldVal.String()).
 		Str("new", d.String()).
 		Msgf("%s of %s config section is loaded", name, sectionName)
 
@@ -639,7 +672,7 @@ func parseTimeDurationBySeconds(
 
 func parseUpdatedTimeDurationBySeconds(
 	v int,
-	oldValal time.Duration,
+	oldVal time.Duration,
 	name, sectionName string,
 	logger zerolog.Logger,
 ) (time.Duration, bool) {
@@ -651,12 +684,12 @@ func parseUpdatedTimeDurationBySeconds(
 	}
 
 	d := time.Duration(v) * time.Second
-	if d == oldValal {
+	if d == oldVal {
 		return 0, false
 	}
 
 	logger.Info().
-		Str("previous", oldValal.String()).
+		Str("previous", oldVal.String()).
 		Str("new", d.String()).
 		Msgf("%s of %s config section is loaded", name, sectionName)
 
@@ -684,7 +717,7 @@ func parseInt(
 }
 
 func parseUpdatedInt(
-	v, oldValal int,
+	v, oldVal int,
 	name, sectionName string,
 	logger zerolog.Logger,
 	invalidMsg ...string,
@@ -701,12 +734,12 @@ func parseUpdatedInt(
 		return 0, false
 	}
 
-	if v == oldValal {
+	if v == oldVal {
 		return 0, false
 	}
 
 	logger.Info().
-		Int("previous", oldValal).
+		Int("previous", oldVal).
 		Int("new", v).
 		Msgf("%s of %s config section is loaded", name, sectionName)
 
@@ -873,4 +906,62 @@ func parseUpdatedLocation(
 		Msgf("%s of %s config section is loaded", name, sectionName)
 
 	return location, true
+}
+
+func parseJwtSigningMethod(
+	v string,
+	defaultVal jwt.SigningMethod,
+	name, sectionName string,
+	logger zerolog.Logger,
+) jwt.SigningMethod {
+	if v == "" {
+		logger.Error().
+			Str("default", defaultVal.Alg()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	m := jwt.GetSigningMethod(v)
+	if m == nil {
+		logger.Error().
+			Str("default", defaultVal.Alg()).
+			Str("invalid", v).
+			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	logger.Info().
+		Str("value", v).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return m
+}
+
+func parseUpdatedJwtSigningMethod(
+	v string,
+	oldVal jwt.SigningMethod,
+	name, sectionName string,
+	logger zerolog.Logger,
+) (jwt.SigningMethod, bool) {
+	if v == "" {
+		logger.Error().
+			Str("invalid", v).
+			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		return nil, false
+	}
+
+	m := jwt.GetSigningMethod(v)
+	if m.Alg() == oldVal.Alg() {
+		return nil, false
+	}
+
+	logger.Info().
+		Str("previous", oldVal.Alg()).
+		Str("new", v).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	return m, true
 }

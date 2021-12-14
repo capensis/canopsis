@@ -2,7 +2,7 @@
   div
     h2.text-xs-center.display-1.font-weight-medium.mt-3.mb-2
       slot {{ $t(`pageHeaders.${name}.title`) }}
-      v-btn(v-if="hasMessage", icon, @click="toggleMessageVisibility")
+      v-btn.mr-0(v-if="hasMessage", icon, @click="toggleMessageVisibility")
         v-icon(color="info") help_outline
     v-expand-transition
       div(v-if="hasMessage && shownMessage")
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { get } from 'lodash';
+import { get, isFunction } from 'lodash';
 
 import { DOCUMENTATION_BASE_URL } from '@/config';
 import { DOCUMENTATION_LINKS } from '@/constants';
@@ -28,7 +28,11 @@ export default {
     name: {
       type: String,
       default() {
-        return get(this.$route, 'meta.requiresPermission.id');
+        const name = get(this.$route, 'meta.requiresPermission.id');
+
+        return isFunction(name)
+          ? name(this.$route)
+          : name;
       },
     },
   },

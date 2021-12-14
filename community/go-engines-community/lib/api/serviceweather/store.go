@@ -17,7 +17,6 @@ import (
 	pbehaviorlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -33,8 +32,7 @@ func NewStore(
 	legacyURL fmt.Stringer,
 	statsStore StatsStore,
 	timezoneConfigProvider config.TimezoneConfigProvider,
-	pbhStore redis.Store,
-	pbhService pbehaviorlib.Service,
+	entityTypeResolver pbehaviorlib.EntityTypeResolver,
 ) Store {
 	return &store{
 		dbCollection:           dbClient.Collection(mongo.EntityMongoCollection),
@@ -43,8 +41,7 @@ func NewStore(
 		defaultSortBy:          "name",
 		links:                  alarmapi.NewLinksFetcher(legacyURL, linkFetchTimeout),
 		timezoneConfigProvider: timezoneConfigProvider,
-		pbhStore:               pbhStore,
-		pbhService:             pbhService,
+		entityTypeResolver:     entityTypeResolver,
 	}
 }
 
@@ -55,8 +52,7 @@ type store struct {
 	statsStore             StatsStore
 	defaultSortBy          string
 	timezoneConfigProvider config.TimezoneConfigProvider
-	pbhStore               redis.Store
-	pbhService             pbehaviorlib.Service
+	entityTypeResolver     pbehaviorlib.EntityTypeResolver
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -198,6 +194,7 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 
 	pbhIDs := make([]string, 0)
 	entitiesWithoutPbh := make([]int, 0, len(res.Data))
+	entityIDs := make([]string, 0, len(res.Data))
 	for idx, v := range res.Data {
 		if v.PbehaviorInfo.ID != "" {
 			pbhIDs = append(pbhIDs, v.PbehaviorInfo.ID)
@@ -209,41 +206,44 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 
 		if v.PbehaviorInfo.ID == "" && !res.Data[idx].IsGrey {
 			entitiesWithoutPbh = append(entitiesWithoutPbh, idx)
+			entityIDs = append(entityIDs, v.ID)
 		}
 	}
 
-	pbhRestored, err := s.pbhStore.Restore(ctx, s.pbhService)
-	if err == nil && pbhRestored {
+	now := time.Now().In(s.timezoneConfigProvider.Get().Location)
 
-		now := time.Now().In(s.timezoneConfigProvider.Get().Location)
-
-		for _, idx := range entitiesWithoutPbh {
-			infos := make(map[string]libtypes.Info, len(res.Data[idx].Infos))
-			for k, v := range res.Data[idx].Infos {
-				infos[k] = libtypes.Info{
-					Description: v.Description,
-					Value:       v.Value,
-				}
-			}
-			entity := libtypes.NewEntity(res.Data[idx].ID, res.Data[idx].Name, res.Data[idx].Type, infos, nil, nil)
-			result, err := s.pbhService.Resolve(ctx, &entity, now)
-			if err != nil && !errors.Is(err, pbehaviorlib.ErrRecomputeNeed) {
-				return nil, err
-			}
-			if result.ResolvedPbhID != "" {
-				res.Data[idx].PbehaviorInfo = libtypes.PbehaviorInfo{
-					ID:            result.ResolvedPbhID,
-					Name:          result.ResolvedPbhName,
-					Reason:        result.ResolvedPbhReason,
-					TypeID:        result.ResolvedType.ID,
-					TypeName:      result.ResolvedType.Name,
-					CanonicalType: result.ResolvedType.Type,
-				}
-				res.Data[idx].IsGrey = true
-				pbhIDs = append(pbhIDs, result.ResolvedPbhID)
-			}
+	resolveResult, err := s.entityTypeResolver.ResolveAll(ctx, entityIDs, now)
+	if err != nil {
+		if errors.Is(err, pbehaviorlib.ErrNoComputed) || errors.Is(err, pbehaviorlib.ErrRecomputeNeed) {
+			return nil, nil
 		}
 
+		return nil, err
+	}
+
+	for _, idx := range entitiesWithoutPbh {
+		infos := make(map[string]libtypes.Info, len(res.Data[idx].Infos))
+		for k, v := range res.Data[idx].Infos {
+			infos[k] = libtypes.Info{
+				Description: v.Description,
+				Value:       v.Value,
+			}
+		}
+		entityID := res.Data[idx].ID
+		result := resolveResult[entityID]
+
+		if result.ResolvedPbhID != "" {
+			res.Data[idx].PbehaviorInfo = libtypes.PbehaviorInfo{
+				ID:            result.ResolvedPbhID,
+				Name:          result.ResolvedPbhName,
+				Reason:        result.ResolvedPbhReason,
+				TypeID:        result.ResolvedType.ID,
+				TypeName:      result.ResolvedType.Name,
+				CanonicalType: result.ResolvedType.Type,
+			}
+			res.Data[idx].IsGrey = true
+			pbhIDs = append(pbhIDs, result.ResolvedPbhID)
+		}
 	}
 
 	pbhs, err := s.findPbehaviors(ctx, pbhIDs)
@@ -595,6 +595,10 @@ func getFindEntitiesPipeline() []bson.M {
 			"let":  bson.M{"eid": "$_id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$d", "$$eid"}}}},
+				{"$match": bson.M{"$or": []bson.M{
+					{"v.resolved": bson.M{"$in": bson.A{false, nil}}},
+					{"v.resolved": bson.M{"$exists": false}},
+				}}},
 				{"$sort": bson.M{"v.creation_date": -1}},
 				{"$limit": 1},
 			},
