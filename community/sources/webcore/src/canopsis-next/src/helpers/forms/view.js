@@ -143,18 +143,6 @@ export const groupWithViewsToPositions = (group = {}) => ({ _id: group._id, view
 export const groupsWithViewsToPositions = (groups = []) => groups.map(groupWithViewsToPositions);
 
 /**
- * Convert view to exported view.
- *
- * @param {View} view
- * @return {ExportedView}
- */
-export const viewToExportedView = view => ({
-  ...view,
-
-  exported: true,
-});
-
-/**
  * Convert Group to export group entity.
  *
  * @param {ViewGroupWithViews} group
@@ -162,12 +150,10 @@ export const viewToExportedView = view => ({
  * @return {ExportedViewGroup}
  */
 export const groupToExportedGroup = (group, exportedViewIds = []) => ({
-  ...group,
-
-  exported: true,
-  views: group.views.reduce((acc, view) => {
+  _id: group._id,
+  views: group.views.filter((acc, view) => {
     if (exportedViewIds.includes(view._id)) {
-      acc.push(viewToExportedView(view));
+      acc.push(view._id);
     }
 
     return acc;
@@ -189,7 +175,7 @@ export const getExportedGroupsAndViews = ({ groups, views }) => {
     groups: groups.map(group => groupToExportedGroup(group, viewsIds)),
     views: views.reduce((acc, view) => {
       if (!groupsIds.includes(view.group._id)) {
-        acc.push(viewToExportedView(view));
+        acc.push(view._id);
       }
 
       return acc;

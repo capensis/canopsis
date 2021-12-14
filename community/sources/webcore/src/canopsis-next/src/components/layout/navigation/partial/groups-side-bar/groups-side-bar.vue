@@ -51,7 +51,7 @@ import { groupSchema } from '@/store/schemas';
 import { isDeepOrderChanged } from '@/helpers/dragdrop';
 import { groupsWithViewsToPositions } from '@/helpers/forms/view';
 
-import entitiesViewMixin from '@/mixins/entities/view';
+import { entitiesViewMixin } from '@/mixins/entities/view';
 import layoutNavigationGroupsBarMixin from '@/mixins/layout/navigation/groups-bar';
 import { registrableMixin } from '@/mixins/registrable';
 
