@@ -44,25 +44,22 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 
 	err := w.AlarmStatusService.Load(ctx)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("cannot load alarm status rules")
+		w.Logger.Err(err).Msg("cannot load alarm status rules")
 	}
 
 	alarmConfig := w.AlarmConfigProvider.Get()
 	if alarmConfig.TimeToKeepResolvedAlarms > 0 {
-		w.Logger.Debug().Msg("Delete outdated resolved alarms")
-
 		err := w.AlarmAdapter.DeleteResolvedAlarms(ctx, alarmConfig.TimeToKeepResolvedAlarms)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("cannot delete resolved alarms")
+			w.Logger.Err(err).Msg("cannot delete resolved alarms")
 			return
 		}
 	}
 
 	// Resolve the alarms whose state is info.
-	w.Logger.Debug().Msg("Closing alarms")
 	closed, err := w.AlarmService.ResolveClosed(ctx)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("cannot resolve ok alarms")
+		w.Logger.Err(err).Msg("cannot resolve ok alarms")
 		return
 	}
 
@@ -70,26 +67,23 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 	// Note that this may unsnooze some alarms, but it will not resolve any.
 	// This is the reason why the snoozedResolved alarms are not added to the
 	// resolvedAlarms slice.
-	w.Logger.Debug().Msg("Resolve snooze")
 	unsnoozedAlarms, err := w.AlarmService.ResolveSnoozes(ctx, alarmConfig)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("cannot unsnooze alarms")
+		w.Logger.Err(err).Msg("cannot unsnooze alarms")
 		return
 	}
 
 	// Resolve the alarms marked as canceled.
-	w.Logger.Debug().Msg("Resolve cancel")
 	cancelResolved, err := w.AlarmService.ResolveCancels(ctx, alarmConfig)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("cannot resolve canceled alarms")
+		w.Logger.Err(err).Msg("cannot resolve canceled alarms")
 		return
 	}
 
 	// Resolve the alarms marked as done.
-	w.Logger.Debug().Msg("Resolve done")
 	doneResolved, err := w.AlarmService.ResolveDone(ctx)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("cannot resolve done alarms")
+		w.Logger.Err(err).Msg("cannot resolve done alarms")
 		return
 	}
 
@@ -98,20 +92,11 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 	// resolve any.
 	// This is the reason why the statusUpdated alarms are not added to the
 	// resolvedAlarms slice.
-	w.Logger.Debug().Msg("Update flapping alarms")
 	statusUpdated, err := w.AlarmService.UpdateFlappingAlarms(ctx)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("cannot update flapping alarms")
+		w.Logger.Err(err).Msg("cannot update flapping alarms")
 		return
 	}
-
-	w.Logger.Info().
-		Int("closed", len(closed)).
-		Int("unsnoozed", len(unsnoozedAlarms)).
-		Int("cancel_resolved", len(cancelResolved)).
-		Int("done_resolved", len(doneResolved)).
-		Int("flapping_updated", len(statusUpdated)).
-		Msg("updated alarms")
 
 	for _, alarm := range statusUpdated {
 		eventUpdateStatus := types.Event{
@@ -127,7 +112,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		eventUpdateStatus.SourceType = eventUpdateStatus.DetectSourceType()
 		err = w.publishToEngineFIFO(eventUpdateStatus)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("Failed publish update_status event to FIFO")
+			w.Logger.Err(err).Msg("cannot publish event")
 		}
 	}
 
@@ -143,7 +128,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		eventResolveClosed.SourceType = eventResolveClosed.DetectSourceType()
 		err = w.publishToEngineFIFO(eventResolveClosed)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("Failed publish resolve_close event to FIFO")
+			w.Logger.Err(err).Msg("cannot publish event")
 		}
 	}
 
@@ -159,7 +144,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		eventResolveCancel.SourceType = eventResolveCancel.DetectSourceType()
 		err = w.publishToEngineFIFO(eventResolveCancel)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("Failed publish resolve_cancel event to FIFO")
+			w.Logger.Err(err).Msg("cannot publish event")
 		}
 	}
 
@@ -175,7 +160,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		eventResolveDone.SourceType = eventResolveDone.DetectSourceType()
 		err = w.publishToEngineFIFO(eventResolveDone)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("Failed publish resolve_done event to FIFO")
+			w.Logger.Err(err).Msg("cannot publish event")
 		}
 	}
 
@@ -191,18 +176,18 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		eventUnsnooze.SourceType = eventUnsnooze.DetectSourceType()
 		err = w.publishToEngineFIFO(eventUnsnooze)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("Failed publish unsnooze event to FIFO")
+			w.Logger.Err(err).Msg("cannot publish event")
 		}
 	}
 
 	events, err := w.IdleAlarmService.Process(idleCtx)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("Failed process idle rules")
+		w.Logger.Err(err).Msg("cannot process idle rules")
 	}
 	for _, event := range events {
 		err = w.publishToEngineFIFO(event)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("Failed publish idle event to FIFO")
+			w.Logger.Err(err).Msg("cannot publish event")
 		}
 	}
 
@@ -212,7 +197,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 func (w *periodicalWorker) publishToEngineFIFO(event types.Event) error {
 	bevent, err := w.Encoder.Encode(event)
 	if err != nil {
-		return fmt.Errorf("publishEvent(): error while encoding event %+v", err)
+		return fmt.Errorf("cannot encode event : %w", err)
 	}
 	return errt.NewIOError(w.ChannelPub.Publish(
 		"",

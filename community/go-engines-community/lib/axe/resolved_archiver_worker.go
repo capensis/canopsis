@@ -38,7 +38,7 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) {
 
 	conf, err := w.LimitConfigAdapter.Get(ctx)
 	if err != nil {
-		w.Logger.Err(err).Msg("fail to retrieve data storage config")
+		w.Logger.Err(err).Msg("cannot retrieve data storage config")
 		return
 	}
 	//Skip if already executed today.
@@ -58,7 +58,9 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) {
 			return
 		}
 
-		w.Logger.Info().Int64("alarm number", archived).Msg("resolved alarm archiving")
+		if archived > 0 {
+			w.Logger.Info().Int64("alarm number", archived).Msg("resolved alarm archiving")
+		}
 	}
 
 	deleteAfter := conf.Config.Alarm.DeleteAfter
@@ -67,7 +69,10 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) {
 		deleted, err = w.AlarmAdapter.DeleteArchivedResolvedAlarms(ctx, deleteAfter.SubFrom(now))
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot delete resolved alarms")
-		} else if deleted > 0 {
+			return
+		}
+
+		if deleted > 0 {
 			w.Logger.Info().Int64("alarm number", deleted).Msg("resolved alarm removing")
 		}
 	}
