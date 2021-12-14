@@ -18,7 +18,7 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
 ### Dernières versions
 
-*  [Canopsis 4.4.0](notes-de-version/4.4.0.md), publié le xx novembre 2021.
+*  [Canopsis 4.4.0](notes-de-version/4.4.0.md), publié le 14 décembre 2021.
 *  [Canopsis 4.3.6](notes-de-version/4.3.6.md), publié le 13 décembre 2021.
 *  [Canopsis 4.3.5](notes-de-version/4.3.5.md), publié le 10 décembre 2021.
 *  [Canopsis 4.3.4](notes-de-version/4.3.4.md), publié le 23 novembre 2021.
