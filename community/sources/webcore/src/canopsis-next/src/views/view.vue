@@ -132,7 +132,7 @@ import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 import { authMixin } from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
-import entitiesViewMixin from '@/mixins/entities/view';
+import { entitiesViewMixin } from '@/mixins/entities/view';
 import periodicRefreshMixin from '@/mixins/view/periodic-refresh';
 import { scrollToTopMixin } from '@/mixins/scroll-to-top';
 

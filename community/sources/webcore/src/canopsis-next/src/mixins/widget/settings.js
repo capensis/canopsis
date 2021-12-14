@@ -6,7 +6,7 @@ import { viewToRequest } from '@/helpers/forms/view';
 
 import queryMixin from '@/mixins/query';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
-import entitiesViewMixin from '@/mixins/entities/view';
+import { entitiesViewMixin } from '@/mixins/entities/view';
 
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';

@@ -5,7 +5,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('view');
 /**
  * @mixin Helpers for the view entity
  */
-export default {
+export const entitiesViewMixin = {
   computed: {
     ...mapGetters({
       viewId: 'itemId',

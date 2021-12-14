@@ -19,7 +19,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import entitiesViewMixin from '@/mixins/entities/view';
+import { entitiesViewMixin } from '@/mixins/entities/view';
 
 export default {
   mixins: [entitiesViewMixin],

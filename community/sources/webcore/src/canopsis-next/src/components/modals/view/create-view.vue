@@ -36,7 +36,7 @@ import { viewToForm, viewToRequest } from '@/helpers/forms/view';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import entitiesViewMixin from '@/mixins/entities/view';
+import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
