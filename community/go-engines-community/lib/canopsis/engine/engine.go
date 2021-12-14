@@ -123,10 +123,7 @@ func (e *engine) runPeriodicalWorker(
 	for {
 		select {
 		case <-ticker.C:
-			err := worker.Work(ctx)
-			if err != nil {
-				return fmt.Errorf("periodical worker failed: %w", err)
-			}
+			worker.Work(ctx)
 
 			newInterval := worker.GetInterval()
 			if newInterval != interval {

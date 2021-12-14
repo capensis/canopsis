@@ -35,7 +35,7 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *periodicalWorker) Work(parentCtx context.Context) error {
+func (w *periodicalWorker) Work(parentCtx context.Context) {
 	ctx, task := trace.NewTask(parentCtx, "axe.PeriodicalProcess")
 	defer task.End()
 
@@ -54,7 +54,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) error {
 		err := w.AlarmAdapter.DeleteResolvedAlarms(ctx, alarmConfig.TimeToKeepResolvedAlarms)
 		if err != nil {
 			w.Logger.Error().Err(err).Msg("cannot delete resolved alarms")
-			return nil
+			return
 		}
 	}
 
@@ -63,7 +63,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) error {
 	closed, err := w.AlarmService.ResolveClosed(ctx)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("cannot resolve ok alarms")
-		return nil
+		return
 	}
 
 	// Process the snoozed alarms.
@@ -74,7 +74,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) error {
 	unsnoozedAlarms, err := w.AlarmService.ResolveSnoozes(ctx, alarmConfig)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("cannot unsnooze alarms")
-		return nil
+		return
 	}
 
 	// Resolve the alarms marked as canceled.
@@ -82,7 +82,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) error {
 	cancelResolved, err := w.AlarmService.ResolveCancels(ctx, alarmConfig)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("cannot resolve canceled alarms")
-		return nil
+		return
 	}
 
 	// Resolve the alarms marked as done.
@@ -90,7 +90,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) error {
 	doneResolved, err := w.AlarmService.ResolveDone(ctx)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("cannot resolve done alarms")
-		return nil
+		return
 	}
 
 	// Process the flapping alarms.
@@ -102,7 +102,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) error {
 	statusUpdated, err := w.AlarmService.UpdateFlappingAlarms(ctx)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("cannot update flapping alarms")
-		return nil
+		return
 	}
 
 	w.Logger.Info().
@@ -206,7 +206,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) error {
 		}
 	}
 
-	return nil
+	return
 }
 
 func (w *periodicalWorker) publishToEngineFIFO(event types.Event) error {

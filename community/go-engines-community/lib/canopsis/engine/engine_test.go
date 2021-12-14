@@ -101,36 +101,6 @@ func TestEngine_Run_GivenConsumer_ShouldRunIt(t *testing.T) {
 	}
 }
 
-func TestEngine_Run_GivenErrorOnPeriodicalProcess_ShouldStopEngine(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	done := make(chan bool)
-	defer close(done)
-
-	mockPeriodicalWorker := mock_engine.NewMockPeriodicalWorker(ctrl)
-	expectedErr := &testErr{msg: "test error"}
-	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval)
-	mockPeriodicalWorker.EXPECT().Work(gomock.Any()).Return(expectedErr)
-
-	engine := libengine.New(nil, nil, zerolog.Logger{})
-	engine.AddPeriodicalWorker(mockPeriodicalWorker)
-
-	var err error
-	go func() {
-		err = engine.Run(ctx)
-		done <- true
-	}()
-
-	waitDone(t, done)
-
-	testErr := &testErr{}
-	if !errors.As(err, &testErr) || testErr.Error() != expectedErr.Error() {
-		t.Errorf("expected error %v but got %v", expectedErr, err)
-	}
-}
-
 func TestEngine_Run_GivenErrorOnConsumer_ShouldStopEngine(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
