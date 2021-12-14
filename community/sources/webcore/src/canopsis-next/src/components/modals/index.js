@@ -117,6 +117,10 @@ export const TextFieldEditor = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/text-field-editor.vue'),
   loading: ModalLoaderOverlay,
 });
+export const ConfirmationPhrase = () => ({
+  component: import(/* webpackChunkName: "Common" */ './common/confirmation-phrase.vue'),
+  loading: ModalLoaderOverlay,
+});
 export const ImageViewer = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/image-viewer.vue'),
   loading: ModalLoaderOverlay,
