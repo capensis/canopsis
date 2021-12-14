@@ -1,8 +1,11 @@
-import request from '@/services/request';
-import i18n from '@/i18n';
-import schemas from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
+
+import i18n from '@/i18n';
+
+import request from '@/services/request';
+
+import schemas from '@/store/schemas';
 
 import commentModule from './comment';
 import entitiesModule from './entities';
@@ -96,6 +99,10 @@ export default {
 
         console.error(err);
       }
+    },
+
+    fetchListByEntityIdWithoutStore(context, { id }) {
+      return request.get(API_ROUTES.pbehavior.pbehaviorById, { params: { id } });
     },
 
     async create({ dispatch }, { data }) {
