@@ -210,11 +210,10 @@ func (s *service) statDuration(statName string, timestamp types.CpsTime, duratio
 	event.Entity = &entity
 	event.Author = author
 
-	duration_seconds := types.CpsNumber(duration.Seconds())
 	event.EventType = types.EventTypeStatDuration
 	event.Timestamp = timestamp
 	event.StatName = statName
-	event.Duration = &duration_seconds
+	event.Duration = types.CpsNumber(duration.Seconds())
 
 	return s.sendEvent(event)
 }
@@ -225,11 +224,10 @@ func (s *service) statStateInterval(statName string, timestamp types.CpsTime, du
 	event.Entity = &entity
 	event.Author = author
 
-	duration_seconds := types.CpsNumber(duration.Seconds())
 	event.EventType = types.EventTypeStatStateInterval
 	event.Timestamp = timestamp
 	event.StatName = statName
-	event.Duration = &duration_seconds
+	event.Duration = types.CpsNumber(duration.Seconds())
 	event.State = state
 
 	return s.sendEvent(event)
