@@ -95,17 +95,37 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', ge
  * @returns {Schedule}
  */
 export function getScheduleForSpan(span) {
+  const SECONDS_IN_DAY = Constants.MINUTES_IN_DAY * Constants.SECOND_MAX;
+  const SECONDS_IN_HOUR = Constants.MINUTES_IN_HOUR * Constants.SECOND_MAX;
   const { start } = span;
-  const minutes = span.minutes(Op.UP);
-  const isDay = (minutes % Constants.MINUTES_IN_DAY) === 0;
+  const seconds = span.seconds(Op.UP);
 
-  if (isDay && span.start.isStart()) {
+  /**
+   * We need to use it if we have the end of day or hour with remainder of the division equals 59
+   */
+  const roundedSeconds = seconds + 1;
+  const isDay = (seconds % SECONDS_IN_DAY) === 0
+    || (roundedSeconds % SECONDS_IN_DAY) === 0;
+
+  if (isDay && start.isStart()) {
     return Schedule.forDay(start, span.days(Op.UP));
   }
 
-  const isHour = (minutes % Constants.MINUTES_IN_HOUR) === 0;
-  const duration = isHour ? minutes / Constants.MINUTES_IN_HOUR : minutes;
-  const durationUnit = isHour ? 'hours' : 'minutes';
+  const isHour = (seconds % SECONDS_IN_HOUR) === 0
+    || (roundedSeconds % SECONDS_IN_HOUR) === 0;
+
+  const isMinute = !isHour && (seconds % Constants.SECOND_MAX === 0);
+
+  let duration = seconds;
+  let durationUnit = 'seconds';
+
+  if (isHour) {
+    duration = Math.ceil(seconds / SECONDS_IN_HOUR);
+    durationUnit = 'hours';
+  } else if (isMinute) {
+    duration = Math.ceil(seconds / Constants.SECOND_MAX);
+    durationUnit = 'minutes';
+  }
 
   return Schedule.forTime(start, start.asTime(), duration, durationUnit);
 }

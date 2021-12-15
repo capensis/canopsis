@@ -36,6 +36,10 @@ func (e *ackExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	if alarm.Value.ACK != nil {
 		return "", nil
 	}
