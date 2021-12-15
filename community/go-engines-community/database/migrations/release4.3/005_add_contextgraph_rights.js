@@ -4,6 +4,7 @@ db.default_rights.insertMany([
         loader_id: "api_contextgraph",
         crecord_name: "api_contextgraph",
         crecord_type: "action",
+        desc: "Context graph import",
         type: "CRUD"
     },
 ]);
