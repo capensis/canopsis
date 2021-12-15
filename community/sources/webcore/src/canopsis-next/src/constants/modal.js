@@ -81,4 +81,5 @@ export const MODALS = {
   healthcheckEngine: 'healthcheck-engine',
   healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
   patterns: 'patterns',
+  info: 'info',
 };
