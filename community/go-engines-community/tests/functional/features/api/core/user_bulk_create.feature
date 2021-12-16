@@ -42,7 +42,44 @@ Feature: Create a user
       }
     ]
     """
-    Then the response code should be 204
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "id": "test-user-to-bulk-create-1-name",
+        "status": 200,
+        "item": {
+          "name": "test-user-to-bulk-create-1-name",
+          "firstname": "test-user-to-bulk-create-1-firstname",
+          "lastname": "test-user-to-bulk-create-1-lastname",
+          "email": "test-user-to-bulk-create-1-email@canopsis.net",
+          "role": "test-role-to-edit-user",
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "enable": true,
+          "defaultview": "test-view-to-edit-user",
+          "password": "test-password"
+        }
+      },
+      {
+        "id": "test-user-to-bulk-create-2-name",
+        "status": 200,
+        "item": {
+          "name": "test-user-to-bulk-create-2-name",
+          "firstname": "test-user-to-bulk-create-2-firstname",
+          "lastname": "test-user-to-bulk-create-2-lastname",
+          "email": "test-user-to-bulk-create-2-email@canopsis.net",
+          "role": "test-role-to-edit-user",
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "enable": true,
+          "defaultview": "test-view-to-edit-user",
+          "password": "test-password"
+        }
+      }
+    ]
+    """
     When I do GET /api/v4/users?search=test-user-to-bulk-create
     Then the response code should be 200
     Then the response body should contain:
@@ -180,19 +217,42 @@ Feature: Create a user
       }
     ]
     """
-    Then the response code should be 400
+    Then the response code should be 207
     Then the response body should contain:
     """json
-    {
-      "errors": {
-        "0.defaultview": "DefaultView doesn't exist.",
-        "0.email": "Email is missing.",
-        "0.enable": "IsEnabled is missing.",
-        "0.name": "Name is missing.",
-        "0.password": "Password is missing.",
-        "0.role": "Role doesn't exist.",
-        "1.name": "Name already exists.",
-        "2.name": "Name already exists."
+    [
+      {
+        "status": 400,
+        "item": {
+          "role": "not-exist",
+          "defaultview": "not-exist"
+        },
+        "errors": {
+          "defaultview": "DefaultView doesn't exist.",
+          "email": "Email is missing.",
+          "enable": "IsEnabled is missing.",
+          "name": "Name is missing.",
+          "password": "Password is missing.",
+          "role": "Role doesn't exist."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-check-unique-name-name"
+        },
+        "errors": {
+          "name": "Name already exists."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-check-unique-name"
+        },
+        "errors": {
+          "_id": "Id is missing."
+        }
       }
-    }
+    ]
     """

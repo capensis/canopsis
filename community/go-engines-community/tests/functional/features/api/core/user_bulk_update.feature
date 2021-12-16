@@ -50,7 +50,52 @@ Feature: Update a user
       }
     ]
     """
-    Then the response code should be 204
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "id": "test-user-to-bulk-update-1",
+        "status": 200,
+        "item": {
+          "_id": "test-user-to-bulk-update-1",
+          "name": "test-user-to-bulk-update-1-updated",
+          "firstname": "test-user-to-bulk-update-1-firstname-updated",
+          "lastname": "test-user-to-bulk-update-1-lastname-updated",
+          "email": "test-user-to-bulk-update-1-email-updated@canopsis.net",
+          "role": "test-role-to-edit-user",
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "enable": true,
+          "password": "test-password-updated",
+          "defaultview": "test-view-to-edit-user",
+          "ui_tours": {
+            "test-tour-to-bulk-update-user-1": true
+          }
+        }
+      },
+      {
+        "id": "test-user-to-bulk-update-2",
+        "status": 200,
+        "item": {
+          "_id": "test-user-to-bulk-update-2",
+          "name": "test-user-to-bulk-update-2-updated",
+          "firstname": "test-user-to-bulk-update-2-firstname-updated",
+          "lastname": "test-user-to-bulk-update-2-lastname-updated",
+          "email": "test-user-to-bulk-update-2-email-updated@canopsis.net",
+          "role": "test-role-to-edit-user",
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "password": "test-password-updated",
+          "enable": true,
+          "defaultview": "test-view-to-edit-user",
+          "ui_tours": {
+            "test-tour-to-bulk-update-user-2": true
+          }
+        }
+      }
+    ]
+    """
     When I do GET /api/v4/users?search=test-user-to-bulk-update
     Then the response code should be 200
     Then the response body should contain:
@@ -160,21 +205,45 @@ Feature: Update a user
       }
     ]
     """
-    Then the response code should be 400
+    Then the response code should be 207
     Then the response body should contain:
     """json
-    {
-      "errors": {
-        "0._id": "ID is missing.",
-        "0.defaultview": "DefaultView doesn't exist.",
-        "0.email": "Email is missing.",
-        "0.enable": "IsEnabled is missing.",
-        "0.name": "Name is missing.",
-        "0.role": "Role doesn't exist.",
-        "1._id": "ID is missing.",
-        "1.name": "Name already exists.",
-        "2._id": "ID is missing.",
-        "2.name": "Name already exists."
+    [
+      {
+        "status": 400,
+        "item": {
+          "role": "not-exist",
+          "defaultview": "not-exist"
+        },
+        "errors": {
+          "_id": "ID is missing.",
+          "defaultview": "DefaultView doesn't exist.",
+          "email": "Email is missing.",
+          "enable": "IsEnabled is missing.",
+          "name": "Name is missing.",
+          "password": "Password is missing.",
+          "role": "Role doesn't exist."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-check-unique-name-name"
+        },
+        "errors": {
+          "_id": "ID is missing.",
+          "name": "Name already exists."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-check-unique-name"
+        },
+        "errors": {
+          "_id": "ID is missing.",
+          "name": "Name already exists."
+        }
       }
-    }
+    ]
     """
