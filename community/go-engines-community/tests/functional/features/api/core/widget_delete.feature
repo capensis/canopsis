@@ -18,7 +18,7 @@ Feature: Delete a widget
     When I do DELETE /api/v4/widgets/test-widget-to-delete
     Then the response code should be 403
 
-  Scenario: given delete request and auth user without tab permission should not allow access
+  Scenario: given delete request and auth user without view permission should not allow access
     When I am admin
     When I do DELETE /api/v4/widgets/test-widget-to-check-access
     Then the response code should be 403

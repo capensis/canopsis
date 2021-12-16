@@ -160,7 +160,7 @@ Feature: Create a widget
     }
     """
 
-  Scenario: given create request and auth user without tab permission should not allow access
+  Scenario: given create request and auth user without view permission should not allow access
     When I am admin
     When I do POST /api/v4/widgets:
     """json

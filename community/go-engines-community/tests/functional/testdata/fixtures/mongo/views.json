@@ -424,5 +424,38 @@
     "position": 36,
     "created": 1611229670,
     "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-user-preferences-get",
+    "enabled": true,
+    "title": "test-view-to-user-preferences-get-title",
+    "description": "test-view-to-user-preferences-get-description",
+    "author": "test-author-to-user-preferences-get",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 37,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widgetfilter-edit",
+    "enabled": true,
+    "title": "test-view-to-widgetfilter-edit-title",
+    "description": "test-view-to-widgetfilter-edit-description",
+    "author": "test-author-to-widgetfilter-edit",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 38,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widgetfilter-check-access",
+    "enabled": true,
+    "title": "test-view-to-widgetfilter-check-access-title",
+    "description": "test-view-to-widgetfilter-check-access-description",
+    "author": "test-author-to-widgetfilter-check-access",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 39,
+    "created": 1611229670,
+    "updated": 1611229670
   }
 ]

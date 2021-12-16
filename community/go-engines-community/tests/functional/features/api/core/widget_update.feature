@@ -53,7 +53,7 @@ Feature: Update a widget
     When I do PUT /api/v4/widgets/test-widget-to-update
     Then the response code should be 403
 
-  Scenario: given update request and auth user without tab permission should not allow access
+  Scenario: given update request and auth user without view permission should not allow access
     When I am admin
     When I do PUT /api/v4/widgets/test-widget-to-check-access:
     """json
@@ -96,7 +96,7 @@ Feature: Update a widget
     """
     Then the response code should be 403
 
-  Scenario: given update request and auth user without tab permission should not allow access
+  Scenario: given update request and auth user without view permission should not allow access
     When I am admin
     When I do PUT /api/v4/widgets/test-widget-to-update:
     """json

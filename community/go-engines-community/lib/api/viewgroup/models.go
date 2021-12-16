@@ -1,10 +1,9 @@
 package viewgroup
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 )
 
 type ListRequest struct {
@@ -51,10 +50,22 @@ type View struct {
 type Tab struct {
 	ID      string         `bson:"_id" json:"_id,omitempty"`
 	Title   string         `bson:"title" json:"title"`
-	Widgets []view.Widget  `bson:"widgets" json:"widgets,omitempty"`
+	Widgets []Widget       `bson:"widgets" json:"widgets,omitempty"`
 	Author  string         `bson:"author" json:"author,omitempty"`
 	Created *types.CpsTime `bson:"created" json:"created,omitempty"`
 	Updated *types.CpsTime `bson:"updated" json:"updated,omitempty"`
+}
+
+type Widget struct {
+	ID             string                 `bson:"_id" json:"_id,omitempty"`
+	Title          string                 `bson:"title" json:"title"`
+	Type           string                 `bson:"type" json:"type"`
+	GridParameters map[string]interface{} `bson:"grid_parameters" json:"grid_parameters"`
+	Parameters     view.Parameters        `bson:"parameters" json:"parameters"`
+	Filters        []view.Filter          `bson:"filters" json:"filters"`
+	Author         string                 `bson:"author" json:"author,omitempty"`
+	Created        *types.CpsTime         `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated        *types.CpsTime         `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type AggregationResult struct {

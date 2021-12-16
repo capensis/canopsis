@@ -8245,6 +8245,195 @@ var doc = `{
                 }
             }
         },
+        "/widget-filters": {
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create widget filter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "widgetfilters"
+                ],
+                "summary": "Create widget filter",
+                "operationId": "widgetfilters-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/widgetfilter.CreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/view.Filter"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/widget-filters/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get widget filter by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "widgetfilters"
+                ],
+                "summary": "Get widget filter by id",
+                "operationId": "widgetfilters-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "filter id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/view.Filter"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update widget filter by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "widgetfilters"
+                ],
+                "summary": "Update widget filter by id",
+                "operationId": "widgetfilters-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "filter id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/widgetfilter.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/view.Filter"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete widget filter by id",
+                "tags": [
+                    "widgetfilters"
+                ],
+                "summary": "Delete widget filter by id",
+                "operationId": "widgetfilters-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "filter id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/widget-positions": {
             "put": {
                 "security": [
@@ -13521,6 +13710,12 @@ var doc = `{
                     "type": "object",
                     "additionalProperties": true
                 },
+                "filters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/view.Filter"
+                    }
+                },
                 "widget": {
                     "type": "string"
                 }
@@ -13627,6 +13822,29 @@ var doc = `{
                 }
             }
         },
+        "view.Filter": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "query": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
         "view.ImportRequest": {
             "type": "object",
             "required": [
@@ -13650,6 +13868,9 @@ var doc = `{
                 "is_api": {
                     "description": "Junit",
                     "type": "boolean"
+                },
+                "main_filter": {
+                    "type": "string"
                 },
                 "report_fileregexp": {
                     "type": "string"
@@ -13759,7 +13980,7 @@ var doc = `{
                 "widgets": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/view.Widget"
+                        "$ref": "#/definitions/viewgroup.Widget"
                     }
                 }
             }
@@ -13839,6 +14060,43 @@ var doc = `{
                 }
             }
         },
+        "viewgroup.Widget": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "filters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/view.Filter"
+                    }
+                },
+                "grid_parameters": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "parameters": {
+                    "type": "object",
+                    "$ref": "#/definitions/view.Parameters"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
         "viewtab.EditRequest": {
             "type": "object",
             "required": [
@@ -13877,6 +14135,44 @@ var doc = `{
                     "type": "string"
                 },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "widgetfilter.CreateRequest": {
+            "type": "object",
+            "required": [
+                "personal",
+                "query",
+                "title",
+                "widget"
+            ],
+            "properties": {
+                "personal": {
+                    "type": "boolean"
+                },
+                "query": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "widget": {
+                    "type": "string"
+                }
+            }
+        },
+        "widgetfilter.EditRequest": {
+            "type": "object",
+            "required": [
+                "query",
+                "title"
+            ],
+            "properties": {
+                "query": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 }
             }
