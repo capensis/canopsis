@@ -31,6 +31,15 @@ type EventFilter struct {
 	EventFilterPayload `bson:",inline"`
 }
 
+type BulkUpdateRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+	EventFilterPayload
+}
+
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
 type FilteredQuery struct {
 	pagination.FilteredQuery
 	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id author priority created updated on_success on_failure"`

@@ -1014,6 +1014,28 @@ func RegisterRoutes(
 				)
 			}
 
+			eventFilterRouter := bulkRouter.Group("/eventfilters")
+			{
+				eventFilterRouter.POST(
+					"",
+					middleware.Authorize(authObjView, permCreate, enforcer),
+					middleware.PreProcessBulk(conf),
+					eventFilterApi.BulkCreate,
+				)
+				eventFilterRouter.PUT(
+					"",
+					middleware.Authorize(authObjView, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf),
+					eventFilterApi.BulkUpdate,
+				)
+				eventFilterRouter.DELETE(
+					"",
+					middleware.Authorize(authObjView, permDelete, enforcer),
+					middleware.PreProcessBulk(conf),
+					eventFilterApi.BulkDelete,
+				)
+			}
+
 			userRouter := bulkRouter.Group("/users")
 			{
 				userRouter.POST(

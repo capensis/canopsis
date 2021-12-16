@@ -231,7 +231,11 @@ func RegisterValidators(client mongo.DbClient) {
 	v.RegisterStructValidation(stateSettingsValidator.ValidateStateThresholds, statesettings.StateThresholds{})
 
 	eventfilterValidator := eventfilter.NewValidator(client)
-	v.RegisterStructValidationCtx(eventfilterValidator.Validate, eventfilter.EventFilter{})
+	eventfilterExistIdValidator := common.NewUniqueFieldValidator(client, mongo.EventFilterRulesMongoCollection, "ID")
+	v.RegisterStructValidationCtx(eventfilterValidator.Validate, eventfilter.EventFilterPayload{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		eventfilterExistIdValidator.Validate(ctx, sl)
+	}, eventfilter.EventFilter{})
 
 	broadcastmessageValidator := broadcastmessage.NewValidator(client)
 	v.RegisterStructValidationCtx(broadcastmessageValidator.Validate, broadcastmessage.BroadcastMessage{})
