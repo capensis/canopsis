@@ -1,4 +1,6 @@
 (function () {
+    var tabIds = {};
+    var widgetIds = {};
     db.views.find().forEach(function (doc) {
         if (!doc.tabs) {
             return;
@@ -23,18 +25,34 @@
         }
 
         doc.tabs.forEach(function (tab) {
+            var tabId = tab._id;
+            if (tabIds[tabId] > 0) {
+                tabIds[tabId]++;
+                tabId += "_" + tabIds[tabId];
+            } else {
+                tabIds[tabId] = 1;
+            }
+
             if (tab.widgets) {
                 tab.widgets.forEach(function (widget) {
+                    var widgetId = widget._id;
+                    if (widgetIds[widgetId] > 0) {
+                        widgetIds[widgetId]++;
+                        widgetId += "_" + widgetIds[widgetId];
+                    } else {
+                        widgetIds[widgetId] = 1;
+                    }
+
                     if (widget.parameters.viewFilters) {
                         var mainFilterId = null;
 
                         var mainFilter = widget.parameters.mainFilter;
                         widget.parameters.viewFilters.forEach(function (filter, fi) {
-                            var filterId = widget._id + "filter_" + (fi+1);
+                            var filterId = widgetId + "_filter_" + (fi+1);
                             filters.push({
                                 _id: filterId,
                                 loader_id: filterId,
-                                widget: widget._id,
+                                widget: widgetId,
                                 title: filter.title,
                                 query: filter.filter,
                                 author: author,
@@ -55,8 +73,9 @@
                         }
                     }
 
-                    widget.loader_id = widget._id;
-                    widget.tab = tab._id;
+                    widget._id = widgetId;
+                    widget.loader_id = widgetId;
+                    widget.tab = tabId;
                     widget.author = author;
                     widget.created = created;
                     widget.updated = updated;
@@ -65,7 +84,8 @@
             }
 
             delete tab.widgets;
-            tab.loader_id = tab._id;
+            tab._id = tabId;
+            tab.loader_id = tabId;
             tab.view = doc._id;
             tab.author = author;
             tab.created = created;
@@ -83,7 +103,19 @@
         }
     });
 
-    db.userpreferences.find().forEach(function (doc) {
+    var userPrefWidgetIds = {};
+    db.userpreferences.find().sort({updated: -1, _id: 1}).forEach(function (doc) {
+        if (userPrefWidgetIds[doc.user]) {
+            if (userPrefWidgetIds[doc.user][doc.widget]) {
+                db.userpreferences.deleteOne({_id: doc._id});
+                return;
+            }
+        } else {
+            userPrefWidgetIds[doc.user] = {};
+        }
+
+        userPrefWidgetIds[doc.user][doc.widget] = true;
+
         var filters = [];
 
         var now = Math.ceil((new Date()).getTime() / 1000);
@@ -97,7 +129,7 @@
 
             var mainFilter = doc.content.mainFilter;
             doc.content.viewFilters.forEach(function (filter, fi) {
-                var filterId = doc.widget + "_" + doc.user + "filter_" + (fi+1);
+                var filterId = doc.widget + "_" + doc.user + "_filter_" + (fi+1);
                 filters.push({
                     _id: filterId,
                     loader_id: filterId,
