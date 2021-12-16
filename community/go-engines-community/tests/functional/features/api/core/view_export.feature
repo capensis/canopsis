@@ -49,6 +49,7 @@ Feature: Export views
                         "test-widget-to-view-export-1-gridparameter": "test-widget-to-view-export-1-gridparameter-value"
                       },
                       "parameters": {
+                        "main_filter": "test-widgetfilter-to-export-2",
                         "test-widget-to-view-export-1-parameter-1": {
                           "test-widget-to-view-export-1-parameter-1-subparameter": "test-widget-to-view-export-1-parameter-1-subvalue"
                         },
@@ -57,7 +58,19 @@ Feature: Export views
                             "test-widget-to-view-export-1-parameter-2-subparameter": "test-widget-to-view-export-1-parameter-2-subvalue"
                           }
                         ]
-                      }
+                      },
+                      "filters": [
+                        {
+                          "_id": "test-widgetfilter-to-export-1",
+                          "title": "test-widgetfilter-to-export-1-title",
+                          "query": "{\"test\":\"test\"}"
+                        },
+                        {
+                          "_id": "test-widgetfilter-to-export-2",
+                          "title": "test-widgetfilter-to-export-2-title",
+                          "query": "{\"test\":\"test\"}"
+                        }
+                      ]
                     }
                   ]
                 },

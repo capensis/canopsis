@@ -1,5 +1,7 @@
 package userpreferences
 
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
+
 type EditRequest struct {
 	Widget  string                 `json:"widget" binding:"required"`
 	Content map[string]interface{} `json:"content" binding:"required"`
@@ -8,4 +10,5 @@ type EditRequest struct {
 type Response struct {
 	Widget  string                 `bson:"widget" json:"widget"`
 	Content map[string]interface{} `bson:"content" json:"content"`
+	Filters []view.Filter          `bson:"filters" json:"filters"`
 }

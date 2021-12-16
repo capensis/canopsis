@@ -27,6 +27,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 		collection:         dbClient.Collection(mongo.WidgetMongoCollection),
 		tabCollection:      dbClient.Collection(mongo.ViewTabMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		filterCollection:   dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 	}
 }
 
@@ -34,6 +35,7 @@ type store struct {
 	collection         mongo.DbCollection
 	tabCollection      mongo.DbCollection
 	userPrefCollection mongo.DbCollection
+	filterCollection   mongo.DbCollection
 }
 
 func (s *store) FindViewIds(ctx context.Context, ids []string) (map[string]string, error) {
@@ -152,6 +154,11 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
+	err = s.deleteFilters(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
@@ -201,6 +208,14 @@ func (s *store) UpdatePositions(ctx context.Context, ids []string) (bool, error)
 
 func (s *store) deleteUserPreferences(ctx context.Context, widgetID string) error {
 	_, err := s.userPrefCollection.DeleteMany(ctx, bson.M{
+		"widget": widgetID,
+	})
+
+	return err
+}
+
+func (s *store) deleteFilters(ctx context.Context, widgetID string) error {
+	_, err := s.filterCollection.DeleteMany(ctx, bson.M{
 		"widget": widgetID,
 	})
 

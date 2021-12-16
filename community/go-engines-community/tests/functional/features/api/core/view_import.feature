@@ -33,6 +33,7 @@ Feature: Import views
                       "test-widget-to-view-import-1-gridparameter": "test-widget-to-view-import-1-gridparameter-value"
                     },
                     "parameters": {
+                      "main_filter": "test-widgetfilter-to-import-2",
                       "test-widget-to-view-import-1-parameter-1": {
                         "test-widget-to-view-import-1-parameter-1-subparameter": "test-widget-to-view-import-1-parameter-1-subvalue"
                       },
@@ -41,7 +42,19 @@ Feature: Import views
                           "test-widget-to-view-import-1-parameter-2-subparameter": "test-widget-to-view-import-1-parameter-2-subvalue"
                         }
                       ]
-                    }
+                    },
+                    "filters": [
+                      {
+                        "_id": "test-widgetfilter-to-import-1",
+                        "title": "test-widgetfilter-to-import-1-title",
+                        "query": "{\"test\":\"test\"}"
+                      },
+                      {
+                        "_id": "test-widgetfilter-to-import-2",
+                        "title": "test-widgetfilter-to-import-2-title",
+                        "query": "{\"test\":\"test\"}"
+                      }
+                    ]
                   }
                 ]
               },
@@ -136,6 +149,18 @@ Feature: Import views
                   }
                 ]
               },
+              "filters": [
+                {
+                  "title": "test-widgetfilter-to-import-1-title",
+                  "query": "{\"test\":\"test\"}",
+                  "author": "root"
+                },
+                {
+                  "title": "test-widgetfilter-to-import-2-title",
+                  "query": "{\"test\":\"test\"}",
+                  "author": "root"
+                }
+              ],
               "author": "root"
             }
           ],
@@ -145,6 +170,23 @@ Feature: Import views
           "title": "test-tab-to-import-1-2-title",
           "author": "root"
         }
+      ]
+    }
+    """
+    Then the response body should contain:
+    """json
+    {
+      "tabs": [
+        {
+          "widgets": [
+            {
+              "parameters": {
+                "main_filter": "{{ (index (index (index .lastResponse.tabs 0).widgets 0).filters 1)._id }}"
+              }
+            }
+          ]
+        },
+        {}
       ]
     }
     """

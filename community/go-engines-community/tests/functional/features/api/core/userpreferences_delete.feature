@@ -2,7 +2,7 @@ Feature: Delete user preferences on widget delete.
   I need to be able to delete user preferences.
 
   Scenario: given deleted view should delete user preferences
-    When I am test-role-to-user-preferences-delete-1
+    When I am test-role-to-user-preferences-edit
     When I do POST /api/v4/views:
     """json
     {
@@ -51,7 +51,8 @@ Feature: Delete user preferences on widget delete.
       "widget": "{{ .widgetID }}",
       "content": {
         "test": 1
-      }
+      },
+      "filters": []
     }
 	"""
     When I do DELETE /api/v4/views/{{ .viewID }}
@@ -60,7 +61,7 @@ Feature: Delete user preferences on widget delete.
     Then the response code should be 403
 
   Scenario: given deleted widget should delete user preferences
-    When I am test-role-to-user-preferences-delete-2
+    When I am test-role-to-user-preferences-edit
     When I do POST /api/v4/views:
     """json
     {
@@ -129,7 +130,8 @@ Feature: Delete user preferences on widget delete.
       "widget": "{{ .widget1ID }}",
       "content": {
         "test": 1
-      }
+      },
+      "filters": []
     }
 	"""
     When I do GET /api/v4/user-preferences/{{ .widget2ID }}
@@ -140,7 +142,8 @@ Feature: Delete user preferences on widget delete.
       "widget": "{{ .widget2ID }}",
       "content": {
         "test": 2
-      }
+      },
+      "filters": []
     }
 	"""
     When I do DELETE /api/v4/widgets/{{ .widget2ID }}
@@ -153,14 +156,15 @@ Feature: Delete user preferences on widget delete.
       "widget": "{{ .widget1ID }}",
       "content": {
         "test": 1
-      }
+      },
+      "filters": []
     }
 	"""
     When I do GET /api/v4/user-preferences/{{ .widget2ID }}
     Then the response code should be 403
 
   Scenario: given deleted tab should delete user preferences
-    When I am test-role-to-user-preferences-delete-3
+    When I am test-role-to-user-preferences-edit
     When I do POST /api/v4/views:
     """json
     {
@@ -209,7 +213,8 @@ Feature: Delete user preferences on widget delete.
       "widget": "{{ .widgetID }}",
       "content": {
         "test": 1
-      }
+      },
+      "filters": []
     }
 	"""
     When I do DELETE /api/v4/view-tabs/{{ .tabID }}

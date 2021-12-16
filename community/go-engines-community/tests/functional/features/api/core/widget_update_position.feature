@@ -82,7 +82,7 @@ Feature: Update widget positions
     When I do PUT /api/v4/widget-positions
     Then the response code should be 401
 
-  Scenario: given update request and auth user without tab permission should not allow access
+  Scenario: given update request and auth user without view permission should not allow access
     When I am noperms
     When I do PUT /api/v4/widget-positions
     Then the response code should be 403
