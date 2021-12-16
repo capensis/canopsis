@@ -19,9 +19,14 @@
         v-model="settings.widget.parameters.statsColors"
       )
       v-divider
+      field-stats-points-styles(
+        :stats="settings.widget.parameters.stats",
+        v-model="settings.widget.parameters.statsPointsStyles"
+      )
+      v-divider
       field-stats-annotation-line(v-model="settings.widget.parameters.annotationLine")
       v-divider
-    v-btn.primary(data-test="submitStatsHistogramButton", @click="submit") {{ $t('common.save') }}
+    v-btn.primary(data-test="statsCurvesSubmitButton", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -31,15 +36,16 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 
-import FieldTitle from './fields/common/title.vue';
-import FieldFilterEditor from './fields/common/filter-editor.vue';
-import FieldDateInterval from './fields/stats/date-interval.vue';
-import FieldStatsSelector from './fields/stats/stats-selector.vue';
-import FieldStatsColors from './fields/stats/stats-colors.vue';
-import FieldStatsAnnotationLine from './fields/stats/annotation-line.vue';
+import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
+import FieldFilterEditor from '@/components/sidebars/settings/fields/common/filter-editor.vue';
+import FieldDateInterval from '@/components/sidebars/settings/fields/stats/date-interval.vue';
+import FieldStatsSelector from '@/components/sidebars/settings/fields/stats/stats-selector.vue';
+import FieldStatsColors from '@/components/sidebars/settings/fields/stats/stats-colors.vue';
+import FieldStatsPointsStyles from '@/components/sidebars/settings/fields/stats/stats-points-style.vue';
+import FieldStatsAnnotationLine from '@/components/sidebars/settings/fields/stats/annotation-line.vue';
 
 export default {
-  name: SIDE_BARS.statsHistogramSettings,
+  name: SIDE_BARS.statsCurvesSettings,
   $_veeValidate: {
     validator: 'new',
   },
@@ -49,6 +55,7 @@ export default {
     FieldDateInterval,
     FieldStatsSelector,
     FieldStatsColors,
+    FieldStatsPointsStyles,
     FieldStatsAnnotationLine,
   },
   mixins: [widgetSettingsMixin],

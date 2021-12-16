@@ -49,12 +49,12 @@ import { SIDE_BARS, USERS_PERMISSIONS } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 
-import FieldTitle from './fields/common/title.vue';
-import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
-import FieldColumns from './fields/common/columns.vue';
-import FieldFilters from './fields/common/filters.vue';
-import FieldContextEntitiesTypesFilter from './fields/context/context-entities-types-filter.vue';
-import ExportCsvForm from './forms/export-csv.vue';
+import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
+import FieldDefaultSortColumn from '@/components/sidebars/settings/fields/common/default-sort-column.vue';
+import FieldColumns from '@/components/sidebars/settings/fields/common/columns.vue';
+import FieldFilters from '@/components/sidebars/settings/fields/common/filters.vue';
+import FieldContextEntitiesTypesFilter from '@/components/sidebars/settings/fields/context/context-entities-types-filter.vue';
+import ExportCsvForm from '@/components/sidebars/settings/forms/export-csv.vue';
 
 export default {
   name: SIDE_BARS.contextSettings,

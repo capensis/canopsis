@@ -35,7 +35,7 @@ import { MODALS } from '@/constants';
 
 import { saveJsonFile } from '@/helpers/file/files';
 import { getFileTextContent } from '@/helpers/file/file-select';
-import { getExportedGroupsAndViews } from '@/helpers/forms/view';
+import { getAllViewsFromGroups, exportedGroupsAndViewsToRequest } from '@/helpers/forms/view';
 
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
@@ -70,11 +70,7 @@ export default {
     },
 
     viewIds() {
-      return this.groups.reduce((acc, { views }) => {
-        acc.push(...views.map(({ _id }) => _id));
-
-        return acc;
-      }, []);
+      return getAllViewsFromGroups(this.groups).map(({ _id }) => _id);
     },
 
     isAllSelected: {
@@ -115,7 +111,7 @@ export default {
     },
 
     exportViews() {
-      const exportData = getExportedGroupsAndViews({
+      const data = exportedGroupsAndViewsToRequest({
         groups: this.selected.groups.map(this.getGroupById),
         views: this.selected.views.map(this.getViewById),
       });
@@ -124,7 +120,7 @@ export default {
        * TODO: put request
        */
 
-      saveJsonFile(exportData, `${EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX}${new Date().toLocaleString()}`);
+      saveJsonFile(data, `${EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX}${new Date().toLocaleString()}`);
 
       this.resetSelected();
     },

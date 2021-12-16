@@ -27,6 +27,7 @@ import Draggable from 'vuedraggable';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { getDuplicateEntityTitle } from '@/helpers/entities';
 import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
+import { getAllViewsFromGroups } from '@/helpers/forms/view';
 
 import DraggableGroupViews from './draggable-group-views.vue';
 import GroupPanel from './group-panel.vue';
@@ -72,11 +73,7 @@ export default {
     },
 
     allViewsList() {
-      return this.groups.reduce((ids, { views }) => {
-        ids.push(...views);
-
-        return ids;
-      }, []);
+      return getAllViewsFromGroups(this.groups);
     },
   },
   methods: {

@@ -21,13 +21,10 @@
 <script>
 import { MODALS, ROUTES_NAMES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
-import sideBarMixin from '@/mixins/side-bar/side-bar';
-
 import { generateWidgetId } from '@/helpers/entities';
 import { removeFrom } from '@/helpers/immutable';
 
 export default {
-  mixins: [sideBarMixin],
   props: {
     widget: {
       type: Object,
@@ -94,7 +91,7 @@ export default {
       tabId,
       widget,
     }) {
-      this.showSideBar({
+      this.$sidebar.show({
         name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
         config: {
           viewId,

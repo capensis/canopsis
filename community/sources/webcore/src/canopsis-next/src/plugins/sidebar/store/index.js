@@ -9,36 +9,34 @@ export const types = {
 export default {
   namespaced: true,
   state: {
-    name: null,
-    config: {},
-    hidden: false,
+    sidebar: {
+      hidden: true,
+    },
   },
   getters: {
-    name: state => state.name,
-    config: state => state.config,
-    hidden: state => state.hidden,
+    sidebar: state => state.sidebar,
   },
   mutations: {
     [types.SHOW](state, { name, config = {} }) {
-      state.name = name;
-      state.config = config;
-      state.hidden = false;
+      state.sidebar = {
+        name,
+        config,
+
+        hidden: false,
+      };
     },
     [types.HIDE](state) {
-      state.hidden = true;
+      state.sidebar.hidden = true;
     },
     [types.HIDE_COMPLETED](state) {
-      state.name = null;
-      state.config = {};
-      state.hidden = false;
+      state.sidebar = {};
     },
   },
   actions: {
-    show({ commit, state }, payload) {
-      if (!state.name) {
-        commit(types.SHOW, payload);
-      }
+    show({ commit }, { name, config = {} } = {}) {
+      commit(types.SHOW, { name, config });
     },
+
     hide({ commit, state }) {
       commit(types.HIDE);
 

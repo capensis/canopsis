@@ -80,7 +80,8 @@
           )
           v-divider
           v-list-group
-            v-list-tile(slot="activator") Ack
+            template(#activator="")
+              v-list-tile Ack
             v-list.grey.lighten-4.px-2.py-0(expand)
             field-switcher(
               v-model="settings.widget.parameters.isAckNoteRequired",
@@ -128,22 +129,22 @@ import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widget
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
-import FieldTitle from './fields/common/title.vue';
-import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
-import FieldColumns from './fields/common/columns.vue';
-import FieldLiveReporting from './fields/common/live-reporting.vue';
-import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
-import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
-import FieldFilters from './fields/common/filters.vue';
-import FieldTextEditor from './fields/common/text-editor.vue';
-import FieldSwitcher from './fields/common/switcher.vue';
-import FieldFastAckOutput from './fields/alarm/fast-ack-output.vue';
-import FieldGridRangeSize from './fields/common/grid-range-size.vue';
-import FieldRemediationInstructionsFilters from './fields/common/remediation-instructions-filters.vue';
-import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
-import FieldInfoPopup from './fields/alarm/info-popup.vue';
-import FieldEnabledLimit from './fields/common/enabled-limit.vue';
-import ExportCsvForm from './forms/export-csv.vue';
+import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
+import FieldDefaultSortColumn from '@/components/sidebars/settings/fields/common/default-sort-column.vue';
+import FieldColumns from '@/components/sidebars/settings/fields/common/columns.vue';
+import FieldLiveReporting from '@/components/sidebars/settings/fields/common/live-reporting.vue';
+import FieldPeriodicRefresh from '@/components/sidebars/settings/fields/common/periodic-refresh.vue';
+import FieldDefaultElementsPerPage from '@/components/sidebars/settings/fields/common/default-elements-per-page.vue';
+import FieldFilters from '@/components/sidebars/settings/fields/common/filters.vue';
+import FieldTextEditor from '@/components/sidebars/settings/fields/common/text-editor.vue';
+import FieldSwitcher from '@/components/sidebars/settings/fields/common/switcher.vue';
+import FieldFastAckOutput from '@/components/sidebars/settings/fields/alarm/fast-ack-output.vue';
+import FieldGridRangeSize from '@/components/sidebars/settings/fields/common/grid-range-size.vue';
+import FieldRemediationInstructionsFilters from '@/components/sidebars/settings/fields/common/remediation-instructions-filters.vue';
+import FieldOpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
+import FieldInfoPopup from '@/components/sidebars/settings/fields/alarm/info-popup.vue';
+import FieldEnabledLimit from '@/components/sidebars/settings/fields/common/enabled-limit.vue';
+import ExportCsvForm from '@/components/sidebars/settings/forms/export-csv.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -176,8 +177,14 @@ export default {
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
   ],
+  props: {
+    sidebar: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
-    const { widget } = this.config;
+    const { widget } = this.sidebar.config;
 
     return {
       settings: {
@@ -185,6 +192,11 @@ export default {
         userPreferenceContent: { itemsPerPage: PAGINATION_LIMIT },
       },
     };
+  },
+  computed: {
+    config() {
+      return this.sidebar.config ?? {};
+    },
   },
   mounted() {
     const { content } = this.userPreference;

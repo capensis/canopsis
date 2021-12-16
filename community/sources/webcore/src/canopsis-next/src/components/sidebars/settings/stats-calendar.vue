@@ -18,14 +18,14 @@ import { SIDE_BARS } from '@/constants';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { sideBarSettingsWidgetAlarmMixin } from '@/mixins/side-bar/settings/widgets/alarm';
 
-import FieldTitle from './fields/common/title.vue';
-import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
-import FieldFilters from './fields/common/filters.vue';
-import FieldSwitcher from './fields/common/switcher.vue';
-import FieldCriticityLevels from './fields/stats/criticity-levels.vue';
-import FieldLevelsColorsSelector from './fields/stats/levels-colors-selector.vue';
-import AlarmsListModalForm from './forms/alarms-list-modal.vue';
-import StatsCalendarAdvancedForm from './forms/stats-calendar-advanced.vue';
+import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
+import FieldOpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
+import FieldFilters from '@/components/sidebars/settings/fields/common/filters.vue';
+import FieldSwitcher from '@/components/sidebars/settings/fields/common/switcher.vue';
+import FieldCriticityLevels from '@/components/sidebars/settings/fields/stats/criticity-levels.vue';
+import FieldLevelsColorsSelector from '@/components/sidebars/settings/fields/stats/levels-colors-selector.vue';
+import AlarmsListModalForm from '@/components/sidebars/settings/forms/alarms-list-modal.vue';
+import StatsCalendarAdvancedForm from '@/components/sidebars/settings/forms/stats-calendar-advanced.vue';
 
 /**
  * Component to regroup the entities list settings fields

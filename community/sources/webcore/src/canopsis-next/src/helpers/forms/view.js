@@ -5,7 +5,7 @@ import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
 import uuid from '../uuid';
 
 import { durationWithEnabledToForm } from '../date/duration';
-import { generateCopyOfViewTab, generateViewTab } from '../entities';
+import { generateViewTab } from '../entities';
 
 import { enabledToForm } from './shared/common';
 
@@ -61,26 +61,13 @@ import { enabledToForm } from './shared/common';
  */
 
 /**
- * @typedef {View} ExportedView
- * @property {boolean} exported
+ * @typedef {Object} ExportedViewRequest
+ * @property {string} _id
  */
 
 /**
- * @typedef {ViewGroupWithViews} ExportedViewGroup
- * @property {boolean} exported
- * @property {ExportedView[]} views
- */
-
-/**
- * @typedef {Object} ExportedViewWrapper
- * @property {View} view
- * @property {number} position
- */
-
-/**
- * @typedef {Object} ExportedViewGroupWrapper
- * @property {ViewGroup} group
- * @property {number} position
+ * @typedef {ExportedViewRequest} ExportedViewGroupRequest
+ * @property {ExportedViewRequest[]} views
  */
 
 /**
@@ -147,7 +134,7 @@ export const groupsWithViewsToPositions = (groups = []) => groups.map(groupWithV
  *
  * @param {ViewGroupWithViews} group
  * @param {string[]} exportedViewIds
- * @return {ExportedViewGroup}
+ * @return {ExportedViewGroupRequest}
  */
 export const groupToExportedGroup = (group, exportedViewIds = []) => ({
   _id: group._id,
@@ -165,9 +152,9 @@ export const groupToExportedGroup = (group, exportedViewIds = []) => ({
  *
  * @param {ViewGroup[]} groups - groups with selected views.
  * @param {View[]} views - views without group.
- * @return {{ groups: ExportedViewGroup[], views: ExportedView[] }}
+ * @return {{ groups: ExportedViewGroupRequest[], views: ExportedViewRequest[] }}
  */
-export const getExportedGroupsAndViews = ({ groups, views }) => {
+export const exportedGroupsAndViewsToRequest = ({ groups, views }) => {
   const viewsIds = views.map(({ _id }) => _id);
   const groupsIds = groups.map(({ _id }) => _id);
 
@@ -185,68 +172,37 @@ export const getExportedGroupsAndViews = ({ groups, views }) => {
 };
 
 /**
- * Get exported views wrappers
+ * Get all views in one collection from groups
  *
- * @param {ExportedView[]} [views = []]
- * @param {ViewGroup} group
- * @param {number} groupIndex
- * @return {ExportedViewWrapper[]}
+ * @param {ViewGroupWithViews[]} groups
+ * @return {View[]}
  */
-export const getExportedViewsWrappersFromGroup = ({ views = [], ...group }, groupIndex) => views
-  .reduce((acc, { exported, ...view }, index) => {
-    if (exported) {
-      acc.push({ view: { ...view, group }, path: `${groupIndex}.views.${index}` });
-    }
-
-    return acc;
-  }, []);
-
-/**
- * Get exported views wrappers from groups
- *
- * @param {ExportedViewGroup[]} [groups = []]
- * @return {ExportedViewWrapper[]}
- */
-export const getExportedViewsWrappersFromGroups = (groups = []) => groups.reduce((acc, group, index) => {
-  acc.push(...getExportedViewsWrappersFromGroup(group, index));
+export const getAllViewsFromGroups = groups => groups.reduce((acc, { views }) => {
+  acc.push(...views);
 
   return acc;
 }, []);
 
 /**
- * Get exported views wrappers
+ * Prepare current groups for importing process
  *
- * @param {ExportedViewGroup[]} [groups = []]
- * @return {ExportedViewGroupWrapper[]}
+ * @param {ViewGroupWithViews[]} groups
+ * @return {ViewGroupWithViews[]}
  */
-export const getExportedGroupsWrappers = (groups = []) => groups.reduce((acc, { exported, ...group }, index) => {
-  if (exported) {
-    acc.push({ group, path: index });
-  }
-
-  return acc;
-}, []);
-
-/**
- * Prepare imported view tabs
- *
- * @param {ViewTab[]} tabs
- * @return {ViewTab[]}
- */
-export const prepareImportedViewTabs = (tabs = []) => tabs.map(tab => generateCopyOfViewTab(tab));
+export const prepareCurrentGroupsForImporting = groups => (
+  groups.map(group => ({ ...group, views: [...group.views] }))
+);
 
 /**
  * Prepare imported views
  *
  * @param {View[]} views
- * @param {ViewGroup} [group]
  * @return {View[]}
  */
-export const prepareImportedViews = (views, group) => views.map(view => ({
+export const prepareImportedViews = views => views.map(view => ({
   ...view,
+
   _id: uuid(),
-  group: group || view.group,
-  tabs: prepareImportedViewTabs(view.tabs),
 }));
 
 /**
@@ -258,5 +214,5 @@ export const prepareImportedViews = (views, group) => views.map(view => ({
 export const prepareImportedGroups = groups => groups.map(({ views, ...group }) => {
   const preparedGroup = { ...group, _id: uuid() };
 
-  return { ...preparedGroup, views: prepareImportedViews(views, preparedGroup) };
+  return { ...preparedGroup, views: prepareImportedViews(views) };
 });

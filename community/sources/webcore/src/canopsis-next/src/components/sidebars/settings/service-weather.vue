@@ -108,23 +108,23 @@ import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { sideBarSettingsWidgetAlarmMixin } from '@/mixins/side-bar/settings/widgets/alarm';
 import { rightsWidgetsServiceWeatherListFilters } from '@/mixins/rights/widgets/service-weather/filters';
 
-import FieldTitle from './fields/common/title.vue';
-import FieldSortColumn from './fields/service-weather/sort-column.vue';
-import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
-import FieldFilters from './fields/common/filters.vue';
-import FieldColumns from './fields/common/columns.vue';
-import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
-import FieldTemplate from './fields/common/template.vue';
-import FieldGridSize from './fields/common/grid-size.vue';
-import FieldSlider from './fields/common/slider.vue';
-import FieldSwitcher from './fields/common/switcher.vue';
-import FieldModalType from './fields/service-weather/modal-type.vue';
-import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
-import FieldNumber from './fields/common/number.vue';
-import FieldCountersSelector from './fields/common/counters-selector.vue';
-import FieldColorIndicator from './fields/common/color-indicator.vue';
-import AlarmsListModalForm from './forms/alarms-list-modal.vue';
-import MarginsForm from './forms/margins.vue';
+import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
+import FieldSortColumn from '@/components/sidebars/settings/fields/service-weather/sort-column.vue';
+import FieldPeriodicRefresh from '@/components/sidebars/settings/fields/common/periodic-refresh.vue';
+import FieldFilters from '@/components/sidebars/settings/fields/common/filters.vue';
+import FieldColumns from '@/components/sidebars/settings/fields/common/columns.vue';
+import FieldDefaultSortColumn from '@/components/sidebars/settings/fields/common/default-sort-column.vue';
+import FieldTemplate from '@/components/sidebars/settings/fields/common/template.vue';
+import FieldGridSize from '@/components/sidebars/settings/fields/common/grid-size.vue';
+import FieldSlider from '@/components/sidebars/settings/fields/common/slider.vue';
+import FieldSwitcher from '@/components/sidebars/settings/fields/common/switcher.vue';
+import FieldModalType from '@/components/sidebars/settings/fields/service-weather/modal-type.vue';
+import FieldDefaultElementsPerPage from '@/components/sidebars/settings/fields/common/default-elements-per-page.vue';
+import FieldNumber from '@/components/sidebars/settings/fields/common/number.vue';
+import FieldCountersSelector from '@/components/sidebars/settings/fields/common/counters-selector.vue';
+import FieldColorIndicator from '@/components/sidebars/settings/fields/common/color-indicator.vue';
+import AlarmsListModalForm from '@/components/sidebars/settings/forms/alarms-list-modal.vue';
+import MarginsForm from '@/components/sidebars/settings/forms/margins.vue';
 
 export default {
   name: SIDE_BARS.serviceWeatherSettings,
