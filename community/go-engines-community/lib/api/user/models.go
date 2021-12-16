@@ -119,6 +119,10 @@ type BulkUpdateRequestItem struct {
 	EditRequest
 }
 
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
 type BulkUpdateRequest struct {
 	Items []BulkUpdateRequestItem `binding:"required,notblank,dive"`
 }

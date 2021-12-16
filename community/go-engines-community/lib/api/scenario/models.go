@@ -49,8 +49,12 @@ func (r *BulkCreateRequest) UnmarshalJSON(b []byte) error {
 }
 
 type BulkUpdateRequestItem struct {
-	ID string `json:"_id" binding:"required"`
 	EditRequest
+	ID string `json:"_id" binding:"required"`
+}
+
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
 }
 
 type BulkUpdateRequest struct {
