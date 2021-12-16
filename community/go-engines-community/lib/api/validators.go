@@ -239,10 +239,18 @@ func RegisterValidators(client mongo.DbClient) {
 	v.RegisterStructValidation(messageratestats.ValidateListRequest, messageratestats.ListRequest{})
 
 	idleRuleUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.IdleRuleMongoCollection, "Name")
+	idleRuleExistIdValidator := common.NewUniqueFieldValidator(client, mongo.IdleRuleMongoCollection, "ID")
+	v.RegisterStructValidation(idlerule.ValidateEditRequest, idlerule.EditRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		idleRuleUniqueNameValidator.Validate(ctx, sl)
-		idlerule.ValidateEditRequest(sl)
-	}, idlerule.EditRequest{})
+		idleRuleExistIdValidator.Validate(ctx, sl)
+	}, idlerule.CreateRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		idleRuleUniqueNameValidator.Validate(ctx, sl)
+	}, idlerule.UpdateRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		idleRuleUniqueNameValidator.Validate(ctx, sl)
+	}, idlerule.BulkUpdateRequestItem{})
 	v.RegisterStructValidation(idlerule.ValidateCountPatternRequest, idlerule.CountByPatternRequest{})
 
 	v.RegisterStructValidation(alarm.ValidateListRequest, alarm.ListRequest{})
