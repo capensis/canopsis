@@ -370,28 +370,6 @@ export const isResolvedAlarm = alarm => [ENTITIES_STATUSES.closed, ENTITIES_STAT
 export const isWarningAlarmState = alarm => ENTITIES_STATES.ok !== alarm.v.state.val;
 
 /**
- * Function return new title if title is not uniq
- *
- * @param {Object} [entity = {}]
- * @param {Array} [entities = []]
- * @returns {string}
- */
-export function getDuplicateEntityTitle(entity = {}, entities = []) {
-  const suffixRegexp = '(\\s\\(\\d+\\))?$';
-  const clearName = entity.title.replace(new RegExp(suffixRegexp), '');
-
-  const titleRegexp = new RegExp(`^${clearName}${suffixRegexp}`);
-
-  const duplicateEntityCount = entities.reduce((count, { title }) => {
-    const isDuplicate = titleRegexp.test(title);
-
-    return isDuplicate ? count + 1 : count;
-  }, 0);
-
-  return duplicateEntityCount !== 0 ? `${clearName} (${duplicateEntityCount})` : entity.title;
-}
-
-/**
  * Add uniq key field in each entity.
  *
  * @param {Array} entities

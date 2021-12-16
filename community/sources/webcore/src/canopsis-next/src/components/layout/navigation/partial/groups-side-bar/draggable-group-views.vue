@@ -16,6 +16,7 @@
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+
 import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 import GroupViewPanel from './group-view-panel.vue';
@@ -39,10 +40,6 @@ export default {
       type: [Boolean, String],
       default: false,
     },
-    prepareView: {
-      type: Function,
-      default: () => v => v,
-    },
   },
   computed: {
     isViewsEmpty() {
@@ -58,7 +55,7 @@ export default {
   },
   methods: {
     changeViewsOrdering(event) {
-      this.$emit('change', dragDropChangePositionHandler(this.views, event, this.prepareView));
+      this.$emit('change', dragDropChangePositionHandler(this.views, event));
     },
   },
 };
