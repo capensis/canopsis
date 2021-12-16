@@ -16,47 +16,42 @@
         v-btn(icon, @click.stop="closeHandler")
           v-icon(color="white") close
       v-divider
-      // @slot use this slot default
     slot
 </template>
 
 <script>
-import ClickOutside from '@/services/click-outside';
-
-import { sideBarInnerMixin } from '@/mixins/side-bar/side-bar-inner';
-
 /**
- * Wrapper for each modal window
- *
- * @prop {Object} [navigationDrawerProps={}] - Properties for vuetify v-navigation-drawer
+ * Wrapper for each sidebar
  */
 export default {
-  provide() {
-    return {
-      $clickOutside: this.$clickOutside,
-    };
+  inject: ['$clickOutside'],
+  props: {
+    sidebar: {
+      type: Object,
+      required: true,
+    },
   },
-  mixins: [sideBarInnerMixin],
   data() {
     return {
       ready: false,
     };
   },
   computed: {
-    title() {
-      if (this.sideBarConfig.sideBarTitle) {
-        return this.sideBarConfig.sideBarTitle;
-      }
-
-      return this.sideBarName ? this.$t(`settings.titles.${this.sideBarName}`) : '';
+    hasMaximizedModal() {
+      return this.$store.getters[`${this.$modals.moduleName}/hasMaximizedModal`];
     },
+
+    title() {
+      return this.sidebar.name ? this.$t(`settings.titles.${this.sidebar.name}`) : '';
+    },
+
     isOpen: {
       get() {
-        return !this.isSideBarHidden && this.ready && this.sideBarName;
+        return !this.sidebar.hidden && this.ready;
       },
       set(value) {
         if (!value) {
-          this.hideSideBar();
+          this.$sidebar.hide();
         }
       },
     },
@@ -64,13 +59,10 @@ export default {
   mounted() {
     this.ready = true;
   },
-  beforeCreate() {
-    this.$clickOutside = new ClickOutside();
-  },
   methods: {
     closeHandler() {
       if (this.closeCondition()) {
-        this.hideSideBar();
+        this.$sidebar.hide();
       }
     },
 

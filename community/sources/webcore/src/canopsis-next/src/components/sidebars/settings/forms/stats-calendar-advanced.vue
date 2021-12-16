@@ -34,11 +34,11 @@
 <script>
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
-import FieldOpenedResolvedFilter from '../fields/alarm/opened-resolved-filter.vue';
-import FieldFilters from '../fields/common/filters.vue';
-import FieldSwitcher from '../fields/common/switcher.vue';
-import FieldCriticityLevels from '../fields/stats/criticity-levels.vue';
-import FieldLevelsColorsSelector from '../fields/stats/levels-colors-selector.vue';
+import FieldOpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
+import FieldFilters from '@/components/sidebars/settings/fields/common/filters.vue';
+import FieldSwitcher from '@/components/sidebars/settings/fields/common/switcher.vue';
+import FieldCriticityLevels from '@/components/sidebars/settings/fields/stats/criticity-levels.vue';
+import FieldLevelsColorsSelector from '@/components/sidebars/settings/fields/stats/levels-colors-selector.vue';
 
 /**
  * Component to regroup the entities list settings fields

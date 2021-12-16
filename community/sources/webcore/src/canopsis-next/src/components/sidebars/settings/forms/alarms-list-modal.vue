@@ -25,10 +25,10 @@
 </template>
 
 <script>
-import FieldColumns from '../fields/common/columns.vue';
-import FieldInfoPopup from '../fields/alarm/info-popup.vue';
-import FieldTextEditor from '../fields/common/text-editor.vue';
-import FieldDefaultElementsPerPage from '../fields/common/default-elements-per-page.vue';
+import FieldColumns from '@/components/sidebars/settings/fields/common/columns.vue';
+import FieldInfoPopup from '@/components/sidebars/settings/fields/alarm/info-popup.vue';
+import FieldTextEditor from '@/components/sidebars/settings/fields/common/text-editor.vue';
+import FieldDefaultElementsPerPage from '@/components/sidebars/settings/fields/common/default-elements-per-page.vue';
 
 export default {
   components: {

@@ -66,16 +66,16 @@ import { SIDE_BARS } from '@/constants';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { sideBarSettingsWidgetAlarmMixin } from '@/mixins/side-bar/settings/widgets/alarm';
 
-import FieldTitle from './fields/common/title.vue';
-import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
-import FieldTemplate from './fields/common/template.vue';
-import FieldGridSize from './fields/common/grid-size.vue';
-import FieldFilters from './fields/common/filters.vue';
-import FieldSlider from './fields/common/slider.vue';
-import FieldSwitcher from './fields/common/switcher.vue';
-import AlarmsListModalForm from './forms/alarms-list-modal.vue';
-import MarginsForm from './forms/margins.vue';
-import CounterLevelsForm from './forms/counter-levels.vue';
+import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
+import FieldOpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
+import FieldTemplate from '@/components/sidebars/settings/fields/common/template.vue';
+import FieldGridSize from '@/components/sidebars/settings/fields/common/grid-size.vue';
+import FieldFilters from '@/components/sidebars/settings/fields/common/filters.vue';
+import FieldSlider from '@/components/sidebars/settings/fields/common/slider.vue';
+import FieldSwitcher from '@/components/sidebars/settings/fields/common/switcher.vue';
+import AlarmsListModalForm from '@/components/sidebars/settings/forms/alarms-list-modal.vue';
+import MarginsForm from '@/components/sidebars/settings/forms/margins.vue';
+import CounterLevelsForm from '@/components/sidebars/settings/forms/counter-levels.vue';
 
 export default {
   name: SIDE_BARS.counterSettings,

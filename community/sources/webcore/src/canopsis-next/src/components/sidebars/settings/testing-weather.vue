@@ -57,13 +57,13 @@ import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { sideBarSettingsWidgetAlarmMixin } from '@/mixins/side-bar/settings/widgets/alarm';
 import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';
 
-import FieldTitle from './fields/common/title.vue';
-import FieldDuration from './fields/common/duration.vue';
-import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
-import FieldSwitcher from './fields/common/switcher.vue';
-import FieldStorages from './fields/testing-weather/storages.vue';
-import FieldStorage from './fields/testing-weather/storage.vue';
-import FieldFileNameMasks from './fields/testing-weather/file-name-masks.vue';
+import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
+import FieldDuration from '@/components/sidebars/settings/fields/common/duration.vue';
+import FieldPeriodicRefresh from '@/components/sidebars/settings/fields/common/periodic-refresh.vue';
+import FieldSwitcher from '@/components/sidebars/settings/fields/common/switcher.vue';
+import FieldStorages from '@/components/sidebars/settings/fields/testing-weather/storages.vue';
+import FieldStorage from '@/components/sidebars/settings/fields/testing-weather/storage.vue';
+import FieldFileNameMasks from '@/components/sidebars/settings/fields/testing-weather/file-name-masks.vue';
 
 export default {
   name: SIDE_BARS.testingWeatherSettings,

@@ -36,11 +36,11 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 
-import FieldTitle from './fields/common/title.vue';
-import FieldDateInterval from './fields/stats/date-interval.vue';
-import FieldStatsSelector from './fields/stats/stats-selector.vue';
-import FieldFilterEditor from './fields/common/filter-editor.vue';
-import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
+import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
+import FieldDateInterval from '@/components/sidebars/settings/fields/stats/date-interval.vue';
+import FieldStatsSelector from '@/components/sidebars/settings/fields/stats/stats-selector.vue';
+import FieldFilterEditor from '@/components/sidebars/settings/fields/common/filter-editor.vue';
+import FieldDefaultSortColumn from '@/components/sidebars/settings/fields/common/default-sort-column.vue';
 
 export default {
   name: SIDE_BARS.statsTableSettings,

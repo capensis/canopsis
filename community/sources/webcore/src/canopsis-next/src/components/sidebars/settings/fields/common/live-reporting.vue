@@ -14,7 +14,7 @@ import { MODALS } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
-import SettingsButtonField from '../partials/button-field.vue';
+import SettingsButtonField from '@/components/sidebars/settings/fields/partials/button-field.vue';
 
 export default {
   components: { SettingsButtonField },

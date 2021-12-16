@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import FieldSlider from '../fields/common/slider.vue';
+import FieldSlider from '@/components/sidebars/settings/fields/common/slider.vue';
 
 export default {
   components: { FieldSlider },

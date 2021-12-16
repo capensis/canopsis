@@ -33,11 +33,11 @@ import { textWidgetToForm } from '@/helpers/forms/widgets/text';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
-import FieldTitle from './fields/common/title.vue';
-import FieldDateInterval from './fields/stats/date-interval.vue';
-import FieldStatsSelector from './fields/stats/stats-selector.vue';
-import FieldFilterEditor from './fields/common/filter-editor.vue';
-import FieldTextEditor from './fields/common/text-editor.vue';
+import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
+import FieldDateInterval from '@/components/sidebars/settings/fields/stats/date-interval.vue';
+import FieldStatsSelector from '@/components/sidebars/settings/fields/stats/stats-selector.vue';
+import FieldFilterEditor from '@/components/sidebars/settings/fields/common/filter-editor.vue';
+import FieldTextEditor from '@/components/sidebars/settings/fields/common/text-editor.vue';
 
 export default {
   name: SIDE_BARS.textSettings,

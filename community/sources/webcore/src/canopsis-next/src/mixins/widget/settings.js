@@ -5,25 +5,17 @@ import { getNewWidgetGridParametersY } from '@/helpers/grid-layout';
 import { viewToRequest } from '@/helpers/forms/view';
 
 import queryMixin from '@/mixins/query';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 import { entitiesViewMixin } from '@/mixins/entities/view';
 
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
 export const widgetSettingsMixin = {
-  props: {
-    config: {
-      type: Object,
-      required: true,
-    },
-  },
   mixins: [
     queryMixin,
-    sideBarMixin,
     entitiesViewMixin,
     entitiesUserPreferenceMixin,
-    confirmableModalMixinCreator({ field: 'settings', closeMethod: 'hideSideBar' }),
+    confirmableModalMixinCreator({ field: 'settings', closeMethod: '$sidebar.hide' }),
   ],
   computed: {
     activeView() {
@@ -138,7 +130,7 @@ export const widgetSettingsMixin = {
           query: this.prepareWidgetQuery(newQuery, oldQuery),
         });
 
-        this.hideSideBar();
+        this.$sidebar.hide();
       }
     },
   },

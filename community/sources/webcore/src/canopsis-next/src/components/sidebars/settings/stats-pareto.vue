@@ -32,11 +32,11 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 
-import FieldTitle from './fields/common/title.vue';
-import FieldFilterEditor from './fields/common/filter-editor.vue';
-import FieldDateInterval from './fields/stats/date-interval.vue';
-import FieldStatSelector from './fields/stats/stat-selector.vue';
-import FieldStatsColors from './fields/stats/stats-colors.vue';
+import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
+import FieldFilterEditor from '@/components/sidebars/settings/fields/common/filter-editor.vue';
+import FieldDateInterval from '@/components/sidebars/settings/fields/stats/date-interval.vue';
+import FieldStatSelector from '@/components/sidebars/settings/fields/stats/stat-selector.vue';
+import FieldStatsColors from '@/components/sidebars/settings/fields/stats/stats-colors.vue';
 
 export default {
   name: SIDE_BARS.statsParetoSettings,

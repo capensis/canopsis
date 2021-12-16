@@ -28,8 +28,8 @@
 <script>
 import { AVAILABLE_COUNTERS } from '@/constants';
 
-import FieldCriticityLevels from '../fields/stats/criticity-levels.vue';
-import FieldLevelsColorsSelector from '../fields/stats/levels-colors-selector.vue';
+import FieldCriticityLevels from '@/components/sidebars/settings/fields/stats/criticity-levels.vue';
+import FieldLevelsColorsSelector from '@/components/sidebars/settings/fields/stats/levels-colors-selector.vue';
 
 export default {
   components: {
