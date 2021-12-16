@@ -150,15 +150,15 @@ type Event struct {
 	Alarm         *Alarm     `bson:"current_alarm" json:"current_alarm"`
 	Entity        *Entity    `bson:"current_entity" json:"current_entity"`
 
-	Author        string     `bson:"author" json:"author"`
-	UserID        string     `bson:"user_id" json:"user_id"`
+	Author string `bson:"author" json:"author"`
+	UserID string `bson:"user_id" json:"user_id"`
 
-	RK            string     `bson:"routing_key" json:"routing_key"`
+	RK string `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.
 	// It also adds declare ticket to all resource alarms on ack webhook.
 	// It's still used by some old users but meta alarms must be used instead.
 	AckResources bool                   `json:"ack_resources"`
-	Duration     *CpsNumber             `json:"duration"`
+	Duration     CpsNumber              `json:"duration"`
 	Ticket       string                 `bson:"ticket" json:"ticket"`
 	StatName     string                 `bson:"stat_name" json:"stat_name"`
 	Debug        bool                   `bson:"debug" json:"debug"`
