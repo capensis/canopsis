@@ -213,7 +213,7 @@ session:
 
 
 
-La paire de certificats relatifs aux directives `x509_cert` et `x509_key` doivent être généré en amont.
+La paire de certificats relatifs aux directives `x509_cert` et `x509_key` doit être générée en amont.
 
 Exemple pour des certificats auto-signés :
 
