@@ -5372,5 +5372,65 @@
       "infos_rule_version": {
       }
     }
+  },
+  {
+    "_id": "dynamic-info-update-1",
+    "d": "dynamic-info-update-resource-1/dynamic-info-update-component",
+    "t": 1000000002,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "dynamic-info-update-connector.dynamic-info-update-connectorname",
+        "m": "dynamic-info-update alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "dynamic-info-update-connector.dynamic-info-update-connectorname",
+        "m": "dynamic-info-update alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+          "m": "dynamic-info-update alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-api-correlation-get-connector.test-api-correlation-get-connectorname",
+          "m": "dynamic-info-update alarm",
+          "val": 1
+        }
+      ],
+      "component": "dynamic-info-update-component",
+      "connector": "dynamic-info-update-connector",
+      "connector_name": "dynamic-info-update-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "7DT-0TC",
+      "initial_output": "dynamic-info-update alarm",
+      "output": "dynamic-info-update alarm",
+      "initial_long_output": "dynamic-info-update alarm",
+      "long_output": "dynamic-info-update alarm",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1000000004,
+      "resource": "dynamic-info-update-resource-1",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
   }
 ]

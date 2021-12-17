@@ -9626,6 +9626,10 @@ var doc = `{
                 }
             }
         },
+        "bson.M": {
+            "type": "object",
+            "additionalProperties": true
+        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {

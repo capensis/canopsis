@@ -19,6 +19,8 @@ import { MODALS } from '@/constants';
 
 import { patternRuleToForm, formToPatternRule } from '@/helpers/forms/pattern-rule';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
+
 import PatternRuleForm from '@/components/other/pattern/form/pattern-rule-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -29,6 +31,7 @@ export default {
     validator: 'new',
   },
   components: { PatternRuleForm, ModalWrapper },
+  mixins: [modalInnerMixin],
   data() {
     const { rule = {} } = this.modal.config;
 
@@ -51,4 +54,3 @@ export default {
   },
 };
 </script>
-

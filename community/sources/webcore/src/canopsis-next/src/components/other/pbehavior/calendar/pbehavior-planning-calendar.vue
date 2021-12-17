@@ -47,7 +47,6 @@
 </template>
 
 <script>
-import moment from 'moment';
 import { get, omit, uniqBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op } from 'dayspan';
@@ -58,7 +57,7 @@ import uid from '@/helpers/uid';
 import { getMostReadableTextColor, getRandomHexColor } from '@/helpers/color';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
 import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
-import { convertDateToTimestampByTimezone } from '@/helpers/date/date';
+import { convertDateToTimestampByTimezone, convertDateToMoment } from '@/helpers/date/date';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import entitiesPbehaviorTimespansMixin from '@/mixins/entities/pbehavior/timespans';
@@ -190,7 +189,7 @@ export default {
 
       if (startTimestamps.length) {
         const startTimestamp = Math.min.apply(null, startTimestamps);
-        const calendarStart = moment.unix(startTimestamp);
+        const calendarStart = convertDateToMoment(startTimestamp);
 
         this.calendar.set({ around: calendarStart });
       }
@@ -245,7 +244,6 @@ export default {
         from,
         to,
       });
-
 
       return this.fetchTimespansListWithoutStore({ data: timespan });
     },
