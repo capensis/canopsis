@@ -153,6 +153,12 @@ Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fic
 
     Si vous le surchargez à l'aide d'un volume pour y apporter des modifications, c'est ce fichier local qui doit être synchronisé.
 
+## Fin de la mise à jour
+
+Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md) et redémarrez l'environnement.
+
+Vous devez ensuite contrôler la bonne mise à jour de la configuration Nginx
+
 ### Migrations
 
 Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un client MongoDB, assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes suivantes, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
@@ -169,12 +175,6 @@ done
     Ces scripts essaient de gérer le plus de cas d'usage possible, mais la bonne exécution de ces scripts en toute condition ne peut être garantie.
 
     N'hésitez pas à nous signaler tout problème d'exécution que vous pourriez rencontrer lors de cette étape.
-
-## Fin de la mise à jour
-
-Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md) et redémarrez l'environnement.
-
-Vous devez ensuite contrôler la bonne mise à jour de la configuration Nginx
 
 ### Mise à jour de la configuration de Nginx
 
