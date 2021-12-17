@@ -157,8 +157,6 @@ Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fic
 
 Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md) et redémarrez l'environnement.
 
-Vous devez ensuite contrôler la bonne mise à jour de la configuration Nginx
-
 ### Migrations
 
 Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un client MongoDB, assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes suivantes, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
@@ -175,6 +173,23 @@ done
     Ces scripts essaient de gérer le plus de cas d'usage possible, mais la bonne exécution de ces scripts en toute condition ne peut être garantie.
 
     N'hésitez pas à nous signaler tout problème d'exécution que vous pourriez rencontrer lors de cette étape.
+
+### Correction du binaire `canopsis-api` (paquets)
+
+Cette partie s'applique seulement aux installations de paquets RPM.
+
+Après mise à jour, le lien symbolique `/opt/canopsis/bin/canopsis-api` doit être corrigé pour pointer vers une version Community ou Pro, en fonction de votre type d'installation :
+
+```sh
+rm -f /opt/canopsis/bin/canopsis-api
+
+# Si Canopsis Community :
+ln -sf /opt/canopsis/bin/canopsis-api-community /opt/canopsis/bin/canopsis-api
+# Si Canopsis Pro :
+ln -sf /opt/canopsis/bin/canopsis-api-pro /opt/canopsis/bin/canopsis-api
+
+canoctl restart
+```
 
 ### Mise à jour de la configuration de Nginx
 
