@@ -461,10 +461,10 @@ func RegisterRoutes(
 				entitybasicsAPI.Delete,
 			)
 		}
+
+		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater, actionLogger, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
-			entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
-				actionLogger, logger)
 			entityserviceRouter.POST(
 				"",
 				middleware.Authorize(authObjEntityService, permCreate, enforcer),
@@ -1033,6 +1033,28 @@ func RegisterRoutes(
 					middleware.Authorize(authObjView, permDelete, enforcer),
 					middleware.PreProcessBulk(conf),
 					eventFilterApi.BulkDelete,
+				)
+			}
+
+			entityserviceRouter := bulkRouter.Group("/entityservices")
+			{
+				entityserviceRouter.POST(
+					"",
+					middleware.Authorize(authObjView, permCreate, enforcer),
+					middleware.PreProcessBulk(conf),
+					entityserviceAPI.BulkCreate,
+				)
+				entityserviceRouter.PUT(
+					"",
+					middleware.Authorize(authObjView, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf),
+					entityserviceAPI.BulkUpdate,
+				)
+				entityserviceRouter.DELETE(
+					"",
+					middleware.Authorize(authObjView, permDelete, enforcer),
+					middleware.PreProcessBulk(conf),
+					entityserviceAPI.BulkDelete,
 				)
 			}
 
