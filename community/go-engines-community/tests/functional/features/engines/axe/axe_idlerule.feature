@@ -12,7 +12,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 40,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "entity_patterns": [
@@ -136,6 +136,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-1-ticket"
               }
             ]
@@ -185,6 +186,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-1-ticket"
             },
             "steps": [
@@ -199,11 +201,13 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-1-ticket"
               },
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-1-ticket"
               }
             ]
@@ -230,7 +234,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 41,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "entity_patterns": [
@@ -344,6 +348,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-2-ticket"
             },
             "steps": [
@@ -362,6 +367,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
             ]
@@ -412,6 +418,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-2-ticket"
             },
             "steps": [
@@ -430,6 +437,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
             ]
@@ -479,6 +487,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-2-ticket"
             },
             "steps": [
@@ -497,6 +506,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               },
               {
@@ -506,6 +516,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
             ]
@@ -531,7 +542,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 42,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "entity_patterns": [
@@ -708,7 +719,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 43,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -852,7 +863,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 44,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -996,7 +1007,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 46,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1022,7 +1033,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 45,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1076,6 +1087,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-6-2-ticket"
             },
             "steps": [
@@ -1090,6 +1102,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-6-2-ticket"
               }
             ]
@@ -1201,7 +1214,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 48,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1221,7 +1234,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 47,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1402,7 +1415,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 49,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1563,7 +1576,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 50,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1590,7 +1603,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 51,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1638,6 +1651,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-9-1-ticket"
             },
             "steps": [
@@ -1652,6 +1666,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-9-1-ticket"
               }
             ]
@@ -1768,7 +1783,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 53,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1794,7 +1809,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 52,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1996,7 +2011,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 54,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [

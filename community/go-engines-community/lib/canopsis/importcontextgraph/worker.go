@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,16 +21,19 @@ type worker struct {
 	entityCollection   libmongo.DbCollection
 	categoryCollection libmongo.DbCollection
 	publisher          EventPublisher
+	metricMetaUpdater  metrics.MetaUpdater
 }
 
 func NewWorker(
 	dbClient libmongo.DbClient,
 	publisher EventPublisher,
+	metricMetaUpdater metrics.MetaUpdater,
 ) Worker {
 	return &worker{
 		entityCollection:   dbClient.Collection(libmongo.EntityMongoCollection),
 		categoryCollection: dbClient.Collection(libmongo.EntityCategoryMongoCollection),
 		publisher:          publisher,
+		metricMetaUpdater:  metricMetaUpdater,
 	}
 }
 
@@ -57,6 +61,8 @@ func (w *worker) Work(ctx context.Context, filename, source string) (stats Stats
 	if err != nil {
 		return stats, err
 	}
+
+	w.metricMetaUpdater.UpdateAll(ctx)
 
 	return stats, nil
 }

@@ -123,6 +123,7 @@ export default {
       return {
         itemsType: ENTITIES_TYPES.alarm,
         itemsIds: this.itemsIds,
+        afterSubmit: this.afterSubmit,
       };
     },
   },
@@ -193,7 +194,7 @@ export default {
 
       await this.createEvent(EVENT_ENTITY_TYPES.ack, this.items, eventData);
 
-      return this.clearItems();
+      return this.afterSubmit();
     },
   },
 };

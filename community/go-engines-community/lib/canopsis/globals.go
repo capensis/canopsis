@@ -30,8 +30,6 @@ const (
 	DynamicInfosEngineName          = "engine-dynamic-infos"
 	DynamicInfosQueueName           = "Engine_dynamic_infos"
 	DynamicInfosConsumerName        = "dynamic-infos"
-	StatsngExchangeName             = "amq.direct"
-	StatsngQueueName                = "Engine_statsng"
 	PBehaviorEngineName             = "engine-pbehavior"
 	PBehaviorQueueName              = "Engine_pbehavior"
 	PBehaviorRPCQueueServerName     = "Engine_pbehavior_rpc_server"

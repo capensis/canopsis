@@ -32,7 +32,7 @@
             :has-access-to-edit-filter="hasAccessToEditFilter",
             :has-access-to-user-filter="hasAccessToUserFilter",
             :has-access-to-list-filters="hasAccessToListFilters",
-            :entitiesType="$constants.ENTITIES_TYPES.entity",
+            :entities-type="$constants.ENTITIES_TYPES.entity",
             @input="updateSelectedFilter",
             @update:condition="updateSelectedCondition",
             @update:filters="updateFilters"
@@ -63,7 +63,6 @@
               type="top",
               @input="updateQueryPage"
             )
-
       template(v-for="column in columns", :slot="column.value", slot-scope="props")
         entity-column-cell(
           :entity="props.item",
@@ -72,7 +71,6 @@
         )
       template(slot="actions", slot-scope="props")
         actions-panel(:item="props.item", :is-editing-mode="isEditingMode")
-
       template(slot="expand", slot-scope="props")
         entities-list-expand-panel(
           :item="props.item",
@@ -80,9 +78,9 @@
           :tab-id="tabId",
           :columns-filters="columnsFilters"
         )
-
       template(slot="mass-actions", slot-scope="props")
         mass-actions-panel.ml-3(:items="props.selected")
+
     c-table-pagination(
       :total-items="contextEntitiesMeta.total_count",
       :rows-per-page="query.limit",
@@ -191,9 +189,7 @@ export default {
   },
   methods: {
     updateNoEvents(noEvents) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         noEvents,
       });
 
@@ -207,9 +203,7 @@ export default {
     updateCategory(category) {
       const categoryId = category && category._id;
 
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         category: categoryId,
       });
 

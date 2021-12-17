@@ -6,7 +6,7 @@ import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, SORT_ORDERS } from '@/consta
 import { dateParse } from '@/helpers/date/date-intervals';
 
 import queryMixin from '@/mixins/query';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
 /**
  * @mixin Add query logic

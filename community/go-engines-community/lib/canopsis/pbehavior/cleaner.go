@@ -12,7 +12,7 @@ import (
 )
 
 type Cleaner interface {
-	Clean(ctx context.Context, d time.Duration) (int64, error)
+	Clean(ctx context.Context, before types.CpsTime) (int64, error)
 }
 
 func NewCleaner(client mongo.DbClient, logger zerolog.Logger) Cleaner {
@@ -27,14 +27,13 @@ type cleaner struct {
 	logger     zerolog.Logger
 }
 
-func (c *cleaner) Clean(ctx context.Context, d time.Duration) (int64, error) {
-	before := time.Now().Add(-d)
+func (c *cleaner) Clean(ctx context.Context, before types.CpsTime) (int64, error) {
 	// Delete pbehaviors without rrule.
 	deleted, err := c.collection.DeleteMany(ctx, bson.M{
 		"rrule": bson.M{"$in": bson.A{"", nil}},
 		"tstop": bson.M{
 			"$gt": 0,
-			"$lt": types.CpsTime{Time: before},
+			"$lt": before,
 		},
 	})
 	if err != nil {
@@ -76,7 +75,7 @@ func (c *cleaner) Clean(ctx context.Context, d time.Duration) (int64, error) {
 			continue
 		}
 
-		if isRruleFinished(*rRule, before) {
+		if isRruleFinished(*rRule, before.Time) {
 			ids = append(ids, pbehavior.ID)
 		}
 	}

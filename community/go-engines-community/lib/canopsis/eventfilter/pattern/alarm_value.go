@@ -24,7 +24,6 @@ type AlarmValueRegexMatches struct {
 	Connector         RegexMatches
 	ConnectorName     RegexMatches
 	DisplayName       RegexMatches
-	Extra             map[string]RegexMatches
 	InitialOutput     RegexMatches
 	Output            RegexMatches
 	InitialLongOutput RegexMatches
@@ -34,11 +33,9 @@ type AlarmValueRegexMatches struct {
 	Children          RegexMatches
 }
 
-// NewAlarmValueRegexMatches creates an AlarmValueRegexMatches, with the Extra
-// field initialized to an empty map.
+// NewAlarmValueRegexMatches creates an AlarmValueRegexMatches.
 func NewAlarmValueRegexMatches() AlarmValueRegexMatches {
 	return AlarmValueRegexMatches{
-		Extra:  map[string]RegexMatches{},
 		Ticket: NewAlarmTicketRegexMatches(),
 	}
 }
@@ -48,33 +45,32 @@ func NewAlarmValueRegexMatches() AlarmValueRegexMatches {
 // The fields are not defined directly in the AlarmValuePattern struct to
 // make the unmarshalling easier.
 type AlarmValueFields struct {
-	ACK                           AlarmStepRefPattern         `bson:"ack,omitempty"`
-	Canceled                      AlarmStepRefPattern         `bson:"canceled,omitempty"`
-	Done                          AlarmStepRefPattern         `bson:"done,omitempty"`
-	Snooze                        AlarmStepRefPattern         `bson:"snooze,omitempty"`
-	State                         AlarmStepRefPattern         `bson:"state,omitempty"`
-	Status                        AlarmStepRefPattern         `bson:"status,omitempty"`
-	Ticket                        AlarmTicketRefPattern       `bson:"ticket,omitempty"`
-	Component                     StringPattern               `bson:"component"`
-	Connector                     StringPattern               `bson:"connector"`
-	ConnectorName                 StringPattern               `bson:"connector_name"`
-	CreationDate                  TimePattern                 `bson:"creation_date"`
-	ActivationDate                TimeRefPattern              `bson:"activation_date"`
-	DisplayName                   StringPattern               `bson:"display_name"`
-	Extra                         map[string]InterfacePattern `bson:"extra"`
-	HardLimit                     IntegerRefPattern           `bson:"hard_limit,omitempty"`
-	InitialOutput                 StringPattern               `bson:"initial_output"`
-	Output                        StringPattern               `bson:"output"`
-	InitialLongOutput             StringPattern               `bson:"initial_long_output"`
-	LongOutput                    StringPattern               `bson:"long_output"`
-	LastUpdateDate                TimePattern                 `bson:"last_update_date"`
-	LastEventDate                 TimePattern                 `bson:"last_event_date"`
-	Resource                      StringPattern               `bson:"resource,omitempty"`
-	Resolved                      TimeRefPattern              `bson:"resolved,omitempty"`
-	StateChangesSinceStatusUpdate IntegerPattern              `bson:"state_changes_since_status_update,omitempty"`
-	TotalStateChanges             IntegerPattern              `bson:"total_state_changes,omitempty"`
-	Parents                       StringArrayPattern          `bson:"parents,omitempty"`
-	Children                      StringArrayPattern          `bson:"children,omitempty"`
+	ACK                           AlarmStepRefPattern   `bson:"ack,omitempty"`
+	Canceled                      AlarmStepRefPattern   `bson:"canceled,omitempty"`
+	Done                          AlarmStepRefPattern   `bson:"done,omitempty"`
+	Snooze                        AlarmStepRefPattern   `bson:"snooze,omitempty"`
+	State                         AlarmStepRefPattern   `bson:"state,omitempty"`
+	Status                        AlarmStepRefPattern   `bson:"status,omitempty"`
+	Ticket                        AlarmTicketRefPattern `bson:"ticket,omitempty"`
+	Component                     StringPattern         `bson:"component"`
+	Connector                     StringPattern         `bson:"connector"`
+	ConnectorName                 StringPattern         `bson:"connector_name"`
+	CreationDate                  TimePattern           `bson:"creation_date"`
+	ActivationDate                TimeRefPattern        `bson:"activation_date"`
+	DisplayName                   StringPattern         `bson:"display_name"`
+	HardLimit                     IntegerRefPattern     `bson:"hard_limit,omitempty"`
+	InitialOutput                 StringPattern         `bson:"initial_output"`
+	Output                        StringPattern         `bson:"output"`
+	InitialLongOutput             StringPattern         `bson:"initial_long_output"`
+	LongOutput                    StringPattern         `bson:"long_output"`
+	LastUpdateDate                TimePattern           `bson:"last_update_date"`
+	LastEventDate                 TimePattern           `bson:"last_event_date"`
+	Resource                      StringPattern         `bson:"resource,omitempty"`
+	Resolved                      TimeRefPattern        `bson:"resolved,omitempty"`
+	StateChangesSinceStatusUpdate IntegerPattern        `bson:"state_changes_since_status_update,omitempty"`
+	TotalStateChanges             IntegerPattern        `bson:"total_state_changes,omitempty"`
+	Parents                       StringArrayPattern    `bson:"parents,omitempty"`
+	Children                      StringArrayPattern    `bson:"children,omitempty"`
 
 	// When unmarshalling a BSON document, the fields of this document that are
 	// not defined in this struct are added to UnexpectedFields.
@@ -129,7 +125,6 @@ func (p AlarmValuePattern) IsSet() bool {
 		p.AlarmValueFields.ConnectorName.IsSet() ||
 		p.AlarmValueFields.CreationDate.IsSet() ||
 		p.AlarmValueFields.DisplayName.IsSet() ||
-		len(p.AlarmValueFields.Extra) > 0 ||
 		p.AlarmValueFields.HardLimit.IsSet() ||
 		p.AlarmValueFields.InitialLongOutput.IsSet() ||
 		p.AlarmValueFields.InitialOutput.IsSet() ||
@@ -202,10 +197,6 @@ func (p AlarmValuePattern) AsMongoDriverQuery(prefix string, query bson.M) {
 		query[fmt.Sprintf("%s.total_state_changes", prefix)] = p.TotalStateChanges.AsMongoDriverQuery()
 	}
 
-	for key, value := range p.Extra {
-		query[fmt.Sprintf("%s.extra.%s", prefix, key)] = value.AsMongoDriverQuery()
-	}
-
 	q := p.Parents.AsMongoDriverQuery()
 	if q != nil && len(q) != 0 {
 		query[fmt.Sprintf("%s.parents", prefix)] = q
@@ -246,21 +237,8 @@ func (p AlarmValuePattern) Matches(value types.AlarmValue, matches *AlarmValueRe
 		p.TotalStateChanges.Matches(value.TotalStateChanges) &&
 		p.Parents.Matches(value.Parents) &&
 		p.Children.Matches(value.Children)
-	if !match {
-		return false
-	}
 
-	for extraName, extraPattern := range p.Extra {
-		var regexMatches RegexMatches
-		match = extraPattern.Matches(value.Extra[extraName], &regexMatches)
-		if match {
-			matches.Extra[extraName] = regexMatches
-		} else {
-			return false
-		}
-	}
-
-	return true
+	return match
 }
 
 func (p AlarmValuePattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
@@ -381,15 +359,6 @@ func (p AlarmValuePattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		}
 
 		resultBson[bsonFieldName] = p.DisplayName
-	}
-
-	if len(p.Extra) > 0 {
-		bsonFieldName, err := GetFieldBsonName(p, "Extra", "extra")
-		if err != nil {
-			return bsontype.Undefined, nil, err
-		}
-
-		resultBson[bsonFieldName] = p.Extra
 	}
 
 	if p.HardLimit.IsSet() {

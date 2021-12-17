@@ -257,9 +257,7 @@ func (a *api) Delete(c *gin.Context) {
 }
 
 func (a *api) sendComputeTask(exceptionID string) {
-	task := pbehavior.ComputeTask{
-		PbehaviorID: "",
-	}
+	task := pbehavior.ComputeTask{}
 
 	select {
 	case a.computeChan <- task:

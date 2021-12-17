@@ -77,6 +77,10 @@ type ConsoleWriter struct {
 	PartsOrder []string `toml:"PartsOrder"`
 }
 
+type SectionMetrics struct {
+	SliInterval string `toml:"SliInterval"`
+}
+
 // CanopsisConf represents a generic configuration object.
 type CanopsisConf struct {
 	ID          string             `bson:"_id,omitempty" toml:"omitempty"`
@@ -86,8 +90,9 @@ type CanopsisConf struct {
 	ImportCtx   SectionImportCtx   `bson:"import_ctx" toml:"import_ctx"`
 	File        SectionFile        `bson:"file" toml:"file"`
 	DataStorage SectionDataStorage `bson:"data_storage" toml:"data_storage"`
-	API         SectionApi         `bson:"api" tml:"api"`
 	Logger      SectionLogger      `bson:"logger" toml:"logger"`
+	API         SectionApi         `bson:"api" toml:"api"`
+	Metrics     SectionMetrics     `bson:"metrics" toml:"metrics"`
 }
 
 // UserInterfaceConf represents a user interface configuration object.

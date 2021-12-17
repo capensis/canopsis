@@ -1,6 +1,7 @@
 package pattern
 
 import (
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
@@ -49,4 +50,12 @@ func (p BoolPattern) AsMongoDriverQuery() bson.M {
 	}
 
 	return query
+}
+
+func (p BoolPattern) AsSqlQuery() string {
+	if p.Set {
+		return fmt.Sprintf("= %v", p.Value)
+	}
+
+	return ""
 }
