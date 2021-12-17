@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 
 	_ "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/docs"
 	libapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -34,7 +34,7 @@ import (
 // @in header
 // @name Authorization
 func main() {
-	var flags Flags
+	var flags libapi.Flags
 	flags.ParseArgs()
 	logger := liblog.NewLogger(flags.Debug)
 	// Graceful shutdown.
@@ -66,13 +66,13 @@ func main() {
 
 	api, err := libapi.Default(
 		ctx,
-		fmt.Sprintf(":%d", flags.Port),
-		flags.ConfigDir,
-		flags.SecureSession,
-		flags.Test,
+		flags,
 		enforcer,
 		nil,
 		logger,
+		metrics.NewNullMetaUpdater(),
+		metrics.NewNullMetaUpdater(),
+		nil,
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {
@@ -84,7 +84,7 @@ func main() {
 		logger.Fatal().Err(err).Msg("fail create api")
 	}
 
-	if flags.Debug {
+	if flags.EnableDocs {
 		api.AddRouter(func(router gin.IRouter) {
 			router.GET("/swagger/*any", ginswagger.WrapHandler(swaggerfiles.Handler))
 		})

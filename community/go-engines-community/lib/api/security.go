@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/provider"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tokenprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
@@ -38,8 +39,6 @@ type Security interface {
 	RegisterCallbackRoutes(router gin.IRouter)
 	// GetAuthMiddleware returns corresponding config auth middlewares.
 	GetAuthMiddleware() []gin.HandlerFunc
-	// GetWebsocketAuthMiddleware returns auth middlewares for websocket.
-	GetWebsocketAuthMiddleware() []gin.HandlerFunc
 	// GetFileAuthMiddleware returns auth middlewares for files.
 	GetFileAuthMiddleware() []gin.HandlerFunc
 	GetSessionStore() libsession.Store
@@ -47,6 +46,7 @@ type Security interface {
 	GetPasswordEncoder() password.Encoder
 	GetTokenService() token.Service
 	GetTokenStore() token.Store
+	GetTokenProvider() libsecurity.TokenProvider
 	GetCookieOptions() CookieOptions
 }
 
@@ -99,7 +99,7 @@ func (s *security) GetHttpAuthProviders() []libsecurity.HttpProvider {
 		case libsecurity.AuthMethodBasic:
 			baseProvider := s.newBaseAuthProvider()
 			res = append(res, httpprovider.NewBasicProvider(baseProvider))
-			res = append(res, httpprovider.NewBearerProvider(s.GetTokenService(), s.GetTokenStore(), s.newUserProvider(), s.Logger))
+			res = append(res, httpprovider.NewBearerProvider(s.GetTokenProvider()))
 		case libsecurity.AuthMethodApiKey:
 			res = append(res, httpprovider.NewApikeyProvider(s.newUserProvider()))
 		case libsecurity.AuthMethodLdap:
@@ -166,14 +166,6 @@ func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
 	}
 }
 
-func (s *security) GetWebsocketAuthMiddleware() []gin.HandlerFunc {
-	return []gin.HandlerFunc{
-		middleware.Auth([]libsecurity.HttpProvider{
-			httpprovider.NewQueryTokenProvider(s.GetTokenService(), s.GetTokenStore(), s.newUserProvider(), s.Logger),
-		}),
-	}
-}
-
 func (s *security) GetFileAuthMiddleware() []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		middleware.Auth([]libsecurity.HttpProvider{
@@ -202,6 +194,9 @@ func (s *security) GetTokenService() token.Service {
 }
 func (s *security) GetTokenStore() token.Store {
 	return token.NewMongoStore(s.DbClient, s.Logger)
+}
+func (s *security) GetTokenProvider() libsecurity.TokenProvider {
+	return tokenprovider.NewTokenProvider(s.GetTokenService(), s.GetTokenStore(), s.newUserProvider(), s.Logger)
 }
 
 func (s *security) GetCookieOptions() CookieOptions {
@@ -341,11 +336,12 @@ func (s *security) casCallbackHandler(p libsecurity.HttpProvider) gin.HandlerFun
 			panic(err)
 		}
 
+		now := time.Now()
 		err = s.GetTokenStore().Save(c.Request.Context(), token.Token{
 			ID:       accessToken,
 			User:     user.ID,
 			Provider: libsecurity.AuthMethodCas,
-			Created:  types.CpsTime{Time: time.Now()},
+			Created:  types.CpsTime{Time: now},
 			Expired:  types.CpsTime{Time: expiresAt},
 		})
 		if err != nil {

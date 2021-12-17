@@ -72,6 +72,7 @@ func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) bool {
 	s.flappingRulesMx.RLock()
 	defer s.flappingRulesMx.RUnlock()
 
+	now := types.NewCpsTime()
 	alarmWithEntity := types.AlarmWithEntity{
 		Alarm:  alarm,
 		Entity: entity,
@@ -80,9 +81,12 @@ func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) bool {
 	freq := 0
 	for _, rule := range s.flappingRules {
 		if rule.Matches(alarmWithEntity) {
+			before := rule.Duration.SubFrom(now)
+
 			for i := len(alarm.Value.Steps) - 1; i >= 0; i-- {
 				step := alarm.Value.Steps[i]
-				if time.Since(step.Timestamp.Time) >= rule.Duration.Duration() {
+
+				if step.Timestamp.Before(before) {
 					break
 				}
 

@@ -38,7 +38,7 @@ DOCKER_CMD_TARGETS = $(addprefix docker-cmd-,$(CMDS))
 SOURCE_DATE_EPOCH:=$(shell date -u +%s)
 LINKPKG=git.canopsis.net/canopsis/canopsis-$(CANOPSIS_EDITION)/$(CANOPSIS_EDITION)/go-engines-$(CANOPSIS_EDITION)/lib/canopsis
 VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
-GITCOMMIT:=$(shell git -C "$(MONOREPO_ROOT)" log -n 1 --format=oneline --abbrev-commit --pretty="%h" 2>/dev/null || echo "unknown Git commit")
+GITCOMMIT:=$(shell git -C "$(MONOREPO_ROOT)" log -n 1 --format=oneline --abbrev=12 --pretty="%h" 2>/dev/null || echo "unknown Git commit")
 # Metadata for the binaries
 CUSTOM_LDFLAGS=
 # TODO: simplify this after Go 1.18 with https://utcc.utoronto.ca/~cks/space/blog/programming/GoVersionOfYourSource
@@ -66,7 +66,7 @@ DOCKER_TAG = $(VERSION)
 # Alpine version used in final containers (https://hub.docker.com/_/alpine?tab=tags)
 DOCKER_ALPINE_VERSION = 3.12.8
 # Version of the Go compiler (https://hub.docker.com/_/golang?tab=tags)
-DOCKER_GOLANG_VERSION = 1.17.2
+DOCKER_GOLANG_VERSION = 1.17.4
 # Alpine version used in the Golang build container (https://hub.docker.com/_/golang?tab=tags&page=1&name=alpine)
 # (note: Alpine 3.14+ is currenly on hold; see issue canopsis/canopsis-pro#3871)
 DOCKER_ALPINE_BUILD_VERSION = 3.13

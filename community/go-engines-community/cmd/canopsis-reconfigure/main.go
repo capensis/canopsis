@@ -2,11 +2,17 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/pgx"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -57,24 +63,40 @@ func main() {
 	err = GracefullStart(ctx, logger)
 	utils.FailOnError(err, "Failed to open one of required sessions")
 
-	if f.modeMigrate || f.modeMigrateOnly {
-		if f.migrationDirectory == "" {
-			logger.Error().Msg("-migration-directory is not set")
+	if f.modeMigrateMongo {
+		if f.mongoMigrationDirectory == "" {
+			logger.Error().Msg("-mongo-migration-directory is not set")
 			os.Exit(ErrGeneral)
 		}
 
-		logger.Info().Msg("Start migrations")
+		logger.Info().Msg("Start mongo migrations")
 
-		err = executeMigrations(logger, f.migrationDirectory, f.mongoURL, f.mongoContainer)
+		err = executeMigrations(logger, f.mongoMigrationDirectory, f.mongoURL, f.mongoContainer)
 		if err != nil {
 			utils.FailOnError(err, "Failed to migrate")
 		}
 
-		logger.Info().Msg("Finish migrations")
+		logger.Info().Msg("Finish mongo migrations")
+	}
 
-		if f.modeMigrateOnly {
-			return
+	if f.modeMigratePostgres {
+		if f.postgresMigrationDirectory == "" {
+			logger.Error().Msg("-postgres-migration-directory is not set")
+			os.Exit(ErrGeneral)
 		}
+
+		logger.Info().Msg("Start postgres migrations")
+
+		err = runPostgresMigrations(f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps)
+		if err != nil {
+			utils.FailOnError(err, "Failed to migrate")
+		}
+
+		logger.Info().Msg("Finish postgres migrations")
+	}
+
+	if f.modeMigrateOnly {
+		return
 	}
 
 	amqpConn, err := amqp.NewConnection(logger, 0, 0)
@@ -162,6 +184,51 @@ func main() {
 	logger.Info().Msg("Initialising Mongo indexes")
 	err = createMongoIndexes(ctx, client, f.mongoConfPath, logger)
 	utils.FailOnError(err, "Failed to create Mongo indexes")
+}
+
+func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
+	connStr, err := postgres.GetConnStr()
+	if err != nil {
+		return err
+	}
+
+	p := &pgx.Postgres{}
+	driver, err := p.Open(connStr)
+	if err != nil {
+		return err
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(fmt.Sprintf("file://%s", migrationDirectory), "pgx", driver)
+	if err != nil {
+		return err
+	}
+
+	if steps < 0 {
+		return errors.New("postgres migration steps should be >= 0")
+	}
+
+	switch mode {
+	case "up":
+		if steps != 0 {
+			err = m.Steps(steps)
+		} else {
+			err = m.Up()
+		}
+	case "down":
+		if steps != 0 {
+			err = m.Steps(-steps)
+		} else {
+			err = m.Down()
+		}
+	default:
+		return errors.New("postgres migration mode should be up or down")
+	}
+
+	if err != migrate.ErrNoChange {
+		return err
+	}
+
+	return nil
 }
 
 func createMongoIndexes(ctx context.Context, client mongo.DbClient, mongoConfPath string, logger zerolog.Logger) error {
