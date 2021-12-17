@@ -86,7 +86,6 @@ module.exports = {
       },
     );
 
-
     browser.page.modals.view.create()
       .verifyModalClosed();
   },
@@ -156,7 +155,6 @@ module.exports = {
       .clickSubmitButton()
       .verifyModalClosed();
 
-
     browser.page.layout.topBar()
       .clickDropdownButton(views.create.group_id)
       .verifyDropdownZone(views.create.group_id)
@@ -176,7 +174,6 @@ module.exports = {
       .setViewGroupTags(group)
       .clearViewGroupId()
       .setViewGroupId(group);
-
 
     browser.waitForFirstXHR(
       `${API_ROUTES.view}/${views.create._id}`,

@@ -14,7 +14,7 @@
       v-layout.version.ml-1(fill-height, align-end)
         logged-users-count(badgeColor="secondary")
         app-version
-    v-toolbar-title.white--text.font-weight-regular(v-if="appTitle") {{ appTitle }}
+    top-bar-title(:title="appTitle")
     healthcheck-chips-list(v-if="hasAccessToHealthcheckStatus")
     v-spacer(v-else)
     portal-target(:name="$constants.PORTALS_NAMES.additionalTopBarItems")
@@ -42,6 +42,7 @@ import TopBarExploitationMenu from './top-bar-exploitation-menu.vue';
 import TopBarAdministrationMenu from './top-bar-administration-menu.vue';
 import TopBarNotificationsMenu from './top-bar-notifications-menu.vue';
 import TopBarUserMenu from './top-bar-user-menu.vue';
+import TopBarTitle from './top-bar-title.vue';
 
 /**
  * Component for the top bar of the application
@@ -50,6 +51,7 @@ import TopBarUserMenu from './top-bar-user-menu.vue';
  */
 export default {
   components: {
+    HealthcheckChipsList,
     AppLogo,
     AppVersion,
     LoggedUsersCount,
@@ -58,7 +60,7 @@ export default {
     TopBarAdministrationMenu,
     TopBarNotificationsMenu,
     TopBarUserMenu,
-    HealthcheckChipsList,
+    TopBarTitle,
   },
   mixins: [
     authMixin,

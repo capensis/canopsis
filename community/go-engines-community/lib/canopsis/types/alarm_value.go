@@ -246,11 +246,14 @@ type ByTimestamp struct {
 }
 
 func (s ByTimestamp) Less(i, j int) bool {
-	return s.AlarmSteps[i].Timestamp.Before(s.AlarmSteps[j].Timestamp.Time)
+	return s.AlarmSteps[i].Timestamp.Before(s.AlarmSteps[j].Timestamp)
 }
 
 // PbehaviorInfo represents current state of entity.
 type PbehaviorInfo struct {
+	// Timestamp is time when entity enters pbehavior.
+	// Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+	Timestamp *CpsTime `bson:"timestamp" json:"timestamp"`
 	// ID is ID of pbehavior.PBehavior.
 	ID string `bson:"id" json:"id"`
 	// Name is Name of pbehavior.PBehavior.
@@ -339,7 +342,6 @@ type AlarmValue struct {
 	// EventsCount accumulates count of check events.
 	EventsCount CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	Extra map[string]interface{}            `bson:"extra" json:"extra"`
 	Infos map[string]map[string]interface{} `bson:"infos" json:"infos"`
 
 	// store version of dynamic-infos rule
@@ -361,6 +363,7 @@ type AlarmTicket struct {
 	Type      string  `bson:"_t" json:"_t"`
 	Timestamp CpsTime `bson:"t" json:"t"`
 	Author    string  `bson:"a" json:"a"`
+	UserID    string  `bson:"user_id" json:"user_id"`
 	Message   string  `bson:"m" json:"m"`
 	Role      string  `bson:"role,omitempty" json:"role,omitempty"`
 	Value     string  `bson:"val" json:"val"`
@@ -375,6 +378,7 @@ func (s AlarmStep) NewTicket(value string, data map[string]string) AlarmTicket {
 		Message:   value,
 		Timestamp: s.Timestamp,
 		Type:      s.Type,
+		UserID:    s.UserID,
 		Value:     value,
 		Data:      data,
 		Role:      s.Role,

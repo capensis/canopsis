@@ -15,7 +15,7 @@
         div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.declareTicket') }}
           div {{ $t('common.by') }} : {{ alarm.v.ticket.a }}
-          div {{ $t('common.date') }} : {{ alarm.v.ticket.t | date('long') }}
+          div {{ $t('common.date') }} : {{ alarm.v.ticket.t | dateWithToday }}
           div(
             v-if="alarm.v.ticket.val"
           ) {{ $t('alarmList.actions.iconsFields.ticketNumber') }} : {{ alarm.v.ticket.val }}
@@ -29,7 +29,7 @@
         div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.canceled') }}
           div {{ $t('common.by') }} : {{ alarm.v.canceled.a }}
-          div {{ $t('common.date') }} : {{ alarm.v.canceled.t | date('long') }}
+          div {{ $t('common.date') }} : {{ alarm.v.canceled.t | dateWithToday }}
           div.message(v-if="alarm.v.canceled.m") {{ $tc('common.comment') }} : {{ alarm.v.canceled.m }}
     extra-details-snooze(v-if="alarm.v.snooze", :snooze="alarm.v.snooze")
     div(v-if="alarm.pbehavior")
@@ -46,9 +46,9 @@
             div {{ $t('common.author') }}: {{ alarm.pbehavior.author }}
             div(v-if="alarm.pbehavior.type") {{ $t('common.type') }}: {{ alarm.pbehavior.type.name }}
             div(v-if="alarm.pbehavior.reason") {{ $t('common.reason') }}: {{ alarm.pbehavior.reason.name }}
-            div {{ alarm.pbehavior.tstart | date('long') }}
+            div {{ alarm.pbehavior.tstart | dateWithToday }}
               template(v-if="alarm.pbehavior.tstop")
-                |  - {{ alarm.pbehavior.tstop | date('long') }}
+                |  - {{ alarm.pbehavior.tstop | dateWithToday }}
             div(v-if="alarm.pbehavior.rrule") {{ alarm.pbehavior.rrule }}
             div(
               v-for="comment in alarm.pbehavior.comments",

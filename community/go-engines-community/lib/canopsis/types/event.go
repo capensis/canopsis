@@ -121,6 +121,8 @@ const (
 	ConnectorJunit         = "junit"
 )
 
+const MaxEventTimestampVariation = 24 * time.Hour
+
 //PerfData represents a perf data array
 type PerfData struct {
 	Metric string  `bson:"metric" json:"metric"`
@@ -148,15 +150,15 @@ type Event struct {
 	Alarm         *Alarm     `bson:"current_alarm" json:"current_alarm"`
 	Entity        *Entity    `bson:"current_entity" json:"current_entity"`
 
-	Author        string     `bson:"author" json:"author"`
-	UserID        string     `bson:"user_id" json:"user_id"`
+	Author string `bson:"author" json:"author"`
+	UserID string `bson:"user_id" json:"user_id"`
 
-	RK            string     `bson:"routing_key" json:"routing_key"`
+	RK string `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.
 	// It also adds declare ticket to all resource alarms on ack webhook.
 	// It's still used by some old users but meta alarms must be used instead.
 	AckResources bool                   `json:"ack_resources"`
-	Duration     *CpsNumber             `json:"duration"`
+	Duration     CpsNumber              `json:"duration"`
 	Ticket       string                 `bson:"ticket" json:"ticket"`
 	StatName     string                 `bson:"stat_name" json:"stat_name"`
 	Debug        bool                   `bson:"debug" json:"debug"`
@@ -238,8 +240,10 @@ func NewEventFromAlarm(alarm Alarm) Event {
 //  "event_type" is fill with EventTypeCheck
 //  if "entity" is not null, "impacts" and "depends" are ensured to be initialized
 func (e *Event) Format() {
-	if e.Timestamp.IsZero() {
-		e.Timestamp = CpsTime{time.Now()}
+	//events can't be later or earlier than MaxEventTimestampVariation
+	now := NewCpsTime()
+	if e.Timestamp.IsZero() || e.Timestamp.Time.Before(now.Add(-MaxEventTimestampVariation)) || e.Timestamp.Time.After(now.Add(MaxEventTimestampVariation)) {
+		e.Timestamp = now
 	}
 	if e.EventType == "" {
 		e.EventType = EventTypeCheck

@@ -123,6 +123,8 @@ definitions:
         type: string
       t:
         type: integer
+      user_id:
+        type: string
       val:
         type: string
     type: object
@@ -132,6 +134,8 @@ definitions:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
       activation_date:
+        type: integer
+      active_duration:
         type: integer
       canceled:
         $ref: '#/definitions/alarm.AlarmStep'
@@ -159,9 +163,6 @@ definitions:
         type: integer
       events_count:
         type: integer
-      extra:
-        additionalProperties: true
-        type: object
       infos:
         additionalProperties:
           additionalProperties: true
@@ -199,6 +200,8 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      pbh_inactive_duration:
+        type: integer
       resolved:
         type: integer
       resource:
@@ -206,6 +209,8 @@ definitions:
       snooze:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
+      snooze_duration:
+        type: integer
       state:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
@@ -478,6 +483,9 @@ definitions:
         type: string
       language:
         type: string
+      login:
+        $ref: '#/definitions/appinfo.LoginConf'
+        type: object
       login_page_description:
         type: string
       logo:
@@ -497,13 +505,6 @@ definitions:
       version:
         type: string
     type: object
-  appinfo.IntervalUnit:
-    properties:
-      interval:
-        type: integer
-      unit:
-        type: string
-    type: object
   appinfo.JobConfigType:
     properties:
       auth_type:
@@ -511,7 +512,7 @@ definitions:
       name:
         type: string
     type: object
-  appinfo.LoginConfig:
+  appinfo.LoginConf:
     properties:
       casconfig:
         $ref: '#/definitions/appinfo.LoginConfigMethod'
@@ -530,28 +531,13 @@ definitions:
       title:
         type: string
     type: object
-  appinfo.LoginConfigResponse:
-    properties:
-      edition:
-        type: string
-      login_config:
-        $ref: '#/definitions/appinfo.LoginConfig'
-        type: object
-      stack:
-        type: string
-      user_interface:
-        $ref: '#/definitions/appinfo.UserInterfaceConf'
-        type: object
-      version:
-        type: string
-    type: object
   appinfo.PopupTimeout:
     properties:
       error:
-        $ref: '#/definitions/appinfo.IntervalUnit'
+        $ref: '#/definitions/types.DurationWithUnit'
         type: object
       info:
-        $ref: '#/definitions/appinfo.IntervalUnit'
+        $ref: '#/definitions/types.DurationWithUnit'
         type: object
     type: object
   appinfo.RemediationConf:
@@ -560,9 +546,6 @@ definitions:
         items:
           $ref: '#/definitions/appinfo.JobConfigType'
         type: array
-      pause_manual_instruction_interval:
-        $ref: '#/definitions/types.DurationWithUnit'
-        type: object
     type: object
   appinfo.UserInterfaceConf:
     properties:
@@ -656,6 +639,9 @@ definitions:
     - message
     - start
     type: object
+  bson.M:
+    additionalProperties: true
+    type: object
   common.ErrorResponse:
     properties:
       error:
@@ -693,6 +679,11 @@ definitions:
         additionalProperties:
           type: string
         type: object
+    type: object
+  config.TimezoneConfig:
+    properties:
+      location:
+        type: string
     type: object
   contextgraph.ImportJob:
     properties:
@@ -939,9 +930,12 @@ definitions:
         items:
           $ref: '#/definitions/entitybasic.InfoRequest'
         type: array
+      sli_avail_state:
+        type: integer
     required:
     - enabled
     - impact_level
+    - sli_avail_state
     type: object
   entitybasic.Entity:
     properties:
@@ -992,6 +986,8 @@ definitions:
         type: object
       name:
         type: string
+      sli_avail_state:
+        type: integer
       type:
         type: string
     type: object
@@ -1060,11 +1056,14 @@ definitions:
         type: string
       output_template:
         type: string
+      sli_avail_state:
+        type: integer
     required:
     - enabled
     - impact_level
     - name
     - output_template
+    - sli_avail_state
     type: object
   entityservice.Response:
     properties:
@@ -1110,6 +1109,8 @@ definitions:
         type: string
       output_template:
         type: string
+      sli_avail_state:
+        type: integer
       type:
         type: string
     type: object
@@ -1235,12 +1236,14 @@ definitions:
         type: object
       freq_limit:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
     - freq_limit
+    - name
     - priority
     type: object
   flappingrule.Response:
@@ -1265,6 +1268,8 @@ definitions:
         type: object
       freq_limit:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
       updated:
@@ -1285,12 +1290,14 @@ definitions:
         type: object
       freq_limit:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
     - freq_limit
+    - name
     - priority
     type: object
   http.Response:
@@ -1711,10 +1718,6 @@ definitions:
       done:
         $ref: '#/definitions/pattern.AlarmStepRefPattern'
         type: object
-      extra:
-        additionalProperties:
-          $ref: '#/definitions/pattern.InterfacePattern'
-        type: object
       hardLimit:
         $ref: '#/definitions/pattern.IntegerRefPattern'
         type: object
@@ -1783,6 +1786,9 @@ definitions:
     type: object
   pattern.EntityPattern:
     properties:
+      category:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
       component:
         $ref: '#/definitions/pattern.StringPattern'
         type: object
@@ -2251,6 +2257,52 @@ definitions:
           UnexpectedFields should always be empty.
         type: object
     type: object
+  pbehavior.BulkDeleteRequest:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    required:
+    - ids
+    type: object
+  pbehavior.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      enabled:
+        type: boolean
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      filter:
+        type: object
+      name:
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - _id
+    - enabled
+    - filter
+    - name
+    - reason
+    - tstart
+    - type
+    type: object
   pbehavior.Comment:
     properties:
       _id:
@@ -2274,8 +2326,10 @@ definitions:
       total_count:
         type: integer
     type: object
-  pbehavior.EditRequest:
+  pbehavior.CreateRequest:
     properties:
+      _id:
+        type: string
       enabled:
         type: boolean
       exceptions:
@@ -2407,6 +2461,40 @@ definitions:
         type: integer
       type:
         type: string
+    type: object
+  pbehavior.UpdateRequest:
+    properties:
+      enabled:
+        type: boolean
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      filter:
+        type: object
+      name:
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - enabled
+    - filter
+    - name
+    - reason
+    - tstart
+    - type
     type: object
   pbehaviorcomment.Request:
     properties:
@@ -2657,11 +2745,13 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
+    - name
     - priority
     type: object
   resolverule.Response:
@@ -2684,6 +2774,8 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
+      name:
+        type: string
       priority:
         type: integer
       updated:
@@ -2702,11 +2794,13 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
+      name:
+        type: string
       priority:
         type: integer
     required:
-    - description
     - duration
+    - name
     - priority
     type: object
   role.CreateRequest:
@@ -3065,11 +3159,6 @@ definitions:
       links:
         type: object
     type: object
-  sessionauth.sessionsCountResponse:
-    properties:
-      count:
-        type: integer
-    type: object
   statesettings.JUnitThresholds:
     properties:
       errors:
@@ -3126,37 +3215,6 @@ definitions:
     - major
     - minor
     - type
-    type: object
-  stats.Stats:
-    properties:
-      _id:
-        type: string
-      id_beaker_session:
-        description: Deprecated
-        type: string
-      last_ping:
-        $ref: '#/definitions/types.CpsTime'
-        type: object
-      last_visible_path:
-        type: object
-      last_visible_ping:
-        $ref: '#/definitions/types.CpsTime'
-        type: object
-      session_id:
-        type: string
-      start:
-        $ref: '#/definitions/types.CpsTime'
-        type: object
-      tab_duration:
-        additionalProperties: true
-        type: object
-      user_id:
-        type: string
-      username:
-        description: Deprecated
-        type: string
-      visible_duration:
-        type: integer
     type: object
   types.Alarm:
     properties:
@@ -3221,6 +3279,8 @@ definitions:
       t:
         $ref: '#/definitions/types.CpsTime'
         type: object
+      user_id:
+        type: string
       val:
         type: string
     type: object
@@ -3256,9 +3316,6 @@ definitions:
       events_count:
         description: EventsCount accumulates count of check events.
         type: integer
-      extra:
-        additionalProperties: true
-        type: object
       hard_limit:
         type: integer
       infos:
@@ -3295,6 +3352,8 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      pbh_inactive_duration:
+        type: integer
       related_parents:
         items:
           type: string
@@ -3312,6 +3371,8 @@ definitions:
       snooze:
         $ref: '#/definitions/types.AlarmStep'
         type: object
+      snooze_duration:
+        type: integer
       state:
         $ref: '#/definitions/types.AlarmStep'
         type: object
@@ -3356,24 +3417,24 @@ definitions:
     properties:
       enabled:
         type: boolean
-      seconds:
-        type: integer
       unit:
         type: string
+      value:
+        type: integer
     required:
     - enabled
-    - seconds
     - unit
+    - value
     type: object
   types.DurationWithUnit:
     properties:
-      seconds:
-        type: integer
       unit:
         type: string
+      value:
+        type: integer
     required:
-    - seconds
     - unit
+    - value
     type: object
   types.OptionalBool:
     properties:
@@ -3443,6 +3504,12 @@ definitions:
       reason:
         description: Reason is Name of pbehavior.Reason.
         type: string
+      timestamp:
+        $ref: '#/definitions/types.CpsTime'
+        description: |-
+          Timestamp is time when entity enters pbehavior.
+          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+        type: object
       type:
         description: TypeID is ID of pbehavior.Type.
         type: string
@@ -3532,6 +3599,25 @@ definitions:
       _id:
         type: string
       title:
+        type: string
+    type: object
+  userpreferences.EditRequest:
+    properties:
+      content:
+        additionalProperties: true
+        type: object
+      widget:
+        type: string
+    required:
+    - content
+    - widget
+    type: object
+  userpreferences.Response:
+    properties:
+      content:
+        additionalProperties: true
+        type: object
+      widget:
         type: string
     type: object
   utils.RegexExpression:
@@ -3744,45 +3830,6 @@ definitions:
         items:
           $ref: '#/definitions/viewgroup.View'
         type: array
-    type: object
-  viewstats.listRequest:
-    properties:
-      isActive:
-        type: boolean
-      startedAfter:
-        $ref: '#/definitions/types.CpsTime'
-        type: object
-      stoppedBefore:
-        $ref: '#/definitions/types.CpsTime'
-        type: object
-      usernames:
-        items:
-          type: string
-        type: array
-    type: object
-  viewstats.listResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/stats.Stats'
-        type: array
-    type: object
-  viewstats.pingRequest:
-    properties:
-      path:
-        items:
-          type: string
-        type: array
-      visible:
-        type: boolean
-    required:
-    - path
-    - visible
-    type: object
-  viewstats.pingResponse:
-    properties:
-      _id:
-        type: string
     type: object
 info:
   contact: {}
@@ -4111,6 +4158,23 @@ paths:
       summary: Find all alarms
       tags:
       - alarms
+  /app-info:
+    get:
+      description: Get application information
+      operationId: internal-get-app-info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/appinfo.AppInfoResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get application information
+      tags:
+      - internal
   /associativetable:
     delete:
       description: Delete associativetable by name
@@ -4350,6 +4414,102 @@ paths:
       summary: Update broadcast-message by id
       tags:
       - broadcast-messages
+  /bulk/pbehaviors:
+    post:
+      consumes:
+      - application/json
+      description: Bulk create pbehaviors
+      operationId: pbehaviors-bulk-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/pbehavior.CreateRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/pbehavior.Response'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk create pbehaviors
+      tags:
+      - pbehaviors
+  /bulk/pbehaviors/{id}:
+    delete:
+      description: Bulk delete pbehaviors by id
+      operationId: pbehaviors-bulk-delete-by-id
+      parameters:
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: ids
+        required: true
+        type: array
+      responses:
+        "204":
+          description: ""
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk delete pbehaviors by id
+      tags:
+      - pbehaviors
+    put:
+      consumes:
+      - application/json
+      description: Bulk update pbehaviors by id
+      operationId: pbehaviors-bulk-update-by-id
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/pbehavior.BulkUpdateRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pbehavior.Response'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk update pbehaviors by id
+      tags:
+      - pbehaviors
   /bulk/view-groups:
     delete:
       description: Bulk delete view groups by id
@@ -4764,7 +4924,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ValidationErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find pbehaviors by entity id
       tags:
@@ -5698,7 +5858,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find all flapping rule
       tags:
@@ -5727,7 +5887,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Create flapping rule
       tags:
@@ -5750,7 +5910,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth`: []
       summary: Delete flapping rule by id
       tags:
@@ -5776,7 +5936,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Get flapping rule by id
       tags:
@@ -5814,7 +5974,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Update flapping rule by id
       tags:
@@ -6022,37 +6182,6 @@ paths:
       summary: Count entities and alarm matching patterns
       tags:
       - idlerules
-  /internal/app_info:
-    get:
-      description: Get application information
-      operationId: internal-get-app-info
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/appinfo.AppInfoResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Get application information
-      tags:
-      - internal
-  /internal/login_info:
-    get:
-      description: Get login information
-      operationId: internal-get-login-info
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/appinfo.LoginConfigResponse'
-      summary: Get login information
-      tags:
-      - internal
   /internal/user_interface:
     delete:
       description: delete user interface
@@ -6950,7 +7079,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ValidationErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find all pbehaviors
       tags:
@@ -6966,7 +7095,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/pbehavior.EditRequest'
+          $ref: '#/definitions/pbehavior.CreateRequest'
       produces:
       - application/json
       responses:
@@ -6979,7 +7108,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ValidationErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Create pbehavior
       tags:
@@ -6987,7 +7116,7 @@ paths:
   /pbehaviors/{id}:
     delete:
       description: Delete pbehavior by id
-      operationId: pbehavior-delete-by-id
+      operationId: pbehaviors-delete-by-id
       parameters:
       - description: pbehavior id
         in: path
@@ -7002,7 +7131,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Delete pbehavior by id
       tags:
@@ -7028,7 +7157,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Get pbehavior by id
       tags:
@@ -7066,7 +7195,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Patch partial set of behavior attributes by id
       tags:
@@ -7087,7 +7216,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/pbehavior.EditRequest'
+          $ref: '#/definitions/pbehavior.UpdateRequest'
       produces:
       - application/json
       responses:
@@ -7104,7 +7233,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Update behavior by id
       tags:
@@ -7164,7 +7293,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find entities by pbehavior id
       tags:
@@ -7174,7 +7303,7 @@ paths:
       consumes:
       - application/json
       description: Count entities matching filter
-      operationId: pbehavior-countfilter
+      operationId: pbehaviors-countfilter
       parameters:
       - description: body
         in: body
@@ -7198,7 +7327,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Count entities matching filter
       tags:
@@ -7465,7 +7594,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find all resolve rule
       tags:
@@ -7494,7 +7623,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Create resolve rule
       tags:
@@ -7517,7 +7646,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth`: []
       summary: Delete resolve rule by id
       tags:
@@ -7543,7 +7672,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Get resolve rule by id
       tags:
@@ -7581,7 +7710,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Update resolve rule by id
       tags:
@@ -7971,29 +8100,6 @@ paths:
       summary: Get minimal priority
       tags:
       - scenarios
-  /sessions-count:
-    get:
-      consumes:
-      - application/json
-      description: Get counts of active sessions
-      operationId: auth-get-session-counts
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/sessionauth.sessionsCountResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Get counts of active sessions
-      tags:
-      - auth
   /state-settings:
     get:
       consumes:
@@ -8070,6 +8176,67 @@ paths:
       summary: Update state setting type by id
       tags:
       - state-settings
+  /user-preferences:
+    put:
+      consumes:
+      - application/json
+      description: Update user preferences by widget id
+      operationId: userpreference-update-by-widget-id
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/userpreferences.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userpreferences.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update user preferences by widget id
+      tags:
+      - userpreference
+  /user-preferences/{id}:
+    get:
+      description: Get user preferences by widget id
+      operationId: userpreference-get-by-id
+      parameters:
+      - description: widget id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userpreferences.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get user preferences by widget id
+      tags:
+      - userpreference
   /users:
     get:
       consumes:
@@ -8446,96 +8613,6 @@ paths:
       summary: Update views positions
       tags:
       - views
-  /view-stats:
-    get:
-      consumes:
-      - application/json
-      description: Get list of view stats
-      operationId: view-stats-find-all
-      parameters:
-      - in: query
-        name: isActive
-        type: boolean
-      - collectionFormat: multi
-        in: query
-        items:
-          type: string
-        name: usernames
-        type: array
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/viewstats.listResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Find view stats
-      tags:
-      - view-stats
-    post:
-      consumes:
-      - application/json
-      description: Create view stats
-      operationId: view-stats-create
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/viewstats.pingResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Create view stats
-      tags:
-      - view-stats
-  /view-stats/{id}:
-    put:
-      consumes:
-      - application/json
-      description: Update view stats by id
-      operationId: view-stats-update-by-id
-      parameters:
-      - description: view stats id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/viewstats.pingRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/viewstats.pingResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Update view stats by id
-      tags:
-      - view-stats
   /views:
     get:
       consumes:

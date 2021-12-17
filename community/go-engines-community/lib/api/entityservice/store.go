@@ -232,6 +232,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			Type:          types.EntityTypeService,
 			Category:      request.Category,
 			ImpactLevel:   request.ImpactLevel,
+			SliAvailState: *request.SliAvailState,
 			Created:       types.CpsTime{Time: time.Now()},
 		},
 		EntityPatterns: request.EntityPatterns,
@@ -267,6 +268,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 			"enabled":         request.Enabled,
 			"entity_patterns": request.EntityPatterns,
 			"infos":           transformInfos(request.EditRequest),
+			"sli_avail_state": request.SliAvailState,
 		}},
 		options.FindOneAndUpdate().
 			SetProjection(bson.M{"enabled": 1, "entity_patterns": 1}).

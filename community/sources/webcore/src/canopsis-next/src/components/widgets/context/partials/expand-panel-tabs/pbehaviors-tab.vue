@@ -7,8 +7,8 @@
           td {{ props.item.author }}
           td
             c-enabled(:value="props.item.enabled")
-          td {{ props.item.tstart | timezone($system.timezone, 'long') }}
-          td {{ props.item.tstop | timezone($system.timezone, 'long') }}
+          td {{ props.item.tstart | timezone($system.timezone) }}
+          td {{ props.item.tstop | timezone($system.timezone) }}
           td {{ props.item.type.name }}
           td {{ props.item.reason.name }}
           td {{ props.item.rrule }}
@@ -19,18 +19,20 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import { MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+
+const { mapActions } = createNamespacedHelpers('pbehavior');
 
 export default {
   inject: ['$system'],
   mixins: [
     authMixin,
     queryMixin,
-    entitiesPbehaviorMixin,
   ],
   props: {
     itemId: {
@@ -41,6 +43,12 @@ export default {
       type: String,
       required: true,
     },
+  },
+  data() {
+    return {
+      pending: false,
+      pbehaviors: [],
+    };
   },
   computed: {
     hasAccessToDeletePbehavior() {
@@ -104,6 +112,10 @@ export default {
     this.fetchList();
   },
   methods: {
+    ...mapActions({
+      fetchPbehaviorsByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
+    }),
+
     showEditPbehaviorModal(pbehavior) {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
@@ -121,15 +133,21 @@ export default {
           action: async () => {
             await this.removePbehavior({ id: pbehaviorId });
 
-            this.fetchList();
+            return this.fetchList();
           },
         },
       });
     },
-    fetchList() {
-      this.fetchPbehaviorsByEntityId({ id: this.itemId });
+    async fetchList() {
+      try {
+        this.pending = true;
+        this.pbehaviors = await this.fetchPbehaviorsByEntityIdWithoutStore({ id: this.itemId });
+      } catch (err) {
+        console.warn(err);
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };
 </script>
-

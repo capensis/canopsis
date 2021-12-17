@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-fade-transition(mode="out-in")
-      c-progress-overlay(v-if="pending", :pending="true")
+      c-progress-overlay(v-if="pending", pending)
       div.playlist(v-else-if="playlist")
         c-page-header {{ playlist.name }}
         portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
@@ -30,6 +30,8 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+
+import { toSeconds } from '@/helpers/date/duration';
 
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { permissionsEntitiesPlaylistTabMixin } from '@/mixins/permissions/entities/playlist-tab';
@@ -98,9 +100,9 @@ export default {
     }),
 
     initTime() {
-      const { seconds } = this.playlist.interval;
+      const { value, unit } = this.playlist.interval;
 
-      this.time = seconds;
+      this.time = toSeconds(value, unit);
     },
 
     play() {
@@ -124,8 +126,8 @@ export default {
         const lastIndex = this.availableTabs.length - 1;
 
         this.activeTabIndex = this.activeTabIndex <= 0 ? lastIndex : this.activeTabIndex - 1;
-        this.time = this.playlist.interval.seconds;
 
+        this.initTime();
         this.restartTimer();
       }
     },
@@ -141,7 +143,6 @@ export default {
 
     timerTick() {
       this.time -= 1;
-
 
       if (this.time <= 0) {
         return this.nextTab();
@@ -198,7 +199,7 @@ export default {
   }
 
   &__actions {
-    width: 250px;
+    width: 310px;
   }
 
   &__timer {

@@ -24,7 +24,7 @@ func (e *updateStatusExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	entity types.Entity,
+	entity *types.Entity,
 	time types.CpsTime,
 	_, _, _ string,
 ) (types.AlarmChangeType, error) {
@@ -35,7 +35,7 @@ func (e *updateStatusExecutor) Exec(
 	}
 
 	currentStatus := alarm.Value.Status.Value
-	newStatus := e.alarmStatusService.ComputeStatus(*alarm, entity)
+	newStatus := e.alarmStatusService.ComputeStatus(*alarm, *entity)
 
 	if newStatus == currentStatus {
 		return "", nil
