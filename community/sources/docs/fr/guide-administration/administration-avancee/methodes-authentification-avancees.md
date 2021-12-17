@@ -227,7 +227,7 @@ Les options suivantes doivent ensuite être adaptées au contexte de l'IDP
 | --------------------------- | ------------------------------------------------------------ |
 | `idp_metadata_url`          | URL permettant de récupérer les Metadatas XML de l'IDP ( si les metadatas XML sont fournies via un service accessible ) |
 | `idp_metadata_xml`          | Fichier XML contenant les Metadatas XML de l'IDP ( si les metadatas XML ne sont pas fournies via un service accessible ) |
-| `idp_attributes_map`        | tableau de correspondance entre les attributs utilisateurs de Canopsis ( colonne de gauche ) et les attributs fournis par l'IDP ( colonne de droite ) |
+| `idp_attributes_map`        | Tableau de correspondance entre les attributs utilisateurs de Canopsis ( colonne de gauche ) et les attributs fournis par l'IDP ( colonne de droite ) |
 | `canopsis_saml_url`         | URL du service SAML fourni par Canopsis qui sera configuré côté IDP |
 | `insecure_skip_verify`      | Permet de bypasser la vérification du certification de l'IDP si configuré à `true` |
 | `canopsis_sso_binding`      | Type de binding HTTP pour le service SSO parmi `redirect` ou `post` |
