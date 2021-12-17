@@ -5,7 +5,9 @@
     v-list.grey.lighten-4.px-2.py-0(expand)
       field-filters(
         :filters="value.filters",
-        hideSelect,
+        hide-select,
+        addable,
+        editable,
         @update:filters="updateField('filters', $event)"
       )
       v-divider

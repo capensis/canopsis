@@ -86,7 +86,6 @@ module.exports.command = function setCommonFields({
       .verifyModalClosed();
   }
 
-
   if (dateInterval) {
     common.clickEditDateInterval();
 

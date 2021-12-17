@@ -54,7 +54,7 @@ export function filterToObject(filter = {}) {
   try {
     return isString(filter) ? JSON.parse(filter) : filter;
   } catch (err) {
-    console.warn(err);
+    console.error(err);
 
     return {};
   }

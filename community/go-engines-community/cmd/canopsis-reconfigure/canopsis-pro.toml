@@ -197,6 +197,14 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
+name = "Engine_dynamic_infos_rpc_server"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
 name = "Engine_correlation"
 durable = true
 autoDelete = false

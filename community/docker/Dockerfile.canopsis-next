@@ -1,4 +1,4 @@
-FROM node:10.24.1-stretch
+FROM node:14.18.1-buster-slim
 
 VOLUME /dist/
 
