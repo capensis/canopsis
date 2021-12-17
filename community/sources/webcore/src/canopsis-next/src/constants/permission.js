@@ -92,6 +92,9 @@ export const USERS_PERMISSIONS = {
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
+    kpi: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpi`,
+    kpiFilters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiFilters`,
+    kpiRatingSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiRatingSettings`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -265,6 +268,9 @@ export const USERS_PERMISSIONS = {
       pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
       pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
     },
+    metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
+    ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
+    filter: `${USER_PERMISSIONS_PREFIXES.api}_filter`,
   },
 };
 

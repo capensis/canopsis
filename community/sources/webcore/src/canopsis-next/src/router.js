@@ -12,7 +12,6 @@ import store from '@/store';
 import {
   checkAppInfoAccessForRoute,
   checkUserAccessForRoute,
-  getViewStatsPathByRoute,
 } from '@/helpers/router';
 
 import Login from '@/views/login.vue';
@@ -30,6 +29,7 @@ const AdminPlaylists = () => import(/* webpackChunkName: "Playlist" */ '@/views/
 const AdminPlanning = () => import(/* webpackChunkName: "Planning" */ '@/views/admin/planning.vue');
 const AdminRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/views/admin/remediation.vue');
 const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
+const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilter = () => import(/* webpackChunkName: "EventFilter" */ '@/views/exploitation/event-filter.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
@@ -182,6 +182,18 @@ const routes = [
       requiresPermission: {
         action: CRUD_ACTIONS.can,
         id: USERS_PERMISSIONS.technical.healthcheck,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminKPI,
+    name: ROUTES_NAMES.adminKPI,
+    component: AdminKPI,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        action: CRUD_ACTIONS.can,
+        id: USERS_PERMISSIONS.technical.kpi,
       },
     },
   },
@@ -379,19 +391,8 @@ router.beforeResolve(async (to, from, next) => {
 });
 
 router.afterEach((to, from) => {
-  const isLoggedIn = store.getters['auth/isLoggedIn'];
-
   if (to.path !== from.path) {
     store.dispatch('entities/sweep');
-  }
-
-  if (isLoggedIn) {
-    store.dispatch('viewStats/update', {
-      data: {
-        visible: !(document.visibilityState === 'hidden'),
-        path: getViewStatsPathByRoute(to),
-      },
-    });
   }
 });
 

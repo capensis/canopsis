@@ -50,35 +50,21 @@ export const AVAILABLE_TIME_UNITS = {
   },
 };
 
-export const DURATION_UNITS = {
-  minute: AVAILABLE_TIME_UNITS.minute,
-  hour: AVAILABLE_TIME_UNITS.hour,
-  day: AVAILABLE_TIME_UNITS.day,
-  week: AVAILABLE_TIME_UNITS.week,
-  month: AVAILABLE_TIME_UNITS.month,
-  year: AVAILABLE_TIME_UNITS.month,
-};
-
-export const SNOOZE_DURATION_UNITS = {
-  second: AVAILABLE_TIME_UNITS.second,
-  ...DURATION_UNITS,
-};
-
-export const PERIODIC_REFRESH_UNITS = {
+export const SHORT_AVAILABLE_TIME_UNITS = {
   second: AVAILABLE_TIME_UNITS.second,
   minute: AVAILABLE_TIME_UNITS.minute,
   hour: AVAILABLE_TIME_UNITS.hour,
-};
-
-export const DEFAULT_PERIODIC_REFRESH = {
-  seconds: 60,
-  unit: TIME_UNITS.second,
-  enabled: false,
 };
 
 export const DEFAULT_TIME_INTERVAL = {
-  interval: 60,
+  value: 60,
   unit: TIME_UNITS.second,
+};
+
+export const DEFAULT_PERIODIC_REFRESH = {
+  value: 60,
+  unit: TIME_UNITS.second,
+  enabled: false,
 };
 
 export const DATETIME_FORMATS = {
@@ -88,6 +74,7 @@ export const DATETIME_FORMATS = {
   short: 'DD/MM/YYYY',
   shortWithDayOfWeek: 'ddd DD/MM/YYYY',
   time: 'H:mm:ss',
+  yearWithMonth: 'MMMM YYYY',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
   dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
   datePicker: 'YYYY-MM-DD',
@@ -101,4 +88,11 @@ export const DATETIME_FORMATS = {
 export const DATETIME_INTERVAL_TYPES = {
   start: 'start',
   stop: 'stop',
+};
+
+export const SAMPLINGS = {
+  hour: 'hour',
+  day: 'day',
+  week: 'week',
+  month: 'month',
 };

@@ -4,12 +4,16 @@ module.exports = {
     'jsx',
     'json',
     'vue',
+    'styl',
   ],
+  testEnvironment: 'jest-environment-jsdom',
   transform: {
-    '^.+\\.vue$': 'vue-jest',
+    '^.+\\.vue$': '<rootDir>/tests/unit/jest.vue',
     '^.+\\.jsx?$': '<rootDir>/tests/unit/jest.transform',
   },
   moduleNameMapper: {
+    '^.+\\.styl(us)?$': '<rootDir>/tests/unit/mocks/styleMock.js',
+    '^@unit/(.*)$': '<rootDir>/tests/unit/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   snapshotSerializers: [

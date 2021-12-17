@@ -107,7 +107,7 @@ export default {
           value: 'type',
         },
         {
-          text: this.$t('remediationInstructions.table.lastModifiedOn'),
+          text: this.$t('common.lastModifiedOn'),
           value: 'last_modified',
         },
         {
