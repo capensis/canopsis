@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`kpi-sli Renders \`kpi-sli\` without metrics 1`] = `
+<div
+  class="position-relative"
+>
+  <c-progress-overlay-stub />
+  <kpi-sli-filters-stub
+    mindate="1385830800"
+    query="[object Object]"
+  />
+  <kpi-sli-chart-stub
+    data-type="percent"
+    metrics=""
+    min-date="1385830800"
+    responsive="responsive"
+    sampling="day"
+  />
+</div>
+`;

@@ -14,52 +14,26 @@
           remediation-instruction-assigned-job(
             :job="props.item",
             :key="props.item.job_id",
-            @execute-job="executeJob"
+            @execute-job="$listeners['execute-job']"
           )
 </template>
 
 <script>
-import entitiesRemediationJobsExecutionsMixin from '@/mixins/entities/remediation/jobs-executions';
-import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
-
 import RemediationInstructionAssignedJob from './partials/remediation-instruction-assigned-job.vue';
 
 export default {
   components: {
     RemediationInstructionAssignedJob,
   },
-  mixins: [
-    entitiesRemediationJobsExecutionsMixin,
-    entitiesRemediationInstructionExecutionMixin,
-  ],
   props: {
     jobs: {
       type: Array,
       default: () => [],
     },
-    executionId: {
-      type: String,
-      required: true,
-    },
-    operationId: {
-      type: [Number, String],
-      required: true,
-    },
   },
   methods: {
     async executeJob(job) {
-      try {
-        await this.createRemediationJobExecution({
-          data: {
-            execution: this.executionId,
-            job: job.job_id,
-            operation: this.operationId,
-          },
-        });
-        await this.pingRemediationInstructionExecution({ id: this.executionId });
-      } catch (err) {
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
-      }
+      this.$emit('execute-job', { job });
     },
   },
 };

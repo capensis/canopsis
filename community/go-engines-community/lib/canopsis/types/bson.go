@@ -3,8 +3,10 @@ package types
 import (
 	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"text/template"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
@@ -350,6 +352,12 @@ type OptionalTemplate struct {
 	// Value contains the value of the regular expression. It should only be
 	// taken into account if Set is true.
 	Value *template.Template
+
+	timezoneConfig *config.TimezoneConfig
+}
+
+func (t *OptionalTemplate) SetTimezoneConfig(cfg *config.TimezoneConfig) {
+	t.timezoneConfig = cfg
 }
 
 func (t *OptionalTemplate) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
@@ -361,7 +369,7 @@ func (t *OptionalTemplate) UnmarshalBSONValue(valueType bsontype.Type, b []byte)
 			return errors.New("unable to parse template")
 		}
 
-		t.Value, err = template.New(value).Funcs(GetTemplateFunc()).Parse(value)
+		t.Value, err = template.New(value).Funcs(GetTemplateFunc(t.timezoneConfig)).Parse(value)
 		if err != nil {
 			return fmt.Errorf("unable to parse template: %v", err)
 		}

@@ -86,7 +86,7 @@ export function getRemediationInstructionsFilters(widget, userPreference) {
   const {
     disabledWidgetRemediationInstructionsFilters: disabledWidgetFilters = [],
     remediationInstructionsFilters: filters = [],
-  } = userPreference.widget_preferences;
+  } = userPreference.content;
 
   const preparedWidgetFilters = widgetFilters
     .filter(filter => !disabledWidgetFilters.includes(filter._id));

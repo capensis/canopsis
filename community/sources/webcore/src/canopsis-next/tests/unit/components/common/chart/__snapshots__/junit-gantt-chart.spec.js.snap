@@ -1,0 +1,242 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical and tooltip (no icon). 1`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="opacity: 1; left: -90px; top: 95px; pointer-events: none;"
+>
+  <div>
+    <div>
+      common.current: testSuite.statuses.0 0.970s 
+    </div>
+    <div>
+      common.average: testSuite.statuses.0 0.970s
+    </div>
+  </div>
+</div>
+`;
+
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (arrow downward). 1`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="opacity: 1; left: 90px; top: 95px; pointer-events: none;"
+>
+  <div>
+    <div>
+      common.current: testSuite.statuses.0 0.890s 
+      <i
+        class="v-icon material-icons error--text"
+        style="font-size: 16px;"
+      >
+        arrow_downward
+      </i>
+    </div>
+    <div>
+      common.average: testSuite.statuses.0 0.800s
+    </div>
+  </div>
+</div>
+`;
+
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (arrow upward). 1`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="opacity: 1; left: 90px; top: 95px; pointer-events: none;"
+>
+  <div>
+    <div>
+      common.current: testSuite.statuses.0 0.900s 
+      <i
+        class="v-icon material-icons primary--text"
+        style="font-size: 16px;"
+      >
+        arrow_upward
+      </i>
+    </div>
+    <div>
+      common.average: testSuite.statuses.0 0.910s
+    </div>
+  </div>
+</div>
+`;
+
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (close). 1`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="opacity: 1; left: 90px; top: 95px; pointer-events: none;"
+>
+  <div>
+    <div>
+      common.current: testSuite.statuses.2 0.870s 
+      <i
+        class="v-icon material-icons error--text"
+        style="font-size: 16px;"
+      >
+        close
+      </i>
+    </div>
+    <div>
+      common.average: testSuite.statuses.0 0.870s
+    </div>
+  </div>
+</div>
+`;
+
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (done). 1`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="opacity: 1; left: 90px; top: 95px; pointer-events: none;"
+>
+  <div>
+    <div>
+      common.current: testSuite.statuses.0 0.220s 
+      <i
+        class="v-icon material-icons primary--text"
+        style="font-size: 16px;"
+      >
+        done
+      </i>
+    </div>
+    <div>
+      common.average: testSuite.statuses.3 0.220s
+    </div>
+  </div>
+</div>
+`;
+
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (no icon). 1`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="opacity: 1; left: 90px; top: 95px; pointer-events: none;"
+>
+  <div>
+    <div>
+      common.current: testSuite.statuses.3 0.770s 
+    </div>
+    <div>
+      common.average: testSuite.statuses.3 0.770s
+    </div>
+  </div>
+</div>
+`;
+
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (no icon). 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="opacity: 1; left: 90px; top: 95px; pointer-events: none;"
+>
+  <div>
+    <div>
+      common.current: testSuite.statuses.1 0.000s 
+    </div>
+    <div>
+      common.average: testSuite.statuses.1 0.000s
+    </div>
+  </div>
+</div>
+`;
+
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip with opacity 0. 1`] = `
+<div>
+  <div
+    class="layout position-relative justify-center"
+  >
+    <div>
+      <div
+        class=""
+      >
+        <canvas
+          height="400"
+          id="bar-chart"
+          style="display: block; box-sizing: border-box; height: 400px; width: 400px;"
+          width="400"
+        />
+      </div>
+    </div>
+    <div
+      class="v-tooltip__content menuable__content__active"
+      style="opacity: 0;"
+    />
+  </div>
+  <c-table-pagination-stub
+    rows-per-page-items="5,10,20"
+    total-items="0"
+  />
+</div>
+`;
+
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip without. 1`] = `
+<div>
+  <div
+    class="layout position-relative justify-center"
+  >
+    <div>
+      <div
+        class=""
+      >
+        <canvas
+          height="400"
+          id="bar-chart"
+          style="display: block; box-sizing: border-box; height: 400px; width: 400px;"
+          width="400"
+        />
+      </div>
+    </div>
+    <div
+      class="v-tooltip__content menuable__content__active"
+      style="opacity: 1; left: 90px; top: 95px; pointer-events: none;"
+    >
+      <div>
+        <div>
+          0.000s
+        </div>
+        <div>
+          testSuite.statuses.1
+        </div>
+      </div>
+    </div>
+  </div>
+  <c-table-pagination-stub
+    rows-per-page-items="5,10,20"
+    total-items="0"
+  />
+</div>
+`;
+
+exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip. 1`] = `
+<div>
+  <div
+    class="layout position-relative justify-center"
+  >
+    <div>
+      <div
+        class=""
+      >
+        <canvas
+          height="400"
+          id="bar-chart"
+          style="display: block; box-sizing: border-box; height: 400px; width: 400px;"
+          width="400"
+        />
+      </div>
+    </div>
+    <div
+      class="v-tooltip__content menuable__content__active"
+      style="opacity: 1; left: 90px; top: 95px; pointer-events: none;"
+    >
+      <div>
+        <div>
+          0.700s
+        </div>
+        <div>
+          testSuite.statuses.2: test_case_msg_9_6_0
+        </div>
+      </div>
+    </div>
+  </div>
+  <c-table-pagination-stub
+    rows-per-page-items="5,10,20"
+    total-items="0"
+  />
+</div>
+`;

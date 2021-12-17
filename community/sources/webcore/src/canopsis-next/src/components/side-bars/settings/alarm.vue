@@ -5,8 +5,9 @@
       v-divider
       field-periodic-refresh(v-model="settings.widget.parameters.periodic_refresh")
       v-divider
-      v-list-group(data-test="advancedSettings")
-        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
+      v-list-group
+        template(#activator="")
+          v-list-tile {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
             v-model="settings.widget.parameters.sort",
@@ -34,7 +35,7 @@
             with-color-indicator
           )
           v-divider
-          field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
+          field-default-elements-per-page(v-model="settings.userPreferenceContent.itemsPerPage")
           v-divider
           field-opened-resolved-filter(v-model="settings.widget.parameters.opened")
           v-divider
@@ -44,16 +45,16 @@
               :entities-type="$constants.ENTITIES_TYPES.alarm",
               :filters.sync="settings.widget.parameters.viewFilters",
               :condition.sync="settings.widget.parameters.mainFilterCondition",
-              :has-access-to-add-filter="hasAccessToAddFilter",
-              :has-access-to-edit-filter="hasAccessToEditFilter",
+              :addable="hasAccessToAddFilter",
+              :editable="hasAccessToEditFilter",
               @input="updateMainFilterUpdatedAt"
             )
             v-divider
           template(v-if="hasAccessToListRemediationInstructionsFilters")
             field-remediation-instructions-filters(
               v-model="settings.widget.parameters.remediationInstructionsFilters",
-              :has-access-to-add-filter="hasAccessToAddRemediationInstructionsFilter",
-              :has-access-to-edit-filter="hasAccessToEditRemediationInstructionsFilter"
+              :addable="hasAccessToAddRemediationInstructionsFilter",
+              :editable="hasAccessToEditRemediationInstructionsFilter"
             )
             v-divider
           field-live-reporting(v-model="settings.widget.parameters.liveReporting")
@@ -64,7 +65,6 @@
           )
           v-divider
           field-text-editor(
-            data-test="widgetMoreInfoTemplate",
             v-model="settings.widget.parameters.moreInfoTemplate",
             :title="$t('settings.moreInfosModal')"
           )
@@ -75,22 +75,19 @@
           )
           v-divider
           field-switcher(
-            data-test="isHtmlEnabledOnTimeLine",
             v-model="settings.widget.parameters.isHtmlEnabledOnTimeLine",
             :title="$t('settings.isHtmlEnabledOnTimeLine')"
           )
           v-divider
-          v-list-group(data-test="ackGroup")
+          v-list-group
             v-list-tile(slot="activator") Ack
             v-list.grey.lighten-4.px-2.py-0(expand)
             field-switcher(
-              data-test="isAckNoteRequired",
               v-model="settings.widget.parameters.isAckNoteRequired",
               :title="$t('settings.isAckNoteRequired')"
             )
             v-divider
             field-switcher(
-              data-test="isMultiAckEnabled",
               v-model="settings.widget.parameters.isMultiAckEnabled",
               :title="$t('settings.isMultiAckEnabled')"
             )
@@ -109,8 +106,13 @@
           )
           v-divider
           export-csv-form(v-model="settings.widget.parameters", datetime-format)
+          v-divider
+          field-switcher(
+            v-model="settings.widget.parameters.sticky_header",
+            :title="$t('settings.stickyHeader')"
+          )
       v-divider
-    v-btn.primary(data-test="submitAlarms", @click="submit") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -180,17 +182,15 @@ export default {
     return {
       settings: {
         widget: alarmListWidgetToForm(widget),
-        widget_preferences: {
-          itemsPerPage: PAGINATION_LIMIT,
-        },
+        userPreferenceContent: { itemsPerPage: PAGINATION_LIMIT },
       },
     };
   },
   mounted() {
-    const { widget_preferences: widgetPreference } = this.userPreference;
+    const { content } = this.userPreference;
 
-    this.settings.widget_preferences = {
-      itemsPerPage: get(widgetPreference, 'itemsPerPage', PAGINATION_LIMIT),
+    this.settings.userPreferenceContent = {
+      itemsPerPage: get(content, 'itemsPerPage', PAGINATION_LIMIT),
     };
   },
   methods: {

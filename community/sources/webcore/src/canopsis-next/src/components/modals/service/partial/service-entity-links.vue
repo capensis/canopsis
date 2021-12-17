@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { BUSINESS_USER_PERMISSIONS_ACTIONS_MAP, WIDGETS_ACTIONS_TYPES } from '@/constants';
+import { BUSINESS_USER_PERMISSIONS_ACTIONS_MAP, WEATHER_ACTIONS_TYPES } from '@/constants';
 
 import { harmonizeLinks } from '@/helpers/links';
 
@@ -53,12 +53,12 @@ export default {
      * Check if user has access to all links/categories
      */
     hasAccessToLinks() {
-      return this.checkAccess(BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.weather[WIDGETS_ACTIONS_TYPES.weather.entityLinks]);
+      return this.checkAccess(BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.weather[WEATHER_ACTIONS_TYPES.entityLinks]);
     },
   },
   methods: {
     checkAccessForSpecialCategory(category) {
-      const permissionPrefix = BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.weather[WIDGETS_ACTIONS_TYPES.weather.entityLinks];
+      const permissionPrefix = BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.weather[WEATHER_ACTIONS_TYPES.entityLinks];
       const permission = `${permissionPrefix}_${category}`;
 
       return this.hasAccessToLinks || this.checkAccess(permission);
