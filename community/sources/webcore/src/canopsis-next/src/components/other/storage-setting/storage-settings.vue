@@ -20,7 +20,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formToDataStorageSettings, dataStorageSettingsToForm } from '@/helpers/forms/data-storage';
+import { dataStorageSettingsToForm } from '@/helpers/forms/data-storage';
 
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { entitiesDataStorageSettingsMixin } from '@/mixins/entities/data-storage';
@@ -85,7 +85,7 @@ export default {
             phrase: this.$t('modals.confirmationPhrase.updateStorageSettings.phrase'),
             action: async () => {
               try {
-                await this.updateDataStorageSettings({ data: formToDataStorageSettings(this.form) });
+                await this.updateDataStorageSettings({ data: this.form });
 
                 this.$popups.success({ text: this.$t('success.default') });
               } catch (err) {

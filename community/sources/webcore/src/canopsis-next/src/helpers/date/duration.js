@@ -1,4 +1,4 @@
-import { isNil } from 'lodash';
+import { isNil, isNumber } from 'lodash';
 import moment from 'moment';
 
 import 'moment-duration-format';
@@ -20,23 +20,12 @@ import {
 
 /**
  * @typedef {Object} Duration
- * @property {number} seconds
- * @property {DurationUnit} unit
- */
-
-/**
- * @typedef {Duration} DurationWithEnabled
- * @property {boolean} enabled
- */
-
-/**
- * @typedef {Object} DurationForm
  * @property {number} value
  * @property {DurationUnit} unit
  */
 
 /**
- * @typedef {DurationForm} DurationWithEnabledForm
+ * @typedef {Duration} DurationWithEnabled
  * @property {boolean} enabled
  */
 
@@ -110,51 +99,29 @@ export const toSeconds = (value, unit = TIME_UNITS.second) => convertUnit(value,
 export const fromSeconds = (value, unit = TIME_UNITS.second) => convertUnit(value, TIME_UNITS.second, unit);
 
 /**
- * Convert Duration object to DurationForm
+ * Convert duration to seconds
  *
  * @param {Duration} duration
- * @param {number} [duration.seconds = 1]
- * @param {DurationUnit} [duration.unit = TIME_UNITS.second]
- * @returns {DurationForm}
+ * @return {number}
  */
-export const durationToForm = ({ seconds = 1, unit = TIME_UNITS.second } = {}) => ({
-  unit,
-  value: fromSeconds(seconds, unit),
-});
+export const durationToSeconds = ({ value, unit } = {}) => toSeconds(value, unit);
 
 /**
- * Convert DurationForm object to Duration
+ * Convert Duration object to form
  *
- * @param {DurationForm} duration
- * @param {number} [duration.value = 0]
- * @param {DurationUnit} [duration.unit = TIME_UNITS.second]
+ * @param {Duration} [duration = { value: 1, unit: TIME_UNITS.second }]
  * @returns {Duration}
  */
-export const formToDuration = ({ value = 0, unit = TIME_UNITS.second } = {}) => ({
-  unit,
-  seconds: toSeconds(value, unit),
-});
+export const durationToForm = duration => (duration ? { ...duration } : { value: 1, unit: TIME_UNITS.second });
 
 /**
- * Convert DurationWithEnabled object to DurationWithEnabledForm
+ * Convert DurationWithEnabled object to form
  *
  * @param {DurationWithEnabled} duration
- * @return {DurationWithEnabledForm}
- */
-export const durationWithEnabledToForm = ({ seconds, unit, enabled = false } = {}) => ({
-  ...durationToForm({ seconds, unit }),
-
-  enabled,
-});
-
-/**
- * Convert DurationWithEnabled object to DurationWithEnabledForm
- *
- * @param {DurationWithEnabledForm} duration
  * @return {DurationWithEnabled}
  */
-export const formToDurationWithEnabled = ({ value, unit, enabled }) => ({
-  ...formToDuration({ value, unit }),
+export const durationWithEnabledToForm = ({ value, unit, enabled = false } = {}) => ({
+  ...durationToForm({ value, unit }),
 
   enabled,
 });
@@ -162,15 +129,15 @@ export const formToDurationWithEnabled = ({ value, unit, enabled }) => ({
 /**
  * Get max available interval value
  *
- * @param {DurationForm} [durationForm = { value: 0, unit: TIME_UNITS.second }]
+ * @param {Duration} [duration = { value: 0, unit: TIME_UNITS.second }]
  * @param {DurationUnit[]} [availableUnits = AVAILABLE_SORTED_TIME_UNITS]
- * @return {DurationForm}
+ * @return {Duration}
  */
-export const convertDurationFormToMaxUnitDurationForm = (
-  durationForm = { value: 0, unit: TIME_UNITS.second },
+export const convertDurationToMaxUnitDuration = (
+  duration = { value: 0, unit: TIME_UNITS.second },
   availableUnits = AVAILABLE_SORTED_TIME_UNITS,
 ) => {
-  const { value, unit } = durationForm;
+  const { value, unit } = duration;
   let unitValue = value;
 
   const maxUnit = availableUnits.find((availableUnit) => {
@@ -192,12 +159,12 @@ export const convertDurationFormToMaxUnitDurationForm = (
  * @param {string[]} [availableUnits = AVAILABLE_SORTED_TIME_UNITS]
  * @return {string}
  */
-export const convertDurationFormToMaxUnitDurationString = (
+export const convertDurationToMaxUnitDurationString = (
   value = 0,
   unit = TIME_UNITS.second,
   availableUnits = AVAILABLE_SORTED_TIME_UNITS,
 ) => {
-  const durationForm = convertDurationFormToMaxUnitDurationForm({ value, unit }, availableUnits);
+  const durationForm = convertDurationToMaxUnitDuration({ value, unit }, availableUnits);
 
   return `${durationForm.value}${durationForm.unit}`;
 };
@@ -205,7 +172,7 @@ export const convertDurationFormToMaxUnitDurationString = (
 /**
  * Convert duration to more readable format
  *
- * @param {number | Duration | DurationForm} duration
+ * @param {number | Duration} duration
  * @param {string} [format = DEFAULT_DURATION_FORMAT]
  * @param {DurationUnit} [unit = TIME_UNITS.second]
  * @returns {string}
@@ -215,37 +182,12 @@ export const convertDurationToString = (duration, format = DEFAULT_DURATION_FORM
     return '';
   }
 
-  /**
-   * TODO: Should be removed after duration refactoring
-   */
-  const durationValue = duration ? (duration.seconds || duration.value || duration) : duration;
   const resultFormat = DATETIME_FORMATS[format] || format;
+  const preparedDuration = isNumber(duration)
+    ? duration
+    : duration?.value;
 
-  return moment.duration(durationValue, unit).format(resultFormat, { trim: 'both final' }) || '0s';
-};
-
-/**
- * Convert duration to interval object
- *
- * @param duration
- * @return {{unit: string, interval: number}}
- */
-export const convertDurationToIntervalObject = (duration) => {
-  const durationUnits = [
-    TIME_UNITS.year,
-    TIME_UNITS.month,
-    TIME_UNITS.week,
-    TIME_UNITS.week,
-    TIME_UNITS.day,
-    TIME_UNITS.hour,
-    TIME_UNITS.minute,
-    TIME_UNITS.second,
-  ];
-
-  const durationType = durationUnits.find(unit => moment.duration(duration, 'seconds').as(unit) % 1 === 0);
-
-  return {
-    interval: moment.duration(duration, 'seconds').as(durationType),
-    unit: durationType,
-  };
+  return moment
+    .duration(preparedDuration, duration?.unit ?? unit)
+    .format(resultFormat, { trim: 'both final' }) || '0s';
 };

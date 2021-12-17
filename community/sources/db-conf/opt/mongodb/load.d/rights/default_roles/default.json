@@ -56,6 +56,15 @@
       "models_healthcheckStatus": {
         "checksum": 1
       },
+      "models_kpi": {
+        "checksum": 1
+      },
+      "models_kpiFilters": {
+        "checksum": 15
+      },
+      "models_kpiRatingSettings": {
+        "checksum": 15
+      },
       "models_notification_instructionStats": {
         "checksum": 15
       },

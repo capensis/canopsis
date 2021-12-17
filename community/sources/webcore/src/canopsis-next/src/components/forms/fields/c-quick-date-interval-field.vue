@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(row, align-center, wrap)
+  div.c-quick-interval
     date-picker-field(
       :value="intervalFromString",
       :label="$t('common.from')",
@@ -16,7 +16,7 @@
       @input="updateToDate"
     )
       v-icon(slot="append", color="black") calendar_today
-    v-flex(xs2)
+    div.c-quick-interval__range
       v-select.ml-4(
         v-model="range",
         :items="quickRanges",
@@ -74,11 +74,11 @@ export default {
     },
 
     intervalFromAsTimestamp() {
-      return convertStartDateIntervalToTimestamp(this.interval.from, DATETIME_FORMATS.datePicker);
+      return convertStartDateIntervalToTimestamp(this.interval.from);
     },
 
     intervalToAsTimestamp() {
-      return convertStopDateIntervalToTimestamp(this.interval.to, DATETIME_FORMATS.datePicker);
+      return convertStopDateIntervalToTimestamp(this.interval.to);
     },
 
     intervalFromString() {
@@ -168,8 +168,8 @@ export default {
         return true;
       }
 
-      const startTimestamp = convertStartDateIntervalToTimestamp(start, DATETIME_FORMATS.datePicker);
-      const stopTimestamp = convertStopDateIntervalToTimestamp(start, DATETIME_FORMATS.datePicker);
+      const startTimestamp = convertStartDateIntervalToTimestamp(start);
+      const stopTimestamp = convertStopDateIntervalToTimestamp(start);
 
       return this.isGreaterMinDate(startTimestamp)
         && this.isAllowedAccumulatedFromDate(startTimestamp)
@@ -187,3 +187,14 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.c-quick-interval {
+  display: inline-flex;
+
+  &__range {
+    display: flex;
+    max-width: 180px;
+  }
+}
+</style>

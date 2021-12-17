@@ -1,5 +1,5 @@
 <template lang="pug">
-  shared-actions-panel(:actions="actions.inline", :dropDownActions="actions.dropDown")
+  shared-actions-panel(:actions="actions.inline", :drop-down-actions="actions.dropDown")
 </template>
 
 <script>

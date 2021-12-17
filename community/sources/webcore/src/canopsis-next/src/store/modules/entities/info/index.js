@@ -2,6 +2,7 @@ import { API_ROUTES } from '@/config';
 import { POPUP_TYPES } from '@/constants';
 
 import request from '@/services/request';
+import { durationToSeconds } from '@/helpers/date/duration';
 
 const types = {
   FETCH_APP_INFO: 'FETCH_APP_INFO',
@@ -60,11 +61,8 @@ export default {
     },
 
     setPopupTimeouts({ dispatch }, { popupTimeout = {} }) {
-      const { seconds: intervalInfo } = popupTimeout.info;
-      const { seconds: intervalError } = popupTimeout.error;
-
-      const timeInfo = intervalInfo * 1000;
-      const timeError = intervalError * 1000;
+      const timeInfo = durationToSeconds(popupTimeout.info) * 1000;
+      const timeError = durationToSeconds(popupTimeout.error) * 1000;
 
       dispatch('popups/setDefaultCloseTime', { type: POPUP_TYPES.success, time: timeInfo }, { root: true });
       dispatch('popups/setDefaultCloseTime', { type: POPUP_TYPES.info, time: timeInfo }, { root: true });

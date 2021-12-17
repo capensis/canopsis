@@ -24,6 +24,8 @@ import {
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
+  ALARM_METRIC_PARAMETERS,
+  USER_METRIC_PARAMETERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -198,7 +200,18 @@ export default {
     graph: 'Graphique | Graphiques',
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
+    rating: 'Notation | Notations',
+    sampling: 'Échantillonnage',
+    parametersToDisplay: '{count} paramètres à afficher',
+    uptime: 'Uptime',
+    maintenance: 'Maintenance',
+    downtime: 'Downtime',
     toTheTop: 'Jusqu\'au sommet',
+    time: 'Temps',
+    lastModifiedOn: 'Dernière modification le',
+    exportAsCsv: 'Export as csv',
+    criteria: 'Critères',
+    ratingSettings: 'Paramètres d\'évaluation',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -255,6 +268,12 @@ export default {
       october: 'Octobre',
       november: 'Novembre',
       december: 'Décembre',
+    },
+    stateTypes: {
+      [ENTITIES_STATES.ok]: 'Ok',
+      [ENTITIES_STATES.minor]: 'Mineur',
+      [ENTITIES_STATES.major]: 'Majeur',
+      [ENTITIES_STATES.critical]: 'Critique',
     },
   },
   variableTypes: {
@@ -459,6 +478,25 @@ export default {
       hasAutoInstructionInRunning: 'Instruction automatique en cours',
       allAutoInstructionExecuted: 'Toutes les instructions automatiques ont été exécutées',
       awaitingInstructionComplete: 'En attente de l\'instruction pour terminer',
+    },
+    metrics: {
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Nombre d\'alarmes créées',
+      [ALARM_METRIC_PARAMETERS.activeAlarms]: 'Nombre d\'alarmes actives',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Nombre d\'alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre d\'alarmes en cours de correction automatique',
+      [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Nombre d\'alarmes avec PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Nombre d\'alarmes corrélées',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Nombre d\'alarmes avec acquittement',
+      [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: 'Number of active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Nombre d\'accusés de réception annulés',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Nombre d\'alarmes actives avec acks',
+      [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Nombre d\'alarmes actives sans tickets',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% d\'alarmes corrélées',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec correction automatique',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '% d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% d\'alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.averageAck]: 'Délai moyen d\'acquittement des alarmes',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: 'Temps moyen pour résoudre les alarmes',
     },
   },
   weather: {
@@ -978,6 +1016,9 @@ export default {
       },
       edit: {
         title: 'Éditer un filtre',
+      },
+      duplicate: {
+        title: 'Dupliquer un filtre',
       },
       fields: {
         title: 'Nom',
@@ -2160,7 +2201,6 @@ export default {
     },
     table: {
       rating: 'Évaluation',
-      lastModifiedOn: 'Dernière modification le',
       monthExecutions: '№ d\'exécutions\nce mois-ci',
       lastExecutedOn: 'Dernière exécution le',
     },
@@ -2236,7 +2276,6 @@ export default {
     executedOn: 'Exécuté sur',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
-    lastModifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\n\'achèvement',
     executionCount: 'Nombre de\nexécutions',
     alarmStates: 'Alarmes affectées par l\'état',
@@ -2325,22 +2364,17 @@ export default {
   },
 
   entity: {
+    manageInfos: 'Gérer les informations',
+    form: 'Formulaire',
+    impact: 'Impacts',
+    depends: 'Dépendances',
+    addInformation: 'Ajouter une information',
+    emptyInfos: 'Aucune information',
+    availabilityState: 'État de haute disponibilité',
     types: {
       connector: 'type de connecteur',
       component: 'composant',
       resource: 'ressource',
-    },
-    fields: {
-      type: 'Type',
-      manageInfos: 'Gérer les informations',
-      form: 'Formulaire',
-      impact: 'Impacts',
-      depends: 'Dépendances',
-    },
-    manageInfos: {
-      title: 'Informations',
-      createTitle: 'Ajouter une information',
-      emptyInfos: 'Aucune information',
     },
   },
 
@@ -2370,6 +2404,9 @@ export default {
     navigationTypes: {
       [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',
       [GROUPS_NAVIGATION_TYPES.topBar]: 'Barre d\'entête',
+    },
+    metrics: {
+      [USER_METRIC_PARAMETERS.totalUserActivity]: 'Durée totale de l\'activité',
     },
   },
 
@@ -2608,6 +2645,10 @@ export default {
       title: 'Bilan de santé',
       message: 'La fonction Healthcheck est le tableau de bord avec des indications d\'états et d\'erreurs de tous les systèmes inclus dans Canopsis.',
     },
+    [USERS_PERMISSIONS.technical.kpi]: {
+      title: 'KPI',
+      message: '', // TODO: add correct message
+    },
 
     /**
      * Admin general
@@ -2669,6 +2710,44 @@ export default {
       maxMatchedItems: 'Avertit l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
       checkCountRequestTimeout: 'Définit le délai d\'expiration (en secondes) de la demande d\'éléments correspondants',
     },
+  },
+
+  kpi: {
+    alarmMetrics: 'Métriques d\'alarme',
+    sli: 'SLI',
+  },
+
+  kpiMetrics: {
+    parameter: 'Paramètre à comparer',
+    tooltip: {
+      [USER_METRIC_PARAMETERS.totalUserActivity]: '{value} temps total d\'activité',
+
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: '{value} alarmes créées',
+      [ALARM_METRIC_PARAMETERS.activeAlarms]: '{value} alarmes actives',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: '{value} alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: '{value} alarmes en cours de correction automatique',
+      [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: '{value} alarmes sous PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: '{value} alarmes avec corrélation',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} alarmes avec ack',
+      [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: '{value} alarmes actives avec acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} alarmes avec acquittement annulé',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} alarmes actives avec acks',
+      [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: '{value} alarmes actives sans tickets',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% d\'alarmes avec correction automatique',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% d\'alarmes avec instructions',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% des alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.averageAck]: '{value} accuser les alarmes',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} pour résoudre les alarmes',
+    },
+  },
+
+  kpiFilters: {
+    helpInformation: 'Ici, les modèles de filtre pour des tranches de données supplémentaires pour les compteurs et les évaluations peuvent être ajoutés.',
+  },
+
+  kpiRatingSettings: {
+    helpInformation: 'La liste des paramètres à utiliser pour la notation.',
   },
 
   ...featureService.get('i18n.fr'),

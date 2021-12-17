@@ -74,7 +74,6 @@ export default {
       commit(types.LOGIN_COMPLETED);
 
       return Promise.all([
-        dispatch('viewStats/create', null, { root: true }),
         dispatch('fetchCurrentUser'),
         dispatch('filesAccess'),
       ]);

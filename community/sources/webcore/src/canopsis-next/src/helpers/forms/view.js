@@ -3,7 +3,8 @@ import { omit } from 'lodash';
 import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
 
 import uuid from '../uuid';
-import { durationWithEnabledToForm, formToDurationWithEnabled } from '../date/duration';
+
+import { durationWithEnabledToForm } from '../date/duration';
 import { generateCopyOfViewTab, generateViewTab } from '../entities';
 
 import { enabledToForm } from './shared/common';
@@ -29,35 +30,23 @@ import { enabledToForm } from './shared/common';
  */
 
 /**
- * @typedef {ViewGroup} View
- * @property {string} title
- * @property {string} description
- * @property {boolean} enabled
- * @property {string[]} tags
- * @property {ViewGroup} group
- * @property {ViewTab[]} tabs
- * @property {DurationWithEnabled} periodic_refresh
- */
-
-/**
- * @typedef {ViewGroupRequest} ViewRequest
- * @property {string} title
- * @property {string} description
- * @property {boolean} enabled
- * @property {string[]} tags
- * @property {string} group
- * @property {ViewTab[]} tabs
- * @property {DurationWithEnabled} periodic_refresh
- */
-
-/**
  * @typedef {Object} ViewForm
  * @property {string} title
  * @property {string} description
  * @property {boolean} enabled
  * @property {string[]} tags
- * @property {ViewGroup} group
- * @property {DurationWithEnabledForm} periodic_refresh
+ * @property {ViewGroup} [group]
+ * @property {DurationWithEnabled} periodic_refresh
+ */
+
+/**
+ * @typedef {ViewGroup & ViewForm} View
+ * @property {ViewTab[]} tabs
+ */
+
+/**
+ * @typedef {View} ViewRequest
+ * @property {string} group
  */
 
 /**
@@ -69,16 +58,6 @@ import { enabledToForm } from './shared/common';
  * @typedef {Object} ViewGroupWithViewsPosition
  * @property {string} _id
  * @property {string[]} views
- */
-
-/**
- * @typedef {ViewGroup} View
- * @property {string} description
- * @property {boolean} enabled
- * @property {string[]} tags
- * @property {ViewGroup} group
- * @property {ViewTab[]} tabs
- * @property {DurationWithEnabled} periodic_refresh
  */
 
 /**
@@ -111,24 +90,12 @@ import { enabledToForm } from './shared/common';
  * @returns {ViewForm}
  */
 export const viewToForm = (view = {}) => ({
-  title: view.title || '',
-  description: view.description || '',
+  title: view.title ?? '',
+  description: view.description ?? '',
   enabled: enabledToForm(view.enabled),
   tags: view.tags ? [...view.tags] : [],
   group: view.group ? { ...view.group } : null,
-  periodic_refresh: durationWithEnabledToForm(view.periodic_refresh || DEFAULT_PERIODIC_REFRESH),
-});
-
-/**
- * Convert form to view
- *
- * @param {ViewForm} form
- * @returns {View}
- */
-export const formToView = form => ({
-  ...form,
-
-  periodic_refresh: formToDurationWithEnabled(form.periodic_refresh),
+  periodic_refresh: durationWithEnabledToForm(view.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
 });
 
 /**

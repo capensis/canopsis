@@ -114,7 +114,7 @@ export default {
           width: 180,
         },
         {
-          text: this.$t('remediationInstructionStats.lastModifiedOn'),
+          text: this.$t('common.lastModifiedOn'),
           value: 'last_modified',
           width: 180,
         },
@@ -143,7 +143,7 @@ export default {
           width: 150,
         },
         {
-          text: this.$t('remediationInstructionStats.rating'),
+          text: this.$tc('common.rating'),
           value: 'rating',
           sortable: false,
           width: 250,

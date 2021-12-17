@@ -293,6 +293,10 @@ export const Rate = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './common/rate.vue'),
   loading: ModalLoaderOverlay,
 });
+export const Patterns = () => ({
+  component: import(/* webpackChunkName: "Common" */ './common/patterns.vue'),
+  loading: ModalLoaderOverlay,
+});
 export const CreateRemediationInstructionsFilter = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/create-remediation-instructions-filter.vue'),
   loading: ModalLoaderOverlay,
