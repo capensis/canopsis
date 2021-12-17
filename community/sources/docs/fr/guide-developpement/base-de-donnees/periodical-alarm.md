@@ -51,17 +51,7 @@ Voici la structure d'une [alarme](../../guide-utilisation/vocabulaire/index.md#a
 }
 ```
 
-Complément d'information :
-
-* `last_update_date`: Correspond à l'horodatage de la dernière modification de l'alarme (changement de criticité, pose d'un acquittement…).
-* `last_event_date`: Correspond à l'horodatage du dernier événement reçu pour cette alarme même si cela n'a pas généré de changement.
-
-Par défaut, la valeur de `last_update_date` est égale à la valeur de `last_event_date`.
-
-Pour activer la dissociation des deux variables, il est nécessaire de configurer l'option `EnableLastEventDate = true` dans le fichier `canopsis.toml`.
-
-!!! note
-    Toute modification d'une de ces valeurs implique de suivre de le [Guide de modification du fichier `canopsis.toml`](../../guide-administration/administration-avancee/modification-canopsis-toml.md).
+En complément d'information, consulter la page [Format des temps des alarmes](../../guide-utilisation/formats-et-syntaxe/format-temps-alarmes.md).
 
 ## Collection MongoDB
 
