@@ -25,7 +25,8 @@ import {
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
-  USER_METRIC_PARAMETERS, WEATHER_ACTIONS_TYPES,
+  USER_METRIC_PARAMETERS,
+  WEATHER_ACTIONS_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -989,7 +990,7 @@ export default {
       copyToClipboard: 'Copy to clipboard',
     },
     service: {
-      actionPending: 'action(s) pending',
+      actionPending: 'action pending | actions pending',
       refreshEntities: 'Refresh entities list',
       editPbehaviors: 'Edit pbehaviors',
       entity: {
@@ -1957,6 +1958,7 @@ export default {
   serviceWeather: {
     seeAlarms: 'See alarms',
     massActions: 'Mass actions',
+    cannotBeApplied: 'This action cannot be applied',
     actions: {
       [WEATHER_ACTIONS_TYPES.entityAck]: 'Acknowledge',
       [WEATHER_ACTIONS_TYPES.entityValidate]: 'Validate',

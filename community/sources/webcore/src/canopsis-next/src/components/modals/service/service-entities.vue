@@ -26,7 +26,7 @@
         v-layout(row, align-center)
           v-btn.mr-2(icon, small, @click="clearActions")
             v-icon(color="white", small) close
-          span {{ actionsCount }} {{ $t('modals.service.actionPending') }}
+          span {{ actionsCount }} {{ $tc('modals.service.actionPending', actionsCount) }}
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-tooltip.mx-2(top)
         v-btn.secondary(slot="activator", @click="fetchList")
