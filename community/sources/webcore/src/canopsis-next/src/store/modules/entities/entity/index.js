@@ -33,8 +33,10 @@ export default createEntityModule({
     widgets: {},
   },
   getters: {
-    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.entity, get(state.widgets[widgetId], 'allIds', [])),
+    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId => rootGetters['entities/getList'](
+      ENTITIES_TYPES.entity,
+      get(state.widgets[widgetId], 'allIds', []),
+    ),
 
     getMetaByWidgetId: state => widgetId => get(state.widgets[widgetId], 'meta', {}),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
