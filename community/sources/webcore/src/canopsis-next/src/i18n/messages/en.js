@@ -303,6 +303,9 @@ export default {
       common: 'Add a new entity',
       addService: 'Add a new service entity',
     },
+    popups: {
+      massDeleteWarning: 'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
+    },
   },
   search: {
     alarmAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
@@ -478,6 +481,25 @@ export default {
     created: 'Creation date',
     updated: 'Last update date',
     lastAlarmDate: 'Last alarm date',
+    searchHelp: '<span>Help on the advanced research :</span>\n' +
+      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
+      '<p>The "-" before the research is required</p>\n' +
+      '<p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
+      '<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>\n' +
+      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+      '<dl>' +
+      '  <dt>Examples :</dt>' +
+      '  <dt>- name = "name_1"</dt>\n' +
+      '  <dd>Pbehavior name are "name_1"</dd>\n' +
+      '  <dt>- rrule = "rrule_1"</dt>\n' +
+      '  <dd>Pbehavior rrule are "rrule_1"</dd>\n' +
+      '  <dt>- filter = "filter_1"</dt>\n' +
+      '  <dd>Pbehavior filter are "filter_1"</dd>\n' +
+      '  <dt>- type.name = "type_name_1"</dt>\n' +
+      '  <dd>Pbehavior type name are "type_name_1"</dd>\n' +
+      '  <dt>- reason.name = "reason_name_1"</dt>\n' +
+      '  <dd>Pbehavior reason name are "reason_name_1"</dd>' +
+      '</dl>',
     tabs: {
       filter: 'Filter',
       comments: 'Comments',
@@ -700,6 +722,14 @@ export default {
         '<dd>- test case name %test_case%</dd>\n' +
         '<dd>- date (YYYY, MM, DD)</dd>\n' +
         '<dd>- time of execution (hh, mm, ss)</dd>' +
+        '</dl>',
+    },
+    reportFileRegexp: {
+      title: 'Report file mask',
+      helpText: '<dl>' +
+        '<dt>Define the filename regexp of which report:<dt>\n' +
+        '<dd>For example:</dd>\n' +
+        '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n' +
         '</dl>',
     },
   },
@@ -1216,6 +1246,7 @@ export default {
       title: 'Select tab',
     },
     createDynamicInfo: {
+      alarmUpdate: 'The rule will update existing alarms!',
       create: {
         title: 'Create dynamic information',
         success: 'Dynamic information successfully created!',
@@ -1537,6 +1568,47 @@ export default {
         title: 'Duplicate entity rule',
       },
     },
+    createAlarmStatusRule: {
+      flapping: {
+        create: {
+          title: 'Create flapping rule',
+        },
+        edit: {
+          title: 'Edit flapping rule',
+        },
+        duplicate: {
+          title: 'Duplicate flapping rule',
+        },
+      },
+      resolve: {
+        create: {
+          title: 'Create resolve rule',
+        },
+        edit: {
+          title: 'Edit resolve rule',
+        },
+        duplicate: {
+          title: 'Duplicate resolve rule',
+        },
+      },
+    },
+    confirmationPhrase: {
+      phrase: 'Phrase',
+      updateStorageSettings: {
+        title: 'Updating storage policy. Are you sure ?',
+        text: 'You are about to change the storage policy.\n' +
+          '<strong>Associated operations, deleting data, won\'t be cancellable.</strong>',
+        phraseText: 'Please, type the following to confirm:',
+        phrase: 'update the storage policy',
+      },
+      cleanStorage: {
+        title: 'Archive/delete disabled entities. Are you sure ?',
+        text: 'You are about to archive and/or delete data.\n' +
+          '<strong>Deletion operation won\'t be cancellable.</strong>',
+        phraseText: 'Please, type the following to confirm:',
+        phrase: 'archive or delete',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1625,6 +1697,7 @@ export default {
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
+    socketConnectionProblem: 'Problem with connection to socket server',
   },
   calendar: {
     today: 'Today',
@@ -1918,6 +1991,12 @@ export default {
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
     },
+    api: {
+      general: 'General',
+      rules: 'Rules',
+      remediation: 'Remediation',
+      pbehavior: 'PBehavior',
+    },
   },
 
   pbehavior: {
@@ -1980,6 +2059,10 @@ export default {
     systemStatusChipError: 'The system is not operational',
     systemStatusServerError: 'System configuration is invalid, please contact the administrator',
     systemsOperational: 'All systems are operational',
+    validation: {
+      max_value: 'The field must be equal or less than the optimal instance count',
+      min_value: 'The field must be equal or more than the minimal instance count',
+    },
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
@@ -2196,6 +2279,15 @@ export default {
   },
 
   scenario: {
+    triggers: 'Triggers',
+    emitTrigger: 'Emit trigger',
+    withAuth: 'Do you need auth fields?',
+    emptyResponse: 'Empty response',
+    isRegexp: 'The value can be a RegExp',
+    headerKey: 'Header key',
+    headerValue: 'Header value',
+    key: 'Key',
+    skipVerify: 'Ignore HTTPS certificate verification',
     headers: 'Headers',
     declareTicket: 'Declare ticket',
     workflow: 'Workflow if this action didn’t match:',
@@ -2229,22 +2321,12 @@ export default {
       [ACTION_TYPES.cancel]: 'Cancel',
       [ACTION_TYPES.webhook]: 'Webhook',
     },
-    fields: {
-      triggers: 'Triggers',
-      emitTrigger: 'Emit trigger',
-      withAuth: 'Do you need auth fields?',
-      emptyResponse: 'Empty response',
-      isRegexp: 'The value can be a RegExp',
-      headerKey: 'Header key',
-      headerValue: 'Header value',
-      key: 'Key',
-      skipVerify: 'Ignore HTTPS certificate verification',
-    },
     tabs: {
       pattern: 'Pattern',
     },
     errors: {
       actionRequired: 'Please add at least one action',
+      priorityExist: 'The priority of current scenario is already in use. Do you want to change the current scenario priority to {priority}?',
     },
   },
 
@@ -2359,7 +2441,7 @@ export default {
     },
   },
 
-  storageSetting: {
+  storageSettings: {
     alarm: {
       title: 'Alarm data storage',
       titleHelp: 'When switched on, the resolved alarms data will be archived and/or deleted after the defined time period.',
@@ -2385,11 +2467,6 @@ export default {
       archiveDependencies: 'Remove the impacting and dependent entities as well',
       archiveDependenciesHelp: 'For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well.',
       cleanStorage: 'Clean storage',
-      confirmation: {
-        title: 'Delete disabled entities?',
-        archive: 'Are you sure you want to archive all disabled entities? This action cannot be canceled.',
-        delete: 'Are you sure you want to delete all disabled entities from the archive forever? This action cannot be canceled.',
-      },
     },
     pbehavior: {
       title: 'PBehavior data storage',
@@ -2460,6 +2537,10 @@ export default {
     },
   },
 
+  alarmStatusRules: {
+    frequencyLimit: 'Frequency limit',
+  },
+
   icons: {
     noEvents: 'No events received for {duration} by some of dependencies',
   },
@@ -2489,6 +2570,16 @@ export default {
     [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
       title: 'Idle rules',
       message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
+      title: 'Flapping rules',
+      // message: '', // TODO: need to put description
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
+      title: 'Resolve rules',
+      // message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {

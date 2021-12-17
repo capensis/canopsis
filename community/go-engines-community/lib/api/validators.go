@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -21,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortimespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/playlist"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
@@ -77,11 +79,14 @@ func RegisterValidators(client mongo.DbClient) {
 	pbhUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorMongoCollection, "Name")
 	pbhExistReasonValidator := common.NewExistFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Reason")
 	pbhExistTypeValidator := common.NewExistFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Type")
+	pbhBulkUniqueIDValidator := common.NewUniqueBulkFieldValidator("ID")
+	pbhBulkUniqueNameValidator := common.NewUniqueBulkFieldValidator("Name")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		pbhUniqueIDValidator.Validate(ctx, sl)
 		pbhUniqueNameValidator.Validate(ctx, sl)
 	}, pbehavior.CreateRequest{})
 	v.RegisterStructValidationCtx(pbhUniqueNameValidator.Validate, pbehavior.UpdateRequest{})
+	v.RegisterStructValidationCtx(pbhUniqueNameValidator.Validate, pbehavior.BulkUpdateRequestItem{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		pbhValidator.ValidateEditRequest(ctx, sl)
 		pbhExistReasonValidator.Validate(ctx, sl)
@@ -90,6 +95,14 @@ func RegisterValidators(client mongo.DbClient) {
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		pbhValidator.ValidateEditRequest(ctx, sl)
 	}, pbehavior.PatchRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		pbhBulkUniqueIDValidator.Validate(ctx, sl)
+		pbhBulkUniqueNameValidator.Validate(ctx, sl)
+	}, pbehavior.BulkCreateRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		pbhBulkUniqueIDValidator.Validate(ctx, sl)
+		pbhBulkUniqueNameValidator.Validate(ctx, sl)
+	}, pbehavior.BulkUpdateRequest{})
 
 	pbhReasonUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "ID")
 	pbhReasonUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Name")
@@ -229,4 +242,22 @@ func RegisterValidators(client mongo.DbClient) {
 
 	v.RegisterStructValidation(alarm.ValidateListRequest, alarm.ListRequest{})
 	v.RegisterStructValidation(datastorage.ValidateConfig, libdatastorage.Config{})
+
+	resolveRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.ResolveRuleMongoCollection, "ID")
+	resolveRuleNameUniqueValidator := common.NewUniqueFieldValidator(client, mongo.ResolveRuleMongoCollection, "Name")
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		resolveRuleIdUniqueValidator.Validate(ctx, sl)
+		resolveRuleNameUniqueValidator.Validate(ctx, sl)
+	}, resolverule.CreateRequest{})
+	v.RegisterStructValidationCtx(resolveRuleNameUniqueValidator.Validate, resolverule.UpdateRequest{})
+	v.RegisterStructValidation(resolverule.ValidateEditRequest, resolverule.EditRequest{})
+
+	flappingRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.FlappingRuleMongoCollection, "ID")
+	flappingRuleNameUniqueValidator := common.NewUniqueFieldValidator(client, mongo.FlappingRuleMongoCollection, "Name")
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		flappingRuleIdUniqueValidator.Validate(ctx, sl)
+		flappingRuleNameUniqueValidator.Validate(ctx, sl)
+	}, flappingrule.CreateRequest{})
+	v.RegisterStructValidationCtx(flappingRuleNameUniqueValidator.Validate, flappingrule.UpdateRequest{})
+	v.RegisterStructValidation(flappingrule.ValidateEditRequest, flappingrule.EditRequest{})
 }

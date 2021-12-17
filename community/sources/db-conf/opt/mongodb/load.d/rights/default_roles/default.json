@@ -44,7 +44,16 @@
       "models_exploitation_idleRules": {
         "checksum": 15
       },
+      "models_exploitation_flappingRules": {
+        "checksum": 15
+      },
+      "models_exploitation_resolveRules": {
+        "checksum": 15
+      },
       "models_healthcheck": {
+        "checksum": 1
+      },
+      "models_healthcheckStatus": {
         "checksum": 1
       },
       "models_notification_instructionStats": {
@@ -663,6 +672,26 @@
       },
       "api_instruction_approve": {
         "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_resolve_rule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_flapping_rule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_metrics": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_rating_settings": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_filter": {
+        "checksum": 15,
         "crecord_type": "right"
       }
     },

@@ -3,6 +3,7 @@ package entity
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"time"
@@ -15,13 +16,20 @@ type DisabledCleaner interface {
 type worker struct {
 	store              Store
 	dataStorageAdapter datastorage.Adapter
+	metricMetaUpdater  metrics.MetaUpdater
 	logger             zerolog.Logger
 }
 
-func NewDisabledCleaner(store Store, adapter datastorage.Adapter, logger zerolog.Logger) DisabledCleaner {
+func NewDisabledCleaner(
+	store Store,
+	adapter datastorage.Adapter,
+	metricMetaUpdater metrics.MetaUpdater,
+	logger zerolog.Logger,
+) DisabledCleaner {
 	return &worker{
 		store:              store,
 		dataStorageAdapter: adapter,
+		metricMetaUpdater:  metricMetaUpdater,
 		logger:             logger,
 	}
 }
@@ -50,6 +58,10 @@ func (w *worker) RunCleanerProcess(ctx context.Context, ch <-chan CleanTask) {
 				if err != nil {
 					w.logger.Err(err).Msg("Failed to update entity history")
 					continue
+				}
+
+				if archived > 0 {
+					w.metricMetaUpdater.UpdateAll(ctx)
 				}
 
 				w.logger.Info().Int64("alarm number", archived).Str("user", task.UserID).Msg("disabled entities have been archived")

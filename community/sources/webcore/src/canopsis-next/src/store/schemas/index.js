@@ -42,7 +42,7 @@ export const serviceSchema = new schema.Entity(ENTITIES_TYPES.service, {}, { idA
 export const weatherServiceSchema = new schema.Entity(ENTITIES_TYPES.weatherService, {}, { idAttribute: '_id' });
 
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
-  idAttribute: '_id',
+  idAttribute: 'widget',
 });
 
 export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {
@@ -126,6 +126,10 @@ export const stateSettingSchema = new schema.Entity(ENTITIES_TYPES.stateSetting,
 
 export const idleRulesSchema = new schema.Entity(ENTITIES_TYPES.idleRules, {}, { idAttribute: '_id' });
 
+export const flappingRulesSchema = new schema.Entity(ENTITIES_TYPES.flappingRules, {}, { idAttribute: '_id' });
+
+export const resolveRulesSchema = new schema.Entity(ENTITIES_TYPES.resolveRules, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -158,4 +162,6 @@ export default {
   [ENTITIES_TYPES.stateSetting]: stateSettingSchema,
   [ENTITIES_TYPES.remediationInstructionStats]: remediationInstructionStatsSchema,
   [ENTITIES_TYPES.idleRules]: idleRulesSchema,
+  [ENTITIES_TYPES.flappingRules]: flappingRulesSchema,
+  [ENTITIES_TYPES.resolveRules]: resolveRulesSchema,
 };

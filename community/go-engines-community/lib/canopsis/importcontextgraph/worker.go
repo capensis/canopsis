@@ -3,12 +3,14 @@ package importcontextgraph
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -19,16 +21,19 @@ type worker struct {
 	entityCollection   libmongo.DbCollection
 	categoryCollection libmongo.DbCollection
 	publisher          EventPublisher
+	metricMetaUpdater  metrics.MetaUpdater
 }
 
 func NewWorker(
 	dbClient libmongo.DbClient,
 	publisher EventPublisher,
+	metricMetaUpdater metrics.MetaUpdater,
 ) Worker {
 	return &worker{
 		entityCollection:   dbClient.Collection(libmongo.EntityMongoCollection),
 		categoryCollection: dbClient.Collection(libmongo.EntityCategoryMongoCollection),
 		publisher:          publisher,
+		metricMetaUpdater:  metricMetaUpdater,
 	}
 }
 
@@ -57,6 +62,8 @@ func (w *worker) Work(ctx context.Context, filename, source string) (stats Stats
 		return stats, err
 	}
 
+	w.metricMetaUpdater.UpdateAll(ctx)
+
 	return stats, nil
 }
 
@@ -82,6 +89,7 @@ func (w *worker) parseFile(ctx context.Context, filename, source string) (writeM
 
 	writeModels = make([]mongo.WriteModel, 0)
 	decoder := json.NewDecoder(file)
+	var componentInfos map[string]map[string]interface{}
 
 	for {
 		t, err := decoder.Token()
@@ -103,7 +111,8 @@ func (w *worker) parseFile(ctx context.Context, filename, source string) (writeM
 				return nil, fmt.Errorf("cis should be an array")
 			}
 
-			entityWriteModels, err := w.parseEntities(ctx, decoder, source)
+			var entityWriteModels []mongo.WriteModel
+			entityWriteModels, componentInfos, err = w.parseEntities(ctx, decoder, source)
 			if err != nil {
 				return nil, err
 			}
@@ -121,7 +130,7 @@ func (w *worker) parseFile(ctx context.Context, filename, source string) (writeM
 				return nil, fmt.Errorf("links should be an array")
 			}
 
-			linkWriteModels, err := w.parseLinks(decoder)
+			linkWriteModels, err := w.parseLinks(ctx, decoder, componentInfos)
 			if err != nil {
 				return nil, err
 			}
@@ -133,21 +142,26 @@ func (w *worker) parseFile(ctx context.Context, filename, source string) (writeM
 	return writeModels, nil
 }
 
-func (w *worker) parseEntities(ctx context.Context, decoder *json.Decoder, source string) ([]mongo.WriteModel, error) {
+func (w *worker) parseEntities(
+	ctx context.Context,
+	decoder *json.Decoder,
+	source string,
+) ([]mongo.WriteModel, map[string]map[string]interface{}, error) {
 	writeModels := make([]mongo.WriteModel, 0)
 	now := types.CpsTime{Time: time.Now()}
+	componentInfos := make(map[string]map[string]interface{})
 
 	for decoder.More() {
 		var ci ConfigurationItem
 		err := decoder.Decode(&ci)
 		if err != nil {
-			return nil, fmt.Errorf("failed to decode cis item: %v", err)
+			return nil, nil, fmt.Errorf("failed to decode cis item: %v", err)
 		}
 
 		w.fillDefaultFields(&ci)
 		err = w.validate(ci)
 		if err != nil {
-			return nil, fmt.Errorf("ci = %s, validation error: %s", ci.ID, err.Error())
+			return nil, nil, fmt.Errorf("ci = %s, validation error: %s", ci.ID, err.Error())
 		}
 
 		ci.ImportSource = source
@@ -156,11 +170,14 @@ func (w *worker) parseEntities(ctx context.Context, decoder *json.Decoder, sourc
 		switch ci.Action {
 		case ActionCreate:
 			writeModels = append(writeModels, w.createEntity(ci))
+			if ci.Type != nil && *ci.Type == types.EntityTypeComponent {
+				componentInfos[ci.ID] = ci.Infos
+			}
 		case ActionSet:
 			var oldEntity ConfigurationItem
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
 			if err != nil && err != mongo.ErrNoDocuments {
-				return nil, err
+				return nil, nil, err
 			}
 
 			if err == mongo.ErrNoDocuments {
@@ -169,61 +186,83 @@ func (w *worker) parseEntities(ctx context.Context, decoder *json.Decoder, sourc
 				break
 			}
 
-			writeModels = append(writeModels, w.updateEntity(ci, oldEntity, true))
+			writeModels = append(writeModels, w.updateEntity(&ci, oldEntity, true))
+			if ci.Type != nil && *ci.Type == types.EntityTypeComponent {
+				componentInfos[ci.ID] = ci.Infos
+				writeModels = append(writeModels, w.updateComponentInfosOnComponentUpdate(ci))
+			}
 		case ActionUpdate:
 			var oldEntity ConfigurationItem
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
-					return nil, fmt.Errorf("failed to update an entity with _id = %s", ci.ID)
+					return nil, nil, fmt.Errorf("failed to update an entity with _id = %s", ci.ID)
 				}
 
-				return nil, err
+				return nil, nil, err
 			}
 
-			writeModels = append(writeModels, w.updateEntity(ci, oldEntity, false))
+			writeModels = append(writeModels, w.updateEntity(&ci, oldEntity, false))
+			if ci.Type != nil && *ci.Type == types.EntityTypeComponent {
+				componentInfos[ci.ID] = ci.Infos
+				writeModels = append(writeModels, w.updateComponentInfosOnComponentUpdate(ci))
+			}
 		case ActionDelete:
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Err()
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
-					return nil, fmt.Errorf("failed to delete an entity with _id = %s", ci.ID)
+					return nil, nil, fmt.Errorf("failed to delete an entity with _id = %s", ci.ID)
 				}
 
-				return nil, err
+				return nil, nil, err
 			}
 
 			writeModels = append(writeModels, w.deleteEntity(ci)...)
+			if ci.Type != nil && *ci.Type == types.EntityTypeComponent {
+				componentInfos[ci.ID] = nil
+				writeModels = append(writeModels, w.updateComponentInfosOnComponentDelete(ci))
+			}
 		case ActionEnable:
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Err()
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
-					return nil, fmt.Errorf("failed to enable an entity with _id = %s", ci.ID)
+					return nil, nil, fmt.Errorf("failed to enable an entity with _id = %s", ci.ID)
 				}
 
-				return nil, err
+				return nil, nil, err
 			}
 
 			writeModels = append(writeModels, w.changeState(ci.ID, true, source, now))
+			if ci.Type != nil && *ci.Type == types.EntityTypeComponent {
+				componentInfos[ci.ID] = ci.Infos
+			}
 		case ActionDisable:
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Err()
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
-					return nil, fmt.Errorf("failed to disable an entity with _id = %s", ci.ID)
+					return nil, nil, fmt.Errorf("failed to disable an entity with _id = %s", ci.ID)
 				}
 
-				return nil, err
+				return nil, nil, err
 			}
 
 			writeModels = append(writeModels, w.changeState(ci.ID, false, source, now))
+			if ci.Type != nil && *ci.Type == types.EntityTypeComponent {
+				componentInfos[ci.ID] = ci.Infos
+			}
 		default:
-			return nil, fmt.Errorf("the action %s is not recognized", ci.Action)
+			return nil, nil, fmt.Errorf("the action %s is not recognized", ci.Action)
 		}
 	}
 
-	return writeModels, nil
+	return writeModels, componentInfos, nil
 }
 
-func (w *worker) parseLinks(decoder *json.Decoder) ([]mongo.WriteModel, error) {
+func (w *worker) parseLinks(
+	ctx context.Context,
+	decoder *json.Decoder,
+	componentInfos map[string]map[string]interface{},
+) ([]mongo.WriteModel, error) {
 	writeModels := make([]mongo.WriteModel, 0)
 
 	for decoder.More() {
@@ -236,8 +275,36 @@ func (w *worker) parseLinks(decoder *json.Decoder) ([]mongo.WriteModel, error) {
 		switch link.Action {
 		case ActionCreate:
 			writeModels = append(writeModels, w.createLink(link)...)
+
+			if infos, ok := componentInfos[link.To]; ok {
+				writeModels = append(writeModels, w.updateComponentInfosOnLinkCreate(link, infos))
+			} else {
+				ci := ConfigurationItem{}
+				err := w.entityCollection.
+					FindOne(ctx, bson.M{"_id": link.To, "type": types.EntityTypeComponent}).
+					Decode(&ci)
+				if err == nil {
+					writeModels = append(writeModels, w.updateComponentInfosOnLinkCreate(link, ci.Infos))
+				} else if !errors.Is(err, mongo.ErrNoDocuments) {
+					return nil, err
+				}
+			}
 		case ActionDelete:
 			writeModels = append(writeModels, w.deleteLink(link)...)
+
+			if _, ok := componentInfos[link.To]; ok {
+				writeModels = append(writeModels, w.updateComponentInfosOnLinkDelete(link))
+			} else {
+				ci := ConfigurationItem{}
+				err := w.entityCollection.
+					FindOne(ctx, bson.M{"_id": link.To, "type": types.EntityTypeComponent}).
+					Decode(&ci)
+				if err == nil {
+					writeModels = append(writeModels, w.updateComponentInfosOnLinkDelete(link))
+				} else if !errors.Is(err, mongo.ErrNoDocuments) {
+					return nil, err
+				}
+			}
 		case ActionUpdate:
 			//wasn't implemented in python code
 			return nil, ErrNotImplemented
@@ -364,7 +431,7 @@ func (w *worker) deleteLink(link Link) []mongo.WriteModel {
 func (w *worker) createEntity(ci ConfigurationItem) mongo.WriteModel {
 	ci.Depends = []string{}
 	ci.Impact = []string{}
-	ci.EnableHistory = make([]string, 0)
+	ci.EnableHistory = make([]int64, 0)
 
 	if ci.Infos == nil {
 		ci.Infos = make(map[string]interface{})
@@ -382,7 +449,7 @@ func (w *worker) createEntity(ci ConfigurationItem) mongo.WriteModel {
 		SetUpsert(true)
 }
 
-func (w *worker) updateEntity(ci ConfigurationItem, oldEntity ConfigurationItem, mergeInfos bool) mongo.WriteModel {
+func (w *worker) updateEntity(ci *ConfigurationItem, oldEntity ConfigurationItem, mergeInfos bool) mongo.WriteModel {
 	ci.Depends = oldEntity.Depends
 	ci.Impact = oldEntity.Impact
 	ci.EnableHistory = oldEntity.EnableHistory
@@ -428,4 +495,28 @@ func (w *worker) deleteEntity(ci ConfigurationItem) []mongo.WriteModel {
 		mongo.NewDeleteOneModel().
 			SetFilter(bson.M{"_id": ci.ID}),
 	}
+}
+
+func (w *worker) updateComponentInfosOnComponentUpdate(ci ConfigurationItem) mongo.WriteModel {
+	return mongo.NewUpdateManyModel().
+		SetFilter(bson.M{"type": types.EntityTypeResource, "impact": ci.ID}).
+		SetUpdate(bson.M{"$set": bson.M{"component_infos": ci.Infos, "component": ci.ID}})
+}
+
+func (w *worker) updateComponentInfosOnComponentDelete(ci ConfigurationItem) mongo.WriteModel {
+	return mongo.NewUpdateManyModel().
+		SetFilter(bson.M{"type": types.EntityTypeResource, "impact": ci.ID}).
+		SetUpdate(bson.M{"$unset": bson.M{"component_infos": "", "component": ""}})
+}
+
+func (w *worker) updateComponentInfosOnLinkCreate(link Link, infos map[string]interface{}) mongo.WriteModel {
+	return mongo.NewUpdateManyModel().
+		SetFilter(bson.M{"_id": bson.M{"$in": link.From}, "type": types.EntityTypeResource}).
+		SetUpdate(bson.M{"$set": bson.M{"component_infos": infos, "component": link.To}})
+}
+
+func (w *worker) updateComponentInfosOnLinkDelete(link Link) mongo.WriteModel {
+	return mongo.NewUpdateManyModel().
+		SetFilter(bson.M{"_id": bson.M{"$in": link.From}, "type": types.EntityTypeResource}).
+		SetUpdate(bson.M{"$unset": bson.M{"component_infos": "", "component": ""}})
 }
