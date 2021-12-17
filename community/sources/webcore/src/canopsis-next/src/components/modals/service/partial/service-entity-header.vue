@@ -28,7 +28,7 @@
           dismissible,
           color="black",
           @click.stop=""
-        ) This action cannot be applied
+        ) {{ $t('serviceWeather.cannotBeApplied') }}
 </template>
 
 <script>
