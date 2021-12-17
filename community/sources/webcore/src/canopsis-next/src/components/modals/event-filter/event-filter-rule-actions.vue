@@ -14,8 +14,9 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import EventFilterRuleActionsForm from '@/components/other/event-filter/form/event-filter-rule-actions-form.vue';
 
@@ -28,8 +29,9 @@ export default {
   },
   components: { EventFilterRuleActionsForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const { actions = [] } = this.modal.config;

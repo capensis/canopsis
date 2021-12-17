@@ -4,7 +4,7 @@ Feature: get service entities
   Scenario: given service for one entity should get one entity
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-service-weather-entity-1",
       "name": "test-service-weather-entity-1",
@@ -14,13 +14,14 @@ Feature: get service entities
       "impact_level": 1,
       "entity_patterns": [
         {"name": "test-resource-service-weather-entity-1"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-service-weather-entity-1",
       "connector_name" : "test-connector_name-service-weather-entity-1",
@@ -36,7 +37,7 @@ Feature: get service entities
     When I do GET /api/v4/weather-services/test-service-weather-entity-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -71,7 +72,7 @@ Feature: get service entities
   Scenario: given service for multiple entities should get multiple entities
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-service-weather-entity-2",
       "name": "test-service-weather-entity-2",
@@ -83,13 +84,14 @@ Feature: get service entities
         {"name": "test-resource-service-weather-entity-2-1"},
         {"name": "test-resource-service-weather-entity-2-2"},
         {"name": "test-resource-service-weather-entity-2-3"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-service-weather-entity-2",
       "connector_name" : "test-connector_name-service-weather-entity-2",
@@ -103,7 +105,7 @@ Feature: get service entities
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-service-weather-entity-2",
       "connector_name" : "test-connector_name-service-weather-entity-2",
@@ -117,7 +119,7 @@ Feature: get service entities
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-service-weather-entity-2",
       "connector_name" : "test-connector_name-service-weather-entity-2",
@@ -133,7 +135,7 @@ Feature: get service entities
     When I do GET /api/v4/weather-services/test-service-weather-entity-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -206,7 +208,7 @@ Feature: get service entities
   Scenario: given service for one entity and no open alarms should get one entity with ok state
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-service-weather-entity-3",
       "name": "test-service-weather-entity-3",
@@ -216,13 +218,14 @@ Feature: get service entities
       "impact_level": 1,
       "entity_patterns": [
         {"name": "test-resource-service-weather-entity-3"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-service-weather-entity-3",
       "connector_name" : "test-connector_name-service-weather-entity-3",
@@ -238,7 +241,7 @@ Feature: get service entities
     When I do GET /api/v4/weather-services/test-service-weather-entity-3
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {

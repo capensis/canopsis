@@ -19,8 +19,10 @@ export default {
     pending: false,
   },
   getters: {
-    items: (state, getters, rootState, rootGetters) =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.snmpRule, state.allIds),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](
+      ENTITIES_TYPES.snmpRule,
+      state.allIds,
+    ),
 
     meta: state => state.meta,
     pending: state => state.pending,

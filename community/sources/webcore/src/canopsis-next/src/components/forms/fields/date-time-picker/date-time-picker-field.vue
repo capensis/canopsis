@@ -14,7 +14,7 @@
       v-text-field(
         :label="label",
         :error-messages="errors.collect(name)",
-        :value="value | date('dateTimePicker', true)",
+        :value="value | date('dateTimePicker')",
         :append-icon="clearable ? 'close' : ''",
         readonly,
         @click:append="clear"
@@ -30,7 +30,9 @@
 </template>
 
 <script>
-import { convertTimestampToMoment } from '@/helpers/date/date';
+import { TIME_UNITS } from '@/constants';
+
+import { convertDateToStartOfUnitDateObject } from '@/helpers/date/date';
 
 import DateTimePicker from './date-time-picker.vue';
 
@@ -54,7 +56,7 @@ export default {
         return this.value;
       }
 
-      return convertTimestampToMoment(this.value).startOf('minute').toDate();
+      return convertDateToStartOfUnitDateObject(this.value, TIME_UNITS.minute);
     },
 
     name() {

@@ -27,7 +27,7 @@ func (e *cancelExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	entity types.Entity,
+	entity *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
@@ -55,7 +55,7 @@ func (e *cancelExecutor) Exec(
 	}
 
 	currentStatus := alarm.Value.Status.Value
-	newStatus := e.alarmStatusService.ComputeStatus(*alarm, entity)
+	newStatus := e.alarmStatusService.ComputeStatus(*alarm, *entity)
 
 	if newStatus == currentStatus {
 		alarm.AddUpdate("$set", bson.M{"v.canceled": alarm.Value.Canceled})

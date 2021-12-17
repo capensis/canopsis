@@ -1,0 +1,1255 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with default props 1`] = `
+<div
+  class="grid-layout-wrapper"
+>
+  <div
+    class="portal"
+  >
+    
+        Portal to: additional-top-bar-items
+        
+    <div
+      class="v-item-group window-size transparent theme--light v-btn-toggle v-btn-toggle--only-child v-btn-toggle--selected"
+      dense="dense"
+    >
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+        value="mobile"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            stay_primary_portrait
+          </i>
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+        value="tablet"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            tablet_mac
+          </i>
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--active v-btn--icon theme--light"
+        type="button"
+        value="desktop"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            desktop_windows
+          </i>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div
+    class="vue-grid-layout"
+    style="max-width: 100%; height: 20px;"
+  >
+    <div
+      class="vue-grid-item vue-grid-placeholder vue-resizable cssTransforms"
+      style="display: none; transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute;"
+    >
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="erd_scroll_detection_container erd_scroll_detection_container_animation_active"
+      style="visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0px; padding: 0px;"
+    />
+  </div>
+</div>
+`;
+
+exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets 1`] = `
+<div
+  class="grid-layout-wrapper"
+>
+  <div
+    class="portal"
+  >
+    
+        Portal to: additional-top-bar-items
+        
+    <div
+      class="v-item-group window-size transparent theme--light v-btn-toggle v-btn-toggle--only-child v-btn-toggle--selected"
+      dense="dense"
+    >
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+        value="mobile"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            stay_primary_portrait
+          </i>
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+        value="tablet"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            tablet_mac
+          </i>
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--active v-btn--icon theme--light"
+        type="button"
+        value="desktop"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            desktop_windows
+          </i>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div
+    class="vue-grid-layout"
+    style="max-width: 100%; height: 1260px;"
+  >
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,20px, 0); width: -40px; height: 280px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,320px, 0); width: -40px; height: 480px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,820px, 0); width: -40px; height: 420px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-grid-placeholder vue-resizable cssTransforms"
+      style="display: none; transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute;"
+    >
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="erd_scroll_detection_container erd_scroll_detection_container_animation_active"
+      style="visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0px; padding: 0px;"
+    />
+  </div>
+</div>
+`;
+
+exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the l window size 1`] = `
+<div
+  class="grid-layout-wrapper"
+>
+  <div
+    class="portal"
+  >
+    
+        Portal to: additional-top-bar-items
+        
+    <div
+      class="v-item-group window-size transparent theme--light v-btn-toggle v-btn-toggle--only-child v-btn-toggle--selected"
+      dense="dense"
+    >
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+        value="mobile"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            stay_primary_portrait
+          </i>
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+        value="tablet"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            tablet_mac
+          </i>
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--active v-btn--icon theme--light"
+        type="button"
+        value="desktop"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            desktop_windows
+          </i>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div
+    class="vue-grid-layout"
+    style="max-width: 100%; height: 1260px;"
+  >
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,20px, 0); width: -40px; height: 280px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,320px, 0); width: -40px; height: 480px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,820px, 0); width: -40px; height: 420px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-grid-placeholder vue-resizable cssTransforms"
+      style="display: none; transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute;"
+    >
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="erd_scroll_detection_container erd_scroll_detection_container_animation_active"
+      style="visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0px; padding: 0px;"
+    />
+  </div>
+</div>
+`;
+
+exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the m window size 1`] = `
+<div
+  class="grid-layout-wrapper"
+>
+  <div
+    class="portal"
+  >
+    
+        Portal to: additional-top-bar-items
+        
+    <div
+      class="v-item-group window-size transparent theme--light v-btn-toggle v-btn-toggle--only-child v-btn-toggle--selected"
+      dense="dense"
+    >
+      <button
+        class="v-btn v-btn--active v-btn--icon theme--light"
+        type="button"
+        value="mobile"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            stay_primary_portrait
+          </i>
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+        value="tablet"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            tablet_mac
+          </i>
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+        value="desktop"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            desktop_windows
+          </i>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div
+    class="vue-grid-layout"
+    style="max-width: 450px; height: 580px;"
+  >
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,280px, 0); width: -25px; height: 240px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,20px, 0); width: -25px; height: 240px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,540px, 0); width: -40px; height: 20px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-grid-placeholder vue-resizable cssTransforms"
+      style="display: none; transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute;"
+    >
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="erd_scroll_detection_container erd_scroll_detection_container_animation_active"
+      style="visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0px; padding: 0px;"
+    />
+  </div>
+</div>
+`;
+
+exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the t window size 1`] = `
+<div
+  class="grid-layout-wrapper"
+>
+  <div
+    class="portal"
+  >
+    
+        Portal to: additional-top-bar-items
+        
+    <div
+      class="v-item-group window-size transparent theme--light v-btn-toggle v-btn-toggle--only-child v-btn-toggle--selected"
+      dense="dense"
+    >
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+        value="mobile"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            stay_primary_portrait
+          </i>
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--active v-btn--icon theme--light"
+        type="button"
+        value="tablet"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            tablet_mac
+          </i>
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+        value="desktop"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            desktop_windows
+          </i>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div
+    class="vue-grid-layout"
+    style="max-width: 900px; height: 140px;"
+  >
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,60px, 0); width: -40px; height: 20px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,20px, 0); width: -40px; height: 20px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,100px, 0); width: -40px; height: 20px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-grid-placeholder vue-resizable cssTransforms"
+      style="display: none; transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute;"
+    >
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="erd_scroll_detection_container erd_scroll_detection_container_animation_active"
+      style="visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0px; padding: 0px;"
+    />
+  </div>
+</div>
+`;
+
+exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the xl window size 1`] = `
+<div
+  class="grid-layout-wrapper"
+>
+  <div
+    class="portal"
+  >
+    
+        Portal to: additional-top-bar-items
+        
+    <div
+      class="v-item-group window-size transparent theme--light v-btn-toggle v-btn-toggle--only-child v-btn-toggle--selected"
+      dense="dense"
+    >
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+        value="mobile"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            stay_primary_portrait
+          </i>
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+        value="tablet"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            tablet_mac
+          </i>
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--active v-btn--icon theme--light"
+        type="button"
+        value="desktop"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+          >
+            desktop_windows
+          </i>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div
+    class="vue-grid-layout"
+    style="max-width: 100%; height: 1260px;"
+  >
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,20px, 0); width: -40px; height: 280px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,320px, 0); width: -40px; height: 480px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-resizable cssTransforms"
+      style="transform: translate3d(20px,820px, 0); width: -40px; height: 420px; position: absolute;"
+    >
+      <div
+        class="wrapper"
+      >
+        <div
+          class="drag-handler"
+        >
+          <div
+            class="layout controls"
+          >
+            <span
+              class="v-tooltip v-tooltip--bottom"
+            >
+              <transition-stub
+                name="slide-y-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light black--text"
+                      style="font-size: 16px;"
+                    >
+                      lock
+                    </i>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <widget-wrapper-menu-stub
+              tab="[object Object]"
+              updatetabmethod="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="vue-grid-item vue-grid-placeholder vue-resizable cssTransforms"
+      style="display: none; transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute;"
+    >
+      <span
+        class="vue-resizable-handle"
+      />
+    </div>
+    <div
+      class="erd_scroll_detection_container erd_scroll_detection_container_animation_active"
+      style="visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0px; padding: 0px;"
+    />
+  </div>
+</div>
+`;
