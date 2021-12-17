@@ -101,7 +101,7 @@ Feature: Update a metaalarmrule
       "auto_resolve": true,
       "name": "complex-test-1",
       "type": "complex",
-      "output_template": "{{ .Children.Alarm.Value.State.Message }}",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
         "time_interval": {
           "value": 1,
