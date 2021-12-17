@@ -4,7 +4,7 @@ Feature: Create entity service
   Scenario: given create request should return ok
     When I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-to-create-1-name",
       "output_template": "test-entityservice-to-create-1-output",
@@ -12,6 +12,7 @@ Feature: Create entity service
       "impact_level": 1,
       "enabled": true,
       "entity_patterns": [{"name": "test-entityservice-to-create-1-pattern"}],
+      "sli_avail_state": 1,
       "infos": [
         {
           "description": "test-entityservice-to-create-info-1-description",
@@ -48,7 +49,7 @@ Feature: Create entity service
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "category": {
         "_id": "test-category-to-entityservice-edit",
@@ -60,7 +61,6 @@ Feature: Create entity service
       "depends": [],
       "enabled": true,
       "enable_history": [],
-      "enabled": true,
       "entity_patterns": [
         {
           "name": "test-entityservice-to-create-1-pattern"
@@ -103,6 +103,7 @@ Feature: Create entity service
       "measurements": null,
       "name": "test-entityservice-to-create-1-name",
       "output_template": "test-entityservice-to-create-1-output",
+      "sli_avail_state": 1,
       "type": "service"
     }
     """
@@ -110,7 +111,7 @@ Feature: Create entity service
   Scenario: given create request should return ok to get request
     When I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-to-create-2-name",
       "output_template": "test-entityservice-to-create-2-output",
@@ -118,6 +119,7 @@ Feature: Create entity service
       "impact_level": 2,
       "enabled": true,
       "entity_patterns": [{"name": "test-entityservice-to-create-2-pattern"}],
+      "sli_avail_state": 1,
       "infos": [
         {
           "description": "test-entityservice-to-create-2-customer-description",
@@ -131,7 +133,7 @@ Feature: Create entity service
     When I do GET /api/v4/entityservices/{{ .lastResponse._id}}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "category": {
         "_id": "test-category-to-entityservice-edit",
@@ -143,7 +145,6 @@ Feature: Create entity service
       "depends": [],
       "enabled": true,
       "enable_history": [],
-      "enabled": true,
       "entity_patterns": [
         {
           "name": "test-entityservice-to-create-2-pattern"
@@ -161,6 +162,7 @@ Feature: Create entity service
       "measurements": null,
       "name": "test-entityservice-to-create-2-name",
       "output_template": "test-entityservice-to-create-2-output",
+      "sli_avail_state": 1,
       "type": "service"
     }
     """
@@ -168,18 +170,19 @@ Feature: Create entity service
   Scenario: given invalid create request should return errors
     When I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {}
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "enabled": "Enabled is missing.",
         "impact_level": "ImpactLevel is missing.",
         "name": "Name is missing.",
-        "output_template": "OutputTemplate is missing."
+        "output_template": "OutputTemplate is missing.",
+        "sli_avail_state": "SliAvailState is missing."
       }
     }
     """
@@ -187,26 +190,23 @@ Feature: Create entity service
   Scenario: given invalid create request should return errors
     When I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
-      "name": "test-entityservice-to-create-3-name",
-      "output_template": "test-entityservice-to-create-3-output",
       "category": "test-category-not-exist",
-      "impact_level": 3,
-      "enabled": true,
-      "entity_patterns": [{"name": "test-entityservice-to-create-3-pattern"}],
       "infos": [
         {}
-      ]
+      ],
+      "sli_avail_state": 4
     }
     """
     Then the response code should be 400
-    Then the response body should be:
-    """
+    Then the response body should contain:
+    """json
     {
       "errors": {
         "category": "Category doesn't exist.",
-        "infos.0.name": "Name is missing."
+        "infos.0.name": "Name is missing.",
+        "sli_avail_state": "SliAvailState should be 3 or less."
       }
     }
     """
@@ -214,19 +214,14 @@ Feature: Create entity service
   Scenario: given create request with already exists name should return error
     When I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
-      "name": "test-entityservice-to-check-unique-name-name",
-      "output_template": "test-entityservice-to-create-4-output",
-      "category": "test-category-to-entityservice-edit",
-      "impact_level": 4,
-      "enabled": true,
-      "entity_patterns": [{"name": "test-entityservice-to-create-4-pattern"}]
+      "name": "test-entityservice-to-check-unique-name-name"
     }
     """
     Then the response code should be 400
-    Then the response body should be:
-    """
+    Then the response body should contain:
+    """json
     {
       "errors": {
           "name": "Name already exists."
@@ -238,7 +233,7 @@ Feature: Create entity service
     When I do POST /api/v4/entityservices
     Then the response code should be 401
 
-  Scenario: given create request and auth user by api key without permissions should not allow access
+  Scenario: given create request and auth user without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/entityservices
     Then the response code should be 403

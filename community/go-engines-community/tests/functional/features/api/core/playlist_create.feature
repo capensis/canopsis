@@ -13,7 +13,7 @@ Feature: Create a playlist
         "test-view-to-edit-playlist-tab-1"
       ],
       "interval": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "enabled": true
@@ -30,7 +30,7 @@ Feature: Create a playlist
         "test-view-to-edit-playlist-tab-1"
       ],
       "interval": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "enabled": true
@@ -48,7 +48,7 @@ Feature: Create a playlist
         "test-view-to-edit-playlist-tab-1"
       ],
       "interval": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "enabled": true
@@ -67,7 +67,7 @@ Feature: Create a playlist
         "test-view-to-edit-playlist-tab-1"
       ],
       "interval": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "enabled": true
@@ -85,7 +85,7 @@ Feature: Create a playlist
         "test-view-to-edit-playlist-tab-1"
       ],
       "interval": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "enabled": true
@@ -136,7 +136,7 @@ Feature: Create a playlist
       "errors": {
         "enabled": "Enabled is missing.",
         "fullscreen": "Fullscreen is missing.",
-        "interval.seconds": "Seconds is missing.",
+        "interval.value": "Value is missing.",
         "interval.unit": "Unit is missing.",
         "name": "Name is missing.",
         "tabs_list": "TabsList should not be blank."

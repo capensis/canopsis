@@ -11,6 +11,7 @@ type Entity struct {
 	Description       string   `bson:"description" json:"description"`
 	ChangeableImpacts []string `bson:"changeable_impact" json:"changeable_impact"`
 	ChangeableDepends []string `bson:"changeable_depends" json:"changeable_depends"`
+	SliAvailState     int64    `bson:"sli_avail_state" json:"sli_avail_state"`
 }
 
 type IdRequest struct {
@@ -18,14 +19,15 @@ type IdRequest struct {
 }
 
 type EditRequest struct {
-	ID          string        `json:"-"`
-	Description string        `json:"description" binding:"max=255"`
-	Enabled     *bool         `json:"enabled" binding:"required"`
-	Category    string        `json:"category"`
-	ImpactLevel int64         `json:"impact_level" binding:"required,min=1,max=10"`
-	Infos       []InfoRequest `json:"infos" binding:"dive"`
-	Impacts     []string      `json:"impact"`
-	Depends     []string      `json:"depends"`
+	ID            string        `json:"-"`
+	Description   string        `json:"description" binding:"max=255"`
+	Enabled       *bool         `json:"enabled" binding:"required"`
+	Category      string        `json:"category"`
+	ImpactLevel   int64         `json:"impact_level" binding:"required,min=1,max=10"`
+	Infos         []InfoRequest `json:"infos" binding:"dive"`
+	Impacts       []string      `json:"impact"`
+	Depends       []string      `json:"depends"`
+	SliAvailState *int64        `json:"sli_avail_state" binding:"required,min=0,max=3"`
 }
 
 type InfoRequest struct {
