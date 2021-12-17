@@ -11,11 +11,10 @@ import (
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
-	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
-	"strings"
 	"time"
 )
 
@@ -29,59 +28,50 @@ func NewService(
 	ruleAdapter idlerule.RuleAdapter,
 	alarmAdapter libalarm.Adapter,
 	entityAdapter libentity.Adapter,
-	pbhTypeResolver libpbehavior.EntityTypeResolver,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Service {
 	return &baseService{
-		ruleAdapter:     ruleAdapter,
-		alarmAdapter:    alarmAdapter,
-		entityAdapter:   entityAdapter,
-		pbhTypeResolver: pbhTypeResolver,
-		encoder:         encoder,
-		logger:          logger,
-
-		connectors: make(map[string]types.Entity),
-		components: make(map[string]types.Entity),
+		ruleAdapter:   ruleAdapter,
+		alarmAdapter:  alarmAdapter,
+		entityAdapter: entityAdapter,
+		encoder:       encoder,
+		logger:        logger,
 	}
 }
 
 type baseService struct {
-	ruleAdapter     idlerule.RuleAdapter
-	alarmAdapter    libalarm.Adapter
-	entityAdapter   libentity.Adapter
-	pbhTypeResolver libpbehavior.EntityTypeResolver
-	encoder         encoding.Encoder
-	logger          zerolog.Logger
-
-	connectors map[string]types.Entity
-	components map[string]types.Entity
+	ruleAdapter   idlerule.RuleAdapter
+	alarmAdapter  libalarm.Adapter
+	entityAdapter libentity.Adapter
+	encoder       encoding.Encoder
+	logger        zerolog.Logger
 }
 
 func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr error) {
 	defer func() {
 		s.logger.Debug().Msg("process idle alarms")
-		s.connectors = make(map[string]types.Entity)
-		s.components = make(map[string]types.Entity)
 	}()
 
+	now := types.NewCpsTime()
+	eventGenerator := libevent.NewGenerator(s.entityAdapter)
 	rules, err := s.ruleAdapter.GetEnabled(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	var allMinDuration, entityMinDuration time.Duration
+	var allMinDuration, entityMinDuration types.DurationWithUnit
 	for _, rule := range rules {
-		if allMinDuration == 0 || allMinDuration > rule.Duration.Duration() {
-			allMinDuration = rule.Duration.Duration()
+		if allMinDuration.Value == 0 || allMinDuration.AddTo(now).After(rule.Duration.AddTo(now)) {
+			allMinDuration = rule.Duration
 		}
 
 		switch rule.Type {
 		case idlerule.RuleTypeAlarm:
 			/*do nothing*/
 		case idlerule.RuleTypeEntity:
-			if entityMinDuration == 0 || entityMinDuration > rule.Duration.Duration() {
-				entityMinDuration = rule.Duration.Duration()
+			if entityMinDuration.Value == 0 || entityMinDuration.AddTo(now).After(rule.Duration.AddTo(now)) {
+				entityMinDuration = rule.Duration
 			}
 		default:
 			return nil, fmt.Errorf("unknown type of idle rule: %v for id=%s", rule.Type, rule.ID)
@@ -90,10 +80,9 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 
 	events := make([]types.Event, 0)
 	checkedEntities := make([]string, 0)
-	now := time.Now()
 
-	if allMinDuration > 0 {
-		before := types.CpsTime{Time: now.Add(-allMinDuration)}
+	if allMinDuration.Value > 0 {
+		before := allMinDuration.SubFrom(now)
 		cursor, err := s.alarmAdapter.GetOpenedAlarmsWithLastDatesBefore(ctx, before)
 		if err != nil {
 			return events, err
@@ -108,7 +97,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 				return events, err
 			}
 
-			event, err := s.applyRules(ctx, rules, alarm.Entity, &alarm.Alarm, now)
+			event, err := s.applyRules(ctx, rules, alarm.Entity, &alarm.Alarm, eventGenerator, now)
 			if err != nil {
 				return events, err
 			}
@@ -121,8 +110,8 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 		}
 	}
 
-	if entityMinDuration > 0 {
-		before := types.CpsTime{Time: now.Add(-entityMinDuration)}
+	if entityMinDuration.Value > 0 {
+		before := entityMinDuration.SubFrom(now)
 		cursor, err := s.entityAdapter.GetAllWithLastUpdateDateBefore(ctx, before, checkedEntities)
 		if err != nil {
 			return events, err
@@ -137,7 +126,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 				return events, err
 			}
 
-			event, err := s.applyRules(ctx, rules, entity, nil, now)
+			event, err := s.applyRules(ctx, rules, entity, nil, eventGenerator, now)
 			if err != nil {
 				return events, err
 			}
@@ -166,21 +155,19 @@ func (s *baseService) applyRules(
 	rules []idlerule.Rule,
 	entity types.Entity,
 	alarm *types.Alarm,
-	now time.Time,
+	eventGenerator libevent.Generator,
+	now types.CpsTime,
 ) (*types.Event, error) {
 	lastAlarm := alarm
 
 	for _, rule := range rules {
 		switch rule.Type {
 		case idlerule.RuleTypeAlarm:
-			if alarm != nil && rule.Matches(alarm, &entity) && !alarm.Value.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
-				event, err := s.applyAlarmRule(rule, *alarm)
-				if err != nil || event != nil {
-					return event, err
-				}
+			if alarm != nil && rule.Matches(alarm, &entity, now) && !alarm.Value.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
+				return s.applyAlarmRule(rule, *alarm, now)
 			}
 		case idlerule.RuleTypeEntity:
-			if !rule.Matches(nil, &entity) {
+			if !rule.Matches(nil, &entity, now) || entity.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
 				continue
 			}
 
@@ -198,28 +185,7 @@ func (s *baseService) applyRules(
 				}
 			}
 
-			// If rule is disabled on pbehavior.
-			if len(rule.DisableDuringPeriods) > 0 {
-				// Check pbehavior period by open alarm.
-				if lastAlarm != nil && !lastAlarm.IsResolved() {
-					if lastAlarm.Value.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
-						continue
-					}
-				} else {
-					pbhRes, err := s.pbhTypeResolver.Resolve(ctx, entity.ID, now)
-					if err != nil {
-						return nil, err
-					}
-					if pbhResOneOfType(pbhRes, rule.DisableDuringPeriods) {
-						continue
-					}
-				}
-			}
-
-			event, err := s.applyEntityRule(ctx, rule, entity, lastAlarm)
-			if err != nil || event != nil {
-				return event, err
-			}
+			return s.applyEntityRule(ctx, rule, entity, lastAlarm, eventGenerator)
 		}
 	}
 
@@ -229,13 +195,14 @@ func (s *baseService) applyRules(
 func (s *baseService) applyAlarmRule(
 	rule idlerule.Rule,
 	alarm types.Alarm,
+	now types.CpsTime,
 ) (*types.Event, error) {
 	event := types.Event{
 		Connector:     alarm.Value.Connector,
 		ConnectorName: alarm.Value.ConnectorName,
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
-		Timestamp:     types.CpsTime{Time: time.Now()},
+		Timestamp:     now,
 		Initiator:     types.InitiatorSystem,
 		IdleRuleApply: fmt.Sprintf("%s_%s", rule.Type, rule.AlarmCondition),
 	}
@@ -293,7 +260,7 @@ func (s *baseService) applyAlarmRule(
 	case types.ActionTypeSnooze:
 		if params, ok := rule.Operation.Parameters.(types.OperationSnoozeParameters); ok {
 			event.EventType = types.EventTypeSnooze
-			event.Duration = types.CpsNumber(params.Duration.Seconds)
+			event.Duration = types.CpsNumber(params.Duration.AddTo(now).Sub(now.Time).Seconds())
 			event.Output = params.Output
 			event.Author = params.Author
 			event.UserID = params.User
@@ -317,69 +284,30 @@ func (s *baseService) applyEntityRule(
 	rule idlerule.Rule,
 	entity types.Entity,
 	alarm *types.Alarm,
+	eventGenerator libevent.Generator,
 ) (*types.Event, error) {
-	event := types.Event{
-		EventType:     types.EventTypeNoEvents,
-		Timestamp:     types.CpsTime{Time: time.Now()},
-		State:         types.AlarmStateCritical,
-		Author:        rule.Author,
-		Initiator:     types.InitiatorSystem,
-		Output:        fmt.Sprintf("Idle rule %s", rule.Name),
-		IdleRuleApply: rule.Type,
-	}
-	if alarm != nil {
+	event := types.Event{}
+	if alarm == nil {
+		var err error
+		event, err = eventGenerator.Generate(ctx, entity)
+		if err != nil {
+			return nil, err
+		}
+	} else {
 		event.Connector = alarm.Value.Connector
 		event.ConnectorName = alarm.Value.ConnectorName
 		event.Component = alarm.Value.Component
 		event.Resource = alarm.Value.Resource
-	} else {
-		switch entity.Type {
-		case types.EntityTypeConnector:
-			event.Connector = strings.ReplaceAll(entity.ID, "/"+entity.Name, "")
-			event.ConnectorName = entity.Name
-		case types.EntityTypeComponent:
-			connector, err := s.findConnectorForComponent(ctx, entity)
-			if err != nil {
-				return nil, err
-			}
-			if connector == nil {
-				s.logger.Error().Msgf("cannot generate event for entity %v : not found any alarm and not found linked connector", entity.ID)
-				return nil, nil
-			}
-			event.Connector = strings.ReplaceAll(connector.ID, "/"+connector.Name, "")
-			event.ConnectorName = connector.Name
-			event.Component = entity.Name
-		case types.EntityTypeResource:
-			connector, err := s.findConnectorForResource(ctx, entity)
-			if err != nil {
-				return nil, err
-			}
-			if connector == nil {
-				s.logger.Error().Msgf("cannot generate event for entity %v : not found any alarm and not found linked connector", entity.ID)
-				return nil, nil
-			}
-			event.Connector = strings.ReplaceAll(connector.ID, "/"+connector.Name, "")
-			event.ConnectorName = connector.Name
-			if entity.Component != "" {
-				event.Component = entity.Component
-			} else {
-				component, err := s.findComponentForResource(ctx, entity)
-				if err != nil {
-					return nil, err
-				}
-				if component == nil {
-					s.logger.Error().Msgf("cannot generate event for resource %v : not found any alarm and not found linked component", entity.ID)
-					return nil, nil
-				}
-				event.Component = component.ID
-			}
-			event.Resource = entity.Name
-		default:
-			return nil, fmt.Errorf("unknown entity type %v", entity.Type)
-		}
+		event.SourceType = event.DetectSourceType()
 	}
 
-	event.SourceType = event.DetectSourceType()
+	event.EventType = types.EventTypeNoEvents
+	event.Timestamp = types.CpsTime{Time: time.Now()}
+	event.State = types.AlarmStateCritical
+	event.Author = rule.Author
+	event.Initiator = types.InitiatorSystem
+	event.Output = fmt.Sprintf("Idle rule %s", rule.Name)
+	event.IdleRuleApply = rule.Type
 
 	return &event, nil
 }
@@ -408,66 +336,4 @@ func (s *baseService) closeConnectorAlarms(ctx context.Context) ([]types.Event, 
 	}
 
 	return events, nil
-}
-
-func (s *baseService) findConnectorForComponent(ctx context.Context, entity types.Entity) (*types.Entity, error) {
-	for _, id := range entity.Impacts {
-		if connector, ok := s.connectors[id]; ok {
-			return &connector, nil
-		}
-	}
-
-	connector, err := s.entityAdapter.FindConnectorForComponent(ctx, entity.ID)
-	if err != nil || connector == nil {
-		return nil, err
-	}
-
-	s.connectors[connector.ID] = *connector
-
-	return connector, nil
-}
-
-func (s *baseService) findConnectorForResource(ctx context.Context, entity types.Entity) (*types.Entity, error) {
-	for _, id := range entity.Depends {
-		if connector, ok := s.connectors[id]; ok {
-			return &connector, nil
-		}
-	}
-
-	connector, err := s.entityAdapter.FindConnectorForResource(ctx, entity.ID)
-	if err != nil || connector == nil {
-		return nil, err
-	}
-
-	s.connectors[connector.ID] = *connector
-
-	return connector, nil
-}
-
-func (s *baseService) findComponentForResource(ctx context.Context, entity types.Entity) (*types.Entity, error) {
-	for _, id := range entity.Impacts {
-		if component, ok := s.components[id]; ok {
-			return &component, nil
-		}
-	}
-
-	component, err := s.entityAdapter.FindComponentForResource(ctx, entity.ID)
-	if err != nil || component == nil {
-		return nil, err
-	}
-
-	s.components[component.ID] = *component
-
-	return component, nil
-}
-
-func pbhResOneOfType(pbhRes libpbehavior.ResolveResult, types []string) bool {
-	for _, canonicalType := range types {
-		if canonicalType == libpbehavior.TypeActive && pbhRes.ResolvedType == nil ||
-			pbhRes.ResolvedType != nil && pbhRes.ResolvedType.Type == canonicalType {
-			return true
-		}
-	}
-
-	return false
 }

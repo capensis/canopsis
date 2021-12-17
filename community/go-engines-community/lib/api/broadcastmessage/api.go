@@ -1,12 +1,10 @@
 package broadcastmessage
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"net/http"
 
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
 )
@@ -17,8 +15,9 @@ type API interface {
 }
 
 type api struct {
-	store        Store
-	actionLogger logger.ActionLogger
+	store            Store
+	onChangeListener chan<- bool
+	actionLogger     logger.ActionLogger
 }
 
 // Create broadcast-message
@@ -54,6 +53,8 @@ func (a api) Create(c *gin.Context) {
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
+
+	a.sendOnChange()
 
 	c.JSON(http.StatusCreated, request)
 }
@@ -110,14 +111,13 @@ func (a api) List(c *gin.Context) {
 // @Router /broadcast-message/{id} [get]
 func (a api) Get(c *gin.Context) {
 	bm, err := a.store.GetById(c.Request.Context(), c.Param("id"))
-
-	if err == mongodriver.ErrNoDocuments || bm == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
 	if err != nil {
 		panic(err)
+	}
+
+	if bm == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
 	c.JSON(http.StatusOK, bm)
@@ -165,6 +165,8 @@ func (a api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
+	a.sendOnChange()
+
 	c.JSON(http.StatusOK, data)
 }
 
@@ -199,6 +201,8 @@ func (a api) Delete(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
+	a.sendOnChange()
+
 	c.JSON(http.StatusNoContent, nil)
 }
 
@@ -219,10 +223,19 @@ func (a api) GetActive(c *gin.Context) {
 
 func NewApi(
 	store Store,
+	onChangeListener chan<- bool,
 	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
-		store:        store,
-		actionLogger: actionLogger,
+		store:            store,
+		onChangeListener: onChangeListener,
+		actionLogger:     actionLogger,
+	}
+}
+
+func (a *api) sendOnChange() {
+	select {
+	case a.onChangeListener <- true:
+	default:
 	}
 }

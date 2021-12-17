@@ -71,6 +71,10 @@ type Entity struct {
 
 	ImportSource string   `bson:"import_source,omitempty" json:"import_source"`
 	Imported     *CpsTime `bson:"imported,omitempty" json:"imported"`
+
+	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+
+	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
 }
 
 func (e *Entity) GetUpsertMongoBson(newImpacts []string, newDepends []string) bson.M {

@@ -447,11 +447,12 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 			panic(err)
 		}
 
+		now := time.Now()
 		err = sp.tokenStore.Save(c.Request.Context(), token.Token{
 			ID:       accessToken,
 			User:     user.ID,
 			Provider: security.AuthMethodSaml,
-			Created:  types.CpsTime{Time: time.Now()},
+			Created:  types.CpsTime{Time: now},
 			Expired:  types.CpsTime{Time: expiresAt},
 		})
 		if err != nil {
