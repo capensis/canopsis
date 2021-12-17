@@ -100,7 +100,7 @@ export default {
           :service-entities="serviceEntities"
           :widget-parameters="widgetParameters"
           entity-name-field="${entityNameField}"
-          @add:event="addEventToQueue"
+          @add:action="addActionToQueue"
         ></service-entities-wrapper>
       `);
     });
@@ -109,8 +109,8 @@ export default {
     unregisterHelper('entities');
   },
   methods: {
-    addEventToQueue(event) {
-      this.$emit('add:event', event);
+    addActionToQueue(event) {
+      this.$emit('add:action', event);
     },
 
     showPbehaviorsListModal() {

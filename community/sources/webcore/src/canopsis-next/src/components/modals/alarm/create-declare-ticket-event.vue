@@ -22,7 +22,7 @@
           :disabled="isDisabled",
           data-test="declareTicketEventSubmitButton",
           type="submit"
-        ) {{ $t('common.actions.reportIncident') }}
+        ) {{ $t('common.reportIncident') }}
 </template>
 
 <script>

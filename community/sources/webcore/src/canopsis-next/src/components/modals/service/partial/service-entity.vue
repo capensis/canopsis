@@ -2,13 +2,17 @@
   div.weather-service-entity-expansion-panel
     v-expansion-panel(v-model="opened", dark)
       v-expansion-panel-content(:style="{ backgroundColor: color }")
-        entity-header(
-          slot="header",
-          :entity="entity",
-          :entity-name-field="entityNameField",
-          :active="hasActivePbehavior",
-          :paused="hasPausedPbehavior"
-        )
+        template(#header="")
+          entity-header(
+            :selected="selected",
+            :entity="entity",
+            :entity-name-field="entityNameField",
+            :last-action-unavailable="lastActionUnavailable",
+            :active="hasActivePbehavior",
+            :paused="hasPausedPbehavior",
+            @select="$listeners.select",
+            @remove-unavailable="$listeners['remove-unavailable']"
+          )
         v-card(color="white black--text")
           v-card-text
             entity-info-tab(
@@ -17,7 +21,7 @@
               :template="template",
               :active="hasActivePbehavior",
               :paused="hasPausedPbehavior",
-              @add:event="$listeners['add:event']"
+              @add:action="$listeners['add:action']"
             )
             v-tabs(
               v-else,
@@ -34,7 +38,7 @@
                   :template="template",
                   :active="hasActivePbehavior",
                   :paused="hasPausedPbehavior",
-                  @add:event="$listeners['add:event']"
+                  @add:action="$listeners['add:action']"
                 )
               v-tab {{ $t('modals.service.entity.tabs.treeOfDependencies') }}
               v-tab-item(lazy)
@@ -47,9 +51,10 @@
 <script>
 import { isNull } from 'lodash';
 
-import { PBEHAVIOR_TYPE_TYPES, ENTITY_TYPES } from '@/constants';
+import { ENTITY_TYPES } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
+import { hasActivePbehavior, hasPausedPbehavior } from '@/helpers/entities/pbehavior';
 
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
 
@@ -58,7 +63,7 @@ import EntityInfoTab from './service-entity-info-tab.vue';
 import EntityTreeOfDependenciesTab from './service-entity-tree-of-dependencies-tab.vue';
 
 export default {
-  inject: ['$eventsQueue'],
+  inject: ['$actionsQueue'],
   components: {
     EntityHeader,
     EntityInfoTab,
@@ -69,6 +74,14 @@ export default {
     entity: {
       type: Object,
       required: true,
+    },
+    selected: {
+      type: Boolean,
+      default: false,
+    },
+    lastActionUnavailable: {
+      type: Boolean,
+      default: false,
     },
     entityNameField: {
       type: String,
@@ -99,11 +112,11 @@ export default {
     },
 
     hasActivePbehavior() {
-      return this.entity.pbehaviors.some(pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.active);
+      return hasActivePbehavior(this.entity.pbehaviors);
     },
 
     hasPausedPbehavior() {
-      return this.entity.pbehaviors.some(pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause);
+      return hasPausedPbehavior(this.entity.pbehaviors);
     },
 
     isService() {

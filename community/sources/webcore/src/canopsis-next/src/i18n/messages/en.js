@@ -25,7 +25,7 @@ import {
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
-  USER_METRIC_PARAMETERS,
+  USER_METRIC_PARAMETERS, WEATHER_ACTIONS_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -212,22 +212,11 @@ export default {
     exportAsCsv: 'Export as csv',
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
-    actions: {
-      close: 'Close',
-      acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
-      acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
-      saveChanges: 'Save changes',
-      reportIncident: 'Report an incident',
-      [EVENT_ENTITY_TYPES.ack]: 'Acknowledge',
-      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
-      [EVENT_ENTITY_TYPES.validate]: 'Validate',
-      [EVENT_ENTITY_TYPES.invalidate]: 'Invalidate',
-      [EVENT_ENTITY_TYPES.pause]: 'Pause',
-      [EVENT_ENTITY_TYPES.play]: 'Play',
-      [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
-      [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
-      [EVENT_ENTITY_TYPES.comment]: 'Comment',
-    },
+    acknowledge: 'Acknowledge',
+    acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
+    acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
+    saveChanges: 'Save changes',
+    reportIncident: 'Report an incident',
     times: {
       second: 'second | seconds',
       minute: 'minute | minutes',
@@ -1967,6 +1956,17 @@ export default {
   },
   serviceWeather: {
     seeAlarms: 'See alarms',
+    massActions: 'Mass actions',
+    actions: {
+      [WEATHER_ACTIONS_TYPES.entityAck]: 'Acknowledge',
+      [WEATHER_ACTIONS_TYPES.entityValidate]: 'Validate',
+      [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalidate',
+      [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
+      [WEATHER_ACTIONS_TYPES.entityPlay]: 'Play',
+      [WEATHER_ACTIONS_TYPES.entityCancel]: 'Cancel',
+      [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associate ticket',
+      [WEATHER_ACTIONS_TYPES.entityComment]: 'Comment',
+    },
   },
   contextGeneralTable: {
     addSelection: 'Add selection',
