@@ -265,7 +265,7 @@ Pour tester l’authentification, il faudra vous authentifier avec un compte val
 
 ### Troubleshooting
 
-Observer les logs du service `api` en vérifier la non présence de pattern de type `ERR`
+Observer les logs du service `api` et vérifier la non présence de pattern de type `ERR`
 
 Redémarrer le service `api` de Canopsis
 
