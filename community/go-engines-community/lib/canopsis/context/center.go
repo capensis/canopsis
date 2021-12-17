@@ -5,6 +5,7 @@ import (
 	"errors"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"github.com/rs/zerolog"
@@ -19,12 +20,14 @@ func NewEnrichmentCenter(
 	adapter libentity.Adapter,
 	enableEnrich bool,
 	entityServiceManager entityservice.Manager,
+	metricMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
 ) EnrichmentCenter {
 	return &center{
 		adapter:              adapter,
 		enableEnrich:         enableEnrich,
 		entityServiceManager: entityServiceManager,
+		metricMetaUpdater:    metricMetaUpdater,
 		logger:               logger,
 	}
 }
@@ -33,6 +36,7 @@ type center struct {
 	adapter              libentity.Adapter
 	enableEnrich         bool
 	entityServiceManager entityservice.Manager
+	metricMetaUpdater    metrics.MetaUpdater
 	logger               zerolog.Logger
 }
 
@@ -61,6 +65,15 @@ func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFie
 			updatedServices.UpdatedComponentInfosResources = resources
 		}
 	}
+
+	updatedEntities := []string{eventEntity.ID}
+	for _, entity := range entities {
+		if eventEntity.ID != entity.ID {
+			updatedEntities = append(updatedEntities, entity.ID)
+		}
+	}
+	updatedEntities = append(updatedEntities, resources...)
+	go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
 
 	if !eventEntity.Enabled {
 		return eventEntity, updatedServices, nil
@@ -163,12 +176,15 @@ func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (U
 	updatedServices.AddedTo = addedTo[entity.ID]
 	updatedServices.RemovedFrom = removedFrom[entity.ID]
 
+	updatedEntities := []string{entity.ID}
 	// Update component infos for related resource entities
 	if entity.Type == types.EntityTypeComponent {
 		resources, err := c.adapter.UpdateComponentInfosByComponent(ctx, entity.ID)
 		if err != nil {
 			return updatedServices, err
 		}
+
+		updatedEntities = append(updatedEntities, resources...)
 
 		if len(resources) > 0 {
 			has, err := c.entityServiceManager.HasEntityServiceByComponentInfos(ctx)
@@ -180,6 +196,8 @@ func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (U
 			}
 		}
 	}
+
+	go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
 
 	return updatedServices, nil
 }

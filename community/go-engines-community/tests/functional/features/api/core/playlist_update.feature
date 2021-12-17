@@ -13,7 +13,7 @@ Feature: Update an playlist
         "test-view-to-edit-playlist-tab-1"
       ],
       "interval": {
-        "seconds": 120,
+        "value": 120,
         "unit": "m"
       },
       "enabled": false
@@ -29,7 +29,7 @@ Feature: Update an playlist
       "enabled": false,
       "fullscreen": false,
       "interval": {
-        "seconds": 120,
+        "value": 120,
         "unit": "m"
       },
       "name": "test-playlist-to-update",
@@ -85,7 +85,7 @@ Feature: Update an playlist
       "errors": {
         "enabled": "Enabled is missing.",
         "fullscreen": "Fullscreen is missing.",
-        "interval.seconds": "Seconds is missing.",
+        "interval.value": "Value is missing.",
         "interval.unit": "Unit is missing.",
         "name": "Name is missing.",
         "tabs_list": "TabsList is missing."
