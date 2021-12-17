@@ -33,6 +33,15 @@ type UpdateRequest struct {
 	ID string `json:"-"`
 }
 
+type BulkUpdateRequestItem struct {
+	EditRequest
+	ID string `json:"_id" binding:"required"`
+}
+
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
 type ContextGraphRequest struct {
 	pagination.Query
 	ID string `form:"_id"`
