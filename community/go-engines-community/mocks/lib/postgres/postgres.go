@@ -10,6 +10,7 @@ import (
 	pgconn "github.com/jackc/pgconn"
 	pgx "github.com/jackc/pgx/v4"
 	reflect "reflect"
+	time "time"
 )
 
 // MockBasePool is a mock of BasePool interface
@@ -230,10 +231,10 @@ func (mr *MockPoolMockRecorder) QueryRow(arg0, arg1 interface{}, arg2 ...interfa
 }
 
 // SendBatch mocks base method
-func (m *MockPool) SendBatch(arg0 context.Context, arg1 *pgx.Batch) pgx.BatchResults {
+func (m *MockPool) SendBatch(arg0 context.Context, arg1 *pgx.Batch) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendBatch", arg0, arg1)
-	ret0, _ := ret[0].(pgx.BatchResults)
+	ret0, _ := ret[0].(error)
 	return ret0
 }
 
@@ -241,6 +242,18 @@ func (m *MockPool) SendBatch(arg0 context.Context, arg1 *pgx.Batch) pgx.BatchRes
 func (mr *MockPoolMockRecorder) SendBatch(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendBatch", reflect.TypeOf((*MockPool)(nil).SendBatch), arg0, arg1)
+}
+
+// SetRetry mocks base method
+func (m *MockPool) SetRetry(arg0 int, arg1 time.Duration) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetRetry", arg0, arg1)
+}
+
+// SetRetry indicates an expected call of SetRetry
+func (mr *MockPoolMockRecorder) SetRetry(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetRetry", reflect.TypeOf((*MockPool)(nil).SetRetry), arg0, arg1)
 }
 
 // WithTransaction mocks base method
