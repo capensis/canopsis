@@ -2,7 +2,7 @@
 // Source: github.com/gorilla/sessions (interfaces: Store)
 
 // Package mock_sessions is a generated GoMock package.
-package sessions
+package mock_sessions
 
 import (
 	gomock "github.com/golang/mock/gomock"

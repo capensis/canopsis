@@ -49,15 +49,15 @@ func (mr *MockEngineMockRecorder) AddConsumer(arg0 interface{}) *gomock.Call {
 }
 
 // AddPeriodicalWorker mocks base method
-func (m *MockEngine) AddPeriodicalWorker(arg0 engine.PeriodicalWorker) {
+func (m *MockEngine) AddPeriodicalWorker(arg0 string, arg1 engine.PeriodicalWorker) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "AddPeriodicalWorker", arg0)
+	m.ctrl.Call(m, "AddPeriodicalWorker", arg0, arg1)
 }
 
 // AddPeriodicalWorker indicates an expected call of AddPeriodicalWorker
-func (mr *MockEngineMockRecorder) AddPeriodicalWorker(arg0 interface{}) *gomock.Call {
+func (mr *MockEngineMockRecorder) AddPeriodicalWorker(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPeriodicalWorker", reflect.TypeOf((*MockEngine)(nil).AddPeriodicalWorker), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPeriodicalWorker", reflect.TypeOf((*MockEngine)(nil).AddPeriodicalWorker), arg0, arg1)
 }
 
 // Run mocks base method
