@@ -126,37 +126,6 @@ Le moteur `engine-axe` doit aussi être lancé avec l'option `-withRemediation=t
       command: /engine-axe -publishQueue Engine_correlation -withRemediation=true
     ```
 
-### Mise à jour de la configuration de Nginx
-
-!!! information
-    Canopsis 4.4.0 propose maintenant une configuration HTTPS, non activée par défaut. Consultez le [Guide d'activation de HTTPS](../../guide-administration/administration-avancee/configuration-composants/reverse-proxy-nginx-https.md) pour en savoir plus.
-
-Plusieurs changements ont été apportés à la configuration de Nginx.
-
-=== "Paquets CentOS 7"
-
-    ```sh
-    cp /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/cors.j2 /etc/nginx/cors.inc
-    cp /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/https.j2 /etc/nginx/https.inc
-    sed -e 's,{{ CPS_API_URL }},http://127.0.0.1:8082,g' -e 's,{{ CPS_SERVER_NAME }},"localhost",g' /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/default.j2 > /etc/nginx/conf.d/default.conf
-    ```
-
-    !!! attention
-        Si vous accédez à l'interface web de Canopsis au travers d'un nom de domaine (par exemple `canopsis.mon-si.fr`), vous devrez **obligatoirement** configurer la ligne `set $canopsis_server_name` du fichier `/etc/nginx/conf.d/default.conf` avec cette valeur.
-
-=== "Docker Compose"
-
-    Si vous n'avez pas surchargé la configuration Nginx à l'aide d'un volume, vous n'avez rien à faire.
-
-    En revanche, si vous mainteniez vos propres versions modifiées de ces fichiers de configuration, vous devez manuellement vous synchroniser avec la totalité des modifications ayant été apportées dans `/etc/nginx/`.
-
-    !!! attention
-        Si vous accédez à l'interface web de Canopsis au travers d'un nom de domaine (par exemple `canopsis.mon-si.fr`), vous devrez **obligatoirement** configurer la ligne `CPS_SERVER_NAME` du fichier `compose.env` associé à votre Docker Compose avec cette valeur :
-
-        ```ini
-        CPS_SERVER_NAME=canopsis.mon-si.fr
-        ```
-
 ### Docker Compose : réorganisation des environnements de référence
 
 Les fichiers de référence Docker Compose ont été complétement revus dans cette version :
@@ -166,6 +135,23 @@ Les fichiers de référence Docker Compose ont été complétement revus dans ce
 L'environnement a notamment été découpé en 3 parties à lancer successivement (`00-data` pour les données persistantes et briques externes ; `01-prov` pour le provisioning ; `02-app` pour l'application Canopsis en elle-même). De nouvelles variables, telles que `DOCKER_REPOSITORY`, ou `CPS_SERVER_NAME` ont aussi été introduites. Certains conteneurs ont aussi été renommés ou déplacés entre Community et Pro.
 
 Il vous est donc recommandé de partir de ce nouveau référentiel, et d'y appliquer toute modification locale que vous pouviez faire jusqu'à présent. En cas de nécessité, rapprochez-vous de votre contact habituel pour un accompagnement.
+
+### Synchronisation du fichier de configuration `canopsis.toml`
+
+Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fichier de référence, notamment dans le cas où vous auriez apporté des modifications locales à ce fichier :
+
+* [`canopsis.toml` pour Canopsis Community 4.4.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/4.4.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml)
+* [`canopsis.toml` pour Canopsis Pro 4.4.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/4.4.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml)
+
+=== "Paquets CentOS 7"
+
+    Le fichier à synchroniser est `/opt/canopsis/etc/canopsis.toml`.
+
+=== "Docker Compose"
+
+    Si vous n'avez pas apporté de modification locale, ce fichier est directement intégré et mise à jour dans les conteneurs.
+
+    Si vous le surchargez à l'aide d'un volume pour y apporter des modifications, c'est ce fichier local qui doit être synchronisé.
 
 ### Migrations
 
@@ -184,6 +170,41 @@ done
 
     N'hésitez pas à nous signaler tout problème d'exécution que vous pourriez rencontrer lors de cette étape.
 
-### Fin de la mise à jour
+## Fin de la mise à jour
 
 Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md) et redémarrez l'environnement.
+
+Vous devez ensuite contrôler la bonne mise à jour de la configuration Nginx
+
+### Mise à jour de la configuration de Nginx
+
+!!! information
+    Canopsis 4.4.0 propose maintenant une configuration HTTPS, non activée par défaut. Consultez le [Guide d'activation de HTTPS](../../guide-administration/administration-avancee/configuration-composants/reverse-proxy-nginx-https.md) pour en savoir plus.
+
+Plusieurs changements ont été apportés à la configuration de Nginx.
+
+=== "Paquets CentOS 7"
+
+    ```sh
+    cp -f /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/cors.j2 /etc/nginx/cors.inc
+    cp -f /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/https.j2 /etc/nginx/https.inc
+    sed -e 's,{{ CPS_API_URL }},http://127.0.0.1:8082,g' -e 's,{{ CPS_SERVER_NAME }},"localhost",g' /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/default.j2 > /etc/nginx/conf.d/default.conf
+
+    systemctl restart nginx
+    ```
+
+    !!! attention
+        Si vous accédez à l'interface web de Canopsis au travers d'un nom de domaine (par exemple `canopsis.mon-si.fr`), vous devrez **obligatoirement** configurer la ligne `set $canopsis_server_name` du fichier `/etc/nginx/conf.d/default.conf` avec cette valeur.
+
+=== "Docker Compose"
+
+    Si vous n'avez pas surchargé la configuration Nginx à l'aide d'un volume, vous n'avez rien à faire.
+
+    En revanche, si vous mainteniez vos propres versions modifiées de ces fichiers de configuration, vous devez manuellement vous synchroniser avec la totalité des modifications ayant été apportées dans `/etc/nginx/`.
+
+    !!! attention
+        Si vous accédez à l'interface web de Canopsis au travers d'un nom de domaine (par exemple `canopsis.mon-si.fr`), vous devrez **obligatoirement** configurer la ligne `CPS_SERVER_NAME` du fichier `compose.env` associé à votre Docker Compose avec cette valeur :
+
+        ```ini
+        CPS_SERVER_NAME=canopsis.mon-si.fr
+        ```
