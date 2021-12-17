@@ -12,6 +12,7 @@ export { default as CreateManualMetaAlarm } from './alarm/create-manual-meta-ala
 export { default as PbehaviorList } from './pbehavior/pbehavior-list.vue';
 export { default as EditLiveReporting } from './alarm/edit-live-reporting.vue';
 export { default as Confirmation } from './common/confirmation.vue';
+export { default as ConfirmationPhrase } from './common/confirmation-phrase.vue';
 export { default as ClickOutsideConfirmation } from './common/click-outside-confirmation.vue';
 export { default as CreateWidget } from './view/create-widget.vue';
 export { default as ColorPicker } from './common/color-picker.vue';
@@ -75,5 +76,6 @@ export { default as CreateScenario } from './scenario/create-scenario.vue';
 export { default as TestSuite } from './test-suite/test-suite.vue';
 export { default as StateSetting } from './state-setting/state-setting.vue';
 export { default as CreateIdleRule } from './idle-rule/create-idle-rule.vue';
+export { default as CreateAlarmStatusRule } from './alarm-status-rule/create-alarm-status-rule.vue';
 export { default as HealthcheckEngine } from './healthcheck/healthcheck-engine.vue';
 export { default as HealthcheckEnginesChainReference } from './healthcheck/healthcheck-engines-chain-reference.vue';

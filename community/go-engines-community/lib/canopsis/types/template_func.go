@@ -6,9 +6,12 @@ import (
 	"regexp"
 	"strings"
 	"text/template"
+	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 )
 
-func GetTemplateFunc() template.FuncMap {
+func GetTemplateFunc(cfgTimezone *config.TimezoneConfig) template.FuncMap {
 	return template.FuncMap{
 		// json will convert an item to an JSON-compatible element,
 		// ie ints will be returned as integers and strings returned as strings with quotes
@@ -96,6 +99,47 @@ func GetTemplateFunc() template.FuncMap {
 			}
 			log.Printf("trim : %+v is not a string", v)
 			return ""
+		},
+		"localtime": func(v ...interface{}) string {
+			var value CpsTime
+			var timezone string
+			var format string
+			var ok bool
+
+			if len(v) == 3 {
+				if value, ok = v[2].(CpsTime); !ok {
+					log.Printf("localtime : %+v is not a CpsTime", v)
+					return ""
+				}
+				timezone = v[1].(string)
+				format = v[0].(string)
+			} else if len(v) == 2 {
+				if value, ok = v[1].(CpsTime); !ok {
+					log.Printf("localtime : %+v is not a CpsTime", v)
+					return ""
+				}
+				format = v[0].(string)
+			} else {
+				log.Print("localtime : must have 1 or 2 arguments")
+				return ""
+			}
+
+			var loc *time.Location
+			if timezone != "" {
+				var err error
+				if loc, err = time.LoadLocation(timezone); err != nil {
+					log.Print("localtime : invalid timezone")
+					return ""
+				}
+			} else {
+				if cfgTimezone == nil {
+					return value.Time.Format(format)
+				}
+				loc = cfgTimezone.Location
+			}
+
+			intz := value.Time.In(loc)
+			return intz.Format(format)
 		},
 	}
 }

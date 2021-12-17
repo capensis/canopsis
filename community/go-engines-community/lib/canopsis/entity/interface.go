@@ -55,6 +55,10 @@ type Adapter interface {
 	GetImpactedServicesInfo(ctx context.Context) (mongo.Cursor, error)
 
 	Bulk(ctx context.Context, models []mongodriver.WriteModel) error
+
+	FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbehaviors []string, exceptIds []string) (mongo.Cursor, error)
+
+	UpdatePbehaviorInfo(ctx context.Context, id string, info types.PbehaviorInfo) error
 }
 
 // Service glue Adapter and Cache together

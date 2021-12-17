@@ -45,6 +45,8 @@ export const ENTITIES_TYPES = {
   testSuiteHistory: 'testSuiteHistory',
   stateSetting: 'stateSetting',
   idleRules: 'idleRules',
+  flappingRules: 'flappingRules',
+  resolveRules: 'resolveRules',
 };
 
 export const MODALS = {
@@ -68,6 +70,7 @@ export const MODALS = {
   infoPopupSetting: 'info-popup-setting',
   addInfoPopup: 'add-info-popup',
   confirmation: 'confirmation',
+  confirmationPhrase: 'confirmation-phrase',
   clickOutsideConfirmation: 'click-outside-confirmation',
   createWidget: 'create-widget',
   createFilter: 'create-filter',
@@ -126,6 +129,7 @@ export const MODALS = {
   stateSetting: 'state-setting',
   testSuite: 'test-suite',
   createIdleRule: 'create-idle-rule',
+  createAlarmStatusRule: 'create-alarm-status-rule',
   healthcheckEngine: 'healthcheck-engine',
   healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
 };
@@ -858,6 +862,7 @@ export const USERS_PERMISSIONS = {
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
+    healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -866,6 +871,8 @@ export const USERS_PERMISSIONS = {
       metaAlarmRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_metaAlarmRule`,
       scenario: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_scenario`,
       idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
+      flappingRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_flappingRules`,
+      resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
@@ -982,43 +989,53 @@ export const USERS_PERMISSIONS = {
     },
   },
   api: {
-    files: `${USER_PERMISSIONS_PREFIXES.api}_file`,
-    alarmRead: `${USER_PERMISSIONS_PREFIXES.api}_alarm_read`,
-    alarmUpdate: `${USER_PERMISSIONS_PREFIXES.api}_alarm_update`,
-    alarmDelete: `${USER_PERMISSIONS_PREFIXES.api}_alarm_delete`,
-    alarmFilter: `${USER_PERMISSIONS_PREFIXES.api}_alarmfilter`,
-    idleRule: `${USER_PERMISSIONS_PREFIXES.api}_idlerule`,
-    eventFilter: `${USER_PERMISSIONS_PREFIXES.api}_eventfilter`,
-    action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
-    metaalarmrule: `${USER_PERMISSIONS_PREFIXES.api}_metaalarmrule`,
-    playlist: `${USER_PERMISSIONS_PREFIXES.api}_playlist`,
-    dynamicinfos: `${USER_PERMISSIONS_PREFIXES.api}_dynamicinfos`,
-    entityservice: `${USER_PERMISSIONS_PREFIXES.api}_entityservice`,
-    viewgroup: `${USER_PERMISSIONS_PREFIXES.api}_viewgroup`,
-    view: `${USER_PERMISSIONS_PREFIXES.api}_view`,
-    pbehavior: `${USER_PERMISSIONS_PREFIXES.api}_pbehavior`,
-    pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
-    pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
-    pbehaviorException: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorexception`,
-    event: `${USER_PERMISSIONS_PREFIXES.api}_event`,
-    healthcheck: `${USER_PERMISSIONS_PREFIXES.api}_healthcheck`,
-    entity: `${USER_PERMISSIONS_PREFIXES.api}_entity`,
-    acl: `${USER_PERMISSIONS_PREFIXES.api}_acl`,
-    remediationExecution: `${USER_PERMISSIONS_PREFIXES.api}_execution`,
-    remediationInstruction: `${USER_PERMISSIONS_PREFIXES.api}_instruction`,
-    remediationJob: `${USER_PERMISSIONS_PREFIXES.api}_job`,
-    remediationJobConfig: `${USER_PERMISSIONS_PREFIXES.api}_job_config`,
-    stateSettings: `${USER_PERMISSIONS_PREFIXES.api}_state_settings`,
-    contextgraph: `${USER_PERMISSIONS_PREFIXES.api}_contextgraph`,
-    broadcastMessage: `${USER_PERMISSIONS_PREFIXES.api}_broadcast_message`,
-    associativeTable: `${USER_PERMISSIONS_PREFIXES.api}_associative_table`,
-    appInfoRead: `${USER_PERMISSIONS_PREFIXES.api}_app_info_read`,
-    userInterfaceUpdate: `${USER_PERMISSIONS_PREFIXES.api}_user_interface_update`,
-    userInterfaceDelete: `${USER_PERMISSIONS_PREFIXES.api}_user_interface_delete`,
-    junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
-    datastorageRead: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_read`,
-    datastorageUpdate: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_update`,
-    instructionApprove: `${USER_PERMISSIONS_PREFIXES.api}_instruction_approve`,
+    general: {
+      acl: `${USER_PERMISSIONS_PREFIXES.api}_acl`,
+      appInfoRead: `${USER_PERMISSIONS_PREFIXES.api}_app_info_read`,
+      alarmRead: `${USER_PERMISSIONS_PREFIXES.api}_alarm_read`,
+      entity: `${USER_PERMISSIONS_PREFIXES.api}_entity`,
+      entityservice: `${USER_PERMISSIONS_PREFIXES.api}_entityservice`,
+      entitycategory: `${USER_PERMISSIONS_PREFIXES.api}_entitycategory`,
+      event: `${USER_PERMISSIONS_PREFIXES.api}_event`,
+      view: `${USER_PERMISSIONS_PREFIXES.api}_view`,
+      viewgroup: `${USER_PERMISSIONS_PREFIXES.api}_viewgroup`,
+      userInterfaceUpdate: `${USER_PERMISSIONS_PREFIXES.api}_user_interface_update`,
+      userInterfaceDelete: `${USER_PERMISSIONS_PREFIXES.api}_user_interface_delete`,
+      datastorageRead: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_read`,
+      datastorageUpdate: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_update`,
+      associativeTable: `${USER_PERMISSIONS_PREFIXES.api}_associative_table`,
+      stateSettings: `${USER_PERMISSIONS_PREFIXES.api}_state_settings`,
+      files: `${USER_PERMISSIONS_PREFIXES.api}_file`,
+      healthcheck: `${USER_PERMISSIONS_PREFIXES.api}_healthcheck`,
+      contextgraph: `${USER_PERMISSIONS_PREFIXES.api}_contextgraph`,
+      broadcastMessage: `${USER_PERMISSIONS_PREFIXES.api}_broadcast_message`,
+      junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
+      notifications: `${USER_PERMISSIONS_PREFIXES.api}_notification`,
+    },
+    rules: {
+      action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
+      dynamicinfos: `${USER_PERMISSIONS_PREFIXES.api}_dynamicinfos`,
+      eventFilter: `${USER_PERMISSIONS_PREFIXES.api}_eventfilter`,
+      idleRule: `${USER_PERMISSIONS_PREFIXES.api}_idlerule`,
+      metaalarmrule: `${USER_PERMISSIONS_PREFIXES.api}_metaalarmrule`,
+      playlist: `${USER_PERMISSIONS_PREFIXES.api}_playlist`,
+      flappingRule: `${USER_PERMISSIONS_PREFIXES.api}_flapping_rule`,
+      resolveRule: `${USER_PERMISSIONS_PREFIXES.api}_resolve_rule`,
+    },
+    remediation: {
+      instruction: `${USER_PERMISSIONS_PREFIXES.api}_instruction`,
+      jobConfig: `${USER_PERMISSIONS_PREFIXES.api}_job_config`,
+      job: `${USER_PERMISSIONS_PREFIXES.api}_job`,
+      execution: `${USER_PERMISSIONS_PREFIXES.api}_execution`,
+      instructionApprove: `${USER_PERMISSIONS_PREFIXES.api}_instruction_approve`,
+      messageRateStatsRead: `${USER_PERMISSIONS_PREFIXES.api}_message_rate_stats_read`,
+    },
+    pbehavior: {
+      pbehavior: `${USER_PERMISSIONS_PREFIXES.api}_pbehavior`,
+      pbehaviorException: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorexception`,
+      pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
+      pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
+    },
   },
 };
 
@@ -1772,6 +1789,8 @@ export const TEST_SUITE_COLORS = {
 
 export const TEST_CASE_FILE_MASK = '%test_case%-hh-mm-ss-YYYY-MM-DD';
 
+export const TEST_CASE_FILE_NAME = '%name%_*.xml';
+
 export const TEST_SUITE_HISTORICAL_DATA_MONTHS_DEFAULT_ITEMS = [1, 3, 6, 12];
 
 export const JUNIT_ALARM_CONNECTOR = 'junit';
@@ -1915,6 +1934,8 @@ export const ROUTES_NAMES = {
   exploitationMetaAlarmRules: 'exploitation-meta-alarm-rules',
   exploitationScenarios: 'exploitation-scenarios',
   exploitationIdleRules: 'exploitation-idle-rules',
+  exploitationFlappingRules: 'exploitation-flapping-rules',
+  exploitationResolveRules: 'exploitation-resolve-rules',
   notificationInstructionStats: 'notification-instruction-stats',
 };
 
@@ -1941,6 +1962,8 @@ export const ROUTES = {
   exploitationMetaAlarmRules: '/exploitation/meta-alarm-rule',
   exploitationScenarios: '/exploitation/scenarios',
   exploitationIdleRules: '/exploitation/idle-rules',
+  exploitationFlappingRules: '/exploitation/flapping-rules',
+  exploitationResolveRules: '/exploitation/resolve-rules',
   notificationInstructionStats: '/notification/instruction-stats',
 };
 

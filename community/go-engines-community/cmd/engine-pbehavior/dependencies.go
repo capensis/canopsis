@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -170,7 +171,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			ChannelPub:             amqpChannel,
 			PeriodicalInterval:     options.PeriodicalWaitTime,
 			PbhService:             pbehavior.NewService(pbehavior.NewModelProvider(dbClient), entityMatcher, pbhStore, pbhLockerClient),
-			DbClient:               dbClient,
+			PbhEntityMatcher:       entityMatcher,
+			AlarmAdapter:           alarm.NewAdapter(dbClient),
+			EntityAdapter:          entity.NewAdapter(dbClient),
 			EventManager:           eventManager,
 			FrameDuration:          frameDuration,
 			Encoder:                json.NewEncoder(),

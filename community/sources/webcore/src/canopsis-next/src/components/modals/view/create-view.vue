@@ -37,7 +37,7 @@ import { submittableMixin } from '@/mixins/submittable';
 import { confirmableModalMixin } from '@/mixins/confirmable-modal';
 import entitiesViewMixin from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 
 import ViewForm from '@/components/other/view/view-form.vue';

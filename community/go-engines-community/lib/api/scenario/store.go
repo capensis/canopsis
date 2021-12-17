@@ -3,6 +3,7 @@ package scenario
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -17,6 +18,7 @@ type Store interface {
 	Insert(ctx context.Context, r CreateRequest) (*Scenario, error)
 	Find(ctx context.Context, q FilteredQuery) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*Scenario, error)
+	IsPriorityValid(ctx context.Context, priority int) (bool, error)
 	Update(ctx context.Context, r UpdateRequest) (*Scenario, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
@@ -93,6 +95,19 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Scenario, error) {
 	}
 
 	return nil, nil
+}
+
+func (s *store) IsPriorityValid(ctx context.Context, priority int) (bool, error) {
+	err := s.collection.FindOne(ctx, bson.M{"priority": priority}).Err()
+	if err == nil {
+		return false, nil
+	}
+
+	if err == mongodriver.ErrNoDocuments {
+		return true, nil
+	}
+
+	return false, err
 }
 
 // Create new scenario.
@@ -191,7 +206,7 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 	}
 
 	if sortBy == "delay" {
-		sortBy = "delay.seconds"
+		sortBy = "delay.value"
 	}
 
 	return common.GetSortQuery(sortBy, r.Sort)

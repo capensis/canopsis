@@ -109,7 +109,7 @@ export function generateWidgetByType(type) {
           order: SORT_ORDERS.asc,
         },
         exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
-        exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds,
+        exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
         widgetExportColumns: defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
       };
       break;
@@ -321,24 +321,6 @@ export function generateViewTab(title = '') {
 
     _id: generateViewTabId(),
     widgets: [],
-  };
-}
-
-/**
- * Generate user preference by widget and user objects
- *
- * @param {Object} widget
- * @param {Object} user
- * @returns {Object}
- */
-export function generateUserPreferenceByWidgetAndUser(widget, user) {
-  return {
-    _id: `${widget._id}_${user._id}`,
-    widget_preferences: {},
-    name: user._id,
-    widget_id: widget._id,
-    widgetXtype: widget.type,
-    crecord_type: 'userpreferences',
   };
 }
 

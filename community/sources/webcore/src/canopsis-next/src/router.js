@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import { ROUTER_MODE } from '@/config';
+import { ROUTER_MODE, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 import { CRUD_ACTIONS, ROUTES_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
 import store from '@/store';
 import {
@@ -30,6 +30,8 @@ import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
 import ExploitationMetaAlarmRules from '@/views/exploitation/meta-alarm-rules.vue';
 import ExploitationScenarios from '@/views/exploitation/scenarios.vue';
 import ExploitationIdleRules from '@/views/exploitation/idle-rules.vue';
+import ExploitationFlappingRules from '@/views/exploitation/flapping-rules.vue';
+import ExploitationResolveRules from '@/views/exploitation/resolve-rules.vue';
 import Playlist from '@/views/playlist.vue';
 import NotificationInstructionStats from '@/views/notification/instruction-stats.vue';
 import Error from '@/views/error.vue';
@@ -268,6 +270,28 @@ const routes = [
     },
   },
   {
+    path: ROUTES.exploitationFlappingRules,
+    name: ROUTES_NAMES.exploitationFlappingRules,
+    component: ExploitationFlappingRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.flappingRules,
+      },
+    },
+  },
+  {
+    path: ROUTES.exploitationResolveRules,
+    name: ROUTES_NAMES.exploitationResolveRules,
+    component: ExploitationResolveRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.resolveRules,
+      },
+    },
+  },
+  {
     path: ROUTES.notificationInstructionStats,
     name: ROUTES_NAMES.notificationInstructionStats,
     component: NotificationInstructionStats,
@@ -300,10 +324,19 @@ const router = new Router({
 /**
  * If requiresLogin is undefined then we can visit this page with auth and without auth
  */
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const isRequiresAuth = to.matched.some(v => v.meta.requiresLogin);
   const isDontRequiresAuth = to.matched.some(v => v.meta.requiresLogin === false);
   const isLoggedIn = store.getters['auth/isLoggedIn'];
+  const { query: { [ROUTER_ACCESS_TOKEN_KEY]: accessToken, ...restQuery } = {} } = to;
+
+  if (accessToken) {
+    await store.dispatch('auth/applyAccessToken', accessToken);
+
+    return router.replace({
+      query: restQuery,
+    });
+  }
 
   if (!isLoggedIn && isRequiresAuth) {
     return next({
@@ -331,6 +364,8 @@ router.beforeResolve(async (to, from, next) => {
 
     next();
   } catch (err) {
+    console.error(err);
+
     next({
       name: ROUTES_NAMES.home,
     });
