@@ -49,6 +49,15 @@ type UpdateRequest struct {
 	ID string `json:"-"`
 }
 
+type BulkUpdateRequestItem struct {
+	EditRequest
+	ID string `json:"_id" binding:"required"`
+}
+
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
 type PatchRequest struct {
 	Author     string                             `json:"author" swaggerignore:"true"`
 	Enabled    *bool                              `json:"enabled"`
@@ -169,37 +178,4 @@ type CountFilterResult struct {
 
 func (r *CountFilterResult) GetTotal() int64 {
 	return r.TotalCount
-}
-
-type BulkCreateRequest struct {
-	Items []CreateRequest `binding:"required,notblank,dive"`
-}
-
-func (r BulkCreateRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(r.Items)
-}
-
-func (r *BulkCreateRequest) UnmarshalJSON(b []byte) error {
-	return json.Unmarshal(b, &r.Items)
-}
-
-type BulkUpdateRequestItem struct {
-	EditRequest
-	ID string `json:"_id" binding:"required"`
-}
-
-type BulkUpdateRequest struct {
-	Items []BulkUpdateRequestItem `binding:"required,notblank,dive"`
-}
-
-func (r BulkUpdateRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(r.Items)
-}
-
-func (r *BulkUpdateRequest) UnmarshalJSON(b []byte) error {
-	return json.Unmarshal(b, &r.Items)
-}
-
-type BulkDeleteRequest struct {
-	IDs []string `form:"ids[]" json:"ids" binding:"required,unique,notblank"`
 }
