@@ -261,7 +261,7 @@ La mire de connexion de Canopsis doit maintenant proposer un nouveau menu de log
 
 ![saml2_login](img/saml2_login.png)
 
-Pour tester l’authentification, il faudra vous authentifier avec un compte valider de votre IDP et ainsi arriver dans Canopsis sans erreur.
+Pour tester l’authentification, il faudra vous authentifier avec un compte valide de votre IDP et ainsi arriver dans Canopsis sans erreur.
 
 ### Troubleshooting
 
