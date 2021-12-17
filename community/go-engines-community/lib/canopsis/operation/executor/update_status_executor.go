@@ -24,9 +24,9 @@ func (e *updateStatusExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	entity types.Entity,
+	entity *types.Entity,
 	time types.CpsTime,
-	_, _ string,
+	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationParameters
 	var ok bool
@@ -35,14 +35,14 @@ func (e *updateStatusExecutor) Exec(
 	}
 
 	currentStatus := alarm.Value.Status.Value
-	newStatus := e.alarmStatusService.ComputeStatus(*alarm, entity)
+	newStatus := e.alarmStatusService.ComputeStatus(*alarm, *entity)
 
 	if newStatus == currentStatus {
 		return "", nil
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, time, alarm.Value.Connector+"."+alarm.Value.ConnectorName, params.Output, "", "")
+	newStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, time, alarm.Value.Connector+"."+alarm.Value.ConnectorName, params.Output, "", "", "")
 	newStep.Value = newStatus
 
 	if newStatus < currentStatus {

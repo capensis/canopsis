@@ -18,9 +18,9 @@ func (e *resolveCloseExecutor) Exec(
 	_ context.Context,
 	_ types.Operation,
 	alarm *types.Alarm,
-	_ types.Entity,
+	_ *types.Entity,
 	_ types.CpsTime,
-	_, _ string,
+	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	if alarm.Value.Resolved != nil || !alarm.Closable(0*time.Second) {
 		return "", nil

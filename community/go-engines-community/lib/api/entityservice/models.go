@@ -12,6 +12,7 @@ type Response struct {
 	entity.Entity  `bson:",inline"`
 	EntityPatterns pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
 	OutputTemplate string                    `bson:"output_template" json:"output_template"`
+	SliAvailState  int64                     `bson:"sli_avail_state" json:"sli_avail_state"`
 }
 
 type AlarmWithEntity struct {
@@ -45,6 +46,7 @@ type EditRequest struct {
 	ImpactLevel    int64                     `json:"impact_level" binding:"required,min=1,max=10"`
 	EntityPatterns pattern.EntityPatternList `json:"entity_patterns"`
 	Infos          []entitybasic.InfoRequest `json:"infos" binding:"dive"`
+	SliAvailState  *int64                    `json:"sli_avail_state" binding:"required,min=0,max=3"`
 }
 
 type ContextGraphAggregationResult struct {

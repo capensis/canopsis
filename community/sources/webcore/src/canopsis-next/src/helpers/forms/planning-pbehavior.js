@@ -1,12 +1,22 @@
 import Vue from 'vue';
-import moment from 'moment-timezone';
-import { omit, isObject, isString, cloneDeep } from 'lodash';
-import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
+import {
+  omit,
+  isObject,
+  isString,
+  cloneDeep,
+} from 'lodash';
+import {
+  CalendarEvent,
+  DaySpan,
+  Op,
+  Schedule,
+} from 'dayspan';
 
 import uid from '@/helpers/uid';
 import {
   convertDateToTimestampByTimezone,
-  convertTimestampToMomentByTimezone,
+  convertDateToDateObjectByTimezone,
+  getLocaleTimezone,
 } from '@/helpers/date/date';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/entities';
 
@@ -56,7 +66,6 @@ import { enabledToForm } from './shared/common';
  * @property {PbehaviorType} type
  */
 
-
 /**
  * @typedef {PbehaviorExdate} PbehaviorExdateForm
  * @property {string} key
@@ -93,7 +102,7 @@ import { enabledToForm } from './shared/common';
  * @property {PbehaviorCommentForm[]} comments
  * @property {PbehaviorExceptionForm[]} exceptions
  * @property {PbehaviorExdateForm[]} exdates
- * @property {DurationForm} duration
+ * @property {Duration} duration
  */
 
 /**
@@ -125,24 +134,24 @@ export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, en
  * Convert exdate to form
  *
  * @param {PbehaviorExdate} exdate
- * @param {string} [timezone = moment.tz.guess()]
+ * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorExdateForm}
  */
-export const exdateToForm = (exdate, timezone = moment.tz.guess()) => ({
+export const exdateToForm = (exdate, timezone = getLocaleTimezone()) => ({
   ...exdate,
   key: uid(),
-  begin: convertTimestampToMomentByTimezone(exdate.begin, timezone).toDate(),
-  end: convertTimestampToMomentByTimezone(exdate.end, timezone).toDate(),
+  begin: convertDateToDateObjectByTimezone(exdate.begin, timezone),
+  end: convertDateToDateObjectByTimezone(exdate.end, timezone),
 });
 
 /**
  * Convert exdate form to exdate
  *
  * @param {PbehaviorExdateForm} formExdate
- * @param {string} [timezone = moment.tz.guess()]
+ * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorExdate}
  */
-export const formToExdate = (formExdate, timezone = moment.tz.guess()) => ({
+export const formToExdate = (formExdate, timezone = getLocaleTimezone()) => ({
   type: formExdate.type,
   begin: convertDateToTimestampByTimezone(formExdate.begin, timezone),
   end: convertDateToTimestampByTimezone(formExdate.end, timezone),
@@ -161,13 +170,13 @@ export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception
  *
  * @param {Pbehavior} [pbehavior = {}]
  * @param {string|Object} [filter = null]
- * @param {string} [timezone = moment.tz.guess()]
+ * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorForm}
  */
 export const pbehaviorToForm = (
   pbehavior = {},
   filter = null,
-  timezone = moment.tz.guess(),
+  timezone = getLocaleTimezone(),
 ) => {
   let rrule = pbehavior.rrule || null;
 
@@ -184,8 +193,8 @@ export const pbehaviorToForm = (
     name: pbehavior.name || '',
     type: cloneDeep(pbehavior.type),
     reason: cloneDeep(pbehavior.reason),
-    tstart: pbehavior.tstart ? convertTimestampToMomentByTimezone(pbehavior.tstart, timezone).toDate() : null,
-    tstop: pbehavior.tstop ? convertTimestampToMomentByTimezone(pbehavior.tstop, timezone).toDate() : null,
+    tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, timezone) : null,
+    tstop: pbehavior.tstop ? convertDateToDateObjectByTimezone(pbehavior.tstop, timezone) : null,
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     exceptions: pbehavior.exceptions ? addKeyInEntities(cloneDeep(pbehavior.exceptions)) : [],
     comments: pbehavior.comments ? addKeyInEntities(cloneDeep(pbehavior.comments)) : [],
@@ -209,7 +218,7 @@ export const pbehaviorToDuplicateForm = pbehavior => ({
  * @param {string} timezone
  * @return {Pbehavior}
  */
-export const formToPbehavior = (form, timezone = moment.tz.guess()) => ({
+export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
   ...form,
 
   enabled: enabledToForm(form.enabled),
@@ -227,13 +236,13 @@ export const formToPbehavior = (form, timezone = moment.tz.guess()) => ({
  *
  * @param {CalendarEvent} calendarEvent
  * @param {string|Object} filter
- * @param {string} [timezone = moment.tz.guess()]
+ * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorForm}
  */
 export const calendarEventToPbehaviorForm = (
   calendarEvent,
   filter,
-  timezone = moment.tz.guess(),
+  timezone = getLocaleTimezone(),
 ) => {
   const {
     start,

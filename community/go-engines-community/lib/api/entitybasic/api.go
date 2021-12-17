@@ -5,6 +5,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"net/http"
@@ -19,6 +20,7 @@ type API interface {
 type api struct {
 	store                Store
 	entityChangeListener chan<- entityservice.ChangeEntityMessage
+	metricMetaUpdater    metrics.MetaUpdater
 	actionLogger         logger.ActionLogger
 	logger               zerolog.Logger
 }
@@ -26,6 +28,7 @@ type api struct {
 func NewApi(
 	store Store,
 	entityChangeListener chan<- entityservice.ChangeEntityMessage,
+	metricMetaUpdater metrics.MetaUpdater,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
@@ -33,6 +36,7 @@ func NewApi(
 		store:                store,
 		entityChangeListener: entityChangeListener,
 		logger:               logger,
+		metricMetaUpdater:    metricMetaUpdater,
 		actionLogger:         actionLogger,
 	}
 }
@@ -124,6 +128,8 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
+	a.metricMetaUpdater.UpdateById(c.Request.Context(), entity.ID)
+
 	c.JSON(http.StatusOK, entity)
 }
 
@@ -169,6 +175,8 @@ func (a *api) Delete(c *gin.Context) {
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
+
+	a.metricMetaUpdater.DeleteById(c.Request.Context(), request.ID)
 
 	c.Status(http.StatusNoContent)
 }

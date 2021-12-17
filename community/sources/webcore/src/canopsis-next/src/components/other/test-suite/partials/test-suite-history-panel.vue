@@ -10,6 +10,8 @@
 <script>
 import { TEST_SUITE_COLORS } from '@/constants';
 
+import { convertDateToString } from '@/helpers/date/date';
+
 import TestSuiteTabs from './test-suite-tabs.vue';
 
 export default {
@@ -22,9 +24,7 @@ export default {
   },
   computed: {
     title() {
-      const timestamp = this.testSuite.last_update || this.testSuite.created;
-
-      return this.$options.filters.date(timestamp, 'testSuiteFormat', true);
+      return convertDateToString(this.testSuite.last_update || this.testSuite.created, 'testSuiteFormat');
     },
 
     color() {
