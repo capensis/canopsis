@@ -22,7 +22,7 @@ Feature: Update a scenario
           "parameters": {
             "output": "test snooze updated",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -55,9 +55,10 @@ Feature: Update a scenario
           "type": "snooze",
           "parameters": {
             "author": "root",
+            "user": "root",
             "output": "test snooze updated",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -89,7 +90,7 @@ Feature: Update a scenario
           "parameters": {
             "output": "test snooze updated",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -129,7 +130,7 @@ Feature: Update a scenario
           "parameters": {
             "output": "test snooze updated",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -178,7 +179,7 @@ Feature: Update a scenario
           "parameters": {
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -216,7 +217,7 @@ Feature: Update a scenario
           "parameters": {
             "output": "test-scenario-to-create-1-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },

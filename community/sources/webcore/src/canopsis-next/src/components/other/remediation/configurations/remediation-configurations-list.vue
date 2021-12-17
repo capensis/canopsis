@@ -26,7 +26,7 @@
         :tooltip="props.disabled ? $t('remediationConfigurations.usingConfiguration') : $t('common.delete')",
         :disabled="props.disabled",
         type="delete",
-        @click="$emit('edit', props.item)"
+        @click="$emit('remove', props.item)"
       )
 </template>
 
