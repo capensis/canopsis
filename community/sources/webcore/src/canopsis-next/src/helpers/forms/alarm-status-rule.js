@@ -2,7 +2,7 @@ import { omit, cloneDeep } from 'lodash';
 
 import { TIME_UNITS } from '@/constants';
 
-import { durationToForm, formToDuration } from '@/helpers/date/duration';
+import { durationToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} AlarmStatusRulePatternsForm
@@ -25,11 +25,10 @@ import { durationToForm, formToDuration } from '@/helpers/date/duration';
  * @typedef {Object} AlarmStatusRuleForm
  * @property {string} name
  * @property {string} description
- * @property {DurationForm} duration
+ * @property {Duration} duration
  * @property {number} priority
  * @property {AlarmStatusRulePatternsForm} patterns
  */
-
 
 /**
  * Convert alarm status rule object to form compatible object
@@ -66,8 +65,6 @@ export const alarmStatusRuleToForm = (rule = {}, flapping = false) => {
  * @return {AlarmStatusRule}
  */
 export const formToAlarmStatusRule = form => ({
-  ...omit(form, ['patterns', 'duration']),
+  ...omit(form, ['patterns']),
   ...form.patterns,
-
-  duration: formToDuration(form.duration),
 });

@@ -14,7 +14,7 @@ Feature: Create a view
       "tags": ["test-view-to-create-1-tag"],
       "periodic_refresh": {
         "enabled": true,
-        "seconds": 600,
+        "value": 600,
         "unit": "m"
       },
       "tabs": [
@@ -55,7 +55,7 @@ Feature: Create a view
       "title": "test-view-to-create-1-title",
       "periodic_refresh": {
         "enabled": true,
-        "seconds": 600,
+        "value": 600,
         "unit": "m"
       },
       "tabs": [
@@ -95,7 +95,7 @@ Feature: Create a view
       "tags": ["test-view-to-create-2-tag"],
       "periodic_refresh": {
         "enabled": true,
-        "seconds": 600,
+        "value": 600,
         "unit": "m"
       },
       "tabs": [
@@ -137,7 +137,7 @@ Feature: Create a view
       "title": "test-view-to-create-2-title",
       "periodic_refresh": {
         "enabled": true,
-        "seconds": 600,
+        "value": 600,
         "unit": "m"
       },
       "tabs": [

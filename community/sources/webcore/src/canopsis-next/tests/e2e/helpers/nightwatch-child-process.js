@@ -107,7 +107,6 @@ const onNextQueueFunction = () => new Promise((resolve) => {
   }
 }).then(handler => handler && process.removeListener('message', handler));
 
-
 /**
  * Call and await callback, after resolve send a message to parent process
  *
@@ -118,15 +117,15 @@ const onNextQueueFunction = () => new Promise((resolve) => {
  * @param request
  * @returns {Promise<*|Promise<unknown>>}
  */
-const queueFunction = async request => new Promise(async (resolve) => {
+const queueFunction = async (request) => {
   const response = await request();
 
   if (process.send) {
     process.send(JSON.stringify({ type: requestFinishType }));
   }
 
-  resolve(response);
-});
+  return response;
+};
 
 module.exports.nightwatchRunWithQueue = nightwatchRunWithQueue;
 module.exports.requestStartType = requestStartType;

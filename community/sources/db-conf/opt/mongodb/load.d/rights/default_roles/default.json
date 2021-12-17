@@ -56,6 +56,15 @@
       "models_healthcheckStatus": {
         "checksum": 1
       },
+      "models_kpi": {
+        "checksum": 1
+      },
+      "models_kpiFilters": {
+        "checksum": 15
+      },
+      "models_kpiRatingSettings": {
+        "checksum": 15
+      },
       "models_notification_instructionStats": {
         "checksum": 15
       },
@@ -679,6 +688,18 @@
         "crecord_type": "right"
       },
       "api_flapping_rule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_metrics": {
+        "checksum": 1,
+        "crecord_type": "right"
+      },
+      "api_rating_settings": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_filter": {
         "checksum": 15,
         "crecord_type": "right"
       }

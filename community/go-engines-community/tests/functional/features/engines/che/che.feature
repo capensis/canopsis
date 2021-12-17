@@ -16,7 +16,7 @@ Feature: create entities on event
       "output": "test-output-che-1"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-1
     Then the response code should be 200
@@ -107,7 +107,7 @@ Feature: create entities on event
       "output": "test-output-che-2"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-2
     Then the response code should be 200
@@ -172,7 +172,7 @@ Feature: create entities on event
       "output": "test-output-che-3"
     }
     """
-    When I save response createComponentTimestamp={{ now.UTC.Unix }}
+    When I save response createComponentTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
     """
@@ -187,7 +187,7 @@ Feature: create entities on event
       "output": "test-output-che-3"
     }
     """
-    When I save response createResourceTimestamp={{ now.UTC.Unix }}
+    When I save response createResourceTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-3
     Then the response code should be 200
@@ -281,7 +281,7 @@ Feature: create entities on event
       "company": "test-company-che-4"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-4
     Then the response code should be 200
@@ -384,7 +384,7 @@ Feature: create entities on event
       "output": "test-output-che-5"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
     """
@@ -400,7 +400,7 @@ Feature: create entities on event
       "company": "test-company-che-5"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/entities?search=che-5
     Then the response code should be 200
     Then the response body should contain:
@@ -515,7 +515,7 @@ Feature: create entities on event
       "company": "test-company-che-6"
     }
     """
-    When I save response createComponentTimestamp={{ now.UTC.Unix }}
+    When I save response createComponentTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
     """
@@ -530,7 +530,7 @@ Feature: create entities on event
       "output": "test-output-che-6"
     }
     """
-    When I save response createResourceTimestamp={{ now.UTC.Unix }}
+    When I save response createResourceTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-6
     Then the response code should be 200
@@ -644,7 +644,7 @@ Feature: create entities on event
       "state": 2
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do PUT /api/v4/entitybasics?_id=test-resource-che-7/test-component-che-7:
     """
@@ -657,7 +657,8 @@ Feature: create entities on event
       ],
       "depends": [
         "test-connector-che-7/test-connector-name-che-7"
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200

@@ -1,7 +1,6 @@
 const { isString } = require('lodash');
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-const PageUtils = require('nightwatch/lib/page-object/page-utils');
+const PageUtils = require('nightwatch/lib/page-object/base-object');
 
 function elementsWrapperCreator(selector, elements) {
   return Object.entries(elements).reduce((acc, [key, value]) => {
