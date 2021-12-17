@@ -23,7 +23,7 @@ func (e *snoozeExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	_ types.Entity,
+	_ *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
@@ -33,13 +33,17 @@ func (e *snoozeExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	if alarm.Value.Snooze != nil {
 		return "", nil
 	}
 
 	err := alarm.PartialUpdateSnooze(
 		time,
-		types.CpsNumber(params.Duration.Seconds),
+		params.Duration,
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
 		userID,

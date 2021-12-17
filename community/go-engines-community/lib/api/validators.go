@@ -79,11 +79,14 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	pbhUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorMongoCollection, "Name")
 	pbhExistReasonValidator := common.NewExistFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Reason")
 	pbhExistTypeValidator := common.NewExistFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Type")
+	pbhBulkUniqueIDValidator := common.NewUniqueBulkFieldValidator("ID")
+	pbhBulkUniqueNameValidator := common.NewUniqueBulkFieldValidator("Name")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		pbhUniqueIDValidator.Validate(ctx, sl)
 		pbhUniqueNameValidator.Validate(ctx, sl)
 	}, pbehavior.CreateRequest{})
 	v.RegisterStructValidationCtx(pbhUniqueNameValidator.Validate, pbehavior.UpdateRequest{})
+	v.RegisterStructValidationCtx(pbhUniqueNameValidator.Validate, pbehavior.BulkUpdateRequestItem{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		pbhValidator.ValidateEditRequest(ctx, sl)
 		pbhExistReasonValidator.Validate(ctx, sl)
@@ -92,6 +95,14 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		pbhValidator.ValidateEditRequest(ctx, sl)
 	}, pbehavior.PatchRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		pbhBulkUniqueIDValidator.Validate(ctx, sl)
+		pbhBulkUniqueNameValidator.Validate(ctx, sl)
+	}, pbehavior.BulkCreateRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		pbhBulkUniqueIDValidator.Validate(ctx, sl)
+		pbhBulkUniqueNameValidator.Validate(ctx, sl)
+	}, pbehavior.BulkUpdateRequest{})
 
 	pbhReasonUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "ID")
 	pbhReasonUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Name")
