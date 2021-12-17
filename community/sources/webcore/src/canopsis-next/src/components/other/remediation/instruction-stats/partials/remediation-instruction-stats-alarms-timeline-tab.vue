@@ -8,7 +8,7 @@
     advanced-pagination
   )
     template(slot="executed_on", slot-scope="props")
-      span.c-nowrap {{ props.item.executed_on | date('long', true) }}
+      span.c-nowrap {{ props.item.executed_on | date }}
     template(slot="alarm._id", slot-scope="props")
       span {{ props.item.alarm | get('v.display_name') }}
     template(slot="timeline", slot-scope="props")

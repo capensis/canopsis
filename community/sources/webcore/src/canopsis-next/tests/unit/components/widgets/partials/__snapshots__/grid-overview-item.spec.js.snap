@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`grid-overview-item Renders \`grid-overview-item\` with l desktop size 1`] = `
+<div
+  class="grid-item v-card v-sheet theme--light"
+  style="margin: 10px 0px; grid-column-start: 5; grid-column-end: 13; grid-row-start: 23; grid-row-end: 35; height: 240px;"
+/>
+`;
+
+exports[`grid-overview-item Renders \`grid-overview-item\` with m desktop size 1`] = `
+<div
+  class="grid-item v-card v-sheet theme--light"
+  style="margin: 10px 0px; grid-column-start: 2; grid-column-end: 14; grid-row-start: 2; grid-row-end: 4; height: 40px;"
+/>
+`;
+
+exports[`grid-overview-item Renders \`grid-overview-item\` with t desktop size 1`] = `
+<div
+  class="grid-item v-card v-sheet theme--light"
+  style="margin: 10px 0px; grid-column-start: 3; grid-column-end: 13; grid-row-start: 4; grid-row-end: 7; height: auto;"
+/>
+`;
+
+exports[`grid-overview-item Renders \`grid-overview-item\` with xl desktop size 1`] = `
+<div
+  class="grid-item v-card v-sheet theme--light"
+  style="margin: 10px 0px; grid-column-start: 5; grid-column-end: 13; grid-row-start: 23; grid-row-end: 35; height: 240px;"
+/>
+`;
