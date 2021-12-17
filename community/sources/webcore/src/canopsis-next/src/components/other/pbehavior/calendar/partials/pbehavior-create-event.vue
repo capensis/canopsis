@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form.pa-3.pbehavior-form(v-click-outside.zIndex="clickOutsideDirective", @submit.prevent="submitHandler")
-    pbehavior-form(v-model="form", :noFilter="!!filter")
+    pbehavior-form(v-model="form", :no-filter="!!filter")
     v-layout(row, justify-end)
       v-btn.error(
         v-show="pbehavior",

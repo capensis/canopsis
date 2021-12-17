@@ -1,9 +1,13 @@
-import moment from 'moment';
 import { get, groupBy } from 'lodash';
 import { Day, Schedule, Constants, Op, DaySpan } from 'dayspan';
 
-import { convertTimestampToMomentByTimezone } from '@/helpers/date/date';
-
+import {
+  convertDateToMoment,
+  convertDateToTimestamp,
+  convertDateToStartOfUnitString,
+  convertDateToEndOfUnitTimestamp,
+  convertDateToMomentByTimezone,
+} from '@/helpers/date/date';
 
 /**
  * Convert alarms to calendar events
@@ -20,12 +24,12 @@ export function convertAlarmsToEvents({
   filter = {},
   getColor = () => '#fff',
 }) {
-  const groupedAlarms = groupBy(alarms, alarm => moment.unix(alarm.t).startOf(groupByValue).format());
+  const groupedAlarms = groupBy(alarms, alarm => convertDateToStartOfUnitString(alarm.t, groupByValue, null));
 
-  return Object.keys(groupedAlarms).map((dateString) => {
-    const dateObject = moment(dateString);
+  return Object.entries(groupedAlarms).map(([dateString, alarmsGroup]) => {
+    const dateObject = convertDateToMoment(dateString);
     const startDay = new Day(dateObject);
-    const sum = groupedAlarms[dateString].length;
+    const sum = alarmsGroup.length;
 
     return {
       data: {
@@ -35,8 +39,8 @@ export function convertAlarmsToEvents({
         meta: {
           sum,
           filter,
-          tstart: dateObject.unix(),
-          tstop: dateObject.clone().endOf(groupByValue).unix(),
+          tstart: convertDateToTimestamp(dateObject),
+          tstop: convertDateToEndOfUnitTimestamp(dateObject, groupByValue),
         },
       },
       schedule: new Schedule({
@@ -140,8 +144,8 @@ export function getSpanForTimestamps({
   end,
   timezone,
 }) {
-  const startMoment = convertTimestampToMomentByTimezone(start, timezone);
-  const endMoment = convertTimestampToMomentByTimezone(end, timezone);
+  const startMoment = convertDateToMomentByTimezone(start, timezone);
+  const endMoment = convertDateToMomentByTimezone(end, timezone);
   const startDay = new Day(startMoment);
   const endDay = new Day(endMoment);
 
