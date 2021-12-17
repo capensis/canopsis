@@ -9,7 +9,6 @@ import defaultLogo from '@/assets/canopsis.png';
 
 const { mapGetters } = createNamespacedHelpers('info');
 
-
 export default {
   computed: {
     ...mapGetters(['logo']),

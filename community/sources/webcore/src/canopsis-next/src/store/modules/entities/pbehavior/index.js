@@ -29,10 +29,14 @@ export default {
   },
   getters: {
     allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.pbehavior, state.allIds),
-    getItem: (state, getters, rootState, rootGetters) => id =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.pbehavior, id),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](
+      ENTITIES_TYPES.pbehavior,
+      state.allIds,
+    ),
+    getItem: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
+      ENTITIES_TYPES.pbehavior,
+      id,
+    ),
     pending: state => state.pending,
     meta: state => state.meta,
   },
@@ -93,7 +97,7 @@ export default {
       } catch (err) {
         commit(types.FETCH_BY_ID_FAILED, err);
 
-        console.warn(err);
+        console.error(err);
       }
     },
 
@@ -141,4 +145,3 @@ export default {
     },
   },
 };
-

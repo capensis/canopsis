@@ -8,7 +8,7 @@
           @submit="updateSearchHandler",
           @clear="clearSearchHandler"
         )
-        c-advanced-search(
+        c-advanced-search-field(
           v-else,
           :query="pagination",
           :columns="headers",
@@ -47,7 +47,7 @@
       template(slot="items", slot-scope="props")
         slot(v-bind="getItemsProps(props)", name="items")
           tr(:key="props.item[itemKey] || props.index")
-            td(v-if="selectAll || expand", @click.stop)
+            td(v-if="selectAll || expand", @click.stop="")
               v-layout.c-checkbox-wrapper(row, justify-start)
                 slot(v-if="selectAll", v-bind="getItemsProps(props)", name="item-select")
                   v-checkbox-functional(
