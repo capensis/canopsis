@@ -23,7 +23,7 @@
           :disabled="isDisabled || submittingWithTicket",
           data-test="createAckEventSubmitButton",
           type="submit"
-        ) {{ $t('common.actions.ack') }}
+        ) {{ $t('common.acknowledge') }}
         v-btn.warning(
           :loading="submittingWithTicket",
           :disabled="isDisabledWithTicket || submitting",
@@ -85,8 +85,8 @@ export default {
 
     submitWithTicketBtnLabel() {
       return this.form.ticket
-        ? this.$t('common.actions.acknowledgeAndAssociateTicket')
-        : this.$t('common.actions.acknowledgeAndDeclareTicket');
+        ? this.$t('common.acknowledgeAndAssociateTicket')
+        : this.$t('common.acknowledgeAndDeclareTicket');
     },
   },
   methods: {

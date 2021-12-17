@@ -120,6 +120,10 @@ export default {
       }
     },
 
+    bulkCreate(context, { data }) {
+      return request.post(API_ROUTES.pbehavior.bulkPbehaviors, data);
+    },
+
     async update({ dispatch }, { data, id }) {
       await dispatch('entities/update', {
         route: `${API_ROUTES.pbehavior.pbehaviors}/${id}`,
@@ -138,6 +142,10 @@ export default {
       } catch (err) {
         console.warn(err);
       }
+    },
+
+    bulkRemove(context, { params }) {
+      return request.delete(API_ROUTES.pbehavior.bulkPbehaviors, { params });
     },
 
     fetchEntitiesCountWithoutStore(context, { data }) {

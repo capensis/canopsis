@@ -12,7 +12,7 @@
           :pagination.sync="pagination",
           :total-items="serviceEntitiesMeta.total_count",
           :pending="serviceEntitiesPending",
-          @add:event="addEventToQueue"
+          @add:action="addActionToQueue"
         )
         v-layout(v-else, column)
           v-flex(xs12)
@@ -20,13 +20,13 @@
               v-progress-circular(color="primary", indeterminate)
     template(slot="actions")
       v-alert.ma-0.pa-1.pr-2(
-        :value="events.queue.length",
+        :value="!!actionsCount",
         color="info"
       )
         v-layout(row, align-center)
           v-btn.mr-2(icon, small, @click="clearActions")
             v-icon(color="white", small) close
-          span {{ events.queue.length }} {{ $t('modals.service.actionPending') }}
+          span {{ actionsCount }} {{ $t('modals.service.actionPending') }}
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-tooltip.mx-2(top)
         v-btn.secondary(slot="activator", @click="fetchList")
@@ -40,19 +40,22 @@
 </template>
 
 <script>
-import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES, SORT_ORDERS } from '@/constants';
+import { pick } from 'lodash';
+
 import { PAGINATION_LIMIT } from '@/config';
 
-import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
-import { addKeyInEntities } from '@/helpers/entities';
-import { getNowTimestamp } from '@/helpers/date/date';
+import { MODALS, SORT_ORDERS, WEATHER_ACTIONS_TYPES } from '@/constants';
+
+import { addKeyInEntities, mapIds } from '@/helpers/entities';
+import { createDowntimePbehavior, isPausedPbehavior } from '@/helpers/entities/pbehavior';
+import { convertActionsToEvents } from '@/helpers/entities/context';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import eventActionsMixin from '@/mixins/event-actions/alarm';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesServiceEntityMixin from '@/mixins/entities/service-entity';
+import { eventActionsMixin } from '@/mixins/event-actions';
+import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
+import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -64,22 +67,22 @@ export default {
   inject: ['$system'],
   provide() {
     return {
-      $eventsQueue: this.events,
+      $actionsQueue: this.actions,
     };
   },
   components: { ServiceTemplate, ModalWrapper },
   mixins: [
+    localQueryMixin,
     modalInnerMixin,
     eventActionsMixin,
     entitiesPbehaviorMixin,
     entitiesServiceEntityMixin,
     submittableMixinCreator(),
-    confirmableModalMixinCreator({ field: 'events' }),
-    localQueryMixin,
+    confirmableModalMixinCreator({ field: 'actions' }),
   ],
   data() {
     return {
-      events: {
+      actions: {
         queue: [],
       },
       pending: true,
@@ -106,6 +109,10 @@ export default {
     serviceEntitiesWithKey() {
       return addKeyInEntities(this.serviceEntities);
     },
+
+    actionsCount() {
+      return this.actions.queue.reduce((count, { entities }) => count + entities.length, 0);
+    },
   },
   async mounted() {
     this.pending = true;
@@ -122,49 +129,61 @@ export default {
       });
     },
 
-    addEventToQueue(event) {
-      this.events.queue.push(event);
+    addActionToQueue(action) {
+      this.actions.queue.push(action);
     },
 
-    getPausedPbehaviors(pbehaviors = []) {
-      return pbehaviors.reduce((accSecond, pbehavior) => {
-        if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
-          accSecond.push(this.updatePbehavior({
-            id: pbehavior._id,
-            data: pbehaviorToRequest({
-              ...pbehavior,
+    getCreatedPbehaviorsByEntitites(entities, data) {
+      return entities.reduce((acc, entity) => {
+        acc.push(createDowntimePbehavior({
+          entity,
+          ...pick(data, ['comment', 'reason', 'type']),
+        }));
 
-              tstop: getNowTimestamp(),
-            }),
-          }));
-        }
+        return acc;
+      }, []);
+    },
 
-        return accSecond;
+    getPausedPbehaviorsByEntitites(entities) {
+      return entities.reduce((acc, entity) => {
+        acc.push(...entity.pbehaviors?.filter(isPausedPbehavior));
+
+        return acc;
       }, []);
     },
 
     async submit() {
-      const requests = this.events.queue.reduce((acc, event) => {
-        if (event.type === EVENT_ENTITY_TYPES.pause) {
-          const pbehavior = pbehaviorToRequest(formToPbehavior(event.data));
-
-          acc.push(this.createPbehavior({ data: pbehavior }));
-        } else if (event.type === EVENT_ENTITY_TYPES.play) {
-          acc.push(...this.getPausedPbehaviors(event.data.pbehaviors));
+      const { eventsActions, createdPbehaviors, removedPbehaviors } = this.actions.queue.reduce((acc, action) => {
+        if (action.actionType === WEATHER_ACTIONS_TYPES.entityPause) {
+          acc.createdPbehaviors.push(
+            ...this.getCreatedPbehaviorsByEntitites(action.entities, action.payload),
+          );
+        } else if (action.actionType === WEATHER_ACTIONS_TYPES.entityPlay) {
+          acc.removedPbehaviors.push(
+            ...this.getPausedPbehaviorsByEntitites(action.entities),
+          );
         } else {
-          acc.push(this.createEventAction({ data: event.data }));
+          acc.eventsActions.push(action);
         }
 
         return acc;
-      }, []);
+      }, {
+        createdPbehaviors: [],
+        removedPbehaviors: [],
+        eventsActions: [],
+      });
 
-      await Promise.all(requests);
+      await Promise.all([
+        createdPbehaviors.length && this.bulkCreatePbehaviors({ data: createdPbehaviors }),
+        removedPbehaviors.length && this.bulkRemovePbehaviors({ params: { ids: mapIds(removedPbehaviors) } }),
+        this.createEventAction({ data: convertActionsToEvents(eventsActions) }),
+      ]);
 
       this.$modals.hide();
     },
 
     clearActions() {
-      this.events.queue = [];
+      this.actions.queue = [];
     },
   },
 };

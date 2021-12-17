@@ -2,7 +2,7 @@ import { get, camelCase } from 'lodash';
 import tinycolor from 'tinycolor2';
 
 import { COLORS } from '@/config';
-import { CAT_ENGINES, COLOR_INDICATOR_TYPES, ENTITIES_STATES_STYLES } from '@/constants';
+import { CAT_ENGINES, COLOR_INDICATOR_TYPES, ENTITIES_STATES_STYLES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
 
 /**
  * Get most readable text color ('white' or 'black')
@@ -111,3 +111,10 @@ export const getRandomHexColor = () => tinycolor.random().toHexString();
  * @param {string} metric
  */
 export const getMetricColor = metric => COLORS.metrics[camelCase(metric)] || COLORS.secondary;
+
+/**
+ * Get color for entity event
+ *
+ * @param {string} type
+ */
+export const getEntityEventColor = type => EVENT_ENTITY_COLORS_BY_TYPE[type];

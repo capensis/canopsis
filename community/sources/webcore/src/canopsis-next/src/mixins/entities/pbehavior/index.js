@@ -7,7 +7,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('pbehavior');
 /**
  * @mixin
  */
-export default {
+export const entitiesPbehaviorMixin = {
   mixins: [entitiesPbehaviorCommentMixin],
   computed: {
     ...mapGetters({
@@ -23,8 +23,10 @@ export default {
       fetchPbehaviorsListWithoutStore: 'fetchListWithoutStore',
       fetchPbehaviorEIDSListWithoutStore: 'fetchEIDSWithoutStore',
       createPbehavior: 'create',
+      bulkCreatePbehaviors: 'bulkCreate',
       updatePbehavior: 'update',
       removePbehavior: 'remove',
+      bulkRemovePbehaviors: 'bulkRemove',
       fetchPbehaviorsByEntityId: 'fetchListByEntityId',
       fetchPbehaviorsByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
     }),
