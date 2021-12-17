@@ -16,7 +16,7 @@ Feature: create a instruction
       "description": "test-instruction-to-create-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -25,7 +25,7 @@ Feature: create a instruction
           "operations": [
             {
               "name": "test-instruction-to-create-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-create-1-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
@@ -34,7 +34,7 @@ Feature: create a instruction
             },
             {
               "name": "test-instruction-to-create-1-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-to-create-1-step-1-operation-2-description",
               "jobs": [
                 "test-job-to-instruction-edit-2"
@@ -49,7 +49,7 @@ Feature: create a instruction
           "operations": [
             {
               "name": "test-instruction-to-create-1-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-to-create-1-step-2-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
@@ -82,7 +82,7 @@ Feature: create a instruction
       "enabled": true,
       "name": "test-instruction-to-create-1-name",
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -138,7 +138,7 @@ Feature: create a instruction
                 }
               ],
               "name": "test-instruction-to-create-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"}
+              "time_to_complete": {"value": 1, "unit":"s"}
             },
             {
               "description": "test-instruction-to-create-1-step-1-operation-2-description",
@@ -166,7 +166,7 @@ Feature: create a instruction
                 }
               ],
               "name": "test-instruction-to-create-1-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"}
+              "time_to_complete": {"value": 3, "unit":"s"}
             }
           ]
         },
@@ -222,7 +222,7 @@ Feature: create a instruction
                 }
               ],
               "name": "test-instruction-to-create-1-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"}
+              "time_to_complete": {"value": 6, "unit":"s"}
             }
           ]
         }
@@ -246,7 +246,7 @@ Feature: create a instruction
       "enabled": true,
       "priority": 21,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "jobs": [
@@ -277,7 +277,7 @@ Feature: create a instruction
       "enabled": true,
       "priority": 21,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "name": "test-instruction-to-create-2-name",
@@ -348,7 +348,7 @@ Feature: create a instruction
       "description": "test-instruction-to-create-3-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -357,7 +357,7 @@ Feature: create a instruction
           "operations": [
             {
               "name": "test-instruction-to-create-3-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-create-3-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
@@ -366,7 +366,7 @@ Feature: create a instruction
             },
             {
               "name": "test-instruction-to-create-3-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-to-create-3-step-1-operation-2-description",
               "jobs": [
                 "test-job-to-instruction-edit-2"
@@ -381,7 +381,7 @@ Feature: create a instruction
           "operations": [
             {
               "name": "test-instruction-to-create-3-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-to-create-3-step-2-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
@@ -414,7 +414,7 @@ Feature: create a instruction
       "enabled": true,
       "name": "test-instruction-to-create-3-name",
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -470,7 +470,7 @@ Feature: create a instruction
                 }
               ],
               "name": "test-instruction-to-create-3-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"}
+              "time_to_complete": {"value": 1, "unit":"s"}
             },
             {
               "description": "test-instruction-to-create-3-step-1-operation-2-description",
@@ -498,7 +498,7 @@ Feature: create a instruction
                 }
               ],
               "name": "test-instruction-to-create-3-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"}
+              "time_to_complete": {"value": 3, "unit":"s"}
             }
           ]
         },
@@ -554,7 +554,7 @@ Feature: create a instruction
                 }
               ],
               "name": "test-instruction-to-create-3-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"}
+              "time_to_complete": {"value": 6, "unit":"s"}
             }
           ]
         }
@@ -578,7 +578,7 @@ Feature: create a instruction
       "description": "test-instruction-to-create-4-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -587,7 +587,7 @@ Feature: create a instruction
           "operations": [
             {
               "name": "test-instruction-to-create-4-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-create-4-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
