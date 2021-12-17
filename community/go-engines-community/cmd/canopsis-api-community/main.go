@@ -8,6 +8,7 @@ import (
 	_ "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/docs"
 	libapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -69,6 +70,9 @@ func main() {
 		enforcer,
 		nil,
 		logger,
+		metrics.NewNullMetaUpdater(),
+		metrics.NewNullMetaUpdater(),
+		nil,
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {

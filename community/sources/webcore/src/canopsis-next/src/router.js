@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import { ROUTER_MODE } from '@/config';
+import { ROUTER_MODE, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 import { CRUD_ACTIONS, ROUTES_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
 import store from '@/store';
 import {
@@ -324,10 +324,19 @@ const router = new Router({
 /**
  * If requiresLogin is undefined then we can visit this page with auth and without auth
  */
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const isRequiresAuth = to.matched.some(v => v.meta.requiresLogin);
   const isDontRequiresAuth = to.matched.some(v => v.meta.requiresLogin === false);
   const isLoggedIn = store.getters['auth/isLoggedIn'];
+  const { query: { [ROUTER_ACCESS_TOKEN_KEY]: accessToken, ...restQuery } = {} } = to;
+
+  if (accessToken) {
+    await store.dispatch('auth/applyAccessToken', accessToken);
+
+    return router.replace({
+      query: restQuery,
+    });
+  }
 
   if (!isLoggedIn && isRequiresAuth) {
     return next({
@@ -355,6 +364,8 @@ router.beforeResolve(async (to, from, next) => {
 
     next();
   } catch (err) {
+    console.error(err);
+
     next({
       name: ROUTES_NAMES.home,
     });
