@@ -236,7 +236,7 @@ Les options suivantes doivent ensuite être adaptées au contexte de l'IDP
 | `name_id_format`            | Format du `NameIDPolicy`                                     |
 | `skip_signature_validation` | Permet de bypasser la validation de la signature de l'idp lors du décodage des réponses envoyées par l'idp si positionné à `true` |
 | `acs_index`                 | Valeur entière à utiliser lorsque l'on configure le service ACS Index dans les Metadata XML |
-| `auto_user_registration`    | Permet d'automatiquement créer les utilisateurs dans Canopsis ( si ils n'existent pas déjà ) si cette valeur est mise à `true`, sinon il faut la passer à `false` |
+| `auto_user_registration`    | Permet de créer automatiquement les utilisateurs dans Canopsis ( s'ils n'existent pas déjà ) si cette valeur est mise à `true`|
 | `default_role`              | Rôle Canopsis par défaut à attribuer pour l'utilisateur à sa création |
 
 ### Activation de l’authentification SAML2
