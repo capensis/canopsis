@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { MODALS, WIDGETS_ACTIONS_TYPES } from '@/constants';
+import { MODALS, CONTEXT_ACTIONS_TYPES } from '@/constants';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
@@ -26,19 +26,17 @@ export default {
     },
   },
   data() {
-    const { context: contextActionsTypes } = WIDGETS_ACTIONS_TYPES;
-
     return {
       actionsMap: {
         deleteEntity: {
-          type: contextActionsTypes.deleteEntity,
+          type: CONTEXT_ACTIONS_TYPES.deleteEntity,
           icon: 'delete',
           iconColor: 'error',
           title: this.$t('context.actions.titles.deleteEntity'),
           method: this.showDeleteEntitiesModal,
         },
         pbehavior: {
-          type: contextActionsTypes.pbehaviorAdd,
+          type: CONTEXT_ACTIONS_TYPES.pbehaviorAdd,
           icon: 'pause',
           title: this.$t('context.actions.titles.pbehavior'),
           method: this.showAddPbehaviorsModal,

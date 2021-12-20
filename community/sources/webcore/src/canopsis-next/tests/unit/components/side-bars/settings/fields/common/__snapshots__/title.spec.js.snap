@@ -1,0 +1,161 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`title Renders \`title\` with custom props 1`] = `
+<div
+  class="v-list__group"
+>
+  <div
+    class="v-list__group__header"
+  >
+    <div
+      role="listitem"
+    >
+      <div
+        class="v-list__tile theme--light"
+      >
+        Custom title
+        <div
+          class="font-italic caption ml-1"
+        >
+          (common.optional)
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-list__group__header__append-icon"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light"
+      >
+        keyboard_arrow_down
+      </i>
+    </div>
+  </div>
+  <transition-stub
+    mode="in-out"
+    name="expand-transition"
+  >
+    <div
+      class="v-list__group__items"
+      style="display: none;"
+    >
+      <div
+        class="container"
+      >
+        <div
+          class="v-input v-text-field v-text-field--placeholder v-input--is-label-active v-input--is-dirty theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-text-field__slot"
+              >
+                <input
+                  placeholder="settings.widgetTitle"
+                  type="text"
+                />
+              </div>
+            </div>
+            <div
+              class="v-text-field__details"
+            >
+              <div
+                class="v-messages theme--light"
+              >
+                <div
+                  class="v-messages__wrapper"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition-stub>
+</div>
+`;
+
+exports[`title Renders \`title\` with default props 1`] = `
+<div
+  class="v-list__group"
+>
+  <div
+    class="v-list__group__header"
+  >
+    <div
+      role="listitem"
+    >
+      <div
+        class="v-list__tile theme--light"
+      >
+        
+        <div
+          class="font-italic caption ml-1"
+        >
+          (common.optional)
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-list__group__header__append-icon"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light"
+      >
+        keyboard_arrow_down
+      </i>
+    </div>
+  </div>
+  <transition-stub
+    mode="in-out"
+    name="expand-transition"
+  >
+    <div
+      class="v-list__group__items"
+      style="display: none;"
+    >
+      <div
+        class="container"
+      >
+        <div
+          class="v-input v-text-field v-text-field--placeholder theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-text-field__slot"
+              >
+                <input
+                  placeholder="settings.widgetTitle"
+                  type="text"
+                />
+              </div>
+            </div>
+            <div
+              class="v-text-field__details"
+            >
+              <div
+                class="v-messages theme--light"
+              >
+                <div
+                  class="v-messages__wrapper"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition-stub>
+</div>
+`;

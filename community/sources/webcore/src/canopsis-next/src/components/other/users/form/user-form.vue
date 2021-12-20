@@ -11,7 +11,7 @@
       v-text-field(
         v-field="form.name",
         v-validate="'required'",
-        :label="$t('users.fields.username')",
+        :label="$t('users.username')",
         :disabled="onlyUserPrefs",
         :error-messages="errors.collect('name')",
         name="name",
@@ -21,14 +21,14 @@
     v-layout(row)
       v-text-field(
         v-field="form.firstname",
-        :label="$t('users.fields.firstName')",
+        :label="$t('users.firstName')",
         :disabled="onlyUserPrefs",
         data-test="firstName"
       )
     v-layout(row)
       v-text-field(
         v-field="form.lastname",
-        :label="$t('users.fields.lastName')",
+        :label="$t('users.lastName')",
         :disabled="onlyUserPrefs",
         data-test="lastName"
       )
@@ -36,7 +36,7 @@
       v-text-field(
         v-field="form.email",
         v-validate="'required|email'",
-        :label="$t('users.fields.email')",
+        :label="$t('users.email')",
         :disabled="onlyUserPrefs",
         :error-messages="errors.collect('email')",
         name="email",
@@ -47,7 +47,7 @@
       v-text-field(
         v-field="form.password",
         v-validate="passwordRules",
-        :label="$t('users.fields.password')",
+        :label="$t('users.password')",
         :error-messages="errors.collect('password')",
         type="password",
         name="password",
@@ -58,7 +58,7 @@
       v-select(
         v-field="form.role",
         v-validate="'required'",
-        :label="$t('users.fields.role')",
+        :label="$t('users.role')",
         :items="roles",
         :disabled="onlyUserPrefs",
         :error-messages="errors.collect('role')",
@@ -69,16 +69,14 @@
         data-test="role"
       )
     v-layout(data-test="languageLayout", row)
-      v-select(
+      c-language-field(
         v-field="form.ui_language",
-        :label="$t('users.fields.language')",
-        :items="languages",
-        data-test="language"
+        :label="$t('users.language')"
       )
     v-layout(data-test="navigationTypeLayout", row)
       v-select.mt-0(
         v-field="form.ui_groups_navigation_type",
-        :label="$t('parameters.groupsNavigationType.title')",
+        :label="$t('users.navigationType')",
         :items="groupsNavigationItems",
         data-test="navigationType"
       )
@@ -149,29 +147,17 @@ export default {
     };
   },
   computed: {
-    languages() {
-      return Object.keys(this.$i18n.messages);
-    },
-
     passwordRules() {
-      if (this.isNew) {
-        return 'required';
-      }
-
-      return null;
+      return {
+        required: this.isNew,
+      };
     },
 
     groupsNavigationItems() {
-      return [
-        {
-          text: this.$t('parameters.groupsNavigationType.items.sideBar'),
-          value: GROUPS_NAVIGATION_TYPES.sideBar,
-        },
-        {
-          text: this.$t('parameters.groupsNavigationType.items.topBar'),
-          value: GROUPS_NAVIGATION_TYPES.topBar,
-        },
-      ];
+      return Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
+        text: this.$t(`users.navigationTypes.${type}`),
+        value: type,
+      }));
     },
   },
   async mounted() {

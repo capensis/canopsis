@@ -3,7 +3,7 @@
     v-layout(row)
       v-flex.pr-1(v-if="reverse && !fullDay", xs4)
         time-picker-field(
-          :value="value | date('timePicker', true, null)",
+          :value="value | date('timePicker', null)",
           :label="label",
           :error="errors.has(name)",
           :disabled="disabled",
@@ -12,7 +12,7 @@
         )
       v-flex(:class="datePickerFlexClass")
         date-picker-field(
-          :value="value | date('YYYY-MM-DD', true, null)",
+          :value="value | date('datePicker', null)",
           :label="!reverse || fullDay ? label : ''",
           :error="errors.has(name)",
           :disabled="disabled",
@@ -21,7 +21,7 @@
         )
       v-flex.pr-1(v-if="!reverse && !fullDay", xs4)
         time-picker-field(
-          :value="value | date('timePicker', true, null)",
+          :value="value | date('timePicker', null)",
           :error="errors.has(name)",
           :disabled="disabled",
           hide-details,
@@ -37,7 +37,9 @@
 </template>
 
 <script>
-import { convertTimestampToMoment } from '@/helpers/date/date';
+import { TIME_UNITS } from '@/constants';
+
+import { convertDateToStartOfUnitDateObject } from '@/helpers/date/date';
 import { updateTime, updateDate } from '@/helpers/date/date-time-picker';
 
 import { formBaseMixin } from '@/mixins/form';
@@ -52,7 +54,7 @@ export default {
         return this.value;
       }
 
-      return convertTimestampToMoment(this.value).startOf('minute').toDate();
+      return convertDateToStartOfUnitDateObject(this.value, TIME_UNITS.minute);
     },
 
     name() {

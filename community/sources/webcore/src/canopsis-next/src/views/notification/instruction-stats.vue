@@ -13,18 +13,21 @@
 </template>
 
 <script>
-import { MODALS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
+import { MODALS, QUICK_RANGES } from '@/constants';
 
-import { dateParse } from '@/helpers/date/date-intervals';
 import {
-  convertDateToEndOfDayMoment,
-  convertDateToStartOfDayMoment,
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from '@/helpers/date/date-intervals';
+import {
+  convertDateToEndOfDayTimestamp,
+  convertDateToStartOfDayTimestamp,
 } from '@/helpers/date/date';
 
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
-import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
+import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
 
 import RemediationInstructionStatsList from '@/components/other/remediation/instruction-stats/remediation-instruction-stats-list.vue';
 
@@ -36,7 +39,7 @@ export default {
     authMixin,
     localQueryMixin,
     entitiesRemediationInstructionStatsMixin,
-    entitiesRemediationInstructionsMixin,
+    entitiesRemediationInstructionMixin,
   ],
   data() {
     return {
@@ -70,16 +73,12 @@ export default {
       const params = this.getQuery();
       params.with_flags = true;
 
-      params.from = convertDateToStartOfDayMoment(dateParse(
+      params.from = convertDateToStartOfDayTimestamp(convertStartDateIntervalToTimestamp(
         this.pagination.interval.from,
-        DATETIME_INTERVAL_TYPES.start,
-        DATETIME_FORMATS.datePicker,
-      )).unix();
-      params.to = convertDateToEndOfDayMoment(dateParse(
+      ));
+      params.to = convertDateToEndOfDayTimestamp(convertStopDateIntervalToTimestamp(
         this.pagination.interval.to,
-        DATETIME_INTERVAL_TYPES.stop,
-        DATETIME_FORMATS.datePicker,
-      )).unix();
+      ));
 
       this.fetchRemediationInstructionStatsList({ params });
     },

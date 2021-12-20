@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`grid-overview-widget Renders \`grid-overview-widget\` with default props 1`] = `
+<div
+  class="grid-overview"
+  style="padding: 20px; column-gap: 20px; grid-template-columns: repeat(12, 1fr);"
+/>
+`;
+
+exports[`grid-overview-widget Renders \`grid-overview-widget\` with widgets 1`] = `
+<div
+  class="grid-overview"
+  style="padding: 20px; column-gap: 20px; grid-template-columns: repeat(12, 1fr);"
+>
+  <grid-overview-item-stub
+    widget="[object Object]"
+  >
+    <div
+      class="default-slot"
+    >
+      {"widget":{"_id":"id1"}}
+    </div>
+  </grid-overview-item-stub>
+  <grid-overview-item-stub
+    widget="[object Object]"
+  >
+    <div
+      class="default-slot"
+    >
+      {"widget":{"_id":"id2"}}
+    </div>
+  </grid-overview-item-stub>
+</div>
+`;

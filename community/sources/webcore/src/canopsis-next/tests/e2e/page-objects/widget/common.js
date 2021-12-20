@@ -438,7 +438,6 @@ const commands = {
   },
 };
 
-
 module.exports = {
   elements: {
     optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',

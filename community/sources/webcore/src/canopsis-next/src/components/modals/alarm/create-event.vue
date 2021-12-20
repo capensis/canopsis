@@ -36,10 +36,11 @@
 <script>
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
-import modalInnerItemsMixin from '@/mixins/modal/inner-items';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
@@ -55,10 +56,11 @@ export default {
   },
   components: { AlarmGeneralTable, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
-    submittableMixin(),
-    confirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {
