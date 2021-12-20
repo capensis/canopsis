@@ -3,7 +3,6 @@ package saml
 import (
 	"bytes"
 	"compress/flate"
-	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
@@ -270,8 +269,6 @@ func (sp *serviceProvider) SamlAuthHandler() gin.HandlerFunc {
 
 func (sp *serviceProvider) SamlSessionAcsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx := c.Request.Context()
-
 		samlResponse, exists := c.GetPostForm("SAMLResponse")
 		if !exists {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("SAMLResponse doesn't exist")))
@@ -317,7 +314,7 @@ func (sp *serviceProvider) SamlSessionAcsHandler() gin.HandlerFunc {
 
 		if user == nil {
 			var ok bool
-			user, ok = sp.createUser(ctx, c, relayUrl, assertionInfo)
+			user, ok = sp.createUser(c, relayUrl, assertionInfo)
 			if !ok {
 				return
 			}
@@ -348,8 +345,6 @@ func (sp *serviceProvider) SamlSessionAcsHandler() gin.HandlerFunc {
 
 func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx := c.Request.Context()
-
 		samlResponse, exists := c.GetPostForm("SAMLResponse")
 		if !exists {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("SAMLResponse doesn't exist")))
@@ -395,7 +390,7 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 
 		if user == nil {
 			var ok bool
-			user, ok = sp.createUser(ctx, c, relayUrl, assertionInfo)
+			user, ok = sp.createUser(c, relayUrl, assertionInfo)
 			if !ok {
 				return
 			}
@@ -590,7 +585,9 @@ func (sp *serviceProvider) getSession(c *gin.Context) *sessions.Session {
 	return session
 }
 
-func (sp *serviceProvider) createUser(ctx context.Context, c *gin.Context, relayUrl *url.URL, assertionInfo *saml2.AssertionInfo) (*security.User, bool) {
+func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *saml2.AssertionInfo) (*security.User, bool) {
+	ctx := c.Request.Context()
+
 	if !sp.config.Security.Saml.AutoUserRegistration {
 		sp.logger.Err(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)).Msg("AutoUserRegistration is disabled")
 		sp.errorRedirect(c, relayUrl, "This user is not allowed to log into Canopsis")
